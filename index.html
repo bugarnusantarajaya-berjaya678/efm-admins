@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creator Performance Intelligence - EFM</title>
+    <title>Creator Performance Intelligence - EFM Live</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -11,35 +11,35 @@
         .tab-btn.active { background-color: #3b82f6; color: #ffffff; }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen pb-12">
 
     <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
             <div class="flex items-center gap-3">
-                <span class="bg-indigo-600 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider text-white">Live Integration</span>
+                <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Live Active</span>
                 <h1 class="text-xl font-bold tracking-tight">Creator Performance Intelligence</h1>
             </div>
             <p class="text-sm text-slate-400 mt-1">
-                Akun: <span class="text-indigo-400 font-semibold">@essentialfitnessmanagement</span>
+                Dashboard Performa: <span class="text-indigo-400 font-semibold">@essentialfitnessmanagement</span>
             </p>
         </div>
     </header>
 
-    <section class="max-w-7xl mx-auto mx-4 mt-6 p-5 bg-slate-900/80 border border-indigo-900/60 rounded-2xl shadow-xl">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <section class="max-w-7xl mx-auto mx-4 mt-6 p-5 bg-slate-900/80 border border-indigo-950 rounded-2xl shadow-xl">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div class="space-y-1">
                 <h3 class="text-sm font-bold text-indigo-400 flex items-center gap-2">
-                    <i class="fa-solid fa-plug animate-pulse text-emerald-400"></i> Koneksikan Data Live Windsor.ai Anda
+                    <i class="fa-solid fa-link text-emerald-400"></i> Hubungkan Link Windsor API Terbaru
                 </h3>
                 <p class="text-xs text-slate-400">
-                    Salin URL dari browser Windsor.ai Anda (yang ada tulisan <code class="bg-slate-950 px-1 py-0.5 rounded text-pink-400">api_key=...</code>) lalu tempel di bawah ini.
+                    Pastikan Anda mengeklik tombol <code class="text-amber-400 font-mono">Clear Cache</code> di Windsor.ai setelah mencentang media field sebelum menyalin linknya.
                 </p>
             </div>
-            <div class="flex w-full md:w-auto gap-2">
-                <input type="text" id="api-url-input" placeholder="Tempel URL API Windsor.ai Anda di sini..." 
-                       class="w-full md:w-96 bg-slate-950 border border-slate-700 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
-                <button onclick="loadLiveParameters()" class="bg-indigo-600 hover:bg-indigo-500 transition text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap">
-                    <i class="fa-solid fa-sync"></i> Ambil Data Real
+            <div class="flex w-full lg:w-auto gap-2">
+                <input type="text" id="api-url-input" placeholder="Tempel URL API Windsor.ai terbaru di sini..." 
+                       class="w-full lg:w-96 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 font-mono">
+                <button onclick="loadLiveParameters()" class="bg-indigo-600 hover:bg-indigo-500 transition text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 whitespace-nowrap">
+                    <i class="fa-solid fa-sync"></i> Ambil & Hitung Data Real
                 </button>
             </div>
         </div>
@@ -50,65 +50,66 @@
         
         <nav class="flex border-b border-slate-800 overflow-x-auto gap-2 bg-slate-900/30 p-1.5 rounded-xl">
             <button onclick="switchTab('ringkasan')" id="btn-ringkasan" class="tab-btn active flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 whitespace-nowrap">
-                <i class="fa-solid fa-chart-pie"></i> Ringkasan Matriks
+                <i class="fa-solid fa-chart-line"></i> Ringkasan Utama Performa
             </button>
-            <button onclick="switchTab('json-viewer')" id="btn-json-viewer" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 whitespace-nowrap">
-                <i class="fa-solid fa-database"></i> Data Mentah Instagram (Live Data)
+            <button onclick="switchTab('konten')" id="btn-konten" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 whitespace-nowrap">
+                <i class="fa-solid fa-trophy"></i> Peringkat Konten Terbaik
             </button>
         </nav>
 
         <section id="sec-ringkasan" class="tab-content space-y-6">
-            <div class="bg-slate-900/40 border border-slate-800 p-6 rounded-2xl">
-                <div class="flex items-center gap-3 mb-6">
-                    <i class="fa-brands fa-instagram text-2xl text-pink-500"></i>
-                    <div>
-                        <h2 class="text-lg font-bold text-slate-100">Instagram Insights</h2>
-                        <p class="text-xs text-slate-400">@essentialfitnessmanagement</p>
-                    </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Likes Akumulasi</p>
+                    <p id="total-likes" class="text-3xl font-bold mt-2 text-white tracking-tight">-</p>
+                    <p class="text-xs text-slate-500 mt-1">Total suka dari seluruh log konten</p>
                 </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80">
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Total Rows / Logs</p>
-                        <p id="metric-rows" class="text-3xl font-bold mt-2 text-white tracking-tight">-</p>
-                        <p class="text-xs text-slate-500 mt-1">Jumlah log penarikan data</p>
-                    </div>
-                    <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80">
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Data Source</p>
-                        <p id="metric-source" class="text-2xl font-bold mt-2 text-pink-400 tracking-tight">Belum Terhubung</p>
-                        <p class="text-xs text-slate-500 mt-1">Sistem integrasi API</p>
-                    </div>
-                    <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-800/80">
-                        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Last Sync Status</p>
-                        <p id="metric-sync" class="text-2xl font-bold mt-2 text-slate-500 tracking-tight">Idle</p>
-                        <p class="text-xs text-slate-500 mt-1">Kondisi muat ulang data</p>
-                    </div>
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Comments Akumulasi</p>
+                    <p id="total-comments" class="text-3xl font-bold mt-2 text-pink-400 tracking-tight">-</p>
+                    <p class="text-xs text-slate-500 mt-1">Total komentar aktif dari audiens</p>
+                </div>
+                <div class="bg-slate-900/50 p-5 rounded-xl border border-slate-800">
+                    <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Jumlah Postingan Terbaca</p>
+                    <p id="total-posts" class="text-3xl font-bold mt-2 text-emerald-400 tracking-tight">-</p>
+                    <p class="text-xs text-slate-500 mt-1">Total baris data yang ditarik</p>
                 </div>
             </div>
-            <p class="text-xs text-slate-500 text-center italic">Masukkan URL API Windsor Anda di atas untuk mengubah angka simulasi menjadi data asli.</p>
+
+            <div class="bg-slate-900/20 border border-slate-800/80 p-6 rounded-2xl flex items-center gap-4">
+                <div class="p-3 bg-indigo-600/10 rounded-xl text-indigo-400 text-lg hidden sm:block">
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-200">Kalkulator Intelegensi Berhasil Disesuaikan</h4>
+                    <p class="text-xs text-slate-400 mt-1">Sistem sekarang fokus menghitung interaksi murni dari kiriman Instagram Anda berdasarkan data media asli dari Windsor.</p>
+                </div>
+            </div>
         </section>
 
-        <section id="sec-json-viewer" class="tab-content hidden space-y-6">
+        <section id="sec-konten" class="tab-content hidden space-y-6">
             <div class="bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
-                <div class="flex items-center gap-2 mb-4">
-                    <i class="fa-solid fa-list-check text-indigo-400"></i>
-                    <h2 class="text-lg font-bold text-slate-100">Daftar Data Real dari Windsor.ai</h2>
+                <div class="mb-4">
+                    <h2 class="text-lg font-bold text-slate-100 flex items-center gap-2">
+                        <i class="fa-solid fa-medal text-amber-500"></i> Peringkat Konten Berdasarkan Engagement
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Urutan postingan Anda dari yang paling ramai interaksinya (Likes + Comments).</p>
                 </div>
-                <p class="text-xs text-slate-400 mb-4">Di bawah ini adalah tabel yang digenerate otomatis berdasarkan isi data asli dari akun Windsor Anda setelah dikoneksikan.</p>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse rounded-xl overflow-hidden">
                         <thead>
-                            <tr class="bg-slate-950 text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                                <th class="p-4">Tanggal</th>
-                                <th class="p-4">Source</th>
-                                <th class="p-4">Nama Akun</th>
-                                <th class="p-4">Profile Name</th>
+                            <tr class="bg-slate-950 text-slate-400 text-xs font-semibold uppercase tracking-wider border-b border-slate-800">
+                                <th class="p-4 text-center w-16">Rank</th>
+                                <th class="p-4">Isi Caption / Konten</th>
+                                <th class="p-4 text-center w-28">Likes</th>
+                                <th class="p-4 text-center w-28">Comments</th>
+                                <th class="p-4 text-center w-32 font-bold text-indigo-400">Total Score</th>
                             </tr>
                         </thead>
-                        <tbody id="live-table-body" class="text-sm divide-y divide-slate-800 bg-slate-950/30">
+                        <tbody id="live-table-body" class="text-sm divide-y divide-slate-800 bg-slate-950/20">
                             <tr>
-                                <td colspan="4" class="p-8 text-center text-slate-500 italic">Belum ada data. Silakan masukkan link Windsor API Anda di atas lalu klik "Ambil Data Real".</td>
+                                <td colspan="5" class="p-8 text-center text-slate-500 italic">Belum ada data. Tempelkan link API terbaru Anda di atas.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -119,7 +120,6 @@
     </main>
 
     <script>
-        // Tab system switcher
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -127,7 +127,6 @@
             document.getElementById('btn-' + tabName).classList.add('active');
         }
 
-        // Load configuration on page load
         window.onload = function() {
             const savedUrl = localStorage.getItem('windsor_api_url');
             if (savedUrl) {
@@ -139,60 +138,80 @@
         function loadLiveParameters() {
             const urlInput = document.getElementById('api-url-input').value.trim();
             if (!urlInput) {
-                alert('Mohon masukkan URL API Windsor Anda terlebih dahulu.');
+                alert('Mohon tempelkan URL API Windsor Anda terlebih dahulu.');
                 return;
             }
-            // Save locally so user doesn't have to re-paste every time
             localStorage.setItem('windsor_api_url', urlInput);
             fetchWindsorData(urlInput);
         }
 
-        // Live Fetch System from Windsor API
         async function fetchWindsorData(apiUrl) {
             const statusDiv = document.getElementById('connection-status');
             statusDiv.classList.remove('hidden');
-            statusDiv.innerHTML = `<span class="text-amber-400 font-medium"><i class="fa-solid fa-spinner animate-spin"></i> Menghubungi server Windsor.ai... Sedang memuat data real Anda...</span>`;
+            statusDiv.innerHTML = `<span class="text-amber-400 font-medium"><i class="fa-solid fa-spinner animate-spin"></i> Memproses kalkulasi data kiriman real Instagram Anda...</span>`;
 
             try {
                 const response = await fetch(apiUrl);
-                if (!response.ok) throw new Error('API Response Network Error');
+                if (!response.ok) throw new Error('API Network Error');
                 
                 const jsonResult = await response.json();
-                
-                // Windsor format structure is usually nested inside a "data" array
                 const records = jsonResult.data || jsonResult;
 
                 if (Array.isArray(records) && records.length > 0) {
-                    // Update Main Cards Metrics Dynamic
-                    document.getElementById('metric-rows').innerText = records.length;
-                    document.getElementById('metric-source').innerText = records[0].source || 'instagram_public';
-                    document.getElementById('metric-sync').innerText = 'Sukses';
-                    document.getElementById('metric-sync').className = 'text-2xl font-bold mt-2 text-emerald-400 tracking-tight';
+                    
+                    let aggregatedLikes = 0;
+                    let aggregatedComments = 0;
 
-                    // Clear and Populate Live Data Table
+                    // Map & Clean data array
+                    let processedItems = records.map(item => {
+                        const likes = parseInt(item.media_like_count || item.instagram_media_like_count || item.likes || 0);
+                        const comments = parseInt(item.comments_count || item.instagram_media_comments_count || item.comments || 0);
+                        const caption = item.media_caption || item.instagram_media_caption || item.caption || '(Tidak ada caption / Foto)';
+                        const score = likes + comments;
+
+                        aggregatedLikes += likes;
+                        aggregatedComments += comments;
+
+                        return { caption, likes, comments, score };
+                    });
+
+                    // Sort descending by highest score
+                    processedItems.sort((a, b) => b.score - a.score);
+
+                    // Render Table content
                     const tbody = document.getElementById('live-table-body');
                     tbody.innerHTML = '';
 
-                    records.forEach(item => {
+                    processedItems.forEach((item, index) => {
                         const tr = document.createElement('tr');
-                        tr.className = 'hover:bg-slate-900/40 transition text-xs';
+                        tr.className = 'hover:bg-slate-900/40 transition text-xs border-b border-slate-900/60';
+                        
+                        // Limit caption string length if too long for design
+                        const cleanCaption = item.caption.length > 90 ? item.caption.substring(0, 90) + '...' : item.caption;
+
                         tr.innerHTML = `
-                            <td class="p-4 font-mono text-slate-300">${item.date || '-'}</td>
-                            <td class="p-4"><span class="bg-pink-950/50 text-pink-400 border border-pink-900 px-2 py-0.5 rounded">${item.source || '-'}</span></td>
-                            <td class="p-4 font-semibold text-slate-200">${item.account_name || '-'}</td>
-                            <td class="p-4 text-indigo-300">${item.instagram_profile_account_name || item.instagram_profile_name || '-'}</td>
+                            <td class="p-4 text-center font-bold text-amber-500">${index + 1}</td>
+                            <td class="p-4 font-medium text-slate-200">${cleanCaption}</td>
+                            <td class="p-4 text-center text-slate-300 font-mono">${item.likes.toLocaleString('id-ID')}</td>
+                            <td class="p-4 text-center text-slate-300 font-mono">${item.comments.toLocaleString('id-ID')}</td>
+                            <td class="p-4 text-center font-bold text-indigo-400 font-mono">${item.score.toLocaleString('id-ID')}</td>
                         `;
                         tbody.appendChild(tr);
                     });
 
-                    statusDiv.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Berhasil Terkoneksi! ${records.length} data asli dari Instagram @essentialfitnessmanagement berhasil dimuat.</span>`;
+                    // Update UI Total Counters
+                    document.getElementById('total-likes').innerText = aggregatedLikes.toLocaleString('id-ID');
+                    document.getElementById('total-comments').innerText = aggregatedComments.toLocaleString('id-ID');
+                    document.getElementById('total-posts').innerText = records.length;
+
+                    statusDiv.innerHTML = `<span class="text-emerald-400 font-bold"><i class="fa-solid fa-circle-check"></i> Sukses Terkoneksi! Peringkat konten asli EFM berhasil disusun.</span>`;
                 } else {
-                    statusDiv.innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Terhubung, tetapi tidak ada record data atau format berbeda.</span>`;
+                    statusDiv.innerHTML = `<span class="text-amber-400 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> Link terhubung, namun isinya kosong.</span>`;
                 }
 
             } catch (error) {
                 console.error(error);
-                statusDiv.innerHTML = `<span class="text-red-400 font-bold"><i class="fa-solid fa-circle-xmark"></i> Gagal memuat data live. Pastikan URL API yang Anda masukkan sudah benar dan lengkap.</span>`;
+                statusDiv.innerHTML = `<span class="text-red-400 font-bold"><i class="fa-solid fa-circle-xmark"></i> Terjadi kegagalan memuat data. Mohon pastikan link API Windsor valid.</span>`;
             }
         }
     </script>
