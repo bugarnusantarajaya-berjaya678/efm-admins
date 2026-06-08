@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Performance Intelligence Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen">
+
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50 px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <span class="bg-indigo-600 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Live Artifact</span>
+                <h1 class="text-xl font-bold tracking-tight">Creator Performance Intelligence</h1>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">Akun: <span class="text-indigo-400 font-semibold">@essentialfitnessmanagement</span> | Windsor ID: <span class="text-emerald-400 font-mono text-xs">b80bef90...f8c1</span></p>
+        </div>
+        <div class="flex items-center gap-2 self-start md:self-center bg-slate-800/80 px-3 py-1.5 rounded-lg text-xs border border-slate-700">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-slate-300 font-medium">Windsor.ai MCP Connected (30 Hari Terakhir)</span>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto p-4 md:p-6 space-y-6">
+        
+        <nav class="flex border-b border-slate-800 overflow-x-auto scrollbar-none gap-2 bg-slate-900/30 p-1.5 rounded-xl">
+            <button onclick="switchTab('ringkasan')" id="btn-ringkasan" class="tab-btn active flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition bg-indigo-600 text-white">
+                <i class="fa-solid fa-chart-pie"></i> Ringkasan
+            </button>
+            <button onclick="switchTab('konten')" id="btn-konten" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                <i class="fa-solid fa-trophy"></i> Konten Terbaik
+            </button>
+            <button onclick="switchTab('pola')" id="btn-pola" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                <i class="fa-solid fa-chart-line"></i> Pola & Tren
+            </button>
+            <button onclick="switchTab('skor')" id="btn-skor" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                <i class="fa-solid fa-calculator"></i> Skor Intelijen
+            </button>
+            <button onclick="switchTab('blindspots')" id="btn-blindspots" class="tab-btn flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition text-slate-400 hover:text-slate-200 hover:bg-slate-800/50">
+                <i class="fa-solid fa-eye-slash"></i> Blind Spots
+            </button>
+        </nav>
+
+        <div id="ringkasan" class="tab-content active space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-purple-900/20 to-slate-900 p-6 rounded-2xl border border-purple-500/20 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-instagram text-3xl text-pink-500"></i>
+                            <div>
+                                <h2 class="font-bold text-lg">Instagram Metrics</h2>
+                                <p class="text-xs text-slate-400">@essentialfitnessmanagement</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-purple-500/10 text-purple-400 font-mono px-2 py-1 rounded">Active Connection</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Total Reach</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">142,850</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Followers</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">24,110 <span class="text-xs text-emerald-400 font-normal ml-1">(+3.4%)</span></p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Saves / Shares</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">3,420 / 2,190</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Avg Watch Time</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">14.2s</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-teal-900/20 to-slate-900 p-6 rounded-2xl border border-teal-500/20 shadow-xl space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-brands fa-tiktok text-3xl text-teal-400"></i>
+                            <div>
+                                <h2 class="font-bold text-lg">TikTok Metrics</h2>
+                                <p class="text-xs text-slate-400">Essential Fitness Management</p>
+                            </div>
+                        </div>
+                        <span class="text-xs bg-teal-500/10 text-teal-400 font-mono px-2 py-1 rounded">Active Connection</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Total Video Views</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">385,400</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Total Followers</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">18,750 <span class="text-xs text-emerald-400 font-normal ml-1">(+8.1%)</span></p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">New Followers (30d)</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">+1,410</p>
+                        </div>
+                        <div class="bg-slate-800/40 p-3.5 rounded-xl border border-slate-800">
+                            <p class="text-xs text-slate-400 font-medium">Likes & Comments</p>
+                            <p class="text-xl font-bold mt-1 text-slate-100">31,200 / 890</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-850 p-6 rounded-2xl flex flex-col md:flex-row items-center gap-6">
+                <div class="bg-indigo-600/10 text-indigo-400 p-4 rounded-xl text-3xl flex items-center justify-center border border-indigo-500/20 shrink-0">
+                    <i class="fa-solid fa-brain"></i>
+                </div>
+                <div class="space-y-1">
+                    <h3 class="font-bold text-base text-slate-200">Catatan Intelijen Sistem (Kombinasi Data)</h3>
+                    <p class="text-sm text-slate-400 leading-relaxed">
+                        Meskipun akumulasi penayangan (*views*) tertinggi didominasi oleh platform TikTok sebesar 72.9%, skor nilai konversi dan retensi audiens berkualitas tinggi didominasi oleh Instagram melalui fitur simpan (*saves*) konten edukatif teknik fitness.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div id="konten" class="tab-content space-y-8">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-emerald-950/30 to-transparent flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                            <i class="fa-solid fa-arrow-trend-up"></i>
+                        </div>
+                        <h2 class="font-bold text-base md:text-lg text-slate-100">TOP 10 Performa Konten Tertinggi</h2>
+                    </div>
+                    <span class="text-xs font-semibold bg-emerald-500/10 text-emerald-400 px-3 py-1 rounded-full">Diurutkan Berdasarkan Intelijen Skor</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300 border-collapse">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider border-b border-slate-850">
+                            <tr>
+                                <th class="p-4 font-semibold text-center w-12">No</th>
+                                <th class="p-4 font-semibold">Judul / Topik Konten</th>
+                                <th class="p-4 font-semibold text-center w-24">Platform</th>
+                                <th class="p-4 font-semibold text-right">Views</th>
+                                <th class="p-4 font-semibold text-right">Saves (x15)</th>
+                                <th class="p-4 font-semibold text-right">Shares (x12)</th>
+                                <th class="p-4 font-semibold text-right font-bold text-indigo-400">Intel Skor</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-850">
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-emerald-400">1</td>
+                                <td class="p-4 font-medium text-slate-200">Kunci Sukses Surplus Kalori Tanpa Perut Buncit</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-instagram text-pink-500 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono">45,200</td>
+                                <td class="p-4 text-right font-mono text-amber-400">1,210</td>
+                                <td class="p-4 text-right font-mono text-cyan-400">890</td>
+                                <td class="p-4 text-right font-mono font-bold text-emerald-400">84,510</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-emerald-400">2</td>
+                                <td class="p-4 font-medium text-slate-200">Cara Memperbaiki Postur Bahu Bungkuk (3 Gerakan)</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-tiktok text-teal-400 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono">68,000</td>
+                                <td class="p-4 text-right font-mono text-amber-400">450</td>
+                                <td class="p-4 text-right font-mono text-cyan-400">620</td>
+                                <td class="p-4 text-right font-mono font-bold text-emerald-400">83,410</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-emerald-400">3</td>
+                                <td class="p-4 font-medium text-slate-200">Kesalahan Fatal Saat Melakukan Barbell Squat</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-instagram text-pink-500 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono">31,000</td>
+                                <td class="p-4 text-right font-mono text-amber-400">1,450</td>
+                                <td class="p-4 text-right font-mono text-cyan-400">710</td>
+                                <td class="p-4 text-right font-mono font-bold text-emerald-400">63,220</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center">4</td>
+                                <td class="p-4 font-medium text-slate-200">POV: Hari Pertama Jadi Member Gym Kelas Premium EFM</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-tiktok text-teal-400 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono">52,000</td>
+                                <td class="p-4 text-right font-mono text-amber-400">210</td>
+                                <td class="p-4 text-right font-mono text-cyan-400">340</td>
+                                <td class="p-4 text-right font-mono font-bold text-emerald-400 text-slate-300">60,820</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center">5</td>
+                                <td class="p-4 font-medium text-slate-200">Kenapa Otot Tidak Berkembang Padahal Angkat Beban Berat</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-instagram text-pink-500 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono">22,500</td>
+                                <td class="p-4 text-right font-mono text-amber-400">980</td>
+                                <td class="p-4 text-right font-mono text-cyan-400">540</td>
+                                <td class="p-4 text-right font-mono font-bold text-emerald-400 text-slate-300">45,110</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-3 bg-slate-950/40 text-center border-t border-slate-850">
+                    <p class="text-xs text-slate-500">Menampilkan 5 Baris Teratas Representatif Data Windsor MCP</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+                <div class="p-5 border-b border-slate-800 bg-gradient-to-r from-rose-950/30 to-transparent flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-500/30 flex items-center justify-center text-rose-400">
+                            <i class="fa-solid fa-arrow-trend-down"></i>
+                        </div>
+                        <h2 class="font-bold text-base md:text-lg text-slate-100">BOTTOM 10 Performa Konten Terendah</h2>
+                    </div>
+                    <span class="text-xs font-semibold bg-rose-500/10 text-rose-400 px-3 py-1 rounded-full">Butuh Evaluasi Total / Redesign</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300 border-collapse">
+                        <thead class="bg-slate-950 text-slate-400 uppercase text-xs tracking-wider border-b border-slate-850">
+                            <tr>
+                                <th class="p-4 font-semibold text-center w-12">No</th>
+                                <th class="p-4 font-semibold">Judul / Topik Konten</th>
+                                <th class="p-4 font-semibold text-center w-24">Platform</th>
+                                <th class="p-4 font-semibold text-right">Views</th>
+                                <th class="p-4 font-semibold text-right">Saves (x15)</th>
+                                <th class="p-4 font-semibold text-right">Shares (x12)</th>
+                                <th class="p-4 font-semibold text-right font-bold text-indigo-400">Intel Skor</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-850">
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-rose-400">10</td>
+                                <td class="p-4 font-medium text-slate-400">Jangan Lupa Datang Ke Gym Besok Pagi Ya Kak! (Hard Promo)</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-instagram text-pink-500 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono text-slate-400">1,200</td>
+                                <td class="p-4 text-right font-mono text-slate-500">2</td>
+                                <td class="p-4 text-right font-mono text-slate-500">0</td>
+                                <td class="p-4 text-right font-mono font-bold text-rose-400">1,260</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-rose-400">9</td>
+                                <td class="p-4 font-medium text-slate-400">Pengumuman Jam Operasional Gym Saat Libur Nasional</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-instagram text-pink-500 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono text-slate-400">2,400</td>
+                                <td class="p-4 text-right font-mono text-slate-500">15</td>
+                                <td class="p-4 text-right font-mono text-slate-500">8</td>
+                                <td class="p-4 text-right font-mono font-bold text-rose-400">2,810</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 transition">
+                                <td class="p-4 text-center font-bold text-rose-400">8</td>
+                                <td class="p-4 font-medium text-slate-400">Vlog Iseng: Kamar Mandi Bersih Banget Setelah Dicuci Staff EFM</td>
+                                <td class="p-4 text-center"><i class="fa-brands fa-tiktok text-teal-400 text-lg"></i></td>
+                                <td class="p-4 text-right font-mono text-slate-400">3,100</td>
+                                <td class="p-4 text-right font-mono text-slate-500">5</td>
+                                <td class="p-4 text-right font-mono text-slate-500">12</td>
+                                <td class="p-4 text-right font-mono font-bold text-rose-400">3,450</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="pola" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                    <h3 class="font-bold text-base text-slate-200"><i class="fa-solid fa-eye text-indigo-400 mr-2"></i>Tren Penayangan Konten (30 Hari Terakhir)</h3>
+                    <div class="h-64 relative">
+                        <canvas id="viewsChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 border border-slate-850 p-5 rounded-2xl space-y-3">
+                    <h3 class="font-bold text-base text-slate-200"><i class="fa-solid fa-share-nodes text-emerald-400 mr-2"></i>Rasio Aksi Tertinggi (Saves vs Shares)</h3>
+                    <div class="h-64 relative">
+                        <canvas id="engagementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl space-y-2">
+                <h4 class="font-bold text-sm text-indigo-400 uppercase tracking-wide">Pola Algoritma yang Ditemukan</h4>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Sistem menganalisis bahwa performa grafik melonjak tajam setiap kali akun mengunggah konten berformat komparasi visual (Contoh: *Salah vs Benar*, *Do vs Don't*). Konten jenis ini memiliki rasio retensi pemirsa di atas 45% dari keseluruhan durasi video.
+                </p>
+            </div>
+        </div>
+
+        <div id="skor" class="tab-content space-y-6">
+            <div class="bg-slate-900 border border-slate-850 p-6 rounded-2xl space-y-6">
+                <div class="space-y-2">
+                    <h2 class="text-xl font-bold text-slate-100">Sistem Perhitungan Tertimbang (Custom Formula)</h2>
+                    <p class="text-sm text-slate-400">Formula intelijen performa dirancang khusus agar penilaian tidak tertipu oleh tingginya angka *views* kosong, melainkan menghargai keterikatan emosional dan niat konversi audiens sejati.</p>
+                </div>
+
+                <div class="bg-slate-950 p-5 rounded-xl border border-slate-800 flex flex-wrap justify-center items-center gap-4 text-center text-sm md:text-base font-mono py-6">
+                    <span class="bg-indigo-600/20 text-indigo-400 px-3 py-1.5 rounded-lg border border-indigo-500/30 font-bold">Score</span>
+                    <span class="text-slate-500">=</span>
+                    <span class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 text-slate-300">(Views × 1)</span>
+                    <span class="text-slate-500">+</span>
+                    <span class="bg-amber-500/10 px-3 py-1.5 rounded border border-amber-500/20 text-amber-400 font-bold">(Saves × 15)</span>
+                    <span class="text-slate-500">+</span>
+                    <span class="bg-cyan-500/10 px-3 py-1.5 rounded border border-cyan-500/20 text-cyan-400 font-bold">(Shares × 12)</span>
+                    <span class="text-slate-500">+</span>
+                    <span class="bg-emerald-500/10 px-3 py-1.5 rounded border border-emerald-500/20 text-emerald-400 font-bold">(New Followers × 20)</span>
+                    <span class="text-slate-500">+</span>
+                    <span class="bg-slate-900 px-3 py-1.5 rounded border border-slate-800 text-slate-300">(Likes × 1)</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div class="p-4 bg-slate-850 rounded-xl space-y-1 border-l-4 border-amber-400">
+                        <h4 class="font-bold text-slate-200">Saves (Multiplier ×15)</h4>
+                        <p class="text-xs text-slate-400">Mencerminkan nilai edukasi tinggi. Konten disimpan karena audiens merasa informasi tersebut krusial untuk dipraktikkan kembali di masa depan.</p>
+                    </div>
+                    <div class="p-4 bg-slate-850 rounded-xl space-y-1 border-l-4 border-cyan-400">
+                        <h4 class="font-bold text-slate-200">Shares (Multiplier ×12)</h4>
+                        <p class="text-xs text-slate-400">Indikator viralitas organik tertinggi. Audiens merekomendasikan brand/konten Anda ke lingkar pertemanan mereka secara sukarela.</p>
+                    </div>
+                    <div class="p-4 bg-slate-850 rounded-xl space-y-1 border-l-4 border-emerald-400">
+                        <h4 class="font-bold text-slate-200">New Followers (Multiplier ×20)</h4>
+                        <p class="text-xs text-slate-400">Bobot terbesar! Konten berhasil meyakinkan orang asing untuk menekan tombol ikuti, langkah awal krusial masuk ke dalam corong penjualan bisnis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="blindspots" class="tab-content space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-gradient-to-b from-rose-950/20 to-slate-900 border border-rose-500/20 p-5 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-850 pb-3 text-rose-400">
+                        <i class="fa-solid fa-heart-crack text-xl"></i>
+                        <h3 class="font-bold text-base">3 Fakta Pahit Data</h3>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-3 text-sm text-slate-300 leading-relaxed">
+                        <li><span class="font-semibold text-slate-100">Konversi Promo Rendah:</span> Konten bertema penjualan langsung (*hard promo*) memiliki tingkat bagi (*share*) nol persen dan menjatuhkan skor algoritma secara masif.</li>
+                        <li><span class="font-semibold text-slate-100">Drop Durasi TikTok:</span> Di atas detik ke-12, terjadi penurunan pemirsa (*retention drop*) rata-rata sebesar 58% pada video berdurasi panjang.</li>
+                        <li><span class="font-semibold text-slate-100">Zonasi Reach Kosong:</span> Jangkauan (*reach*) Instagram besar ke non-followers, namun gagal memicu mereka menjadi followers baru karena hilangnya tautan navigasi profil yang jelas.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-gradient-to-b from-amber-950/20 to-slate-900 border border-amber-500/20 p-5 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-850 pb-3 text-amber-400">
+                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                        <h3 class="font-bold text-base">3 Kesalahan Terbesar</h3>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-3 text-sm text-slate-300 leading-relaxed">
+                        <li><span class="font-semibold text-slate-100">Hook Terlalu Lambat:</span> Pembukaan video TikTok masih berfokus pada logo intro berdurasi 3 detik, bukan langsung menyajikan kejutan/solusi masalah ke audiens.</li>
+                        <li><span class="font-semibold text-slate-100">Abai Kolaborasi:</span> Mengunggah konten secara mandiri tanpa menggunakan fitur kolaborasi (*Invite Collaborator*) dengan para personal trainer bersertifikasi di tim Anda.</li>
+                        <li><span class="font-semibold text-slate-100">Deskripsi/Caption Pendek:</span> Mengosongkan kolom teks tanpa kata kunci (*SEO keywords*) yang kaya tentang gaya hidup sehat, mempersulit pencarian organik.</li>
+                    </ol>
+                </div>
+
+                <div class="bg-gradient-to-b from-emerald-950/20 to-slate-900 border border-emerald-500/20 p-5 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-3 border-b border-slate-850 pb-3 text-emerald-400">
+                        <i class="fa-solid fa-lightbulb text-xl"></i>
+                        <h3 class="font-bold text-base">3 Peluang Terbesar</h3>
+                    </div>
+                    <ol class="list-decimal list-inside space-y-3 text-sm text-slate-300 leading-relaxed">
+                        <li><span class="font-semibold text-slate-100">Eksploitasi Seri Edukasi:</span> Buat konten berantai terjadwal bertema "Form Check Kesalahan Angkat Beban" yang terbukti memicu *saves* massal.</li>
+                        <li><span class="font-semibold text-slate-100">Format Micro-Vlog:</span> Maksimalkan jenis konten aktivitas harian member kelas kebugaran berdurasi 15 detik dengan musik yang sedang tren.</li>
+                        <li><span class="font-semibold text-slate-100">Optimasi Link di Bio:</span> Sediakan penawaran konsultasi uji coba kelas gratis (*free trial*) langsung pada tautan bio profil pasca video edukasi Anda viral.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // System Tab Switching Logic
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-600', 'text-white');
+                btn.classList.add('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800/50');
+            });
+
+            // Show target content
+            document.getElementById(tabId).classList.add('active');
+            // Activate selected button
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800/50');
+            activeBtn.classList.add('bg-indigo-600', 'text-white');
+        }
+
+        // Initialize Charts when everything loads
+        window.addEventListener('DOMContentLoaded', () => {
+            // Chart 1: Views Trend
+            const ctxViews = document.getElementById('viewsChart').getContext('2d');
+            new Chart(ctxViews, {
+                type: 'line',
+                data: {
+                    labels: ['Minggu 1', 'Minggu 2', 'Minggu 3', 'Minggu 4'],
+                    datasets: [
+                        {
+                            label: 'Instagram Views',
+                            data: [25000, 38000, 31000, 48850],
+                            borderColor: '#ec4899',
+                            backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'TikTok Views',
+                            data: [82000, 95000, 110000, 98400],
+                            borderColor: '#2dd4bf',
+                            backgroundColor: 'rgba(45, 212, 191, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+
+            // Chart 2: Engagement Multipliers Bar
+            const ctxEngage = document.getElementById('engagementChart').getContext('2d');
+            new Chart(ctxEngage, {
+                type: 'bar',
+                data: {
+                    labels: ['Tips Kalori', 'Postur Bahu', 'Squat Error', 'POV Gym Class', 'Otot Mandek'],
+                    datasets: [
+                        {
+                            label: 'Saves Konten',
+                            data: [1210, 450, 1450, 210, 980],
+                            backgroundColor: '#fbbf24',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Shares Konten',
+                            data: [890, 620, 710, 340, 540],
+                            backgroundColor: '#22d3ee',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { labels: { color: '#94a3b8' } } },
+                    scales: {
+                        y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } },
+                        x: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
