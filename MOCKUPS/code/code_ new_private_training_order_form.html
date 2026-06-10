@@ -1,0 +1,301 @@
+<!DOCTYPE html><html class="light" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EFM Portal - New Private Training</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#a4c9ff",
+                    "surface-variant": "#e5e1e5",
+                    "surface-container-low": "#f6f2f6",
+                    "on-tertiary-fixed": "#001c39",
+                    "on-error-container": "#93000a",
+                    "outline": "#78767f",
+                    "on-primary-fixed-variant": "#44426b",
+                    "surface-dim": "#dcd9dd",
+                    "secondary-container": "#fd6e58",
+                    "surface-tint": "#5c5a85",
+                    "primary-fixed-dim": "#c5c1f3",
+                    "on-primary-fixed": "#18163d",
+                    "primary": "#06042c",
+                    "on-tertiary": "#ffffff",
+                    "on-primary": "#ffffff",
+                    "on-background": "#1c1b1e",
+                    "error": "#ba1a1a",
+                    "tertiary-container": "#002142",
+                    "secondary-fixed": "#ffdad4",
+                    "primary-container": "#1e1c43",
+                    "on-secondary-fixed-variant": "#8a1b0e",
+                    "background": "#fcf8fc",
+                    "on-tertiary-fixed-variant": "#004883",
+                    "on-surface-variant": "#47464e",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "surface-container-high": "#ebe7eb",
+                    "surface-bright": "#fcf8fc",
+                    "error-container": "#ffdad6",
+                    "surface-container": "#f1edf1",
+                    "tertiary-fixed": "#d4e3ff",
+                    "on-surface": "#1c1b1e",
+                    "inverse-primary": "#c5c1f3",
+                    "surface-container-highest": "#e5e1e5",
+                    "on-tertiary-container": "#438adc",
+                    "on-primary-container": "#8684b1",
+                    "tertiary": "#000919",
+                    "primary-fixed": "#e3dfff",
+                    "secondary-fixed-dim": "#ffb4a7",
+                    "inverse-surface": "#313033",
+                    "secondary": "#ac3323",
+                    "inverse-on-surface": "#f4eff4",
+                    "surface": "#fcf8fc",
+                    "outline-variant": "#c8c5cf",
+                    "on-secondary-fixed": "#400100",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-container": "#6c0300"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "margin-mobile": "16px",
+                    "container-max": "1440px",
+                    "unit": "8px",
+                    "margin-desktop": "32px",
+                    "gutter": "24px",
+                    "sidebar-width": "260px"
+            },
+            "fontFamily": {
+                    "body-sm": ["Poppins"],
+                    "label-md": ["Poppins"],
+                    "label-lg": ["Poppins"],
+                    "body-lg": ["Poppins"],
+                    "headline-md": ["Poppins"],
+                    "headline-sm": ["Poppins"],
+                    "headline-lg": ["Poppins"],
+                    "display-lg": ["Poppins"],
+                    "headline-lg-mobile": ["Poppins"],
+                    "body-md": ["Poppins"]
+            },
+            "fontSize": {
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface antialiased min-h-screen">
+<!-- TopAppBar -->
+<header class="h-16 fixed top-0 right-0 w-[calc(100%-260px)] border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-margin-desktop bg-surface/95 backdrop-blur-sm z-40">
+<div class="flex items-center gap-4">
+<span class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">EFM Management</span>
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-9 pr-4 py-1.5 bg-surface-container-highest border-none rounded-full text-sm w-64 focus:ring-2 focus:ring-primary focus:bg-surface transition-all" placeholder="Search..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3 cursor-pointer hover:bg-surface-container-high transition-colors p-1.5 rounded-lg">
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a person, well-lit, looking approachable, suitable for a corporate or management portal avatar. The background is subtle and neutral to ensure the subject stands out. This matches a modern, clean UI aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAccmYvm6T__QB0SXkzOQN4F4FFKFLNKdg4deWZCQT1xa4iqNPJ_aw_eU3GBvMBNMwYSaDgxnWNzN_PebQ2MdneJQ87-AB0IQI0FqIZJHskXrpEZTuilwOEASrQwAgy5dNP6YZ7P2yQbC-7_3BIfDzmYnNDwl0djcIqncDEuGubvbrsXAd-47MX1AuICVlPNNK9rrtdxBbPzovkssXb2lW4czAeJo4Og9FG23ur1CGLb-1PVATfaZ6ivu9uB-wH4mchXyCQY7LuHPwn">
+<span class="font-label-lg text-label-lg text-primary hidden md:block">Settings</span>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<nav class="w-[260px] h-screen fixed left-0 top-0 bg-primary dark:bg-tertiary shadow-sm flex flex-col h-full py-unit z-50" style="background-color: rgb(30, 28, 67);">
+<div class="px-6 py-4 flex items-center gap-3 mb-6">
+<div class="w-10 h-10 bg-secondary rounded flex items-center justify-center text-on-primary font-bold text-xl shrink-0" style="background-color: rgb(241, 237, 241);"><span class="material-symbols-outlined text-primary">fitness_center</span></div>
+<div class="overflow-hidden">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-tertiary truncate">EFM Portal</h1>
+<p class="text-xs text-on-primary/70 truncate">Management System</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-secondary hover:bg-secondary/90 text-on-secondary py-2.5 rounded-lg font-label-lg text-label-lg shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95" style="background-color: rgb(224, 89, 69);">
+<span class="material-symbols-outlined text-sm">add</span>
+                + New Entry
+            </button>
+</div>
+<ul class="flex-1 px-3 space-y-1 overflow-y-auto">
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg border-secondary bg-primary-container text-on-primary font-semibold hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 border-l-4" href="#" style="background-color: rgb(30, 28, 67);">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+</li>
+<li class="">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</li>
+</ul>
+<div class="px-3 mt-auto border-t border-primary-container pt-4">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="ml-[260px] pt-16 min-h-screen bg-background">
+<div class="p-margin-desktop max-w-container-max mx-auto">
+<!-- Header & Stepper -->
+<div class="mb-8">
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">Create Private Training Order</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Step 1 of 4: Client Selection</p>
+<div class="mt-6 flex items-center w-full max-w-3xl">
+<!-- Step 1 -->
+<div class="flex flex-col items-center relative flex-1">
+<div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-bold z-10 border-4 border-background">1</div>
+<span class="mt-2 font-label-md text-label-md text-primary font-semibold">Client</span>
+<div class="absolute top-5 left-1/2 w-full h-0.5 bg-outline-variant -z-0"></div>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center relative flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold z-10 border-4 border-background">2</div>
+<span class="mt-2 font-label-md text-label-md text-on-surface-variant">Program</span>
+<div class="absolute top-5 left-1/2 w-full h-0.5 bg-outline-variant -z-0"></div>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center relative flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold z-10 border-4 border-background">3</div>
+<span class="mt-2 font-label-md text-label-md text-on-surface-variant">Logistics</span>
+<div class="absolute top-5 left-1/2 w-full h-0.5 bg-outline-variant -z-0"></div>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center relative flex-1">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-bold z-10 border-4 border-background">4</div>
+<span class="mt-2 font-label-md text-label-md text-on-surface-variant">Review</span>
+</div>
+</div>
+</div>
+<!-- Form Content Canvas -->
+<div class="bg-surface rounded-xl shadow-sm border border-outline-variant p-gutter">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Search Existing Client -->
+<div class="p-6 border border-outline-variant rounded-lg bg-surface-container-lowest">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-headline-sm text-headline-sm text-primary">Search Existing Client</h3>
+<span class="material-symbols-outlined text-secondary">search</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4">Find a client already in the EFM database.</p>
+<div class="space-y-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Search by Name or Phone</label>
+<div class="relative">
+<input class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" placeholder="e.g. John Doe or +1 555..." type="text">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-outline text-xl">person_search</span>
+</div>
+</div>
+<!-- Search Results Mock -->
+<div class="mt-4 border border-outline-variant rounded-lg overflow-hidden hidden">
+<div class="p-3 hover:bg-surface-container-low cursor-pointer flex justify-between items-center border-b border-outline-variant">
+<div>
+<div class="font-label-lg text-label-lg text-primary">Sarah Jenkins</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">+1 555-0192 • sarah.j@email.com</div>
+</div>
+<button class="text-secondary font-label-md text-label-md uppercase">Select</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Add New Client -->
+<div class="p-6 border border-outline-variant rounded-lg bg-surface-container-lowest relative overflow-hidden">
+<!-- Decorative gradient blob -->
+<div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-fixed-dim/20 rounded-full blur-2xl"></div>
+<div class="flex items-center justify-between mb-4 relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-primary">Quick Add New Client</h3>
+<span class="material-symbols-outlined text-primary">person_add</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-4 relative z-10">Create a new profile to proceed with the order.</p>
+<form class="space-y-4 relative z-10">
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">First Name *</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" type="text">
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Last Name *</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" type="text">
+</div>
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Phone Number *</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" type="tel">
+</div>
+<div>
+<label class="block font-label-md text-label-md text-on-surface mb-1">Email Address</label>
+<input class="w-full px-3 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-primary font-body-sm text-body-sm" type="email">
+</div>
+<button class="w-full py-2 bg-surface-container-high hover:bg-surface-dim text-primary font-label-lg text-label-lg rounded-lg border border-outline-variant transition-colors mt-2" type="button">
+                                Save &amp; Select Client
+                            </button>
+</form>
+</div>
+</div>
+<!-- Footer Actions -->
+<div class="mt-8 pt-6 border-t border-outline-variant flex justify-between items-center">
+<button class="px-6 py-2 border border-outline-variant text-on-surface-variant font-label-lg text-label-lg rounded-lg hover:bg-surface-container-low transition-colors">
+                        Cancel Order
+                    </button>
+<button class="px-8 py-2 bg-secondary text-on-secondary font-label-lg text-label-lg rounded-lg shadow-sm hover:bg-secondary/90 transition-colors flex items-center gap-2" style="background-color: rgb(224, 89, 69);">
+                        Continue to Program
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+
+
+
+
+
+
+</body></html>

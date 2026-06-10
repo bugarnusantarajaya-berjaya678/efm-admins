@@ -1,0 +1,475 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EFM Portal - Private Training Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-primary": "#ffffff",
+                    "tertiary": "#000919",
+                    "inverse-surface": "#313033",
+                    "surface-dim": "#dcd9dd",
+                    "on-primary-fixed": "#18163d",
+                    "on-tertiary-fixed-variant": "#004883",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed": "#d4e3ff",
+                    "primary-container": "#1e1c43",
+                    "error-container": "#ffdad6",
+                    "surface": "#fcf8fc",
+                    "inverse-on-surface": "#f4eff4",
+                    "surface-container": "#f1edf1",
+                    "on-primary-fixed-variant": "#44426b",
+                    "primary": "#06042c",
+                    "outline-variant": "#c8c5cf",
+                    "surface-variant": "#e5e1e5",
+                    "surface-container-highest": "#e5e1e5",
+                    "on-tertiary-fixed": "#001c39",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary-fixed": "#400100",
+                    "surface-container-low": "#f6f2f6",
+                    "secondary-fixed": "#ffdad4",
+                    "primary-fixed": "#e3dfff",
+                    "on-surface": "#1c1b1e",
+                    "primary-fixed-dim": "#c5c1f3",
+                    "on-secondary-fixed-variant": "#8a1b0e",
+                    "on-secondary": "#ffffff",
+                    "secondary": "#ac3323",
+                    "on-primary-container": "#8684b1",
+                    "on-background": "#1c1b1e",
+                    "outline": "#78767f",
+                    "on-tertiary-container": "#438adc",
+                    "tertiary-fixed-dim": "#a4c9ff",
+                    "surface-bright": "#fcf8fc",
+                    "on-secondary-container": "#6c0300",
+                    "surface-tint": "#5c5a85",
+                    "surface-container-high": "#ebe7eb",
+                    "secondary-container": "#fd6e58",
+                    "secondary-fixed-dim": "#ffb4a7",
+                    "tertiary-container": "#002142",
+                    "on-surface-variant": "#47464e",
+                    "inverse-primary": "#c5c1f3",
+                    "on-error": "#ffffff",
+                    "background": "#fcf8fc",
+                    "surface-container-lowest": "#ffffff",
+                    "on-error-container": "#93000a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sidebar-width": "260px",
+                    "margin-mobile": "16px",
+                    "unit": "8px",
+                    "container-max": "1440px",
+                    "gutter": "24px",
+                    "margin-desktop": "32px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Poppins"],
+                    "headline-lg": ["Poppins"],
+                    "headline-lg-mobile": ["Poppins"],
+                    "body-sm": ["Poppins"],
+                    "label-lg": ["Poppins"],
+                    "body-md": ["Poppins"],
+                    "body-lg": ["Poppins"],
+                    "headline-md": ["Poppins"],
+                    "label-md": ["Poppins"],
+                    "display-lg": ["Poppins"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                    "display-lg": ["48px", {"lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        body { background-color: #F8F9FA; }
+        .card-elevation {
+            box-shadow: 0px 2px 4px rgba(30, 28, 67, 0.05);
+            border: 1px solid #E2E8F0;
+        }
+        .interactive-card:hover {
+            box-shadow: 0px 8px 16px rgba(30, 28, 67, 0.08);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="font-body-md text-on-surface bg-background antialiased flex">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col h-full py-unit bg-primary dark:bg-tertiary w-[260px] h-screen fixed left-0 top-0 shadow-sm z-50">
+<div class="px-gutter py-margin-mobile flex items-center gap-unit mb-margin-mobile">
+<div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-on-secondary font-headline-sm">E</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-tertiary">EFM Portal</h1>
+<p class="font-label-md text-label-md text-on-primary-container">Management System</p>
+</div>
+</div>
+<div class="px-margin-mobile mb-gutter">
+<button class="w-full bg-secondary text-on-secondary font-label-lg text-label-lg py-3 rounded-lg shadow-sm hover:shadow-md transition-shadow uppercase tracking-wide flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                + New Entry
+            </button>
+</div>
+<ul class="flex-1 px-unit space-y-1">
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-secondary bg-primary-container text-on-primary font-semibold hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</li>
+</ul>
+<div class="mt-auto px-unit pt-margin-mobile border-t border-primary-container">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="w-full md:ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="h-16 fixed top-0 right-0 w-full md:w-[calc(100%-260px)] flex justify-between items-center px-margin-mobile md:px-margin-desktop bg-surface/95 backdrop-blur-sm z-40 border-b border-outline-variant shadow-sm text-primary font-body-md text-body-md">
+<div class="flex items-center gap-4">
+<button class="md:hidden p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed">EFM Management</div>
+</div>
+<div class="flex items-center gap-unit md:gap-4">
+<div class="hidden md:flex items-center bg-surface-container-low rounded-full px-4 py-2 border border-outline-variant focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+<span class="material-symbols-outlined text-on-surface-variant mr-2">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-48 text-on-surface placeholder:text-on-surface-variant outline-none" placeholder="Search..." type="text">
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors relative cursor-pointer transition-opacity active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant cursor-pointer transition-opacity active:opacity-80 hover:bg-surface-container-high p-2 rounded-lg">
+<img alt="User Avatar" class="w-8 h-8 rounded-full object-cover border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBC7o19pNugYTYjv7ERqiBisBkVYl2JDa5s71ZxEwQw4FR-Zqrfs1mr6OexwjCo9TVzE6GrhQ7k1ivuYl8vk2Dw5Haa1StOLPeOq4GZYVnfA3LUrqENu-MnlTaFDDvF3MmqzWH49nKFvoPBY-2zU9PU-YiFddHNCVVW-AQxiPvyCbYh2boHC-WNUUNC6Are0AMAThDXh5ruWNlh5L4FjPTkSbiagwXhyt0utsuWHzHfzrUluiS3e-efryy0pd_ZWl39I8ZaTZDot27H">
+<div class="hidden md:block">
+<p class="font-label-lg text-label-lg text-on-surface leading-tight">Admin User</p>
+<p class="font-label-md text-label-md text-on-surface-variant leading-tight">Settings</p>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Canvas -->
+<div class="pt-24 px-margin-mobile md:px-margin-desktop pb-margin-desktop flex-1 flex flex-col gap-gutter">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Private Training Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Metrics and operations for current division.</p>
+</div>
+<div class="flex gap-3">
+<select class="bg-surface rounded-lg border border-outline-variant px-4 py-2 font-label-lg text-label-lg text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none">
+<option>Last 30 Days</option>
+<option>This Month</option>
+<option>This Quarter</option>
+</select>
+</div>
+</div>
+<!-- Bento Grid - Top Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Revenue Card -->
+<div class="bg-surface rounded-xl p-6 card-elevation interactive-card transition-all flex flex-col relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Revenue This Month</h3>
+<div class="w-10 h-10 rounded-full bg-primary-container/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="relative z-10 mt-auto">
+<div class="font-display-lg text-display-lg text-primary">$124,500</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">trending_up</span>
+<span class="font-label-md text-label-md text-secondary">+12.5%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">vs last month</span>
+</div>
+</div>
+</div>
+<!-- Pipeline Card -->
+<div class="bg-surface rounded-xl p-6 card-elevation interactive-card transition-all flex flex-col relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-secondary/5 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Leads Pipeline</h3>
+<div class="w-10 h-10 rounded-full bg-secondary/10 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">group_add</span>
+</div>
+</div>
+<div class="relative z-10 mt-auto">
+<div class="font-display-lg text-display-lg text-on-surface">342</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="font-label-md text-label-md text-on-surface">85</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Hot Leads</span>
+<span class="mx-2 text-outline-variant">•</span>
+<span class="font-label-md text-label-md text-on-surface">12</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Converted Today</span>
+</div>
+</div>
+</div>
+<!-- Absensi Card -->
+<div class="bg-surface rounded-xl p-6 card-elevation interactive-card transition-all flex flex-col relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-tertiary-fixed/30 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+<div class="flex justify-between items-start mb-4 relative z-10">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Absensi Today</h3>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">fact_check</span>
+</div>
+</div>
+<div class="relative z-10 mt-auto flex items-end justify-between">
+<div>
+<div class="font-display-lg text-display-lg text-on-surface">92%</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant mt-2">148 / 160 Trainers Present</div>
+</div>
+<div class="w-16 h-16 rounded-full border-4 border-outline-variant border-t-primary border-r-primary flex items-center justify-center transform rotate-45">
+<div class="transform -rotate-45 font-label-md text-label-md">92%</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Lower Layout: 2/3 Main, 1/3 Sidebar -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-gutter">
+<!-- Main Column -->
+<div class="lg:col-span-2 flex flex-col gap-gutter">
+<!-- Actionable Section: Payment Requests -->
+<div class="bg-surface rounded-xl card-elevation flex flex-col h-full">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Payment Requests</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Requires immediate attention</p>
+</div>
+<span class="bg-secondary/10 text-secondary font-label-md px-3 py-1 rounded-full">5 Pending</span>
+</div>
+<div class="flex-1 overflow-auto p-4 space-y-3">
+<!-- Request Item 1 -->
+<div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-primary/30 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Invoice #PT-2023-1042</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Sarah Jenkins • 10 Sessions Package</p>
+</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-primary">$1,200.00</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Stripe • 2 hrs ago</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors" title="Reject">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<button class="p-2 rounded-lg bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-sm" title="Approve">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Request Item 2 -->
+<div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-primary/30 transition-colors">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Invoice #PT-2023-1043</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Michael Chang • Monthly Retainer</p>
+</div>
+</div>
+<div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+<div class="text-right">
+<p class="font-label-lg text-label-lg text-primary">$850.00</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Bank Transfer • 4 hrs ago</p>
+</div>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg bg-surface border border-outline-variant text-on-surface hover:bg-surface-container-high transition-colors" title="Reject">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+<button class="p-2 rounded-lg bg-primary text-on-primary hover:bg-primary/90 transition-colors shadow-sm" title="Approve">
+<span class="material-symbols-outlined text-[20px]">check</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-outline-variant text-center">
+<a class="font-label-md text-label-md text-primary hover:underline flex items-center justify-center gap-1" href="#">
+                                View All Requests <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Recent Activity Table -->
+<div class="bg-surface rounded-xl card-elevation overflow-hidden flex flex-col">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low/50">
+<h3 class="font-headline-sm text-headline-sm text-primary">Recent Activity</h3>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Entity</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Type</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Status</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Time</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm">
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group cursor-pointer">
+<td class="p-4">
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Emma Wilson</div>
+<div class="text-on-surface-variant">Lead Conversion</div>
+</td>
+<td class="p-4">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-secondary">person_add</span> Lead
+                                            </span>
+</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-md border border-outline-variant">Converted</span>
+</td>
+<td class="p-4 text-on-surface-variant">10:42 AM</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group cursor-pointer">
+<td class="p-4">
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Order #9921</div>
+<div class="text-on-surface-variant">New Package Purchase</div>
+</td>
+<td class="p-4">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-primary">shopping_cart</span> Order
+                                            </span>
+</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-md bg-primary-container/10 text-primary font-label-md border border-primary/20">Completed</span>
+</td>
+<td class="p-4 text-on-surface-variant">09:15 AM</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-lowest transition-colors group cursor-pointer">
+<td class="p-4">
+<div class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">David Miller</div>
+<div class="text-on-surface-variant">Consultation Scheduled</div>
+</td>
+<td class="p-4">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-tertiary-fixed-variant">calendar_month</span> Event
+                                            </span>
+</td>
+<td class="p-4">
+<span class="inline-block px-2 py-1 rounded-md bg-surface-container-high text-on-surface-variant font-label-md border border-outline-variant">Upcoming</span>
+</td>
+<td class="p-4 text-on-surface-variant">Yesterday</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Sidebar Column -->
+<div class="flex flex-col gap-gutter">
+<!-- Trainer Status Widget -->
+<div class="bg-surface rounded-xl card-elevation p-6 relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-4 relative z-10">Trainer Utilization</h3>
+<div class="space-y-4 relative z-10">
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface">Active Sessions</span>
+<span class="text-primary font-bold">42/50</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 84%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between font-label-md text-label-md mb-1">
+<span class="text-on-surface">Available Capacity</span>
+<span class="text-secondary font-bold">16%</span>
+</div>
+<div class="w-full bg-surface-container-high rounded-full h-2">
+<div class="bg-secondary h-2 rounded-full" style="width: 16%"></div>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 bg-surface border border-outline-variant text-on-surface font-label-md text-label-md py-2 rounded-lg hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2">
+                            View Roster <span class="material-symbols-outlined text-[16px]">group</span>
+</button>
+</div>
+<!-- Quick Actions Glassmorphism Card -->
+<div class="rounded-xl card-elevation p-6 relative overflow-hidden bg-white/40 backdrop-blur-md border border-white/50">
+<div class="absolute inset-0 bg-gradient-to-tr from-surface-tint/10 to-transparent pointer-events-none"></div>
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider mb-4 relative z-10">Quick Tools</h3>
+<div class="grid grid-cols-2 gap-3 relative z-10">
+<button class="p-4 rounded-lg bg-surface border border-outline-variant/50 hover:border-primary/50 hover:shadow-sm flex flex-col items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">edit_calendar</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Schedule<br>Session</span>
+</button>
+<button class="p-4 rounded-lg bg-surface border border-outline-variant/50 hover:border-primary/50 hover:shadow-sm flex flex-col items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">person_add</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Add<br>Lead</span>
+</button>
+<button class="p-4 rounded-lg bg-surface border border-outline-variant/50 hover:border-primary/50 hover:shadow-sm flex flex-col items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">campaign</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Send<br>Broadcast</span>
+</button>
+<button class="p-4 rounded-lg bg-surface border border-outline-variant/50 hover:border-primary/50 hover:shadow-sm flex flex-col items-center justify-center gap-2 transition-all group">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">bar_chart</span>
+<span class="font-label-md text-label-md text-on-surface text-center">Generate<br>Report</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

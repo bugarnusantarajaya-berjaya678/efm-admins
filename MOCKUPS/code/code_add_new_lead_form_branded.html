@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Add New Lead - Private Training</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#e3dfff",
+                      "background": "#fcf8fc",
+                      "surface-container": "#f1edf1",
+                      "on-tertiary-container": "#438adc",
+                      "secondary": "#ac3323",
+                      "on-surface": "#1c1b1e",
+                      "surface-variant": "#e5e1e5",
+                      "inverse-surface": "#313033",
+                      "surface": "#fcf8fc",
+                      "on-secondary-fixed": "#400100",
+                      "on-secondary-container": "#6c0300",
+                      "surface-container-low": "#f6f2f6",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f4eff4",
+                      "inverse-primary": "#c5c1f3",
+                      "tertiary-container": "#002142",
+                      "surface-container-high": "#ebe7eb",
+                      "primary-container": "#1e1c43",
+                      "outline": "#78767f",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#8684b1",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "secondary-container": "#fd6e58",
+                      "on-tertiary-fixed": "#001c39",
+                      "primary": "#06042c",
+                      "on-background": "#1c1b1e",
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-bright": "#fcf8fc",
+                      "surface-dim": "#dcd9dd",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffdad4",
+                      "on-primary-fixed": "#18163d",
+                      "surface-container-highest": "#e5e1e5",
+                      "on-surface-variant": "#47464e",
+                      "outline-variant": "#c8c5cf",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "tertiary-fixed": "#d4e3ff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary": "#000919",
+                      "surface-tint": "#5c5a85",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "on-primary-fixed-variant": "#44426b",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "unit": "8px",
+                      "container-max": "1440px",
+                      "sidebar-width": "260px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Poppins"
+                      ],
+                      "label-lg": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "headline-lg-mobile": [
+                              "Poppins"
+                      ],
+                      "body-sm": [
+                              "Poppins"
+                      ],
+                      "label-md": [
+                              "Poppins"
+                      ],
+                      "body-md": [
+                              "Poppins"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "display-lg": [
+                              "Poppins"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "60px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .card-shadow {
+            box-shadow: 0 2px 4px rgba(30, 28, 67, 0.05);
+        }
+        .form-input {
+            border-color: #E2E8F0;
+            transition: all 0.2s ease-in-out;
+        }
+        .form-input:focus {
+            border-color: #06042c;
+            box-shadow: 0 0 0 2px rgba(6, 4, 44, 0.2);
+            outline: none;
+        }
+      </style>
+</head>
+<body class="bg-background font-body-md text-on-surface antialiased min-h-screen flex flex-col md:flex-row">
+<!-- SideNavBar -->
+<nav class="hidden md:flex flex-col gap-unit h-screen bg-primary dark:bg-primary-container font-body-md text-body-md font-Poppins fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-md z-50 transition-all duration-300">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary-container rounded-full flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white" data-icon="fitness_center">fitness_center</span>
+</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm font-bold text-white">FitLead Manager</span>
+<span class="text-[10px] text-on-primary-container uppercase tracking-wider">Management Portal</span>
+</div>
+</div>
+<div class="px-4 pb-4">
+<button class="w-full bg-secondary-container text-white py-2 px-4 rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 hover:bg-[#e6553e] transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="add">add</span>
+                New Lead
+            </button>
+</div>
+<div class="flex-1 overflow-y-auto py-2 flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-4 border-secondary-container bg-primary-fixed-dim/10 text-white font-semibold hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span>Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="business">business</span>
+<span>B2B</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span>Event</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Operational</span>
+</a>
+</div>
+<div class="p-4 mt-auto border-t border-outline-variant/30 flex flex-col gap-1 px-3">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span>Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span>Log Out</span>
+</a>
+</div>
+</nav>
+<!-- Main Content Area -->
+<div class="flex-1 md:ml-[260px] flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="hidden md:flex items-center justify-between px-margin-desktop w-full z-40 bg-surface dark:bg-surface-dim font-label-lg text-label-lg font-Poppins fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-6">
+<h1 class="font-headline-sm text-headline-sm font-semibold text-primary hidden lg:block">Private Training</h1>
+<nav class="flex items-center gap-4 ml-4">
+<a class="text-secondary border-b-2 border-secondary font-bold py-5 hover:text-secondary-container opacity-80 transition-opacity" href="#">Leads</a>
+<a class="text-on-surface-variant py-5 hover:text-secondary-container opacity-80 transition-opacity border-b-2 border-transparent" href="#">Orders</a>
+<a class="text-on-surface-variant py-5 hover:text-secondary-container opacity-80 transition-opacity border-b-2 border-transparent" href="#">Documents</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full border border-outline-variant bg-surface-container-lowest text-body-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary-container rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant ml-2">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0BQVNw8-TfSndd6mriS2NN681aca8OS2ev9qN0-F68msqXM4hkOdmQmW1v7BRin0y4araisWg-G9TjngfWJO2Kom2NtxB3yGan2c3qMafprEiT7JCQzp1E9wU_9csh6X_FxJQ8roWE8KtwrUmtRtwDwUbZPugtmfHULIwiQfG68xjqzUx4EXk0viQDTCMjW_6i8YhqD5k96ojNwNPi1hRynE9S5X-wS9t2V3n3BlMQA9Y8Z2oYZbXux1Fk-D4FWwhUol_44e609jY"/>
+</div>
+</div>
+</header>
+<!-- Mobile Header (Visible only on mobile) -->
+<header class="md:hidden flex items-center justify-between p-4 bg-surface border-b border-surface-variant sticky top-0 z-30">
+<div class="flex items-center gap-3">
+<button class="text-primary">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<span class="font-headline-sm text-headline-sm font-semibold text-primary">Add Lead</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF1kgqNzgcf6LoIm6UjdF7sUKxyFxo093fNdGIeigO-PJfincf6ReCpyaANvYcn33AVV7Vn99q6YMV1LgR-LMbFAQEmtTPRwlLlxmQ_bOuvl_IN6qh4coTe-1ajq6vXWTEQ9kVudJyZqbgyhKCeThKrQOmTb4fkBMm93vPNRs4Y6qUzBDwlpne4_KdNHx5KJEP_5-NAt_WXdTlVuQqB01P3ihjzLwEoPTBDwNp-fSC9s6fo4P0SVhhF-C2N62kgegmD38N86wpYXn3"/>
+</div>
+</header>
+<!-- Page Content -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop md:mt-16 bg-surface-container-low overflow-y-auto">
+<div class="max-w-3xl mx-auto">
+<!-- Breadcrumb / Header -->
+<div class="mb-6">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-md text-label-md mb-2">
+<a class="hover:text-primary transition-colors" href="#">Private Training</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Leads</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-primary font-semibold">Add New Lead</span>
+</div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">New Lead Profile</h2>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Enter the prospect's details to initiate the private training pipeline.</p>
+</div>
+<!-- Form Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-surface-variant card-shadow overflow-hidden">
+<div class="p-6 border-b border-surface-variant bg-surface/50">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container" data-icon="person_add">person_add</span>
+                            Lead Information
+                        </h3>
+</div>
+<form class="p-6 space-y-6">
+<!-- Grid Layout for Fields -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Full Name -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="nama_lengkap">Nama Lengkap <span class="text-secondary">*</span></label>
+<input class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface placeholder:text-outline-variant" id="nama_lengkap" name="nama_lengkap" placeholder="e.g. Budi Santoso" required="" type="text"/>
+</div>
+<!-- Phone Number -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="no_hp">No HP / WhatsApp <span class="text-secondary">*</span></label>
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-body-sm text-body-sm">+62</span>
+<input class="w-full form-input rounded-lg bg-surface-bright pl-12 pr-4 py-2.5 text-body-md text-on-surface placeholder:text-outline-variant" id="no_hp" name="no_hp" placeholder="812 3456 7890" required="" type="tel"/>
+</div>
+</div>
+<!-- Email -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="email">Email Address</label>
+<input class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface placeholder:text-outline-variant" id="email" name="email" placeholder="budi@example.com" type="email"/>
+</div>
+<!-- Lead Source -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="sumber">Sumber Lead <span class="text-secondary">*</span></label>
+<div class="relative">
+<select class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface appearance-none cursor-pointer" id="sumber" name="sumber" required="">
+<option disabled="" selected="" value="">Pilih Sumber...</option>
+<option value="ads">Instagram/FB Ads</option>
+<option value="website">Website Form</option>
+<option value="referral">Member Referral</option>
+<option value="walk_in">Walk-in Studio</option>
+<option value="other">Lainnya</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Program of Interest -->
+<div>
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="program">Program Diminati <span class="text-secondary">*</span></label>
+<div class="relative">
+<select class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface appearance-none cursor-pointer" id="program" name="program" required="">
+<option disabled="" selected="" value="">Pilih Program...</option>
+<option value="elite">Elite Transformation (12 Weeks)</option>
+<option value="foundation">Foundation Builder (8 Weeks)</option>
+<option value="maintenance">Maintenance Plan (Monthly)</option>
+<option value="undecided">Belum Menentukan</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Assigned To -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="assigned">Assigned To (PIC)</label>
+<div class="relative">
+<select class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface appearance-none cursor-pointer" id="assigned" name="assigned">
+<option selected="" value="auto">Auto-Assign (Round Robin)</option>
+<option value="sarah">Sarah (Admin PT)</option>
+<option value="kevin">Kevin (Sales Lead)</option>
+<option value="diana">Diana (Studio Manager)</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Notes -->
+<div class="col-span-1 md:col-span-2">
+<label class="block font-label-lg text-label-lg text-on-surface mb-1.5" for="catatan">Catatan Tambahan</label>
+<textarea class="w-full form-input rounded-lg bg-surface-bright px-4 py-2.5 text-body-md text-on-surface placeholder:text-outline-variant resize-none" id="catatan" name="catatan" placeholder="Goals spesifik, riwayat cedera, preferensi jadwal, dll..." rows="4"></textarea>
+</div>
+</div>
+<!-- Form Actions -->
+<div class="pt-6 border-t border-surface-variant flex items-center justify-end gap-4 mt-8">
+<button class="px-6 py-2.5 rounded-lg font-label-lg text-label-lg text-on-surface-variant hover:bg-surface-variant transition-colors" type="button">
+                                Cancel
+                            </button>
+<button class="px-6 py-2.5 rounded-lg font-label-lg text-label-lg bg-secondary-container text-white hover:bg-[#e6553e] transition-colors shadow-sm flex items-center gap-2" type="submit">
+<span class="material-symbols-outlined text-[18px]" data-icon="save">save</span>
+                                Save Lead
+                            </button>
+</div>
+</form>
+</div>
+</div>
+</main>
+</div>
+</body></html>

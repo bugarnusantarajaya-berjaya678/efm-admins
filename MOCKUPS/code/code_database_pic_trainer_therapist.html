@@ -1,0 +1,474 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Database PIC | FitManage Admin</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body { font-family: 'Poppins', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for data-density */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #1e1c43; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ac3323; }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#002142",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-container": "#f1edf1",
+                        "on-secondary-fixed": "#400100",
+                        "background": "#fcf8fc",
+                        "secondary-container": "#fd6e58",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#ebe7eb",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "on-surface-variant": "#47464e",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-bright": "#fcf8fc",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "surface": "#fcf8fc",
+                        "on-background": "#1c1b1e",
+                        "inverse-surface": "#313033",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "on-tertiary-fixed": "#001c39",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#06042c",
+                        "primary-container": "#1e1c43",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "surface-dim": "#dcd9dd",
+                        "outline": "#78767f",
+                        "on-secondary-container": "#6c0300",
+                        "secondary": "#ac3323",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6f2f6",
+                        "on-tertiary-container": "#438adc",
+                        "on-primary-fixed-variant": "#44426b",
+                        "tertiary": "#000919",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "surface-variant": "#e5e1e5",
+                        "surface-container-highest": "#e5e1e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "32px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "label-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- Fixed Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary text-on-primary shadow-md flex flex-col py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">fitness_center</span>
+</div>
+<div>
+<h1 class="text-headline-md font-bold text-on-primary leading-tight">FitManage</h1>
+<p class="text-label-md text-on-primary-container opacity-80">Admin Portal</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-body-md">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-body-md">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-body-md">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 border-l-4 border-secondary bg-primary-container text-on-primary font-semibold" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Operational</span>
+</a>
+</nav>
+<div class="px-4 mt-auto">
+<button class="w-full bg-secondary text-on-primary py-3 rounded-lg font-label-lg flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add</span>
+                New Entry
+            </button>
+<div class="mt-6 pt-6 border-t border-white/10">
+<a class="flex items-center gap-3 px-2 py-2 text-on-primary-container hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-2 py-2 text-on-primary-container hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-sm">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-8 z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all font-body-sm" placeholder="Search database..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-lg text-on-surface">Admin User</p>
+<p class="text-[10px] uppercase tracking-wider text-outline">Operational Head</p>
+</div>
+<div class="w-10 h-10 rounded-full border-2 border-secondary overflow-hidden bg-surface-container-highest">
+<img alt="Administrator Profile" data-alt="A professional portrait of a senior male administrator wearing a charcoal suit in a high-tech corporate office setting. The lighting is soft and directional, highlighting his confident expression. The background shows a blurry modern office with clean white and navy blue accents, maintaining a professional and organized corporate atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh5rZOLss5kuX6LOHu73bwSe0emJklsX7XbWL7h1l5PbXXR_kmts2OHBByz7O6LkuuA959EWrRxbJzdQTbxrTeNVJcq_Bmwu-brLXP3yal3I_i0jXaK-qV0Z-V2m1LQBlu0fP2pJBEmc6iJCwbtO7MPG0YA10Yhz0bTEzPuFMEn5pv2XVI3s0lQKtNkF5nKOBBTTlNJTK184Oa-RoXBHUTEolHmyEMAM0QxiYOuDKjG1s_NrmuWZzCES495IvPTZCsXZXOB7uhqf6M">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[260px] pt-24 px-8 pb-12 min-h-screen">
+<!-- Breadcrumbs & Header -->
+<div class="mb-8">
+<nav class="flex items-center gap-2 text-label-md text-outline mb-2">
+<span class="">Operational</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+<span class="text-secondary">Database PIC</span>
+</nav>
+<div class="flex items-center justify-between">
+<div>
+<h2 class="font-headline-lg text-on-surface">Database PIC (Trainer/Therapist)</h2>
+<p class="text-body-md text-on-surface-variant">Manage and monitor all active professional staff members.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline-variant rounded-lg font-label-lg text-on-surface-variant hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[20px]">download</span>
+                        Export CSV
+                    </button>
+<button class="flex items-center gap-2 px-6 py-2 bg-secondary text-white rounded-lg font-label-lg hover:opacity-90 active:scale-95 shadow-sm transition-all">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+                        Add New PIC
+                    </button>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-4 mb-6 shadow-sm flex flex-wrap items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline">filter_list</span>
+<span class="font-label-lg text-on-surface">Filters:</span>
+</div>
+<select class="font-body-sm bg-surface border border-outline-variant rounded-lg px-4 py-2 outline-none focus:border-secondary transition-colors cursor-pointer">
+<option value="">Semua Spesialisasi</option>
+<option value="trainer">Physical Trainer</option>
+<option value="therapist">Physical Therapist</option>
+<option value="yoga">Yoga Instructor</option>
+<option value="nutrition">Nutritionist</option>
+</select>
+<select class="font-body-sm bg-surface border border-outline-variant rounded-lg px-4 py-2 outline-none focus:border-secondary transition-colors cursor-pointer">
+<option value="">Semua Status</option>
+<option value="aktif">Aktif</option>
+<option value="nonaktif">Nonaktif</option>
+</select>
+<div class="flex-1"></div>
+<button class="text-secondary font-label-lg hover:underline transition-all">Reset Filters</button>
+</section>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high border-b border-outline-variant">
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">ID PIC</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Nama</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Kode PIC</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Spesialisasi</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">No HP</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">Bank</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider">No Rekening</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-primary font-semibold">#PIC-00124</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center text-[10px] font-bold">AB</div>
+<span class="font-label-lg text-on-surface">Aditya Baskoro</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">TRN-AB-01</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-[11px] font-bold uppercase">Physical Trainer</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-body-sm font-medium text-green-700">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">0812-9988-7766</td>
+<td class="px-6 py-4 font-body-sm">BCA</td>
+<td class="px-6 py-4 font-body-sm tracking-widest">8830-112-990</td>
+<td class="px-6 py-4 text-right">
+<button class="text-outline hover:text-secondary p-1 rounded transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-primary font-semibold">#PIC-00125</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center text-[10px] font-bold">SR</div>
+<span class="font-label-lg text-on-surface">Siti Rahayu</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">THR-SR-02</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-[11px] font-bold uppercase">Therapist</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+<span class="text-body-sm font-medium text-red-700">Nonaktif</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">0813-1122-3344</td>
+<td class="px-6 py-4 font-body-sm">Mandiri</td>
+<td class="px-6 py-4 font-body-sm tracking-widest">127-00-119922</td>
+<td class="px-6 py-4 text-right">
+<button class="text-outline hover:text-secondary p-1 rounded transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-primary font-semibold">#PIC-00128</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center text-[10px] font-bold">DW</div>
+<span class="font-label-lg text-on-surface">Deni Wijaya</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">TRN-DW-05</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-[11px] font-bold uppercase">Physical Trainer</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-body-sm font-medium text-green-700">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">0821-4455-6677</td>
+<td class="px-6 py-4 font-body-sm">BNI</td>
+<td class="px-6 py-4 font-body-sm tracking-widest">098-221-3344</td>
+<td class="px-6 py-4 text-right">
+<button class="text-outline hover:text-secondary p-1 rounded transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-primary font-semibold">#PIC-00130</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed-dim text-on-secondary-fixed-variant flex items-center justify-center text-[10px] font-bold">LM</div>
+<span class="font-label-lg text-on-surface">Linda Maura</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">THR-LM-08</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-full text-[11px] font-bold uppercase">Therapist</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-body-sm font-medium text-green-700">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">0877-0099-2211</td>
+<td class="px-6 py-4 font-body-sm">BCA</td>
+<td class="px-6 py-4 font-body-sm tracking-widest">8830-776-112</td>
+<td class="px-6 py-4 text-right">
+<button class="text-outline hover:text-secondary p-1 rounded transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-primary font-semibold">#PIC-00132</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-on-primary-container text-white flex items-center justify-center text-[10px] font-bold">RM</div>
+<span class="font-label-lg text-on-surface">Raka Maulana</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">YOG-RM-12</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed rounded-full text-[11px] font-bold uppercase">Yoga Instructor</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+<span class="text-body-sm font-medium text-green-700">Aktif</span>
+</div>
+</td>
+<td class="px-6 py-4 font-body-sm">0852-3322-1100</td>
+<td class="px-6 py-4 font-body-sm">Permata</td>
+<td class="px-6 py-4 font-body-sm tracking-widest">700-1122-334</td>
+<td class="px-6 py-4 text-right">
+<button class="text-outline hover:text-secondary p-1 rounded transition-all">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface-container-low border-t border-outline-variant flex items-center justify-between">
+<span class="text-body-sm text-on-surface-variant">Showing 1-5 of 124 entries</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-outline hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-secondary text-white font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container transition-all font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container transition-all font-label-md">3</button>
+<span class="text-outline px-1">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface hover:bg-surface-container transition-all font-label-md">25</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-outline hover:bg-surface-container transition-all">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Stats Bento Section -->
+<section class="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-primary text-white p-6 rounded-xl shadow-lg flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-[32px] mb-2" style="font-variation-settings: 'FILL' 1;">groups</span>
+<p class="text-label-md opacity-70">Total PIC Active</p>
+<h3 class="text-headline-lg font-bold">112</h3>
+</div>
+<div class="mt-4 flex items-center text-green-400 gap-1 font-body-sm">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">+4 this month</span>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-tertiary-container text-[32px] mb-2">medical_services</span>
+<p class="text-label-md text-on-surface-variant">Therapists</p>
+<h3 class="text-headline-md font-bold text-primary">48</h3>
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-4">
+<div class="bg-tertiary-container h-1.5 rounded-full" style="width: 42%"></div>
+</div>
+</div>
+<div class="bg-white border border-outline-variant p-6 rounded-xl shadow-sm">
+<span class="material-symbols-outlined text-secondary text-[32px] mb-2">exercise</span>
+<p class="text-label-md text-on-surface-variant">Trainers</p>
+<h3 class="text-headline-md font-bold text-primary">64</h3>
+<div class="w-full bg-surface-container rounded-full h-1.5 mt-4">
+<div class="bg-secondary h-1.5 rounded-full" style="width: 58%"></div>
+</div>
+</div>
+<div class="relative overflow-hidden bg-white border border-outline-variant p-6 rounded-xl shadow-sm group">
+<div class="relative z-10">
+<span class="material-symbols-outlined text-primary text-[32px] mb-2">pending_actions</span>
+<p class="text-label-md text-on-surface-variant">Avg. Sessions/PIC</p>
+<h3 class="text-headline-md font-bold text-primary">24.5</h3>
+<p class="text-[10px] text-outline mt-2 italic">Based on last 30 days data</p>
+</div>
+<!-- Abstract decorative shape -->
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-surface-container rounded-full opacity-50 group-hover:scale-110 transition-transform"></div>
+</div>
+</section>
+</main>
+<script>
+        // Simple micro-interactions for the database screen
+        document.addEventListener('DOMContentLoaded', () => {
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.addEventListener('click', () => {
+                    // Visual feedback for selection
+                    rows.forEach(r => r.classList.remove('bg-surface-container-high'));
+                    row.classList.add('bg-surface-container-high');
+                });
+            });
+
+            // Mobile sidebar toggle placeholder logic
+            window.addEventListener('resize', () => {
+                if (window.innerWidth < 1024) {
+                    console.log('Mobile view active');
+                    // In a real app, we'd handle the sidebar collapse here
+                }
+            });
+        });
+    </script>
+
+
+</body></html>

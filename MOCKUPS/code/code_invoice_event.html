@@ -1,0 +1,363 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Invoice Event - FitEvents Portal</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-fixed-dim": "#c5c1f3",
+                        "outline": "#78767f",
+                        "surface-variant": "#e5e1e5",
+                        "primary": "#06042c",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1e1c43",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "secondary-container": "#fd6e58",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "on-background": "#1c1b1e",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-bright": "#fcf8fc",
+                        "tertiary": "#000919",
+                        "surface": "#fcf8fc",
+                        "surface-container-low": "#f6f2f6",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-container-high": "#ebe7eb",
+                        "on-surface-variant": "#47464e",
+                        "on-primary-fixed-variant": "#44426b",
+                        "secondary": "#ac3323",
+                        "primary-fixed": "#e3dfff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary-fixed": "#001c39",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "inverse-surface": "#313033",
+                        "on-surface": "#1c1b1e",
+                        "on-primary": "#ffffff",
+                        "background": "#fcf8fc",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "on-secondary-container": "#6c0300",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f1edf1",
+                        "tertiary-container": "#002142",
+                        "surface-container-highest": "#e5e1e5",
+                        "surface-dim": "#dcd9dd",
+                        "on-error": "#ffffff"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "sidebar-width": "260px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "container-max": "1440px"
+                    },
+                    fontFamily: {
+                        "display-lg": ["Poppins", "sans-serif"],
+                        "headline-lg-mobile": ["Poppins", "sans-serif"],
+                        "label-md": ["Poppins", "sans-serif"],
+                        "headline-sm": ["Poppins", "sans-serif"],
+                        "headline-md": ["Poppins", "sans-serif"],
+                        "body-lg": ["Poppins", "sans-serif"],
+                        "label-lg": ["Poppins", "sans-serif"],
+                        "body-sm": ["Poppins", "sans-serif"],
+                        "body-md": ["Poppins", "sans-serif"],
+                        "headline-lg": ["Poppins", "sans-serif"]
+                    },
+                    fontSize: {
+                        "display-lg": ["48px", { lineHeight: "60px", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-lg-mobile": ["28px", { lineHeight: "36px", fontWeight: "600" }],
+                        "label-md": ["12px", { lineHeight: "16px", fontWeight: "500" }],
+                        "headline-sm": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+                        "headline-md": ["24px", { lineHeight: "32px", fontWeight: "600" }],
+                        "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+                        "label-lg": ["14px", { lineHeight: "20px", letterSpacing: "0.05em", fontWeight: "600" }],
+                        "body-sm": ["14px", { lineHeight: "20px", fontWeight: "400" }],
+                        "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+                        "headline-lg": ["32px", { lineHeight: "40px", fontWeight: "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer utilities {
+            .material-symbols-outlined {
+                font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+            .material-symbols-outlined[data-weight="fill"] {
+                font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background min-h-screen flex overflow-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[260px] dark:bg-primary-container border-r border-outline-variant dark:border-outline shadow-sm flex flex-col py-6 z-20 transition-all duration-200 ease-in-out hidden md:flex" style="background-color: #1E1C43;">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface overflow-hidden border border-outline-variant flex-shrink-0">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate manager in a modern office setting. The lighting is bright and even, highlighting a friendly yet organized demeanor. The background is slightly blurred, showing a modern, light-mode workspace." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC2PArsZEvQ6UGGbStQHzip4mSPn2IG90hrmBjxTr-txBzgrvMdxRmz83r5T6weiwbsReGoYdb20zbs11ji65wXraIN_nE02mn4JmRBegn3OTxvHSu9io3cx6Efo_d4e1U99X3CS-EYEyp0ihSdOlp44VAQCuTtIp4jJrhG7f5yygmA1mx3fddGfZXsZsVAX77sjj1acCVedbGKNr_ZHcAVeTTtaJ7-oaZ-CgCpY5x1R41EBig5_IprKLechmWV4VWj9wtV9qv14abf">
+</div>
+<div>
+<h1 class="font-display-lg text-display-lg text-on-primary-container !text-lg !leading-tight">FitEvents Admin</h1>
+<p class="font-label-md text-label-md text-on-primary-container/70">Management Portal</p>
+</div>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto px-2 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="fitness_center">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="business">business</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+<!-- Active Tab -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary text-on-primary font-semibold rounded-r-lg bg-secondary" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="calendar_today" data-weight="fill">calendar_today</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings_applications">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</div>
+<!-- CTA & Footer -->
+<div class="px-4 mt-auto pt-6 space-y-4">
+<button class="w-full bg-secondary text-on-secondary font-label-lg text-label-lg py-3 rounded-lg shadow-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Create Event
+            </button>
+<div class="space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="help">help</span>
+<span class="font-label-md text-label-md">Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col min-w-0 md:ml-[260px]">
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 w-full md:w-[calc(100%-260px)] h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm flex justify-between items-center px-margin-desktop z-10">
+<div class="flex items-center gap-6">
+<!-- Mobile Menu Toggle (Hidden on desktop) -->
+<button class="md:hidden text-primary hover:bg-surface-container-high p-2 rounded-full transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim tracking-tight">
+                    FitEvents Portal
+                </div>
+</div>
+<!-- Navigation Links (Centered) -->
+<nav class="hidden lg:flex items-center gap-8 h-full">
+<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors font-label-md text-label-md h-full flex items-center px-2" href="#">Overview</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors font-label-md text-label-md h-full flex items-center px-2" href="#">Analytics</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors font-label-md text-label-md h-full flex items-center px-2" href="#">Reports</a>
+</nav>
+<!-- Trailing Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden sm:block font-label-lg text-label-lg text-secondary border border-secondary px-4 py-1.5 rounded-md hover:bg-secondary hover:text-on-secondary transition-colors scale-95 active:scale-90">
+                    New Booking
+                </button>
+<div class="flex items-center gap-2">
+<button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-primary hover:bg-surface-container-high rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Page Content Canvas -->
+<main class="flex-1 overflow-y-auto pt-16 p-margin-mobile md:p-margin-desktop bg-surface-container-low">
+<!-- Breadcrumbs / Back Navigation -->
+<div class="mb-6 flex items-center gap-2 text-on-surface-variant font-label-md text-label-md">
+<a class="hover:text-primary flex items-center gap-1" href="#">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                    Back to Event Management
+                </a>
+</div>
+<!-- Invoice Container (Level 1 Elevation) -->
+<div class="max-w-[900px] mx-auto bg-surface-container-lowest rounded-xl shadow-[0_2px_4px_rgba(30,28,67,0.05)] border border-surface-variant overflow-hidden">
+<!-- Invoice Header Bar -->
+<div class="bg-primary-container text-on-primary-container px-8 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-primary">INVOICE</h2>
+<p class="font-label-lg text-label-lg text-on-primary/80 mt-1 uppercase tracking-wider">Number: INV/EFM/EVT/2023/1042</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-secondary text-on-secondary font-label-lg text-label-lg px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">print</span>
+                            Print
+                        </button>
+<button class="bg-secondary text-on-secondary font-label-lg text-label-lg px-4 py-2 rounded-lg shadow-sm hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Download PDF
+                        </button>
+</div>
+</div>
+<!-- Invoice Body -->
+<div class="p-8">
+<!-- Status & Dates -->
+<div class="flex justify-between items-start mb-10 pb-8 border-b border-surface-variant">
+<div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed/20 text-on-secondary-fixed-variant font-label-lg text-label-lg mb-4">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                Pending Payment
+                            </span>
+</div>
+<div class="text-right">
+<div class="grid grid-cols-2 gap-x-6 gap-y-2 text-left">
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Issue Date:</div>
+<div class="font-body-md text-body-md text-on-surface text-right">Oct 24, 2023</div>
+<div class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Due Date:</div>
+<div class="font-body-md text-body-md text-on-surface text-right font-semibold">Nov 07, 2023</div>
+</div>
+</div>
+</div>
+<!-- From / To Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-12">
+<!-- From -->
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface-variant mb-2 uppercase tracking-wider">Billed From</h3>
+<div class="font-headline-sm text-headline-sm text-primary mb-1">EFM Corporate HQ</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                100 Fitness Blvd, Suite 400<br>
+                                Wellness City, ST 12345<br>
+                                accounts@efm-management.com<br>
+                                +1 (555) 123-4567
+                            </p>
+</div>
+<!-- To -->
+<div>
+<h3 class="font-label-lg text-label-lg text-on-surface-variant mb-2 uppercase tracking-wider">Billed To</h3>
+<div class="font-headline-sm text-headline-sm text-primary mb-1">TechCorp Wellness Program</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                                Attn: Sarah Jenkins, HR<br>
+                                500 Innovation Drive<br>
+                                Tech Park, ST 54321<br>
+                                s.jenkins@techcorp.com
+                            </p>
+</div>
+</div>
+<!-- Event Details Summary Box -->
+<div class="bg-surface-container-low rounded-lg p-5 mb-8 border border-outline-variant/30 flex items-start gap-4">
+<div class="bg-primary/10 p-3 rounded-full text-primary shrink-0">
+<span class="material-symbols-outlined" data-weight="fill">event_available</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg text-primary mb-1">Event Details</h4>
+<p class="font-body-md text-body-md text-on-surface mb-1"><strong>Annual Corporate Marathon &amp; Health Expo</strong></p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Date: October 15, 2023 • Location: Central Park Grounds</p>
+</div>
+</div>
+<!-- Line Items Table -->
+<div class="overflow-x-auto mb-10">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b-2 border-surface-variant bg-surface-container-low">
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider w-1/2">Description</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider text-right">Qty</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider text-right">Unit Price</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<tr class="border-b border-surface-variant/50 hover:bg-surface-bright transition-colors">
+<td class="py-4 px-4">
+<div class="font-semibold text-primary">Event Base Management Fee</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">Comprehensive planning, logistics, and onsite coordination.</div>
+</td>
+<td class="py-4 px-4 text-right">1</td>
+<td class="py-4 px-4 text-right">$5,000.00</td>
+<td class="py-4 px-4 text-right font-medium">$5,000.00</td>
+</tr>
+<tr class="border-b border-surface-variant/50 hover:bg-surface-bright transition-colors">
+<td class="py-4 px-4">
+<div class="font-semibold text-primary">Equipment Rental Package (Tier 2)</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">Staging, A/V, timing chips, and hydration stations.</div>
+</td>
+<td class="py-4 px-4 text-right">1</td>
+<td class="py-4 px-4 text-right">$2,450.00</td>
+<td class="py-4 px-4 text-right font-medium">$2,450.00</td>
+</tr>
+<tr class="border-b border-surface-variant/50 hover:bg-surface-bright transition-colors">
+<td class="py-4 px-4">
+<div class="font-semibold text-primary">Permit Handling Subcharge</div>
+<div class="text-on-surface-variant font-body-sm text-body-sm mt-0.5">City and park authorization processing.</div>
+</td>
+<td class="py-4 px-4 text-right">1</td>
+<td class="py-4 px-4 text-right">$300.00</td>
+<td class="py-4 px-4 text-right font-medium">$300.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Totals Section -->
+<div class="flex flex-col items-end mb-12">
+<div class="w-full sm:w-1/2 lg:w-1/3">
+<div class="flex justify-between py-2 font-body-md text-body-md text-on-surface-variant">
+<span class="">Subtotal</span>
+<span class="">$7,750.00</span>
+</div>
+<div class="flex justify-between py-2 font-body-md text-body-md text-on-surface-variant border-b border-surface-variant">
+<span class="">Tax (8.5%)</span>
+<span class="">$658.75</span>
+</div>
+<div class="flex justify-between py-4 font-headline-md text-headline-md text-primary">
+<span class="">Total Amount</span>
+<span class="">$8,408.75</span>
+</div>
+</div>
+</div>
+<!-- Footer Notes -->
+<div class="bg-surface-container-low p-6 rounded-lg font-body-sm text-body-sm text-on-surface-variant">
+<h4 class="font-label-lg text-label-lg text-primary mb-2">Payment Terms</h4>
+<p class="mb-2">Please remit payment within 14 days of issue date. Late payments may be subject to a 1.5% monthly fee.</p>
+<p class=""><strong>Bank Details:</strong> Bank of Wellness • Account: 0012345678 • Routing: 123456789</p>
+</div>
+</div>
+</div>
+<!-- Bottom Padding -->
+<div class="h-12"></div>
+</main>
+</div>
+
+
+</body></html>

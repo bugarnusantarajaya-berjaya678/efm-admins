@@ -1,0 +1,404 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Live Report Fasilitas | EFM Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#1c1b1e",
+                        "surface-dim": "#dcd9dd",
+                        "surface-container-highest": "#e5e1e5",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "surface-container": "#f1edf1",
+                        "on-primary-fixed-variant": "#44426b",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "secondary": "#ac3323",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-variant": "#e5e1e5",
+                        "on-secondary-container": "#6c0300",
+                        "on-primary-fixed": "#18163d",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#313033",
+                        "surface-container-high": "#ebe7eb",
+                        "outline": "#78767f",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "primary": "#06042c",
+                        "background": "#fcf8fc",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "tertiary": "#000919",
+                        "surface-container-low": "#f6f2f6",
+                        "surface-bright": "#fcf8fc",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#1e1c43",
+                        "tertiary-container": "#002142",
+                        "error": "#ba1a1a",
+                        "surface": "#fcf8fc",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "on-primary-container": "#8684b1",
+                        "on-tertiary-fixed": "#001c39",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fd6e58",
+                        "on-surface-variant": "#47464e",
+                        "outline-variant": "#c8c5cf",
+                        "on-background": "#1c1b1e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "sidebar-width": "260px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["48px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .sidebar-active { border-left-width: 4px; border-left-color: #fd6e58; background-color: #1e1c43; color: #8684b1; }
+        .data-card { border: 1px solid #E2E8F0; box-shadow: 0 2px 4px rgba(30, 28, 67, 0.05); }
+    </style>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full w-[260px] flex flex-col py-unit z-50 transition-all duration-200 ease-in-out" style="background-color: rgb(30, 28, 67);">
+<div class="px-6 py-8 flex flex-col items-start">
+<div class="flex items-center gap-3">
+<img alt="EFM Logo" class="rounded-lg bg-on-primary p-1" data-alt="A professional minimalist logo for a facility management company named EFM. The logo features clean geometric lines and a modern high-contrast navy and white color scheme, presented in a studio lighting environment on a white background. The aesthetic is corporate, reliable, and technologically advanced." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaVPLjghZI3i0-JRrBTkRQtqf3g7IH13Ckpn_58qnlqgJn7Vri4tORGed4lTqsaePe143M3YksF4SoMEgEoEF-rastgLHim_qLqgb9nm8NoDUhZDcXOy8TVGtHO-wKqASpV-diZmUUpqrJhLcB-p6BA-mFyLy8fkjfCeAdWqlhfstbKkFjyo_GaKJSaxGVd0k11x-QqtoiIr--pTAT439EVy34pDeNugDa4CbIkfqKXsCAYyf9ODrC89HKgojwHk_GKQA1vlRgEIWU">
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary">EFM</h1>
+<p class="font-label-md text-label-md text-on-primary-container opacity-80">Management Portal</p>
+</div>
+</div>
+</div>
+<nav class="flex-grow px-4 mt-4 space-y-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary-container hover:text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary-container hover:text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary-container hover:text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg border-l-4 border-secondary bg-primary-container text-on-primary-container" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary-container hover:text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</nav>
+<div class="mt-auto px-4 pb-8">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary-container hover:text-on-primary-container transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant shadow-sm flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center gap-4 flex-grow max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-sm focus:ring-2 focus:ring-secondary transition-all" placeholder="Search facilities, reports, or tasks..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant relative scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors text-on-surface-variant scale-95 active:scale-90">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="flex items-center gap-3 border-l border-outline-variant pl-6">
+<div class="text-right hidden md:block">
+<p class="font-label-lg text-label-lg text-primary">Admin User</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Facility Manager</p>
+</div>
+<button class="w-10 h-10 rounded-full overflow-hidden border-2 border-secondary scale-95 active:scale-90">
+<span class="material-symbols-outlined text-4xl text-on-surface-variant">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[260px] pt-24 pb-12 px-margin-desktop min-h-screen">
+<div class="max-w-[1440px] mx-auto">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">Live Report Fasilitas</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Pantau dan kelola laporan operasional fasilitas gedung secara real-time.</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2 bg-surface-container-highest px-4 py-2 rounded-lg">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">sensors</span>
+<span class="font-label-lg text-label-lg text-primary">Status: Live</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Input Form Card -->
+<div class="col-span-12 lg:col-span-5 bg-surface-container-lowest rounded-xl data-card p-6 h-fit sticky top-24">
+<div class="flex items-center gap-3 mb-6">
+<div class="w-10 h-10 rounded-lg bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined">post_add</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Buat Laporan Baru</h3>
+</div>
+<form class="space-y-5" onsubmit="event.preventDefault(); alert('Laporan berhasil disubmit!');">
+<div>
+<label class="block font-label-lg text-label-lg text-primary mb-2">Kategori Laporan</label>
+<select class="w-full rounded-lg border-outline-variant bg-surface focus:border-secondary focus:ring-secondary font-body-md">
+<option value="kerusakan">Kerusakan (Maintenance Needed)</option>
+<option value="komplain">Komplain (Member Complaint)</option>
+<option value="rutin">Laporan Rutin (Daily Check)</option>
+</select>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-primary mb-2">Lokasi Spesifik</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">location_on</span>
+<input class="w-full pl-10 rounded-lg border-outline-variant bg-surface focus:border-secondary focus:ring-secondary font-body-md" placeholder="Contoh: Area Cardio Lt. 2, Locker Room Pria" type="text">
+</div>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-primary mb-2">Deskripsi Detail</label>
+<textarea class="w-full rounded-lg border-outline-variant bg-surface focus:border-secondary focus:ring-secondary font-body-md" placeholder="Jelaskan kondisi atau isu secara mendetail..." rows="4"></textarea>
+</div>
+<div>
+<label class="block font-label-lg text-label-lg text-primary mb-2">Dokumentasi Foto</label>
+<div class="flex items-center justify-center w-full">
+<label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-outline-variant rounded-lg cursor-pointer bg-surface hover:bg-surface-container transition-all group">
+<div class="flex flex-col items-center justify-center pt-5 pb-6">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors mb-2">cloud_upload</span>
+<p class="font-label-md text-label-md text-on-surface-variant">Klik untuk upload foto</p>
+</div>
+<input class="hidden" type="file">
+</label>
+</div>
+</div>
+<button class="w-full py-4 bg-secondary text-on-secondary rounded-lg font-label-lg text-label-lg uppercase tracking-wider hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg" type="submit">
+<span class="material-symbols-outlined">send</span>
+                            Submit Laporan
+                        </button>
+</form>
+</div>
+<!-- Report List & Visualization Card -->
+<div class="col-span-12 lg:col-span-7 space-y-gutter">
+<!-- Stats Overview -->
+<div class="grid grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl data-card border-l-4 border-error">
+<p class="text-on-surface-variant font-label-md mb-1">Open Reports</p>
+<h4 class="text-headline-md font-bold text-error">12</h4>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl data-card border-l-4 border-secondary-container">
+<p class="text-on-surface-variant font-label-md mb-1">In Progress</p>
+<h4 class="text-headline-md font-bold text-secondary-container">08</h4>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl data-card border-l-4 border-green-500">
+<p class="text-on-surface-variant font-label-md mb-1">Resolved Today</p>
+<h4 class="text-headline-md font-bold text-green-500">24</h4>
+</div>
+</div>
+<!-- List Container -->
+<div class="bg-surface-container-lowest rounded-xl data-card overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<h3 class="font-headline-sm text-headline-sm text-primary">Riwayat Laporan Terkini</h3>
+<button class="text-secondary font-label-lg hover:underline flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                            </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low">
+<tr>
+<th class="px-6 py-4 font-label-lg text-label-lg text-primary">ID</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-primary">Kategori</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-primary">Lokasi</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-primary">Status</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-primary">Tanggal</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-body-sm text-primary font-bold">#EFM-9021</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-error"></span> Kerusakan
+                                            </span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm">Treadmill Zone A</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full font-label-md text-label-md">Open</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">14 Okt, 09:30</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-body-sm text-primary font-bold">#EFM-9020</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span> Komplain
+                                            </span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm">Area Loker Pria</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full font-label-md text-label-md">In Progress</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">14 Okt, 08:15</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-body-sm text-primary font-bold">#EFM-9019</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span> Rutin
+                                            </span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm">Main Hall Floor</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-label-md text-label-md">Closed</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">13 Okt, 22:00</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-body-sm text-primary font-bold">#EFM-9018</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-error"></span> Kerusakan
+                                            </span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm">HVAC System Central</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full font-label-md text-label-md">Open</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">13 Okt, 18:45</td>
+</tr>
+<!-- Row 5 -->
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-4 font-body-sm text-body-sm text-primary font-bold">#EFM-9017</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-2 font-body-sm text-body-sm">
+<span class="w-2 h-2 rounded-full bg-blue-500"></span> Rutin
+                                            </span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm">Toilet Lt. 1</td>
+<td class="px-6 py-4">
+<span class="px-3 py-1 bg-green-100 text-green-700 rounded-full font-label-md text-label-md">Closed</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-body-sm text-on-surface-variant">13 Okt, 17:00</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 bg-surface-container-low flex justify-between items-center">
+<p class="font-label-md text-label-md text-on-surface-variant">Menampilkan 5 dari 142 laporan</p>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-secondary text-on-secondary font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors font-label-md">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Decorative Graphic Card -->
+<div class="relative overflow-hidden bg-primary rounded-xl p-8 h-48 flex flex-col justify-center">
+<div class="absolute right-[-40px] top-[-20px] opacity-20">
+<span class="material-symbols-outlined text-[160px] text-on-primary">monitoring</span>
+</div>
+<h4 class="text-on-primary font-headline-sm mb-2 relative z-10">Efisiensi Operasional Terjamin</h4>
+<p class="text-on-primary-container text-body-sm max-w-md relative z-10">Rata-rata waktu penyelesaian laporan (Resolution Time) meningkat 15% pada kuartal ini melalui pelaporan live sistem EFM.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('tbody tr').forEach(row => {
+            row.addEventListener('click', () => {
+                row.classList.add('bg-secondary/5');
+                setTimeout(() => row.classList.remove('bg-secondary/5'), 300);
+            });
+        });
+
+        // Hover effects for the submit button
+        const submitBtn = document.querySelector('button[type="submit"]');
+        if(submitBtn) {
+            submitBtn.addEventListener('mouseenter', () => {
+                submitBtn.style.transform = 'translateY(-2px)';
+            });
+            submitBtn.addEventListener('mouseleave', () => {
+                submitBtn.style.transform = 'translateY(0)';
+            });
+        }
+    </script>
+
+
+</body></html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Private Training Orders - EFM Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-variant": "#e5e1e5",
+                      "surface-container-low": "#f6f2f6",
+                      "on-tertiary-fixed": "#001c39",
+                      "on-error-container": "#93000a",
+                      "outline": "#78767f",
+                      "on-primary-fixed-variant": "#44426b",
+                      "surface-dim": "#dcd9dd",
+                      "secondary-container": "#fd6e58",
+                      "surface-tint": "#5c5a85",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "on-primary-fixed": "#18163d",
+                      "primary": "#06042c",
+                      "on-tertiary": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "on-background": "#1c1b1e",
+                      "error": "#ba1a1a",
+                      "tertiary-container": "#002142",
+                      "secondary-fixed": "#ffdad4",
+                      "primary-container": "#1e1c43",
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "background": "#fcf8fc",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "on-surface-variant": "#47464e",
+                      "on-secondary": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-container-high": "#ebe7eb",
+                      "surface-bright": "#fcf8fc",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#f1edf1",
+                      "tertiary-fixed": "#d4e3ff",
+                      "on-surface": "#1c1b1e",
+                      "inverse-primary": "#c5c1f3",
+                      "surface-container-highest": "#e5e1e5",
+                      "on-tertiary-container": "#438adc",
+                      "on-primary-container": "#8684b1",
+                      "tertiary": "#000919",
+                      "primary-fixed": "#e3dfff",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "inverse-surface": "#313033",
+                      "secondary": "#ac3323",
+                      "inverse-on-surface": "#f4eff4",
+                      "surface": "#fcf8fc",
+                      "outline-variant": "#c8c5cf",
+                      "on-secondary-fixed": "#400100",
+                      "surface-container-lowest": "#ffffff",
+                      "on-secondary-container": "#6c0300"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px",
+                      "sidebar-width": "260px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Poppins"],
+                      "label-md": ["Poppins"],
+                      "label-lg": ["Poppins"],
+                      "body-lg": ["Poppins"],
+                      "headline-md": ["Poppins"],
+                      "headline-sm": ["Poppins"],
+                      "headline-lg": ["Poppins"],
+                      "display-lg": ["Poppins"],
+                      "headline-lg-mobile": ["Poppins"],
+                      "body-md": ["Poppins"]
+              },
+              "fontSize": {
+                      "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                      "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                      "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                      "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                      "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                      "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                      "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                      "display-lg": ["48px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                      "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                      "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; background-color: #fcf8fc; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .filled-icon { font-variation-settings: 'FILL' 1; }
+        
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #c8c5cf; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #78767f; }
+    </style>
+</head>
+<body class="bg-background text-on-background flex min-h-screen overflow-x-hidden">
+<!-- SideNavBar -->
+<aside class="w-sidebar-width h-screen fixed left-0 top-0 bg-primary dark:bg-tertiary shadow-sm z-50 flex flex-col hidden md:flex">
+<!-- Header -->
+<div class="px-gutter py-margin-desktop flex flex-col items-center border-b border-primary-container">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-4 overflow-hidden border-2 border-primary-container">
+<img alt="EFM Logo" class="w-full h-full object-cover" data-alt="A modern, high-contrast corporate logo placeholder. A glowing neon orange geometrical shape on a deep navy blue background. The aesthetic is energetic, professional, and clean, suitable for a premium fitness management portal. Soft, high-key lighting illuminates the edges." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGtFHK4TAAIr4NdQqpvTvKYxMY15M82FsSYchgaI_p0GDXmrM8Y-um7vhZp80Pw-B2qKhWgAVxu2uO3D1IU99BZKRUL04qgFCZfaotBEvGA3NAuNiDZefsI8dkkjwRjTqwGQjTRZ2dP7HoSKhyv_JfrTmFADTl5vTBalaVTDO1lsA8NsmK3t8HoZNamxg4Bn35LvBs6TG_-_FpicKWAdXnuJzmAG7NQ9gb7reP3VBqas6vVELRvx3WT7AaoNkQJ4-T8XgIA_ObzOap">
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary text-center">EFM Portal</h1>
+<p class="font-label-md text-label-md text-on-primary-container mt-1">Management System</p>
+</div>
+<!-- Navigation -->
+<nav class="flex-1 overflow-y-auto py-unit flex flex-col gap-unit px-unit mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg border-l-4 border-secondary bg-primary-container text-on-primary font-semibold" href="#">
+<span class="material-symbols-outlined filled-icon">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</nav>
+<!-- CTA & Footer -->
+<div class="p-gutter mt-auto flex flex-col gap-4 border-t border-primary-container">
+<button class="w-full bg-secondary hover:bg-secondary-container text-on-secondary font-label-lg text-label-lg py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+                + New Entry
+            </button>
+<button class="flex items-center gap-3 px-4 py-2 text-on-primary-container hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 md:ml-[260px] min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="h-16 fixed top-0 right-0 w-full md:w-[calc(100%-260px)] bg-surface/95 backdrop-blur-sm z-40 shadow-sm border-b border-outline-variant flex justify-between items-center px-margin-desktop">
+<div class="flex items-center gap-4">
+<!-- Mobile Menu Trigger (Hidden on Desktop) -->
+<button class="md:hidden text-primary p-2 -ml-2">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-bold text-primary hidden md:block">EFM Management</div>
+</div>
+<!-- Search (Left Aligned within its section) -->
+<div class="flex-1 max-w-md ml-8 mr-8 hidden md:block">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-sm text-body-sm focus:border-primary focus:ring-1 focus:ring-primary transition-all outline-none" placeholder="Search orders, clients..." type="text">
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-colors relative cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="font-label-md text-label-md text-on-surface-variant hover:text-primary transition-colors hidden sm:block">Settings</button>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-outline-variant cursor-pointer" data-alt="A small circular avatar placeholder image showing a professional headshot of a person. Warm, bright lighting, neutral background, suitable for a corporate SaaS dashboard profile picture." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlZQnztrfJu6fkcTzjgVRBQ17AxFXp2nPEqfHShLEuJzwKk5JTksB7PbOJzzA6Y92DKK9JfbGEzX0vNZLqXUxHDCL_gKtMhSELHJ-fCmcuLsVquFOgMASZSaUjkKgRVI2wxqIsqO_pCvAyJiIv_7lECoiNtKsRec9qkb-x08AWHNXjtMAiBD_czakC8xlanPzPDlNgVTlXdyvsp5zgV44S15-wydmErFLlATpbstl2-9rq0BVVIAlsiICezMKtWvTzxNFIXa7C61J2">
+</div>
+</header>
+<!-- Page Canvas -->
+<div class="pt-[88px] px-margin-mobile md:px-margin-desktop pb-12 max-w-container-max mx-auto w-full flex-1">
+<!-- Page Header & Actions -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-background mb-1">Private Training Orders</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and track all 1-on-1 coaching packages.</p>
+</div>
+<button class="bg-secondary hover:bg-secondary-container text-on-secondary font-label-lg text-label-lg px-6 py-2.5 rounded-lg transition-all shadow-sm hover:shadow flex items-center gap-2 whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+                    New Order
+                </button>
+</div>
+<!-- Filters Bar (Bento-style thin strip) -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_4px_rgba(30,28,67,0.05)] border border-outline-variant/50 p-4 mb-6 flex flex-wrap gap-4 items-center justify-between">
+<div class="flex flex-wrap items-center gap-4 flex-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[20px]">filter_list</span>
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Filters</span>
+</div>
+<!-- Status Filter -->
+<div class="relative">
+<select class="appearance-none bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-lg pl-3 pr-8 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+<option value="all">All Statuses</option>
+<option value="active">Active</option>
+<option value="completed">Completed</option>
+<option value="cancelled">Cancelled</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[20px]">arrow_drop_down</span>
+</div>
+<!-- Trainer Filter -->
+<div class="relative">
+<select class="appearance-none bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-lg pl-3 pr-8 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+<option value="all">All Trainers (PIC)</option>
+<option value="t1">Sarah Jenkins</option>
+<option value="t2">Marcus Chen</option>
+<option value="t3">Elena Rodriguez</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[20px]">arrow_drop_down</span>
+</div>
+<!-- Date Range -->
+<div class="relative hidden sm:block">
+<input class="bg-surface border border-outline-variant text-on-surface font-body-sm text-body-sm rounded-lg pl-9 pr-3 py-2 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer w-48" placeholder="Date Range" readonly="" type="text" value="Oct 1 - Oct 31, 2023">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-outline text-[18px]">calendar_today</span>
+</div>
+</div>
+<button class="font-label-md text-label-md text-secondary hover:text-secondary-container transition-colors">Clear All</button>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl shadow-[0_2px_4px_rgba(30,28,67,0.05)] border border-outline-variant/50 overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant/50">
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">Order ID</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">Client Name</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">Package</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">PIC (Trainer)</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">Date</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold whitespace-nowrap">Status</th>
+<th class="p-4 font-label-lg text-label-lg text-on-surface-variant font-semibold text-right whitespace-nowrap">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 font-medium text-primary">#PP-8042</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-tertiary-fixed text-on-tertiary-fixed flex items-center justify-center font-label-md font-bold">JW</div>
+<span>James Wilson</span>
+</div>
+</td>
+<td class="p-4">12 Sessions - Pro</td>
+<td class="p-4 text-on-surface-variant">Sarah Jenkins</td>
+<td class="p-4 text-on-surface-variant">Oct 24, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-fixed-dim/30 text-on-tertiary-fixed-variant border border-tertiary-fixed-dim">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container mr-1.5"></span> Active
+                                    </span>
+</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Generate QR">
+<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="View Invoice">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Edit Order">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 font-medium text-primary">#PP-8041</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed text-on-primary-fixed flex items-center justify-center font-label-md font-bold">EM</div>
+<span>Emily Chen</span>
+</div>
+</td>
+<td class="p-4">4 Sessions - Starter</td>
+<td class="p-4 text-on-surface-variant">Marcus Chen</td>
+<td class="p-4 text-on-surface-variant">Oct 22, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-surface-variant text-on-surface-variant border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline mr-1.5"></span> Completed
+                                    </span>
+</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Generate QR">
+<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="View Invoice">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Edit Order">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 font-medium text-primary">#PP-8038</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-label-md font-bold">RT</div>
+<span>Robert Taylor</span>
+</div>
+</td>
+<td class="p-4">24 Sessions - Elite</td>
+<td class="p-4 text-on-surface-variant">Elena Rodriguez</td>
+<td class="p-4 text-on-surface-variant">Oct 18, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-tertiary-fixed-dim/30 text-on-tertiary-fixed-variant border border-tertiary-fixed-dim">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container mr-1.5"></span> Active
+                                    </span>
+</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Generate QR">
+<span class="material-symbols-outlined text-[20px]">qr_code_2</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="View Invoice">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Edit Order">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="p-4 font-medium text-primary">#PP-8035</td>
+<td class="p-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center font-label-md font-bold">AK</div>
+<span>Anita Kumar</span>
+</div>
+</td>
+<td class="p-4">8 Sessions - Base</td>
+<td class="p-4 text-on-surface-variant">Sarah Jenkins</td>
+<td class="p-4 text-on-surface-variant">Oct 15, 2023</td>
+<td class="p-4">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-error-container/50 text-error border border-error-container">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1.5"></span> Cancelled
+                                    </span>
+</td>
+<td class="p-4 text-right">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" disabled="" title="Generate QR">
+<span class="material-symbols-outlined text-[20px] opacity-30">qr_code_2</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="View Invoice">
+<span class="material-symbols-outlined text-[20px]">receipt_long</span>
+</button>
+<button class="p-1.5 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded transition-colors" title="Edit Order">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="p-4 border-t border-outline-variant/50 bg-surface flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Showing 1 to 4 of 42 entries</span>
+<div class="flex items-center gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-primary-container text-on-primary-container font-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors font-label-md">3</button>
+<span class="text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Revenue Event Analytics - FitEvents Portal</title>
+<!-- Google Fonts: Poppins -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c5c1f3",
+                        "outline": "#78767f",
+                        "surface-variant": "#e5e1e5",
+                        "primary": "#06042c",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1e1c43",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "secondary-container": "#fd6e58",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "on-background": "#1c1b1e",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-bright": "#fcf8fc",
+                        "tertiary": "#000919",
+                        "surface": "#fcf8fc",
+                        "surface-container-low": "#f6f2f6",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-container-high": "#ebe7eb",
+                        "on-surface-variant": "#47464e",
+                        "on-primary-fixed-variant": "#44426b",
+                        "secondary": "#ac3323",
+                        "primary-fixed": "#e3dfff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary-fixed": "#001c39",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "inverse-surface": "#313033",
+                        "on-surface": "#1c1b1e",
+                        "on-primary": "#ffffff",
+                        "background": "#fcf8fc",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "on-secondary-container": "#6c0300",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f1edf1",
+                        "tertiary-container": "#002142",
+                        "surface-container-highest": "#e5e1e5",
+                        "surface-dim": "#dcd9dd",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "headline-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dcd9dd; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #78767f; }
+        
+        /* Subtle card animations */
+        .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(30, 28, 67, 0.08); }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-hidden flex">
+<!-- SideNavBar Component -->
+<aside class="bg-primary-container dark:bg-primary-container fixed left-0 top-0 h-full w-[260px] border-outline-variant shadow-sm flex flex-col py-6 z-20 hidden md:flex" style="background-color: #1E1C43;">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary font-bold text-headline-sm">
+                F
+            </div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-on-primary font-bold">FitEvents Admin</h1>
+<p class="font-label-md text-label-md text-on-primary-container">Management Portal</p>
+</div>
+</div>
+<!-- Main Navigation -->
+<nav class="flex-1 flex flex-col gap-1 px-2 font-label-lg text-label-lg">
+<!-- Active Item: Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary text-on-primary font-semibold transition-all duration-200 ease-in-out bg-secondary/20" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<!-- Inactive Items -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+                Private Training
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="business">business</span>
+                B2B Management
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Event Management
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings_applications">settings_applications</span>
+                Operational
+            </a>
+</nav>
+<!-- Footer Navigation & CTA -->
+<div class="px-4 mt-auto flex flex-col gap-4 font-label-lg text-label-lg">
+<button class="w-full bg-secondary text-on-secondary py-3 rounded-lg font-bold shadow-sm hover:opacity-90 transition-opacity">
+                Create Event
+            </button>
+<div class="flex flex-col gap-1 pt-4 border-t border-outline-variant/30">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                    Help Center
+                </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 transition-all duration-200 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                    Logout
+                </a>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 flex flex-col md:ml-[260px] h-screen overflow-hidden bg-surface-container-lowest">
+<!-- TopNavBar Component -->
+<header class="bg-surface dark:bg-surface-dim h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm flex justify-between items-center px-margin-desktop w-full z-10 shrink-0">
+<!-- Left Side: Brand (Mobile) & Search -->
+<div class="flex items-center gap-6">
+<div class="md:hidden font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">
+                    FitEvents Portal
+                </div>
+<!-- Search Bar Placeholder -->
+<div class="hidden md:flex items-center bg-surface-container-low px-4 py-2 rounded-full border border-outline-variant/50 focus-within:border-primary transition-colors w-64">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px] mr-2">search</span>
+<input class="bg-transparent border-none outline-none text-body-sm w-full placeholder:text-on-surface-variant/60 focus:ring-0 p-0" placeholder="Search events..." type="text">
+</div>
+</div>
+<!-- Middle: Navigation Links (Web) -->
+<nav class="hidden md:flex items-center gap-8 h-full font-label-md text-label-md">
+<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors h-full flex items-center px-2" href="#">Overview</a>
+<a class="text-secondary font-semibold border-b-2 border-secondary h-full flex items-center px-2" href="#">Analytics</a>
+<a class="text-on-surface-variant hover:text-primary hover:bg-surface-container-high transition-colors h-full flex items-center px-2" href="#">Reports</a>
+</nav>
+<!-- Right Side: Actions & Profile -->
+<div class="flex items-center gap-4">
+<button class="hidden md:block bg-secondary text-on-secondary px-4 py-2 rounded-md font-label-lg text-label-lg font-bold scale-95 active:scale-90 transition-transform hover:opacity-90">
+                    New Booking
+                </button>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors scale-95 active:scale-90 transition-transform relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<main class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop bg-surface-container-lowest">
+<div class="max-w-container-max mx-auto space-y-6">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Revenue Event Analytics</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Performance overview and financial metrics.</p>
+</div>
+<div class="flex items-center gap-3">
+<select class="bg-surface border border-outline-variant rounded-md px-3 py-2 font-label-md text-label-md text-on-surface focus:border-primary outline-none">
+<option>Last 30 Days</option>
+<option>This Quarter</option>
+<option>Year to Date</option>
+</select>
+<button class="bg-surface border border-outline-variant rounded-md px-3 py-2 flex items-center gap-2 hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="font-label-md text-label-md font-semibold">Export</span>
+</button>
+</div>
+</div>
+<!-- Summary Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Total Revenue -->
+<div class="bg-surface rounded-xl border border-outline-variant p-6 shadow-[0_2px_4px_rgba(30,28,67,0.05)] card-hover flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary-container/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex justify-between items-start">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Total Revenue</h3>
+<span class="material-symbols-outlined text-primary-container opacity-80">account_balance_wallet</span>
+</div>
+<div class="flex items-baseline gap-2 mt-auto">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">Rp 1.2B</span>
+<span class="font-label-md text-label-md text-[#2e7d32] bg-[#e8f5e9] px-2 py-0.5 rounded-full flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 12%</span>
+</div>
+</div>
+<!-- Total Events -->
+<div class="bg-surface rounded-xl border border-outline-variant p-6 shadow-[0_2px_4px_rgba(30,28,67,0.05)] card-hover flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-secondary-container/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex justify-between items-start">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Total Events</h3>
+<span class="material-symbols-outlined text-secondary-container opacity-80">event</span>
+</div>
+<div class="flex items-baseline gap-2 mt-auto">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">48</span>
+<span class="font-label-md text-label-md text-on-surface-variant">Completed</span>
+</div>
+</div>
+<!-- Avg Revenue per Event -->
+<div class="bg-surface rounded-xl border border-outline-variant p-6 shadow-[0_2px_4px_rgba(30,28,67,0.05)] card-hover flex flex-col justify-between h-32 relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex justify-between items-start">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Avg. per Event</h3>
+<span class="material-symbols-outlined text-primary opacity-80">monitoring</span>
+</div>
+<div class="flex items-baseline gap-2 mt-auto">
+<span class="font-headline-lg text-headline-lg text-primary font-bold">Rp 25M</span>
+<span class="font-label-md text-label-md text-secondary bg-secondary/10 px-2 py-0.5 rounded-full flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_downward</span> 3%</span>
+</div>
+</div>
+</div>
+<!-- Charts Section (Bento Grid Style) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter">
+<!-- Bar Chart: Profit Per Event -->
+<div class="bg-surface rounded-xl border border-outline-variant p-6 shadow-[0_2px_4px_rgba(30,28,67,0.05)] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-label-lg text-label-lg text-primary font-bold">Profit Margin per Event</h3>
+<button class="text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">more_vert</span></button>
+</div>
+<!-- Simple CSS Bar Chart Representation -->
+<div class="flex-1 flex items-end justify-between gap-2 h-48 pt-4 border-b border-outline-variant/30 pb-2 relative">
+<!-- Y-axis labels (rough representation) -->
+<div class="absolute left-0 top-0 h-full flex flex-col justify-between text-[10px] text-on-surface-variant -ml-4 pb-2">
+<span class="">High</span>
+<span class="">Mid</span>
+<span class="">Low</span>
+</div>
+<!-- Bars -->
+<div class="w-full flex justify-around items-end h-full px-4 group">
+<div class="w-1/6 bg-primary-container rounded-t-sm h-[60%] hover:opacity-80 transition-opacity relative group-hover:bg-primary-container/50"><div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 text-[10px] bg-inverse-surface text-inverse-on-surface px-1.5 py-0.5 rounded whitespace-nowrap">Marathon</div></div>
+<div class="w-1/6 bg-secondary rounded-t-sm h-[85%] hover:opacity-80 transition-opacity relative shadow-[0_0_10px_rgba(172,51,35,0.3)]"><div class="absolute -top-6 left-1/2 -translate-x-1/2 opacity-100 text-[10px] bg-inverse-surface text-inverse-on-surface px-1.5 py-0.5 rounded whitespace-nowrap font-bold">Bootcamp</div></div>
+<div class="w-1/6 bg-primary-container rounded-t-sm h-[40%] hover:opacity-80 transition-opacity relative group-hover:bg-primary-container/50"></div>
+<div class="w-1/6 bg-primary-container rounded-t-sm h-[70%] hover:opacity-80 transition-opacity relative group-hover:bg-primary-container/50"></div>
+<div class="w-1/6 bg-primary-container rounded-t-sm h-[55%] hover:opacity-80 transition-opacity relative group-hover:bg-primary-container/50"></div>
+</div>
+</div>
+<div class="flex justify-around mt-2 text-[10px] font-label-md text-on-surface-variant px-4">
+<span class="">Ev 1</span><span class="">Ev 2</span><span class="">Ev 3</span><span class="">Ev 4</span><span class="">Ev 5</span>
+</div>
+</div>
+<!-- Line Chart: Monthly Trend -->
+<div class="bg-surface rounded-xl border border-outline-variant p-6 shadow-[0_2px_4px_rgba(30,28,67,0.05)] flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-label-lg text-label-lg text-primary font-bold">Monthly Revenue Trend</h3>
+<div class="flex items-center gap-2">
+<span class="flex items-center gap-1 text-[11px] text-on-surface-variant"><span class="w-2 h-2 rounded-full bg-primary-container block"></span> Revenue</span>
+<span class="flex items-center gap-1 text-[11px] text-on-surface-variant"><span class="w-2 h-2 rounded-full bg-secondary block"></span> Cost</span>
+</div>
+</div>
+<!-- CSS/SVG Line Chart representation -->
+<div class="flex-1 w-full h-48 relative border-l border-b border-outline-variant/30">
+<!-- Grid lines -->
+<div class="absolute w-full h-[25%] border-b border-outline-variant/10 bottom-[25%]"></div>
+<div class="absolute w-full h-[50%] border-b border-outline-variant/10 bottom-[50%]"></div>
+<div class="absolute w-full h-[75%] border-b border-outline-variant/10 bottom-[75%]"></div>
+<!-- Placeholder SVG for lines -->
+<svg class="absolute inset-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 100">
+<!-- Cost Line (Secondary) -->
+<polyline class="opacity-60" fill="none" points="0,80 20,75 40,85 60,70 80,65 100,75" stroke="#ac3323" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></polyline>
+<!-- Revenue Line (Primary Container) -->
+<polyline fill="none" points="0,60 20,45 40,50 60,25 80,30 100,10" stroke="#1e1c43" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></polyline>
+<!-- Data points -->
+<circle cx="60" cy="25" fill="#1e1c43" r="3"></circle>
+<circle cx="100" cy="10" fill="#1e1c43" r="3"></circle>
+</svg>
+</div>
+<div class="flex justify-between mt-2 text-[10px] font-label-md text-on-surface-variant">
+<span class="">Jan</span><span class="">Feb</span><span class="">Mar</span><span class="">Apr</span><span class="">May</span><span class="">Jun</span>
+</div>
+</div>
+</div>
+<!-- Data Table Section -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-[0_2px_4px_rgba(30,28,67,0.05)] overflow-hidden">
+<div class="p-4 md:p-6 border-b border-outline-variant/50 flex justify-between items-center bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-primary font-bold">Event Financial Register</h3>
+<div class="flex gap-2">
+<button class="p-1.5 rounded text-on-surface-variant hover:bg-surface-container-high"><span class="material-symbols-outlined text-[20px]">filter_list</span></button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-lg text-label-lg border-b border-outline-variant/50">
+<th class="py-3 px-6 font-semibold">Nama Event</th>
+<th class="py-3 px-6 font-semibold">Tanggal</th>
+<th class="py-3 px-6 font-semibold text-right">Gross Revenue</th>
+<th class="py-3 px-6 font-semibold text-right">Total Biaya</th>
+<th class="py-3 px-6 font-semibold text-right">Laba/Rugi</th>
+<th class="py-3 px-6 font-semibold text-center">Status</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface divide-y divide-outline-variant/30">
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="py-4 px-6 font-medium text-primary">Jakarta Marathon 2023</td>
+<td class="py-4 px-6 text-on-surface-variant">12 Oct 2023</td>
+<td class="py-4 px-6 text-right font-medium">Rp 450,000,000</td>
+<td class="py-4 px-6 text-right text-on-surface-variant">Rp 320,000,000</td>
+<td class="py-4 px-6 text-right font-semibold text-[#2e7d32]">+Rp 130,000,000</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2 py-1 rounded-full bg-[#e8f5e9] text-[#2e7d32] text-[11px] font-bold tracking-wide uppercase">Settled</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="py-4 px-6 font-medium text-primary">Corporate Bootcamp EFM</td>
+<td class="py-4 px-6 text-on-surface-variant">28 Sep 2023</td>
+<td class="py-4 px-6 text-right font-medium">Rp 120,000,000</td>
+<td class="py-4 px-6 text-right text-on-surface-variant">Rp 45,000,000</td>
+<td class="py-4 px-6 text-right font-semibold text-[#2e7d32]">+Rp 75,000,000</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2 py-1 rounded-full bg-[#e8f5e9] text-[#2e7d32] text-[11px] font-bold tracking-wide uppercase">Settled</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="py-4 px-6 font-medium text-primary">Yoga Retreat Bali</td>
+<td class="py-4 px-6 text-on-surface-variant">05 Nov 2023</td>
+<td class="py-4 px-6 text-right font-medium">Rp 85,000,000</td>
+<td class="py-4 px-6 text-right text-on-surface-variant">Rp 90,000,000</td>
+<td class="py-4 px-6 text-right font-semibold text-secondary">-Rp 5,000,000</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2 py-1 rounded-full bg-surface-container-highest text-on-surface-variant text-[11px] font-bold tracking-wide uppercase">Review</span>
+</td>
+</tr>
+<tr class="hover:bg-surface-bright transition-colors group">
+<td class="py-4 px-6 font-medium text-primary">Zumba Fest Series 1</td>
+<td class="py-4 px-6 text-on-surface-variant">15 Nov 2023</td>
+<td class="py-4 px-6 text-right font-medium">Rp 210,000,000</td>
+<td class="py-4 px-6 text-right text-on-surface-variant">Rp 150,000,000</td>
+<td class="py-4 px-6 text-right font-semibold text-primary-container">Pending</td>
+<td class="py-4 px-6 text-center">
+<span class="inline-block px-2 py-1 rounded-full bg-[#fff3e0] text-[#e65100] text-[11px] font-bold tracking-wide uppercase">Ongoing</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination/Footer -->
+<div class="px-6 py-4 border-t border-outline-variant/30 bg-surface-container-lowest flex justify-between items-center text-label-md text-on-surface-variant">
+<span class="">Showing 1 to 4 of 48 entries</span>
+<div class="flex gap-1">
+<button class="px-2 py-1 border border-outline-variant rounded hover:bg-surface-container-low disabled:opacity-50" disabled="">Prev</button>
+<button class="px-2 py-1 border border-outline-variant rounded bg-primary-container text-on-primary">1</button>
+<button class="px-2 py-1 border border-outline-variant rounded hover:bg-surface-container-low">2</button>
+<button class="px-2 py-1 border border-outline-variant rounded hover:bg-surface-container-low">Next</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

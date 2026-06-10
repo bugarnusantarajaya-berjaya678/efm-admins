@@ -1,0 +1,528 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Leads Apartment - EFM Management Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "primary-fixed": "#e3dfff",
+                      "on-surface": "#1c1b1e",
+                      "surface-dim": "#dcd9dd",
+                      "surface-container-highest": "#e5e1e5",
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-container": "#f1edf1",
+                      "on-primary-fixed-variant": "#44426b",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "secondary": "#ac3323",
+                      "inverse-primary": "#c5c1f3",
+                      "surface-variant": "#e5e1e5",
+                      "on-secondary-container": "#6c0300",
+                      "on-primary-fixed": "#18163d",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#5c5a85",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#313033",
+                      "surface-container-high": "#ebe7eb",
+                      "outline": "#78767f",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "primary": "#06042c",
+                      "background": "#fcf8fc",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#d4e3ff",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "tertiary": "#000919",
+                      "surface-container-low": "#f6f2f6",
+                      "surface-bright": "#fcf8fc",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#1e1c43",
+                      "tertiary-container": "#002142",
+                      "error": "#ba1a1a",
+                      "surface": "#fcf8fc",
+                      "secondary-fixed": "#ffdad4",
+                      "on-secondary-fixed": "#400100",
+                      "on-primary-container": "#8684b1",
+                      "on-tertiary-fixed": "#001c39",
+                      "on-tertiary-container": "#438adc",
+                      "inverse-on-surface": "#f4eff4",
+                      "error-container": "#ffdad6",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#fd6e58",
+                      "on-surface-variant": "#47464e",
+                      "outline-variant": "#c8c5cf",
+                      "on-background": "#1c1b1e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "sidebar-width": "260px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px"
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-[#F8F9FA] text-on-surface">
+<!-- Persistent Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary flex flex-col py-unit z-50">
+<div class="px-6 py-4 flex flex-col items-center border-b border-primary-container mb-6">
+<div class="w-16 h-16 rounded-full bg-surface-container flex items-center justify-center mb-4 overflow-hidden border-2 border-primary-container">
+<img alt="EFM Logo" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGtFHK4TAAIr4NdQqpvTvKYxMY15M82FsSYchgaI_p0GDXmrM8Y-um7vhZp80Pw-B2qKhWgAVxu2uO3D1IU99BZKRUL04qgFCZfaotBEvGA3NAuNiDZefsI8dkkjwRjTqwGQjTRZ2dP7HoSKhyv_JfrTmFADTl5vTBalaVTDO1lsA8NsmK3t8HoZNamxg4Bn35LvBs6TG_-_FpicKWAdXnuJzmAG7NQ9gb7reP3VBqas6vVELRvx3WT7AaoNkQJ4-T8XgIA_ObzOap">
+</div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary text-center">EFM Portal</h1>
+<p class="font-label-md text-label-md text-on-primary-container mt-1">Management System</p>
+</div>
+<nav class="flex-1 px-3 space-y-1 overflow-y-auto custom-scrollbar">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary bg-primary-container text-on-primary font-semibold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</nav>
+<div class="px-3 pt-4 mt-auto border-t border-white/10 flex flex-col gap-4">
+<button class="w-full bg-secondary hover:bg-secondary-container text-on-secondary font-label-lg text-label-lg py-3 rounded-lg transition-colors shadow-sm flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+                + New Entry
+            </button>
+<a class="flex items-center gap-3 px-4 py-2 text-on-primary-container hover:text-on-primary transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-md text-label-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm flex items-center justify-between px-margin-desktop z-40">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-secondary/20" placeholder="Search apartment leads..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors relative scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="p-2 rounded-full hover:bg-surface-container-high transition-colors scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant">settings</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-3">
+<div class="text-right hidden xl:block">
+<p class="text-sm font-bold text-primary">Admin Portal</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Super Admin</p>
+</div>
+<button class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden border border-outline-variant scale-95 active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-3xl text-on-surface-variant mt-1">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="pt-24 px-margin-desktop pb-12">
+<!-- Breadcrumbs & Actions -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Leads Apartment</h2>
+<nav class="flex items-center gap-2 text-sm text-on-surface-variant mt-1">
+<a class="hover:text-secondary" href="#">B2B Management</a>
+<span class="material-symbols-outlined text-xs">chevron_right</span>
+<span class="font-semibold text-secondary">Apartment Pipeline</span>
+</nav>
+</div>
+<button class="flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-lg font-label-lg text-label-lg shadow-lg shadow-secondary/20 hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-lg">add</span>
+                    + New Lead Apartment
+                </button>
+</div>
+<!-- Dashboard Stats Summary -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="glass-card p-6 rounded-xl flex items-start justify-between">
+<div>
+<p class="text-sm text-on-surface-variant font-medium">Total Pipeline</p>
+<h3 class="text-2xl font-bold text-primary mt-1">Rp 4.2B</h3>
+<p class="text-xs text-green-600 mt-2 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-sm">trending_up</span> +12.5% vs last month
+                        </p>
+</div>
+<div class="p-3 bg-primary/5 rounded-lg text-primary">
+<span class="material-symbols-outlined">payments</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl flex items-start justify-between">
+<div>
+<p class="text-sm text-on-surface-variant font-medium">Active Leads</p>
+<h3 class="text-2xl font-bold text-primary mt-1">48 Units</h3>
+<p class="text-xs text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">apartment</span> Across 12 Cities
+                        </p>
+</div>
+<div class="p-3 bg-secondary/10 rounded-lg text-secondary">
+<span class="material-symbols-outlined">hub</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl flex items-start justify-between">
+<div>
+<p class="text-sm text-on-surface-variant font-medium">Proposal Sent</p>
+<h3 class="text-2xl font-bold text-primary mt-1">16 Sent</h3>
+<p class="text-xs text-secondary mt-2 flex items-center gap-1 font-medium">
+<span class="material-symbols-outlined text-sm">priority_high</span> 4 Needs Follow-up
+                        </p>
+</div>
+<div class="p-3 bg-on-tertiary-container/10 rounded-lg text-on-tertiary-container">
+<span class="material-symbols-outlined">description</span>
+</div>
+</div>
+<div class="glass-card p-6 rounded-xl flex items-start justify-between">
+<div>
+<p class="text-sm text-on-surface-variant font-medium">Conversion Rate</p>
+<h3 class="text-2xl font-bold text-primary mt-1">24.8%</h3>
+<p class="text-xs text-on-surface-variant mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">analytics</span> Benchmark: 22%
+                        </p>
+</div>
+<div class="p-3 bg-green-500/10 rounded-lg text-green-600">
+<span class="material-symbols-outlined">monitoring</span>
+</div>
+</div>
+</div>
+<!-- Leads Management Table Card -->
+<div class="bg-white rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">filter_list</span>
+<span class="text-sm font-medium text-on-surface-variant">All Stages</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg border border-outline-variant">
+<span class="material-symbols-outlined text-on-surface-variant text-sm">sort</span>
+<span class="text-sm font-medium text-on-surface-variant">Sort by: Date</span>
+</div>
+</div>
+<div class="text-sm text-on-surface-variant">
+                        Showing <span class="font-bold text-primary">1 - 10</span> of <span class="font-bold text-primary">142</span> Apartment Leads
+                    </div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">ID</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Nama Perusahaan (Apartment)</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">PIC Klien</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">No HP</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Estimasi Nilai Kontrak</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Stage Pipeline</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant">Tanggal</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant text-center">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Lead Row 1 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4 text-body-sm font-medium text-on-surface-variant">#APT-0824</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A modern luxury high-rise apartment building at sunset with golden reflections on the glass facade. The scene is sophisticated and professional, reflecting high-value real estate property management and fitness facility deals. High-end urban development atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcsd6g6XZyd9w0bT7UhnAgF6dcp7p-H0PuZ60Rg0HBJVaC4MkqHGteMhayMjtIKFhPlbtS0PvZnrg9irhka5W-8fj-HRANOqZntejbyXIgfCdHcuhNuUQB_wwmsK4TPLHZA5UPa9IAaohkuBZbLFUq8MyOpVA8IBsNEDYrnO8kJSU2TqHpwKHgDOwHgc2fEx83NDCM1Ozr5GF4KDiE7e8vwWefH21cV79YHmQpsyv-ss2onGIspwFfwXskBUl4DGULTBHnsZrayRI8">
+</div>
+<div>
+<p class="font-bold text-primary">Grand Wisata Apartment</p>
+<p class="text-xs text-on-surface-variant">Bekasi, West Java</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface">Bambang Wijaya</td>
+<td class="px-6 py-4 text-body-sm text-on-surface font-mono">0812-3456-7890</td>
+<td class="px-6 py-4">
+<p class="font-bold text-primary">Rp 450.000.000</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Annual Retainer</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-secondary/10 text-secondary">
+                                        Proposal Sent
+                                    </span>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface-variant">24 Oct 2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead Row 2 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4 text-body-sm font-medium text-on-surface-variant">#APT-0825</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="A futuristic residential skyscraper in a lush green neighborhood. The architecture features glass balconies and sky gardens. Lighting is bright and daytime, reflecting energy and high-performance lifestyle standards for B2B fitness management clients." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXPmRcwlJdJp4V39UHSDUbXK73QsRLCMfbVUuVTEJLfuxj7ZEwgw4VE-Dzwh1Ajgu6LDBXQSe2HAFxiP382i2kpy9jZ82im-D9kFQCw1XKiihQKI_5Y62pvyDQVlrr9nv-y2TMmNmpNNSbm0n54pankE6dTC1tfP0lzh47d1CnCkphAOG797IEp_hAKSt40NGEyWxJrOFJarj465VW0F_hlzXOECWuobVNtMX_-liRo758BQkWL97II1Z1z4apprz8HIMtpYJKnyhG">
+</div>
+<div>
+<p class="font-bold text-primary">The Elements Residences</p>
+<p class="text-xs text-on-surface-variant">Kuningan, Jakarta</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface">Indah Permata</td>
+<td class="px-6 py-4 text-body-sm text-on-surface font-mono">0877-9911-2233</td>
+<td class="px-6 py-4">
+<p class="font-bold text-primary">Rp 1.200.000.000</p>
+<p class="text-[10px] text-on-surface-variant uppercase">3-Year Contract</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                        Negotiation
+                                    </span>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface-variant">25 Oct 2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead Row 3 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4 text-body-sm font-medium text-on-surface-variant">#APT-0826</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Close up of a luxury apartment complex with a visible state-of-the-art gym through floor-to-ceiling windows. The mood is aspirational and healthy, showing the integration of fitness into premium living spaces. Clean, sharp, high-resolution photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxeKvYSs_kEsjycYQQHRDz_HTeDi8bCe4FdUc9BH3YZ7qZOK-QS3ownITEkqHhIQARyEV6WOIsotljJrs9mtS2enSCM5J5XOWa2jG_fTB2iQ8qEhp73yqyrsewyWjcOC0rp9SGq9x7DPIjRKpoWyCD92-ddRr47SkJArXgyhW5lnbHSp_F_x4KZnOyk_FaF5-OZ9rt5zc7ShAUyw1I02OKn6z2ldSFIzyMxu4PXmgovR2CV6IRWhU1W_L9fUTLoULlk5uPb_eLn2Hp">
+</div>
+<div>
+<p class="font-bold text-primary">District 8 Apartments</p>
+<p class="text-xs text-on-surface-variant">Senopati, Jakarta</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface">Rian Hartanto</td>
+<td class="px-6 py-4 text-body-sm text-on-surface font-mono">0813-8822-4455</td>
+<td class="px-6 py-4">
+<p class="font-bold text-primary">Rp 850.000.000</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Gym Management</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                                        Initial Contact
+                                    </span>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface-variant">26 Oct 2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Lead Row 4 -->
+<tr class="hover:bg-surface-container transition-colors group">
+<td class="px-6 py-4 text-body-sm font-medium text-on-surface-variant">#APT-0827</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary/5 flex items-center justify-center overflow-hidden border border-outline-variant">
+<img class="w-full h-full object-cover" data-alt="Modern penthouse interior with large windows looking over a city skyline. The interior is minimal and sleek. The lighting is crisp and clean, symbolizing the premium nature of the B2B apartment fitness contracts. The design is corporate and high-performance." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9QyqdFeGfUeNKal2gucAHXq7p7MAUu4TFAPOtX66Wt4P664xv2KhouFdHXPsojwrB-y2wl1puu6FiM9z9kv9IOqSBw6Vg8FNEFxzYTyFB5IqxaaZ10BTofbpdETXAApJ9_66hKC4mNF0pjL9m9NXZe_2QwVp_kc-pCfZU6AoYFo1oH9iXxk3ZRUyCl9KUFIgC63Z6Ef7YiI-1gQ3oqGN9g8TetF0AoNPAspBwAoOMn20EKYBrNoAyVmNL4za-g66PVyk79iIN5n0r">
+</div>
+<div>
+<p class="font-bold text-primary">Southgate Residence</p>
+<p class="text-xs text-on-surface-variant">Tanjung Barat, Jakarta</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface">Maya Sari</td>
+<td class="px-6 py-4 text-body-sm text-on-surface font-mono">0856-1122-3344</td>
+<td class="px-6 py-4">
+<p class="font-bold text-primary">Rp 600.000.000</p>
+<p class="text-[10px] text-on-surface-variant uppercase">Consultancy</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-on-tertiary-container/10 text-on-tertiary-container">
+                                        Discovery Call
+                                    </span>
+</td>
+<td class="px-6 py-4 text-body-sm text-on-surface-variant">27 Oct 2023</td>
+<td class="px-6 py-4">
+<div class="flex justify-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-white rounded-md border border-transparent hover:border-outline-variant transition-all">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-6 border-t border-outline-variant flex items-center justify-between">
+<button class="px-4 py-2 text-sm font-medium text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-lg hover:bg-surface-container-high transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">arrow_back</span>
+                        Previous
+                    </button>
+<div class="flex items-center gap-2">
+<button class="w-10 h-10 rounded-lg bg-secondary text-white font-bold text-sm">1</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-sm font-medium">2</button>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-sm font-medium">3</button>
+<span class="px-2">...</span>
+<button class="w-10 h-10 rounded-lg hover:bg-surface-container transition-colors text-sm font-medium">12</button>
+</div>
+<button class="px-4 py-2 text-sm font-medium text-on-surface-variant bg-surface-container-low border border-outline-variant rounded-lg hover:bg-surface-container-high transition-colors flex items-center gap-2">
+                        Next
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Pipeline Analysis Mini View (Asymmetric Layout) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-12">
+<div class="lg:col-span-2 glass-card rounded-2xl p-8 border border-outline-variant overflow-hidden relative">
+<div class="relative z-10">
+<h4 class="font-headline-sm text-headline-sm text-primary mb-6">Revenue Forecasting</h4>
+<div class="flex items-end gap-2 h-48 mb-6">
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[60%]">
+<div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 800M</div>
+</div>
+<div class="flex-1 bg-secondary/20 rounded-t-lg relative group h-[85%]">
+<div class="absolute inset-0 bg-secondary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-secondary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 1.4B</div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[40%]">
+<div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 500M</div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[75%]">
+<div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 1.1B</div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[95%]">
+<div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 1.6B</div>
+</div>
+<div class="flex-1 bg-primary/10 rounded-t-lg relative group h-[55%]">
+<div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-100 transition-opacity rounded-t-lg"></div>
+<div class="absolute -top-10 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">Rp 750M</div>
+</div>
+</div>
+<div class="grid grid-cols-6 text-[10px] text-on-surface-variant font-bold text-center uppercase tracking-tighter">
+<span class="">Jul</span><span class="">Aug</span><span class="">Sep</span><span class="text-secondary">Oct</span><span class="">Nov</span><span class="">Dec</span>
+</div>
+</div>
+<div class="absolute -right-20 -bottom-20 w-64 h-64 bg-secondary/5 rounded-full blur-3xl"></div>
+</div>
+<div class="bg-primary-container rounded-2xl p-8 border border-primary text-white relative overflow-hidden">
+<div class="relative z-10">
+<span class="inline-block px-3 py-1 rounded-full bg-secondary text-[10px] font-bold uppercase tracking-wider mb-4">Urgent Task</span>
+<h4 class="text-xl font-bold leading-tight mb-2">Follow-up: <br>The Elements Residences</h4>
+<p class="text-sm opacity-60 mb-6">Negotiation phase has been idle for 4 days. Send final pricing adjustment to Indah Permata.</p>
+<button class="w-full py-3 bg-white text-primary font-bold rounded-xl text-sm hover:bg-secondary hover:text-white transition-all flex items-center justify-center gap-2">
+                            Go to Lead Detail
+                            <span class="material-symbols-outlined text-sm">open_in_new</span>
+</button>
+</div>
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-8xl" style="font-variation-settings: 'FILL' 1;">priority_high</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Help Button (FAB suppressed as per guidelines) -->
+<script>
+        // Micro-interactions and effects
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'scale(1.002)';
+                row.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.05)';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'scale(1)';
+                row.style.boxShadow = 'none';
+            });
+        });
+
+        // Search Bar Focus Effect
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('focus', () => {
+            searchInput.parentElement.classList.add('ring-2', 'ring-secondary/20');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchInput.parentElement.classList.remove('ring-2', 'ring-secondary/20');
+        });
+    </script>
+
+
+</body></html>

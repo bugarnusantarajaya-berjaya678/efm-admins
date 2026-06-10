@@ -1,0 +1,470 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Lead Details - Private Training | FitLead Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "error-container": "#ffdad6",
+                      "primary-fixed": "#e3dfff",
+                      "background": "#fcf8fc",
+                      "surface-container": "#f1edf1",
+                      "on-tertiary-container": "#438adc",
+                      "secondary": "#ac3323",
+                      "on-surface": "#1c1b1e",
+                      "surface-variant": "#e5e1e5",
+                      "inverse-surface": "#313033",
+                      "surface": "#fcf8fc",
+                      "on-secondary-fixed": "#400100",
+                      "on-secondary-container": "#6c0300",
+                      "surface-container-low": "#f6f2f6",
+                      "on-primary": "#ffffff",
+                      "inverse-on-surface": "#f4eff4",
+                      "inverse-primary": "#c5c1f3",
+                      "tertiary-container": "#002142",
+                      "surface-container-high": "#ebe7eb",
+                      "primary-container": "#1e1c43",
+                      "outline": "#78767f",
+                      "on-error-container": "#93000a",
+                      "on-secondary": "#ffffff",
+                      "on-primary-container": "#8684b1",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "secondary-container": "#fd6e58",
+                      "on-tertiary-fixed": "#001c39",
+                      "primary": "#06042c",
+                      "on-background": "#1c1b1e",
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-bright": "#fcf8fc",
+                      "surface-dim": "#dcd9dd",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed": "#ffdad4",
+                      "on-primary-fixed": "#18163d",
+                      "surface-container-highest": "#e5e1e5",
+                      "on-surface-variant": "#47464e",
+                      "outline-variant": "#c8c5cf",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "tertiary-fixed": "#d4e3ff",
+                      "on-tertiary": "#ffffff",
+                      "tertiary": "#000919",
+                      "surface-tint": "#5c5a85",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "on-primary-fixed-variant": "#44426b",
+                      "error": "#ba1a1a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "32px",
+                      "unit": "8px",
+                      "container-max": "1440px",
+                      "sidebar-width": "260px",
+                      "margin-mobile": "16px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "body-lg": [
+                              "Poppins"
+                      ],
+                      "label-lg": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "headline-lg-mobile": [
+                              "Poppins"
+                      ],
+                      "body-sm": [
+                              "Poppins"
+                      ],
+                      "label-md": [
+                              "Poppins"
+                      ],
+                      "body-md": [
+                              "Poppins"
+                      ],
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "display-lg": [
+                              "Poppins"
+                      ]
+              },
+              "fontSize": {
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "60px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+          font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1;
+        }
+      </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex">
+<!-- SideNavBar -->
+<aside class="hidden md:flex flex-col gap-unit h-screen bg-primary dark:bg-primary-container font-body-md text-body-md font-Poppins fixed left-0 top-0 h-full w-[260px] border-r border-outline-variant shadow-md z-50">
+<div class="p-margin-desktop flex items-center gap-4">
+<div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-white" data-icon="fitness_center">fitness_center</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-white">FitLead Manager</h1>
+<p class="text-on-primary-container text-label-md">Management Portal</p>
+</div>
+</div>
+<div class="px-4 mb-6">
+<button class="w-full bg-secondary-container hover:bg-secondary text-white font-label-lg py-3 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+                New Lead
+            </button>
+</div>
+<nav class="flex-1 px-4 flex flex-col gap-2">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg border-l-4 border-secondary-container bg-primary-fixed-dim/10 text-white font-semibold hover:bg-primary-fixed-variant transition-colors duration-200 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="fitness_center">fitness_center</span>
+<span class="">Private Training</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="business">business</span>
+<span class="">B2B</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+<span class="">Event</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200 scale-95 duration-150 ease-in-out" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="">Operational</span>
+</a>
+</nav>
+<div class="mt-auto px-4 py-6 flex flex-col gap-2 border-t border-primary-fixed-variant/20">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="">Help Center</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-on-primary-container hover:text-white hover:bg-primary-fixed-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="">Log Out</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-[260px] flex flex-col min-h-screen">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-dim font-label-lg text-label-lg font-Poppins fixed top-0 right-0 w-full md:w-[calc(100%-260px)] h-16 shadow-sm flex items-center justify-between px-margin-desktop z-40 transition-all duration-300">
+<div class="flex items-center gap-6">
+<!-- Mobile menu button -->
+<button class="md:hidden text-on-surface-variant hover:text-secondary-container">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<div class="font-headline-sm text-headline-sm font-semibold text-primary">Private Training</div>
+</div>
+<nav class="hidden md:flex items-center gap-8 h-full">
+<a class="h-full flex items-center text-secondary border-b-2 border-secondary font-bold px-2" href="#">Leads</a>
+<a class="h-full flex items-center text-on-surface-variant hover:text-secondary-container px-2 transition-colors" href="#">Orders</a>
+<a class="h-full flex items-center text-on-surface-variant hover:text-secondary-container px-2 transition-colors" href="#">Documents</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors relative opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary-container rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-secondary-container transition-colors opacity-80 hover:opacity-100">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant cursor-pointer">
+<img alt="User Profile Avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDz4SqvNMiE3tZIYC8QWRrnL_hpgLvVhW8sG-HCre9lRuzI4MU7J6g4oOMTtDzucL48s4o8P-olR-6-XHPtR_XyE4po38aJFuTikqLPqT0XmsPelS_QWrUpWF4IqbfyD9mVYM2T-QwBHQo3kauWKC2JcbOvZNI2fUwmMFQxnpTBv76guWSgaE-DHZ4ULM8aLFeNa-atzTFcbC3QUTgUa96CoIQlTsHzJD7KpxcAysGqhNcSoHkD6TaMbSo9ce2u8t4X-Psu0fXEeHJV">
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="flex-1 mt-16 p-margin-mobile md:p-margin-desktop bg-background overflow-y-auto">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div>
+<div class="flex items-center gap-2 text-on-surface-variant text-label-md mb-1">
+<a class="hover:text-secondary-container transition-colors" href="#">Private Training</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-secondary-container transition-colors" href="#">Leads</a>
+<span class="material-symbols-outlined text-[16px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-on-surface">Lead Details</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary flex items-center gap-3">
+                        Sarah Jenkins
+                        <span class="bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full text-label-md font-medium border border-outline-variant">Closing</span>
+</h2>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative">
+<select class="appearance-none bg-surface border border-outline-variant text-on-surface rounded-lg px-4 py-2 pr-10 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-label-lg cursor-pointer">
+<option>New</option>
+<option>Contacted</option>
+<option>Meeting Scheduled</option>
+<option selected="">Closing</option>
+<option>Lost</option>
+</select>
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+<button class="bg-secondary-container hover:bg-[#c94b38] text-white px-6 py-2 rounded-lg font-label-lg transition-colors shadow-sm flex items-center gap-2"><span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>Create Order</button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Column: Lead Info -->
+<div class="lg:col-span-4 flex flex-col gap-gutter">
+<!-- Profile Summary Card -->
+<div class="bg-surface rounded-xl p-6 border border-surface-container-high shadow-sm relative overflow-hidden">
+<!-- Decorative Header -->
+<div class="absolute top-0 left-0 w-full h-2 bg-secondary-container"></div>
+<div class="flex items-center gap-4 mb-6 pt-2">
+<div class="w-16 h-16 rounded-full bg-primary-fixed flex items-center justify-center text-primary-container font-headline-md font-bold shrink-0">
+                                SJ
+                            </div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-primary">Sarah Jenkins</h3>
+<p class="text-on-surface-variant font-body-sm">Lead ID: #PT-2023-849</p>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5" data-icon="mail">mail</span>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Email</p>
+<p class="font-body-md text-on-surface font-medium">sarah.jenkins@example.com</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5" data-icon="phone">phone</span>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Phone</p>
+<p class="font-body-md text-on-surface font-medium">+1 (555) 283-9402</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-surface-variant mt-0.5" data-icon="location_on">location_on</span>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Location</p>
+<p class="font-body-md text-on-surface font-medium">Downtown Studio</p>
+</div>
+</div>
+<div class="pt-4 border-t border-surface-variant flex items-center justify-between">
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Source</p>
+<p class="font-body-md text-on-surface font-medium flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-tertiary-container"></span>
+                                        Instagram Ad
+                                    </p>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant uppercase tracking-wider">Assigned To</p>
+<p class="font-body-md text-on-surface font-medium">Mike Trainer</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Training Goals Card -->
+<div class="bg-surface rounded-xl p-6 border border-surface-container-high shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-label-lg text-label-lg text-primary uppercase tracking-wider">Training Profile</h3>
+<button class="text-secondary-container hover:text-secondary p-1 rounded-full hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="edit">edit</span>
+</button>
+</div>
+<div class="space-y-4">
+<div>
+<p class="font-label-md text-on-surface-variant mb-1">Primary Goal</p>
+<div class="bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant font-body-sm text-on-surface">
+                                    Strength Building &amp; Hypertrophy
+                                </div>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-1">Experience Level</p>
+<div class="bg-surface-container-low px-3 py-2 rounded-md border border-outline-variant font-body-sm text-on-surface">
+                                    Intermediate (1-2 years)
+                                </div>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-1">Availability</p>
+<div class="flex flex-wrap gap-2 mt-1">
+<span class="bg-primary-fixed text-primary-container px-2 py-1 rounded text-[12px] font-medium">Mon Eve</span>
+<span class="bg-primary-fixed text-primary-container px-2 py-1 rounded text-[12px] font-medium">Wed Eve</span>
+<span class="bg-primary-fixed text-primary-container px-2 py-1 rounded text-[12px] font-medium">Sat Morn</span>
+</div>
+</div>
+<div>
+<p class="font-label-md text-on-surface-variant mb-1">Notes</p>
+<p class="text-body-sm text-on-surface bg-surface-container-low p-3 rounded-md border border-outline-variant">
+                                    Recovering from mild shoulder impingement. Needs focus on proper form for overhead movements.
+                                </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Timeline & Activity -->
+<div class="lg:col-span-8 flex flex-col gap-gutter">
+<div class="bg-surface rounded-xl border border-surface-container-high shadow-sm flex-1 flex flex-col overflow-hidden">
+<!-- Activity Header -->
+<div class="px-6 py-4 border-b border-surface-variant flex items-center justify-between bg-surface-container-lowest">
+<h3 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-container" data-icon="history">history</span>
+                                Activity Log
+                            </h3>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 rounded-md bg-surface-variant text-on-surface-variant font-label-md hover:bg-surface-container-high transition-colors">Notes</button>
+<button class="px-3 py-1.5 rounded-md bg-primary text-white font-label-md hover:bg-primary-container transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="add">add</span>
+                                    Log Action
+                                </button>
+</div>
+</div>
+<!-- Timeline Content -->
+<div class="p-6 flex-1 overflow-y-auto">
+<div class="relative pl-6 border-l-2 border-surface-variant space-y-8 pb-4">
+<!-- Timeline Item: Quotation -->
+
+<!-- Timeline Item: Meeting -->
+<div class="relative">
+<div class="absolute -left-[31px] bg-surface-variant border-2 border-outline w-4 h-4 rounded-full mt-1.5 z-10"></div>
+<div class="bg-surface-container-low rounded-lg p-4 border border-outline-variant hover:border-outline transition-colors">
+<div class="flex justify-between items-start mb-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]" data-icon="handshake">handshake</span>
+<h4 class="font-label-lg text-primary">Consultation Meeting</h4>
+</div>
+<span class="text-label-md text-on-surface-variant">Yesterday, 4:00 PM</span>
+</div>
+<p class="text-body-sm text-on-surface">In-person meeting at Downtown Studio. Discussed goals, shoulder mobility, and facility tour. Client highly engaged.</p>
+</div>
+</div>
+<!-- Timeline Item: Call -->
+<div class="relative">
+<div class="absolute -left-[31px] bg-surface-variant border-2 border-outline w-4 h-4 rounded-full mt-1.5 z-10"></div>
+<div>
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]" data-icon="call">call</span>
+<h4 class="font-label-md text-on-surface font-medium">Follow up call - Scheduled Consult</h4>
+</div>
+<span class="text-label-md text-on-surface-variant">Oct 24, 2:15 PM</span>
+</div>
+</div>
+</div>
+<!-- Timeline Item: Created -->
+<div class="relative">
+<div class="absolute -left-[31px] bg-surface-variant border-2 border-outline w-4 h-4 rounded-full mt-1.5 z-10"></div>
+<div>
+<div class="flex justify-between items-start mb-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]" data-icon="person_add">person_add</span>
+<h4 class="font-label-md text-on-surface font-medium">Lead Created (Instagram Ad)</h4>
+</div>
+<span class="text-label-md text-on-surface-variant">Oct 23, 8:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+
+</body></html>

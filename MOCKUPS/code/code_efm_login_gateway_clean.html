@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EFM Admin Portal - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary": "#1E1C43",
+                        "secondary": "#E05945",
+                        "on-surface-variant": "#47464e",
+                        "outline-variant": "#c8c5cf",
+                        "background": "#1E1C43"
+                    },
+                    "fontFamily": {
+                        "poppins": ["Poppins", "sans-serif"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+        /* CSS-only Dumbbell Icon */
+        .dumbbell-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+        }
+        .dumbbell-bar {
+            width: 24px;
+            height: 4px;
+            background-color: #1E1C43;
+            border-radius: 2px;
+            position: relative;
+        }
+        .dumbbell-weight {
+            position: absolute;
+            width: 6px;
+            height: 20px;
+            background-color: #1E1C43;
+            border-radius: 2px;
+        }
+        .weight-left { left: -4px; top: -8px; }
+        .weight-right { right: -4px; top: -8px; }
+        .weight-inner-left { left: 4px; top: -6px; height: 16px; width: 4px; }
+        .weight-inner-right { right: 4px; top: -6px; height: 16px; width: 4px; }
+    </style>
+</head>
+<body class="bg-background min-h-screen flex items-center justify-center p-4">
+<main class="w-full max-w-md">
+<!-- Login Card -->
+<div class="bg-white rounded-2xl shadow-xl overflow-hidden p-8 md:p-10">
+<!-- Header Area -->
+<div class="flex flex-col items-center mb-8">
+<!-- CSS-only Dumbbell Icon -->
+<div class="dumbbell-icon mb-4">
+<div class="dumbbell-bar">
+<div class="dumbbell-weight weight-left"></div>
+<div class="dumbbell-weight weight-inner-left"></div>
+<div class="dumbbell-weight weight-inner-right"></div>
+<div class="dumbbell-weight weight-right"></div>
+</div>
+</div>
+<h1 class="text-2xl md:text-3xl font-bold text-primary mb-2 text-center">
+                    EFM Portal Login
+                </h1>
+<p class="text-sm text-on-surface-variant text-center">
+                    Secure access for authorized personnel only.
+                </p>
+</div>
+<!-- Form Area -->
+<form action="#" class="space-y-6" method="POST" onsubmit="return false;">
+<!-- Username Field -->
+<div class="space-y-1.5">
+<label class="block text-xs font-semibold text-primary uppercase tracking-wider" for="username">Username</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 text-[20px]">person</span>
+</div>
+<input class="block w-full pl-11 pr-4 py-3 border border-outline-variant rounded-xl bg-gray-50 text-primary text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-gray-400" id="username" name="username" placeholder="Enter your username" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<label class="block text-xs font-semibold text-primary uppercase tracking-wider" for="password">Password</label>
+<a class="text-xs font-medium text-secondary hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 text-[20px]">lock</span>
+</div>
+<input class="block w-full pl-11 pr-11 py-3 border border-outline-variant rounded-xl bg-gray-50 text-primary text-sm focus:ring-2 focus:ring-primary focus:border-primary transition-all placeholder:text-gray-400" id="password" name="password" placeholder="Enter your password" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<button class="text-gray-400 hover:text-primary transition-colors focus:outline-none" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="h-4 w-4 text-primary focus:ring-primary border-outline-variant rounded cursor-pointer transition-colors" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block text-sm text-primary font-medium cursor-pointer" for="remember-me">
+                        Keep me logged in
+                    </label>
+</div>
+<!-- Submit Button -->
+<button class="w-full flex justify-center items-center py-3.5 px-4 border border-transparent rounded-xl shadow-md font-semibold text-white bg-secondary hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all active:scale-[0.99] uppercase tracking-wide text-sm" type="submit">
+                    Login
+                </button>
+</form>
+<!-- Footer Help -->
+<div class="mt-8 pt-6 border-t border-gray-100 text-center">
+<p class="text-sm text-on-surface-variant">
+                    Need assistance? <a class="font-semibold text-secondary hover:underline" href="#">Contact Support</a>
+</p>
+</div>
+</div>
+<!-- Bottom Copyright -->
+<div class="mt-8 text-center">
+<p class="text-[10px] text-white/50 tracking-[0.2em] uppercase font-medium">© 2024 EFM Management Systems</p>
+</div>
+</main>
+</body></html>

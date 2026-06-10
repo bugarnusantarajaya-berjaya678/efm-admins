@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invoice B2B | EFM Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#1c1b1e",
+                        "surface-dim": "#dcd9dd",
+                        "surface-container-highest": "#e5e1e5",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "surface-container": "#f1edf1",
+                        "on-primary-fixed-variant": "#44426b",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "secondary": "#ac3323",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-variant": "#e5e1e5",
+                        "on-secondary-container": "#6c0300",
+                        "on-primary-fixed": "#18163d",
+                        "on-error": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-surface": "#313033",
+                        "surface-container-high": "#ebe7eb",
+                        "outline": "#78767f",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "primary": "#06042c",
+                        "background": "#fcf8fc",
+                        "on-primary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "tertiary": "#000919",
+                        "surface-container-low": "#f6f2f6",
+                        "surface-bright": "#fcf8fc",
+                        "on-error-container": "#93000a",
+                        "primary-container": "#1e1c43",
+                        "tertiary-container": "#002142",
+                        "error": "#ba1a1a",
+                        "surface": "#fcf8fc",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "on-primary-container": "#8684b1",
+                        "on-tertiary-fixed": "#001c39",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fd6e58",
+                        "on-surface-variant": "#47464e",
+                        "outline-variant": "#c8c5cf",
+                        "on-background": "#1c1b1e",
+                        "accent-orange": "#E05945"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "sidebar-width": "260px",
+                        "container-max": "1440px",
+                        "unit": "8px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "display-lg": ["48px", {"lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #F8F9FA;
+        }
+        .invoice-card {
+            box-shadow: 0 4px 6px -1px rgba(30, 28, 67, 0.05), 0 2px 4px -1px rgba(30, 28, 67, 0.03);
+            border: 1px solid #E2E8F0;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: white;
+            }
+            .invoice-card {
+                box-shadow: none;
+                border: none;
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body class="text-on-surface p-4 md:p-12 min-h-screen flex flex-col items-center">
+<!-- Top Navigation Actions (Hidden in Sidebar view, requested as branded document) -->
+<div class="w-full max-w-5xl flex justify-between items-center mb-8 no-print">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-headline-sm">fitness_center</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-primary">EFM</h1>
+<p class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest">Management Portal</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-6 py-2.5 bg-accent-orange text-white rounded-lg font-label-lg text-label-lg hover:brightness-110 transition-all active:scale-95" onclick="window.print()">
+<span class="material-symbols-outlined">print</span>
+                Print
+            </button>
+<button class="flex items-center gap-2 px-6 py-2.5 bg-accent-orange text-white rounded-lg font-label-lg text-label-lg hover:brightness-110 transition-all active:scale-95">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+                Download PDF
+            </button>
+</div>
+</div>
+<!-- Main Invoice Document -->
+<main class="invoice-card bg-white w-full max-w-5xl p-8 md:p-16 rounded-xl overflow-hidden relative">
+<!-- Aesthetic Header Bar -->
+<div class="absolute top-0 left-0 w-full h-2 bg-primary"></div>
+<!-- Header Info -->
+<div class="flex flex-col md:flex-row justify-between mb-12 gap-8">
+<div class="space-y-4">
+<h2 class="font-headline-lg text-headline-lg text-primary">Invoice B2B</h2>
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface-variant">INVOICE NUMBER</p>
+<p class="font-headline-sm text-headline-sm text-primary">INV/EFM/B2B/2024/0001</p>
+</div>
+<div class="flex gap-12 mt-4">
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">ISSUED DATE</p>
+<p class="font-body-md text-body-md font-semibold">Oct 24, 2024</p>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface-variant">DUE DATE</p>
+<p class="font-body-md text-body-md font-semibold text-secondary">Nov 05, 2024</p>
+</div>
+</div>
+</div>
+<div class="text-left md:text-right space-y-6">
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface-variant">FROM</p>
+<h3 class="font-label-lg text-label-lg text-primary">Elite Fitness Management (EFM)</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        122 Corporate Plaza, Suite 400<br/>
+                        Business District, NY 10001<br/>
+                        billing@efm-portal.com
+                    </p>
+</div>
+<div class="space-y-1">
+<p class="font-label-md text-label-md text-on-surface-variant">BILL TO</p>
+<h3 class="font-label-lg text-label-lg text-primary">Global Tech Solutions Inc.</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        45 Innovation Way<br/>
+                        San Francisco, CA 94105<br/>
+                        accounts@globaltech.com
+                    </p>
+</div>
+</div>
+</div>
+<!-- Monthly Billing Details Table -->
+<div class="mb-12">
+<h4 class="font-label-lg text-label-lg text-primary mb-4 border-b border-outline-variant pb-2">Monthly Billing Details</h4>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="py-4 px-4 font-label-lg text-label-lg text-primary">Service Description</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-primary text-center">Qty / Seats</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-primary text-right">Unit Price</th>
+<th class="py-4 px-4 font-label-lg text-label-lg text-primary text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr>
+<td class="py-6 px-4">
+<p class="font-body-md text-body-md font-semibold text-primary">Corporate Wellness Program</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Tier 3 Premium Management - All access for staff</p>
+</td>
+<td class="py-6 px-4 text-center font-body-md text-body-md">1</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md">$2,500.00</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md font-semibold">$2,500.00</td>
+</tr>
+<tr>
+<td class="py-6 px-4">
+<p class="font-body-md text-body-md font-semibold text-primary">On-site Private Training Sessions</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">12 x 60-minute group sessions (October)</p>
+</td>
+<td class="py-6 px-4 text-center font-body-md text-body-md">12</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md">$150.00</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md font-semibold">$1,800.00</td>
+</tr>
+<tr>
+<td class="py-6 px-4">
+<p class="font-body-md text-body-md font-semibold text-primary">B2B Management Platform Access</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Dashboard and Analytics Seat Licenses</p>
+</td>
+<td class="py-6 px-4 text-center font-body-md text-body-md">50</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md">$12.00</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md font-semibold">$600.00</td>
+</tr>
+<tr>
+<td class="py-6 px-4">
+<p class="font-body-md text-body-md font-semibold text-primary">Nutritional Workshop</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Quarterly event - "Fueling Peak Performance"</p>
+</td>
+<td class="py-6 px-4 text-center font-body-md text-body-md">1</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md">$450.00</td>
+<td class="py-6 px-4 text-right font-body-md text-body-md font-semibold">$450.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Summary Section -->
+<div class="flex flex-col md:flex-row justify-between gap-12">
+<div class="flex-1 max-w-md">
+<div class="p-6 bg-surface-container-low rounded-lg space-y-4">
+<h5 class="font-label-lg text-label-lg text-primary">Payment Instructions</h5>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                        Please include invoice number <strong>INV/EFM/B2B/2024/0001</strong> in the transaction reference.
+                        All payments should be made via bank transfer within 14 days of the invoice date.
+                    </p>
+<div class="grid grid-cols-2 gap-2 text-body-sm">
+<span class="text-on-surface-variant">Bank:</span>
+<span class="font-semibold">Fidelity Trust Bank</span>
+<span class="text-on-surface-variant">Account Name:</span>
+<span class="font-semibold">EFM Services LLC</span>
+<span class="text-on-surface-variant">Account Number:</span>
+<span class="font-semibold">9876 5432 1098</span>
+<span class="text-on-surface-variant">SWIFT:</span>
+<span class="font-semibold">EFMBUS33</span>
+</div>
+</div>
+</div>
+<div class="w-full md:w-80 space-y-3">
+<div class="flex justify-between items-center py-2">
+<span class="font-body-md text-body-md text-on-surface-variant">Subtotal</span>
+<span class="font-body-md text-body-md font-semibold">$5,350.00</span>
+</div>
+<div class="flex justify-between items-center py-2">
+<span class="font-body-md text-body-md text-on-surface-variant">Tax (VAT 10%)</span>
+<span class="font-body-md text-body-md font-semibold">$535.00</span>
+</div>
+<div class="flex justify-between items-center py-2 border-b border-outline-variant pb-4">
+<span class="font-body-md text-body-md text-on-surface-variant">Discounts (Prepaid)</span>
+<span class="font-body-md text-body-md font-semibold text-secondary">-$200.00</span>
+</div>
+<div class="flex justify-between items-center pt-4">
+<span class="font-headline-sm text-headline-sm text-primary">Total Due</span>
+<span class="font-headline-sm text-headline-sm text-primary">$5,685.00</span>
+</div>
+<div class="mt-8 flex items-center justify-center p-4 border-2 border-dashed border-outline-variant rounded-lg bg-surface-bright">
+<div class="text-center">
+<span class="material-symbols-outlined text-secondary text-headline-md mb-2">verified</span>
+<p class="font-label-md text-label-md uppercase text-on-surface-variant">Status</p>
+<p class="font-headline-sm text-headline-sm text-secondary">PENDING</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Branding -->
+<div class="mt-20 pt-8 border-t border-outline-variant flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Thank you for choosing EFM for your corporate wellness needs. <br class="hidden md:block"/>
+                Questions? Contact our support team at help@efm-portal.com
+            </p>
+<div class="flex gap-4">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-body-sm">language</span>
+</div>
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined text-body-sm">mail</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Spacing for Web View -->
+<footer class="mt-12 text-on-surface-variant font-label-md text-label-md no-print">
+        © 2024 Elite Fitness Management. All rights reserved.
+    </footer>
+<script>
+        // Micro-interaction for hover states and printing log
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if(this.textContent.includes('Download')) {
+                    console.log('Generating PDF for INV/EFM/B2B/2024/0001...');
+                    // In a real app, trigger PDF generation
+                }
+            });
+        });
+
+        // Simple animation on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const card = document.querySelector('.invoice-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease-out';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body></html>

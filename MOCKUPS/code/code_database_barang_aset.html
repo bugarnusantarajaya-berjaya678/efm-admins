@@ -1,0 +1,417 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FitManage - Database Barang/Aset</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#002142",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-container": "#f1edf1",
+                        "on-secondary-fixed": "#400100",
+                        "background": "#fcf8fc",
+                        "secondary-container": "#fd6e58",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#ebe7eb",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "on-surface-variant": "#47464e",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-tint": "#5c5a85",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffdad4",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#1c1b1e",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "surface-bright": "#fcf8fc",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "surface": "#fcf8fc",
+                        "on-background": "#1c1b1e",
+                        "inverse-surface": "#313033",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "on-tertiary-fixed": "#001c39",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#06042c",
+                        "primary-container": "#1e1c43",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "surface-dim": "#dcd9dd",
+                        "outline": "#78767f",
+                        "on-secondary-container": "#6c0300",
+                        "secondary": "#ac3323",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6f2f6",
+                        "on-tertiary-container": "#438adc",
+                        "on-primary-fixed-variant": "#44426b",
+                        "tertiary": "#000919",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "surface-variant": "#e5e1e5",
+                        "surface-container-highest": "#e5e1e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "32px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "label-lg": ["Poppins"]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .asset-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .asset-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(30, 28, 67, 0.1);
+        }
+    </style>
+</head>
+<body class="flex min-h-screen text-on-surface">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full w-[260px] shadow-md flex flex-col py-6 z-50 bg-primary-container" style="background-color: #1e1c43;">
+<div class="px-6 mb-8">
+<h1 class="text-headline-md font-headline-md font-bold text-on-primary">FitManage</h1>
+<p class="text-body-sm text-on-primary-container opacity-80">Admin Portal</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-body-md text-body-md">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-body-md text-body-md">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-body-md text-body-md">Event Management</span>
+</a>
+<!-- Active State: Operational -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary bg-secondary text-on-secondary" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Operational</span>
+</a>
+</nav>
+<div class="mt-auto px-4 space-y-1">
+<button class="w-full mb-6 flex items-center justify-center gap-2 bg-secondary text-on-secondary px-4 py-3 rounded-lg font-label-lg text-label-lg uppercase tracking-wider active:scale-[0.98] transition-all">
+<span class="material-symbols-outlined">add</span>
+<span class="">New Entry</span>
+</button>
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary-container transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md text-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[260px] flex-grow flex flex-col min-h-screen">
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-margin-desktop z-40 shadow-sm">
+<div class="flex items-center flex-grow max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-full focus:ring-2 focus:ring-primary text-body-sm outline-none" placeholder="Search database..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 border-r border-outline-variant pr-6">
+<button class="relative text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:bg-surface-container-high p-2 rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="flex items-center gap-3 pl-2">
+<div class="text-right hidden sm:block">
+<p class="font-label-lg text-label-lg text-primary leading-tight">Admin User</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-tighter">System Administrator</p>
+</div>
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full border-2 border-primary-fixed-dim object-cover" data-alt="A professional headshot of a middle-aged man with short hair and a clean-shaven face, wearing a sharp navy blue suit and a white shirt. The background is a soft, blurred corporate office setting with cool, daylight illumination. The lighting is flattering and high-key, emphasizing a clean, modern, and trustworthy aesthetic consistent with professional management software." src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6UVv8xinAkRaBz-m-UWsq8m6BptN9weDBdGeTpQ8OSa0DKRL_2B7C6NK-eMAPptS3rHSsV8JLuuHOLpevfd791ZoNK-BUyCMG2Q9eJtaYOoM_pcDdS0N4Yk_qXu52V2D3wgegeiG37UVma0nJ76-ldQHhrcaMe8pHLU6TybECIj-KELdhXPDH_XWseR1hpvYKxPdlKql8TPFdtSQ7sjpVS8kqAZFT4Xq54pnJQNdxzW5EJG7Gq1AsjfdrfOHI6TNUR1rH3vbsS6hQ">
+</div>
+</div>
+</header>
+<!-- Canvas Area -->
+<div class="mt-16 p-margin-desktop flex-grow bg-[#F8F9FA]">
+<!-- Page Header & Action -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Database Barang/Aset</h2>
+<nav class="flex text-on-surface-variant text-label-md mt-1">
+<span class="">Operational</span>
+<span class="mx-2">/</span>
+<span class="text-secondary font-semibold">Asset Database</span>
+</nav>
+</div>
+<button class="flex items-center gap-2 bg-secondary text-on-secondary px-6 py-3 rounded-lg font-label-lg text-label-lg uppercase tracking-widest shadow-md hover:brightness-110 active:scale-95 transition-all">
+<span class="material-symbols-outlined">add_box</span>
+<span class="">Add New Asset</span>
+</button>
+</div>
+<!-- Bento Filter Bar -->
+<div class="grid grid-cols-12 gap-gutter mb-gutter">
+<div class="col-span-12 lg:col-span-12 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex flex-wrap items-center gap-gutter">
+<div class="flex-grow min-w-[200px]">
+<label class="block text-label-md text-on-surface-variant mb-2">Filter by Kategori</label>
+<select class="w-full border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-primary">
+<option>All Categories</option>
+<option>Kardio</option>
+<option>Beban</option>
+<option>Yoga &amp; Mat</option>
+<option>Elektronik</option>
+<option>Furniture</option>
+</select>
+</div>
+<div class="flex-grow min-w-[200px]">
+<label class="block text-label-md text-on-surface-variant mb-2">Filter by Kondisi</label>
+<select class="w-full border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-primary">
+<option>All Conditions</option>
+<option>Baik</option>
+<option>Rusak Ringan</option>
+<option>Rusak Berat</option>
+</select>
+</div>
+<div class="flex-grow min-w-[200px]">
+<label class="block text-label-md text-on-surface-variant mb-2">Filter by Lokasi</label>
+<select class="w-full border-outline-variant rounded-lg text-body-sm focus:border-primary focus:ring-primary">
+<option>All Locations</option>
+<option>Main Hall</option>
+<option>Studio 1</option>
+<option>Studio 2</option>
+<option>Weight Area</option>
+</select>
+</div>
+<div class="flex items-end self-end h-[68px]">
+<button class="bg-surface-container-high text-on-surface px-6 py-2.5 rounded-lg border border-outline-variant font-label-lg text-label-lg hover:bg-surface-variant transition-all">
+                            Reset Filters
+                        </button>
+</div>
+</div>
+</div>
+<!-- Data Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high">
+<tr>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">ID</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">Nama Barang</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">Kategori</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase text-center">Jumlah</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">Kondisi</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">Lokasi</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase">Tanggal Masuk</th>
+<th class="px-6 py-4 font-label-lg text-label-lg text-on-surface-variant border-b border-outline-variant uppercase text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-label-md text-label-md text-on-surface-variant">AST-001</td>
+<td class="px-6 py-5 font-label-lg text-label-lg text-primary">Treadmill Pro-X10</td>
+<td class="px-6 py-5"><span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-[12px] font-medium">Kardio</span></td>
+<td class="px-6 py-5 text-center font-body-sm text-body-sm">8 Unit</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-green-100 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                        Baik
+                                    </span>
+</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">Main Hall</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">12 Jan 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit_square</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-label-md text-label-md text-on-surface-variant">AST-042</td>
+<td class="px-6 py-5 font-label-lg text-label-lg text-primary">Dumbbell Set 20kg</td>
+<td class="px-6 py-5"><span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-[12px] font-medium">Beban</span></td>
+<td class="px-6 py-5 text-center font-body-sm text-body-sm">12 Unit</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-orange-100 text-orange-700">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                                        Rusak Ringan
+                                    </span>
+</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">Weight Area</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">05 Feb 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit_square</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-label-md text-label-md text-on-surface-variant">AST-089</td>
+<td class="px-6 py-5 font-label-lg text-label-lg text-primary">Air Conditioner 2PK</td>
+<td class="px-6 py-5"><span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-[12px] font-medium">Elektronik</span></td>
+<td class="px-6 py-5 text-center font-body-sm text-body-sm">2 Unit</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-red-100 text-red-700">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                        Rusak Berat
+                                    </span>
+</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">Studio 1</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">18 Nov 2023</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit_square</span></button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5 font-label-md text-label-md text-on-surface-variant">AST-105</td>
+<td class="px-6 py-5 font-label-lg text-label-lg text-primary">Yoga Mat Premium</td>
+<td class="px-6 py-5"><span class="px-3 py-1 bg-primary-fixed text-on-primary-fixed-variant rounded-full text-[12px] font-medium">Yoga &amp; Mat</span></td>
+<td class="px-6 py-5 text-center font-body-sm text-body-sm">25 Unit</td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold bg-green-100 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                        Baik
+                                    </span>
+</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">Studio 2</td>
+<td class="px-6 py-5 font-body-sm text-body-sm">22 Feb 2024</td>
+<td class="px-6 py-5 text-right">
+<button class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined">edit_square</span></button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination Footer -->
+<div class="px-6 py-4 bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<p class="text-body-sm text-on-surface-variant">Showing <span class="font-semibold">4</span> of <span class="font-semibold">124</span> assets</p>
+<div class="flex gap-2">
+<button class="p-2 rounded-lg hover:bg-surface-container-high disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-on-primary rounded-lg font-label-md text-label-md">1</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded-lg font-label-md text-label-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container-high rounded-lg font-label-md text-label-md">3</button>
+<button class="p-2 rounded-lg hover:bg-surface-container-high">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Summary Bento Section -->
+<div class="grid grid-cols-12 gap-gutter mt-gutter">
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h4 class="font-label-lg text-label-lg text-on-surface-variant uppercase">Aset Total</h4>
+<span class="material-symbols-outlined text-primary">inventory_2</span>
+</div>
+<p class="text-display-lg font-display-lg text-primary">124</p>
+<div class="mt-4 flex items-center gap-2 text-body-sm text-green-600">
+<span class="material-symbols-outlined text-[16px]">trending_up</span>
+<span class="">+12 units since last month</span>
+</div>
+</div>
+<div class="col-span-12 md:col-span-8 bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm relative overflow-hidden">
+<div class="flex items-center justify-between mb-6">
+<h4 class="font-label-lg text-label-lg text-on-surface-variant uppercase">Kondisi Aset Global</h4>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-green-500"></span>
+<span class="text-label-md text-on-surface-variant">Baik</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-orange-500"></span>
+<span class="text-label-md text-on-surface-variant">R. Ringan</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-red-500"></span>
+<span class="text-label-md text-on-surface-variant">R. Berat</span>
+</div>
+</div>
+</div>
+<div class="relative h-24 w-full bg-surface-container-low rounded-full overflow-hidden flex">
+<div class="h-full bg-green-500" style="width: 75%"></div>
+<div class="h-full bg-orange-500" style="width: 15%"></div>
+<div class="h-full bg-red-500" style="width: 10%"></div>
+</div>
+<div class="mt-4 grid grid-cols-3 text-center">
+<div>
+<p class="text-headline-sm font-headline-sm text-primary">93</p>
+<p class="text-label-md text-on-surface-variant">Units</p>
+</div>
+<div>
+<p class="text-headline-sm font-headline-sm text-primary">19</p>
+<p class="text-label-md text-on-surface-variant">Units</p>
+</div>
+<div>
+<p class="text-headline-sm font-headline-sm text-primary">12</p>
+<p class="text-label-md text-on-surface-variant">Units</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple interactivity for demonstration
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('click', () => {
+                console.log('Row clicked');
+            });
+        });
+    </script>
+
+
+</body></html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FitEvents Admin - Leads Event</title>
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c5c1f3",
+                        "outline": "#78767f",
+                        "surface-variant": "#e5e1e5",
+                        "primary": "#06042c",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1e1c43",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "secondary-container": "#fd6e58",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "on-background": "#1c1b1e",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-bright": "#fcf8fc",
+                        "tertiary": "#000919",
+                        "surface": "#fcf8fc",
+                        "surface-container-low": "#f6f2f6",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-container-high": "#ebe7eb",
+                        "on-surface-variant": "#47464e",
+                        "on-primary-fixed-variant": "#44426b",
+                        "secondary": "#ac3323",
+                        "primary-fixed": "#e3dfff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary-fixed": "#001c39",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "inverse-surface": "#313033",
+                        "on-surface": "#1c1b1e",
+                        "on-primary": "#ffffff",
+                        "background": "#fcf8fc",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "on-secondary-container": "#6c0300",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f1edf1",
+                        "tertiary-container": "#002142",
+                        "surface-container-highest": "#e5e1e5",
+                        "surface-dim": "#dcd9dd",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "headline-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined[data-weight="fill"] {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for tables */
+        .table-scroll::-webkit-scrollbar {
+            height: 6px;
+            width: 6px;
+        }
+        .table-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .table-scroll::-webkit-scrollbar-thumb {
+            background-color: #c8c5cf;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen overflow-x-hidden flex">
+<!-- Mobile Nav Toggle -->
+<div class="md:hidden fixed top-0 left-0 w-full bg-surface border-b border-outline-variant z-50 px-margin-mobile py-4 flex justify-between items-center">
+<h1 class="font-headline-sm text-headline-sm font-bold text-primary">FitEvents</h1>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors" id="mobile-menu-btn">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</div>
+<!-- SideNavBar (from JSON) -->
+<nav class="fixed left-0 top-0 h-full w-[260px] dark:bg-primary-container border-r border-outline-variant dark:border-outline shadow-sm z-40 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out flex flex-col py-6 bg-[#1E1C43]" id="sidebar">
+<!-- Header -->
+<div class="px-6 mb-8 flex items-center gap-3">
+<img alt="User Profile Avatar" class="w-10 h-10 rounded-full border-2 border-outline-variant object-cover" data-alt="A professional headshot of a person looking confident, suitable for a corporate profile avatar. The background is clean and neutral to emphasize the subject. High quality, crisp lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCTmC3jCV5iQNDSbECWkZTyMqc5A1lJftumiRPYaFW0ABBOnyRfZnBgCiekD8MEv-q8bS_srmSiPJwtoG1qq0lahEU34Yov8TXjFKeYflLAR2JRLYd1ysBXxtpIMZU8inwPB0b-9iiQX8biIUisxXnjM5shxappUKQMSYs4F4xjE2DpR1BbyoPLCUGCwZvBTA2E_U3LbsNwry67aurOJOZxHBflr-fIXXAFNQoQBKqrh4rBF9tpzYlHVj59z2kcvH5IlWdMabGBGu3q">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-primary font-bold">FitEvents Admin</h2>
+<p class="font-label-md text-label-md text-on-primary-container">Management Portal</p>
+</div>
+</div>
+<!-- Create CTA -->
+<div class="px-6 mb-6">
+<button class="w-full bg-[#E05945] hover:bg-secondary-container text-white font-label-lg text-label-lg py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors shadow-sm hover:shadow-md">
+<span class="material-symbols-outlined">add</span>
+                Create Event
+            </button>
+</div>
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto px-2 space-y-1">
+<!-- Inactive -->
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<!-- Active (Event Management intent matches Leads Event) -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary text-on-primary font-semibold mx-2 rounded-r-lg bg-white/10" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg mx-2" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</div>
+<!-- Footer Links -->
+<div class="px-4 mt-auto pt-4 border-t border-primary/20 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-label-lg text-label-lg">Help Center</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors hover:bg-primary/50 rounded-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg">Logout</span>
+</a>
+</div>
+</nav>
+<!-- Overlay for mobile sidebar -->
+<div class="fixed inset-0 bg-primary/50 z-30 hidden md:hidden transition-opacity" id="sidebar-overlay"></div>
+<!-- Main Content Canvas -->
+<main class="flex-1 w-full md:ml-[260px] min-h-screen flex flex-col pt-[72px] md:pt-0">
+<!-- TopNavBar (from JSON) -->
+<header class="hidden md:flex fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface dark:bg-surface-dim border-b border-outline-variant shadow-sm z-30 justify-between items-center px-margin-desktop">
+<div class="flex items-center gap-8">
+<div class="font-headline-md text-headline-md font-bold text-primary dark:text-primary-fixed-dim">FitEvents Portal</div>
+<nav class="flex gap-6 h-16 items-center">
+<a class="text-secondary font-semibold border-b-2 border-secondary h-full flex items-center px-1" href="#">Overview</a>
+<a class="text-on-surface-variant hover:text-primary font-label-md text-label-md h-full flex items-center px-1 transition-colors" href="#">Analytics</a>
+<a class="text-on-surface-variant hover:text-primary font-label-md text-label-md h-full flex items-center px-1 transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<!-- Search bar on left of actions -->
+<div class="relative hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 transition-all placeholder:text-outline" placeholder="Search events..." type="text">
+</div>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-6">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+<button class="ml-2 bg-[#1E1C43] hover:bg-primary text-white font-label-md text-label-md py-2 px-4 rounded-lg transition-colors shadow-sm">
+                        New Booking
+                    </button>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="flex-1 p-margin-mobile md:p-margin-desktop mt-0 md:mt-16 bg-background max-w-container-max mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+<div>
+<h1 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Leads Event</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">Manage and track your corporate event pipeline.</p>
+</div>
+<button class="bg-[#E05945] hover:bg-secondary-container text-white font-label-lg text-label-lg py-2.5 px-5 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm hover:shadow-md active:scale-95 whitespace-nowrap">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    New Lead Event
+                </button>
+</div>
+<!-- Pipeline Summary / Metric Cards (Bento Style inspiration) -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-[#c8c5cf]">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">New</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">12</span>
+<span class="material-symbols-outlined text-outline-variant">fiber_new</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-[#a4c9ff]">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Brief</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">8</span>
+<span class="material-symbols-outlined text-[#a4c9ff]">description</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-[#438adc]">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Proposal</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">5</span>
+<span class="material-symbols-outlined text-[#438adc]">draw</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-[#1e1c43]">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Presentasi</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">3</span>
+<span class="material-symbols-outlined text-[#1e1c43]">co_present</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-[#34d399]">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Closing</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">14</span>
+<span class="material-symbols-outlined text-[#34d399]">task_alt</span>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-4 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow cursor-pointer border-t-4 border-t-error">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Gagal</span>
+<div class="mt-2 flex items-end justify-between">
+<span class="font-headline-md text-headline-md text-primary">2</span>
+<span class="material-symbols-outlined text-error">cancel</span>
+</div>
+</div>
+</div>
+<!-- Main Data Table Card -->
+<div class="bg-surface rounded-xl border border-outline-variant shadow-sm flex flex-col bg-white">
+<!-- Table Controls -->
+<div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-container-lowest rounded-t-xl">
+<div class="relative w-full sm:w-72">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full pl-9 pr-4 py-2 border border-outline-variant rounded-lg font-body-sm text-body-sm focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] outline-none transition-shadow bg-surface" placeholder="Search leads..." type="text">
+</div>
+<div class="flex gap-2 w-full sm:w-auto">
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                            Filter
+                        </button>
+<button class="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 border border-outline-variant rounded-lg hover:bg-surface-container-high transition-colors font-label-md text-label-md text-on-surface-variant">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<!-- Table Wrapper for scrolling -->
+<div class="w-full overflow-x-auto table-scroll">
+<table class="w-full text-left border-collapse whitespace-nowrap min-w-[1000px]">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">ID</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Nama Brand/Instansi</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">PIC Klien</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">No HP</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Jenis Event</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Estimasi Nilai</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Stage</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold">Tanggal Follow Up</th>
+<th class="py-3 px-4 font-label-lg text-label-lg text-on-surface-variant font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">#LD-001</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-fixed-dim text-[#1E1C43] flex items-center justify-center font-bold font-label-sm">TB</div>
+<span class="font-label-lg text-label-lg text-primary">TechBank Indonesia</span>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface">Budi Santoso</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">0812-3456-7890</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-fixed text-on-tertiary-fixed">
+                                        Corporate
+                                    </span>
+</td>
+<td class="py-3 px-4 font-label-lg text-label-lg text-primary">Rp 150.000.000</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border border-[#438adc] text-[#004883] bg-[#f0f6ff]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#438adc]"></span>
+                                        Proposal
+                                    </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">24 Oct 2023</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-on-surface-variant hover:text-[#1E1C43] rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">#LD-002</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-bold font-label-sm">KP</div>
+<span class="font-label-lg text-label-lg text-primary">Kementerian Pariwisata</span>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface">Siti Rahma</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">0813-9876-5432</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-secondary-fixed-dim text-on-secondary-fixed-variant">
+                                        Government
+                                    </span>
+</td>
+<td class="py-3 px-4 font-label-lg text-label-lg text-primary">Rp 450.000.000</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border border-[#1e1c43] text-[#1e1c43] bg-[#1e1c43]/5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#1e1c43]"></span>
+                                        Presentasi
+                                    </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-error font-medium">Today</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-on-surface-variant hover:text-[#1E1C43] rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">#LD-003</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold font-label-sm">JS</div>
+<span class="font-label-lg text-label-lg text-primary">Jakarta Runners Society</span>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface">Andi Wijaya</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">0856-1122-3344</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-surface-container-highest text-on-surface-variant">
+                                        Community
+                                    </span>
+</td>
+<td class="py-3 px-4 font-label-lg text-label-lg text-primary">Rp 25.000.000</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border border-[#c8c5cf] text-on-surface-variant bg-surface-container-low">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                        New
+                                    </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">28 Oct 2023</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-on-surface-variant hover:text-[#1E1C43] rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-lowest transition-colors group">
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">#LD-004</td>
+<td class="py-3 px-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-fixed-dim text-[#1E1C43] flex items-center justify-center font-bold font-label-sm">MF</div>
+<span class="font-label-lg text-label-lg text-primary">MegaFit Gym</span>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface">Diana Kusuma</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">0877-5544-6633</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-tertiary-fixed text-on-tertiary-fixed">
+                                        Corporate
+                                    </span>
+</td>
+<td class="py-3 px-4 font-label-lg text-label-lg text-primary">Rp 85.000.000</td>
+<td class="py-3 px-4">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border border-[#34d399] text-[#047857] bg-[#ecfdf5]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#34d399]"></span>
+                                        Closing
+                                    </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant">-</td>
+<td class="py-3 px-4 text-right">
+<button class="p-1.5 text-on-surface-variant hover:text-[#1E1C43] rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="p-4 border-t border-outline-variant flex items-center justify-between bg-surface-container-lowest rounded-b-xl">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Showing 1 to 4 of 42 entries</span>
+<div class="flex gap-1">
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-outline-variant disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded bg-[#1E1C43] text-white font-label-sm">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-sm">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors font-label-sm">3</button>
+<button class="w-8 h-8 flex items-center justify-center rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<div class="h-12 w-full"></div> <!-- Bottom padding -->
+</div>
+</main>
+<script>
+        // Simple mobile menu toggle
+        const mobileBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        function toggleMenu() {
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+                // slight delay to allow display:block to apply before opacity transition
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        mobileBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+    </script>
+
+
+</body></html>

@@ -1,0 +1,465 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Database Mitra | FitManage Admin Portal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #fcf8fc;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e5e1e5;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-primary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "tertiary-container": "#002142",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-container": "#f1edf1",
+                        "on-secondary-fixed": "#400100",
+                        "background": "#fcf8fc",
+                        "secondary-container": "#fd6e58",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary": "#ffffff",
+                        "surface-container-high": "#ebe7eb",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "on-surface-variant": "#47464e",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-tint": "#5c5a85",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed": "#ffdad4",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#1c1b1e",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "surface-bright": "#fcf8fc",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "surface": "#fcf8fc",
+                        "on-background": "#1c1b1e",
+                        "inverse-surface": "#313033",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "on-tertiary-fixed": "#001c39",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#06042c",
+                        "primary-container": "#1e1c43",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "surface-dim": "#dcd9dd",
+                        "outline": "#78767f",
+                        "on-secondary-container": "#6c0300",
+                        "secondary": "#ac3323",
+                        "on-error": "#ffffff",
+                        "surface-container-low": "#f6f2f6",
+                        "on-tertiary-container": "#438adc",
+                        "on-primary-fixed-variant": "#44426b",
+                        "tertiary": "#000919",
+                        "on-secondary": "#ffffff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "surface-variant": "#e5e1e5",
+                        "surface-container-highest": "#e5e1e5"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "unit": "8px",
+                        "margin-mobile": "16px",
+                        "gutter": "24px",
+                        "container-max": "1440px",
+                        "margin-desktop": "32px",
+                        "sidebar-width": "260px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "label-md": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface antialiased">
+<!-- SIDEBAR -->
+<aside class="fixed left-0 top-0 h-full w-[260px] bg-primary-container shadow-md flex flex-col py-6 z-50">
+<div class="px-6 mb-10">
+<h1 class="text-headline-md font-bold text-on-primary tracking-tight">FitManage</h1>
+<p class="text-label-md text-on-primary-fixed-variant opacity-70">Admin Portal</p>
+</div>
+<nav class="flex-grow space-y-1">
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-body-md">Private Training</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">business</span>
+<span class="font-body-md">B2B Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-body-md">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 border-l-4 border-secondary bg-white/10 text-on-primary font-semibold" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md">Operational</span>
+</a>
+</nav>
+<div class="px-4 mt-auto space-y-1">
+<button class="w-full mb-6 bg-secondary text-on-primary font-label-lg py-3 rounded-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-lg flex items-center justify-center gap-2">
+<span class="material-symbols-outlined">add</span>
+                New Entry
+            </button>
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-6 py-3 text-surface-variant hover:text-on-primary-fixed hover:bg-primary/20 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-body-md">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TOP BAR -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant flex justify-between items-center px-margin-desktop z-40">
+<div class="flex items-center bg-surface-container-low px-4 py-2 rounded-full w-96">
+<span class="material-symbols-outlined text-outline text-lg">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-sm w-full placeholder:text-on-surface-variant" placeholder="Search database..." type="text">
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="relative p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-all active:scale-95">
+<span class="material-symbols-outlined">help</span>
+</button>
+</div>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="font-label-lg text-primary leading-none">Admin User</p>
+<p class="text-xs text-on-surface-variant">Super Administrator</p>
+</div>
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full object-cover border-2 border-outline-variant" data-alt="A professional headshot of a corporate administrator in a modern office setting. The lighting is crisp and neutral, reflecting a high-end management environment. He wears a sharp charcoal suit and has a confident, reliable expression. The background is softly blurred with hints of glass and steel architectural elements." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEKPp52qH0XOBAWOcjILbxuDFEPvvjPs6zWDXDCKSHAJ3ychX_jMbUKVmb2HrdFBbytpuEsWu7oFhGISKWOl5q-Te3Yf6k7GzP6t1j7aW9Tfwl9z-b63nZ9Cf3O9p8AB_hwpio17syrFkGB3zBmyhepbo_di0qixqqswS_SaTMaLd186Sjm8wGN5fCe-t1oia2UIafmwGDPTubw0RvLyJ4HRNGy0d4AefyI60jNrVE2apm3aoBLyj7NOioQOWa8Ky6YSYDHXGPF4Hv">
+</div>
+</div>
+</header>
+<!-- MAIN CONTENT -->
+<main class="ml-[260px] pt-16 min-h-screen p-margin-desktop">
+<div class="max-w-container-max mx-auto">
+<!-- Page Header Section -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<nav class="flex text-on-surface-variant text-label-md mb-2 gap-2 items-center">
+<span class="">Operational</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-secondary font-medium">Database Mitra</span>
+</nav>
+<h2 class="text-headline-lg font-headline-lg text-primary">Database Mitra</h2>
+<p class="text-body-md text-on-surface-variant">Kelola vendor, partner, dan supplier operasional EFM</p>
+</div>
+<button class="bg-secondary text-on-primary px-6 py-3 rounded-lg font-label-lg flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-md">
+<span class="material-symbols-outlined">add</span>
+                    + Add New Mitra
+                </button>
+</div>
+<!-- Dashboard Stats Summary (Bento Style) -->
+<div class="grid grid-cols-4 gap-gutter mb-8">
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-primary-fixed rounded-lg flex items-center justify-center text-primary">
+<span class="material-symbols-outlined">groups</span>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Total Mitra</p>
+<p class="text-headline-sm text-primary">124</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-green-700">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Aktif</p>
+<p class="text-headline-sm text-primary">112</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-orange-700">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Sedang Review</p>
+<p class="text-headline-sm text-primary">8</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm flex items-center gap-4">
+<div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center text-red-700">
+<span class="material-symbols-outlined">block</span>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Nonaktif</p>
+<p class="text-headline-sm text-primary">4</p>
+</div>
+</div>
+</div>
+<!-- Table Card -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center bg-surface-container-low">
+<div class="flex items-center gap-4">
+<h3 class="text-label-lg text-primary">MITRA LIST</h3>
+<div class="flex gap-2">
+<button class="bg-white px-3 py-1 text-xs font-medium border border-outline-variant rounded-full text-on-surface hover:bg-surface-variant transition-colors">All Types</button>
+<button class="bg-white px-3 py-1 text-xs font-medium border border-outline-variant rounded-full text-on-surface hover:bg-surface-variant transition-colors">Vendor</button>
+<button class="bg-white px-3 py-1 text-xs font-medium border border-outline-variant rounded-full text-on-surface hover:bg-surface-variant transition-colors">Partner</button>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 font-label-md">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                        Filter &amp; Sort
+                    </button>
+</div>
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">ID</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">Nama Mitra</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">Jenis</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">PIC Mitra</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">No HP</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant">Status</th>
+<th class="px-6 py-4 font-label-lg text-on-surface-variant uppercase tracking-wider text-[11px] border-b border-outline-variant text-right">Aksi</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/30">
+<!-- Row 1 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-label-lg text-primary text-sm">#MTR-2024-001</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center font-bold text-xs text-primary">PT</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Pangan Terpadu Sejahtera</p>
+<p class="text-xs text-on-surface-variant">Catering &amp; Nutrition</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-tertiary-fixed text-on-tertiary-fixed-variant text-[11px] font-bold px-2 py-0.5 rounded uppercase">Supplier</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Budi Santoso</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">+62 812-3456-7890</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-green-600 font-label-md text-xs">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant group-hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-label-lg text-primary text-sm">#MTR-2024-002</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-fixed flex items-center justify-center font-bold text-xs text-secondary">GY</div>
+<div>
+<p class="font-body-md font-semibold text-primary">GymEquip Solutions</p>
+<p class="text-xs text-on-surface-variant">Maintenance &amp; Hardware</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-surface-variant text-on-surface-variant text-[11px] font-bold px-2 py-0.5 rounded uppercase">Vendor</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Anita Wijaya</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">+62 811-9988-7766</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-green-600 font-label-md text-xs">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant group-hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-label-lg text-primary text-sm">#MTR-2024-003</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-primary-container flex items-center justify-center font-bold text-xs text-on-primary">FA</div>
+<div>
+<p class="font-body-md font-semibold text-primary">FitApp Digital Partner</p>
+<p class="text-xs text-on-surface-variant">IT &amp; Software Services</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded uppercase">Partner</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Rian Pratama</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">+62 856-4433-2211</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-on-surface-variant font-label-md text-xs">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                                        Nonaktif
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant group-hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="hover:bg-surface-container-low/30 transition-colors group">
+<td class="px-6 py-4 font-label-lg text-primary text-sm">#MTR-2024-004</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-orange-100 flex items-center justify-center font-bold text-xs text-orange-700">MS</div>
+<div>
+<p class="font-body-md font-semibold text-primary">Medika Sehat Prima</p>
+<p class="text-xs text-on-surface-variant">Health &amp; Insurance</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded uppercase">Partner</span>
+</td>
+<td class="px-6 py-4 font-body-sm text-on-surface">Siska Maharani</td>
+<td class="px-6 py-4 font-body-sm text-on-surface-variant">+62 813-1122-3344</td>
+<td class="px-6 py-4">
+<span class="flex items-center gap-1.5 text-green-600 font-label-md text-xs">
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                        Aktif
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded transition-colors text-on-surface-variant group-hover:text-primary">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<p class="text-body-sm text-on-surface-variant">Showing 4 of 124 mitras</p>
+<div class="flex gap-2">
+<button class="p-2 border border-outline-variant rounded hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="px-3 py-1 bg-primary text-on-primary font-label-md rounded shadow-sm">1</button>
+<button class="px-3 py-1 bg-white border border-outline-variant font-label-md rounded hover:bg-surface-variant transition-colors">2</button>
+<button class="px-3 py-1 bg-white border border-outline-variant font-label-md rounded hover:bg-surface-variant transition-colors">3</button>
+<button class="p-2 border border-outline-variant rounded hover:bg-white transition-colors">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Contextual Help / Tips Section -->
+<div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-gutter">
+<div class="bg-primary-container p-6 rounded-xl border border-primary text-on-primary flex gap-4">
+<span class="material-symbols-outlined text-secondary text-3xl">info</span>
+<div>
+<h4 class="font-headline-sm mb-1">Panduan Pengelolaan Mitra</h4>
+<p class="text-body-sm opacity-80 mb-4">Pastikan data PIC selalu terupdate untuk memudahkan koordinasi operasional lapangan.</p>
+<a class="text-secondary font-label-lg hover:underline flex items-center gap-1" href="#">
+                            Download SOP Kerjasama
+                            <span class="material-symbols-outlined text-sm">open_in_new</span>
+</a>
+</div>
+</div>
+<div class="bg-surface-container-highest p-6 rounded-xl border border-outline-variant flex gap-4">
+<span class="material-symbols-outlined text-primary text-3xl">history</span>
+<div class="flex-grow">
+<h4 class="font-headline-sm mb-1 text-primary">Aktivitas Terbaru</h4>
+<ul class="space-y-3 mt-4">
+<li class="flex justify-between items-start text-xs">
+<span class="text-on-surface-variant">#MTR-2024-001 updated status to <b>Aktif</b></span>
+<span class="text-outline">2h ago</span>
+</li>
+<li class="flex justify-between items-start text-xs">
+<span class="text-on-surface-variant">Added new partner <b>Medika Sehat Prima</b></span>
+<span class="text-outline">5h ago</span>
+</li>
+<li class="flex justify-between items-start text-xs">
+<span class="text-on-surface-variant">Contract renewal alert: <b>Pangan Terpadu</b></span>
+<span class="text-secondary font-semibold">Today</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for hover states
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.96)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+
+
+</body></html>

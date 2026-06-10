@@ -1,0 +1,649 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EFM Event Tracker</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "primary-fixed-dim": "#c5c1f3",
+                        "outline": "#78767f",
+                        "surface-variant": "#e5e1e5",
+                        "primary": "#06042c",
+                        "on-secondary": "#ffffff",
+                        "primary-container": "#1e1c43",
+                        "on-primary-fixed": "#18163d",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "secondary-container": "#fd6e58",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "on-background": "#1c1b1e",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "on-error-container": "#93000a",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-container": "#438adc",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-bright": "#fcf8fc",
+                        "tertiary": "#000919",
+                        "surface": "#fcf8fc",
+                        "surface-container-low": "#f6f2f6",
+                        "secondary-fixed": "#ffdad4",
+                        "on-secondary-fixed": "#400100",
+                        "inverse-primary": "#c5c1f3",
+                        "surface-container-high": "#ebe7eb",
+                        "on-surface-variant": "#47464e",
+                        "on-primary-fixed-variant": "#44426b",
+                        "secondary": "#ac3323",
+                        "primary-fixed": "#e3dfff",
+                        "tertiary-fixed": "#d4e3ff",
+                        "outline-variant": "#c8c5cf",
+                        "on-tertiary-fixed": "#001c39",
+                        "error": "#ba1a1a",
+                        "on-primary-container": "#8684b1",
+                        "inverse-surface": "#313033",
+                        "on-surface": "#1c1b1e",
+                        "on-primary": "#ffffff",
+                        "background": "#fcf8fc",
+                        "on-tertiary": "#ffffff",
+                        "surface-tint": "#5c5a85",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "on-secondary-container": "#6c0300",
+                        "error-container": "#ffdad6",
+                        "surface-container": "#f1edf1",
+                        "tertiary-container": "#002142",
+                        "surface-container-highest": "#e5e1e5",
+                        "surface-dim": "#dcd9dd",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "margin-mobile": "16px",
+                        "margin-desktop": "32px",
+                        "gutter": "24px",
+                        "unit": "8px",
+                        "container-max": "1440px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "headline-sm": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "headline-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["48px", { "lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "label-md": ["12px", { "lineHeight": "16px", "fontWeight": "500" }],
+                        "headline-sm": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #dcd9dd; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #c8c5cf; 
+        }
+
+        /* Checkbox styling */
+        .efm-checkbox {
+            appearance: none;
+            background-color: #ffffff;
+            margin: 0;
+            font: inherit;
+            color: currentColor;
+            width: 1.15em;
+            height: 1.15em;
+            border: 2px solid #78767f;
+            border-radius: 0.15em;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .efm-checkbox::before {
+            content: "";
+            width: 0.65em;
+            height: 0.65em;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #ffffff;
+            background-color: transform;
+            transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .efm-checkbox:checked {
+            background-color: #06042c;
+            border-color: #06042c;
+        }
+
+        .efm-checkbox:checked::before {
+            transform: scale(1);
+        }
+
+        .accordion-content {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, padding 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .accordion-content.expanded {
+            max-height: 500px;
+            opacity: 1;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+
+        .row-expanded-bg {
+            background-color: #f6f2f6; /* surface-container-low */
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-hidden flex">
+<!-- SideNavBar (Shared Component) -->
+<aside class="hidden md:flex flex-col h-full py-6 fixed left-0 top-0 w-sidebar-width shadow-sm z-50 bg-primary">
+<!-- Header -->
+<div class="px-6 mb-8 flex flex-col gap-2">
+<h1 class="font-display-lg text-headline-sm font-bold tracking-tight text-on-primary">FitEvents Admin</h1>
+<p class="font-label-md text-label-md text-on-primary-container">Management Portal</p>
+</div>
+<!-- Create Event CTA -->
+<div class="px-4 mb-8">
+<button class="w-full bg-secondary text-on-secondary font-label-lg text-label-lg py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:bg-secondary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                Create Event
+            </button>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex-1 flex flex-col gap-1 w-full">
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary hover:bg-primary/50 transition-all duration-200 ease-in-out font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary hover:bg-primary/50 transition-all duration-200 ease-in-out font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+                Private Training
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary hover:bg-primary/50 transition-all duration-200 ease-in-out font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">business</span>
+                B2B Management
+            </a>
+<!-- Active State -->
+<a class="flex items-center gap-3 px-4 py-3 border-l-4 border-secondary bg-primary text-on-primary font-semibold transition-all duration-200 ease-in-out font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Event Management
+            </a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-primary-container/70 hover:text-on-primary hover:bg-primary/50 transition-all duration-200 ease-in-out font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+                Operational
+            </a>
+</nav>
+<!-- Footer Tabs -->
+<div class="mt-auto flex flex-col gap-1 w-full px-4 border-t border-outline-variant/30 pt-4">
+<a class="flex items-center gap-3 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">help</span>
+                Help Center
+            </a>
+<a class="flex items-center gap-3 py-3 text-on-primary-container/70 hover:text-on-primary transition-colors font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="flex-1 ml-0 md:ml-sidebar-width flex flex-col h-screen overflow-hidden">
+<!-- TopNavBar (Shared Component) -->
+<header class="flex justify-between items-center px-margin-mobile md:px-margin-desktop w-full h-16 bg-surface border-b border-outline-variant shadow-sm shrink-0 z-40">
+<!-- Mobile Brand (Hidden on Desktop) -->
+<div class="md:hidden flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">menu</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">FitEvents Portal</span>
+</div>
+<!-- Left Search/Nav (Desktop) -->
+<div class="hidden md:flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="pl-10 pr-4 py-2 rounded-full bg-surface-container-high border-none text-body-sm focus:ring-2 focus:ring-primary/20 w-64 transition-all" placeholder="Search events..." type="text">
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">Overview</a>
+<a class="text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">Analytics</a>
+<a class="text-on-surface-variant hover:text-primary font-label-md text-label-md transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<!-- Right Actions -->
+<div class="flex items-center gap-4">
+<button class="hidden md:flex items-center gap-2 text-primary font-label-md text-label-md hover:bg-surface-container-high py-2 px-4 rounded-full transition-colors font-semibold">
+                    New Booking
+                </button>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors scale-95 active:scale-90">
+<span class="material-symbols-outlined">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Canvas / Dashboard Content -->
+<div class="flex-1 overflow-y-auto p-margin-mobile md:p-margin-desktop bg-surface-container-low/30">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-1">Event Tracker</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Manage checklists, payments, and progress for all EFM events.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface text-primary border border-outline-variant rounded-lg font-label-md text-label-md hover:bg-surface-container transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">filter_list</span>
+                        Filter
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">download</span>
+                        Export
+                    </button>
+</div>
+</div>
+<!-- KPI Bento Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+<!-- KPI Card 1 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-lg text-label-lg text-on-surface-variant">Active Events</p>
+<div class="p-2 bg-primary-fixed text-primary rounded-md">
+<span class="material-symbols-outlined text-[20px]">calendar_month</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-headline-lg text-primary">12</span>
+<span class="font-body-sm text-body-sm text-secondary-container flex items-center"><span class="material-symbols-outlined text-[16px]">arrow_upward</span> 2 this month</span>
+</div>
+</div>
+<!-- KPI Card 2 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-lg text-label-lg text-on-surface-variant">Avg. Completion</p>
+<div class="p-2 bg-secondary-fixed text-secondary rounded-md">
+<span class="material-symbols-outlined text-[20px]">donut_large</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-headline-lg text-primary">68%</span>
+<div class="w-full h-2 bg-surface-variant rounded-full mt-2 overflow-hidden flex-1 max-w-[100px]">
+<div class="h-full bg-secondary w-[68%] rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- KPI Card 3 -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant/50 shadow-sm flex flex-col justify-between">
+<div class="flex justify-between items-start mb-4">
+<p class="font-label-lg text-label-lg text-on-surface-variant">Pending Reports</p>
+<div class="p-2 bg-tertiary-fixed text-tertiary-container rounded-md">
+<span class="material-symbols-outlined text-[20px]">assignment_late</span>
+</div>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-display-lg text-headline-lg text-primary">3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Require attention</span>
+</div>
+</div>
+</div>
+<!-- The Tracker List (Card-based Accordion) -->
+<div class="bg-surface-container-lowest rounded-xl border border-outline-variant/50 shadow-sm overflow-hidden flex flex-col">
+<!-- Table Header (Visual only) -->
+<div class="hidden md:grid grid-cols-12 gap-4 px-6 py-4 bg-surface-container-low border-b border-outline-variant text-on-surface-variant font-label-md text-label-md uppercase tracking-wider">
+<div class="col-span-4">Event Details</div>
+<div class="col-span-2">Tanggal Event</div>
+<div class="col-span-2">Status</div>
+<div class="col-span-3">Progress</div>
+<div class="col-span-1 text-right">Actions</div>
+</div>
+<!-- List Items Container -->
+<div class="flex flex-col divide-y divide-outline-variant/50">
+<!-- Row 1: Ongoing Event -->
+<div class="tracker-row group transition-colors hover:bg-surface-container-low/50" data-progress="50">
+<!-- Summary Row (Always visible) -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center cursor-pointer" onclick="toggleAccordion(this)">
+<!-- Event Info -->
+<div class="col-span-1 md:col-span-4 flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">Corporate Wellness Retreat</h3>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">domain</span>
+                                    TechNova Inc.
+                                </div>
+</div>
+<!-- Date (Mobile hidden, Desktop visible inline) -->
+<div class="hidden md:flex col-span-2 items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-outline">event</span>
+                                15 Oct 2023
+                            </div>
+<!-- Status Badge -->
+<div class="col-span-1 md:col-span-2 flex items-center">
+<!-- Ongoing: Orange representation using secondary-container -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary-container border border-secondary-container/30 font-label-md text-label-md">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-container"></span>
+                                    Ongoing
+                                </span>
+</div>
+<!-- Progress Bar -->
+<div class="hidden md:flex col-span-3 items-center gap-3">
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary transition-all duration-500" style="width: 50%"></div>
+</div>
+<span class="font-label-md text-label-md text-primary min-w-[4ch]">50%</span>
+</div>
+<!-- Mobile Quick Info & Toggle -->
+<div class="md:hidden flex justify-between items-center mt-2 pt-2 border-t border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">15 Oct • 50%</span>
+<span class="material-symbols-outlined text-outline transform transition-transform chevron">expand_more</span>
+</div>
+<!-- Desktop Toggle -->
+<div class="hidden md:flex col-span-1 justify-end">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors text-outline">
+<span class="material-symbols-outlined transform transition-transform duration-300 chevron">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Expandable Checklist Details -->
+<div class="accordion-content bg-surface-bright px-6 border-t border-outline-variant/30">
+<h4 class="font-label-lg text-label-lg text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]">checklist</span>
+                                Event Checklist
+                            </h4>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+<!-- Item 1 -->
+<label class="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/50">
+<input checked="" class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">LOA ditandatangani</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Letter of Agreement signed by client.</span>
+</div>
+</label>
+<!-- Item 2 -->
+<div class="flex flex-col gap-2 p-3 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<label class="flex items-start gap-4 cursor-pointer">
+<input checked="" class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">DP diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="0" type="text" value="15.000.000">
+</div>
+</div>
+<!-- Item 3 -->
+<div class="flex flex-col gap-2 p-3 rounded-lg hover:bg-surface-container border border-transparent hover:border-outline-variant/30 transition-colors">
+<label class="flex items-start gap-4 cursor-pointer">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">Pelunasan diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md font-body-sm text-body-sm text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all" placeholder="0" type="text">
+</div>
+</div>
+<!-- Item 4 -->
+<label class="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer border border-transparent hover:border-outline-variant/50">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-on-surface font-medium">Laporan event selesai</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Post-event documentation and reporting.</span>
+</div>
+</label>
+</div>
+</div>
+</div>
+<!-- Row 2: Planning Event -->
+<div class="tracker-row group transition-colors hover:bg-surface-container-low/50" data-progress="0">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center cursor-pointer" onclick="toggleAccordion(this)">
+<div class="col-span-1 md:col-span-4 flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors">Annual Marathon Sponsorship</h3>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">domain</span>
+                                    City Bank
+                                </div>
+</div>
+<div class="hidden md:flex col-span-2 items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-outline">event</span>
+                                12 Nov 2023
+                            </div>
+<div class="col-span-1 md:col-span-2 flex items-center">
+<!-- Planning: Gray representation -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-variant text-on-surface-variant border border-outline-variant/50 font-label-md text-label-md">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                                    Planning
+                                </span>
+</div>
+<div class="hidden md:flex col-span-3 items-center gap-3">
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-outline transition-all duration-500" style="width: 0%"></div>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant min-w-[4ch]">0%</span>
+</div>
+<div class="md:hidden flex justify-between items-center mt-2 pt-2 border-t border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">12 Nov • 0%</span>
+<span class="material-symbols-outlined text-outline transform transition-transform chevron">expand_more</span>
+</div>
+<div class="hidden md:flex col-span-1 justify-end">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors text-outline">
+<span class="material-symbols-outlined transform transition-transform duration-300 chevron">expand_more</span>
+</button>
+</div>
+</div>
+<div class="accordion-content bg-surface-bright px-6 border-t border-outline-variant/30">
+<!-- Simplified checklist visual for brevity in code -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
+<label class="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">LOA ditandatangani</span>
+</label>
+<div class="flex flex-col gap-2 p-3 rounded-lg hover:bg-surface-container transition-colors">
+<label class="flex items-start gap-4 cursor-pointer">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">DP diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md text-body-sm" placeholder="0" type="text">
+</div>
+</div>
+<div class="flex flex-col gap-2 p-3 rounded-lg hover:bg-surface-container transition-colors">
+<label class="flex items-start gap-4 cursor-pointer">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">Pelunasan diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-outline font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md text-body-sm" placeholder="0" type="text">
+</div>
+</div>
+<label class="flex items-start gap-4 p-3 rounded-lg hover:bg-surface-container transition-colors cursor-pointer">
+<input class="efm-checkbox mt-0.5" onchange="updateProgress(this)" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium">Laporan event selesai</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Row 3: Done Event -->
+<div class="tracker-row group transition-colors hover:bg-surface-container-low/50" data-progress="100">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4 p-6 items-center cursor-pointer" onclick="toggleAccordion(this)">
+<div class="col-span-1 md:col-span-4 flex flex-col gap-1">
+<h3 class="font-headline-sm text-headline-sm text-primary group-hover:text-secondary transition-colors line-through decoration-outline-variant decoration-2">Summer Fitness Bootcamp</h3>
+<div class="flex items-center gap-2 font-body-sm text-body-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">domain</span>
+                                    FitLife Studios
+                                </div>
+</div>
+<div class="hidden md:flex col-span-2 items-center gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-outline">event</span>
+                                20 Aug 2023
+                            </div>
+<div class="col-span-1 md:col-span-2 flex items-center">
+<!-- Done: Using primary-container as requested to stick to theme, acting as a solid completion state -->
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-container text-on-primary-container border border-primary-fixed/30 font-label-md text-label-md shadow-sm">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+                                    Done
+                                </span>
+</div>
+<div class="hidden md:flex col-span-3 items-center gap-3">
+<div class="w-full h-2 bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary-container transition-all duration-500" style="width: 100%"></div>
+</div>
+<span class="font-label-md text-label-md text-primary font-bold min-w-[4ch]">100%</span>
+</div>
+<div class="md:hidden flex justify-between items-center mt-2 pt-2 border-t border-outline-variant/30">
+<span class="font-body-sm text-body-sm text-on-surface-variant">20 Aug • 100%</span>
+<span class="material-symbols-outlined text-outline transform transition-transform chevron">expand_more</span>
+</div>
+<div class="hidden md:flex col-span-1 justify-end">
+<button class="p-2 rounded-full hover:bg-surface-variant transition-colors text-outline">
+<span class="material-symbols-outlined transform transition-transform duration-300 chevron">expand_more</span>
+</button>
+</div>
+</div>
+<div class="accordion-content bg-surface-bright px-6 border-t border-outline-variant/30">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6 opacity-70 pointer-events-none">
+<label class="flex items-start gap-4 p-3 rounded-lg">
+<input checked="" class="efm-checkbox mt-0.5" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium line-through">LOA ditandatangani</span>
+</label>
+<div class="flex flex-col gap-2 p-3 rounded-lg">
+<label class="flex items-start gap-4">
+<input checked="" class="efm-checkbox mt-0.5" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium line-through">DP diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md text-body-sm" disabled="" type="text" value="5.000.000">
+</div>
+</div>
+<div class="flex flex-col gap-2 p-3 rounded-lg">
+<label class="flex items-start gap-4">
+<input checked="" class="efm-checkbox mt-0.5" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium line-through">Pelunasan diterima</span>
+</label>
+<div class="ml-9 relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant font-label-md text-label-md">Rp</span>
+<input class="w-full pl-9 pr-3 py-2 bg-surface border border-outline-variant rounded-md text-body-sm" disabled="" type="text" value="5.000.000">
+</div>
+</div>
+<label class="flex items-start gap-4 p-3 rounded-lg">
+<input checked="" class="efm-checkbox mt-0.5" type="checkbox">
+<span class="font-body-md text-body-md text-on-surface font-medium line-through">Laporan event selesai</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Spacer for bottom padding -->
+<div class="h-12"></div>
+</div>
+</main>
+<script>
+        // Simple Accordion Logic
+        function toggleAccordion(element) {
+            const row = element.closest('.tracker-row');
+            const content = row.querySelector('.accordion-content');
+            const chevrons = row.querySelectorAll('.chevron');
+            
+            // Toggle expanded class
+            content.classList.toggle('expanded');
+            row.classList.toggle('row-expanded-bg');
+            
+            // Rotate chevrons
+            chevrons.forEach(chev => {
+                if(content.classList.contains('expanded')) {
+                    chev.classList.add('rotate-180');
+                } else {
+                    chev.classList.remove('rotate-180');
+                }
+            });
+        }
+
+        // Mock Progress Update (Visual only for demonstration)
+        function updateProgress(checkbox) {
+            const row = checkbox.closest('.tracker-row');
+            const checkboxes = row.querySelectorAll('.efm-checkbox');
+            const checkedCount = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const totalCount = checkboxes.length;
+            
+            const percentage = Math.round((checkedCount / totalCount) * 100);
+            
+            // Update visual elements
+            const progressBar = row.querySelector('.bg-secondary, .bg-outline, .bg-primary-container');
+            const progressText = row.querySelectorAll('span:not(.material-symbols-outlined)').forEach(span => {
+                if(span.textContent.includes('%') && span.parentElement.classList.contains('items-center')) {
+                    span.textContent = percentage + '%';
+                }
+            });
+            const mobileProgressText = row.querySelector('.md\\:hidden .text-on-surface-variant');
+            if(mobileProgressText) {
+                 const parts = mobileProgressText.textContent.split('•');
+                 mobileProgressText.textContent = parts[0] + '• ' + percentage + '%';
+            }
+
+            if(progressBar) {
+                progressBar.style.width = percentage + '%';
+                // Basic color logic swap based on progress
+                if(percentage > 0 && percentage < 100) {
+                    progressBar.className = 'h-full bg-secondary transition-all duration-500';
+                } else if (percentage === 100) {
+                     progressBar.className = 'h-full bg-primary-container transition-all duration-500';
+                } else {
+                     progressBar.className = 'h-full bg-outline transition-all duration-500';
+                }
+            }
+        }
+    </script>
+
+
+</body></html>

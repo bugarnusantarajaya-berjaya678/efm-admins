@@ -1,0 +1,530 @@
+<!DOCTYPE html><html lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EFM Portal - Pemberkasan B2B</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "primary-fixed": "#e3dfff",
+                      "on-surface": "#1c1b1e",
+                      "surface-dim": "#dcd9dd",
+                      "surface-container-highest": "#e5e1e5",
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-container": "#f1edf1",
+                      "on-primary-fixed-variant": "#44426b",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "secondary": "#ac3323",
+                      "inverse-primary": "#c5c1f3",
+                      "surface-variant": "#e5e1e5",
+                      "on-secondary-container": "#6c0300",
+                      "on-primary-fixed": "#18163d",
+                      "on-error": "#ffffff",
+                      "surface-tint": "#5c5a85",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-surface": "#313033",
+                      "surface-container-high": "#ebe7eb",
+                      "outline": "#78767f",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "primary": "#06042c",
+                      "background": "#fcf8fc",
+                      "on-primary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed": "#d4e3ff",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "tertiary": "#000919",
+                      "surface-container-low": "#f6f2f6",
+                      "surface-bright": "#fcf8fc",
+                      "on-error-container": "#93000a",
+                      "primary-container": "#1e1c43",
+                      "tertiary-container": "#002142",
+                      "error": "#ba1a1a",
+                      "surface": "#fcf8fc",
+                      "secondary-fixed": "#ffdad4",
+                      "on-secondary-fixed": "#400100",
+                      "on-primary-container": "#8684b1",
+                      "on-tertiary-fixed": "#001c39",
+                      "on-tertiary-container": "#438adc",
+                      "inverse-on-surface": "#f4eff4",
+                      "error-container": "#ffdad6",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#fd6e58",
+                      "on-surface-variant": "#47464e",
+                      "outline-variant": "#c8c5cf",
+                      "on-background": "#1c1b1e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "sidebar-width": "260px",
+                      "container-max": "1440px",
+                      "unit": "8px",
+                      "margin-desktop": "32px",
+                      "gutter": "24px"
+              },
+              "fontFamily": {
+                      "headline-md": ["Poppins"],
+                      "body-lg": ["Poppins"],
+                      "label-lg": ["Poppins"],
+                      "headline-lg-mobile": ["Poppins"],
+                      "headline-lg": ["Poppins"],
+                      "label-md": ["Poppins"],
+                      "body-sm": ["Poppins"],
+                      "headline-sm": ["Poppins"],
+                      "body-md": ["Poppins"],
+                      "display-lg": ["Poppins"]
+              },
+              "fontSize": {
+                      "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                      "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                      "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "display-lg": ["48px", {"lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+        .sidebar-active-indicator { width: 4px; height: 100%; position: absolute; left: 0; background-color: #E05945; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-full w-[260px] flex flex-col z-50" style="background-color: rgb(30, 28, 67);">
+<div class="px-6 py-8 flex items-center gap-3">
+<div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<div>
+<h1 class="font-headline-sm text-headline-sm text-white leading-tight">EFM</h1>
+<p class="text-on-primary-container text-xs opacity-70">Management Portal</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary/20 hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-lg text-label-lg">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary/20 hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+<span class="font-label-lg text-label-lg">Private Training</span>
+</a>
+<div class="relative">
+<div class="sidebar-active-indicator"></div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary text-secondary font-bold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">business_center</span>
+<span class="font-label-lg text-label-lg">B2B Management</span>
+</a>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary/20 hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined">event</span>
+<span class="font-label-lg text-label-lg">Event Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-primary/20 hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+<span class="font-label-lg text-label-lg">Operational</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-on-primary-container opacity-70 hover:bg-error/10 hover:text-error hover:opacity-100 transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-lg text-label-lg">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-surface border-b border-outline-variant flex items-center justify-between px-8 z-40 shadow-sm">
+<div class="flex items-center bg-surface-container-low rounded-full px-4 py-2 w-96">
+<span class="material-symbols-outlined text-outline">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm w-full ml-2 text-on-surface" placeholder="Search documents, clients, or IDs..." type="text">
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="flex items-center gap-3 pl-4 border-l border-outline-variant">
+<div class="text-right">
+<p class="text-xs font-bold text-primary">Admin EFM</p>
+<p class="text-[10px] text-on-surface-variant">B2B Lead</p>
+</div>
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-secondary-fixed">
+<img alt="Admin Profile" class="w-full h-full object-cover" data-alt="A professional headshot of a corporate executive for a management portal profile. The subject is a male in his 30s with a confident expression, wearing a sharp navy blue blazer. The background is a soft-focus modern office interior with warm ambient lighting, maintaining a high-end corporate aesthetic consistent with a professional fitness brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABoGMEZNdZ1uAj4FFuF5EitlozWpy48-FJbh4Zy9G-3Uki44teHzF05kOQ6ux8j0c1mj27ZDG5Yh71W5jGwRLEsWL-QB8FdL9TmG6u07eZVxQtG6BX07EogVrw4j-ki9KENnmj561OpncAgoEyn9yISgry2-c_x4kfuts-kOXnnIczVK7zleGaHj-h2mdp1vpVbiOUxHvgNe8DUdcSnqQpfUWUwBvUNnZh49SRHzajiUq9hUGCvg_OtHz7CvzDx_g-k4lhYA-AxHjc">
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[260px] pt-16 min-h-screen">
+<div class="p-8 max-w-[1440px] mx-auto">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Pemberkasan B2B</h2>
+<p class="text-on-surface-variant font-body-sm text-body-sm mt-1">Manage and track your corporate partnerships, legal agreements, and MOUs.</p>
+</div>
+<button class="flex items-center gap-2 bg-secondary text-white px-6 py-3 rounded-xl font-label-lg text-label-lg shadow-lg shadow-secondary/20 hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined">upload_file</span>
+                    + Upload Document
+                </button>
+</div>
+<!-- Bento Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="glass-card p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary-container/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">description</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Total Berkas</p>
+<h4 class="text-2xl font-bold text-primary">1,284</h4>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">pending_actions</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Menunggu TTD</p>
+<h4 class="text-2xl font-bold text-secondary">42</h4>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-green-600">verified</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Selesai TTD</p>
+<h4 class="text-2xl font-bold text-green-700">1,120</h4>
+</div>
+</div>
+<div class="glass-card p-6 rounded-2xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-600">history</span>
+</div>
+<div>
+<p class="text-xs text-on-surface-variant font-medium">Kadaluwarsa</p>
+<h4 class="text-2xl font-bold text-blue-800">12</h4>
+</div>
+</div>
+</div>
+<!-- Content Area: Tabs & Table -->
+<div class="glass-card rounded-2xl overflow-hidden">
+<!-- Tab Navigation -->
+<div class="px-8 pt-6 border-b border-outline-variant flex items-center gap-8">
+<button class="pb-4 font-label-lg text-label-lg text-secondary border-b-2 border-secondary relative">
+                        Kontrak
+                    </button>
+<button class="pb-4 font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors">
+                        MOU
+                    </button>
+<button class="pb-4 font-label-lg text-label-lg text-on-surface-variant hover:text-primary transition-colors">
+                        LOI
+                    </button>
+</div>
+<!-- Filters -->
+<div class="p-6 bg-surface-container-lowest flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg text-sm bg-white">
+<span class="material-symbols-outlined text-xs">filter_list</span>
+<span class="font-medium">Filter By Status</span>
+</div>
+<div class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg text-sm bg-white">
+<span class="material-symbols-outlined text-xs">calendar_today</span>
+<span class="font-medium">This Month</span>
+</div>
+</div>
+<div class="text-body-sm text-on-surface-variant">
+                        Showing <span class="font-bold text-primary">10</span> of 1,284 documents
+                    </div>
+</div>
+<!-- Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant font-label-lg text-xs uppercase tracking-widest">
+<th class="px-8 py-4 font-semibold">ID Berkas</th>
+<th class="px-6 py-4 font-semibold">Nama Klien</th>
+<th class="px-6 py-4 font-semibold">Jenis</th>
+<th class="px-6 py-4 font-semibold">Tanggal</th>
+<th class="px-6 py-4 font-semibold">Status TTD</th>
+<th class="px-8 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-primary-container/5 transition-colors group">
+<td class="px-8 py-5">
+<span class="font-bold text-primary">#EFM-K-00124</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold text-[10px]">TC</div>
+<div>
+<p class="font-label-lg text-on-surface">TechCorp Indonesia</p>
+<p class="text-xs text-on-surface-variant">Corporate Membership</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-surface-container rounded-md text-[10px] font-bold text-on-surface-variant">KONTRAK UTAMA</span>
+</td>
+<td class="px-6 py-5 text-body-sm">
+                                    12 Okt 2023
+                                </td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-green-700"></span>
+                                        Signed
+                                    </span>
+</td>
+<td class="px-8 py-5 text-right">
+<div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Preview">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Download">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="More">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary-container/5 transition-colors group">
+<td class="px-8 py-5">
+<span class="font-bold text-primary">#EFM-K-00125</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-[10px]">BM</div>
+<div>
+<p class="font-label-lg text-on-surface">Bank Mandiri (B2B)</p>
+<p class="text-xs text-on-surface-variant">Executive Wellness</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-surface-container rounded-md text-[10px] font-bold text-on-surface-variant">RENEWAL</span>
+</td>
+<td class="px-6 py-5 text-body-sm">
+                                    15 Okt 2023
+                                </td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-bold text-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                        Pending
+                                    </span>
+</td>
+<td class="px-8 py-5 text-right">
+<div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Preview">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Download">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="More">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- More rows for visual density -->
+<tr class="hover:bg-primary-container/5 transition-colors group">
+<td class="px-8 py-5">
+<span class="font-bold text-primary">#EFM-K-00126</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-[10px]">SP</div>
+<div>
+<p class="font-label-lg text-on-surface">Shopee Logistics</p>
+<p class="text-xs text-on-surface-variant">Employee Training</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-surface-container rounded-md text-[10px] font-bold text-on-surface-variant">KONTRAK UTAMA</span>
+</td>
+<td class="px-6 py-5 text-body-sm">
+                                    18 Okt 2023
+                                </td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">
+<span class="w-1.5 h-1.5 rounded-full bg-green-700"></span>
+                                        Signed
+                                    </span>
+</td>
+<td class="px-8 py-5 text-right">
+<div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Preview">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Download">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="More">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="hover:bg-primary-container/5 transition-colors group">
+<td class="px-8 py-5">
+<span class="font-bold text-primary">#EFM-K-00127</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-[10px]">PT</div>
+<div>
+<p class="font-label-lg text-on-surface">Pertamina Persero</p>
+<p class="text-xs text-on-surface-variant">Wellness Program</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-surface-container rounded-md text-[10px] font-bold text-on-surface-variant">KONTRAK UTAMA</span>
+</td>
+<td class="px-6 py-5 text-body-sm">
+                                    20 Okt 2023
+                                </td>
+<td class="px-6 py-5">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-secondary font-bold text-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                                        Pending
+                                    </span>
+</td>
+<td class="px-8 py-5 text-right">
+<div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Preview">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="Download">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 rounded-lg hover:bg-white text-on-surface-variant hover:text-secondary transition-colors" title="More">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-8 py-6 flex items-center justify-between bg-surface-container-low">
+<div class="text-body-sm text-on-surface-variant">
+                        Page <span class="font-bold text-primary">1</span> of 128
+                    </div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg border border-outline-variant hover:bg-white transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-white font-bold text-sm">1</button>
+<button class="w-8 h-8 rounded-lg hover:bg-white text-on-surface transition-colors font-bold text-sm">2</button>
+<button class="w-8 h-8 rounded-lg hover:bg-white text-on-surface transition-colors font-bold text-sm">3</button>
+<span class="text-on-surface-variant">...</span>
+<button class="p-2 rounded-lg border border-outline-variant hover:bg-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Dashboard Analytics Preview (Asymmetric Layout Example) -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8 pb-12">
+<div class="lg:col-span-2 glass-card rounded-2xl p-6 relative overflow-hidden h-[300px]">
+<div class="relative z-10">
+<h3 class="font-headline-sm text-headline-sm text-primary mb-2">Growth Analysis</h3>
+<p class="text-on-surface-variant text-sm mb-6">Partnership expansion trends for Q4 2023.</p>
+<div class="flex items-end gap-2 h-40">
+<!-- Simple custom bars -->
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[40%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[60%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[45%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[80%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[70%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[95%]"></div>
+<div class="flex-1 bg-primary-container/20 rounded-t-lg transition-all hover:bg-secondary h-[85%]"></div>
+</div>
+</div>
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-secondary/5 rounded-full blur-3xl"></div>
+</div>
+<div class="glass-card rounded-2xl p-6 bg-primary-container text-white">
+<h3 class="font-headline-sm text-headline-sm mb-4">Quick Insights</h3>
+<ul class="space-y-4">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary">trending_up</span>
+<div>
+<p class="text-sm font-bold">12% Growth</p>
+<p class="text-xs opacity-70">In signed contracts compared to last month.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-on-tertiary-container">schedule</span>
+<div>
+<p class="text-sm font-bold">8 Pending MOUs</p>
+<p class="text-xs opacity-70">Require executive review before final signing.</p>
+</div>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-red-400">warning</span>
+<div>
+<p class="text-sm font-bold">2 Expiring Soon</p>
+<p class="text-xs opacity-70">Renewals needed for TechCorp &amp; Astra International.</p>
+</div>
+</li>
+</ul>
+<button class="w-full mt-6 py-3 border border-on-primary-container/30 rounded-xl text-xs font-bold hover:bg-white hover:text-primary transition-all">View Full Analytics</button>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions for table rows and buttons
+        document.querySelectorAll('tr').forEach(row => {
+            row.addEventListener('mouseenter', () => {
+                row.style.transform = 'translateX(4px)';
+                row.style.transition = 'transform 0.2s ease-out';
+            });
+            row.addEventListener('mouseleave', () => {
+                row.style.transform = 'translateX(0)';
+            });
+        });
+
+        // Search bar focus effect
+        const searchInput = document.querySelector('input[type="text"]');
+        const searchContainer = searchInput.parentElement;
+        searchInput.addEventListener('focus', () => {
+            searchContainer.classList.add('ring-2', 'ring-secondary/30', 'border-secondary');
+        });
+        searchInput.addEventListener('blur', () => {
+            searchContainer.classList.remove('ring-2', 'ring-secondary/30', 'border-secondary');
+        });
+    </script>
+
+
+</body></html>

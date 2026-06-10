@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EFM Admin Portal - Login</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "efm-orange": "#E05945",
+                        "efm-orange-hover": "#D04935",
+                        "efm-navy": "#1E1C43",
+                        "efm-navy-hover": "#2A285A",
+                        "on-primary": "#ffffff",
+                        "tertiary": "#000919",
+                        "inverse-surface": "#313033",
+                        "surface-dim": "#dcd9dd",
+                        "on-primary-fixed": "#18163d",
+                        "on-tertiary-fixed-variant": "#004883",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#d4e3ff",
+                        "primary-container": "#1e1c43",
+                        "error-container": "#ffdad6",
+                        "surface": "#fcf8fc",
+                        "inverse-on-surface": "#f4eff4",
+                        "surface-container": "#f1edf1",
+                        "on-primary-fixed-variant": "#44426b",
+                        "primary": "#06042c",
+                        "outline-variant": "#c8c5cf",
+                        "surface-variant": "#e5e1e5",
+                        "surface-container-highest": "#e5e1e5",
+                        "on-tertiary-fixed": "#001c39",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary-fixed": "#400100",
+                        "surface-container-low": "#f6f2f6",
+                        "secondary-fixed": "#ffdad4",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#1c1b1e",
+                        "primary-fixed-dim": "#c5c1f3",
+                        "on-secondary-fixed-variant": "#8a1b0e",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#ac3323",
+                        "on-primary-container": "#8684b1",
+                        "on-background": "#1c1b1e",
+                        "outline": "#78767f",
+                        "on-tertiary-container": "#438adc",
+                        "tertiary-fixed-dim": "#a4c9ff",
+                        "surface-bright": "#fcf8fc",
+                        "on-secondary-container": "#6c0300",
+                        "surface-tint": "#5c5a85",
+                        "surface-container-high": "#ebe7eb",
+                        "secondary-container": "#fd6e58",
+                        "secondary-fixed-dim": "#ffb4a7",
+                        "tertiary-container": "#002142",
+                        "on-surface-variant": "#47464e",
+                        "inverse-primary": "#c5c1f3",
+                        "on-error": "#ffffff",
+                        "background": "#fcf8fc",
+                        "surface-container-lowest": "#ffffff",
+                        "on-error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "sidebar-width": "260px",
+                        "margin-mobile": "16px",
+                        "unit": "8px",
+                        "container-max": "1440px",
+                        "gutter": "24px",
+                        "margin-desktop": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Poppins"],
+                        "headline-lg": ["Poppins"],
+                        "headline-lg-mobile": ["Poppins"],
+                        "body-sm": ["Poppins"],
+                        "label-lg": ["Poppins"],
+                        "body-md": ["Poppins"],
+                        "body-lg": ["Poppins"],
+                        "headline-md": ["Poppins"],
+                        "label-md": ["Poppins"],
+                        "display-lg": ["Poppins"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "fontWeight": "600"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "label-lg": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "display-lg": ["48px", {"lineHeight": "60px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-efm-navy text-on-surface min-h-screen flex items-center justify-center font-body-md relative overflow-hidden">
+<!-- Decorative Elements -->
+<div class="absolute top-[-10%] left-[-5%] w-96 h-96 bg-primary-fixed rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-pulse"></div>
+<div class="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-efm-orange rounded-full mix-blend-multiply filter blur-3xl opacity-10"></div>
+<main class="relative z-10 w-full max-w-md px-margin-mobile md:px-0">
+<!-- Login Card -->
+<div class="bg-surface rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-outline-variant overflow-hidden">
+<!-- Header Area -->
+<div class="p-8 pb-6 text-center border-b border-surface-variant bg-surface-bright">
+<div class="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+<img alt="EFM Logo" class="h-full w-full object-contain rounded-full shadow-sm bg-efm-navy" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+</div>
+<h1 class="font-headline-md text-headline-md text-efm-navy mb-1 tracking-tight">EFM Portal Login</h1>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Secure access for authorized personnel only.</p>
+</div>
+<!-- Form Area -->
+<div class="p-8 pt-6 bg-surface">
+<form action="#" class="space-y-6" method="POST">
+<!-- Username Field -->
+<div class="space-y-2">
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="username">Username</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="person">person</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:ring-2 focus:ring-efm-navy focus:border-efm-navy transition-colors shadow-sm" id="username" name="username" placeholder="Enter your username" type="text"/>
+</div>
+</div>
+<!-- Password Field -->
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<label class="block font-label-md text-label-md text-on-surface-variant uppercase tracking-wider" for="password">Password</label>
+<a class="font-label-md text-label-md text-efm-navy hover:text-efm-navy-hover transition-colors focus:outline-none focus:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline" data-icon="lock">lock</span>
+</div>
+<input class="block w-full pl-10 pr-10 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface font-body-sm focus:ring-2 focus:ring-efm-navy focus:border-efm-navy transition-colors shadow-sm" id="password" name="password" placeholder="Enter your password" type="password"/>
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<button class="text-outline hover:text-on-surface transition-colors focus:outline-none" type="button">
+<span class="material-symbols-outlined" data-icon="visibility_off">visibility_off</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Remember Me -->
+<div class="flex items-center">
+<input class="h-4 w-4 text-efm-navy focus:ring-efm-navy border-outline-variant rounded cursor-pointer" id="remember-me" name="remember-me" type="checkbox"/>
+<label class="ml-2 block font-body-sm text-body-sm text-on-surface cursor-pointer" for="remember-me">
+                            Keep me logged in
+                        </label>
+</div>
+<!-- Submit Button -->
+<div>
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm font-label-lg text-label-lg text-on-primary bg-efm-orange hover:bg-efm-orange-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-efm-orange transition-all active:scale-[0.98] uppercase" type="submit">
+                            Login
+                        </button>
+</div>
+</form>
+</div>
+<!-- Footer -->
+<div class="px-8 py-4 bg-surface-container-low border-t border-surface-variant text-center">
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                    Need assistance? <a class="font-label-lg text-label-lg text-efm-navy hover:underline" href="#">Contact Support</a>
+</p>
+</div>
+</div>
+<!-- Bottom branding -->
+<div class="mt-8 text-center opacity-70">
+<p class="font-label-md text-label-md text-surface-container-lowest tracking-widest uppercase">© 2024 EFM Management Systems</p>
+</div>
+</main>
+</body></html>

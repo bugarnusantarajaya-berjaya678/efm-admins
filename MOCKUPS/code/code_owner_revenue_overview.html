@@ -1,0 +1,331 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>EFM Portal - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#ffffff",
+                      "tertiary": "#000919",
+                      "inverse-surface": "#313033",
+                      "surface-dim": "#dcd9dd",
+                      "on-primary-fixed": "#18163d",
+                      "on-tertiary-fixed-variant": "#004883",
+                      "error": "#ba1a1a",
+                      "tertiary-fixed": "#d4e3ff",
+                      "primary-container": "#1e1c43",
+                      "error-container": "#ffdad6",
+                      "surface": "#fcf8fc",
+                      "inverse-on-surface": "#f4eff4",
+                      "surface-container": "#f1edf1",
+                      "on-primary-fixed-variant": "#44426b",
+                      "primary": "#06042c",
+                      "outline-variant": "#c8c5cf",
+                      "surface-variant": "#e5e1e5",
+                      "surface-container-highest": "#e5e1e5",
+                      "on-tertiary-fixed": "#001c39",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-fixed": "#400100",
+                      "surface-container-low": "#f6f2f6",
+                      "secondary-fixed": "#ffdad4",
+                      "primary-fixed": "#e3dfff",
+                      "on-surface": "#1c1b1e",
+                      "primary-fixed-dim": "#c5c1f3",
+                      "on-secondary-fixed-variant": "#8a1b0e",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#ac3323",
+                      "on-primary-container": "#8684b1",
+                      "on-background": "#1c1b1e",
+                      "outline": "#78767f",
+                      "on-tertiary-container": "#438adc",
+                      "tertiary-fixed-dim": "#a4c9ff",
+                      "surface-bright": "#fcf8fc",
+                      "on-secondary-container": "#6c0300",
+                      "surface-tint": "#5c5a85",
+                      "surface-container-high": "#ebe7eb",
+                      "secondary-container": "#fd6e58",
+                      "secondary-fixed-dim": "#ffb4a7",
+                      "tertiary-container": "#002142",
+                      "on-surface-variant": "#47464e",
+                      "inverse-primary": "#c5c1f3",
+                      "on-error": "#ffffff",
+                      "background": "#fcf8fc",
+                      "surface-container-lowest": "#ffffff",
+                      "on-error-container": "#93000a"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "sidebar-width": "260px",
+                      "margin-mobile": "16px",
+                      "unit": "8px",
+                      "container-max": "1440px",
+                      "gutter": "24px",
+                      "margin-desktop": "32px"
+              },
+              "fontFamily": {
+                      "headline-sm": [
+                              "Poppins"
+                      ],
+                      "headline-lg": [
+                              "Poppins"
+                      ],
+                      "headline-lg-mobile": [
+                              "Poppins"
+                      ],
+                      "body-sm": [
+                              "Poppins"
+                      ],
+                      "label-lg": [
+                              "Poppins"
+                      ],
+                      "body-md": [
+                              "Poppins"
+                      ],
+                      "body-lg": [
+                              "Poppins"
+                      ],
+                      "headline-md": [
+                              "Poppins"
+                      ],
+                      "label-md": [
+                              "Poppins"
+                      ],
+                      "display-lg": [
+                              "Poppins"
+                      ]
+              },
+              "fontSize": {
+                      "headline-sm": [
+                              "20px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-lg": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "60px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body { background-color: #F8F9FA; }
+        .card-shadow { box-shadow: 0 2px 4px rgba(30, 28, 67, 0.05); }
+        .card-hover:hover { box-shadow: 0 8px 16px rgba(30, 28, 67, 0.12); transform: translateY(-2px); transition: all 0.3s ease; }
+    </style>
+</head>
+<body class="text-on-surface flex bg-[#F8F9FA] min-h-screen">
+<!-- SideNavBar -->
+<nav class="hidden md:flex w-[260px] h-screen fixed left-0 top-0 bg-primary dark:bg-tertiary flex-col py-unit shadow-sm z-50">
+<div class="px-gutter py-unit mb-6">
+<h1 class="font-headline-md text-headline-md font-bold text-on-primary dark:text-on-tertiary tracking-tight">EFM Portal</h1>
+<p class="font-label-md text-label-md text-on-primary-container">Management System</p>
+</div>
+<div class="px-unit mb-6">
+<button class="w-full bg-secondary text-on-secondary font-label-lg text-label-lg py-2 rounded uppercase tracking-wider hover:bg-secondary/90 transition-colors shadow-sm active:scale-95 flex items-center justify-center gap-2">
+<span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+                + New Entry
+            </button>
+</div>
+<ul class="flex-1 px-unit space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-4 border-secondary bg-primary-container text-on-primary font-semibold font-label-lg text-label-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+                    Dashboard
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 font-label-lg text-label-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">fitness_center</span>
+                    Private Training
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 font-label-lg text-label-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">business_center</span>
+                    B2B Management
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 font-label-lg text-label-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">event</span>
+                    Event Management
+                </a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded border-l-4 border-transparent text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 font-label-lg text-label-lg active:scale-95 transition-transform" href="#">
+<span class="material-symbols-outlined">settings_applications</span>
+                    Operational
+                </a>
+</li>
+</ul>
+<div class="mt-auto px-unit">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded text-on-primary-container hover:text-on-primary hover:bg-primary-container/50 transition-colors duration-200 font-label-lg text-label-lg" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Logout
+            </a>
+</div>
+</nav>
+<!-- Main Content Wrapper -->
+<div class="flex-1 md:ml-[260px] min-w-0 flex flex-col">
+<!-- TopAppBar -->
+<header class="h-16 sticky top-0 w-full bg-surface/95 backdrop-blur-sm z-40 border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center px-margin-mobile md:px-margin-desktop">
+<div class="flex items-center gap-4">
+<button class="md:hidden text-on-surface-variant p-1 rounded hover:bg-surface-container-high transition-colors">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h2 class="font-headline-sm text-headline-sm font-bold text-primary dark:text-primary-fixed hidden sm:block">EFM Management</h2>
+</div>
+<div class="flex-1 max-w-md mx-4 hidden md:block">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-full font-body-sm text-body-sm focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="Search..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-2 md:gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-high rounded-full transition-colors cursor-pointer active:opacity-80 relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-1 hidden sm:block"></div>
+<button class="hidden sm:flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-surface-container-high transition-colors">
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="A professional headshot of a corporate manager smiling warmly. The setting is a brightly lit, modern office environment, fitting a corporate/modern design style. The lighting is soft and even, highlighting a friendly yet authoritative mood." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEezDf4W6n5wSedkOO92RGDJ53Ncr8sCZMrOsHkFLhiK9vxUTtMKdELmaoL9CJLkOpdXXiHdckQECHEEoAm0CXRyNZ9alPkhJgICuKI-uFulGmtiz_3AljF4LYFaCYdpw0QkPYNK-opOql6CcvoD2ZJSMfayoLxX4XOrdjeN7QwPCDCPI-UFEZxs4NLC3aSySmKaADyqWfoWoV8yDHsI6sZRLjXBq4eeK1iPcBkccxLZl_Pq6nXr0swX48WEb1ifeyPt8TvcioWPes">
+<span class="font-label-md text-label-md text-on-surface-variant">Settings</span>
+</button>
+</div>
+</header>
+<!-- Dashboard Content -->
+<main class="flex-1 p-margin-mobile md:p-margin-desktop space-y-gutter max-w-container-max mx-auto w-full">
+<!-- Page Header -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary">Overview</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">High-level revenue and performance metrics.</p>
+</div>
+<div class="flex gap-2">
+<select class="bg-surface-container-lowest border border-outline-variant rounded font-body-sm text-body-sm px-3 py-1.5 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+<option>Last 30 Days</option>
+<option>This Quarter</option>
+<option>Year to Date</option>
+</select>
+</div>
+</div>
+<!-- KPI Cards Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/50 p-5 card-shadow card-hover">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Total Revenue</h3>
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-1.5 rounded-full">account_balance_wallet</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">$124,500</span>
+<span class="font-label-md text-label-md text-emerald-600 flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 12.5%</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-1">vs previous month</p>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/50 p-5 card-shadow card-hover">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Leads Growth</h3>
+<span class="material-symbols-outlined text-tertiary-container bg-tertiary-container/10 p-1.5 rounded-full">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">+342</span>
+<span class="font-label-md text-label-md text-emerald-600 flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_upward</span> 8.2%</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-1">New leads this period</p>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-lg border border-outline-variant/50 p-5 card-shadow card-hover">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-label-lg text-label-lg text-on-surface-variant uppercase tracking-wider">Active Sessions</h3>
+<span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-full">bolt</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg text-headline-lg text-primary">1,284</span>
+<span class="font-label-md text-label-md text-secondary flex items-center"><span class="material-symbols-outlined text-[14px]">arrow_downward</span> 3.1%</span>
+</div>
+<p class="font-body-sm text-body-sm text-outline mt-1">Across all divisions</p>
+</div>
+</div>
+</main>
+</div>
+</body></html>
