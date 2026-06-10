@@ -64,7 +64,7 @@
     th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
     td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
     tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
+    tr:hover td { background:#FAFAFA; }
     .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
     .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
     .badge.new { background:#EBF5FB; color:#2980B9; }
@@ -72,16 +72,29 @@
     .badge.presentasi { background:#FEF9E7; color:#F39C12; }
     .badge.closing { background:#EAFAF1; color:#27AE60; }
     .badge.gagal { background:#FDEDEC; color:#E74C3C; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); margin-right:4px; }
+
+    /* Action buttons */
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
     .action-btn:hover { border-color:var(--navy); color:var(--navy); }
     .action-btn svg { width:14px; height:14px; }
+
+    /* Convert button - hanya untuk Closing */
+    .action-btn.convert { background:#EAFAF1; color:var(--green); border-color:var(--green); }
+    .action-btn.convert:hover { background:var(--green); color:white; }
+
+    /* Disabled - untuk non-Closing */
+    .action-btn.disabled { opacity:0.3; cursor:not-allowed; }
+    .action-btn.disabled:hover { border-color:var(--gray-border); color:var(--gray-text); background:white; }
+
     .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
     .pagination-info { font-size:12px; color:var(--gray-text); }
     .pagination-btns { display:flex; gap:4px; }
     .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
     .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
     .page-btn svg { width:14px; height:14px; }
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+
+    /* Modals */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; overflow-y:auto; }
     .modal-overlay.show { display:flex; }
     .modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
     .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
@@ -93,19 +106,37 @@
     .form-group { margin-bottom:18px; }
     .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
     .form-group label span { color:var(--orange); }
-    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; outline:none; }
+    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; }
     .form-control:focus { border-color:var(--navy); }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+
+    /* Lead info box di modal convert */
+    .lead-info-box { background:var(--gray-bg); border-radius:10px; padding:14px 16px; margin-bottom:20px; border-left:3px solid var(--green); }
+    .lead-info-box .lead-label { font-size:11px; color:var(--gray-text); font-weight:600; text-transform:uppercase; margin-bottom:4px; }
+    .lead-info-box .lead-name { font-size:15px; font-weight:700; color:var(--navy); }
+    .lead-info-box .lead-type { font-size:12px; color:var(--gray-text); margin-top:2px; }
+
+    /* Success state */
+    .success-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; align-items:center; justify-content:center; }
+    .success-overlay.show { display:flex; }
+    .success-card { background:white; border-radius:16px; padding:40px; text-align:center; max-width:360px; width:100%; }
+    .success-icon { width:64px; height:64px; background:rgba(39,174,96,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+    .success-icon svg { width:32px; height:32px; color:var(--green); }
+    .success-card h3 { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+    .success-card p { font-size:13px; color:var(--gray-text); margin-bottom:24px; }
+    .success-actions { display:flex; gap:12px; justify-content:center; }
   </style>
 </head>
 <body>
+
+<!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-circle"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg></div>
     <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
   </div>
-  <a href="#" class="btn-new-entry" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Lead</a>
+  <a href="#" class="btn-new-entry" onclick="openAddModal()">New Lead</a>
   <nav class="sidebar-nav">
     <div class="nav-label">Main Menu</div>
     <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
@@ -114,7 +145,7 @@
     <a href="#" class="nav-item active" onclick="toggleMenu(event,'b2bSub','b2bArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management<svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
     <div id="b2bSub" style="display:block">
       <a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a>
-      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a>
+      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Apartment</a>
       <a href="b2b-leads-apartment.html" class="nav-sub-item active">Leads Apartment</a>
       <a href="b2b-clients.html" class="nav-sub-item">Database Klien</a>
       <a href="b2b-invoice.html" class="nav-sub-item">Invoice</a>
@@ -130,6 +161,7 @@
   <div class="sidebar-footer"><a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a></div>
 </aside>
 
+<!-- MAIN -->
 <main class="main">
   <header class="header">
     <span class="header-title">EFM Management</span>
@@ -139,45 +171,115 @@
       <div class="user-avatar">A</div>
     </div>
   </header>
+
   <div class="content">
     <div class="page-header">
-      <div class="page-header-left"><h1>Leads Apartment</h1><p>Kelola prospek klien apartemen B2B</p></div>
-      <button class="btn-primary" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Lead</button>
+      <div class="page-header-left"><h1>Leads Apartment</h1><p>Kelola prospek klien apartemen B2B — Klik ✓ untuk convert lead Closing menjadi Klien</p></div>
+      <button class="btn-primary" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Lead</button>
     </div>
+
     <div class="stats-row">
-      <div class="stat-mini"><div class="label">Total Leads</div><div class="value">18</div><div class="sub">Bulan ini</div></div>
-      <div class="stat-mini highlight"><div class="label">Hot Leads</div><div class="value">5</div><div class="sub">Proposal & Closing</div></div>
-      <div class="stat-mini"><div class="label">Converted</div><div class="value">3</div><div class="sub">Jadi kontrak</div></div>
-      <div class="stat-mini"><div class="label">Gagal</div><div class="value">2</div><div class="sub">Tidak closing</div></div>
+      <div class="stat-mini"><div class="label">Total Leads</div><div class="value">32</div><div class="sub">Bulan ini</div></div>
+      <div class="stat-mini highlight"><div class="label">Hot Leads</div><div class="value">8</div><div class="sub">Proposal & Closing</div></div>
+      <div class="stat-mini"><div class="label">Converted</div><div class="value">5</div><div class="sub">Jadi klien</div></div>
+      <div class="stat-mini"><div class="label">Gagal</div><div class="value">3</div><div class="sub">Tidak closing</div></div>
     </div>
+
     <div class="filters-bar">
       <select class="filter-select"><option>Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
       <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama apartemen..."/></div>
       <button class="btn-filter">Filter</button>
     </div>
+
     <div class="table-card">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>ID</th><th>Nama Apartemen</th><th>PIC Klien</th><th>No HP</th><th>Est. Nilai Kontrak</th><th>Stage</th><th>Tanggal</th><th>Actions</th></tr></thead>
+          <thead>
+            <tr>
+              <th>ID</th><th>Nama Apartemen</th><th>PIC Klien</th><th>No HP</th>
+              <th>Est. Nilai Kontrak</th><th>Stage</th><th>Tanggal</th><th>Actions</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr><td>#BA-001</td><td><strong>Apartemen Green Valley</strong></td><td>Pak Hendra</td><td>0812-5555-6666</td><td>Rp 7jt/bln</td><td><span class="badge closing">Closing</span></td><td>10 Jun 2026</td><td><button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
-            <tr><td>#BA-002</td><td><strong>Apartemen Permata Hijau</strong></td><td>Bu Siska</td><td>0813-6666-7777</td><td>Rp 5,5jt/bln</td><td><span class="badge proposal">Proposal</span></td><td>8 Jun 2026</td><td><button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
-            <tr><td>#BA-003</td><td><strong>Apartemen Senayan City</strong></td><td>Pak Joko</td><td>0814-7777-8888</td><td>Rp 9jt/bln</td><td><span class="badge presentasi">Presentasi</span></td><td>5 Jun 2026</td><td><button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
-            <tr><td>#BA-004</td><td><strong>Apartemen Kuningan Place</strong></td><td>Bu Ratna</td><td>0815-8888-9999</td><td>Rp 6jt/bln</td><td><span class="badge new">New</span></td><td>3 Jun 2026</td><td><button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
+            <!-- Closing - tombol convert AKTIF (hijau) -->
+            <tr>
+              <td>#BA-001</td>
+              <td><strong>Apartemen Green Valley</strong></td>
+              <td>Pak Hendra</td><td>0812-5555-6666</td><td>Rp 7jt/bln</td>
+              <td><span class="badge closing">Closing</span></td>
+              <td>10 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn convert" title="Convert menjadi Klien" onclick="openConvertModal('Apartemen Green Valley','Apartment','Pak Hendra','Rp 12.000.000')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </td>
+            </tr>
+            <!-- Proposal - tombol convert DISABLED -->
+            <tr>
+              <td>#BA-002</td>
+              <td><strong>Apartemen Permata Hijau</strong></td>
+              <td>Bu Siska</td><td>0813-6666-7777</td><td>Rp 5,5jt/bln</td>
+              <td><span class="badge proposal">Proposal</span></td>
+              <td>8 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" title="Hanya tersedia saat stage = Closing" onclick="showConvertHint()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </td>
+            </tr>
+            <!-- Presentasi - tombol convert DISABLED -->
+            <tr>
+              <td>#BA-003</td>
+              <td><strong>Apartemen Senayan City</strong></td>
+              <td>Pak Joko</td><td>0814-7777-8888</td><td>Rp 9jt/bln</td>
+              <td><span class="badge presentasi">Presentasi</span></td>
+              <td>5 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" title="Hanya tersedia saat stage = Closing" onclick="showConvertHint()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </td>
+            </tr>
+            <!-- New - tombol convert DISABLED -->
+            <tr>
+              <td>#BA-004</td>
+              <td><strong>Apartemen Kuningan Place</strong></td>
+              <td>Bu Ratna</td><td>0815-8888-9999</td><td>Rp 6jt/bln</td>
+              <td><span class="badge new">New</span></td>
+              <td>3 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" title="Hanya tersedia saat stage = Closing" onclick="showConvertHint()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
       <div class="pagination">
-        <div class="pagination-info">Menampilkan 1–4 dari 18 leads</div>
-        <div class="pagination-btns"><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+        <div class="pagination-info">Menampilkan 1–4 dari 32 leads</div>
+        <div class="pagination-btns">
+          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
       </div>
     </div>
   </div>
 </main>
 
-<div class="modal-overlay" id="modalOverlay">
+<!-- Modal: Add New Lead -->
+<div class="modal-overlay" id="addModal">
   <div class="modal">
-    <div class="modal-header"><h3>Tambah Lead Apartment</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-header">
+      <h3>Tambah Lead Apartment</h3>
+      <button class="modal-close" onclick="closeAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
     <div class="modal-body">
       <div class="form-group"><label>Nama Apartemen <span>*</span></label><input type="text" class="form-control" placeholder="Apartemen xxx"/></div>
       <div class="form-row">
@@ -185,20 +287,141 @@
         <div class="form-group"><label>No HP <span>*</span></label><input type="text" class="form-control" placeholder="+62 812 xxxx xxxx"/></div>
       </div>
       <div class="form-row">
-        <div class="form-group"><label>Estimasi Nilai Kontrak</label><input type="text" class="form-control" placeholder="Rp 7jt/bln"/></div>
-        <div class="form-group"><label>Stage <span>*</span></label><select class="form-control"><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option></select></div>
+        <div class="form-group"><label>Est. Nilai Kontrak</label><input type="text" class="form-control" placeholder="Rp 10jt/bln"/></div>
+        <div class="form-group"><label>Stage <span>*</span></label>
+          <select class="form-control"><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option></select>
+        </div>
       </div>
       <div class="form-group"><label>Catatan</label><textarea class="form-control" rows="3" placeholder="Catatan awal..."></textarea></div>
     </div>
-    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Batal</button><button class="btn-primary" onclick="saveLead()">Simpan Lead</button></div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeAddModal()">Batal</button>
+      <button class="btn-primary" onclick="saveLead()">Simpan Lead</button>
+    </div>
   </div>
+</div>
+
+<!-- Modal: Convert to Client -->
+<div class="modal-overlay" id="convertModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Convert Lead → Klien B2B</h3>
+      <button class="modal-close" onclick="closeConvertModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Info lead yang akan diconvert -->
+      <div class="lead-info-box">
+        <div class="lead-label">Lead yang akan diconvert</div>
+        <div class="lead-name" id="convertLeadName">Apartemen Green Valley</div>
+        <div class="lead-type" id="convertLeadType">Apartment • PIC: Pak Hendra</div>
+      </div>
+
+      <!-- Form detail kontrak -->
+      <div class="form-group">
+        <label>Nilai Kontrak per Bulan <span>*</span></label>
+        <input type="text" class="form-control" id="convertNilai" placeholder="Rp 12.000.000"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Durasi Kontrak <span>*</span></label>
+          <select class="form-control" id="convertDurasi">
+            <option>3 bulan</option>
+            <option>6 bulan</option>
+            <option selected>12 bulan</option>
+            <option>24 bulan</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Tanggal Mulai <span>*</span></label>
+          <input type="date" class="form-control" id="convertTanggal"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>PIC EFM (Petugas lapangan)</label>
+        <select class="form-control">
+          <option>Pilih PIC EFM...</option>
+          <option>Ahmad — Area Jakarta Selatan</option>
+          <option>Budi — Area Jakarta Barat</option>
+          <option>Citra — Area Jakarta Pusat</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Catatan Kontrak</label>
+        <textarea class="form-control" rows="2" placeholder="Catatan khusus kontrak..."></textarea>
+      </div>
+
+      <!-- Summary -->
+      <div style="background:#EAFAF1;border-radius:10px;padding:14px 16px;border-left:3px solid var(--green);">
+        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:6px">Setelah Convert:</p>
+        <p style="font-size:12px;color:#1E1C43">✅ Lead akan dipindahkan ke <strong>Database Klien B2B</strong></p>
+        <p style="font-size:12px;color:#1E1C43;margin-top:4px">✅ Status lead berubah menjadi <strong>Converted</strong></p>
+        <p style="font-size:12px;color:#1E1C43;margin-top:4px">✅ Invoice pertama siap digenerate</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeConvertModal()">Batal</button>
+      <button class="btn-primary" onclick="doConvert()" style="background:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+        Konfirmasi — Jadikan Klien
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Berhasil Diconvert! 🎉</h3>
+    <p id="successMsg">Apartemen Green Valley telah ditambahkan ke Database Klien B2B.</p>
+    <div class="success-actions">
+      <button class="btn-cancel" onclick="closeSuccess()">Tutup</button>
+      <button class="btn-primary" onclick="goToClients()">Lihat Database Klien →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Hint toast -->
+<div id="hintToast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1E1C43;color:white;padding:10px 20px;border-radius:8px;font-size:13px;z-index:999;">
+  ⚠️ Tombol Convert hanya aktif saat stage = Closing
 </div>
 
 <script>
 function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';sub.style.display=isOpen?'none':'block';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';}
-function openModal(){document.getElementById('modalOverlay').classList.add('show');}
-function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
-function saveLead(){alert('Lead tersimpan!');closeModal();}
+
+function openAddModal(){ document.getElementById('addModal').classList.add('show'); }
+function closeAddModal(){ document.getElementById('addModal').classList.remove('show'); }
+function saveLead(){ alert('Lead tersimpan!'); closeAddModal(); }
+
+function openConvertModal(name, type, pic, nilai){
+  document.getElementById('convertLeadName').textContent = name;
+  document.getElementById('convertLeadType').textContent = type + ' • PIC: ' + pic;
+  document.getElementById('convertNilai').value = nilai;
+  // Set today as default tanggal mulai
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('convertTanggal').value = today;
+  document.getElementById('convertModal').classList.add('show');
+}
+function closeConvertModal(){ document.getElementById('convertModal').classList.remove('show'); }
+
+function doConvert(){
+  const name = document.getElementById('convertLeadName').textContent;
+  closeConvertModal();
+  document.getElementById('successMsg').textContent = name + ' telah ditambahkan ke Database Klien B2B.';
+  document.getElementById('successOverlay').classList.add('show');
+}
+
+function closeSuccess(){ document.getElementById('successOverlay').classList.remove('show'); }
+function goToClients(){ window.location.href = 'b2b-clients.html'; }
+
+function showConvertHint(){
+  const toast = document.getElementById('hintToast');
+  toast.style.display = 'block';
+  setTimeout(() => { toast.style.display = 'none'; }, 2500);
+}
 </script>
 </body>
 </html>
