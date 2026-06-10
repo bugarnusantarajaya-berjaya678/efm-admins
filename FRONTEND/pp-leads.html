@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Leads Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
+      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
+      --gray-text:#6C757D; --text-dark:#1E1C43;
+      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
+      --sidebar-w:240px;
+    }
+
+    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; }
+    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+    .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .logo-circle svg { width:22px; height:22px; fill:white; }
+    .logo-text h2 { font-size:14px; font-weight:700; color:white; line-height:1.2; }
+    .logo-text span { font-size:10px; color:rgba(255,255,255,0.5); }
+    .btn-new-entry { margin:16px; padding:11px 16px; background:var(--orange); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s; text-decoration:none; justify-content:center; }
+    .btn-new-entry:hover { background:var(--orange-hover); }
+    .sidebar-nav { flex:1; padding:8px 0; }
+    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
+    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); }
+    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
+    .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
+
+    /* MAIN */
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
+    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .search-bar { display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 14px; width:220px; }
+    .search-bar svg { width:15px; height:15px; color:var(--gray-text); flex-shrink:0; }
+    .search-bar input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; width:100%; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
+    .icon-btn svg { width:17px; height:17px; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
+
+    /* CONTENT */
+    .content { padding:28px; flex:1; }
+
+    /* Page header */
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
+    .btn-primary:hover { background:var(--orange-hover); }
+
+    /* Stats row */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .stat-mini { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; }
+    .stat-mini .label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .stat-mini .value { font-size:24px; font-weight:700; color:var(--navy); }
+    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .stat-mini.highlight { border-color:var(--orange); }
+    .stat-mini.highlight .value { color:var(--orange); }
+
+    /* Filters */
+    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; cursor:pointer; outline:none; }
+    .filter-select:focus { border-color:var(--navy); }
+    .filter-search { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; width:100%; }
+    .btn-filter { padding:8px 16px; background:var(--navy); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-clear { padding:8px 12px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; cursor:pointer; }
+
+    /* Table */
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); color:var(--text-dark); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#FAFAFA; cursor:pointer; }
+
+    .lead-name-cell { display:flex; align-items:center; gap:10px; }
+    .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .badge.new { background:#EBF5FB; color:#2980B9; }
+    .badge.follow-up { background:#FEF9E7; color:#F39C12; }
+    .badge.closing { background:#EAFAF1; color:#27AE60; }
+    .badge.gagal { background:#FDEDEC; color:#E74C3C; }
+
+    .source-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:500; background:var(--gray-bg); color:var(--gray-text); border:1px solid var(--gray-border); white-space:nowrap; }
+
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    .action-btn.danger:hover { border-color:var(--red); color:var(--red); }
+    .action-btn svg { width:14px; height:14px; }
+
+    /* Pagination */
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
+    .pagination-info { font-size:12px; color:var(--gray-text); }
+    .pagination-btns { display:flex; gap:4px; }
+    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); transition:all 0.15s; }
+    .page-btn:hover { border-color:var(--navy); }
+    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
+    .page-btn svg { width:14px; height:14px; }
+
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
+    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
+    .modal-close svg { width:16px; height:16px; }
+    .modal-body { padding:24px 28px; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; }
+
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .form-group label span { color:var(--orange); }
+    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; transition:border-color 0.2s; }
+    .form-control:focus { border-color:var(--navy); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-cancel:hover { border-color:var(--navy); color:var(--navy); }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle">
+      <svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg>
+    </div>
+    <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
+  </div>
+  <a href="#" class="btn-new-entry" onclick="openModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    New Lead
+  </a>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <a href="pp-leads.html" class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Private Training
+    </a>
+    <a href="b2b-dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      B2B Management
+    </a>
+    <a href="event-dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Event Management
+    </a>
+    <a href="operational.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>
+      Operational
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="index.html" class="nav-item logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Cari leads..."/>
+      </div>
+      <div class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Leads Management</h1>
+        <p>Kelola dan pantau semua prospek Private Training</p>
+      </div>
+      <button class="btn-primary" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Lead
+      </button>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-mini">
+        <div class="label">Total Leads</div>
+        <div class="value">248</div>
+        <div class="sub">Bulan ini</div>
+      </div>
+      <div class="stat-mini highlight">
+        <div class="label">Hot Leads</div>
+        <div class="value">85</div>
+        <div class="sub">Follow up & Closing</div>
+      </div>
+      <div class="stat-mini">
+        <div class="label">Converted</div>
+        <div class="value">42</div>
+        <div class="sub">Jadi order</div>
+      </div>
+      <div class="stat-mini">
+        <div class="label">Gagal</div>
+        <div class="value">31</div>
+        <div class="sub">Tidak closing</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-bar">
+      <select class="filter-select" id="filterStatus">
+        <option value="">Semua Status</option>
+        <option value="new">New</option>
+        <option value="follow-up">Follow Up</option>
+        <option value="closing">Closing</option>
+        <option value="gagal">Gagal</option>
+      </select>
+      <select class="filter-select" id="filterSource">
+        <option value="">Semua Sumber</option>
+        <option value="ads">Ads</option>
+        <option value="website">Website</option>
+        <option value="referral">Referral</option>
+        <option value="walk-in">Walk-in</option>
+      </select>
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Cari nama atau no HP..." id="searchInput" oninput="filterTable()"/>
+      </div>
+      <button class="btn-filter" onclick="filterTable()">Filter</button>
+      <button class="btn-clear" onclick="clearFilter()">Reset</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table id="leadsTable">
+          <thead>
+            <tr>
+              <th>Lead ID</th>
+              <th>Nama</th>
+              <th>No HP</th>
+              <th>Sumber</th>
+              <th>Program Diminati</th>
+              <th>Status Pipeline</th>
+              <th>Tanggal</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leadsBody">
+            <tr>
+              <td>#L-1001</td>
+              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#E05945">AR</div>Ahmad Ridwan</div></td>
+              <td>0812-3456-7890</td>
+              <td><span class="source-tag">🌐 Website</span></td>
+              <td>Fatloss & Bodyshape</td>
+              <td><span class="badge new">New</span></td>
+              <td>10 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Lihat Detail" onclick="viewLead('L-1001')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Buat Order" onclick="createOrder('L-1001')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#L-1002</td>
+              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
+              <td>0856-7890-1234</td>
+              <td><span class="source-tag">📱 Ads</span></td>
+              <td>Yoga</td>
+              <td><span class="badge follow-up">Follow Up</span></td>
+              <td>9 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Lihat Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Buat Order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#L-1003</td>
+              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
+              <td>0811-2233-4455</td>
+              <td><span class="source-tag">🚶 Walk-in</span></td>
+              <td>Boxing</td>
+              <td><span class="badge closing">Closing</span></td>
+              <td>8 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Lihat Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Buat Order" style="background:#EAFAF1;color:#27AE60;border-color:#27AE60"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#L-1004</td>
+              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#8E44AD">DA</div>Dewi Ayu</div></td>
+              <td>0877-6655-4433</td>
+              <td><span class="source-tag">👥 Referral</span></td>
+              <td>Tennis</td>
+              <td><span class="badge gagal">Gagal</span></td>
+              <td>7 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Lihat Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Buat Order"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info">Menampilkan 1–4 dari 248 leads</div>
+        <div class="pagination-btns">
+          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+          <button class="page-btn active">1</button>
+          <button class="page-btn">2</button>
+          <button class="page-btn">3</button>
+          <span style="display:flex;align-items:center;padding:0 4px;color:var(--gray-text)">...</span>
+          <button class="page-btn">62</button>
+          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- Modal: Add New Lead -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Tambah Lead Baru</h3>
+      <button class="modal-close" onclick="closeModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Nama Lengkap <span>*</span></label>
+        <input type="text" class="form-control" placeholder="Contoh: Budi Santoso"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>No HP / WhatsApp <span>*</span></label>
+          <input type="text" class="form-control" placeholder="+62 812 3456 7890"/>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" class="form-control" placeholder="email@example.com"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Sumber Lead <span>*</span></label>
+          <select class="form-control">
+            <option value="">Pilih Sumber...</option>
+            <option>Ads (Instagram/Facebook)</option>
+            <option>Website</option>
+            <option>Referral</option>
+            <option>Walk-in</option>
+            <option>WhatsApp</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Program Diminati <span>*</span></label>
+          <select class="form-control">
+            <option value="">Pilih Program...</option>
+            <option>Fatloss & Bodyshape</option>
+            <option>Strength & Muscle</option>
+            <option>Functional Training</option>
+            <option>Boxing</option>
+            <option>Muaythai</option>
+            <option>Yoga</option>
+            <option>Tennis</option>
+            <option>Running</option>
+            <option>Lainnya</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Assigned To (PIC Admin)</label>
+        <select class="form-control">
+          <option>Auto-Assign</option>
+          <option>Admin Jakarta Selatan</option>
+          <option>Admin Jakarta Barat</option>
+          <option>Admin BSD</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Catatan Tambahan</label>
+        <textarea class="form-control" rows="3" placeholder="Catatan awal tentang lead ini..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-primary" onclick="saveLead()">Simpan Lead</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal() {
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+  }
+  function saveLead() {
+    alert('Lead tersimpan! (Akan terhubung ke Google Sheets)');
+    closeModal();
+  }
+  function viewLead(id) {
+    window.location.href = `pp-lead-detail.html?id=${id}`;
+  }
+  function createOrder(id) {
+    window.location.href = `pp-create-order.html?lead=${id}`;
+  }
+  function filterTable() {
+    const status = document.getElementById('filterStatus').value.toLowerCase();
+    const source = document.getElementById('filterSource').value.toLowerCase();
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const rows = document.querySelectorAll('#leadsBody tr');
+    rows.forEach(row => {
+      const text = row.textContent.toLowerCase();
+      const matchSearch = !search || text.includes(search);
+      const matchStatus = !status || text.includes(status);
+      const matchSource = !source || text.includes(source);
+      row.style.display = (matchSearch && matchStatus && matchSource) ? '' : 'none';
+    });
+  }
+  function clearFilter() {
+    document.getElementById('filterStatus').value = '';
+    document.getElementById('filterSource').value = '';
+    document.getElementById('searchInput').value = '';
+    filterTable();
+  }
+</script>
+
+</body>
+</html>
