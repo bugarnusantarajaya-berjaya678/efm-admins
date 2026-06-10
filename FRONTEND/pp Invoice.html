@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Invoice PP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
+      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
+      --gray-text:#6C757D; --text-dark:#1E1C43;
+      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
+      --sidebar-w:240px;
+    }
+    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; flex-shrink:0; }
+    .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .logo-circle svg { width:22px; height:22px; fill:white; }
+    .logo-text h2 { font-size:14px; font-weight:700; color:white; line-height:1.2; }
+    .logo-text span { font-size:10px; color:rgba(255,255,255,0.5); }
+    .btn-new-entry { margin:16px; padding:11px 16px; background:var(--orange); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s; text-decoration:none; justify-content:center; flex-shrink:0; }
+    .btn-new-entry:hover { background:var(--orange-hover); }
+    .sidebar-nav { flex:1; padding:8px 0; }
+    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
+    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+    .nav-sub-item { display:flex; align-items:center; padding:8px 20px 8px 52px; color:rgba(255,255,255,0.45); text-decoration:none; font-size:12px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; }
+    .nav-sub-item:hover { color:white; background:rgba(255,255,255,0.04); }
+    .nav-sub-item.active { color:white; border-left-color:var(--orange); background:rgba(224,89,69,0.08); }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
+    .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
+
+    /* MAIN */
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
+    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .search-bar { display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 14px; width:220px; }
+    .search-bar svg { width:15px; height:15px; color:var(--gray-text); flex-shrink:0; }
+    .search-bar input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
+    .icon-btn svg { width:17px; height:17px; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
+
+    /* CONTENT */
+    .content { padding:28px; flex:1; }
+
+    /* VIEWS */
+    .view { display:none; }
+    .view.active { display:block; }
+
+    /* List View */
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
+    .btn-primary:hover { background:var(--orange-hover); }
+    .btn-outline { padding:10px 20px; background:white; color:var(--navy); border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn-outline:hover { background:var(--navy); color:white; }
+
+    /* Stats */
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .stat-mini { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; }
+    .stat-mini .label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .stat-mini .value { font-size:22px; font-weight:700; color:var(--navy); }
+    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .stat-mini.highlight { border-color:var(--orange); }
+    .stat-mini.highlight .value { color:var(--orange); }
+
+    /* Filters */
+    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:14px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+    .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; background:white; cursor:pointer; outline:none; }
+    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+
+    /* Table */
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    td { padding:13px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#FAFAFA; cursor:pointer; }
+    .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
+    .client-cell { display:flex; align-items:center; }
+    .invoice-id { font-weight:700; color:var(--navy); font-size:12px; }
+
+    /* Badges */
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .badge.paid { background:#EAFAF1; color:#27AE60; }
+    .badge.pending { background:#FEF9E7; color:#F39C12; }
+    .badge.overdue { background:#FDEDEC; color:#E74C3C; }
+    .badge.draft { background:#F2F3F4; color:#7F8C8D; }
+
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
+    .action-btn svg { width:14px; height:14px; }
+
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
+    .pagination-info { font-size:12px; color:var(--gray-text); }
+    .pagination-btns { display:flex; gap:4px; }
+    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
+    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
+    .page-btn svg { width:14px; height:14px; }
+
+    /* ===== DETAIL VIEW ===== */
+    .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--gray-text); font-size:13px; font-weight:500; cursor:pointer; margin-bottom:20px; padding:8px 0; border:none; background:none; font-family:'Poppins',sans-serif; transition:color 0.2s; }
+    .back-btn:hover { color:var(--navy); }
+    .back-btn svg { width:16px; height:16px; }
+
+    .detail-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .detail-header h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .detail-header p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .detail-actions { display:flex; gap:12px; }
+
+    /* Invoice Card */
+    .invoice-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow:hidden; max-width:820px; }
+    .invoice-header { background:var(--navy); padding:28px 36px; display:flex; justify-content:space-between; align-items:flex-start; }
+    .invoice-logo { display:flex; align-items:center; gap:14px; }
+    .inv-logo-circle { width:48px; height:48px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .inv-logo-circle svg { width:26px; height:26px; fill:white; }
+    .invoice-company h2 { font-size:16px; font-weight:700; color:white; line-height:1.3; }
+    .invoice-company p { font-size:11px; color:rgba(255,255,255,0.6); margin-top:3px; line-height:1.6; }
+    .invoice-meta { text-align:right; }
+    .inv-number { font-size:13px; font-weight:700; color:white; margin-bottom:10px; }
+    .inv-number span { color:rgba(255,255,255,0.6); font-weight:400; font-size:11px; }
+    .inv-dates { font-size:11px; color:rgba(255,255,255,0.6); line-height:1.9; }
+    .inv-dates strong { color:white; }
+    .inv-status { display:inline-flex; align-items:center; gap:6px; padding:5px 14px; border-radius:20px; font-size:11px; font-weight:700; margin-top:10px; }
+    .inv-status.pending { background:rgba(243,156,18,0.2); color:#F39C12; border:1px solid rgba(243,156,18,0.3); }
+    .inv-status.paid { background:rgba(39,174,96,0.2); color:#27AE60; border:1px solid rgba(39,174,96,0.3); }
+    .inv-status.overdue { background:rgba(231,76,60,0.2); color:#E74C3C; border:1px solid rgba(231,76,60,0.3); }
+
+    .invoice-body { padding:28px 36px; }
+    .billing-row { display:grid; grid-template-columns:1fr 1fr; gap:28px; margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--gray-border); }
+    .billing-section h4 { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; }
+    .billing-section .client-name { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+    .billing-section p { font-size:13px; color:var(--gray-text); line-height:1.8; }
+    .qr-section { text-align:center; display:flex; flex-direction:column; align-items:center; }
+    .qr-box { width:88px; height:88px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+    .qr-box svg { width:52px; height:52px; color:var(--navy); }
+    .qr-label { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; }
+    .qr-sub { font-size:11px; color:var(--gray-text); margin-top:3px; }
+
+    /* Items table */
+    .items-table { width:100%; border-collapse:collapse; margin-bottom:24px; }
+    .items-table th { background:var(--gray-bg); padding:11px 14px; font-size:11px; font-weight:700; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; }
+    .items-table th.right, .items-table td.right { text-align:right; }
+    .items-table th.center, .items-table td.center { text-align:center; }
+    .items-table td { padding:15px 14px; font-size:13px; border-bottom:1px solid var(--gray-border); }
+    .items-table tr:last-child td { border-bottom:none; }
+    .item-name { font-weight:600; color:var(--navy); margin-bottom:3px; }
+    .item-desc { font-size:11px; color:var(--gray-text); }
+
+    /* Summary */
+    .summary-wrap { display:flex; justify-content:flex-end; margin-bottom:24px; }
+    .summary-box { width:260px; }
+    .summary-row { display:flex; justify-content:space-between; padding:7px 0; font-size:13px; }
+    .summary-row .lbl { color:var(--gray-text); }
+    .summary-row .val { color:var(--navy); font-weight:500; }
+    .summary-row.discount .val { color:var(--green); }
+    .summary-divider { height:1px; background:var(--gray-border); margin:6px 0; }
+    .total-row { display:flex; justify-content:space-between; padding:12px 0 4px; font-size:16px; font-weight:700; border-top:2px solid var(--navy); margin-top:4px; }
+    .total-row .val { color:var(--orange); font-size:18px; }
+
+    /* Notes */
+    .invoice-notes { padding:20px 36px; border-top:1px solid var(--gray-border); background:var(--gray-bg); }
+    .notes-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .note-item h5 { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+    .note-item p { font-size:11px; color:var(--gray-text); line-height:1.7; }
+
+    /* Mark paid modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:white; border-radius:16px; width:100%; max-width:420px; }
+    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .modal-close svg { width:16px; height:16px; }
+    .modal-body { padding:24px 28px; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; outline:none; }
+    .form-control:focus { border-color:var(--navy); }
+    .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-green { padding:10px 20px; background:var(--green); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+
+    @media print {
+      .sidebar, .header, .detail-header, .back-btn { display:none !important; }
+      .main { margin-left:0; }
+      .invoice-card { border:none; max-width:100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg></div>
+    <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
+  </div>
+  <a href="pp-orders.html" class="btn-new-entry"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Order</a>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="#" class="nav-item active" onclick="toggleMenu(event,'ppSub','ppArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training
+      <svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="ppSub" style="display:block">
+      <a href="pp-leads.html" class="nav-sub-item">Leads</a>
+      <a href="pp-orders.html" class="nav-sub-item">Orders</a>
+      <a href="pp-invoice.html" class="nav-sub-item active">Invoice</a>
+      <a href="pp-documents.html" class="nav-sub-item">Dokumen</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management
+      <svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="b2bSub" style="display:none">
+      <a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a>
+      <a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a>
+      <a href="b2b-clients.html" class="nav-sub-item">Database Klien</a>
+      <a href="b2b-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a>
+      <a href="b2b-live-report.html" class="nav-sub-item">Live Report</a>
+      <a href="b2b-revenue.html" class="nav-sub-item">Revenue</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management
+      <svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="eventSub" style="display:none">
+      <a href="event-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="event-leads.html" class="nav-sub-item">Leads Event</a>
+      <a href="event-tracker.html" class="nav-sub-item">Event Tracker</a>
+      <a href="event-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
+      <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational
+      <svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="opsSub" style="display:none">
+      <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
+      <a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a>
+      <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari invoice..."/></div>
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ===== LIST VIEW ===== -->
+    <div class="view active" id="listView">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Invoice Private Training</h1>
+          <p>Semua tagihan klien program private</p>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row">
+        <div class="stat-mini"><div class="label">Total Invoice</div><div class="value">89</div><div class="sub">Bulan ini</div></div>
+        <div class="stat-mini highlight"><div class="label">Belum Dibayar</div><div class="value">12</div><div class="sub">Perlu follow up</div></div>
+        <div class="stat-mini"><div class="label">Sudah Lunas</div><div class="value">74</div><div class="sub">✅ Terbayar</div></div>
+        <div class="stat-mini"><div class="label">Jatuh Tempo</div><div class="value">3</div><div class="sub">⚠️ Overdue</div></div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <select class="filter-select">
+          <option>Semua Status</option>
+          <option>Pending</option>
+          <option>Paid</option>
+          <option>Overdue</option>
+          <option>Draft</option>
+        </select>
+        <select class="filter-select">
+          <option>Semua Bulan</option>
+          <option>Juni 2026</option>
+          <option>Mei 2026</option>
+          <option>April 2026</option>
+        </select>
+        <div class="filter-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" placeholder="Cari nomor invoice atau nama klien..."/>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>No. Invoice</th>
+                <th>Nama Klien</th>
+                <th>Paket</th>
+                <th>PIC Pelatih</th>
+                <th>Tanggal</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="showDetail('INV/EFM/PP/2026/0089','Alex Mercer','JW','#2980B9','12 Sesi - Pro','Sarah Jenkins','10 Jun 2026','24 Jun 2026','paid')">
+                <td><span class="invoice-id">INV/EFM/PP/2026/0089</span></td>
+                <td><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">AM</div>Alex Mercer</div></td>
+                <td>12 Sesi - Pro</td>
+                <td>Sarah Jenkins</td>
+                <td>10 Jun 2026</td>
+                <td style="font-weight:600">Rp 1.500.000</td>
+                <td><span class="badge paid">Paid</span></td>
+                <td>
+                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0089','Alex Mercer','AM','#2980B9','12 Sesi - Pro','Sarah Jenkins','10 Jun 2026','24 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </td>
+              </tr>
+              <tr onclick="showDetail('INV/EFM/PP/2026/0088','Robert Taylor','RT','#E05945','24 Sesi - Elite','Elena Rodriguez','8 Jun 2026','22 Jun 2026','pending')">
+                <td><span class="invoice-id">INV/EFM/PP/2026/0088</span></td>
+                <td><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+                <td>24 Sesi - Elite</td>
+                <td>Elena Rodriguez</td>
+                <td>8 Jun 2026</td>
+                <td style="font-weight:600">Rp 2.800.000</td>
+                <td><span class="badge pending">Pending</span></td>
+                <td>
+                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0088','Robert Taylor','RT','#E05945','24 Sesi - Elite','Elena Rodriguez','8 Jun 2026','22 Jun 2026','pending')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </td>
+              </tr>
+              <tr onclick="showDetail('INV/EFM/PP/2026/0087','Emily Chen','EC','#27AE60','4 Sesi - Starter','Marcus Chen','5 Jun 2026','19 Jun 2026','paid')">
+                <td><span class="invoice-id">INV/EFM/PP/2026/0087</span></td>
+                <td><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+                <td>4 Sesi - Starter</td>
+                <td>Marcus Chen</td>
+                <td>5 Jun 2026</td>
+                <td style="font-weight:600">Rp 600.000</td>
+                <td><span class="badge paid">Paid</span></td>
+                <td>
+                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0087','Emily Chen','EC','#27AE60','4 Sesi - Starter','Marcus Chen','5 Jun 2026','19 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </td>
+              </tr>
+              <tr onclick="showDetail('INV/EFM/PP/2026/0085','James Wilson','JW','#8E44AD','8 Sesi - Base','Sarah Jenkins','1 Jun 2026','15 Jun 2026','overdue')">
+                <td><span class="invoice-id">INV/EFM/PP/2026/0085</span></td>
+                <td><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">JW</div>James Wilson</div></td>
+                <td>8 Sesi - Base</td>
+                <td>Sarah Jenkins</td>
+                <td>1 Jun 2026</td>
+                <td style="font-weight:600">Rp 1.100.000</td>
+                <td><span class="badge overdue">Overdue</span></td>
+                <td>
+                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0085','James Wilson','JW','#8E44AD','8 Sesi - Base','Sarah Jenkins','1 Jun 2026','15 Jun 2026','overdue')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </td>
+              </tr>
+              <tr onclick="showDetail('INV/EFM/PP/2026/0084','Anita Kumar','AK','#F39C12','12 Sesi - Pro','David Kim','28 Mei 2026','11 Jun 2026','paid')">
+                <td><span class="invoice-id">INV/EFM/PP/2026/0084</span></td>
+                <td><div class="client-cell"><div class="avatar-sm" style="background:#F39C12">AK</div>Anita Kumar</div></td>
+                <td>12 Sesi - Pro</td>
+                <td>David Kim</td>
+                <td>28 Mei 2026</td>
+                <td style="font-weight:600">Rp 1.500.000</td>
+                <td><span class="badge paid">Paid</span></td>
+                <td>
+                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0084','Anita Kumar','AK','#F39C12','12 Sesi - Pro','David Kim','28 Mei 2026','11 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="pagination">
+          <div class="pagination-info">Menampilkan 1–5 dari 89 invoice</div>
+          <div class="pagination-btns">
+            <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DETAIL VIEW ===== -->
+    <div class="view" id="detailView">
+      <button class="back-btn" onclick="showList()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali ke Daftar Invoice
+      </button>
+
+      <div class="detail-header">
+        <div>
+          <h1 id="detailTitle">Invoice #INV/EFM/PP/2026/0089</h1>
+          <p id="detailSubtitle">Private Training — Alex Mercer</p>
+        </div>
+        <div class="detail-actions">
+          <button class="btn-outline" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Print
+          </button>
+          <button class="btn-primary" onclick="window.print()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </button>
+          <button class="btn-green" id="markPaidBtn" onclick="openMarkPaid()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+            Mark as Paid
+          </button>
+        </div>
+      </div>
+
+      <!-- Invoice Card -->
+      <div class="invoice-card" id="invoicePrintArea">
+
+        <!-- Header -->
+        <div class="invoice-header">
+          <div class="invoice-logo">
+            <div class="inv-logo-circle"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg></div>
+            <div class="invoice-company">
+              <h2>Essential Fitness Management</h2>
+              <p>CV. Bugar Nusantara Jaya</p>
+              <p>Jl. Terogong Raya No.18, Jakarta Selatan</p>
+              <p>essentialfitnessmanagement@gmail.com</p>
+            </div>
+          </div>
+          <div class="invoice-meta">
+            <div class="inv-number"><span>Invoice No: </span><span id="invNumber">INV/EFM/PP/2026/0089</span></div>
+            <div class="inv-dates">
+              <div>Tanggal: <strong id="invDate">10 Jun 2026</strong></div>
+              <div>Jatuh Tempo: <strong id="invDueDate">24 Jun 2026</strong></div>
+            </div>
+            <div id="invStatusBadge"><span class="inv-status paid">✅ Lunas</span></div>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="invoice-body">
+
+          <!-- Billing Info -->
+          <div class="billing-row">
+            <div class="billing-section">
+              <h4>Tagihan Kepada</h4>
+              <div class="client-name" id="invClientName">Alex Mercer</div>
+              <p id="invClientDetail">Order ID: #PP-8042<br/>alex.mercer@example.com<br/>+62 812-3456-7890</p>
+            </div>
+            <div class="billing-section qr-section">
+              <h4>Attendance Barcode</h4>
+              <div class="qr-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                  <path d="M14 14h1v1h-1zM16 14h1v1h-1zM14 16h3v1h-3zM18 14h1v3h-1zM17 17h1v1h-1z"/>
+                </svg>
+              </div>
+              <div class="qr-label">Scan untuk validasi sesi</div>
+              <div class="qr-sub" id="invOrderId">Order: #PP-8042</div>
+            </div>
+          </div>
+
+          <!-- Items -->
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Deskripsi</th>
+                <th class="center">Sesi</th>
+                <th class="right">Rate/Sesi</th>
+                <th class="right">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="item-name" id="invPackage">12 Sesi - Pro Package</div>
+                  <div class="item-desc">Private 1-on-1 Strength & Conditioning. Valid 60 hari.</div>
+                </td>
+                <td class="center" id="invSesi">12</td>
+                <td class="right">Rp 125.000</td>
+                <td class="right" style="font-weight:600" id="invSubtotal">Rp 1.500.000</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="item-name">Biaya Transportasi PIC</div>
+                  <div class="item-desc" id="invPIC">PIC: Sarah Jenkins</div>
+                </td>
+                <td class="center">-</td>
+                <td class="right">Rp 0</td>
+                <td class="right" style="font-weight:600">Rp 0</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Summary -->
+          <div class="summary-wrap">
+            <div class="summary-box">
+              <div class="summary-row"><span class="lbl">Subtotal</span><span class="val" id="invTotal">Rp 1.500.000</span></div>
+              <div class="summary-row discount"><span class="lbl">Diskon</span><span class="val">- Rp 0</span></div>
+              <div class="summary-divider"></div>
+              <div class="total-row"><span>Total Tagihan</span><span class="val" id="invGrandTotal">Rp 1.500.000</span></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Notes -->
+        <div class="invoice-notes">
+          <div class="notes-grid">
+            <div class="note-item">
+              <h5>Informasi Pembayaran</h5>
+              <p><strong>Bank:</strong> BCA &nbsp;|&nbsp; <strong>No. Rek:</strong> 123-456-7890</p>
+              <p><strong>A/N:</strong> CV. Bugar Nusantara Jaya</p>
+              <p style="margin-top:4px">Sertakan nomor invoice saat transfer.</p>
+            </div>
+            <div class="note-item">
+              <h5>Kebijakan Pembatalan</h5>
+              <p>Pembatalan sesi minimal 24 jam sebelumnya. Sesi yang tidak dibatalkan tepat waktu dianggap terpakai dan tidak dapat dikembalikan.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- Modal: Mark as Paid -->
+<div class="modal-overlay" id="markPaidModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Tandai sebagai Lunas</h3>
+      <button class="modal-close" onclick="closeMarkPaid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:#EAFAF1;border-radius:10px;padding:14px 16px;margin-bottom:20px;border-left:3px solid var(--green)">
+        <p style="font-size:12px;color:var(--green);font-weight:700;margin-bottom:4px">KONFIRMASI PEMBAYARAN</p>
+        <p style="font-size:13px;color:var(--navy)" id="markPaidInfo">Invoice INV/EFM/PP/2026/0088 — Robert Taylor</p>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Pembayaran</label>
+        <input type="date" class="form-control" id="paidDate"/>
+      </div>
+      <div class="form-group">
+        <label>Metode Pembayaran</label>
+        <select class="form-control">
+          <option>Transfer Bank (BCA)</option>
+          <option>Transfer Bank (Mandiri)</option>
+          <option>Cash</option>
+          <option>QRIS</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nomor Referensi / Bukti Transfer</label>
+        <input type="text" class="form-control" placeholder="Contoh: 2026061012345678"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeMarkPaid()">Batal</button>
+      <button class="btn-green" onclick="confirmPaid()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+        Konfirmasi Lunas
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(e,s,a){
+  e.preventDefault();
+  const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';
+  sub.style.display=isOpen?'none':'block';
+  if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';
+}
+
+// Invoice data mapping
+const invoiceData = {
+  'INV/EFM/PP/2026/0089': { client:'Alex Mercer', initials:'AM', color:'#2980B9', package:'12 Sesi - Pro Package', sesi:'12', pic:'PIC: Sarah Jenkins', subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'10 Jun 2026', due:'24 Jun 2026', status:'paid', orderId:'#PP-8042' },
+  'INV/EFM/PP/2026/0088': { client:'Robert Taylor', initials:'RT', color:'#E05945', package:'24 Sesi - Elite Package', sesi:'24', pic:'PIC: Elena Rodriguez', subtotal:'Rp 2.800.000', total:'Rp 2.800.000', date:'8 Jun 2026', due:'22 Jun 2026', status:'pending', orderId:'#PP-8038' },
+  'INV/EFM/PP/2026/0087': { client:'Emily Chen', initials:'EC', color:'#27AE60', package:'4 Sesi - Starter Package', sesi:'4', pic:'PIC: Marcus Chen', subtotal:'Rp 600.000', total:'Rp 600.000', date:'5 Jun 2026', due:'19 Jun 2026', status:'paid', orderId:'#PP-8041' },
+  'INV/EFM/PP/2026/0085': { client:'James Wilson', initials:'JW', color:'#8E44AD', package:'8 Sesi - Base Package', sesi:'8', pic:'PIC: Sarah Jenkins', subtotal:'Rp 1.100.000', total:'Rp 1.100.000', date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue', orderId:'#PP-8035' },
+  'INV/EFM/PP/2026/0084': { client:'Anita Kumar', initials:'AK', color:'#F39C12', package:'12 Sesi - Pro Package', sesi:'12', pic:'PIC: David Kim', subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'28 Mei 2026', due:'11 Jun 2026', status:'paid', orderId:'#PP-8033' },
+};
+
+function showDetail(invNo) {
+  const d = invoiceData[invNo];
+  if (!d) return;
+
+  // Update detail view
+  document.getElementById('detailTitle').textContent = 'Invoice #' + invNo;
+  document.getElementById('detailSubtitle').textContent = 'Private Training — ' + d.client;
+  document.getElementById('invNumber').textContent = invNo;
+  document.getElementById('invClientName').textContent = d.client;
+  document.getElementById('invClientDetail').innerHTML = 'Order ID: ' + d.orderId + '<br/>email@example.com<br/>+62 812-xxxx-xxxx';
+  document.getElementById('invOrderId').textContent = 'Order: ' + d.orderId;
+  document.getElementById('invPackage').textContent = d.package;
+  document.getElementById('invSesi').textContent = d.sesi;
+  document.getElementById('invPIC').textContent = d.pic;
+  document.getElementById('invSubtotal').textContent = d.subtotal;
+  document.getElementById('invTotal').textContent = d.subtotal;
+  document.getElementById('invGrandTotal').textContent = d.total;
+  document.getElementById('invDate').textContent = d.date;
+  document.getElementById('invDueDate').textContent = d.due;
+
+  // Status badge
+  const statusMap = {
+    paid: '<span class="inv-status paid">✅ Lunas</span>',
+    pending: '<span class="inv-status pending">⏳ Pending</span>',
+    overdue: '<span class="inv-status overdue">🔴 Overdue</span>',
+    draft: '<span class="inv-status pending">📝 Draft</span>'
+  };
+  document.getElementById('invStatusBadge').innerHTML = statusMap[d.status] || '';
+
+  // Mark as Paid button
+  const markBtn = document.getElementById('markPaidBtn');
+  if (d.status === 'paid') {
+    markBtn.style.display = 'none';
+  } else {
+    markBtn.style.display = 'inline-flex';
+    document.getElementById('markPaidInfo').textContent = 'Invoice ' + invNo + ' — ' + d.client;
+  }
+
+  // Set today as default paid date
+  document.getElementById('paidDate').value = new Date().toISOString().split('T')[0];
+
+  // Switch view
+  document.getElementById('listView').classList.remove('active');
+  document.getElementById('detailView').classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showList() {
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('listView').classList.add('active');
+}
+
+function openMarkPaid() { document.getElementById('markPaidModal').classList.add('show'); }
+function closeMarkPaid() { document.getElementById('markPaidModal').classList.remove('show'); }
+
+function confirmPaid() {
+  closeMarkPaid();
+  document.getElementById('invStatusBadge').innerHTML = '<span class="inv-status paid">✅ Lunas</span>';
+  document.getElementById('markPaidBtn').style.display = 'none';
+  alert('Invoice berhasil ditandai sebagai Lunas!');
+}
+</script>
+
+</body>
+</html>
