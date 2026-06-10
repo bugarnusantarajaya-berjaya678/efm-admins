@@ -580,8 +580,19 @@
         </select>
       </div>
       <div class="form-group">
-        <label>Nomor Referensi / Bukti Transfer</label>
-        <input type="text" class="form-control" placeholder="Contoh: 2026061012345678"/>
+        <label>Upload Bukti Transfer <span style="color:var(--orange)">*</span></label>
+        <div id="uploadArea" style="border:2px dashed var(--gray-border);border-radius:10px;padding:20px;text-align:center;cursor:pointer;transition:all 0.2s" onclick="document.getElementById('buktiInput').click()" onmouseover="this.style.borderColor='var(--navy)';this.style.background='var(--gray-bg)'" onmouseout="this.style.borderColor='var(--gray-border)';this.style.background='white'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="28" height="28" style="color:var(--gray-text);margin-bottom:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px">Klik untuk upload bukti</p>
+          <p style="font-size:11px;color:var(--gray-text)">JPG, PNG, atau PDF (Maks. 5MB)</p>
+          <input type="file" id="buktiInput" style="display:none" accept="image/*,.pdf" onchange="previewFile(this)"/>
+        </div>
+        <!-- Preview area -->
+        <div id="filePreview" style="display:none;margin-top:10px;padding:10px 14px;background:var(--gray-bg);border-radius:8px;display:none;align-items:center;gap:10px;border:1.5px solid var(--gray-border)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--green);flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="fileName" style="font-size:12px;font-weight:600;color:var(--navy);flex:1">bukti.jpg</span>
+          <button onclick="removeFile()" style="border:none;background:none;cursor:pointer;color:var(--red);font-size:18px;line-height:1">×</button>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
