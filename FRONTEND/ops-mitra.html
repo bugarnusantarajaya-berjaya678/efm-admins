@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Database Mitra</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#1E1C43;--orange:#E05945;--orange-hover:#C94A38;--gray-bg:#F8F9FA;--gray-border:#E2E6EA;--gray-text:#6C757D;--text-dark:#1E1C43;--green:#27AE60;--yellow:#F39C12;--red:#E74C3C;--sidebar-w:240px}
+    body{font-family:'Poppins',sans-serif;background:var(--gray-bg);color:var(--text-dark);min-height:100vh;display:flex}
+    .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto}
+    .sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px}
+    .logo-circle{width:40px;height:40px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center}
+    .logo-circle svg{width:22px;height:22px;fill:white}
+    .logo-text h2{font-size:14px;font-weight:700;color:white}
+    .logo-text span{font-size:10px;color:rgba(255,255,255,0.5)}
+    .btn-new-entry{margin:16px;padding:11px 16px;background:var(--orange);color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;justify-content:center}
+    .sidebar-nav{flex:1;padding:8px 0}
+    .nav-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;padding:16px 20px 8px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;cursor:pointer}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:white}
+    .nav-item.active{background:rgba(224,89,69,0.15);color:white;border-left-color:var(--orange)}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0}
+    .nav-sub-item{display:flex;align-items:center;padding:8px 20px 8px 52px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:12px;font-weight:500;transition:all 0.2s;border-left:3px solid transparent}
+    .nav-sub-item:hover{color:white;background:rgba(255,255,255,0.04)}
+    .nav-sub-item.active{color:white;border-left-color:var(--orange);background:rgba(224,89,69,0.08)}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+    .nav-item.logout{color:rgba(255,255,255,0.4);border-radius:8px}
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+    .header{background:white;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-border);position:sticky;top:0;z-index:50}
+    .header-title{font-size:15px;font-weight:600;color:var(--navy)}
+    .header-right{display:flex;align-items:center;gap:16px}
+    .search-bar{display:flex;align-items:center;gap:8px;background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:8px;padding:7px 14px;width:220px}
+    .search-bar svg{width:15px;height:15px;color:var(--gray-text)}
+    .search-bar input{border:none;background:none;font-family:'Poppins',sans-serif;font-size:13px;outline:none;width:100%}
+    .icon-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--gray-border);background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-text);position:relative}
+    .icon-btn svg{width:17px;height:17px}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1.5px solid white}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+    .content{padding:28px;flex:1}
+    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+    .page-header-left h1{font-size:22px;font-weight:700;color:var(--navy)}
+    .page-header-left p{font-size:13px;color:var(--gray-text);margin-top:4px}
+    .btn-primary{padding:10px 20px;background:var(--orange);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+    .stat-mini{background:white;border-radius:12px;border:1.5px solid var(--gray-border);padding:16px 20px;display:flex;align-items:center;gap:14px}
+    .stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .stat-icon svg{width:18px;height:18px}
+    .stat-icon.green{background:rgba(39,174,96,0.12);color:var(--green)}
+    .stat-icon.orange{background:rgba(224,89,69,0.12);color:var(--orange)}
+    .stat-icon.navy{background:rgba(30,28,67,0.1);color:var(--navy)}
+    .stat-info .label{font-size:11px;color:var(--gray-text);font-weight:600;text-transform:uppercase}
+    .stat-info .value{font-size:22px;font-weight:700;color:var(--navy)}
+    .filters-bar{background:white;border-radius:12px;border:1.5px solid var(--gray-border);padding:14px 20px;display:flex;align-items:center;gap:12px;margin-bottom:20px}
+    .filter-select{padding:8px 12px;border:1.5px solid var(--gray-border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;background:white;cursor:pointer;outline:none}
+    .filter-search{flex:1;display:flex;align-items:center;gap:8px;background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:8px;padding:8px 14px}
+    .filter-search svg{width:14px;height:14px;color:var(--gray-text)}
+    .filter-search input{border:none;background:none;font-family:'Poppins',sans-serif;font-size:13px;outline:none;width:100%}
+    .mitra-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+    .mitra-card{background:white;border-radius:14px;border:1.5px solid var(--gray-border);padding:22px;display:flex;gap:16px;align-items:flex-start;transition:box-shadow 0.2s;cursor:pointer}
+    .mitra-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+    .mitra-icon{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+    .mitra-body{flex:1}
+    .mitra-name{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px}
+    .mitra-type{font-size:12px;color:var(--gray-text);margin-bottom:10px}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;margin-bottom:10px}
+    .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+    .badge.aktif{background:#EAFAF1;color:var(--green)}
+    .badge.nonaktif{background:#F2F3F4;color:#7F8C8D}
+    .mitra-info{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+    .mitra-info-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-text)}
+    .mitra-info-row svg{width:13px;height:13px;flex-shrink:0}
+    .mitra-actions{display:flex;gap:8px}
+    .btn-sm-outline{padding:6px 14px;background:white;color:var(--navy);border:1.5px solid var(--navy);border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+    .btn-sm-primary{padding:6px 14px;background:var(--orange);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.show{display:flex}
+    .modal{background:white;border-radius:16px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+    .modal-header{padding:24px 28px 20px;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;justify-content:space-between}
+    .modal-header h3{font-size:16px;font-weight:700;color:var(--navy)}
+    .modal-close{width:32px;height:32px;border-radius:8px;border:1.5px solid var(--gray-border);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .modal-close svg{width:16px;height:16px}
+    .modal-body{padding:24px 28px}
+    .modal-footer{padding:16px 28px;border-top:1px solid var(--gray-border);display:flex;gap:12px;justify-content:flex-end}
+    .form-group{margin-bottom:16px}
+    .form-group label{display:block;font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px}
+    .form-group label span{color:var(--orange)}
+    .form-control{width:100%;padding:10px 14px;border:1.5px solid var(--gray-border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;outline:none}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .btn-cancel{padding:10px 20px;background:white;color:var(--gray-text);border:1.5px solid var(--gray-border);border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg></div>
+    <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
+  </div>
+  <a href="#" class="btn-new-entry" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Mitra</a>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'ppSub','ppArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training<svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="ppSub" style="display:none"><a href="pp-leads.html" class="nav-sub-item">Leads</a><a href="pp-orders.html" class="nav-sub-item">Orders</a><a href="pp-invoice.html" class="nav-sub-item">Invoice</a><a href="pp-documents.html" class="nav-sub-item">Dokumen</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management<svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="b2bSub" style="display:none"><a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a><a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a><a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a><a href="b2b-clients.html" class="nav-sub-item">Database Klien</a><a href="b2b-invoice.html" class="nav-sub-item">Invoice</a><a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a><a href="b2b-live-report.html" class="nav-sub-item">Live Report</a><a href="b2b-revenue.html" class="nav-sub-item">Revenue</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management<svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="eventSub" style="display:none"><a href="event-dashboard.html" class="nav-sub-item">Dashboard</a><a href="event-leads.html" class="nav-sub-item">Leads Event</a><a href="event-tracker.html" class="nav-sub-item">Event Tracker</a><a href="event-invoice.html" class="nav-sub-item">Invoice</a><a href="event-revenue.html" class="nav-sub-item">Revenue</a><a href="event-documents.html" class="nav-sub-item">Pemberkasan</a></div>
+    <a href="#" class="nav-item active" onclick="toggleMenu(event,'opsSub','opsArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational<svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="opsSub" style="display:block">
+      <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
+      <a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a>
+      <a href="ops-mitra.html" class="nav-sub-item active">Database Mitra</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a></div>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari mitra..."/></div>
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+  <div class="content">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Database Mitra</h1><p>Vendor, supplier, dan mitra bisnis EFM</p></div>
+      <button class="btn-primary" onclick="openModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Mitra</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-mini"><div class="stat-icon green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="stat-info"><div class="label">Mitra Aktif</div><div class="value">14</div></div></div>
+      <div class="stat-mini"><div class="stat-icon orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div class="stat-info"><div class="label">Vendor Alat</div><div class="value">6</div></div></div>
+      <div class="stat-mini"><div class="stat-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="stat-info"><div class="label">Total Mitra</div><div class="value">18</div></div></div>
+    </div>
+
+    <div class="filters-bar">
+      <select class="filter-select"><option>Semua Kategori</option><option>Vendor Alat Fitness</option><option>Vendor Pakaian & Aksesoris</option><option>Jasa Servis</option><option>Media & Promosi</option><option>Lainnya</option></select>
+      <select class="filter-select"><option>Semua Status</option><option>Aktif</option><option>Nonaktif</option></select>
+      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama mitra..."/></div>
+    </div>
+
+    <div class="mitra-grid">
+      <div class="mitra-card">
+        <div class="mitra-icon" style="background:#EBF5FB">🏋️</div>
+        <div class="mitra-body">
+          <div class="mitra-name">PT. Fitness Equipment Indonesia</div>
+          <div class="mitra-type">Vendor Alat Fitness</div>
+          <span class="badge aktif">Aktif</span>
+          <div class="mitra-info">
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>+62 21-1234-5678</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>info@fitnessequip.co.id</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Jakarta Pusat</div>
+          </div>
+          <div class="mitra-actions"><button class="btn-sm-outline">Detail</button><button class="btn-sm-primary">Hubungi</button></div>
+        </div>
+      </div>
+      <div class="mitra-card">
+        <div class="mitra-icon" style="background:#EAFAF1">👕</div>
+        <div class="mitra-body">
+          <div class="mitra-name">CV. Sportwear Jakarta</div>
+          <div class="mitra-type">Vendor Pakaian & Aksesoris</div>
+          <span class="badge aktif">Aktif</span>
+          <div class="mitra-info">
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>+62 812-9876-5432</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>order@sportwearjkt.com</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Jakarta Barat</div>
+          </div>
+          <div class="mitra-actions"><button class="btn-sm-outline">Detail</button><button class="btn-sm-primary">Hubungi</button></div>
+        </div>
+      </div>
+      <div class="mitra-card">
+        <div class="mitra-icon" style="background:#FEF9E7">🔧</div>
+        <div class="mitra-body">
+          <div class="mitra-name">TechFix Service Center</div>
+          <div class="mitra-type">Jasa Servis Alat</div>
+          <span class="badge aktif">Aktif</span>
+          <div class="mitra-info">
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>+62 21-9876-5432</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>service@techfix.co.id</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Jakarta Selatan</div>
+          </div>
+          <div class="mitra-actions"><button class="btn-sm-outline">Detail</button><button class="btn-sm-primary">Hubungi</button></div>
+        </div>
+      </div>
+      <div class="mitra-card">
+        <div class="mitra-icon" style="background:#F5EEF8">📸</div>
+        <div class="mitra-body">
+          <div class="mitra-name">Studio Foto & Video Kreasi</div>
+          <div class="mitra-type">Media & Dokumentasi</div>
+          <span class="badge aktif">Aktif</span>
+          <div class="mitra-info">
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07"/></svg>+62 815-1234-5678</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@studiokreasi.com</div>
+            <div class="mitra-info-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Jakarta Selatan</div>
+          </div>
+          <div class="mitra-actions"><button class="btn-sm-outline">Detail</button><button class="btn-sm-primary">Hubungi</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header"><h3>Tambah Mitra Baru</h3><button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nama Mitra <span>*</span></label><input type="text" class="form-control" placeholder="Nama perusahaan/vendor"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Kategori <span>*</span></label><select class="form-control"><option>Pilih...</option><option>Vendor Alat Fitness</option><option>Vendor Pakaian & Aksesoris</option><option>Jasa Servis</option><option>Media & Promosi</option><option>Lainnya</option></select></div>
+        <div class="form-group"><label>No HP / Telp <span>*</span></label><input type="text" class="form-control" placeholder="+62 xxx"/></div>
+      </div>
+      <div class="form-group"><label>Email</label><input type="email" class="form-control" placeholder="email@mitra.com"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Kota</label><input type="text" class="form-control" placeholder="Jakarta"/></div>
+        <div class="form-group"><label>Status</label><select class="form-control"><option>Aktif</option><option>Nonaktif</option></select></div>
+      </div>
+      <div class="form-group"><label>Catatan / Layanan</label><textarea class="form-control" rows="2" placeholder="Produk atau jasa yang disediakan..."></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeModal()">Batal</button><button class="btn-primary" onclick="saveMitra()">Simpan Mitra</button></div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';sub.style.display=isOpen?'none':'block';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';}
+function openModal(){document.getElementById('modalOverlay').classList.add('show');}
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show');}
+function saveMitra(){alert('Mitra berhasil ditambahkan!');closeModal();}
+</script>
+</body>
+</html>
