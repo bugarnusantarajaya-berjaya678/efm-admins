@@ -201,9 +201,57 @@
     .btn-wa:hover { background:#1DA851; }
 
     @media print {
-      .sidebar, .header, .detail-header, .back-btn { display:none !important; }
-      .main { margin-left:0; }
-      .invoice-card { border:none; max-width:100%; }
+      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      @page { size: A4; margin: 8mm; }
+      .sidebar, .header, .detail-header, .back-btn, #markPaidBtn, #sendWaBtn, .btn-outline, .btn-wa, .btn-green { display:none !important; }
+      body { background:white !important; }
+      .main { margin-left:0 !important; }
+      .content { padding:0 !important; }
+      #listView { display:none !important; }
+      #detailView { display:block !important; }
+
+      /* Invoice card compact */
+      .invoice-card { border:none !important; max-width:100% !important; box-shadow:none !important; }
+      .invoice-header { padding:14px 20px !important; }
+      .invoice-company h2 { font-size:13px !important; }
+      .invoice-company p { font-size:9px !important; margin-top:1px !important; line-height:1.4 !important; }
+      .inv-logo-circle { width:36px !important; height:36px !important; }
+      .inv-logo-circle svg { width:20px !important; height:20px !important; }
+      .inv-number { font-size:11px !important; margin-bottom:6px !important; }
+      .inv-dates { font-size:10px !important; line-height:1.6 !important; }
+      .inv-status { font-size:10px !important; padding:3px 10px !important; margin-top:6px !important; }
+
+      /* Body compact */
+      .invoice-body { padding:14px 20px !important; }
+      .billing-row { grid-template-columns:1fr 1fr !important; gap:14px !important; margin-bottom:14px !important; padding-bottom:12px !important; }
+      .billing-section h4 { font-size:9px !important; margin-bottom:6px !important; }
+      .billing-section .client-name { font-size:14px !important; margin-bottom:3px !important; }
+      .billing-section p { font-size:10px !important; line-height:1.5 !important; }
+
+      /* QR compact */
+      .qr-box { width:60px !important; height:60px !important; margin-bottom:5px !important; }
+      .qr-box svg { width:36px !important; height:36px !important; }
+      .qr-label { font-size:9px !important; }
+      .qr-sub { font-size:9px !important; }
+
+      /* Items table compact */
+      .items-table th { padding:7px 10px !important; font-size:9px !important; }
+      .items-table td { padding:8px 10px !important; font-size:11px !important; }
+      .item-name { font-size:11px !important; }
+      .item-desc { font-size:9px !important; }
+
+      /* Summary compact */
+      .summary-wrap { margin-bottom:12px !important; }
+      .summary-box { width:220px !important; }
+      .summary-row { padding:4px 0 !important; font-size:11px !important; }
+      .total-row { padding:8px 0 4px !important; font-size:13px !important; }
+      .total-row .val { font-size:15px !important; }
+
+      /* Notes compact */
+      .invoice-notes { padding:12px 20px !important; }
+      .notes-grid { gap:12px !important; }
+      .note-item h5 { font-size:8px !important; margin-bottom:3px !important; }
+      .note-item p { font-size:9px !important; line-height:1.5 !important; }
     }
   </style>
 </head>
