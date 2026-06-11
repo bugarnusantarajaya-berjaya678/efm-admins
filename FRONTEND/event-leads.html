@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Leads Event</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --navy:#1E1C43; --orange:#E05945; --orange-hover:#C94A38; --gray-bg:#F8F9FA; --gray-border:#E2E6EA; --gray-text:#6C757D; --text-dark:#1E1C43; --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --sidebar-w:240px; }
+    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; }
+    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; gap:12px; }
+    .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; }
+    .logo-circle svg { width:22px; height:22px; fill:white; }
+    .logo-text h2 { font-size:14px; font-weight:700; color:white; }
+    .logo-text span { font-size:10px; color:rgba(255,255,255,0.5); }
+    .btn-new-entry { margin:16px; padding:11px 16px; background:var(--orange); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; text-decoration:none; justify-content:center; }
+    .btn-new-entry:hover { background:var(--orange-hover); }
+    .sidebar-nav { flex:1; padding:8px 0; }
+    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
+    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+    .nav-sub-item { display:flex; align-items:center; padding:8px 20px 8px 52px; color:rgba(255,255,255,0.45); text-decoration:none; font-size:12px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; }
+    .nav-sub-item:hover { color:white; background:rgba(255,255,255,0.04); }
+    .nav-sub-item.active { color:white; border-left-color:var(--orange); background:rgba(224,89,69,0.08); }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); }
+    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
+    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .search-bar { display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 14px; width:220px; }
+    .search-bar svg { width:15px; height:15px; color:var(--gray-text); }
+    .search-bar input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
+    .icon-btn svg { width:17px; height:17px; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; }
+    .content { padding:28px; flex:1; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn-primary:hover { background:var(--orange-hover); }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+    .stat-mini { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; }
+    .stat-mini .label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+    .stat-mini .value { font-size:24px; font-weight:700; color:var(--navy); }
+    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .stat-mini.highlight { border-color:var(--orange); }
+    .stat-mini.highlight .value { color:var(--orange); }
+    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:14px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+    .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; background:white; cursor:pointer; outline:none; }
+    .filter-search { flex:1; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filter-search svg { width:14px; height:14px; color:var(--gray-text); }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    td { padding:13px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#FAFAFA; }
+    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    .badge.new { background:#EBF5FB; color:#2980B9; }
+    .badge.proposal { background:#F5EEF8; color:#8E44AD; }
+    .badge.presentasi { background:#FEF9E7; color:#F39C12; }
+    .badge.closing { background:#EAFAF1; color:#27AE60; }
+    .badge.gagal { background:#FDEDEC; color:#E74C3C; }
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); margin-right:4px; }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    .action-btn.convert { background:#EAFAF1; color:var(--green); border-color:var(--green); }
+    .action-btn.convert:hover { background:var(--green); color:white; }
+    .action-btn.disabled { opacity:0.3; cursor:not-allowed; }
+    .action-btn svg { width:14px; height:14px; }
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
+    .pagination-info { font-size:12px; color:var(--gray-text); }
+    .pagination-btns { display:flex; gap:4px; }
+    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
+    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
+    .page-btn svg { width:14px; height:14px; }
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
+    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
+    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .modal-close svg { width:16px; height:16px; }
+    .modal-body { padding:24px 28px; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; }
+    .form-group { margin-bottom:16px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .form-group label span { color:var(--orange); }
+    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; outline:none; }
+    .form-control:focus { border-color:var(--navy); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .lead-info-box { background:var(--gray-bg); border-radius:10px; padding:14px 16px; margin-bottom:18px; border-left:3px solid var(--green); }
+    .lead-info-box .lead-label { font-size:11px; color:var(--gray-text); font-weight:600; text-transform:uppercase; margin-bottom:4px; }
+    .lead-info-box .lead-name { font-size:15px; font-weight:700; color:var(--navy); }
+    .success-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; align-items:center; justify-content:center; }
+    .success-overlay.show { display:flex; }
+    .success-card { background:white; border-radius:16px; padding:40px; text-align:center; max-width:360px; width:100%; }
+    .success-icon { width:64px; height:64px; background:rgba(39,174,96,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 16px; }
+    .success-icon svg { width:32px; height:32px; color:var(--green); }
+    .success-card h3 { font-size:18px; font-weight:700; color:var(--navy); margin-bottom:8px; }
+    .success-card p { font-size:13px; color:var(--gray-text); margin-bottom:24px; }
+    .success-actions { display:flex; gap:12px; justify-content:center; }
+    .btn-green { padding:10px 20px; background:var(--green); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    #hintToast { display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1E1C43; color:white; padding:10px 20px; border-radius:8px; font-size:13px; z-index:999; }
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-circle"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="white" stroke-width="2"/><rect x="8" y="18" width="24" height="4" rx="2" fill="white"/><rect x="6" y="14" width="4" height="12" rx="2" fill="white"/><rect x="4" y="16" width="3" height="8" rx="1.5" fill="white"/><rect x="30" y="14" width="4" height="12" rx="2" fill="white"/><rect x="33" y="16" width="3" height="8" rx="1.5" fill="white"/></svg></div>
+    <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
+  </div>
+  <a href="#" class="btn-new-entry" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>New Lead Event</a>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'ppSub','ppArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training<svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="ppSub" style="display:none"><a href="pp-leads.html" class="nav-sub-item">Leads</a><a href="pp-orders.html" class="nav-sub-item">Orders</a><a href="pp-invoice.html" class="nav-sub-item">Invoice</a><a href="pp-documents.html" class="nav-sub-item">Dokumen</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management<svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="b2bSub" style="display:none"><a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a><a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a><a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a><a href="b2b-clients.html" class="nav-sub-item">Database Klien</a><a href="b2b-invoice.html" class="nav-sub-item">Invoice</a><a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a><a href="b2b-live-report.html" class="nav-sub-item">Live Report</a><a href="b2b-revenue.html" class="nav-sub-item">Revenue</a></div>
+    <a href="#" class="nav-item active" onclick="toggleMenu(event,'eventSub','eventArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management<svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="eventSub" style="display:block">
+      <a href="event-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="event-leads.html" class="nav-sub-item active">Leads Event</a>
+      <a href="event-tracker.html" class="nav-sub-item">Event Tracker</a>
+      <a href="event-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
+      <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational<svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="opsSub" style="display:none"><a href="ops-pic.html" class="nav-sub-item">Database PIC</a><a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a><a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a></div>
+  </nav>
+  <div class="sidebar-footer"><a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a></div>
+</aside>
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari leads event..."/></div>
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+  <div class="content">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Leads Event</h1><p>Kelola prospek klien event fitness & sport — Klik ✓ untuk convert lead Closing ke Event aktif</p></div>
+      <button class="btn-primary" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Lead</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-mini"><div class="label">Total Leads</div><div class="value">24</div><div class="sub">Bulan ini</div></div>
+      <div class="stat-mini highlight"><div class="label">Hot Leads</div><div class="value">6</div><div class="sub">Proposal & Closing</div></div>
+      <div class="stat-mini"><div class="label">Converted</div><div class="value">8</div><div class="sub">Jadi event</div></div>
+      <div class="stat-mini"><div class="label">Gagal</div><div class="value">2</div><div class="sub">Tidak closing</div></div>
+    </div>
+    <div class="filters-bar">
+      <select class="filter-select"><option>Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
+      <select class="filter-select"><option>Semua Jenis</option><option>Fun Run</option><option>Yoga</option><option>Workshop</option><option>Festival</option><option>Corporate</option></select>
+      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama klien atau event..."/></div>
+    </div>
+    <div class="table-card">
+      <div style="overflow-x:auto">
+        <table>
+          <thead><tr><th>ID</th><th>Nama Klien</th><th>Jenis Event</th><th>Est. Peserta</th><th>Est. Nilai</th><th>Stage</th><th>Tanggal</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>#EV-001</td><td><strong>PT. Sinar Abadi</strong></td><td>Fun Run 10K</td><td>200 org</td><td>Rp 25jt</td>
+              <td><span class="badge closing" style="background:#EAFAF1;color:#27AE60">Closing</span></td><td>10 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn convert" title="Convert ke Event Aktif" onclick="openConvertModal('PT. Sinar Abadi','Fun Run 10K','Rp 25.000.000')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+              </td>
+            </tr>
+            <tr>
+              <td>#EV-002</td><td><strong>Apt. Permata Hijau</strong></td><td>Zumba Festival</td><td>150 org</td><td>Rp 15jt</td>
+              <td><span class="badge proposal" style="background:#F5EEF8;color:#8E44AD">Proposal</span></td><td>8 Jun 2026</td>
+              <td>
+                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" title="Hanya tersedia saat stage = Closing" onclick="showConvertHint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#EV-003</td><td><strong>CV. Global Tech</strong></td><td>Corporate Yoga</td><td>60 org</td><td>Rp 8jt</td>
+              <td><span class="badge" style="background:#FEF9E7;color:#F39C12">Presentasi</span></td><td>5 Jun 2026</td>
+              <td>
+                <button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" onclick="showConvertHint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></button>
+              </td>
+            </tr>
+            <tr>
+              <td>#EV-004</td><td><strong>Open Public</strong></td><td>Fitness Workshop</td><td>80 org</td><td>Rp 6jt</td>
+              <td><span class="badge" style="background:#EBF5FB;color:#2980B9">New</span></td><td>3 Jun 2026</td>
+              <td>
+                <button class="action-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn disabled" onclick="showConvertHint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info">Menampilkan 1–4 dari 24 leads</div>
+        <div class="pagination-btns"><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Add Lead -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <div class="modal-header"><h3>Tambah Lead Event</h3><button class="modal-close" onclick="closeAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nama Klien <span>*</span></label><input type="text" class="form-control" placeholder="Nama perusahaan / individu"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Jenis Event <span>*</span></label><select class="form-control"><option>Pilih Jenis...</option><option>Fun Run</option><option>Yoga</option><option>Workshop</option><option>Zumba Festival</option><option>Corporate Event</option><option>Lainnya</option></select></div>
+        <div class="form-group"><label>Est. Peserta</label><input type="text" class="form-control" placeholder="100 org"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Est. Nilai <span>*</span></label><input type="text" class="form-control" placeholder="Rp 10.000.000"/></div>
+        <div class="form-group"><label>Stage <span>*</span></label><select class="form-control"><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option></select></div>
+      </div>
+      <div class="form-group"><label>Catatan</label><textarea class="form-control" rows="3" placeholder="Detail kebutuhan event..."></textarea></div>
+    </div>
+    <div class="modal-footer"><button class="btn-cancel" onclick="closeAddModal()">Batal</button><button class="btn-primary" onclick="saveLead()">Simpan Lead</button></div>
+  </div>
+</div>
+
+<!-- Modal Convert ke Event -->
+<div class="modal-overlay" id="convertModal">
+  <div class="modal">
+    <div class="modal-header"><h3>Convert Lead → Event Aktif</h3><button class="modal-close" onclick="closeConvertModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="modal-body">
+      <div class="lead-info-box">
+        <div class="lead-label">Lead yang akan diconvert</div>
+        <div class="lead-name" id="convertLeadName">PT. Sinar Abadi</div>
+        <div style="font-size:12px;color:var(--gray-text);margin-top:3px" id="convertEventType">Fun Run 10K</div>
+      </div>
+      <div class="form-group"><label>Tanggal Event <span>*</span></label><input type="date" class="form-control" id="convertDate"/></div>
+      <div class="form-row">
+        <div class="form-group"><label>Lokasi Event <span>*</span></label><input type="text" class="form-control" placeholder="Nama lokasi / venue"/></div>
+        <div class="form-group"><label>Jumlah Peserta <span>*</span></label><input type="text" class="form-control" placeholder="200 org"/></div>
+      </div>
+      <div class="form-group"><label>Nilai Kontrak <span>*</span></label><input type="text" class="form-control" id="convertNilai" placeholder="Rp 25.000.000"/></div>
+      <div class="form-group"><label>PIC EFM</label><select class="form-control"><option>Pilih PIC...</option><option>Ahmad</option><option>Budi</option><option>Citra</option></select></div>
+      <div style="background:#EAFAF1;border-radius:10px;padding:14px 16px;border-left:3px solid var(--green);">
+        <p style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:6px">Setelah Convert:</p>
+        <p style="font-size:12px;color:#1E1C43">✅ Lead masuk ke <strong>Event Tracker</strong></p>
+        <p style="font-size:12px;color:#1E1C43;margin-top:4px">✅ Invoice event siap digenerate</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeConvertModal()">Batal</button>
+      <button class="btn-green" onclick="doConvert()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>Konfirmasi — Jadikan Event</button>
+    </div>
+  </div>
+</div>
+
+<!-- Success -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <h3>Event Berhasil Dibuat! 🎉</h3>
+    <p id="successMsg">PT. Sinar Abadi telah ditambahkan ke Event Tracker.</p>
+    <div class="success-actions"><button class="btn-cancel" onclick="closeSuccess()">Tutup</button><button class="btn-primary" onclick="window.location.href='event-tracker.html'">Lihat Event Tracker →</button></div>
+  </div>
+</div>
+
+<div id="hintToast">⚠️ Tombol Convert hanya aktif saat stage = Closing</div>
+
+<script>
+function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';sub.style.display=isOpen?'none':'block';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';}
+function openAddModal(){document.getElementById('addModal').classList.add('show');}
+function closeAddModal(){document.getElementById('addModal').classList.remove('show');}
+function saveLead(){alert('Lead tersimpan!');closeAddModal();}
+function openConvertModal(name,type,nilai){
+  document.getElementById('convertLeadName').textContent=name;
+  document.getElementById('convertEventType').textContent=type;
+  document.getElementById('convertNilai').value=nilai;
+  document.getElementById('convertDate').value=new Date().toISOString().split('T')[0];
+  document.getElementById('convertModal').classList.add('show');
+}
+function closeConvertModal(){document.getElementById('convertModal').classList.remove('show');}
+function doConvert(){
+  const name=document.getElementById('convertLeadName').textContent;
+  closeConvertModal();
+  document.getElementById('successMsg').textContent=name+' telah ditambahkan ke Event Tracker.';
+  document.getElementById('successOverlay').classList.add('show');
+}
+function closeSuccess(){document.getElementById('successOverlay').classList.remove('show');}
+function showConvertHint(){const t=document.getElementById('hintToast');t.style.display='block';setTimeout(()=>{t.style.display='none';},2500);}
+</script>
+</body>
+</html>
