@@ -175,7 +175,7 @@
       <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
     </div>
   </nav>
-  <div class="nav-label">Owner Only</div>
+  <div class="nav-label" id="ownerLabel" style="display:none">Owner Only</div>
   <a href="settings.html" class="nav-item" id="menuSettings" style="display:none">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Settings
   </a>
@@ -390,6 +390,8 @@ if (role === 'owner') {
   }
   const dashLink = document.querySelector('a[href="dashboard.html"]');
   if (dashLink) dashLink.setAttribute('href', 'dashboard-owner.html');
+  const ownerLabel = document.getElementById('ownerLabel');
+  if (ownerLabel) ownerLabel.style.display = 'block';
 } else {
   const ownerLabel = document.querySelector('.nav-label:last-of-type');
   if (ownerLabel && ownerLabel.textContent.trim() === 'Owner Only') {
