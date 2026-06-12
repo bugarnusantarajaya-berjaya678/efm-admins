@@ -232,21 +232,25 @@ function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(
 </script>
 
 <script>
-// Cek role dari localStorage
-const role = localStorage.getItem("efm_role");
-const nama = localStorage.getItem("efm_nama");
-if (role === "owner") {
-  // Tampilkan menu Settings
-  const menuSettings = document.getElementById("menuSettings");
-  if (menuSettings) menuSettings.style.display = "flex";
-  // Tampilkan owner badge di header
-  const headerRight = document.querySelector(".header-right");
+const role = localStorage.getItem('efm_role');
+const nama = localStorage.getItem('efm_nama');
+if (role === 'owner') {
+  const menuSettings = document.getElementById('menuSettings');
+  if (menuSettings) menuSettings.style.display = 'flex';
+  const headerRight = document.querySelector('.header-right');
   if (headerRight) {
-    const badge = document.createElement("span");
-    badge.className = "owner-badge";
-    badge.style.cssText = "background:rgba(224,89,69,0.1);color:#E05945;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)";
-    badge.textContent = "👑 Owner";
+    const badge = document.createElement('span');
+    badge.className = 'owner-badge';
+    badge.style.cssText = 'background:rgba(224,89,69,0.1);color:#E05945;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)';
+    badge.textContent = '👑 Owner';
     headerRight.insertBefore(badge, headerRight.firstChild);
+  }
+  const dashLink = document.querySelector('a[href="dashboard.html"]');
+  if (dashLink) dashLink.setAttribute('href', 'dashboard-owner.html');
+} else {
+  const ownerLabel = document.querySelector('.nav-label:last-of-type');
+  if (ownerLabel && ownerLabel.textContent.trim() === 'Owner Only') {
+    ownerLabel.style.display = 'none';
   }
 }
 </script>
