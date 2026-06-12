@@ -429,20 +429,23 @@
   </div>
 </div>
 
-<!-- Modal: Create Order (4 Steps) -->
+<!-- Modal: Create Order (5 Steps) -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div><h3>Buat Order Baru</h3><p id="stepSubtitle">Langkah 1 dari 4: Pilih Klien</p></div>
+      <div><h3>Buat Order Baru</h3><p id="stepSubtitle">Langkah 1 dari 5: Pilih Klien</p></div>
       <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="steps">
       <div class="step active" id="step1"><div class="step-circle">1</div><div class="step-label">Klien</div></div>
       <div class="step" id="step2"><div class="step-circle">2</div><div class="step-label">Program</div></div>
       <div class="step" id="step3"><div class="step-circle">3</div><div class="step-label">Logistik</div></div>
-      <div class="step" id="step4"><div class="step-circle">4</div><div class="step-label">Review</div></div>
+      <div class="step" id="step4"><div class="step-circle">4</div><div class="step-label">Biaya</div></div>
+      <div class="step" id="step5"><div class="step-circle">5</div><div class="step-label">Review</div></div>
     </div>
     <div class="step-content" id="stepContent">
+
+      <!-- STEP 1: KLIEN -->
       <div id="content1">
         <div class="form-row">
           <div style="border:1.5px solid var(--gray-border);border-radius:12px;padding:20px;">
@@ -451,33 +454,197 @@
           </div>
           <div style="border:1.5px solid var(--gray-border);border-radius:12px;padding:20px;">
             <h4 style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">➕ Tambah Klien Baru</h4>
-            <div class="form-group"><label>Nama Lengkap <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" placeholder="Nama klien"/></div>
-            <div class="form-group"><label>No HP <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" placeholder="+62 812 3456 7890"/></div>
-            <div class="form-group"><label>Email</label><input type="email" class="form-control" placeholder="email@example.com"/></div>
+            <div class="form-group"><label>Nama Lengkap <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" id="inp_nama" placeholder="Nama klien"/></div>
+            <div class="form-group"><label>No HP <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" id="inp_hp" placeholder="+62 812 3456 7890"/></div>
+            <div class="form-group"><label>Email</label><input type="email" class="form-control" id="inp_email" placeholder="email@example.com"/></div>
           </div>
         </div>
       </div>
+
+      <!-- STEP 2: PROGRAM -->
       <div id="content2" style="display:none">
         <div class="package-cards">
-          <label class="package-card selected"><input type="radio" name="package" checked/><div class="package-info"><h4>4 Sesi - Starter</h4><p>Cocok untuk pemula</p></div><div class="package-price">Rp 600rb</div></label>
-          <label class="package-card"><input type="radio" name="package"/><div class="package-info"><h4>8 Sesi - Base</h4><p>Program dasar, 2x seminggu</p></div><div class="package-price">Rp 1,1jt</div></label>
-          <label class="package-card"><input type="radio" name="package"/><div class="package-info"><h4>12 Sesi - Pro <span class="recommended">Populer</span></h4><p>Program intensif, 3x seminggu</p></div><div class="package-price">Rp 1,5jt</div></label>
-          <label class="package-card"><input type="radio" name="package"/><div class="package-info"><h4>24 Sesi - Elite</h4><p>Program premium</p></div><div class="package-price">Rp 2,8jt</div></label>
+          <label class="package-card selected" onclick="selectPackage(this,600000,'4 Sesi - Starter','4')">
+            <input type="radio" name="package" value="600000" data-sesi="4" data-label="4 Sesi - Starter" checked/>
+            <div class="package-info"><h4>4 Sesi - Starter</h4><p>Cocok untuk pemula, 1–2x seminggu</p></div>
+            <div class="package-price">Rp 600.000</div>
+          </label>
+          <label class="package-card" onclick="selectPackage(this,1100000,'8 Sesi - Base','8')">
+            <input type="radio" name="package" value="1100000" data-sesi="8" data-label="8 Sesi - Base"/>
+            <div class="package-info"><h4>8 Sesi - Base</h4><p>Program dasar, 2x seminggu</p></div>
+            <div class="package-price">Rp 1.100.000</div>
+          </label>
+          <label class="package-card" onclick="selectPackage(this,1500000,'12 Sesi - Pro','12')">
+            <input type="radio" name="package" value="1500000" data-sesi="12" data-label="12 Sesi - Pro"/>
+            <div class="package-info"><h4>12 Sesi - Pro <span class="recommended">Populer</span></h4><p>Program intensif, 3x seminggu</p></div>
+            <div class="package-price">Rp 1.500.000</div>
+          </label>
+          <label class="package-card" onclick="selectPackage(this,2800000,'24 Sesi - Elite','24')">
+            <input type="radio" name="package" value="2800000" data-sesi="24" data-label="24 Sesi - Elite"/>
+            <div class="package-info"><h4>24 Sesi - Elite</h4><p>Program premium, 5x seminggu</p></div>
+            <div class="package-price">Rp 2.800.000</div>
+          </label>
         </div>
       </div>
+
+      <!-- STEP 3: LOGISTIK -->
       <div id="content3" style="display:none">
-        <div class="form-group"><label>PIC / Pelatih <span style="color:var(--orange)">*</span></label><select class="form-control"><option>Pilih Pelatih...</option><option>Sarah Jenkins</option><option>Marcus Chen</option><option>Elena Rodriguez</option></select></div>
-        <div class="form-group"><label>Lokasi Latihan <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" placeholder="Contoh: Apartemen ABC, Jakarta Selatan"/></div>
+        <div class="form-group"><label>PIC / Pelatih <span style="color:var(--orange)">*</span></label>
+          <select class="form-control" id="inp_pic"><option value="">Pilih Pelatih...</option><option>Sarah Jenkins</option><option>Marcus Chen</option><option>Elena Rodriguez</option></select>
+        </div>
+        <div class="form-group"><label>Lokasi Latihan <span style="color:var(--orange)">*</span></label>
+          <input type="text" class="form-control" id="inp_lokasi" placeholder="Contoh: Apartemen ABC Lt.3, Jakarta Selatan"/>
+        </div>
         <div class="form-row">
-          <div class="form-group"><label>Hari Latihan <span style="color:var(--orange)">*</span></label><select class="form-control"><option>Pilih Hari...</option><option>Senin & Rabu</option><option>Selasa & Kamis</option><option>Senin, Rabu & Jumat</option><option>Sabtu & Minggu</option></select></div>
-          <div class="form-group"><label>Jam Latihan <span style="color:var(--orange)">*</span></label><input type="time" class="form-control" value="07:00"/></div>
+          <div class="form-group"><label>Hari Latihan <span style="color:var(--orange)">*</span></label>
+            <select class="form-control" id="inp_hari"><option value="">Pilih Hari...</option><option>Senin & Rabu</option><option>Selasa & Kamis</option><option>Senin, Rabu & Jumat</option><option>Sabtu & Minggu</option><option>Setiap Hari Kerja</option></select>
+          </div>
+          <div class="form-group"><label>Jam Latihan <span style="color:var(--orange)">*</span></label>
+            <input type="time" class="form-control" id="inp_jam" value="07:00"/>
+          </div>
+        </div>
+        <div class="form-group"><label>Catatan Tambahan</label>
+          <input type="text" class="form-control" id="inp_catatan" placeholder="Contoh: Preferensi alat, kondisi fisik, dst."/>
         </div>
       </div>
+
+      <!-- STEP 4: BIAYA & INVOICE -->
       <div id="content4" style="display:none">
-        <div class="review-section"><h4>📋 Detail Klien</h4><div class="review-row"><span class="label">Nama</span><span class="value">James Wilson</span></div><div class="review-row"><span class="label">No HP</span><span class="value">0812-3456-7890</span></div></div>
-        <div class="review-section"><h4>🏋️ Program</h4><div class="review-row"><span class="label">Paket</span><span class="value">12 Sesi - Pro</span></div><div class="review-row"><span class="label">PIC</span><span class="value">Sarah Jenkins</span></div><div class="review-row"><span class="label">Jadwal</span><span class="value">Senin & Rabu, 07:00</span></div></div>
-        <div class="review-section"><h4>💰 Pembayaran</h4><div class="review-row"><span class="label">Harga Paket</span><span class="value">Rp 1.500.000</span></div><div class="total-row"><span>Total</span><span style="color:var(--orange)">Rp 1.500.000</span></div></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+
+          <!-- Biaya Paket (read-only) -->
+          <div style="grid-column:1/-1;background:var(--gray-bg);border-radius:10px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Paket Dipilih</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="rev_paket_label">—</div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy)" id="biaya_paket_disp">Rp 0</div>
+          </div>
+
+          <!-- Biaya Transportasi -->
+          <div>
+            <label class="form-group" style="margin:0">
+              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Biaya Transportasi PIC</div>
+              <input type="number" class="form-control" id="inp_transport" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
+            </label>
+          </div>
+
+          <!-- Biaya Tambahan -->
+          <div>
+            <label class="form-group" style="margin:0">
+              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Biaya Lain-lain</div>
+              <input type="number" class="form-control" id="inp_extra" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
+            </label>
+          </div>
+
+          <!-- Keterangan Biaya Tambahan -->
+          <div style="grid-column:1/-1">
+            <label class="form-group" style="margin:0">
+              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Keterangan Biaya Lain-lain</div>
+              <input type="text" class="form-control" id="inp_extra_ket" placeholder="Contoh: Biaya peralatan khusus, suplemen, dll."/>
+            </label>
+          </div>
+        </div>
+
+        <!-- Promo & Diskon -->
+        <div style="background:#FFF8F7;border:1.5px solid rgba(224,89,69,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🎁 Promo & Diskon</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group" style="margin:0">
+              <label>Kode Promo / Voucher</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" class="form-control" id="inp_kode_promo" placeholder="Contoh: PROMO10" style="flex:1;text-transform:uppercase"/>
+                <button type="button" onclick="applyPromo()" style="padding:9px 14px;background:var(--orange);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Pakai</button>
+              </div>
+              <div id="promo_result" style="font-size:11px;margin-top:5px;display:none"></div>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Kode Referral</label>
+              <input type="text" class="form-control" id="inp_referral" placeholder="Contoh: REF-JOHN" style="text-transform:uppercase"/>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Jenis Benefit Promo</label>
+              <select class="form-control" id="inp_promo_type" onchange="recalcTotal()">
+                <option value="">— Pilih Jenis —</option>
+                <option value="diskon_persen">Diskon %</option>
+                <option value="diskon_nominal">Diskon Nominal (Rp)</option>
+                <option value="cashback">Cashback (Rp)</option>
+                <option value="free_session">Free Sesi Tambahan</option>
+                <option value="free_treatment">Free Treatment</option>
+                <option value="free_training">Free Training</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label id="promo_val_label">Nilai Promo</label>
+              <input type="number" class="form-control" id="inp_promo_val" placeholder="0" min="0" oninput="recalcTotal()"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pajak -->
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📋 Pajak</div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_ppn" onchange="recalcTotal()" style="accent-color:var(--navy);width:15px;height:15px"/> PPN 11%
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_pph" onchange="recalcTotal()" style="accent-color:var(--navy);width:15px;height:15px"/> PPh 2%
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_tax_custom" onchange="toggleCustomTax()" style="accent-color:var(--navy);width:15px;height:15px"/> Pajak Custom
+            </label>
+            <div id="custom_tax_box" style="display:none;display:flex;align-items:center;gap:8px">
+              <input type="number" class="form-control" id="inp_tax_custom" placeholder="%" min="0" max="100" oninput="recalcTotal()" style="width:80px"/>
+              <span style="font-size:12px;color:var(--gray-text)">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Kalkulasi -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:10px;overflow:hidden">
+          <div style="background:var(--navy);padding:10px 16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px">Draft Kalkulasi Invoice</div>
+          <div style="padding:12px 16px">
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)"><span style="color:var(--gray-text)">Harga Paket</span><span id="calc_paket">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)"><span style="color:var(--gray-text)">Biaya Transportasi</span><span id="calc_transport">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_extra_row"><span style="color:var(--gray-text)" id="calc_extra_lbl">Biaya Lain-lain</span><span id="calc_extra">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border);color:var(--green)" id="calc_diskon_row" style="display:none"><span>Diskon / Promo</span><span id="calc_diskon">- Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_tax_row" style="display:none"><span style="color:var(--gray-text)">Pajak</span><span id="calc_tax">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:15px;font-weight:700;color:var(--navy);border-top:2px solid var(--navy);margin-top:4px"><span>Total Tagihan</span><span style="color:var(--orange)" id="calc_total">Rp 0</span></div>
+          </div>
+        </div>
       </div>
+
+      <!-- STEP 5: REVIEW & KONFIRMASI -->
+      <div id="content5" style="display:none">
+        <div class="review-section">
+          <h4>👤 Detail Klien</h4>
+          <div class="review-row"><span class="label">Nama</span><span class="value" id="rev_nama">—</span></div>
+          <div class="review-row"><span class="label">No HP</span><span class="value" id="rev_hp">—</span></div>
+          <div class="review-row"><span class="label">Email</span><span class="value" id="rev_email">—</span></div>
+        </div>
+        <div class="review-section">
+          <h4>🏋️ Program & Logistik</h4>
+          <div class="review-row"><span class="label">Paket</span><span class="value" id="rev_paket">—</span></div>
+          <div class="review-row"><span class="label">PIC / Pelatih</span><span class="value" id="rev_pic">—</span></div>
+          <div class="review-row"><span class="label">Lokasi</span><span class="value" id="rev_lokasi">—</span></div>
+          <div class="review-row"><span class="label">Jadwal</span><span class="value" id="rev_jadwal">—</span></div>
+        </div>
+        <div class="review-section">
+          <h4>🧾 Draft Invoice</h4>
+          <div class="review-row"><span class="label">Harga Paket</span><span class="value" id="rev_harga">Rp 0</span></div>
+          <div class="review-row" id="rev_transport_row"><span class="label">Transportasi</span><span class="value" id="rev_transport">Rp 0</span></div>
+          <div class="review-row" id="rev_extra_row"><span class="label" id="rev_extra_lbl">Biaya Lain</span><span class="value" id="rev_extra">Rp 0</span></div>
+          <div class="review-row" id="rev_promo_row" style="color:var(--green)"><span class="label">Promo</span><span class="value" id="rev_promo">—</span></div>
+          <div class="review-row" id="rev_referral_row"><span class="label">Kode Referral</span><span class="value" id="rev_referral">—</span></div>
+          <div class="review-row" id="rev_tax_row"><span class="label">Pajak</span><span class="value" id="rev_tax">Rp 0</span></div>
+          <div class="total-row"><span>Total Tagihan</span><span style="color:var(--orange)" id="rev_total">Rp 0</span></div>
+        </div>
+        <div style="background:#EBF5FB;border-radius:10px;padding:12px 16px;font-size:12px;color:#2980B9;font-weight:600;border-left:3px solid #2980B9">
+          ℹ️ Order akan dibuat dengan status <strong>Aktif</strong> dan invoice akan di-generate otomatis sebagai <strong>Pending</strong>.
+        </div>
+      </div>
+
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" id="btnBack" onclick="prevStep()" style="display:none">← Kembali</button>
@@ -489,6 +656,137 @@
 
 <script>
 let currentStep = 1;
+const TOTAL_STEPS = 5;
+
+// Paket yang dipilih
+let _selectedPackage = { price: 600000, label: '4 Sesi - Starter', sesi: '4' };
+
+function selectPackage(card, price, label, sesi) {
+  document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  _selectedPackage = { price, label, sesi };
+}
+
+function fmtRp(n) {
+  return 'Rp ' + Math.max(0, Math.round(n)).toLocaleString('id-ID');
+}
+
+function recalcTotal() {
+  const base      = _selectedPackage.price || 0;
+  const transport = parseInt(document.getElementById('inp_transport').value) || 0;
+  const extra     = parseInt(document.getElementById('inp_extra').value) || 0;
+  const extraKet  = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain-lain';
+  const promoType = document.getElementById('inp_promo_type').value;
+  const promoVal  = parseFloat(document.getElementById('inp_promo_val').value) || 0;
+  const ppn       = document.getElementById('chk_ppn').checked;
+  const pph       = document.getElementById('chk_pph').checked;
+  const taxCustom = document.getElementById('chk_tax_custom').checked;
+  const taxPct    = taxCustom ? (parseFloat(document.getElementById('inp_tax_custom').value) || 0) : 0;
+
+  let subtotal = base + transport + extra;
+
+  // Diskon
+  let diskon = 0;
+  if (promoType === 'diskon_persen') diskon = subtotal * promoVal / 100;
+  else if (promoType === 'diskon_nominal' || promoType === 'cashback') diskon = promoVal;
+  subtotal -= diskon;
+
+  // Pajak
+  let taxTotal = 0;
+  if (ppn)  taxTotal += subtotal * 0.11;
+  if (pph)  taxTotal += subtotal * 0.02;
+  if (taxCustom) taxTotal += subtotal * taxPct / 100;
+
+  const grandTotal = subtotal + taxTotal;
+
+  // Update kalkulasi di step 4
+  document.getElementById('calc_paket').textContent     = fmtRp(base);
+  document.getElementById('calc_transport').textContent = fmtRp(transport);
+  document.getElementById('calc_extra_lbl').textContent = extraKet || 'Biaya Lain-lain';
+  document.getElementById('calc_extra').textContent     = fmtRp(extra);
+
+  const diskonRow = document.getElementById('calc_diskon_row');
+  diskonRow.style.display = diskon > 0 ? 'flex' : 'none';
+  document.getElementById('calc_diskon').textContent = '- ' + fmtRp(diskon);
+
+  const taxRow = document.getElementById('calc_tax_row');
+  taxRow.style.display = taxTotal > 0 ? 'flex' : 'none';
+  document.getElementById('calc_tax').textContent = fmtRp(taxTotal);
+
+  document.getElementById('calc_total').textContent = fmtRp(grandTotal);
+
+  // Simpan untuk review
+  window._calc = { base, transport, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal };
+}
+
+// Demo kode promo (frontend only)
+const PROMO_CODES = {
+  'PROMO10':   { type: 'diskon_persen',  val: 10,     desc: '✅ Diskon 10% diterapkan' },
+  'CASHBACK50':{ type: 'cashback',       val: 50000,  desc: '✅ Cashback Rp 50.000 diterapkan' },
+  'FREE1SESI': { type: 'free_session',   val: 1,      desc: '✅ 1 sesi gratis ditambahkan' },
+};
+
+function applyPromo() {
+  const kode  = document.getElementById('inp_kode_promo').value.trim().toUpperCase();
+  const resEl = document.getElementById('promo_result');
+  const promo = PROMO_CODES[kode];
+  resEl.style.display = 'block';
+  if (promo) {
+    resEl.style.color = 'var(--green)';
+    resEl.textContent = promo.desc;
+    document.getElementById('inp_promo_type').value = promo.type;
+    document.getElementById('inp_promo_val').value  = promo.val;
+    recalcTotal();
+  } else if (!kode) {
+    resEl.style.color = 'var(--gray-text)';
+    resEl.textContent = 'Masukkan kode promo terlebih dahulu.';
+  } else {
+    resEl.style.color = 'var(--red)';
+    resEl.textContent = '❌ Kode promo tidak valid atau sudah kadaluarsa.';
+  }
+}
+
+function toggleCustomTax() {
+  const box = document.getElementById('custom_tax_box');
+  box.style.display = document.getElementById('chk_tax_custom').checked ? 'flex' : 'none';
+  recalcTotal();
+}
+
+function fillReview() {
+  const c = window._calc || {};
+  document.getElementById('rev_nama').textContent    = document.getElementById('inp_nama').value  || '—';
+  document.getElementById('rev_hp').textContent      = document.getElementById('inp_hp').value    || '—';
+  document.getElementById('rev_email').textContent   = document.getElementById('inp_email').value || '—';
+  document.getElementById('rev_paket').textContent   = _selectedPackage.label;
+  document.getElementById('rev_paket_label').textContent = _selectedPackage.label;
+  document.getElementById('rev_pic').textContent     = document.getElementById('inp_pic').value   || '—';
+  document.getElementById('rev_lokasi').textContent  = document.getElementById('inp_lokasi').value|| '—';
+  const hari = document.getElementById('inp_hari').value;
+  const jam  = document.getElementById('inp_jam').value;
+  document.getElementById('rev_jadwal').textContent  = hari && jam ? hari + ', ' + jam : '—';
+  document.getElementById('rev_harga').textContent   = fmtRp(c.base   || _selectedPackage.price);
+  document.getElementById('rev_transport').textContent = fmtRp(c.transport || 0);
+  document.getElementById('rev_extra').textContent   = fmtRp(c.extra  || 0);
+  document.getElementById('rev_extra_lbl').textContent = c.extraKet   || 'Biaya Lain-lain';
+
+  const promoRow = document.getElementById('rev_promo_row');
+  const diskon = c.diskon || 0;
+  promoRow.style.display = diskon > 0 ? 'flex' : 'none';
+  document.getElementById('rev_promo').textContent = '- ' + fmtRp(diskon);
+
+  const refVal = document.getElementById('inp_referral').value.trim().toUpperCase();
+  const refRow = document.getElementById('rev_referral_row');
+  refRow.style.display = refVal ? 'flex' : 'none';
+  document.getElementById('rev_referral').textContent = refVal || '—';
+
+  const taxRow = document.getElementById('rev_tax_row');
+  const tax = c.taxTotal || 0;
+  taxRow.style.display = tax > 0 ? 'flex' : 'none';
+  document.getElementById('rev_tax').textContent = fmtRp(tax);
+
+  document.getElementById('rev_total').textContent = fmtRp(c.grandTotal || _selectedPackage.price);
+}
+
 function toggleMenu(e, subId, arrowId) {
   e.preventDefault();
   const sub = document.getElementById(subId);
@@ -764,27 +1062,47 @@ function confirmPaidFromDrawer(invNo) {
   renderInvoiceTab();
 }
 
-function openModal() { currentStep=1; updateStepUI(); document.getElementById('modalOverlay').classList.add('show'); }
+function openModal() {
+  currentStep = 1;
+  _selectedPackage = { price:600000, label:'4 Sesi - Starter', sesi:'4' };
+  updateStepUI();
+  document.getElementById('modalOverlay').classList.add('show');
+}
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 function nextStep() {
-  if (currentStep < 4) { currentStep++; updateStepUI(); }
-  else { alert('Order berhasil dibuat!'); closeModal(); }
+  if (currentStep === 3) {
+    // Masuk ke step Biaya — sync paket label & recalc
+    document.getElementById('biaya_paket_disp').textContent = fmtRp(_selectedPackage.price);
+    document.getElementById('rev_paket_label').textContent  = _selectedPackage.label;
+    recalcTotal();
+  }
+  if (currentStep === 4) {
+    fillReview();
+  }
+  if (currentStep < TOTAL_STEPS) { currentStep++; updateStepUI(); }
+  else { alert('✅ Order berhasil dibuat! Invoice draft sedang digenerate.'); closeModal(); }
 }
 function prevStep() { if (currentStep > 1) { currentStep--; updateStepUI(); } }
 function updateStepUI() {
-  const subtitles = ['Langkah 1 dari 4: Pilih Klien','Langkah 2 dari 4: Pilih Program','Langkah 3 dari 4: Logistik & Jadwal','Langkah 4 dari 4: Review & Konfirmasi'];
+  const subtitles = [
+    'Langkah 1 dari 5: Pilih Klien',
+    'Langkah 2 dari 5: Pilih Program',
+    'Langkah 3 dari 5: Logistik & Jadwal',
+    'Langkah 4 dari 5: Biaya & Invoice',
+    'Langkah 5 dari 5: Review & Konfirmasi',
+  ];
   document.getElementById('stepSubtitle').textContent = subtitles[currentStep-1];
-  for (let i=1; i<=4; i++) {
-    const el = document.getElementById('step'+i);
+  for (let i=1; i<=TOTAL_STEPS; i++) {
+    const el      = document.getElementById('step'+i);
     const content = document.getElementById('content'+i);
-    el.className = 'step';
+    el.className  = 'step';
     content.style.display = 'none';
     if (i < currentStep) el.classList.add('done');
     else if (i === currentStep) el.classList.add('active');
   }
   document.getElementById('content'+currentStep).style.display = 'block';
   document.getElementById('btnBack').style.display = currentStep > 1 ? 'block' : 'none';
-  document.getElementById('btnNext').textContent = currentStep === 4 ? '✓ Konfirmasi Order' : 'Lanjut →';
+  document.getElementById('btnNext').textContent = currentStep === TOTAL_STEPS ? '✓ Konfirmasi & Buat Order' : 'Lanjut →';
 }
 </script>
 
