@@ -896,39 +896,57 @@ function parseGoogleMapsURL() {
   const box = document.getElementById('maps_link_box');
   msg.style.display = 'block';
 
-  // Pola 1: @lat,lng,zoom  (paling umum di URL google maps)
-  let m = raw.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+  let lat = null, lng = null, src = '';
 
-  // Pola 2: ?q=lat,lng
-  if (!m) m = raw.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+  // ── Prioritas 1: !3d{lat}!4d{lng} → koordinat PIN lokasi sebenarnya ──
+  // Contoh: !3d-6.2913446!4d106.7996201
+  const m3d = raw.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (m3d) {
+    lat = parseFloat(m3d[1]);
+    lng = parseFloat(m3d[2]);
+    src = 'pin lokasi (akurat)';
+  }
 
-  // Pola 3: /maps/place/.../@lat,lng atau ll=lat,lng
-  if (!m) m = raw.match(/ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+  // ── Prioritas 2: ?q=lat,lng atau &q=lat,lng ──
+  if (lat === null) {
+    const mq = raw.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mq) { lat = parseFloat(mq[1]); lng = parseFloat(mq[2]); src = 'query param'; }
+  }
 
-  if (!m) {
+  // ── Prioritas 3: ll=lat,lng ──
+  if (lat === null) {
+    const mll = raw.match(/ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mll) { lat = parseFloat(mll[1]); lng = parseFloat(mll[2]); src = 'll param'; }
+  }
+
+  // ── Fallback: @lat,lng (viewport center — kurang akurat) ──
+  if (lat === null) {
+    const mat = raw.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mat) { lat = parseFloat(mat[1]); lng = parseFloat(mat[2]); src = 'viewport (perkiraan)'; }
+  }
+
+  if (lat === null) {
     msg.style.color = 'var(--red)';
-    msg.textContent = '❌ Koordinat tidak terdeteksi. Pastikan link dari Google Maps dan lengkap.';
+    msg.textContent = '❌ Koordinat tidak terdeteksi. Pastikan link Google Maps lengkap (bukan link pendek).';
     document.getElementById('disp_lat').textContent = '—';
     document.getElementById('disp_lng').textContent = '—';
     box.style.display = 'none';
     return;
   }
 
-  const lat = parseFloat(m[1]);
-  const lng = parseFloat(m[2]);
+  document.getElementById('inp_lat').value        = lat;
+  document.getElementById('inp_lng').value        = lng;
+  document.getElementById('disp_lat').textContent = lat;
+  document.getElementById('disp_lng').textContent = lng;
 
-  document.getElementById('inp_lat').value         = lat;
-  document.getElementById('inp_lng').value         = lng;
-  document.getElementById('disp_lat').textContent  = lat;
-  document.getElementById('disp_lng').textContent  = lng;
-
-  const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
+  const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
   document.getElementById('maps_link_label').textContent = `${lat}, ${lng}`;
   document.getElementById('maps_link_href').href         = mapsUrl;
   box.style.display = 'flex';
 
-  msg.style.color = 'var(--green)';
-  msg.textContent = `✅ Koordinat berhasil dideteksi: ${lat}, ${lng}`;
+  const isAccurate = src === 'pin lokasi (akurat)';
+  msg.style.color = isAccurate ? 'var(--green)' : '#F39C12';
+  msg.textContent = `${isAccurate ? '✅' : '⚠️'} Koordinat terdeteksi (${src}): ${lat}, ${lng}`;
 }
 
 function toggleMenu(e, subId, arrowId) {
