@@ -169,7 +169,7 @@
 
     /* Summary */
     .summary-wrap { display:flex; justify-content:flex-end; margin-bottom:24px; }
-    .summary-box { width:260px; }
+    .summary-box { width:320px; }
     .summary-row { display:flex; justify-content:space-between; padding:7px 0; font-size:13px; }
     .summary-row .lbl { color:var(--gray-text); }
     .summary-row .val { color:var(--navy); font-weight:500; }
@@ -311,7 +311,7 @@
 
       /* ── SUMMARY ── */
       .summary-wrap  { margin-bottom: 0 !important; }
-      .summary-box   { width: 285px !important; }
+      .summary-box   { width: 340px !important; }
       /* Uniform: subtotal/diskon/pajak rows */
       .summary-row {
         padding: 3px 0 !important; font-size: 9pt !important;
@@ -619,8 +619,8 @@
             <thead>
               <tr>
                 <th>Deskripsi</th>
-                <th class="center">Sesi</th>
-                <th class="right">Rate/Sesi</th>
+                <th class="right">Harga Persesi</th>
+                <th class="center">Jumlah Sesi</th>
                 <th class="right">Total</th>
               </tr>
             </thead>
@@ -630,8 +630,8 @@
                   <div class="item-name" id="invPackage">12 Sesi - Pro Package</div>
                   <div class="item-desc" id="invPIC">Private Training · PIC: Sarah Jenkins</div>
                 </td>
-                <td class="center" id="invSesi">12</td>
                 <td class="right" id="invRateSesi">Rp 125.000</td>
+                <td class="center" id="invSesi">12</td>
                 <td class="right" style="font-weight:600" id="invSubtotal">Rp 1.500.000</td>
               </tr>
               <tr id="invBiayaLainRow" style="display:none">
@@ -639,8 +639,8 @@
                   <div class="item-name">Biaya Lain</div>
                   <div class="item-desc" id="invBiayaLainKet"></div>
                 </td>
-                <td class="center">—</td>
                 <td class="right">—</td>
+                <td class="center">—</td>
                 <td class="right" style="font-weight:600" id="invBiayaLainAmt">Rp 0</td>
               </tr>
             </tbody>
@@ -650,7 +650,18 @@
           <div class="summary-wrap">
             <div class="summary-box">
               <div class="summary-row"><span class="lbl">Subtotal</span><span class="val" id="invTotal">Rp 1.500.000</span></div>
-              <div class="summary-row discount" id="invDiskonRow" style="display:none"><span class="lbl">Diskon <span id="invPromoTag" style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px;font-weight:700"></span></span><span class="val" id="invDiskonVal" style="color:#27AE60">- Rp 0</span></div>
+              <div class="summary-row discount" id="invDiskonRow" style="display:none">
+                <span class="lbl">Diskon Paket (Rp)</span>
+                <span class="val" id="invDiskonVal" style="color:#27AE60">- Rp 0</span>
+              </div>
+              <div class="summary-row" id="invAfterDiskonRow" style="display:none">
+                <span class="lbl">Harga Setelah Diskon Paket</span>
+                <span class="val" id="invAfterDiskonVal">Rp 0</span>
+              </div>
+              <div class="summary-row" id="invPromoRow" style="display:none">
+                <span class="lbl" style="color:var(--gray-text);font-style:italic">Keterangan Promo</span>
+                <span class="val" id="invPromoTag" style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:2px 9px;border-radius:10px;font-weight:700"></span>
+              </div>
               <div class="summary-row" id="invPajakRow" style="display:none"><span class="lbl">Pajak</span><span class="val" id="invPajakVal">Rp 0</span></div>
               <div class="summary-divider"></div>
               <div class="total-row"><span style="white-space:nowrap;flex-shrink:0">Total Tagihan</span><span class="val" id="invGrandTotal" style="white-space:nowrap;flex-shrink:0">Rp 1.500.000</span></div>
@@ -952,14 +963,23 @@ function showDetail(invNo) {
   document.getElementById('invBiayaLainAmt').textContent = fmtRp(biayaLain);
 
   // Subtotal (paket + biayaLain)
-  document.getElementById('invTotal').textContent = fmtRp(d.hargaPaket + biayaLain);
+  const subtotal = d.hargaPaket + biayaLain;
+  document.getElementById('invTotal').textContent = fmtRp(subtotal);
 
-  // Diskon
+  // Diskon Paket + Harga Setelah Diskon
   const diskon = d.diskon || 0;
-  const diskonRow = document.getElementById('invDiskonRow');
-  diskonRow.style.display = diskon > 0 ? '' : 'none';
-  document.getElementById('invPromoTag').textContent = d.promoKode || '';
-  document.getElementById('invDiskonVal').textContent = '- ' + fmtRp(diskon);
+  const diskonRow       = document.getElementById('invDiskonRow');
+  const afterDiskonRow  = document.getElementById('invAfterDiskonRow');
+  diskonRow.style.display      = diskon > 0 ? '' : 'none';
+  afterDiskonRow.style.display = diskon > 0 ? '' : 'none';
+  document.getElementById('invDiskonVal').textContent    = '- ' + fmtRp(diskon);
+  document.getElementById('invAfterDiskonVal').textContent = fmtRp(subtotal - diskon);
+
+  // Keterangan Promo
+  const promoKode = d.promoKode || '';
+  const promoRow  = document.getElementById('invPromoRow');
+  promoRow.style.display = promoKode ? '' : 'none';
+  document.getElementById('invPromoTag').textContent = promoKode;
 
   // Pajak
   const pajak = d.pajak || 0;
