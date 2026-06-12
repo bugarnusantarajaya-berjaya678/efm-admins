@@ -469,11 +469,23 @@
           spinner.style.display = 'none';
         }
       } catch (err) {
-        // Development mode: skip API, langsung ke dashboard
-        console.warn('API not connected. Dev mode redirect.');
-        localStorage.setItem('efm_role', 'owner');
-        localStorage.setItem('efm_nama', 'Bagoes');
-        window.location.href = 'dashboard-owner.html';
+        // Dev mode: simulasi login berdasarkan email
+        const email = username.toLowerCase().trim();
+        if (email === 'bugarnusantarajaya@gmail.com') {
+          localStorage.setItem('efm_role', 'owner');
+          localStorage.setItem('efm_nama', 'Bagoes');
+          window.location.href = 'dashboard-owner.html';
+        } else if (email === 'essentialfitnessmanagement@gmail.com') {
+          localStorage.setItem('efm_role', 'admin');
+          localStorage.setItem('efm_nama', 'Admin EFM');
+          window.location.href = 'dashboard.html';
+        } else {
+          errorMsg.textContent = 'Email tidak terdaftar. Gunakan email yang valid.';
+          errorMsg.classList.add('show');
+          btn.disabled = false;
+          btnText.style.display = 'block';
+          spinner.style.display = 'none';
+        }
       }
     }
   </script>
