@@ -462,7 +462,7 @@
                   oninput="filterLeads('pemesan')" onfocus="showDropdown('pemesan')" onblur="setTimeout(()=>hideDropdown('pemesan'),200)"
                   style="padding-right:36px"/>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:260px;overflow-y:auto"></div>
+                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:9999;max-height:280px;overflow-y:auto"></div>
               </div>
             </div>
             <!-- Info Card Pemesan -->
@@ -502,7 +502,7 @@
                   oninput="filterLeads('klien')" onfocus="showDropdown('klien')" onblur="setTimeout(()=>hideDropdown('klien'),200)"
                   style="padding-right:36px"/>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:260px;overflow-y:auto"></div>
+                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:9999;max-height:280px;overflow-y:auto"></div>
               </div>
             </div>
             <!-- Info Card Klien -->
@@ -894,11 +894,6 @@ function initials(nama) {
 }
 
 function filterLeads(role) {
-  const q = document.getElementById('search_' + role).value.trim().toLowerCase();
-  const filtered = q
-    ? LEADS_DB.filter(l => l.nama.toLowerCase().includes(q) || l.hp.includes(q) || l.id.includes(q))
-    : LEADS_DB;
-  renderDropdown(role, filtered);
   showDropdown(role);
 }
 
@@ -927,7 +922,14 @@ function showDropdown(role) {
     ? LEADS_DB.filter(l => l.nama.toLowerCase().includes(q) || l.hp.includes(q) || l.id.includes(q))
     : LEADS_DB;
   renderDropdown(role, filtered);
-  document.getElementById('dropdown_' + role).style.display = 'block';
+  const inp = document.getElementById('search_' + role);
+  const dd  = document.getElementById('dropdown_' + role);
+  const rect = inp.getBoundingClientRect();
+  dd.style.position = 'fixed';
+  dd.style.top      = (rect.bottom + 4) + 'px';
+  dd.style.left     = rect.left + 'px';
+  dd.style.width    = rect.width + 'px';
+  dd.style.display  = 'block';
 }
 
 function hideDropdown(role) {
