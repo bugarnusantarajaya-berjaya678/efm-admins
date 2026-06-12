@@ -1877,7 +1877,31 @@ function printInvoice(invNo) {
   window.location.href = 'pp-invoice.html?inv=' + encodeURIComponent(invNo);
 }
 
-document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
+document.addEventListener('DOMContentLoaded', () => {
+  applyFilterAndPaginate();
+  // Auto-open modal dan pre-fill lead jika datang dari pp-leads.html
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('openOrder') === '1') {
+    const raw = sessionStorage.getItem('prefill_lead');
+    sessionStorage.removeItem('prefill_lead');
+    openModal();
+    if (raw) {
+      try {
+        const l = JSON.parse(raw);
+        // Tambahkan ke LEADS_DB jika belum ada
+        if (!LEADS_DB.find(x => x.id === l.id)) LEADS_DB.push(l);
+        // Pre-fill sebagai Pemesan sekaligus Klien
+        setTimeout(() => {
+          selectLead('pemesan', l.id);
+          document.getElementById('chk_sama').checked = true;
+          toggleSama();
+        }, 80);
+      } catch(e) {}
+    }
+    // Bersihkan URL
+    history.replaceState({}, '', 'pp-orders.html');
+  }
+});
 </script>
 
 <script>
