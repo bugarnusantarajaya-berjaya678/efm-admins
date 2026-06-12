@@ -448,18 +448,86 @@
 
       <!-- STEP 1: KLIEN -->
       <div id="content1">
-        <div class="form-row">
-          <div style="border:1.5px solid var(--gray-border);border-radius:12px;padding:20px;">
-            <h4 style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">🔍 Cari Klien Existing</h4>
-            <div class="form-group"><label>Cari berdasarkan Nama atau No HP</label><input type="text" class="form-control" placeholder="Contoh: John Doe atau +62 812..."/></div>
+
+        <!-- Pemesan -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden;margin-bottom:16px">
+          <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:12px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">👤 Pemesan <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,.6)">(yang melakukan order)</span></div>
           </div>
-          <div style="border:1.5px solid var(--gray-border);border-radius:12px;padding:20px;">
-            <h4 style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:12px">➕ Tambah Klien Baru</h4>
-            <div class="form-group"><label>Nama Lengkap <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" id="inp_nama" placeholder="Nama klien"/></div>
-            <div class="form-group"><label>No HP <span style="color:var(--orange)">*</span></label><input type="text" class="form-control" id="inp_hp" placeholder="+62 812 3456 7890"/></div>
-            <div class="form-group"><label>Email</label><input type="email" class="form-control" id="inp_email" placeholder="email@example.com"/></div>
+          <div style="padding:14px 16px">
+            <div class="form-group" style="margin-bottom:10px">
+              <label>Cari dari Database Leads</label>
+              <div style="position:relative">
+                <input type="text" class="form-control" id="search_pemesan" placeholder="Ketik nama atau No HP..." autocomplete="off"
+                  oninput="filterLeads('pemesan')" onfocus="showDropdown('pemesan')" onblur="setTimeout(()=>hideDropdown('pemesan'),200)"
+                  style="padding-right:36px"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:200px;overflow-y:auto"></div>
+              </div>
+            </div>
+            <!-- Info Card Pemesan -->
+            <div id="card_pemesan" style="display:none;background:#F0F4FF;border:1.5px solid #C5D3F0;border-radius:10px;padding:12px 14px;display:none">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div id="avatar_pemesan" style="width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">?</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--navy)" id="disp_pemesan_nama">—</div>
+                  <div style="font-size:11px;color:var(--gray-text);margin-top:2px"><span id="disp_pemesan_hp">—</span> · <span id="disp_pemesan_email">—</span></div>
+                  <div style="font-size:11px;color:var(--gray-text)">Lead ID: <span id="disp_pemesan_id" style="font-weight:600">—</span> · Minat: <span id="disp_pemesan_minat">—</span></div>
+                </div>
+                <button onclick="clearLead('pemesan')" style="border:none;background:none;cursor:pointer;color:var(--gray-text);font-size:18px;line-height:1;padding:2px">×</button>
+              </div>
+            </div>
+            <div id="empty_pemesan" style="font-size:12px;color:var(--gray-text);margin-top:6px">Belum dipilih</div>
           </div>
         </div>
+
+        <!-- Sama checkbox -->
+        <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--navy)">
+            <input type="checkbox" id="chk_sama" onchange="toggleSama()" style="accent-color:var(--navy);width:15px;height:15px"/>
+            Klien yang latihan = Pemesan (orang yang sama)
+          </label>
+        </div>
+
+        <!-- Klien yang Latihan -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden" id="box_klien">
+          <div style="background:#F39C12;padding:10px 16px">
+            <div style="font-size:12px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">🏋️ Klien yang Latihan <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,.75)">(peserta program)</span></div>
+          </div>
+          <div style="padding:14px 16px">
+            <div class="form-group" style="margin-bottom:10px">
+              <label>Cari dari Database Leads</label>
+              <div style="position:relative">
+                <input type="text" class="form-control" id="search_klien" placeholder="Ketik nama atau No HP..." autocomplete="off"
+                  oninput="filterLeads('klien')" onfocus="showDropdown('klien')" onblur="setTimeout(()=>hideDropdown('klien'),200)"
+                  style="padding-right:36px"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:200px;overflow-y:auto"></div>
+              </div>
+            </div>
+            <!-- Info Card Klien -->
+            <div id="card_klien" style="display:none;background:#FFF8F0;border:1.5px solid #F5CBA7;border-radius:10px;padding:12px 14px;display:none">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div id="avatar_klien" style="width:38px;height:38px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">?</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--navy)" id="disp_klien_nama">—</div>
+                  <div style="font-size:11px;color:var(--gray-text);margin-top:2px"><span id="disp_klien_hp">—</span> · <span id="disp_klien_email">—</span></div>
+                  <div style="font-size:11px;color:var(--gray-text)">Lead ID: <span id="disp_klien_id" style="font-weight:600">—</span> · Minat: <span id="disp_klien_minat">—</span></div>
+                </div>
+                <button onclick="clearLead('klien')" style="border:none;background:none;cursor:pointer;color:var(--gray-text);font-size:18px;line-height:1;padding:2px">×</button>
+              </div>
+            </div>
+            <div id="empty_klien" style="font-size:12px;color:var(--gray-text);margin-top:6px">Belum dipilih</div>
+          </div>
+        </div>
+
+        <!-- hidden inputs (dipakai fillReview) -->
+        <input type="hidden" id="inp_nama"/>
+        <input type="hidden" id="inp_hp"/>
+        <input type="hidden" id="inp_email"/>
+        <input type="hidden" id="inp_pemesan_nama"/>
+        <input type="hidden" id="inp_pemesan_hp"/>
+
       </div>
 
       <!-- STEP 2: PROGRAM -->
@@ -768,7 +836,8 @@
       <div id="content5" style="display:none">
         <div class="review-section">
           <h4>👤 Detail Klien</h4>
-          <div class="review-row"><span class="label">Nama</span><span class="value" id="rev_nama">—</span></div>
+          <div class="review-row"><span class="label">Pemesan</span><span class="value" id="rev_pemesan">—</span></div>
+          <div class="review-row"><span class="label">Klien Latihan</span><span class="value" id="rev_nama">—</span></div>
           <div class="review-row"><span class="label">No HP</span><span class="value" id="rev_hp">—</span></div>
           <div class="review-row"><span class="label">Email</span><span class="value" id="rev_email">—</span></div>
         </div>
@@ -805,6 +874,119 @@
 <script>
 let currentStep = 1;
 const TOTAL_STEPS = 5;
+
+/* ─── LEADS DATABASE (sinkron dengan pp-leads) ─── */
+const LEADS_DB = [
+  { id:'#L-1001', nama:'Ahmad Ridwan',   hp:'0812-3456-7890', email:'ahmad.ridwan@email.com',   minat:'Fatloss & Bodyshape', color:'#E05945' },
+  { id:'#L-1002', nama:'Siti Nurhaliza', hp:'0856-7890-1234', email:'siti.nurhaliza@email.com', minat:'Yoga',                color:'#2980B9' },
+  { id:'#L-1003', nama:'Budi Pratama',   hp:'0811-2233-4455', email:'budi.pratama@email.com',   minat:'Boxing',              color:'#27AE60' },
+  { id:'#L-1004', nama:'Dewi Ayu',       hp:'0877-6655-4433', email:'dewi.ayu@email.com',       minat:'Tennis',              color:'#8E44AD' },
+  { id:'#L-1005', nama:'James Wilson',   hp:'+62 812-3333-0004', email:'james@example.com',     minat:'Strength Training',   color:'#8E44AD' },
+  { id:'#L-1006', nama:'Alex Mercer',    hp:'+62 812-3333-0001', email:'alex@example.com',      minat:'Private Training',    color:'#2980B9' },
+  { id:'#L-1007', nama:'Emily Chen',     hp:'+62 812-3333-0003', email:'emily@example.com',     minat:'Functional Training', color:'#27AE60' },
+  { id:'#L-1008', nama:'Robert Taylor',  hp:'+62 812-3333-0002', email:'robert@example.com',    minat:'Elite Training',      color:'#E05945' },
+];
+
+let _selectedLead = { pemesan: null, klien: null };
+
+function initials(nama) {
+  return nama.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function filterLeads(role) {
+  const q = document.getElementById('search_' + role).value.trim().toLowerCase();
+  const filtered = q
+    ? LEADS_DB.filter(l => l.nama.toLowerCase().includes(q) || l.hp.includes(q) || l.id.includes(q))
+    : LEADS_DB;
+  renderDropdown(role, filtered);
+  showDropdown(role);
+}
+
+function renderDropdown(role, list) {
+  const dd = document.getElementById('dropdown_' + role);
+  if (!list.length) {
+    dd.innerHTML = '<div style="padding:12px 14px;font-size:12px;color:var(--gray-text)">Tidak ada data yang cocok</div>';
+    return;
+  }
+  dd.innerHTML = list.map(l => `
+    <div onmousedown="selectLead('${role}','${l.id}')"
+      style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-border);transition:background .15s"
+      onmouseover="this.style.background='#F8F9FA'" onmouseout="this.style.background='white'">
+      <div style="width:32px;height:32px;border-radius:50%;background:${l.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0">${initials(l.nama)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:12px;font-weight:700;color:var(--navy)">${l.nama}</div>
+        <div style="font-size:11px;color:var(--gray-text)">${l.hp} · ${l.id} · ${l.minat}</div>
+      </div>
+    </div>`).join('');
+}
+
+function showDropdown(role) {
+  const q = document.getElementById('search_' + role).value.trim().toLowerCase();
+  const filtered = q
+    ? LEADS_DB.filter(l => l.nama.toLowerCase().includes(q) || l.hp.includes(q) || l.id.includes(q))
+    : LEADS_DB;
+  renderDropdown(role, filtered);
+  document.getElementById('dropdown_' + role).style.display = 'block';
+}
+
+function hideDropdown(role) {
+  document.getElementById('dropdown_' + role).style.display = 'none';
+}
+
+function selectLead(role, leadId) {
+  const l = LEADS_DB.find(x => x.id === leadId);
+  if (!l) return;
+  _selectedLead[role] = l;
+  document.getElementById('search_' + role).value = l.nama;
+  hideDropdown(role);
+
+  const card = document.getElementById('card_' + role);
+  const empty = document.getElementById('empty_' + role);
+  document.getElementById('avatar_' + role).textContent = initials(l.nama);
+  document.getElementById('avatar_' + role).style.background = l.color;
+  document.getElementById('disp_' + role + '_nama').textContent  = l.nama;
+  document.getElementById('disp_' + role + '_hp').textContent    = l.hp;
+  document.getElementById('disp_' + role + '_email').textContent = l.email;
+  document.getElementById('disp_' + role + '_id').textContent    = l.id;
+  document.getElementById('disp_' + role + '_minat').textContent = l.minat;
+  card.style.display  = 'block';
+  empty.style.display = 'none';
+
+  // sync hidden inputs (klien = peserta latihan → dipakai fillReview)
+  if (role === 'klien') {
+    document.getElementById('inp_nama').value  = l.nama;
+    document.getElementById('inp_hp').value    = l.hp;
+    document.getElementById('inp_email').value = l.email;
+  }
+  if (role === 'pemesan') {
+    document.getElementById('inp_pemesan_nama').value = l.nama;
+    document.getElementById('inp_pemesan_hp').value   = l.hp;
+    // if chk_sama is checked, mirror to klien
+    if (document.getElementById('chk_sama').checked) selectLead('klien', leadId);
+  }
+}
+
+function clearLead(role) {
+  _selectedLead[role] = null;
+  document.getElementById('search_' + role).value = '';
+  document.getElementById('card_' + role).style.display  = 'none';
+  document.getElementById('empty_' + role).style.display = 'block';
+  if (role === 'klien') {
+    document.getElementById('inp_nama').value  = '';
+    document.getElementById('inp_hp').value    = '';
+    document.getElementById('inp_email').value = '';
+  }
+}
+
+function toggleSama() {
+  const checked = document.getElementById('chk_sama').checked;
+  const box = document.getElementById('box_klien');
+  box.style.opacity = checked ? '0.6' : '1';
+  box.style.pointerEvents = checked ? 'none' : '';
+  if (checked && _selectedLead.pemesan) {
+    selectLead('klien', _selectedLead.pemesan.id);
+  }
+}
 
 // Paket yang dipilih
 let _selectedPackage = { price: 600000, label: '4 Sesi - Starter', sesi: '4' };
@@ -903,9 +1085,12 @@ function toggleCustomTax() {
 
 function fillReview() {
   const c = window._calc || {};
-  document.getElementById('rev_nama').textContent    = document.getElementById('inp_nama').value  || '—';
-  document.getElementById('rev_hp').textContent      = document.getElementById('inp_hp').value    || '—';
-  document.getElementById('rev_email').textContent   = document.getElementById('inp_email').value || '—';
+  const klienL   = _selectedLead.klien;
+  const pemesan  = _selectedLead.pemesan;
+  document.getElementById('rev_pemesan').textContent = pemesan ? pemesan.nama + ' (' + pemesan.id + ')' : '—';
+  document.getElementById('rev_nama').textContent    = klienL  ? klienL.nama  + ' (' + klienL.id  + ')' : (document.getElementById('inp_nama').value  || '—');
+  document.getElementById('rev_hp').textContent      = klienL  ? klienL.hp    : (document.getElementById('inp_hp').value    || '—');
+  document.getElementById('rev_email').textContent   = klienL  ? klienL.email : (document.getElementById('inp_email').value || '—');
   document.getElementById('rev_paket').textContent   = _selectedPackage.label;
   document.getElementById('rev_paket_label').textContent = _selectedPackage.label;
   const progId  = document.getElementById('inp_program_id').value;
