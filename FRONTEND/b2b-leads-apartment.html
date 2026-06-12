@@ -195,7 +195,7 @@
     </div>
 
     <div class="filters-bar">
-      <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option>Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
+      <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option value="">Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
       <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama apartemen..."/></div>
       <button class="btn-filter">Filter</button>
     </div>
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
       { id:'nama',    label:'Nama Apartemen',     required:true,  hint:'Nama gedung/apartemen' },
       { id:'no_hp',   label:'No HP PIC',          required:true,  hint:'Nomor kontak PIC' },
       { id:'email',   label:'Email',              required:false, hint:'Email PIC' },
-      { id:'sumber',  label:'Sumber Lead',        required:false, hint:'Asal perolehan lead' },
+      { id:'sumber',  label:'PIC Klien',           required:false, hint:'Nama kontak/PIC' },
       { id:'program', label:'Est. Nilai Kontrak', required:false, hint:'Misal: Rp 7jt/bln' },
       { id:'catatan', label:'Catatan',            required:false, hint:'Info tambahan' }
     ],
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
       tr.innerHTML=`
         <td>${id}</td>
         <td><strong>${lead.nama}</strong></td>
-        <td>${lead.email||'—'}</td>
+        <td>${lead.sumber||'—'}</td>
         <td>${lead.no_hp}</td>
         <td>${lead.program||'—'}</td>
         <td><span class="badge new">New</span></td>
