@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Owner Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--navy:#1E1C43;--orange:#E05945;--orange-hover:#C94A38;--gray-bg:#F8F9FA;--gray-border:#E2E6EA;--gray-text:#6C757D;--text-dark:#1E1C43;--green:#27AE60;--yellow:#F39C12;--red:#E74C3C;--sidebar-w:240px}
+    body{font-family:'Poppins',sans-serif;background:var(--gray-bg);color:var(--text-dark);min-height:100vh;display:flex}
+    .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100;overflow-y:auto}
+    .sidebar-logo{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;gap:12px}
+    .logo-text h2{font-size:14px;font-weight:700;color:white}
+    .logo-text span{font-size:10px;color:rgba(255,255,255,0.5)}
+    .sidebar-nav{flex:1;padding:8px 0}
+    .nav-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.3);letter-spacing:1px;text-transform:uppercase;padding:16px 20px 8px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:11px 20px;color:rgba(255,255,255,0.65);text-decoration:none;font-size:13px;font-weight:500;transition:all 0.2s;border-left:3px solid transparent;cursor:pointer}
+    .nav-item:hover{background:rgba(255,255,255,0.06);color:white}
+    .nav-item.active{background:rgba(224,89,69,0.15);color:white;border-left-color:var(--orange)}
+    .nav-item svg{width:18px;height:18px;flex-shrink:0}
+    .nav-sub-item{display:flex;align-items:center;padding:8px 20px 8px 52px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:12px;font-weight:500;transition:all 0.2s;border-left:3px solid transparent}
+    .nav-sub-item:hover{color:white;background:rgba(255,255,255,0.04)}
+    .nav-sub-item.active{color:white;border-left-color:var(--orange);background:rgba(224,89,69,0.08)}
+    .sidebar-footer{padding:16px;border-top:1px solid rgba(255,255,255,0.08)}
+    .nav-item.logout{color:rgba(255,255,255,0.4);border-radius:8px}
+    .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+    .header{background:white;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-border);position:sticky;top:0;z-index:50}
+    .header-title{font-size:15px;font-weight:600;color:var(--navy)}
+    .header-right{display:flex;align-items:center;gap:16px}
+    .icon-btn{width:36px;height:36px;border-radius:8px;border:1.5px solid var(--gray-border);background:white;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-text);position:relative}
+    .icon-btn svg{width:17px;height:17px}
+    .notif-dot{position:absolute;top:6px;right:6px;width:7px;height:7px;background:var(--orange);border-radius:50%;border:1.5px solid white}
+    .user-avatar{width:36px;height:36px;border-radius:50%;background:var(--navy);color:white;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+    .owner-badge{background:rgba(224,89,69,0.1);color:var(--orange);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)}
+    .content{padding:28px;flex:1}
+    .welcome-bar{background:var(--navy);border-radius:14px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between}
+    .welcome-bar h2{font-size:20px;font-weight:700;color:white;margin-bottom:4px}
+    .welcome-bar p{font-size:13px;color:rgba(255,255,255,0.6)}
+    .welcome-bar .btn-settings{padding:9px 18px;background:var(--orange);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+
+    /* Approval section */
+    .approval-section{margin-bottom:24px}
+    .section-title{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+    .approval-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+    .approval-card{background:white;border-radius:14px;border:1.5px solid var(--gray-border);padding:20px;display:flex;flex-direction:column;gap:14px}
+    .approval-card.urgent{border-color:var(--orange)}
+    .approval-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+    .approval-type{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-text);margin-bottom:4px}
+    .approval-title{font-size:14px;font-weight:700;color:var(--navy)}
+    .approval-meta{font-size:12px;color:var(--gray-text);margin-top:4px}
+    .approval-amount{font-size:16px;font-weight:700;color:var(--orange)}
+    .approval-actions{display:flex;gap:8px}
+    .btn-approve{padding:8px 16px;background:var(--green);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;flex:1}
+    .btn-reject{padding:8px 16px;background:white;color:var(--red);border:1.5px solid var(--red);border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+
+    /* Revenue overview */
+    .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+    .stat-card{background:white;border-radius:14px;padding:20px;border:1.5px solid var(--gray-border)}
+    .stat-card .label{font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px}
+    .stat-card .value{font-size:24px;font-weight:700;color:var(--navy)}
+    .stat-card .sub{font-size:11px;margin-top:4px}
+    .trend-up{color:var(--green)}
+    .trend-down{color:var(--red)}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+    .card{background:white;border-radius:14px;border:1.5px solid var(--gray-border);overflow:hidden;margin-bottom:20px}
+    .card-header{padding:18px 24px;border-bottom:1px solid var(--gray-border);display:flex;align-items:center;justify-content:space-between}
+    .card-header h3{font-size:14px;font-weight:700;color:var(--navy)}
+    .view-all{font-size:12px;color:var(--orange);text-decoration:none;font-weight:600}
+    table{width:100%;border-collapse:collapse}
+    th{background:var(--gray-bg);padding:10px 16px;font-size:11px;font-weight:600;color:var(--gray-text);text-align:left;text-transform:uppercase}
+    td{padding:13px 16px;font-size:13px;border-bottom:1px solid var(--gray-border)}
+    tr:last-child td{border-bottom:none}
+    .badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor}
+    .badge.pending{background:#FEF9E7;color:var(--yellow)}
+    .badge.paid{background:#EAFAF1;color:var(--green)}
+    .badge.waiting{background:#FEF9E7;color:var(--yellow)}
+    .chart-bars{display:flex;align-items:flex-end;gap:8px;height:100px;padding:16px 24px 0}
+    .bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+    .bar{width:100%;border-radius:4px 4px 0 0}
+    .bar-label{font-size:10px;color:var(--gray-text)}
+  </style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="assets/white-logo-circle-pure.png" style="width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#1E1C43;padding:2px"/>
+    <div class="logo-text"><h2>EFM Portal</h2><span>Management System</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard-owner.html" class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'ppSub','ppArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training<svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="ppSub" style="display:none"><a href="pp-leads.html" class="nav-sub-item">Leads</a><a href="pp-orders.html" class="nav-sub-item">Orders</a><a href="pp-invoice.html" class="nav-sub-item">Invoice</a><a href="pp-documents.html" class="nav-sub-item">Dokumen</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management<svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="b2bSub" style="display:none"><a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a><a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a><a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a><a href="b2b-clients.html" class="nav-sub-item">Database Klien</a><a href="b2b-invoice.html" class="nav-sub-item">Invoice</a><a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a><a href="b2b-live-report.html" class="nav-sub-item">Live Report</a><a href="b2b-revenue.html" class="nav-sub-item">Revenue</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management<svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="eventSub" style="display:none"><a href="event-dashboard.html" class="nav-sub-item">Dashboard</a><a href="event-leads.html" class="nav-sub-item">Leads Event</a><a href="event-tracker.html" class="nav-sub-item">Event Tracker</a><a href="event-invoice.html" class="nav-sub-item">Invoice</a><a href="event-revenue.html" class="nav-sub-item">Revenue</a><a href="event-documents.html" class="nav-sub-item">Pemberkasan</a></div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational<svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></a>
+    <div id="opsSub" style="display:none"><a href="ops-pic.html" class="nav-sub-item">Database PIC</a><a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a><a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a></div>
+    <div class="nav-label">Owner Only</div>
+    <a href="settings.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Settings</a>
+  </nav>
+  <div class="sidebar-footer"><a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a></div>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <span class="owner-badge">👑 Owner</span>
+      <div class="user-avatar">B</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <!-- Welcome -->
+    <div class="welcome-bar">
+      <div>
+        <h2>Selamat datang, Bagoes! 👑</h2>
+        <p>Owner Dashboard — Semua kendali ada di tangan kamu</p>
+      </div>
+      <a href="settings.html" class="btn-settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2"/></svg>Settings</a>
+    </div>
+
+    <!-- Approval Pending -->
+    <div class="approval-section">
+      <div class="section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18" style="color:var(--orange)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Menunggu Approval Kamu
+        <span style="background:var(--orange);color:white;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700">3</span>
+      </div>
+      <div class="approval-grid">
+        <!-- Approval 1 -->
+        <div class="approval-card urgent">
+          <div class="approval-top">
+            <div>
+              <div class="approval-type">Invoice PP — Perlu Dikirim</div>
+              <div class="approval-title">INV/EFM/PP/2026/0090</div>
+              <div class="approval-meta">Robert Taylor • 24 Sesi Elite</div>
+              <div class="approval-meta">Dibuat oleh Admin • 2 jam lalu</div>
+            </div>
+            <div class="approval-amount">Rp 2.800.000</div>
+          </div>
+          <div class="approval-actions">
+            <button class="btn-approve" onclick="approve(this,'invoice')">✓ Approve & Kirim</button>
+            <button class="btn-reject" onclick="reject(this)">✗</button>
+          </div>
+        </div>
+        <!-- Approval 2 -->
+        <div class="approval-card urgent">
+          <div class="approval-top">
+            <div>
+              <div class="approval-type">Konfirmasi Pembayaran</div>
+              <div class="approval-title">INV/EFM/PP/2026/0088</div>
+              <div class="approval-meta">James Wilson • 8 Sesi Base</div>
+              <div class="approval-meta">Bukti transfer diupload Admin</div>
+            </div>
+            <div class="approval-amount">Rp 1.100.000</div>
+          </div>
+          <div class="approval-actions">
+            <button class="btn-approve" onclick="approve(this,'payment')">✓ Konfirmasi Lunas</button>
+            <button class="btn-reject" onclick="reject(this)">✗</button>
+          </div>
+        </div>
+        <!-- Approval 3 -->
+        <div class="approval-card">
+          <div class="approval-top">
+            <div>
+              <div class="approval-type">Invoice B2B — Perlu Dikirim</div>
+              <div class="approval-title">INV/EFM/B2B/2026/0012</div>
+              <div class="approval-meta">Apartemen Green Lake • Juni 2026</div>
+              <div class="approval-meta">Dibuat oleh Admin • 1 hari lalu</div>
+            </div>
+            <div class="approval-amount">Rp 9.000.000</div>
+          </div>
+          <div class="approval-actions">
+            <button class="btn-approve" onclick="approve(this,'invoice')">✓ Approve & Kirim</button>
+            <button class="btn-reject" onclick="reject(this)">✗</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Revenue Stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="label">Total Revenue Bulan Ini</div><div class="value">Rp 127jt</div><div class="sub trend-up">↑ 12% vs bulan lalu</div></div>
+      <div class="stat-card"><div class="label">Revenue PP</div><div class="value">Rp 45jt</div><div class="sub trend-up">↑ 8%</div></div>
+      <div class="stat-card"><div class="label">Revenue B2B</div><div class="value">Rp 48jt</div><div class="sub trend-up">↑ 15%</div></div>
+      <div class="stat-card"><div class="label">Revenue Event</div><div class="value">Rp 34jt</div><div class="sub trend-down">↓ 3%</div></div>
+    </div>
+
+    <!-- Chart + Invoice -->
+    <div class="two-col">
+      <div class="card">
+        <div class="card-header"><h3>Revenue 6 Bulan Terakhir</h3></div>
+        <div class="chart-bars">
+          <div class="bar-group"><div class="bar" style="height:55px;background:var(--navy)"></div><span class="bar-label">Jan</span></div>
+          <div class="bar-group"><div class="bar" style="height:70px;background:var(--navy)"></div><span class="bar-label">Feb</span></div>
+          <div class="bar-group"><div class="bar" style="height:60px;background:var(--navy)"></div><span class="bar-label">Mar</span></div>
+          <div class="bar-group"><div class="bar" style="height:85px;background:var(--navy)"></div><span class="bar-label">Apr</span></div>
+          <div class="bar-group"><div class="bar" style="height:75px;background:var(--navy)"></div><span class="bar-label">Mei</span></div>
+          <div class="bar-group"><div class="bar" style="height:95px;background:var(--orange)"></div><span class="bar-label">Jun</span></div>
+        </div>
+        <div style="padding:16px 24px;padding-top:8px;font-size:12px;color:var(--gray-text)">Juni 2026 — tertinggi bulan ini 🎉</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3>Invoice Terbaru</h3><a href="pp-invoice.html" class="view-all">Lihat Semua →</a></div>
+        <table>
+          <thead><tr><th>Invoice</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td><strong>INV/PP/0090</strong><div style="font-size:11px;color:var(--gray-text)">Robert Taylor</div></td><td>Rp 2,8jt</td><td><span class="badge waiting">Waiting</span></td></tr>
+            <tr><td><strong>INV/PP/0089</strong><div style="font-size:11px;color:var(--gray-text)">Alex Mercer</div></td><td>Rp 1,5jt</td><td><span class="badge paid">Paid</span></td></tr>
+            <tr><td><strong>INV/B2B/0012</strong><div style="font-size:11px;color:var(--gray-text)">Apt. Green Lake</div></td><td>Rp 9jt</td><td><span class="badge pending">Pending</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';sub.style.display=isOpen?'none':'block';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';}
+function approve(btn, type){
+  const card = btn.closest('.approval-card');
+  const title = card.querySelector('.approval-title').textContent;
+  const msg = type==='invoice' ? `Invoice ${title} diapprove & akan dikirim ke klien!` : `Pembayaran ${title} dikonfirmasi LUNAS!`;
+  alert(msg);
+  card.style.opacity='0.4';
+  card.style.pointerEvents='none';
+}
+function reject(btn){
+  if(confirm('Tolak approval ini?')){
+    const card=btn.closest('.approval-card');
+    card.style.opacity='0.4';
+    card.style.pointerEvents='none';
+  }
+}
+</script>
+</body>
+</html>
