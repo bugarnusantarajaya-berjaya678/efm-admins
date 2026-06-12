@@ -58,6 +58,8 @@
     .filter-search { flex:1; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
     .filter-search svg { width:14px; height:14px; color:var(--gray-text); }
     .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .btn-filter { padding:8px 16px; background:var(--navy); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-clear  { padding:8px 12px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; cursor:pointer; }
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
     table { width:100%; border-collapse:collapse; }
     th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
@@ -172,7 +174,9 @@
     <div class="filters-bar">
       <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option value="">Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
       <select class="filter-select" id="filterSel2" onchange="applyFilterAndPaginate()"><option value="">Semua Jenis</option><option>Fun Run</option><option>Yoga</option><option>Workshop</option><option>Festival</option><option>Corporate</option></select>
-      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama klien atau event..."/></div>
+      <button class="btn-filter" onclick="applyFilterAndPaginate()">Filter</button>
+      <button class="btn-clear" onclick="clearAllFilters()">Reset</button>
+      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau event..."/></div>
     </div>
     <div class="table-card">
       <div style="overflow-x:auto">

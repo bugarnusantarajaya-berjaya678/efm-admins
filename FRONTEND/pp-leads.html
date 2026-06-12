@@ -266,12 +266,12 @@
         <option value="referral">Referral</option>
         <option value="walk-in">Walk-in</option>
       </select>
+      <button class="btn-filter" onclick="filterTable()">Filter</button>
+      <button class="btn-clear" onclick="clearFilter()">Reset</button>
       <div class="filter-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" placeholder="Cari nama atau no HP..." id="searchInput" oninput="filterTable()"/>
       </div>
-      <button class="btn-filter" onclick="filterTable()">Filter</button>
-      <button class="btn-clear" onclick="clearFilter()">Reset</button>
     </div>
 
     <div class="table-card">
