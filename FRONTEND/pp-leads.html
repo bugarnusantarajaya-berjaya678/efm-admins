@@ -117,6 +117,17 @@
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
     /* Import styles → assets/css/import-engine.css */
+    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; margin-top:4px; }
+    .detail-item .detail-label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px; }
+    .detail-item .detail-value { font-size:13px; font-weight:500; color:var(--text-dark); }
+    .detail-item.full { grid-column:1/-1; }
+    .status-edit { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
+    .status-opt { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:2px solid transparent; transition:all 0.15s; }
+    .status-opt.new      { background:#EBF5FB; color:#2980B9; }
+    .status-opt.follow-up{ background:#FEF9E7; color:#F39C12; }
+    .status-opt.closing  { background:#EAFAF1; color:#27AE60; }
+    .status-opt.gagal    { background:#FDEDEC; color:#E74C3C; }
+    .status-opt.selected { border-color:currentColor; }
   </style>
 </head>
 <body>
@@ -279,9 +290,9 @@
               <td>0812-3456-7890</td><td><span class="source-tag">🌐 Website</span></td>
               <td>Fatloss & Bodyshape</td><td><span class="badge new">New</span></td><td>10 Jun 2026</td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
               </td>
             </tr>
             <tr>
@@ -290,9 +301,9 @@
               <td>0856-7890-1234</td><td><span class="source-tag">📱 Ads</span></td>
               <td>Yoga</td><td><span class="badge follow-up">Follow Up</span></td><td>9 Jun 2026</td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
               </td>
             </tr>
             <tr>
@@ -301,9 +312,9 @@
               <td>0811-2233-4455</td><td><span class="source-tag">🚶 Walk-in</span></td>
               <td>Boxing</td><td><span class="badge closing">Closing</span></td><td>8 Jun 2026</td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" style="background:#EAFAF1;color:#27AE60;border-color:#27AE60" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
               </td>
             </tr>
             <tr>
@@ -312,9 +323,9 @@
               <td>0877-6655-4433</td><td><span class="source-tag">👥 Referral</span></td>
               <td>Tennis</td><td><span class="badge gagal">Gagal</span></td><td>7 Jun 2026</td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
               </td>
             </tr>
           </tbody>
@@ -358,6 +369,59 @@
   </div>
 </div>
 
+<!-- Modal Detail Lead -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Detail Lead</h3>
+      <button class="modal-close" onclick="closeDetailModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--gray-border);">
+        <div id="dtAvatar" class="avatar-sm" style="width:48px;height:48px;font-size:16px;flex-shrink:0"></div>
+        <div>
+          <div id="dtNama" style="font-size:16px;font-weight:700;color:var(--navy)"></div>
+          <div id="dtLeadId" style="font-size:12px;color:var(--gray-text);margin-top:2px"></div>
+        </div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">No HP / WhatsApp</div>
+          <div id="dtNoHp" class="detail-value"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Sumber Lead</div>
+          <div id="dtSumber" class="detail-value"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Program Diminati</div>
+          <div id="dtProgram" class="detail-value"></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Tanggal Masuk</div>
+          <div id="dtTanggal" class="detail-value"></div>
+        </div>
+        <div class="detail-item full">
+          <div class="detail-label">Status Pipeline</div>
+          <div class="status-edit" id="dtStatusEdit">
+            <button class="status-opt new"       onclick="setLeadStatus(this,'new','New')">● New</button>
+            <button class="status-opt follow-up" onclick="setLeadStatus(this,'follow-up','Follow Up')">● Follow Up</button>
+            <button class="status-opt closing"   onclick="setLeadStatus(this,'closing','Closing')">● Closing</button>
+            <button class="status-opt gagal"     onclick="setLeadStatus(this,'gagal','Gagal')">● Gagal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeDetailModal()">Tutup</button>
+      <button class="btn-primary" id="dtOrderBtn" onclick="window.location.href='pp-orders.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Buat Order
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- #modalImportLeads injected by import-engine.js -->
 
 <script>
@@ -369,6 +433,59 @@ function toggleMenu(e, subId, arrowId) {
   sub.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
+/* ─── DETAIL MODAL ─── */
+let _detailRow = null;
+function openDetailModal(btn) {
+  _detailRow = btn.closest('tr');
+  const cells = _detailRow.cells;
+  const leadId  = cells[0].textContent.trim();
+  const namaEl  = cells[1].querySelector('.avatar-sm') || cells[1];
+  const nama    = cells[1].textContent.trim();
+  const initials= nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const color   = (cells[1].querySelector('.avatar-sm') || {style:{background:'#1E1C43'}}).style.background || '#1E1C43';
+  const noHp    = cells[2].textContent.trim();
+  const sumber  = cells[3].textContent.trim() || '—';
+  const program = cells[4].textContent.trim() || '—';
+  const statusEl= cells[5].querySelector('.badge');
+  const statusCls= statusEl ? statusEl.className.replace('badge','').trim() : 'new';
+  const statusTxt= statusEl ? statusEl.textContent.trim() : 'New';
+  const tanggal = cells[6].textContent.trim();
+
+  document.getElementById('dtAvatar').textContent   = initials;
+  document.getElementById('dtAvatar').style.background = color;
+  document.getElementById('dtNama').textContent     = nama;
+  document.getElementById('dtLeadId').textContent   = leadId;
+  document.getElementById('dtNoHp').textContent     = noHp;
+  document.getElementById('dtSumber').textContent   = sumber;
+  document.getElementById('dtProgram').textContent  = program;
+  document.getElementById('dtTanggal').textContent  = tanggal;
+
+  document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('selected'));
+  const active = document.querySelector('.status-opt.' + statusCls);
+  if (active) active.classList.add('selected');
+
+  document.getElementById('detailModal').classList.add('show');
+}
+function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); _detailRow = null; }
+
+function setLeadStatus(btn, cls, label) {
+  document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  if (_detailRow) {
+    const badge = _detailRow.cells[5].querySelector('.badge');
+    if (badge) { badge.className = 'badge ' + cls; badge.textContent = label; }
+  }
+}
+
+/* ─── HAPUS ROW ─── */
+function deleteRow(btn) {
+  const tr = btn.closest('tr');
+  const nama = tr.cells[1].textContent.trim();
+  if (!confirm('Hapus lead "' + nama + '"? Tindakan ini tidak dapat dibatalkan.')) return;
+  tr.remove();
+  applyFilterAndPaginate();
+}
+
 function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('show');
@@ -405,9 +522,9 @@ function saveLead() {
     <td><span class="badge new">New</span></td>
     <td>${today}</td>
     <td>
-      <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-      <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+      <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
     </td>`;
   tbody.appendChild(tr);
   applyFilterAndPaginate();
@@ -578,9 +695,9 @@ document.addEventListener('DOMContentLoaded', function() {
         <td><span class="badge new">New</span></td>
         <td>${today}</td>
         <td>
-          <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
           <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-          <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+          <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
         </td>`;
       return tr;
     }
