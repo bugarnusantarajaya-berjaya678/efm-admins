@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Database Program PP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
+      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
+      --gray-text:#6C757D; --text-dark:#1E1C43;
+      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
+      --sidebar-w:240px;
+    }
+    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; }
+    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; }
+    .sidebar-nav { flex:1; padding:8px 0; }
+    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
+    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+    .nav-sub-item { display:flex; align-items:center; padding:8px 20px 8px 52px; color:rgba(255,255,255,0.45); text-decoration:none; font-size:12px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; }
+    .nav-sub-item:hover { color:white; background:rgba(255,255,255,0.04); }
+    .nav-sub-item.active { color:white; border-left-color:var(--orange); background:rgba(224,89,69,0.08); }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); }
+    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
+    .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
+
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
+    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
+    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
+    .icon-btn svg { width:17px; height:17px; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
+
+    .content { padding:28px; flex:1; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
+    .btn-primary:hover { background:var(--orange-hover); }
+
+    /* Table */
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; margin-top:20px; }
+    .table-wrap { overflow-x:auto; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:var(--gray-bg); padding:12px 14px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+    td { padding:13px 14px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#FAFAFA; }
+    .prog-id { font-weight:700; color:var(--navy); font-size:12px; }
+    .badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+    .badge.active { background:#EAFAF1; color:#27AE60; }
+    .badge.inactive { background:#F2F3F4; color:#7F8C8D; }
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    .action-btn.del:hover { border-color:var(--red); color:var(--red); }
+    .action-btn svg { width:14px; height:14px; }
+
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:24px 20px; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:white; border-radius:18px; width:100%; max-width:680px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+    .modal-header { padding:20px 24px 16px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
+    .modal-close svg { width:16px; height:16px; }
+    .modal-body { flex:1; overflow-y:auto; padding:20px 24px; }
+    .modal-footer { padding:14px 24px; border-top:1px solid var(--gray-border); display:flex; gap:10px; justify-content:flex-end; flex-shrink:0; }
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:5px; }
+    .form-group label span { color:var(--orange); }
+    .form-control { width:100%; padding:9px 13px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; transition:border-color .2s; background:white; }
+    .form-control:focus { border-color:var(--navy); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+    .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
+    .btn-cancel { padding:9px 18px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .section-label { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; margin-top:4px; }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="assets/logo-circle-white.png" style="max-height:60px;width:auto;display:block;background:transparent"/>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
+    </a>
+    <a href="#" class="nav-item active" onclick="toggleMenu(event,'ppSub','ppArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training
+      <svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="ppSub" style="display:block">
+      <a href="pp-leads.html" class="nav-sub-item">Leads</a>
+      <a href="pp-orders.html" class="nav-sub-item">Orders</a>
+      <a href="pp-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="pp-documents.html" class="nav-sub-item">Dokumen</a>
+      <a href="pp-program-db.html" class="nav-sub-item active">Database Program</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management
+      <svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="b2bSub" style="display:none">
+      <a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a>
+      <a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a>
+      <a href="b2b-clients.html" class="nav-sub-item">Database Klien</a>
+      <a href="b2b-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a>
+      <a href="b2b-live-report.html" class="nav-sub-item">Live Report</a>
+      <a href="b2b-revenue.html" class="nav-sub-item">Revenue</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management
+      <svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="eventSub" style="display:none">
+      <a href="event-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="event-leads.html" class="nav-sub-item">Leads Event</a>
+      <a href="event-tracker.html" class="nav-sub-item">Event Tracker</a>
+      <a href="event-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
+      <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
+    </div>
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational
+      <svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="opsSub" style="display:none">
+      <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
+      <a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a>
+      <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
+    </div>
+  </nav>
+  <div class="nav-label" id="ownerLabel" style="display:none">Owner Only</div>
+  <a href="settings.html" class="nav-item" id="menuSettings" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Settings
+  </a>
+  <div class="sidebar-footer">
+    <a href="index.html" class="nav-item logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Database Program Private Training</h1>
+        <p>Kelola paket program, harga, dan penugasan PIC — terintegrasi dengan form Buat Order Baru</p>
+      </div>
+      <button class="btn-primary" onclick="openAddModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah Program
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px">
+      <div style="background:white;border-radius:12px;border:1.5px solid var(--gray-border);padding:16px 20px">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Total Program</div>
+        <div style="font-size:24px;font-weight:700;color:var(--navy)" id="stat_total">0</div>
+      </div>
+      <div style="background:white;border-radius:12px;border:1.5px solid var(--gray-border);padding:16px 20px">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Program Aktif</div>
+        <div style="font-size:24px;font-weight:700;color:var(--green)" id="stat_aktif">0</div>
+      </div>
+      <div style="background:white;border-radius:12px;border:1.5px solid var(--gray-border);padding:16px 20px">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Harga Terendah</div>
+        <div style="font-size:18px;font-weight:700;color:var(--navy)" id="stat_min">—</div>
+      </div>
+      <div style="background:white;border-radius:12px;border:1.5px solid var(--orange);padding:16px 20px">
+        <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Harga Tertinggi</div>
+        <div style="font-size:18px;font-weight:700;color:var(--orange)" id="stat_max">—</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID Program</th>
+              <th>Nama Latihan / Terapi</th>
+              <th>Nama Paket</th>
+              <th>Sesi</th>
+              <th>Pertemuan/Mgg</th>
+              <th>Masa Habis</th>
+              <th>Partisipan</th>
+              <th>PIC</th>
+              <th>Biaya/Sesi PIC</th>
+              <th>Harga Paket</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="programBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal Tambah / Edit Program -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Tambah Program Baru</h3>
+      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+
+      <div class="section-label">Identitas Program</div>
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>ID Program <span>*</span></label>
+          <input type="text" class="form-control" id="f_id" placeholder="Contoh: PRG-PP-005" style="text-transform:uppercase"/>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Prefix: PRG-PP- (Private Training), PRG-TH- (Terapi)</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Status</label>
+          <select class="form-control" id="f_status">
+            <option value="aktif">Aktif</option>
+            <option value="inactive">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Nama Latihan / Terapi <span>*</span></label>
+          <input type="text" class="form-control" id="f_nama_latihan" placeholder="Contoh: Private Training"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Nama Paket <span>*</span></label>
+          <input type="text" class="form-control" id="f_nama_paket" placeholder="Contoh: 12 Sesi - Pro"/>
+        </div>
+      </div>
+
+      <div class="form-row3" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Jumlah Sesi <span>*</span></label>
+          <input type="number" class="form-control" id="f_sesi" placeholder="12" min="1"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Pertemuan / Minggu <span>*</span></label>
+          <input type="number" class="form-control" id="f_pertemuan" placeholder="3" min="1"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Jumlah Partisipan</label>
+          <input type="number" class="form-control" id="f_partisipan" placeholder="1" min="1" value="1"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Masa Berlaku Paket <span>*</span></label>
+        <input type="text" class="form-control" id="f_masa" placeholder="Contoh: 60 hari"/>
+      </div>
+
+      <div class="section-label" style="margin-top:6px">PIC / Pelatih yang Ditugaskan</div>
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Pilih PIC <span>*</span></label>
+          <select class="form-control" id="f_pic" onchange="onModalPICChange()">
+            <option value="">— Pilih PIC —</option>
+            <option value="EFM-PIC-001">EFM-PIC-001 — Sarah Jenkins</option>
+            <option value="EFM-PIC-002">EFM-PIC-002 — Marcus Chen</option>
+            <option value="EFM-PIC-003">EFM-PIC-003 — Elena Rodriguez</option>
+            <option value="EFM-PIC-004">EFM-PIC-004 — David Kim</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Biaya Per Sesi PIC (Rp) <span>*</span></label>
+          <input type="number" class="form-control" id="f_biaya_sesi" placeholder="75000" min="0"/>
+        </div>
+      </div>
+
+      <!-- Auto-fill info PIC -->
+      <div id="modal_pic_info" style="display:none;background:var(--gray-bg);border-radius:10px;padding:11px 14px;margin-bottom:14px;border-left:3px solid var(--orange)">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
+          <div><span style="color:var(--gray-text)">Spesialisasi:</span><br/><strong id="mpic_spesialis">—</strong></div>
+          <div><span style="color:var(--gray-text)">No. HP:</span><br/><strong id="mpic_hp">—</strong></div>
+          <div><span style="color:var(--gray-text)">Default Biaya/Sesi:</span><br/><strong id="mpic_biaya">—</strong></div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:6px">Harga</div>
+      <div class="form-group">
+        <label>Harga Paket (Rp) <span>*</span></label>
+        <input type="number" class="form-control" id="f_harga" placeholder="1500000" min="0"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Batal</button>
+      <button class="btn-primary" onclick="saveProgram()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan Program
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleMenu(e,s,a){
+  e.preventDefault();
+  const sub=document.getElementById(s),arrow=document.getElementById(a),open=sub.style.display!=='none';
+  sub.style.display=open?'none':'block';
+  if(arrow)arrow.style.transform=open?'':'rotate(180deg)';
+}
+
+const PIC_DB = {
+  'EFM-PIC-001': { nick:'Sarah',  fullname:'Sarah Jenkins',   spesialis:'Strength & Conditioning', hp:'+62 812-1111-0001', biayaSesi:75000 },
+  'EFM-PIC-002': { nick:'Marcus', fullname:'Marcus Chen',     spesialis:'Functional Training',      hp:'+62 812-1111-0002', biayaSesi:75000 },
+  'EFM-PIC-003': { nick:'Elena',  fullname:'Elena Rodriguez', spesialis:'Yoga & Flexibility',       hp:'+62 812-1111-0003', biayaSesi:70000 },
+  'EFM-PIC-004': { nick:'David',  fullname:'David Kim',       spesialis:'Sports Rehabilitation',    hp:'+62 812-1111-0004', biayaSesi:80000 },
+};
+
+// Data program (localStorage persisted)
+let programs = JSON.parse(localStorage.getItem('efm_programs') || 'null') || [
+  { id:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  sesi:4,  pertemuan:2, partisipan:1, masa:'30 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:600000,  status:'aktif' },
+  { id:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     sesi:8,  pertemuan:2, partisipan:1, masa:'45 hari', picId:'EFM-PIC-002', biayaSesiPIC:75000, harga:1100000, status:'aktif' },
+  { id:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:1500000, status:'aktif' },
+  { id:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   sesi:24, pertemuan:5, partisipan:1, masa:'90 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:2800000, status:'aktif' },
+  { id:'PRG-TH-001', namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',  sesi:8,  pertemuan:2, partisipan:2, masa:'45 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:900000,  status:'aktif' },
+  { id:'PRG-TH-002', namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab', sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-004', biayaSesiPIC:80000, harga:1800000, status:'aktif' },
+];
+
+function fmtRp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+function saveToStorage() { localStorage.setItem('efm_programs', JSON.stringify(programs)); }
+
+function renderTable() {
+  const tbody = document.getElementById('programBody');
+  tbody.innerHTML = '';
+  const aktif = programs.filter(p => p.status === 'aktif');
+  const prices = programs.map(p => p.harga);
+  document.getElementById('stat_total').textContent = programs.length;
+  document.getElementById('stat_aktif').textContent = aktif.length;
+  document.getElementById('stat_min').textContent   = prices.length ? fmtRp(Math.min(...prices)) : '—';
+  document.getElementById('stat_max').textContent   = prices.length ? fmtRp(Math.max(...prices)) : '—';
+
+  programs.forEach((p, idx) => {
+    const pic = PIC_DB[p.picId] || {};
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span class="prog-id">${p.id}</span></td>
+      <td>${p.namaLatihan}</td>
+      <td style="font-weight:600;color:var(--navy)">${p.namaPaket}</td>
+      <td style="text-align:center">${p.sesi}</td>
+      <td style="text-align:center">${p.pertemuan}x</td>
+      <td>${p.masa}</td>
+      <td style="text-align:center">${p.partisipan} org</td>
+      <td>
+        <div style="font-size:12px;font-weight:600;color:var(--orange)">${p.picId}</div>
+        <div style="font-size:11px;color:var(--gray-text)">${pic.fullname || '—'}</div>
+      </td>
+      <td style="font-weight:600">${fmtRp(p.biayaSesiPIC)}</td>
+      <td style="font-weight:700;color:var(--navy)">${fmtRp(p.harga)}</td>
+      <td><span class="badge ${p.status === 'aktif' ? 'active' : 'inactive'}">${p.status === 'aktif' ? 'Aktif' : 'Nonaktif'}</span></td>
+      <td>
+        <button class="action-btn" title="Edit" onclick="openEditModal(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+        <button class="action-btn del" title="Hapus" onclick="deleteProgram(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+let _editIdx = -1;
+
+function openAddModal() {
+  _editIdx = -1;
+  document.getElementById('modalTitle').textContent = 'Tambah Program Baru';
+  ['f_id','f_nama_latihan','f_nama_paket','f_masa','f_biaya_sesi','f_harga'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f_sesi').value = '';
+  document.getElementById('f_pertemuan').value = '';
+  document.getElementById('f_partisipan').value = '1';
+  document.getElementById('f_pic').value = '';
+  document.getElementById('f_status').value = 'aktif';
+  document.getElementById('modal_pic_info').style.display = 'none';
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function openEditModal(idx) {
+  _editIdx = idx;
+  const p = programs[idx];
+  document.getElementById('modalTitle').textContent = 'Edit Program — ' + p.id;
+  document.getElementById('f_id').value           = p.id;
+  document.getElementById('f_nama_latihan').value = p.namaLatihan;
+  document.getElementById('f_nama_paket').value   = p.namaPaket;
+  document.getElementById('f_sesi').value         = p.sesi;
+  document.getElementById('f_pertemuan').value    = p.pertemuan;
+  document.getElementById('f_partisipan').value   = p.partisipan;
+  document.getElementById('f_masa').value         = p.masa;
+  document.getElementById('f_pic').value          = p.picId;
+  document.getElementById('f_biaya_sesi').value   = p.biayaSesiPIC;
+  document.getElementById('f_harga').value        = p.harga;
+  document.getElementById('f_status').value       = p.status;
+  onModalPICChange();
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+
+function onModalPICChange() {
+  const key = document.getElementById('f_pic').value;
+  const box = document.getElementById('modal_pic_info');
+  const p   = PIC_DB[key];
+  if (!p) { box.style.display = 'none'; return; }
+  document.getElementById('mpic_spesialis').textContent = p.spesialis;
+  document.getElementById('mpic_hp').textContent        = p.hp;
+  document.getElementById('mpic_biaya').textContent     = fmtRp(p.biayaSesi);
+  if (!document.getElementById('f_biaya_sesi').value) {
+    document.getElementById('f_biaya_sesi').value = p.biayaSesi;
+  }
+  box.style.display = 'block';
+}
+
+function saveProgram() {
+  const id = document.getElementById('f_id').value.trim().toUpperCase();
+  if (!id || !document.getElementById('f_nama_latihan').value || !document.getElementById('f_pic').value) {
+    alert('Mohon lengkapi field wajib (ID Program, Nama Latihan, PIC).');
+    return;
+  }
+  const prog = {
+    id,
+    namaLatihan:  document.getElementById('f_nama_latihan').value.trim(),
+    namaPaket:    document.getElementById('f_nama_paket').value.trim(),
+    sesi:         parseInt(document.getElementById('f_sesi').value) || 0,
+    pertemuan:    parseInt(document.getElementById('f_pertemuan').value) || 0,
+    partisipan:   parseInt(document.getElementById('f_partisipan').value) || 1,
+    masa:         document.getElementById('f_masa').value.trim(),
+    picId:        document.getElementById('f_pic').value,
+    biayaSesiPIC: parseInt(document.getElementById('f_biaya_sesi').value) || 0,
+    harga:        parseInt(document.getElementById('f_harga').value) || 0,
+    status:       document.getElementById('f_status').value,
+  };
+  if (_editIdx >= 0) {
+    programs[_editIdx] = prog;
+  } else {
+    if (programs.find(p => p.id === id)) { alert('ID Program sudah ada.'); return; }
+    programs.push(prog);
+  }
+  saveToStorage();
+  renderTable();
+  closeModal();
+}
+
+function deleteProgram(idx) {
+  if (!confirm(`Hapus program "${programs[idx].id}"?`)) return;
+  programs.splice(idx, 1);
+  saveToStorage();
+  renderTable();
+}
+
+document.addEventListener('DOMContentLoaded', renderTable);
+</script>
+
+<script>
+const role = localStorage.getItem('efm_role');
+if (role === 'owner') {
+  const ms = document.getElementById('menuSettings');
+  if (ms) ms.style.display = 'flex';
+  const ol = document.getElementById('ownerLabel');
+  if (ol) ol.style.display = 'block';
+}
+</script>
+</body>
+</html>

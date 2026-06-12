@@ -219,6 +219,7 @@
       <a href="pp-orders.html" class="nav-sub-item active">Orders</a>
       <a href="pp-invoice.html" class="nav-sub-item">Invoice</a>
       <a href="pp-documents.html" class="nav-sub-item">Dokumen</a>
+      <a href="pp-program-db.html" class="nav-sub-item">Database Program</a>
     </div>
     <!-- B2B -->
     <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
@@ -463,62 +464,111 @@
 
       <!-- STEP 2: PROGRAM -->
       <div id="content2" style="display:none">
-        <div class="package-cards">
-          <label class="package-card selected" onclick="selectPackage(this,600000,'4 Sesi - Starter','4')">
-            <input type="radio" name="package" value="600000" data-sesi="4" data-label="4 Sesi - Starter" checked/>
-            <div class="package-info"><h4>4 Sesi - Starter</h4><p>Cocok untuk pemula, 1–2x seminggu</p></div>
-            <div class="package-price">Rp 600.000</div>
-          </label>
-          <label class="package-card" onclick="selectPackage(this,1100000,'8 Sesi - Base','8')">
-            <input type="radio" name="package" value="1100000" data-sesi="8" data-label="8 Sesi - Base"/>
-            <div class="package-info"><h4>8 Sesi - Base</h4><p>Program dasar, 2x seminggu</p></div>
-            <div class="package-price">Rp 1.100.000</div>
-          </label>
-          <label class="package-card" onclick="selectPackage(this,1500000,'12 Sesi - Pro','12')">
-            <input type="radio" name="package" value="1500000" data-sesi="12" data-label="12 Sesi - Pro"/>
-            <div class="package-info"><h4>12 Sesi - Pro <span class="recommended">Populer</span></h4><p>Program intensif, 3x seminggu</p></div>
-            <div class="package-price">Rp 1.500.000</div>
-          </label>
-          <label class="package-card" onclick="selectPackage(this,2800000,'24 Sesi - Elite','24')">
-            <input type="radio" name="package" value="2800000" data-sesi="24" data-label="24 Sesi - Elite"/>
-            <div class="package-info"><h4>24 Sesi - Elite</h4><p>Program premium, 5x seminggu</p></div>
-            <div class="package-price">Rp 2.800.000</div>
-          </label>
+
+        <!-- Dropdown ID Program -->
+        <div class="form-group">
+          <label>Pilih ID Program <span style="color:var(--orange)">*</span></label>
+          <select class="form-control" id="inp_program_id" onchange="onProgramChange()" style="font-family:'Poppins',sans-serif">
+            <option value="">— Pilih Program —</option>
+          </select>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:5px">Program diambil dari <a href="pp-program-db.html" target="_blank" style="color:var(--navy);font-weight:600">Database Program</a></div>
+        </div>
+
+        <!-- Info Program (auto-fill) -->
+        <div id="program_info_box" style="display:none">
+          <div style="background:var(--navy);border-radius:12px;padding:14px 18px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Program</div>
+                <div style="font-size:14px;font-weight:700;color:white" id="prog_id_disp">—</div>
+              </div>
+              <div style="font-size:18px;font-weight:700;color:var(--orange)" id="prog_harga_disp">Rp 0</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Latihan</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_nama_latihan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Paket</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_nama_paket">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Partisipan</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_partisipan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Jumlah Sesi</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_sesi">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Pertemuan/Minggu</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_pertemuan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Masa Habis</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_masa">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info PIC dari program -->
+          <div style="background:var(--gray-bg);border-radius:10px;padding:13px 16px;border-left:3px solid var(--orange)">
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">PIC / Pelatih yang Ditugaskan</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nomor ID PIC</div>
+                <div style="font-size:13px;font-weight:700;color:var(--orange)" id="prog_pic_id">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Panggilan</div>
+                <div style="font-size:13px;font-weight:600;color:var(--navy)" id="prog_pic_nick">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Lengkap</div>
+                <div style="font-size:13px;font-weight:600;color:var(--navy)" id="prog_pic_fullname">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Spesialisasi</div>
+                <div style="font-size:12px;color:var(--navy)" id="prog_pic_spesialis">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Biaya/Sesi PIC</div>
+                <div style="font-size:12px;font-weight:600;color:var(--navy)" id="prog_pic_biaya">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">No. HP PIC</div>
+                <div style="font-size:12px;color:var(--navy)" id="prog_pic_hp">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="program_empty" style="text-align:center;padding:32px 20px;color:var(--gray-text)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="opacity:.3;margin-bottom:10px"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <p style="font-size:13px">Pilih ID Program untuk melihat detail paket dan PIC</p>
         </div>
       </div>
 
       <!-- STEP 3: LOGISTIK -->
       <div id="content3" style="display:none">
 
-        <!-- PIC / Pelatih dengan auto-fill -->
-        <div class="form-group">
-          <label>PIC / Pelatih <span style="color:var(--orange)">*</span></label>
-          <select class="form-control" id="inp_pic" onchange="onPICChange()">
-            <option value="">— Pilih Nama Panggilan Pelatih —</option>
-            <option value="sarah">Sarah</option>
-            <option value="marcus">Marcus</option>
-            <option value="elena">Elena</option>
-            <option value="david">David</option>
-          </select>
-        </div>
-        <!-- Auto-fill info pelatih -->
-        <div id="pic_info_box" style="display:none;background:var(--gray-bg);border-radius:10px;padding:12px 16px;margin-top:-8px;margin-bottom:14px;border-left:3px solid var(--navy)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <!-- Konfirmasi PIC dari program (read-only) -->
+        <div style="background:var(--gray-bg);border-radius:10px;padding:12px 16px;margin-bottom:14px;border-left:3px solid var(--orange)">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">PIC / Pelatih (dari Program)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
             <div>
-              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Lengkap</div>
-              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="pic_fullname">—</div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">ID PIC</div>
+              <div style="font-size:13px;font-weight:700;color:var(--orange)" id="s3_pic_id">—</div>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Pelatih</div>
-              <div style="font-size:13px;font-weight:700;color:var(--orange)" id="pic_id">—</div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">Nama Panggilan</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="s3_pic_nick">—</div>
             </div>
             <div>
-              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Spesialisasi</div>
-              <div style="font-size:12px;color:var(--navy)" id="pic_spesialis">—</div>
-            </div>
-            <div>
-              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">No. HP</div>
-              <div style="font-size:12px;color:var(--navy)" id="pic_hp">—</div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">Nama Lengkap</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="s3_pic_full">—</div>
             </div>
           </div>
         </div>
@@ -868,9 +918,10 @@ function fillReview() {
   document.getElementById('rev_email').textContent   = document.getElementById('inp_email').value || '—';
   document.getElementById('rev_paket').textContent   = _selectedPackage.label;
   document.getElementById('rev_paket_label').textContent = _selectedPackage.label;
-  const picKey = document.getElementById('inp_pic').value;
-  const picData = PIC_DB[picKey] || {};
-  document.getElementById('rev_pic').textContent    = picData.fullname ? `${picData.fullname} (${picData.id})` : (picKey || '—');
+  const progId  = document.getElementById('inp_program_id').value;
+  const progData = PROGRAM_DB[progId] || {};
+  const picData  = PIC_DB[progData.picId] || {};
+  document.getElementById('rev_pic').textContent = picData.fullname ? `${picData.fullname} (${progData.picId})` : '—';
   document.getElementById('rev_lokasi').textContent = document.getElementById('inp_lokasi').value || '—';
   const tglMulai = document.getElementById('inp_tgl_mulai').value;
   const jadwals = [
@@ -903,24 +954,72 @@ function fillReview() {
   document.getElementById('rev_total').textContent = fmtRp(c.grandTotal || _selectedPackage.price);
 }
 
-// ─── DATABASE PELATIH ───
+// ─── DATABASE PIC ───
 const PIC_DB = {
-  sarah:  { fullname:'Sarah Jenkins',    id:'EFM-PIC-001', spesialis:'Strength & Conditioning', hp:'+62 812-1111-0001' },
-  marcus: { fullname:'Marcus Chen',      id:'EFM-PIC-002', spesialis:'Functional Training',      hp:'+62 812-1111-0002' },
-  elena:  { fullname:'Elena Rodriguez',  id:'EFM-PIC-003', spesialis:'Yoga & Flexibility',       hp:'+62 812-1111-0003' },
-  david:  { fullname:'David Kim',        id:'EFM-PIC-004', spesialis:'Sports Rehabilitation',    hp:'+62 812-1111-0004' },
+  'EFM-PIC-001': { nick:'Sarah',  fullname:'Sarah Jenkins',   spesialis:'Strength & Conditioning', hp:'+62 812-1111-0001', biayaSesi:75000 },
+  'EFM-PIC-002': { nick:'Marcus', fullname:'Marcus Chen',     spesialis:'Functional Training',      hp:'+62 812-1111-0002', biayaSesi:75000 },
+  'EFM-PIC-003': { nick:'Elena',  fullname:'Elena Rodriguez', spesialis:'Yoga & Flexibility',       hp:'+62 812-1111-0003', biayaSesi:70000 },
+  'EFM-PIC-004': { nick:'David',  fullname:'David Kim',       spesialis:'Sports Rehabilitation',    hp:'+62 812-1111-0004', biayaSesi:80000 },
 };
 
-function onPICChange() {
-  const key = document.getElementById('inp_pic').value;
-  const box = document.getElementById('pic_info_box');
-  if (!key || !PIC_DB[key]) { box.style.display = 'none'; return; }
-  const p = PIC_DB[key];
-  document.getElementById('pic_fullname').textContent  = p.fullname;
-  document.getElementById('pic_id').textContent        = p.id;
-  document.getElementById('pic_spesialis').textContent = p.spesialis;
-  document.getElementById('pic_hp').textContent        = p.hp;
+// ─── DATABASE PROGRAM (disinkron dengan pp-program-db) ───
+const PROGRAM_DB = {
+  'PRG-PP-001': { namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  partisipan:1, sesi:4,  pertemuan:2, masa:'30 hari',  harga:600000,  picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-002': { namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     partisipan:1, sesi:8,  pertemuan:2, masa:'45 hari',  harga:1100000, picId:'EFM-PIC-002', biayaSesiPIC:75000 },
+  'PRG-PP-003': { namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1500000, picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-004': { namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   partisipan:1, sesi:24, pertemuan:5, masa:'90 hari',  harga:2800000, picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-001': { namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',   partisipan:2, sesi:8,  pertemuan:2, masa:'45 hari',  harga:900000,  picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-002': { namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab',  partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1800000, picId:'EFM-PIC-004', biayaSesiPIC:80000 },
+};
+
+function populateProgramDropdown() {
+  const sel = document.getElementById('inp_program_id');
+  sel.innerHTML = '<option value="">— Pilih Program —</option>';
+  Object.entries(PROGRAM_DB).forEach(([id, p]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = `${id} — ${p.namaLatihan} · ${p.namaPaket}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onProgramChange() {
+  const id  = document.getElementById('inp_program_id').value;
+  const box = document.getElementById('program_info_box');
+  const emp = document.getElementById('program_empty');
+  if (!id || !PROGRAM_DB[id]) { box.style.display='none'; emp.style.display='block'; return; }
+
+  const p   = PROGRAM_DB[id];
+  const pic = PIC_DB[p.picId] || {};
+
+  // Fill program info
+  document.getElementById('prog_id_disp').textContent      = id;
+  document.getElementById('prog_harga_disp').textContent   = fmtRp(p.harga);
+  document.getElementById('prog_nama_latihan').textContent = p.namaLatihan;
+  document.getElementById('prog_nama_paket').textContent   = p.namaPaket;
+  document.getElementById('prog_partisipan').textContent   = p.partisipan + ' orang';
+  document.getElementById('prog_sesi').textContent         = p.sesi + ' sesi';
+  document.getElementById('prog_pertemuan').textContent    = p.pertemuan + 'x / minggu';
+  document.getElementById('prog_masa').textContent         = p.masa;
+
+  // Fill PIC info
+  document.getElementById('prog_pic_id').textContent       = p.picId;
+  document.getElementById('prog_pic_nick').textContent     = pic.nick      || '—';
+  document.getElementById('prog_pic_fullname').textContent = pic.fullname  || '—';
+  document.getElementById('prog_pic_spesialis').textContent= pic.spesialis || '—';
+  document.getElementById('prog_pic_biaya').textContent    = fmtRp(p.biayaSesiPIC) + ' / sesi';
+  document.getElementById('prog_pic_hp').textContent       = pic.hp        || '—';
+
   box.style.display = 'block';
+  emp.style.display = 'none';
+
+  // Simpan ke _selectedPackage untuk kalkulasi
+  _selectedPackage = { price: p.harga, label: `${p.namaPaket} (${p.namaLatihan})`, sesi: String(p.sesi) };
+
+  // Sync ke step 3 konfirmasi PIC
+  document.getElementById('s3_pic_id').textContent   = p.picId;
+  document.getElementById('s3_pic_nick').textContent = pic.nick     || '—';
+  document.getElementById('s3_pic_full').textContent = pic.fullname || '—';
 }
 
 function parseGoogleMapsURL() {
@@ -1259,7 +1358,8 @@ function confirmPaidFromDrawer(invNo) {
 
 function openModal() {
   currentStep = 1;
-  _selectedPackage = { price:600000, label:'4 Sesi - Starter', sesi:'4' };
+  _selectedPackage = { price:0, label:'—', sesi:'0' };
+  populateProgramDropdown();
   updateStepUI();
   document.getElementById('modalOverlay').classList.add('show');
 }
