@@ -571,14 +571,43 @@
         </div>
 
         <!-- Jadwal -->
-        <div class="form-row">
-          <div class="form-group">
-            <label>Hari Latihan <span style="color:var(--orange)">*</span></label>
-            <input type="text" class="form-control" id="inp_hari" placeholder="Contoh: Senin, Rabu & Jumat"/>
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:10px">Jadwal Latihan <span style="color:var(--orange)">*</span> <span style="font-size:11px;font-weight:400;color:var(--gray-text)">(isi minimal 1 jadwal)</span></div>
+          <!-- Header kolom -->
+          <div style="display:grid;grid-template-columns:72px 1fr 1fr;gap:10px;margin-bottom:6px;padding:0 2px">
+            <div></div>
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Hari</div>
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Jam Mulai</div>
           </div>
-          <div class="form-group">
-            <label>Jam Latihan <span style="color:var(--orange)">*</span></label>
-            <input type="time" class="form-control" id="inp_jam" value="07:00"/>
+          <!-- Jadwal 1 -->
+          <div style="display:grid;grid-template-columns:72px 1fr 1fr;gap:10px;margin-bottom:8px;align-items:center">
+            <div style="font-size:11px;font-weight:700;color:white;background:var(--navy);border-radius:7px;padding:5px 10px;text-align:center">Jadwal 1</div>
+            <select class="form-control" id="inp_hari1" style="font-size:13px">
+              <option value="">— Pilih Hari —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam1" value="07:00"/>
+          </div>
+          <!-- Jadwal 2 -->
+          <div style="display:grid;grid-template-columns:72px 1fr 1fr;gap:10px;margin-bottom:8px;align-items:center">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:7px;padding:5px 10px;text-align:center">Jadwal 2</div>
+            <select class="form-control" id="inp_hari2" style="font-size:13px">
+              <option value="">— Opsional —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam2" value="07:00"/>
+          </div>
+          <!-- Jadwal 3 -->
+          <div style="display:grid;grid-template-columns:72px 1fr 1fr;gap:10px;align-items:center">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:7px;padding:5px 10px;text-align:center">Jadwal 3</div>
+            <select class="form-control" id="inp_hari3" style="font-size:13px">
+              <option value="">— Opsional —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam3" value="07:00"/>
           </div>
         </div>
 
@@ -843,10 +872,14 @@ function fillReview() {
   const picData = PIC_DB[picKey] || {};
   document.getElementById('rev_pic').textContent    = picData.fullname ? `${picData.fullname} (${picData.id})` : (picKey || '—');
   document.getElementById('rev_lokasi').textContent = document.getElementById('inp_lokasi').value || '—';
-  const hari    = document.getElementById('inp_hari').value;
-  const jam     = document.getElementById('inp_jam').value;
   const tglMulai = document.getElementById('inp_tgl_mulai').value;
-  document.getElementById('rev_jadwal').textContent = [hari, jam ? 'pukul '+jam : '', tglMulai ? '(mulai '+tglMulai+')' : ''].filter(Boolean).join(', ') || '—';
+  const jadwals = [
+    { hari: document.getElementById('inp_hari1').value, jam: document.getElementById('inp_jam1').value },
+    { hari: document.getElementById('inp_hari2').value, jam: document.getElementById('inp_jam2').value },
+    { hari: document.getElementById('inp_hari3').value, jam: document.getElementById('inp_jam3').value },
+  ].filter(j => j.hari).map(j => `${j.hari} pukul ${j.jam}`);
+  const jadwalStr = jadwals.length ? jadwals.join(' · ') : '—';
+  document.getElementById('rev_jadwal').textContent = tglMulai ? `${jadwalStr} (mulai ${tglMulai})` : jadwalStr;
   document.getElementById('rev_harga').textContent   = fmtRp(c.base   || _selectedPackage.price);
   document.getElementById('rev_transport').textContent = fmtRp(c.transport || 0);
   document.getElementById('rev_extra').textContent   = fmtRp(c.extra  || 0);
