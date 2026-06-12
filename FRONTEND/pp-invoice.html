@@ -350,16 +350,16 @@
         <div class="stat-mini"><div class="label">Total Invoice</div><div class="value">89</div><div class="sub">Bulan ini</div></div>
         <div class="stat-mini highlight"><div class="label">Belum Dibayar</div><div class="value">12</div><div class="sub">Perlu follow up</div></div>
         <div class="stat-mini"><div class="label">Sudah Lunas</div><div class="value">74</div><div class="sub">✅ Terbayar</div></div>
-        <div class="stat-mini"><div class="label">Jatuh Tempo</div><div class="value">3</div><div class="sub">⚠️ Overdue</div></div>
+        <div class="stat-mini"><div class="label">Jatuh Tempo</div><div class="value">3</div><div class="sub">⚠️ Lewat Jatuh Tempo</div></div>
       </div>
 
       <!-- Filters -->
       <div class="filters-bar">
         <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
           <option value="">Semua Status</option>
-          <option value="pending">Pending</option>
+          <option value="pending">Menunggu Pembayaran</option>
           <option value="paid">Paid</option>
-          <option value="overdue">Overdue</option>
+          <option value="overdue">Lewat Jatuh Tempo</option>
           <option value="draft">Draft</option>
         </select>
         <select class="filter-select" id="filterBulan" onchange="applyFilterAndPaginate()">
@@ -409,7 +409,7 @@
                 <td>Elena Rodriguez</td>
                 <td>8 Jun 2026</td>
                 <td style="font-weight:600">Rp 2.800.000</td>
-                <td><span class="badge pending">Pending</span></td>
+                <td><span class="badge pending">Menunggu Pembayaran</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')" style="cursor:pointer">
@@ -429,7 +429,7 @@
                 <td>Sarah Jenkins</td>
                 <td>1 Jun 2026</td>
                 <td style="font-weight:600">Rp 1.100.000</td>
-                <td><span class="badge overdue">Overdue</span></td>
+                <td><span class="badge overdue">Lewat Jatuh Tempo</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')" style="cursor:pointer">
@@ -754,8 +754,8 @@ function showDetail(invNo) {
 
   const statusMap = {
     paid:    '<span class="inv-status paid">✅ Lunas</span>',
-    pending: '<span class="inv-status pending">⏳ Pending</span>',
-    overdue: '<span class="inv-status overdue">🔴 Overdue</span>',
+    pending: '<span class="inv-status pending">⏳ Menunggu Pembayaran</span>',
+    overdue: '<span class="inv-status overdue">🔴 Lewat Jatuh Tempo</span>',
     draft:   '<span class="inv-status pending">📝 Draft</span>'
   };
   document.getElementById('invStatusBadge').innerHTML = statusMap[d.status] || '';
