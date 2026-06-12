@@ -147,7 +147,7 @@
   <header class="header">
     <span class="header-title">EFM Management</span>
     <div class="header-right">
-      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari leads event..."/></div>
+      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari leads event..."/></div>
       <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
       <div class="user-avatar">A</div>
     </div>
@@ -164,15 +164,15 @@
       <div class="stat-mini"><div class="label">Gagal</div><div class="value">2</div><div class="sub">Tidak closing</div></div>
     </div>
     <div class="filters-bar">
-      <select class="filter-select"><option>Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
-      <select class="filter-select"><option>Semua Jenis</option><option>Fun Run</option><option>Yoga</option><option>Workshop</option><option>Festival</option><option>Corporate</option></select>
+      <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option>Semua Stage</option><option>New</option><option>Proposal</option><option>Presentasi</option><option>Closing</option><option>Gagal</option></select>
+      <select class="filter-select" id="filterSel2" onchange="applyFilterAndPaginate()"><option>Semua Jenis</option><option>Fun Run</option><option>Yoga</option><option>Workshop</option><option>Festival</option><option>Corporate</option></select>
       <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama klien atau event..."/></div>
     </div>
     <div class="table-card">
       <div style="overflow-x:auto">
         <table>
           <thead><tr><th>ID</th><th>Nama Klien</th><th>Jenis Event</th><th>Est. Peserta</th><th>Est. Nilai</th><th>Stage</th><th>Tanggal</th><th>Actions</th></tr></thead>
-          <tbody>
+          <tbody id="dataBody">
             <tr>
               <td>#EV-001</td><td><strong>PT. Sinar Abadi</strong></td><td>Fun Run 10K</td><td>200 org</td><td>Rp 25jt</td>
               <td><span class="badge closing" style="background:#EAFAF1;color:#27AE60">Closing</span></td><td>10 Jun 2026</td>
@@ -211,9 +211,10 @@
         </table>
       </div>
       <div class="pagination">
-        <div class="pagination-info">Menampilkan 1–4 dari 24 leads</div>
-        <div class="pagination-btns"><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button><button class="page-btn active">1</button><button class="page-btn">2</button><button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button></div>
+        <div class="pagination-info" id="paginationInfo">Memuat data...</div>
+        <div class="pagination-btns" id="paginationBtns"></div>
       </div>
+    </div>
     </div>
   </div>
 </main>
@@ -327,6 +328,111 @@ if (role === 'owner') {
     ownerLabel.style.display = 'none';
   }
 }
+</script>
+<script>
+function clearAllFilters() {
+  const s = document.getElementById('searchInput'); if(s) s.value='';
+  const f1 = document.getElementById('filterSel1'); if(f1) f1.selectedIndex=0;
+  const f2 = document.getElementById('filterSel2'); if(f2) f2.selectedIndex=0;
+  applyFilterAndPaginate();
+}
+</script>
+
+<script>
+/* ─── PAGINATION ENGINE (10 rows/page) ─── */
+const ROWS_PER_PAGE = 10;
+let currentPage  = 1;
+let filteredRows = [];
+
+function getAllRows() {
+  return Array.from(document.querySelectorAll('#dataBody tr'));
+}
+
+function applyFilterAndPaginate() {
+  const search = (document.getElementById('searchInput') || {value:''}).value.toLowerCase();
+  const sel1   = document.getElementById('filterSel1');
+  const sel2   = document.getElementById('filterSel2');
+  const f1 = sel1 ? sel1.value.toLowerCase() : '';
+  const f2 = sel2 ? sel2.value.toLowerCase() : '';
+
+  filteredRows = getAllRows().filter(row => {
+    const text = row.textContent.toLowerCase();
+    return (!search || text.includes(search))
+        && (!f1 || text.includes(f1))
+        && (!f2 || text.includes(f2));
+  });
+
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage() {
+  const total      = filteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * ROWS_PER_PAGE;
+  const end   = start + ROWS_PER_PAGE;
+
+  getAllRows().forEach(row => { row.style.display = 'none'; });
+  filteredRows.forEach((row, i) => { row.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+  const from = total === 0 ? 0 : start + 1;
+  const to   = Math.min(end, total);
+  const infoEl = document.getElementById('paginationInfo');
+  if (infoEl) infoEl.textContent = 'Menampilkan ' + from + '\u2013' + to + ' dari ' + total + ' data';
+
+  buildPaginationBtns(currentPage, totalPages);
+}
+
+function buildPaginationBtns(current, total) {
+  const container = document.getElementById('paginationBtns');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const mkBtn = (label, page, isActive, isDisabled) => {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (isActive ? ' active' : '');
+    btn.disabled  = isDisabled;
+    btn.style.opacity = isDisabled ? '0.35' : '1';
+    btn.innerHTML = label;
+    if (!isDisabled) btn.onclick = () => goToPage(page);
+    return btn;
+  };
+
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>', current-1, false, current===1));
+
+  pageRange(current, total).forEach(p => {
+    if (p === '...') {
+      const span = document.createElement('span');
+      span.textContent = '\u2026';
+      span.style.cssText = 'padding:0 6px;color:var(--gray-text);font-size:13px;display:flex;align-items:center;';
+      container.appendChild(span);
+    } else {
+      container.appendChild(mkBtn(p, p, p === current, false));
+    }
+  });
+
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>', current+1, false, current===total));
+}
+
+function pageRange(current, total) {
+  if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
+  const pages = [1];
+  if (current > 3) pages.push('...');
+  for (let p = Math.max(2, current-1); p <= Math.min(total-1, current+1); p++) pages.push(p);
+  if (current < total - 2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+function goToPage(page) {
+  const total = Math.max(1, Math.ceil(filteredRows.length / ROWS_PER_PAGE));
+  currentPage = Math.max(1, Math.min(page, total));
+  renderPage();
+  document.querySelector('.table-card').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
 </script>
 </body>
 </html>
