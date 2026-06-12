@@ -58,10 +58,7 @@
     .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
     .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
     .btn-primary:hover { background:var(--orange-hover); }
-    .tabs { display:flex; gap:4px; background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:6px; margin-bottom:20px; width:fit-content; }
-    .tab { padding:8px 20px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; color:var(--gray-text); transition:all 0.2s; border:none; background:none; font-family:'Poppins',sans-serif; }
-    .tab.active { background:var(--navy); color:white; font-weight:600; }
-    .tab:hover:not(.active) { background:var(--gray-bg); color:var(--navy); }
+
     .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
     .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; cursor:pointer; outline:none; }
     .filter-search { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
@@ -255,12 +252,7 @@
       </button>
     </div>
 
-    <div class="tabs">
-      <button class="tab active" onclick="setTab(this)">Semua</button>
-      <button class="tab" onclick="setTab(this)">Aktif</button>
-      <button class="tab" onclick="setTab(this)">Selesai</button>
-      <button class="tab" onclick="setTab(this)">Dibatalkan</button>
-    </div>
+
 
     <div class="filters-bar">
       <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
@@ -422,10 +414,7 @@ function toggleMenu(e, subId, arrowId) {
   sub.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
-function setTab(el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-}
+
 function openModal() { currentStep=1; updateStepUI(); document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 function nextStep() {
