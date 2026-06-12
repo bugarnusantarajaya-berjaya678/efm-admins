@@ -489,21 +489,85 @@
 
       <!-- STEP 3: LOGISTIK -->
       <div id="content3" style="display:none">
-        <div class="form-group"><label>PIC / Pelatih <span style="color:var(--orange)">*</span></label>
-          <select class="form-control" id="inp_pic"><option value="">Pilih Pelatih...</option><option>Sarah Jenkins</option><option>Marcus Chen</option><option>Elena Rodriguez</option></select>
+
+        <!-- PIC / Pelatih dengan auto-fill -->
+        <div class="form-group">
+          <label>PIC / Pelatih <span style="color:var(--orange)">*</span></label>
+          <select class="form-control" id="inp_pic" onchange="onPICChange()">
+            <option value="">— Pilih Nama Panggilan Pelatih —</option>
+            <option value="sarah">Sarah</option>
+            <option value="marcus">Marcus</option>
+            <option value="elena">Elena</option>
+            <option value="david">David</option>
+          </select>
         </div>
-        <div class="form-group"><label>Lokasi Latihan <span style="color:var(--orange)">*</span></label>
+        <!-- Auto-fill info pelatih -->
+        <div id="pic_info_box" style="display:none;background:var(--gray-bg);border-radius:10px;padding:12px 16px;margin-top:-8px;margin-bottom:14px;border-left:3px solid var(--navy)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Lengkap</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="pic_fullname">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Pelatih</div>
+              <div style="font-size:13px;font-weight:700;color:var(--orange)" id="pic_id">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Spesialisasi</div>
+              <div style="font-size:12px;color:var(--navy)" id="pic_spesialis">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">No. HP</div>
+              <div style="font-size:12px;color:var(--navy)" id="pic_hp">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lokasi -->
+        <div class="form-group">
+          <label>Lokasi Latihan <span style="color:var(--orange)">*</span></label>
           <input type="text" class="form-control" id="inp_lokasi" placeholder="Contoh: Apartemen ABC Lt.3, Jakarta Selatan"/>
         </div>
-        <div class="form-row">
-          <div class="form-group"><label>Hari Latihan <span style="color:var(--orange)">*</span></label>
-            <select class="form-control" id="inp_hari"><option value="">Pilih Hari...</option><option>Senin & Rabu</option><option>Selasa & Kamis</option><option>Senin, Rabu & Jumat</option><option>Sabtu & Minggu</option><option>Setiap Hari Kerja</option></select>
+
+        <!-- Koordinat Google Maps -->
+        <div style="background:#EBF5FB;border:1.5px solid rgba(41,128,185,0.25);border-radius:10px;padding:13px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:#2980B9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📍 Koordinat Lokasi (untuk sistem absensi)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group" style="margin:0">
+              <label>Latitude</label>
+              <input type="number" class="form-control" id="inp_lat" placeholder="-6.2088" step="0.000001" oninput="updateMapsLink()"/>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Longitude</label>
+              <input type="number" class="form-control" id="inp_lng" placeholder="106.8456" step="0.000001" oninput="updateMapsLink()"/>
+            </div>
           </div>
-          <div class="form-group"><label>Jam Latihan <span style="color:var(--orange)">*</span></label>
+          <div id="maps_link_box" style="display:none;margin-top:10px;padding:8px 12px;background:white;border-radius:8px;border:1.5px solid rgba(41,128,185,0.3);display:flex;align-items:center;justify-content:space-between">
+            <span style="font-size:12px;color:#2980B9;font-weight:600" id="maps_link_label">—</span>
+            <a id="maps_link_href" href="#" target="_blank" style="font-size:11px;font-weight:700;color:#2980B9;text-decoration:none;padding:4px 10px;border:1px solid #2980B9;border-radius:6px;white-space:nowrap">Buka Maps ↗</a>
+          </div>
+        </div>
+
+        <!-- Tanggal Mulai -->
+        <div class="form-group">
+          <label>Tanggal Mulai Program Latihan / Terapi <span style="color:var(--orange)">*</span></label>
+          <input type="date" class="form-control" id="inp_tgl_mulai"/>
+        </div>
+
+        <!-- Jadwal -->
+        <div class="form-row">
+          <div class="form-group">
+            <label>Hari Latihan <span style="color:var(--orange)">*</span></label>
+            <input type="text" class="form-control" id="inp_hari" placeholder="Contoh: Senin, Rabu & Jumat"/>
+          </div>
+          <div class="form-group">
+            <label>Jam Latihan <span style="color:var(--orange)">*</span></label>
             <input type="time" class="form-control" id="inp_jam" value="07:00"/>
           </div>
         </div>
-        <div class="form-group"><label>Catatan Tambahan</label>
+
+        <div class="form-group">
+          <label>Catatan Tambahan</label>
           <input type="text" class="form-control" id="inp_catatan" placeholder="Contoh: Preferensi alat, kondisi fisik, dst."/>
         </div>
       </div>
@@ -759,11 +823,14 @@ function fillReview() {
   document.getElementById('rev_email').textContent   = document.getElementById('inp_email').value || '—';
   document.getElementById('rev_paket').textContent   = _selectedPackage.label;
   document.getElementById('rev_paket_label').textContent = _selectedPackage.label;
-  document.getElementById('rev_pic').textContent     = document.getElementById('inp_pic').value   || '—';
-  document.getElementById('rev_lokasi').textContent  = document.getElementById('inp_lokasi').value|| '—';
-  const hari = document.getElementById('inp_hari').value;
-  const jam  = document.getElementById('inp_jam').value;
-  document.getElementById('rev_jadwal').textContent  = hari && jam ? hari + ', ' + jam : '—';
+  const picKey = document.getElementById('inp_pic').value;
+  const picData = PIC_DB[picKey] || {};
+  document.getElementById('rev_pic').textContent    = picData.fullname ? `${picData.fullname} (${picData.id})` : (picKey || '—');
+  document.getElementById('rev_lokasi').textContent = document.getElementById('inp_lokasi').value || '—';
+  const hari    = document.getElementById('inp_hari').value;
+  const jam     = document.getElementById('inp_jam').value;
+  const tglMulai = document.getElementById('inp_tgl_mulai').value;
+  document.getElementById('rev_jadwal').textContent = [hari, jam ? 'pukul '+jam : '', tglMulai ? '(mulai '+tglMulai+')' : ''].filter(Boolean).join(', ') || '—';
   document.getElementById('rev_harga').textContent   = fmtRp(c.base   || _selectedPackage.price);
   document.getElementById('rev_transport').textContent = fmtRp(c.transport || 0);
   document.getElementById('rev_extra').textContent   = fmtRp(c.extra  || 0);
@@ -785,6 +852,37 @@ function fillReview() {
   document.getElementById('rev_tax').textContent = fmtRp(tax);
 
   document.getElementById('rev_total').textContent = fmtRp(c.grandTotal || _selectedPackage.price);
+}
+
+// ─── DATABASE PELATIH ───
+const PIC_DB = {
+  sarah:  { fullname:'Sarah Jenkins',    id:'EFM-PIC-001', spesialis:'Strength & Conditioning', hp:'+62 812-1111-0001' },
+  marcus: { fullname:'Marcus Chen',      id:'EFM-PIC-002', spesialis:'Functional Training',      hp:'+62 812-1111-0002' },
+  elena:  { fullname:'Elena Rodriguez',  id:'EFM-PIC-003', spesialis:'Yoga & Flexibility',       hp:'+62 812-1111-0003' },
+  david:  { fullname:'David Kim',        id:'EFM-PIC-004', spesialis:'Sports Rehabilitation',    hp:'+62 812-1111-0004' },
+};
+
+function onPICChange() {
+  const key = document.getElementById('inp_pic').value;
+  const box = document.getElementById('pic_info_box');
+  if (!key || !PIC_DB[key]) { box.style.display = 'none'; return; }
+  const p = PIC_DB[key];
+  document.getElementById('pic_fullname').textContent  = p.fullname;
+  document.getElementById('pic_id').textContent        = p.id;
+  document.getElementById('pic_spesialis').textContent = p.spesialis;
+  document.getElementById('pic_hp').textContent        = p.hp;
+  box.style.display = 'block';
+}
+
+function updateMapsLink() {
+  const lat = parseFloat(document.getElementById('inp_lat').value);
+  const lng = parseFloat(document.getElementById('inp_lng').value);
+  const box = document.getElementById('maps_link_box');
+  if (isNaN(lat) || isNaN(lng)) { box.style.display = 'none'; return; }
+  const url = `https://maps.google.com/?q=${lat},${lng}`;
+  document.getElementById('maps_link_label').textContent = `${lat}, ${lng}`;
+  document.getElementById('maps_link_href').href         = url;
+  box.style.display = 'flex';
 }
 
 function toggleMenu(e, subId, arrowId) {
