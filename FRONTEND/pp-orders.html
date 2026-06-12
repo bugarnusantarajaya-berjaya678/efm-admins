@@ -532,19 +532,35 @@
         <!-- Koordinat Google Maps -->
         <div style="background:#EBF5FB;border:1.5px solid rgba(41,128,185,0.25);border-radius:10px;padding:13px 16px;margin-bottom:14px">
           <div style="font-size:11px;font-weight:700;color:#2980B9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📍 Koordinat Lokasi (untuk sistem absensi)</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-            <div class="form-group" style="margin:0">
-              <label>Latitude</label>
-              <input type="number" class="form-control" id="inp_lat" placeholder="-6.2088" step="0.000001" oninput="updateMapsLink()"/>
+
+          <!-- Input URL -->
+          <div class="form-group" style="margin-bottom:10px">
+            <label style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px;display:block">Paste Link Google Maps</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" class="form-control" id="inp_maps_url" placeholder="https://www.google.com/maps/place/..." style="flex:1;font-size:12px"/>
+              <button type="button" onclick="parseGoogleMapsURL()" style="padding:9px 14px;background:#2980B9;color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Deteksi</button>
             </div>
-            <div class="form-group" style="margin:0">
-              <label>Longitude</label>
-              <input type="number" class="form-control" id="inp_lng" placeholder="106.8456" step="0.000001" oninput="updateMapsLink()"/>
+            <div id="maps_parse_msg" style="font-size:11px;margin-top:5px;display:none"></div>
+          </div>
+
+          <!-- Hasil koordinat (read-only, auto-filled) -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Latitude</div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);padding:8px 12px;background:white;border-radius:8px;border:1.5px solid var(--gray-border);min-height:36px" id="disp_lat">—</div>
+              <input type="hidden" id="inp_lat"/>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Longitude</div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);padding:8px 12px;background:white;border-radius:8px;border:1.5px solid var(--gray-border);min-height:36px" id="disp_lng">—</div>
+              <input type="hidden" id="inp_lng"/>
             </div>
           </div>
-          <div id="maps_link_box" style="display:none;margin-top:10px;padding:8px 12px;background:white;border-radius:8px;border:1.5px solid rgba(41,128,185,0.3);display:flex;align-items:center;justify-content:space-between">
+
+          <!-- Preview link -->
+          <div id="maps_link_box" style="display:none;margin-top:10px;padding:8px 12px;background:white;border-radius:8px;border:1.5px solid rgba(41,128,185,0.3);align-items:center;justify-content:space-between">
             <span style="font-size:12px;color:#2980B9;font-weight:600" id="maps_link_label">—</span>
-            <a id="maps_link_href" href="#" target="_blank" style="font-size:11px;font-weight:700;color:#2980B9;text-decoration:none;padding:4px 10px;border:1px solid #2980B9;border-radius:6px;white-space:nowrap">Buka Maps ↗</a>
+            <a id="maps_link_href" href="#" target="_blank" style="font-size:11px;font-weight:700;color:#2980B9;text-decoration:none;padding:4px 10px;border:1px solid #2980B9;border-radius:6px;white-space:nowrap;margin-left:12px">Buka Maps ↗</a>
           </div>
         </div>
 
@@ -874,15 +890,45 @@ function onPICChange() {
   box.style.display = 'block';
 }
 
-function updateMapsLink() {
-  const lat = parseFloat(document.getElementById('inp_lat').value);
-  const lng = parseFloat(document.getElementById('inp_lng').value);
+function parseGoogleMapsURL() {
+  const raw = document.getElementById('inp_maps_url').value.trim();
+  const msg = document.getElementById('maps_parse_msg');
   const box = document.getElementById('maps_link_box');
-  if (isNaN(lat) || isNaN(lng)) { box.style.display = 'none'; return; }
-  const url = `https://maps.google.com/?q=${lat},${lng}`;
+  msg.style.display = 'block';
+
+  // Pola 1: @lat,lng,zoom  (paling umum di URL google maps)
+  let m = raw.match(/@(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+
+  // Pola 2: ?q=lat,lng
+  if (!m) m = raw.match(/[?&]q=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+
+  // Pola 3: /maps/place/.../@lat,lng atau ll=lat,lng
+  if (!m) m = raw.match(/ll=(-?\d+\.?\d*),(-?\d+\.?\d*)/);
+
+  if (!m) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = '❌ Koordinat tidak terdeteksi. Pastikan link dari Google Maps dan lengkap.';
+    document.getElementById('disp_lat').textContent = '—';
+    document.getElementById('disp_lng').textContent = '—';
+    box.style.display = 'none';
+    return;
+  }
+
+  const lat = parseFloat(m[1]);
+  const lng = parseFloat(m[2]);
+
+  document.getElementById('inp_lat').value         = lat;
+  document.getElementById('inp_lng').value         = lng;
+  document.getElementById('disp_lat').textContent  = lat;
+  document.getElementById('disp_lng').textContent  = lng;
+
+  const mapsUrl = `https://maps.google.com/?q=${lat},${lng}`;
   document.getElementById('maps_link_label').textContent = `${lat}, ${lng}`;
-  document.getElementById('maps_link_href').href         = url;
+  document.getElementById('maps_link_href').href         = mapsUrl;
   box.style.display = 'flex';
+
+  msg.style.color = 'var(--green)';
+  msg.textContent = `✅ Koordinat berhasil dideteksi: ${lat}, ${lng}`;
 }
 
 function toggleMenu(e, subId, arrowId) {
