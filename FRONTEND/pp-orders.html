@@ -137,7 +137,14 @@
     .inv-total { display:flex; justify-content:space-between; padding:12px 14px; background:var(--gray-bg); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); margin-bottom:14px; }
     .inv-total span:last-child { color:var(--orange); font-size:16px; }
     .inv-status-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:10px; border:1.5px solid var(--gray-border); margin-bottom:12px; }
-    .status-select { padding:7px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--navy); background:white; cursor:pointer; outline:none; }
+    .status-select { padding:7px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--navy); background:white; cursor:pointer; outline:none; transition:border-color 0.2s; }
+    .status-select.dirty { border-color:var(--orange); box-shadow:0 0 0 3px rgba(224,89,69,0.12); }
+    .cancel-note { margin-top:12px; padding:14px 16px; background:#FFF5F5; border-radius:10px; border-left:3px solid var(--red); display:none; }
+    .cancel-note label { display:block; font-size:12px; font-weight:600; color:var(--red); margin-bottom:6px; }
+    .cancel-note textarea { width:100%; padding:9px 13px; border:1.5px solid #F5C6C6; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; resize:none; background:white; }
+    .cancel-note textarea:focus { border-color:var(--red); }
+    .toast-saved { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:#1E1C43; color:white; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:999; opacity:0; transition:opacity 0.25s, transform 0.25s; pointer-events:none; display:flex; align-items:center; gap:8px; }
+    .toast-saved.show { opacity:1; transform:translateX(-50%) translateY(0); }
     .btn-green { padding:9px 18px; background:var(--green); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
     .btn-outline-sm { padding:9px 18px; background:white; color:var(--navy); border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
     /* Mark paid form inside drawer */
@@ -399,6 +406,12 @@
   </div>
 </main>
 
+<!-- Toast feedback -->
+<div class="toast-saved" id="toastSaved">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Status diperbarui</span>
+</div>
+
 <!-- Centered Dialog -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()">
   <div class="drawer" id="orderDrawer" onclick="event.stopPropagation()">
@@ -536,6 +549,7 @@ function renderOrderTab() {
   const barColor = barEl ? (barEl.style.background || 'var(--orange)') : 'var(--orange)';
 
   const currentStatus = badgeEl ? badgeEl.textContent.trim().toLowerCase() : 'aktif';
+  const _origStatus = currentStatus;
 
   document.getElementById('drawerBody').innerHTML = `
     <div class="info-grid">
@@ -551,23 +565,57 @@ function renderOrderTab() {
     </div>
     <div class="inv-status-bar">
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Order</span>
-      <select class="status-select" id="statusOrderSelect" onchange="saveOrderStatus(this.value)">
+      <select class="status-select" id="statusOrderSelect" data-orig="${_origStatus}" onchange="onStatusOrderChange(this)">
         <option value="aktif" ${currentStatus.includes('aktif') ? 'selected' : ''}>Aktif</option>
         <option value="selesai" ${currentStatus.includes('selesai') ? 'selected' : ''}>Selesai</option>
         <option value="dibatalkan" ${currentStatus.includes('dibatalkan') ? 'selected' : ''}>Dibatalkan</option>
       </select>
+    </div>
+    <div class="cancel-note" id="cancelNoteBox">
+      <label>⚠️ Catatan Pembatalan (opsional)</label>
+      <textarea id="cancelNoteText" rows="2" placeholder="Tulis alasan pembatalan order..."></textarea>
     </div>`;
 
-  document.getElementById('drawerFooter').innerHTML = `
-    <button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>
-    <button class="btn-primary" onclick="switchDrawerTab('invoice')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-      Lihat Invoice
-    </button>`;
+  _renderOrderFooter(false);
 }
 
-function saveOrderStatus(newStatus) {
-  if (!_drawerRow) return;
+function _renderOrderFooter(isDirty) {
+  const invoiceBtn = `<button class="btn-primary" onclick="switchDrawerTab('invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Lihat Invoice</button>`;
+  if (isDirty) {
+    document.getElementById('drawerFooter').innerHTML =
+      `<button class="btn-outline-sm" onclick="cancelStatusChange()">Batal Ubah</button>
+       <div style="flex:1"></div>
+       <button class="btn-green" onclick="confirmSaveOrderStatus()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status</button>
+       ${invoiceBtn}`;
+  } else {
+    document.getElementById('drawerFooter').innerHTML =
+      `<button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>${invoiceBtn}`;
+  }
+}
+
+function onStatusOrderChange(sel) {
+  const newVal = sel.value;
+  const isDirty = newVal !== sel.dataset.orig;
+  sel.classList.toggle('dirty', isDirty);
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = newVal === 'dibatalkan' ? 'block' : 'none';
+  _renderOrderFooter(isDirty);
+}
+
+function cancelStatusChange() {
+  const sel = document.getElementById('statusOrderSelect');
+  if (!sel) return;
+  sel.value = sel.dataset.orig;
+  sel.classList.remove('dirty');
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = 'none';
+  _renderOrderFooter(false);
+}
+
+function confirmSaveOrderStatus() {
+  const sel = document.getElementById('statusOrderSelect');
+  if (!sel || !_drawerRow) return;
+  const newStatus = sel.value;
   const statusCell = _drawerRow.querySelectorAll('td')[6];
   const badge = statusCell ? statusCell.querySelector('.badge') : null;
   const classMap = { aktif:'active', selesai:'completed', dibatalkan:'cancelled' };
@@ -576,6 +624,19 @@ function saveOrderStatus(newStatus) {
     badge.className = 'badge ' + (classMap[newStatus] || 'active');
     badge.textContent = labelMap[newStatus] || newStatus;
   }
+  sel.dataset.orig = newStatus;
+  sel.classList.remove('dirty');
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = 'none';
+  _renderOrderFooter(false);
+  showToast('✅ Status Order diperbarui: ' + (labelMap[newStatus] || newStatus));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toastSaved');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
 }
 
 function renderInvoiceTab() {
@@ -617,10 +678,14 @@ function renderInvoiceTab() {
     <div class="inv-total"><span>Total Tagihan</span><span>${d.total}</span></div>
     <div class="inv-status-bar">
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Pembayaran</span>
-      ${statusMap[invStatus] || ''}
+      <select class="status-select" id="invStatusSelect" data-orig="${invStatus}" data-inv="${invNo}" onchange="onInvStatusChange(this)">
+        <option value="paid"    ${invStatus==='paid'    ? 'selected':''}>✅ Lunas</option>
+        <option value="pending" ${invStatus==='pending' ? 'selected':''}>⏳ Pending</option>
+        <option value="overdue" ${invStatus==='overdue' ? 'selected':''}>🔴 Overdue</option>
+      </select>
     </div>
     ${invStatus !== 'paid' ? `
-    <div style="margin-top:16px;padding:14px 16px;background:#FEF9E7;border-radius:10px;border-left:3px solid var(--yellow)">
+    <div id="payConfirmBox" style="margin-top:16px;padding:14px 16px;background:#FEF9E7;border-radius:10px;border-left:3px solid var(--yellow)">
       <p style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:8px">KONFIRMASI PEMBAYARAN</p>
       <div class="form-group"><label>Tanggal Pembayaran</label><input type="date" class="form-control" id="drPaidDate" value="${new Date().toISOString().split('T')[0]}"/></div>
       <div class="form-group"><label>Metode Pembayaran</label>
@@ -633,18 +698,68 @@ function renderInvoiceTab() {
   const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
   const footerBtns = invStatus !== 'paid'
     ? `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
-       <button class="btn-green" onclick="confirmPaidFromDrawer('${invNo}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Lunas</button>`
+       <button class="btn-green" id="btnKonfirmasiLunas" onclick="confirmPaidFromDrawer('${invNo}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Lunas</button>`
     : `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
        <button class="btn-primary" onclick="closeDrawer()">Selesai</button>`;
 
   document.getElementById('drawerFooter').innerHTML = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>${footerBtns}`;
 }
 
+function onInvStatusChange(sel) {
+  const newVal  = sel.value;
+  const origVal = sel.dataset.orig;
+  const isDirty = newVal !== origVal;
+  sel.classList.toggle('dirty', isDirty);
+
+  const payBox = document.getElementById('payConfirmBox');
+
+  if (isDirty) {
+    if (payBox) payBox.style.display = newVal !== 'paid' ? 'block' : 'none';
+    const backBtn = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>`;
+    const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+    document.getElementById('drawerFooter').innerHTML =
+      `${backBtn}
+       <button class="btn-outline-sm" onclick="cancelInvStatusChange()">Batal Ubah</button>
+       <div style="flex:1"></div>
+       <button class="btn-outline-sm" onclick="printInvoice('${sel.dataset.inv}')">${printIcon} Print</button>
+       <button class="btn-green" onclick="confirmSaveInvStatus('${sel.dataset.inv}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status</button>`;
+  } else {
+    renderInvoiceTab();
+  }
+}
+
+function cancelInvStatusChange() {
+  const sel = document.getElementById('invStatusSelect');
+  if (sel) { sel.value = sel.dataset.orig; sel.classList.remove('dirty'); }
+  renderInvoiceTab();
+}
+
+function confirmSaveInvStatus(invNo) {
+  const sel = document.getElementById('invStatusSelect');
+  if (!sel) return;
+  const newStatus = sel.value;
+  const labelMap = { paid:'Lunas', pending:'Pending', overdue:'Overdue' };
+  const classMap  = { paid:'paid', pending:'pending', overdue:'overdue' };
+  if (invoiceData[invNo]) invoiceData[invNo].status = newStatus;
+  const actionCell = _drawerRow ? _drawerRow.querySelector('td[data-inv]') : null;
+  if (actionCell) {
+    actionCell.dataset.status = newStatus;
+    const badge = _drawerRow.querySelectorAll('td')[7]?.querySelector('.badge');
+    if (badge) { badge.className = 'badge ' + classMap[newStatus]; badge.textContent = labelMap[newStatus]; }
+  }
+  showToast('✅ Status Invoice diperbarui: ' + (labelMap[newStatus] || newStatus));
+  renderInvoiceTab();
+}
+
 function confirmPaidFromDrawer(invNo) {
   if (invoiceData[invNo]) invoiceData[invNo].status = 'paid';
   const actionCell = _drawerRow.querySelector('td[data-inv]');
-  if (actionCell) actionCell.dataset.status = 'paid';
-  alert('Invoice ' + invNo + ' berhasil ditandai sebagai Lunas! ✅');
+  if (actionCell) {
+    actionCell.dataset.status = 'paid';
+    const badge = _drawerRow.querySelectorAll('td')[7]?.querySelector('.badge');
+    if (badge) { badge.className = 'badge paid'; badge.textContent = 'Lunas'; }
+  }
+  showToast('✅ Invoice ' + invNo + ' berhasil dikonfirmasi Lunas!');
   renderInvoiceTab();
 }
 
