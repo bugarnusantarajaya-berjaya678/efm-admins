@@ -453,6 +453,8 @@
           document.cookie = `efm_token=${data.token}; expires=${cookieExpiry.toUTCString()}; path=/; SameSite=Strict`;
           document.cookie = `efm_role=${data.role}; expires=${cookieExpiry.toUTCString()}; path=/; SameSite=Strict`;
           document.cookie = `efm_nama=${data.nama}; expires=${cookieExpiry.toUTCString()}; path=/; SameSite=Strict`;
+          localStorage.setItem('efm_role', data.role);
+          localStorage.setItem('efm_nama', data.nama);
 
           // Redirect berdasarkan role
           if (data.role === 'owner') {
@@ -469,6 +471,8 @@
       } catch (err) {
         // Development mode: skip API, langsung ke dashboard
         console.warn('API not connected. Dev mode redirect.');
+        localStorage.setItem('efm_role', 'owner');
+        localStorage.setItem('efm_nama', 'Bagoes');
         window.location.href = 'dashboard-owner.html';
       }
     }

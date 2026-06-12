@@ -241,5 +241,25 @@
 function toggleMenu(e,s,a){e.preventDefault();const sub=document.getElementById(s),arrow=document.getElementById(a),isOpen=sub.style.display!=='none';sub.style.display=isOpen?'none':'block';if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';}
 function saveReport(){alert('Laporan berhasil dikirim!');}
 </script>
+
+<script>
+// Cek role dari localStorage
+const role = localStorage.getItem("efm_role");
+const nama = localStorage.getItem("efm_nama");
+if (role === "owner") {
+  // Tampilkan menu Settings
+  const menuSettings = document.getElementById("menuSettings");
+  if (menuSettings) menuSettings.style.display = "flex";
+  // Tampilkan owner badge di header
+  const headerRight = document.querySelector(".header-right");
+  if (headerRight) {
+    const badge = document.createElement("span");
+    badge.className = "owner-badge";
+    badge.style.cssText = "background:rgba(224,89,69,0.1);color:#E05945;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)";
+    badge.textContent = "👑 Owner";
+    headerRight.insertBefore(badge, headerRight.firstChild);
+  }
+}
+</script>
 </body>
 </html>
