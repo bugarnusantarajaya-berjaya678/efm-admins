@@ -1145,10 +1145,23 @@ function populateReceipt(invNo, d) {
   document.getElementById('rcptBiayaLainDesc').textContent  = 'Biaya Lain' + (d.biayaLainKet ? ' — ' + d.biayaLainKet : '');
   document.getElementById('rcptBiayaLainAmt').textContent   = fmtRp(bl);
 
-  const dis = d.diskon || 0;
+  const dis       = d.diskon || 0;
+  const rcptType  = d.promoType || '';
+  const rcptKode  = d.promoKode || '';
   document.getElementById('rcptDiskonRow').style.display = dis > 0 ? '' : 'none';
-  document.getElementById('rcptPromoTag').textContent       = d.promoKode || '';
-  document.getElementById('rcptDiskonAmt').textContent      = '− ' + fmtRp(dis);
+  const rcptLblEl = document.getElementById('rcptDiskonLabel');
+  if (rcptLblEl) rcptLblEl.childNodes[0].textContent = rcptType === 'cashback' ? 'Cashback ' : 'Diskon ';
+  document.getElementById('rcptPromoTag').innerHTML = rcptKode ? `<span style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px;font-weight:700">${rcptKode}</span>` : '';
+  document.getElementById('rcptDiskonAmt').textContent = '− ' + fmtRp(dis);
+
+  // Non-monetary promo info on receipt
+  const rcptPromoInfoRow = document.getElementById('rcptPromoInfoRow');
+  const rcptVal = d.promoVal || 0;
+  const nonMonetary = ['free_session','free_treatment','free_training'].includes(rcptType);
+  if (rcptPromoInfoRow) {
+    rcptPromoInfoRow.style.display = nonMonetary ? '' : 'none';
+    document.getElementById('rcptPromoInfoLabel').innerHTML = promoLabel(rcptType, rcptVal, rcptKode);
+  }
 
   const pjk = d.pajak || 0;
   document.getElementById('rcptPajakRow').style.display = pjk > 0 ? '' : 'none';
