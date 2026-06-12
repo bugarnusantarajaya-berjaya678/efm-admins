@@ -70,7 +70,7 @@
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
     .table-wrap { overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch; }
-    table { width:100%; min-width:1140px; border-collapse:collapse; table-layout:fixed; }
+    table { width:100%; min-width:1170px; border-collapse:collapse; table-layout:fixed; }
     th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     td { padding:12px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
     tr:last-child td { border-bottom:none; }
@@ -83,7 +83,8 @@
     table th:nth-child(5), table td:nth-child(5) { width:130px; min-width:130px; }
     table th:nth-child(6), table td:nth-child(6) { width:120px; min-width:120px; }
     table th:nth-child(7), table td:nth-child(7) { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
-    table th:nth-child(8), table td:nth-child(8) { width:110px; max-width:110px; text-align:center; }
+    table th:nth-child(8) { width:140px; min-width:130px; max-width:140px; text-align:center; white-space:nowrap; }
+    table td:nth-child(8) { width:140px; min-width:130px; max-width:140px; text-align:center; }
     table th:nth-child(9), table td:nth-child(9) { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
     .client-cell { display:flex; align-items:center; gap:10px; }
     .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -362,7 +363,7 @@
             <col style="width:130px"/>  <!-- Progress Sesi -->
             <col style="width:120px"/>  <!-- Tanggal Mulai -->
             <col style="width:120px"/>  <!-- Status Order -->
-            <col style="width:110px"/>  <!-- Status Invoice -->
+            <col style="width:140px"/>  <!-- Status Invoice -->
             <col style="width:90px"/>   <!-- Actions -->
           </colgroup>
           <thead>
