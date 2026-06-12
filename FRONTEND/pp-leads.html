@@ -87,8 +87,8 @@
     .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
     .badge.new { background:#EBF5FB; color:#2980B9; }
     .badge.follow-up { background:#FEF9E7; color:#F39C12; }
-    .badge.closing { background:#EAFAF1; color:#27AE60; }
-    .badge.gagal { background:#FDEDEC; color:#E74C3C; }
+    .badge.closed-won { background:#EAFAF1; color:#27AE60; }
+    .badge.closed-lost { background:#FDEDEC; color:#E74C3C; }
     .source-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:500; background:var(--gray-bg); color:var(--gray-text); border:1px solid var(--gray-border); white-space:nowrap; }
     .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
     .action-btn:hover { border-color:var(--navy); color:var(--navy); }
@@ -124,10 +124,10 @@
     .detail-item.full { grid-column:1/-1; }
     .status-edit { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
     .status-opt { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:2px solid transparent; transition:all 0.15s; }
-    .status-opt.new      { background:#EBF5FB; color:#2980B9; }
-    .status-opt.follow-up{ background:#FEF9E7; color:#F39C12; }
-    .status-opt.closing  { background:#EAFAF1; color:#27AE60; }
-    .status-opt.gagal    { background:#FDEDEC; color:#E74C3C; }
+    .status-opt.new        { background:#EBF5FB; color:#2980B9; }
+    .status-opt.follow-up  { background:#FEF9E7; color:#F39C12; }
+    .status-opt.closed-won { background:#EAFAF1; color:#27AE60; }
+    .status-opt.closed-lost{ background:#FDEDEC; color:#E74C3C; }
     .status-opt.selected { border-color:currentColor; }
   </style>
 </head>
@@ -248,9 +248,9 @@
 
     <div class="stats-row">
       <div class="stat-mini"><div class="label">Total Leads</div><div class="value">248</div><div class="sub">Bulan ini</div></div>
-      <div class="stat-mini highlight"><div class="label">Hot Leads</div><div class="value">85</div><div class="sub">Follow up & Closing</div></div>
-      <div class="stat-mini"><div class="label">Converted</div><div class="value">42</div><div class="sub">Jadi order</div></div>
-      <div class="stat-mini"><div class="label">Gagal</div><div class="value">31</div><div class="sub">Tidak closing</div></div>
+      <div class="stat-mini highlight"><div class="label">Hot Leads</div><div class="value">85</div><div class="sub">Follow Up & Closing</div></div>
+      <div class="stat-mini"><div class="label">Closed Won</div><div class="value">42</div><div class="sub">Berhasil closing</div></div>
+      <div class="stat-mini"><div class="label">Closed Lost</div><div class="value">31</div><div class="sub">Tidak closing</div></div>
     </div>
 
     <div class="filters-bar">
@@ -258,8 +258,8 @@
         <option value="">Semua Status</option>
         <option value="new">New</option>
         <option value="follow up">Follow Up</option>
-        <option value="closing">Closing</option>
-        <option value="gagal">Gagal</option>
+        <option value="closed won">Closed Won</option>
+        <option value="closed lost">Closed Lost</option>
       </select>
       <select class="filter-select" id="filterSource" onchange="applyFilterAndPaginate()">
         <option value="">Semua Sumber</option>
@@ -311,7 +311,7 @@
               <td>#L-1003</td>
               <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
               <td>0811-2233-4455</td><td><span class="source-tag">🚶 Walk-in</span></td>
-              <td>Boxing</td><td><span class="badge closing">Closing</span></td><td>8 Jun 2026</td>
+              <td>Boxing</td><td><span class="badge closed-won">Closed Won</span></td><td>8 Jun 2026</td>
               <td>
                 <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" style="background:#EAFAF1;color:#27AE60;border-color:#27AE60" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
@@ -322,7 +322,7 @@
               <td>#L-1004</td>
               <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#8E44AD">DA</div>Dewi Ayu</div></td>
               <td>0877-6655-4433</td><td><span class="source-tag">👥 Referral</span></td>
-              <td>Tennis</td><td><span class="badge gagal">Gagal</span></td><td>7 Jun 2026</td>
+              <td>Tennis</td><td><span class="badge closed-lost">Closed Lost</span></td><td>7 Jun 2026</td>
               <td>
                 <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
@@ -405,10 +405,10 @@
         <div class="detail-item full">
           <div class="detail-label">Status Pipeline</div>
           <div class="status-edit" id="dtStatusEdit">
-            <button class="status-opt new"       onclick="setLeadStatus(this,'new','New')">● New</button>
-            <button class="status-opt follow-up" onclick="setLeadStatus(this,'follow-up','Follow Up')">● Follow Up</button>
-            <button class="status-opt closing"   onclick="setLeadStatus(this,'closing','Closing')">● Closing</button>
-            <button class="status-opt gagal"     onclick="setLeadStatus(this,'gagal','Gagal')">● Gagal</button>
+            <button class="status-opt new"         onclick="setLeadStatus(this,'new','New')">● New</button>
+            <button class="status-opt follow-up"   onclick="setLeadStatus(this,'follow-up','Follow Up')">● Follow Up</button>
+            <button class="status-opt closed-won"  onclick="setLeadStatus(this,'closed-won','Closed Won')">● Closed Won</button>
+            <button class="status-opt closed-lost" onclick="setLeadStatus(this,'closed-lost','Closed Lost')">● Closed Lost</button>
           </div>
         </div>
       </div>
