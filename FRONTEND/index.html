@@ -457,8 +457,6 @@
           // Redirect berdasarkan role
           if (data.role === 'owner') {
             window.location.href = 'dashboard-owner.html';
-          } else if (data.role === 'superadmin') {
-            window.location.href = 'dashboard-superadmin.html';
           } else {
             window.location.href = 'dashboard.html';
           }
@@ -471,7 +469,7 @@
       } catch (err) {
         // Development mode: skip API, langsung ke dashboard
         console.warn('API not connected. Dev mode redirect.');
-        window.location.href = 'dashboard.html';
+        window.location.href = 'dashboard-owner.html';
       }
     }
   </script>
