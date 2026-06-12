@@ -81,6 +81,9 @@
     .badge.active { background:#EAFAF1; color:#27AE60; }
     .badge.completed { background:#F2F3F4; color:#7F8C8D; }
     .badge.cancelled { background:#FDEDEC; color:#E74C3C; }
+    .badge.paid { background:#EAFAF1; color:#27AE60; }
+    .badge.pending { background:#FEF9E7; color:#F39C12; }
+    .badge.overdue { background:#FDEDEC; color:#E74C3C; }
     .order-id { font-weight:600; color:var(--navy); font-size:13px; }
     .session-progress { display:flex; flex-direction:column; gap:4px; }
     .session-bar { height:4px; background:var(--gray-border); border-radius:2px; width:80px; overflow:hidden; }
@@ -295,10 +298,16 @@
 
     <div class="filters-bar">
       <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
-        <option value="">Semua Status</option>
+        <option value="">Semua Status Order</option>
         <option value="aktif">Aktif</option>
         <option value="selesai">Selesai</option>
         <option value="dibatalkan">Dibatalkan</option>
+      </select>
+      <select class="filter-select" id="filterInvoice" onchange="applyFilterAndPaginate()">
+        <option value="">Semua Status Invoice</option>
+        <option value="paid">Lunas</option>
+        <option value="pending">Pending</option>
+        <option value="overdue">Overdue</option>
       </select>
       <select class="filter-select" id="filterPIC" onchange="applyFilterAndPaginate()">
         <option value="">Semua PIC</option>
@@ -326,7 +335,7 @@
           <thead>
             <tr>
               <th>Order ID</th><th>Nama Klien</th><th>Paket</th><th>PIC (Pelatih)</th>
-              <th>Progress Sesi</th><th>Tanggal Mulai</th><th>Status</th><th>Actions</th>
+              <th>Progress Sesi</th><th>Tanggal Mulai</th><th>Status Order</th><th>Status Invoice</th><th>Actions</th>
             </tr>
           </thead>
           <tbody id="ordersBody">
@@ -336,9 +345,10 @@
               <td>12 Sesi - Pro</td><td>Sarah Jenkins</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
               <td>24 Okt 2026</td><td><span class="badge active">Aktif</span></td>
+              <td><span class="badge paid">Lunas</span></td>
               <td data-inv="INV/EFM/PP/2026/0089" data-status="paid">
-                <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -347,9 +357,10 @@
               <td>4 Sesi - Starter</td><td>Marcus Chen</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
               <td>22 Okt 2026</td><td><span class="badge completed">Selesai</span></td>
+              <td><span class="badge paid">Lunas</span></td>
               <td data-inv="INV/EFM/PP/2026/0087" data-status="paid">
-                <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -358,9 +369,10 @@
               <td>24 Sesi - Elite</td><td>Elena Rodriguez</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
               <td>18 Okt 2026</td><td><span class="badge active">Aktif</span></td>
+              <td><span class="badge pending">Pending</span></td>
               <td data-inv="INV/EFM/PP/2026/0088" data-status="pending">
-                <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -369,9 +381,10 @@
               <td>8 Sesi - Base</td><td>Sarah Jenkins</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
               <td>15 Okt 2026</td><td><span class="badge cancelled">Dibatalkan</span></td>
+              <td><span class="badge overdue">Overdue</span></td>
               <td data-inv="INV/EFM/PP/2026/0085" data-status="overdue">
-                <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
           </tbody>
@@ -597,10 +610,11 @@ function renderInvoiceTab() {
       </div>
     </div>` : ''}`;
 
+  const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
   const footerBtns = invStatus !== 'paid'
-    ? `<button class="btn-outline-sm" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>
+    ? `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
        <button class="btn-green" onclick="confirmPaidFromDrawer('${invNo}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Lunas</button>`
-    : `<button class="btn-outline-sm" onclick="window.print()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print</button>
+    : `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
        <button class="btn-primary" onclick="closeDrawer()">Selesai</button>`;
 
   document.getElementById('drawerFooter').innerHTML = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>${footerBtns}`;
@@ -653,13 +667,16 @@ function applyFilterAndPaginate() {
   const f1 = document.getElementById('filterStatus').value.toLowerCase();
   const f2 = document.getElementById('filterPIC').value.toLowerCase();
   const f3 = document.getElementById('filterPaket').value.toLowerCase();
+  const f4 = document.getElementById('filterInvoice').value.toLowerCase();
 
   filteredRows = getAllRows().filter(row => {
     const text = row.textContent.toLowerCase();
+    const invStatus = (row.querySelector('td[data-status]') || {}).dataset?.status || '';
     return (!search || text.includes(search))
         && (!f1 || text.includes(f1))
         && (!f2 || text.includes(f2))
-        && (!f3 || text.includes(f3));
+        && (!f3 || text.includes(f3))
+        && (!f4 || invStatus === f4);
   });
 
   currentPage = 1;
@@ -728,10 +745,15 @@ function goToPage(page) {
 
 function clearFilter() {
   document.getElementById('searchInput').value = '';
-  document.getElementById('filterStatus').selectedIndex = 0;
-  document.getElementById('filterPIC').selectedIndex    = 0;
-  document.getElementById('filterPaket').selectedIndex  = 0;
+  document.getElementById('filterStatus').selectedIndex  = 0;
+  document.getElementById('filterInvoice').selectedIndex = 0;
+  document.getElementById('filterPIC').selectedIndex     = 0;
+  document.getElementById('filterPaket').selectedIndex   = 0;
   applyFilterAndPaginate();
+}
+
+function printInvoice(invNo) {
+  window.location.href = 'pp-invoice.html?inv=' + encodeURIComponent(invNo);
 }
 
 document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());

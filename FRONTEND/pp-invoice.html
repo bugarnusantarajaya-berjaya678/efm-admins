@@ -335,8 +335,8 @@
 
   <div class="content">
 
-    <!-- ===== LIST VIEW ===== -->
-    <div class="view active" id="listView">
+    <!-- LIST VIEW (hidden — management now in pp-orders) -->
+    <div class="view" id="listView" style="display:none">
       <div class="page-header">
         <div class="page-header-left">
           <h1>Invoice Private Training</h1>
@@ -461,11 +461,11 @@
       </div>
     </div>
 
-    <!-- ===== DETAIL VIEW ===== -->
-    <div class="view" id="detailView">
-      <button class="back-btn" onclick="showList()">
+    <!-- ===== DETAIL VIEW (default active) ===== -->
+    <div class="view active" id="detailView">
+      <button class="back-btn" onclick="window.location.href='pp-orders.html'">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        Kembali ke Daftar Invoice
+        Kembali ke Orders
       </button>
 
       <div class="detail-header">
@@ -675,7 +675,12 @@ const invoiceData = {
 
 function showDetail(invNo) {
   const d = invoiceData[invNo];
-  if (!d) return;
+  if (!d) {
+    // Show empty state
+    document.getElementById('detailTitle').textContent = 'Invoice tidak ditemukan';
+    document.getElementById('detailSubtitle').textContent = invNo || '—';
+    return;
+  }
 
   // Update detail view
   document.getElementById('detailTitle').textContent = 'Invoice #' + invNo;
@@ -723,9 +728,20 @@ function showDetail(invNo) {
 }
 
 function showList() {
-  document.getElementById('detailView').classList.remove('active');
-  document.getElementById('listView').classList.add('active');
+  window.location.href = 'pp-orders.html';
 }
+
+// Auto-load invoice from URL param: pp-invoice.html?inv=INV/EFM/PP/...
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(window.location.search);
+  const invNo = params.get('inv');
+  if (invNo) {
+    showDetail(invNo);
+  } else {
+    // Default: show first invoice
+    showDetail('INV/EFM/PP/2026/0089');
+  }
+});
 
 function openMarkPaid() { document.getElementById('markPaidModal').classList.add('show'); }
 function closeMarkPaid() { document.getElementById('markPaidModal').classList.remove('show'); }
@@ -789,7 +805,7 @@ function sendToWA() {
 
 
 <script>
-/* ─── FILTER + PAGINATION ENGINE ─── */
+/* Filter engine retained for future use but list view is hidden */
 const ROWS_PER_PAGE = 10;
 let currentPage  = 1;
 let filteredRows = [];
@@ -881,7 +897,7 @@ function clearFilter() {
   applyFilterAndPaginate();
 }
 
-document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
+// List pagination removed — page now auto-loads invoice from URL param
 </script>
 
 <script>
