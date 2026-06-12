@@ -446,12 +446,23 @@
         </div>
         <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSelect(this.files[0])"/>
         <div id="fileSelectedInfo" style="display:none"></div>
-        <div style="margin-top:16px;padding:12px 16px;background:#EBF5FB;border-radius:8px;border:1px solid #AED6F1;">
+
+        <!-- Row-start control + auto-detect result -->
+        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <label style="font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;">Mulai baca data dari baris ke:</label>
+          <input type="number" id="startRowInput" value="1" min="1" max="100"
+            style="width:64px;padding:6px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--text-dark);outline:none;"
+            oninput="onStartRowChange()" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray-border)'"/>
+          <span style="font-size:11px;color:var(--gray-text);">(ubah jika baris 1 bukan header — mis. laporan Google Ads)</span>
+        </div>
+        <div id="autoDetectHint" style="display:none;margin-top:8px;padding:8px 12px;background:#FEF9E7;border:1px solid #F9D86B;border-radius:8px;font-size:12px;color:#856404;"></div>
+
+        <div style="margin-top:14px;padding:12px 16px;background:#EBF5FB;border-radius:8px;border:1px solid #AED6F1;">
           <p style="font-size:12px;color:#2980B9;line-height:1.6;">
             <strong>Tips format file:</strong><br/>
-            • <strong>Google Form:</strong> Respons → Unduh sebagai CSV<br/>
-            • <strong>Google Ads / Meta Ads:</strong> Export laporan leads → CSV<br/>
-            • <strong>Landing Page:</strong> Export database kontak → CSV/XLSX<br/>
+            • <strong>Google Form:</strong> Respons → Unduh sebagai CSV (header biasanya baris 1)<br/>
+            • <strong>Google Ads / Meta Ads:</strong> Export leads → baris 1-2 sering berisi judul laporan, coba mulai dari baris 3<br/>
+            • <strong>Landing Page:</strong> Export kontak → CSV/XLSX<br/>
             • Kolom tidak perlu urut — Anda bisa petakan di langkah berikutnya.
           </p>
         </div>
@@ -549,6 +560,7 @@ function clearFilter() {
 let importCurrentStep = 1;
 let importParsedData  = [];   // array of row objects [{col:val,...},...]
 let importHeaders     = [];   // column names from file
+let importFirstRow    = {};   // first data row for preview
 
 /* ─── OPEN / CLOSE ─── */
 function openImportModal() {
@@ -562,14 +574,24 @@ function resetImportModal() {
   importCurrentStep = 1;
   importParsedData  = [];
   importHeaders     = [];
+  importFirstRow    = {};
   document.getElementById('importStep1').style.display  = 'block';
   document.getElementById('importStep2').style.display  = 'none';
   document.getElementById('importStep3').style.display  = 'none';
   document.getElementById('fileSelectedInfo').style.display = 'none';
+  document.getElementById('autoDetectHint').style.display   = 'none';
   document.getElementById('fileInput').value = '';
+  document.getElementById('startRowInput').value = '1';
   document.getElementById('importModalFooter').style.display = 'flex';
   setImportBtn(false, 'Lanjut →');
   setStepIndicators(1);
+}
+
+/* Called when user manually changes start-row input after a file is loaded */
+function onStartRowChange() {
+  if (importParsedData.length === 0) return; // no file loaded yet, nothing to re-parse
+  const fi = document.getElementById('fileInput');
+  if (fi.files && fi.files[0]) handleFileSelect(fi.files[0]);
 }
 
 /* ─── STEP INDICATOR HELPERS ─── */
@@ -647,27 +669,91 @@ function showFileSelectedInfo(name, sizeMB, type) {
 function removeSelectedFile() {
   document.getElementById('fileInput').value = '';
   document.getElementById('fileSelectedInfo').style.display = 'none';
+  document.getElementById('autoDetectHint').style.display = 'none';
   importParsedData = [];
   importHeaders    = [];
+  importFirstRow   = {};
   setImportBtn(false, 'Lanjut →');
 }
 
+/* ─── ROW-DENSITY HELPER ────────────────────────────────────────────
+ * Scans the first `scanLimit` rows of a 2-D array (array-of-arrays)
+ * and returns the 0-based index of the row with the most non-empty cells.
+ * That row is almost always the true header row.
+ * ─────────────────────────────────────────────────────────────────── */
+function detectHeaderRow(rawRows, scanLimit) {
+  const limit = Math.min(scanLimit || 20, rawRows.length);
+  let bestIdx = 0, bestCount = 0;
+  for (let i = 0; i < limit; i++) {
+    const count = rawRows[i].filter(c => c !== null && c !== undefined && c.toString().trim() !== '').length;
+    if (count > bestCount) { bestCount = count; bestIdx = i; }
+  }
+  return bestIdx;
+}
+
+function showAutoDetectHint(detected1Based, override1Based) {
+  const box = document.getElementById('autoDetectHint');
+  if (detected1Based !== override1Based) {
+    box.style.display = 'block';
+    box.innerHTML = `⚠️ <strong>Auto-detect:</strong> Header paling padat terdeteksi di baris <strong>${detected1Based}</strong>, bukan baris ${override1Based}. Pertimbangkan mengubah nilai "Mulai baca dari baris ke" jika kolom tidak sesuai.`;
+  } else {
+    box.style.display = 'none';
+  }
+}
+
+function getStartRow() {
+  const v = parseInt(document.getElementById('startRowInput').value, 10);
+  return (isNaN(v) || v < 1) ? 1 : v;
+}
+
+function applyParsedResult(headers, data) {
+  if (!headers.length || !data.length) {
+    alert('Tidak ada data yang dapat dibaca. Coba ubah "Mulai baca dari baris ke".');
+    return;
+  }
+  importHeaders    = headers;
+  importParsedData = data;
+  importFirstRow   = data[0] || {};
+  setImportBtn(true, 'Lanjut →');
+}
+
 function parseCSV(file) {
+  /* First pass: read everything as raw arrays to run density detection */
   Papa.parse(file, {
-    header: true,
-    skipEmptyLines: true,
-    complete: function(results) {
-      if (results.data.length === 0) {
-        alert('File CSV kosong atau tidak terbaca.');
+    header: false,
+    skipEmptyLines: false,
+    complete: function(raw) {
+      const allRows  = raw.data;
+      const startRow = getStartRow();                         // user override (1-based)
+      const detected = detectHeaderRow(allRows, 20) + 1;     // 1-based
+      showAutoDetectHint(detected, startRow);
+
+      const headerIdx = startRow - 1;                        // 0-based
+      if (headerIdx >= allRows.length) {
+        alert('Baris ke-' + startRow + ' tidak ditemukan. File hanya memiliki ' + allRows.length + ' baris.');
         return;
       }
-      importParsedData = results.data;
-      importHeaders    = results.meta.fields || [];
-      setImportBtn(true, 'Lanjut →');
+
+      const headers = allRows[headerIdx].map((h, i) =>
+        (h !== null && h !== undefined && h.toString().trim() !== '') ? h.toString().trim() : ('Kolom ' + (i + 1))
+      );
+
+      /* Second pass: parse from headerIdx onward with correct header */
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        beforeFirstChunk: function(chunk) {
+          /* Strip lines before the header row */
+          const lines = chunk.split('\n');
+          return lines.slice(headerIdx).join('\n');
+        },
+        complete: function(results) {
+          applyParsedResult(results.meta.fields || headers, results.data);
+        },
+        error: function(err) { alert('Gagal membaca CSV: ' + err.message); }
+      });
     },
-    error: function(err) {
-      alert('Gagal membaca CSV: ' + err.message);
-    }
+    error: function(err) { alert('Gagal membaca CSV: ' + err.message); }
   });
 }
 
@@ -675,16 +761,45 @@ function parseExcel(file) {
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const wb = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      if (json.length === 0) {
-        alert('Sheet pertama kosong atau tidak terbaca.');
+      const wb       = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
+      const ws       = wb.Sheets[wb.SheetNames[0]];
+
+      /* Read as array-of-arrays first for density detection */
+      const rawAoA   = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
+      const startRow = getStartRow();                        // 1-based (user)
+      const detected = detectHeaderRow(rawAoA, 20) + 1;     // 1-based
+      showAutoDetectHint(detected, startRow);
+
+      const headerIdx = startRow - 1;                       // 0-based
+      if (headerIdx >= rawAoA.length) {
+        alert('Baris ke-' + startRow + ' tidak ditemukan. Sheet hanya memiliki ' + rawAoA.length + ' baris.');
         return;
       }
-      importParsedData = json;
-      importHeaders    = Object.keys(json[0]);
-      setImportBtn(true, 'Lanjut →');
+
+      /* Build headers from chosen row; fallback to "Kolom N" for blanks */
+      const rawHeaders = rawAoA[headerIdx];
+      const headers    = rawHeaders.map((h, i) =>
+        (h !== null && h !== undefined && h.toString().trim() !== '') ? h.toString().trim() : ('Kolom ' + (i + 1))
+      );
+
+      /* Deduplicate: if two columns share the same name, append index */
+      const seen = {};
+      const dedupedHeaders = headers.map(h => {
+        if (seen[h] === undefined) { seen[h] = 0; return h; }
+        seen[h]++;
+        return h + '_' + seen[h];
+      });
+
+      /* Convert data rows (everything after headerIdx) to objects */
+      const dataRows = rawAoA.slice(headerIdx + 1)
+        .filter(row => row.some(c => c !== null && c !== undefined && c.toString().trim() !== ''))
+        .map(row => {
+          const obj = {};
+          dedupedHeaders.forEach((h, i) => { obj[h] = (row[i] !== undefined ? row[i].toString() : ''); });
+          return obj;
+        });
+
+      applyParsedResult(dedupedHeaders, dataRows);
     } catch(err) {
       alert('Gagal membaca Excel: ' + err.message);
     }
@@ -707,26 +822,31 @@ function goToMappingStep() {
   document.getElementById('importStep2').style.display = 'block';
   setStepIndicators(2);
 
-  // Fill mapping dropdowns with file column names
+  /* Build dropdown options: "Nama Kolom  —  Contoh: <nilai baris pertama>" */
   const selects = ['mapNama','mapNoHp','mapEmail','mapSumber','mapProgram','mapCatatan'];
   selects.forEach(id => {
     const sel = document.getElementById(id);
-    // keep first empty option
     while (sel.options.length > 1) sel.remove(1);
     importHeaders.forEach(col => {
-      const opt = document.createElement('option');
-      opt.value = col;
-      opt.textContent = col;
+      const opt       = document.createElement('option');
+      opt.value       = col;
+      const sample    = (importFirstRow[col] || '').toString().trim();
+      const preview   = sample.length > 30 ? sample.substring(0, 30) + '…' : sample;
+      opt.textContent = sample ? `${col}  —  contoh: ${preview}` : col;
       sel.appendChild(opt);
     });
   });
 
-  // Auto-detect common column name patterns
   autoDetectMapping();
 
-  // Update preview info
+  /* Preview bar: show detected row count + first-row sample values */
+  const samplePairs = importHeaders.slice(0, 5).map(h => {
+    const v = (importFirstRow[h] || '').toString().trim();
+    return v ? `<em>${h}</em>: "${v}"` : `<em>${h}</em>`;
+  }).join(' · ');
   document.getElementById('importPreviewInfo').innerHTML =
-    `<p>📄 File berisi <strong>${importParsedData.length} baris</strong> data dengan <strong>${importHeaders.length} kolom</strong>: ${importHeaders.map(h=>`<em>${h}</em>`).join(', ')}</p>`;
+    `<p>📄 <strong>${importParsedData.length} baris</strong> data · <strong>${importHeaders.length} kolom</strong> terdeteksi</p>
+     <p style="margin-top:6px;font-size:11px;color:var(--gray-text);">Baris pertama: ${samplePairs}${importHeaders.length > 5 ? ' · …' : ''}</p>`;
 
   setImportBtn(true, 'Import Sekarang →');
 }
