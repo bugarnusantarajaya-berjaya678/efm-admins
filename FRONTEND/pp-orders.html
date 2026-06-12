@@ -299,7 +299,7 @@
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
               <td>24 Okt 2026</td><td><span class="badge active">Aktif</span></td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openOrderDetail(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn invoice" title="Invoice" onclick="window.location.href='pp-invoice.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
@@ -310,7 +310,7 @@
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
               <td>22 Okt 2026</td><td><span class="badge completed">Selesai</span></td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openOrderDetail(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn invoice" title="Invoice" onclick="window.location.href='pp-invoice.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
@@ -321,7 +321,7 @@
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
               <td>18 Okt 2026</td><td><span class="badge active">Aktif</span></td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openOrderDetail(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn invoice" title="Invoice" onclick="window.location.href='pp-invoice.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
@@ -332,7 +332,7 @@
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
               <td>15 Okt 2026</td><td><span class="badge cancelled">Dibatalkan</span></td>
               <td>
-                <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                <button class="action-btn" title="Detail" onclick="openOrderDetail(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn invoice" title="Invoice" onclick="window.location.href='pp-invoice.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
               </td>
             </tr>
@@ -346,6 +346,55 @@
     </div>
   </div>
 </main>
+
+<!-- Modal: Order Detail -->
+<div class="modal-overlay" id="orderDetailModal">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <div><h3 id="odTitle">Detail Order</h3><p id="odSubtitle"></p></div>
+      <button class="modal-close" onclick="closeOrderDetail()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div style="padding:24px 28px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Nama Klien</div>
+          <div id="odKlien" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Order ID</div>
+          <div id="odId" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Paket</div>
+          <div id="odPaket" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">PIC / Pelatih</div>
+          <div id="odPIC" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Progress Sesi</div>
+          <div id="odProgress" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">Tanggal Mulai</div>
+          <div id="odTanggal" style="font-size:14px;font-weight:600;color:var(--navy)"></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--gray-bg);border-radius:10px">
+        <div style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:0.5px">Status</div>
+        <div id="odStatus"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeOrderDetail()">Tutup</button>
+      <button class="btn-primary" onclick="closeOrderDetail();window.location.href='pp-invoice.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        Lihat Invoice
+      </button>
+    </div>
+  </div>
+</div>
 
 <!-- Modal: Create Order (4 Steps) -->
 <div class="modal-overlay" id="modalOverlay">
@@ -415,6 +464,29 @@ function toggleMenu(e, subId, arrowId) {
   sub.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
+
+function openOrderDetail(btn) {
+  const tr = btn.closest('tr');
+  const cells = tr.querySelectorAll('td');
+  const id       = cells[0].textContent.trim();
+  const klien    = cells[1].textContent.trim();
+  const paket    = cells[2].textContent.trim();
+  const pic      = cells[3].textContent.trim();
+  const progress = cells[4].querySelector('.session-text') ? cells[4].querySelector('.session-text').textContent.trim() : cells[4].textContent.trim();
+  const tanggal  = cells[5].textContent.trim();
+  const badgeEl  = cells[6].querySelector('.badge');
+  document.getElementById('odTitle').textContent = 'Detail Order ' + id;
+  document.getElementById('odSubtitle').textContent = klien;
+  document.getElementById('odId').textContent = id;
+  document.getElementById('odKlien').textContent = klien;
+  document.getElementById('odPaket').textContent = paket;
+  document.getElementById('odPIC').textContent = pic;
+  document.getElementById('odProgress').textContent = progress;
+  document.getElementById('odTanggal').textContent = tanggal;
+  document.getElementById('odStatus').innerHTML = badgeEl ? badgeEl.outerHTML : '';
+  document.getElementById('orderDetailModal').classList.add('show');
+}
+function closeOrderDetail() { document.getElementById('orderDetailModal').classList.remove('show'); }
 
 function openModal() { currentStep=1; updateStepUI(); document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
