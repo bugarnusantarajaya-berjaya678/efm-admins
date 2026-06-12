@@ -543,20 +543,20 @@
               <tr>
                 <td>
                   <div class="item-name" id="invPackage">12 Sesi - Pro Package</div>
-                  <div class="item-desc">Private 1-on-1 Strength & Conditioning. Valid 60 hari.</div>
+                  <div class="item-desc" id="invPIC">Private Training · PIC: Sarah Jenkins</div>
                 </td>
                 <td class="center" id="invSesi">12</td>
-                <td class="right">Rp 125.000</td>
+                <td class="right" id="invRateSesi">Rp 125.000</td>
                 <td class="right" style="font-weight:600" id="invSubtotal">Rp 1.500.000</td>
               </tr>
-              <tr>
+              <tr id="invBiayaLainRow" style="display:none">
                 <td>
-                  <div class="item-name">Biaya Transportasi PIC</div>
-                  <div class="item-desc" id="invPIC">PIC: Sarah Jenkins</div>
+                  <div class="item-name">Biaya Lain</div>
+                  <div class="item-desc" id="invBiayaLainKet"></div>
                 </td>
-                <td class="center">-</td>
-                <td class="right">Rp 0</td>
-                <td class="right" style="font-weight:600">Rp 0</td>
+                <td class="center">—</td>
+                <td class="right">—</td>
+                <td class="right" style="font-weight:600" id="invBiayaLainAmt">Rp 0</td>
               </tr>
             </tbody>
           </table>
@@ -565,7 +565,8 @@
           <div class="summary-wrap">
             <div class="summary-box">
               <div class="summary-row"><span class="lbl">Subtotal</span><span class="val" id="invTotal">Rp 1.500.000</span></div>
-              <div class="summary-row discount"><span class="lbl">Diskon</span><span class="val">- Rp 0</span></div>
+              <div class="summary-row discount" id="invDiskonRow" style="display:none"><span class="lbl">Diskon <span id="invPromoTag" style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px;font-weight:700"></span></span><span class="val" id="invDiskonVal" style="color:#27AE60">- Rp 0</span></div>
+              <div class="summary-row" id="invPajakRow" style="display:none"><span class="lbl">Pajak</span><span class="val" id="invPajakVal">Rp 0</span></div>
               <div class="summary-divider"></div>
               <div class="total-row"><span>Total Tagihan</span><span class="val" id="invGrandTotal">Rp 1.500.000</span></div>
             </div>
@@ -655,13 +656,45 @@ function toggleMenu(e,s,a){
   if(arrow)arrow.style.transform=isOpen?'':'rotate(180deg)';
 }
 
+function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
 // Invoice data mapping
 const invoiceData = {
-  'INV/EFM/PP/2026/0089': { client:'Alex Mercer', initials:'AM', color:'#2980B9', package:'12 Sesi - Pro Package', sesi:'12', pic:'PIC: Sarah Jenkins', subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'10 Jun 2026', due:'24 Jun 2026', status:'paid', orderId:'#PP-8042' },
-  'INV/EFM/PP/2026/0088': { client:'Robert Taylor', initials:'RT', color:'#E05945', package:'24 Sesi - Elite Package', sesi:'24', pic:'PIC: Elena Rodriguez', subtotal:'Rp 2.800.000', total:'Rp 2.800.000', date:'8 Jun 2026', due:'22 Jun 2026', status:'pending', orderId:'#PP-8038' },
-  'INV/EFM/PP/2026/0087': { client:'Emily Chen', initials:'EC', color:'#27AE60', package:'4 Sesi - Starter Package', sesi:'4', pic:'PIC: Marcus Chen', subtotal:'Rp 600.000', total:'Rp 600.000', date:'5 Jun 2026', due:'19 Jun 2026', status:'paid', orderId:'#PP-8041' },
-  'INV/EFM/PP/2026/0085': { client:'James Wilson', initials:'JW', color:'#8E44AD', package:'8 Sesi - Base Package', sesi:'8', pic:'PIC: Sarah Jenkins', subtotal:'Rp 1.100.000', total:'Rp 1.100.000', date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue', orderId:'#PP-8035' },
-  'INV/EFM/PP/2026/0084': { client:'Anita Kumar', initials:'AK', color:'#F39C12', package:'12 Sesi - Pro Package', sesi:'12', pic:'PIC: David Kim', subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'28 Mei 2026', due:'11 Jun 2026', status:'paid', orderId:'#PP-8033' },
+  'INV/EFM/PP/2026/0089': {
+    client:'Alex Mercer', initials:'AM', color:'#2980B9', orderId:'#PP-8042',
+    date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
+    namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
+    picFull:'Sarah Jenkins', hargaPaket:1500000,
+    biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, total:1550000,
+  },
+  'INV/EFM/PP/2026/0088': {
+    client:'Robert Taylor', initials:'RT', color:'#E05945', orderId:'#PP-8038',
+    date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
+    namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari',
+    picFull:'Elena Rodriguez', hargaPaket:2800000,
+    biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, total:2520000,
+  },
+  'INV/EFM/PP/2026/0087': {
+    client:'Emily Chen', initials:'EC', color:'#27AE60', orderId:'#PP-8041',
+    date:'5 Jun 2026', due:'19 Jun 2026', status:'paid',
+    namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari',
+    picFull:'Marcus Chen', hargaPaket:600000,
+    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, total:600000,
+  },
+  'INV/EFM/PP/2026/0085': {
+    client:'James Wilson', initials:'JW', color:'#8E44AD', orderId:'#PP-8035',
+    date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
+    namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari',
+    picFull:'Sarah Jenkins', hargaPaket:1100000,
+    biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, total:1175000,
+  },
+  'INV/EFM/PP/2026/0084': {
+    client:'Anita Kumar', initials:'AK', color:'#F39C12', orderId:'#PP-8033',
+    date:'28 Mei 2026', due:'11 Jun 2026', status:'paid',
+    namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
+    picFull:'David Kim', hargaPaket:1500000,
+    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, total:1500000,
+  },
 };
 
 // Track where the user came from so the back button knows where to go
@@ -678,17 +711,44 @@ function showDetail(invNo) {
   }
 
   document.getElementById('detailTitle').textContent = 'Invoice #' + invNo;
-  document.getElementById('detailSubtitle').textContent = 'Private Training — ' + d.client;
+  document.getElementById('detailSubtitle').textContent = (d.namaLatihan||'Private Training') + ' — ' + d.client;
   document.getElementById('invNumber').textContent = invNo;
   document.getElementById('invClientName').textContent = d.client;
   document.getElementById('invClientDetail').innerHTML = 'Order ID: ' + d.orderId + '<br/>email@example.com<br/>+62 812-xxxx-xxxx';
   document.getElementById('invOrderId').textContent = 'Order: ' + d.orderId;
-  document.getElementById('invPackage').textContent = d.package;
+  document.getElementById('invPackage').textContent = d.namaPaket || d.package || '—';
   document.getElementById('invSesi').textContent = d.sesi;
-  document.getElementById('invPIC').textContent = d.pic;
-  document.getElementById('invSubtotal').textContent = d.subtotal;
-  document.getElementById('invTotal').textContent = d.subtotal;
-  document.getElementById('invGrandTotal').textContent = d.total;
+  document.getElementById('invPIC').textContent = (d.namaLatihan||'Private Training') + ' · PIC: ' + (d.picFull || d.pic || '—');
+
+  // Rate per sesi
+  const rateSesi = d.sesi ? Math.round(d.hargaPaket / d.sesi) : 0;
+  document.getElementById('invRateSesi').textContent = fmtRp(rateSesi);
+  document.getElementById('invSubtotal').textContent = fmtRp(d.hargaPaket);
+
+  // Biaya Lain row
+  const biayaLain = d.biayaLain || 0;
+  const blRow = document.getElementById('invBiayaLainRow');
+  blRow.style.display = biayaLain > 0 ? '' : 'none';
+  document.getElementById('invBiayaLainKet').textContent = d.biayaLainKet || '';
+  document.getElementById('invBiayaLainAmt').textContent = fmtRp(biayaLain);
+
+  // Subtotal (paket + biayaLain)
+  document.getElementById('invTotal').textContent = fmtRp(d.hargaPaket + biayaLain);
+
+  // Diskon
+  const diskon = d.diskon || 0;
+  const diskonRow = document.getElementById('invDiskonRow');
+  diskonRow.style.display = diskon > 0 ? '' : 'none';
+  document.getElementById('invPromoTag').textContent = d.promoKode || '';
+  document.getElementById('invDiskonVal').textContent = '- ' + fmtRp(diskon);
+
+  // Pajak
+  const pajak = d.pajak || 0;
+  const pajakRow = document.getElementById('invPajakRow');
+  pajakRow.style.display = pajak > 0 ? '' : 'none';
+  document.getElementById('invPajakVal').textContent = fmtRp(pajak);
+
+  document.getElementById('invGrandTotal').textContent = fmtRp(d.total);
   document.getElementById('invDate').textContent = d.date;
   document.getElementById('invDueDate').textContent = d.due;
 

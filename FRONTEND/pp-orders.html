@@ -680,28 +680,19 @@
             <div style="font-size:16px;font-weight:700;color:var(--navy)" id="biaya_paket_disp">Rp 0</div>
           </div>
 
-          <!-- Biaya Transportasi -->
-          <div>
-            <label class="form-group" style="margin:0">
-              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Biaya Transportasi PIC</div>
-              <input type="number" class="form-control" id="inp_transport" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
-            </label>
-          </div>
-
-          <!-- Biaya Tambahan -->
-          <div>
-            <label class="form-group" style="margin:0">
-              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Biaya Lain-lain</div>
-              <input type="number" class="form-control" id="inp_extra" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
-            </label>
-          </div>
-
-          <!-- Keterangan Biaya Tambahan -->
-          <div style="grid-column:1/-1">
-            <label class="form-group" style="margin:0">
-              <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px">Keterangan Biaya Lain-lain</div>
-              <input type="text" class="form-control" id="inp_extra_ket" placeholder="Contoh: Biaya peralatan khusus, suplemen, dll."/>
-            </label>
+          <!-- Biaya Lain -->
+          <div style="grid-column:1/-1;background:#F8F9FA;border:1.5px solid var(--gray-border);border-radius:10px;padding:14px 16px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">➕ Biaya Lain</div>
+            <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;align-items:end">
+              <div class="form-group" style="margin:0">
+                <label>Nominal (Rp)</label>
+                <input type="number" class="form-control" id="inp_extra" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>Keterangan</label>
+                <input type="text" class="form-control" id="inp_extra_ket" placeholder="Contoh: Biaya peralatan, suplemen, dll."/>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -765,8 +756,7 @@
           <div style="background:var(--navy);padding:10px 16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px">Draft Kalkulasi Invoice</div>
           <div style="padding:12px 16px">
             <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)"><span style="color:var(--gray-text)">Harga Paket</span><span id="calc_paket">Rp 0</span></div>
-            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)"><span style="color:var(--gray-text)">Biaya Transportasi</span><span id="calc_transport">Rp 0</span></div>
-            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_extra_row"><span style="color:var(--gray-text)" id="calc_extra_lbl">Biaya Lain-lain</span><span id="calc_extra">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_extra_row" style="display:none"><span style="color:var(--gray-text)" id="calc_extra_lbl">Biaya Lain</span><span id="calc_extra">Rp 0</span></div>
             <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border);color:var(--green)" id="calc_diskon_row" style="display:none"><span>Diskon / Promo</span><span id="calc_diskon">- Rp 0</span></div>
             <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_tax_row" style="display:none"><span style="color:var(--gray-text)">Pajak</span><span id="calc_tax">Rp 0</span></div>
             <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:15px;font-weight:700;color:var(--navy);border-top:2px solid var(--navy);margin-top:4px"><span>Total Tagihan</span><span style="color:var(--orange)" id="calc_total">Rp 0</span></div>
@@ -792,8 +782,7 @@
         <div class="review-section">
           <h4>🧾 Draft Invoice</h4>
           <div class="review-row"><span class="label">Harga Paket</span><span class="value" id="rev_harga">Rp 0</span></div>
-          <div class="review-row" id="rev_transport_row"><span class="label">Transportasi</span><span class="value" id="rev_transport">Rp 0</span></div>
-          <div class="review-row" id="rev_extra_row"><span class="label" id="rev_extra_lbl">Biaya Lain</span><span class="value" id="rev_extra">Rp 0</span></div>
+          <div class="review-row" id="rev_extra_row" style="display:none"><span class="label" id="rev_extra_lbl">Biaya Lain</span><span class="value" id="rev_extra">Rp 0</span></div>
           <div class="review-row" id="rev_promo_row" style="color:var(--green)"><span class="label">Promo</span><span class="value" id="rev_promo">—</span></div>
           <div class="review-row" id="rev_referral_row"><span class="label">Kode Referral</span><span class="value" id="rev_referral">—</span></div>
           <div class="review-row" id="rev_tax_row"><span class="label">Pajak</span><span class="value" id="rev_tax">Rp 0</span></div>
@@ -832,9 +821,8 @@ function fmtRp(n) {
 
 function recalcTotal() {
   const base      = _selectedPackage.price || 0;
-  const transport = parseInt(document.getElementById('inp_transport').value) || 0;
   const extra     = parseInt(document.getElementById('inp_extra').value) || 0;
-  const extraKet  = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain-lain';
+  const extraKet  = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain';
   const promoType = document.getElementById('inp_promo_type').value;
   const promoVal  = parseFloat(document.getElementById('inp_promo_val').value) || 0;
   const ppn       = document.getElementById('chk_ppn').checked;
@@ -842,7 +830,7 @@ function recalcTotal() {
   const taxCustom = document.getElementById('chk_tax_custom').checked;
   const taxPct    = taxCustom ? (parseFloat(document.getElementById('inp_tax_custom').value) || 0) : 0;
 
-  let subtotal = base + transport + extra;
+  let subtotal = base + extra;
 
   // Diskon
   let diskon = 0;
@@ -859,9 +847,11 @@ function recalcTotal() {
   const grandTotal = subtotal + taxTotal;
 
   // Update kalkulasi di step 4
-  document.getElementById('calc_paket').textContent     = fmtRp(base);
-  document.getElementById('calc_transport').textContent = fmtRp(transport);
-  document.getElementById('calc_extra_lbl').textContent = extraKet || 'Biaya Lain-lain';
+  document.getElementById('calc_paket').textContent = fmtRp(base);
+
+  const extraRow = document.getElementById('calc_extra_row');
+  extraRow.style.display = extra > 0 ? 'flex' : 'none';
+  document.getElementById('calc_extra_lbl').textContent = extraKet || 'Biaya Lain';
   document.getElementById('calc_extra').textContent     = fmtRp(extra);
 
   const diskonRow = document.getElementById('calc_diskon_row');
@@ -875,7 +865,7 @@ function recalcTotal() {
   document.getElementById('calc_total').textContent = fmtRp(grandTotal);
 
   // Simpan untuk review
-  window._calc = { base, transport, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal };
+  window._calc = { base, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal };
 }
 
 // Demo kode promo (frontend only)
@@ -932,9 +922,11 @@ function fillReview() {
   const jadwalStr = jadwals.length ? jadwals.join(' · ') : '—';
   document.getElementById('rev_jadwal').textContent = tglMulai ? `${jadwalStr} (mulai ${tglMulai})` : jadwalStr;
   document.getElementById('rev_harga').textContent   = fmtRp(c.base   || _selectedPackage.price);
-  document.getElementById('rev_transport').textContent = fmtRp(c.transport || 0);
-  document.getElementById('rev_extra').textContent   = fmtRp(c.extra  || 0);
-  document.getElementById('rev_extra_lbl').textContent = c.extraKet   || 'Biaya Lain-lain';
+  const extraReview = c.extra || 0;
+  const extraRow = document.getElementById('rev_extra_row');
+  extraRow.style.display = extraReview > 0 ? 'flex' : 'none';
+  document.getElementById('rev_extra').textContent   = fmtRp(extraReview);
+  document.getElementById('rev_extra_lbl').textContent = c.extraKet   || 'Biaya Lain';
 
   const promoRow = document.getElementById('rev_promo_row');
   const diskon = c.diskon || 0;
@@ -1101,7 +1093,7 @@ const invoiceData = {
     // lokasi & jadwal
     lokasi:'Apartemen Sudirman Park', jadwal:'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
     // keuangan
-    hargaPaket:1500000, transport:50000, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:1500000, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0,
     total:1550000,
   },
   'INV/EFM/PP/2026/0088': {
@@ -1110,7 +1102,7 @@ const invoiceData = {
     programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari', partisipan:1,
     picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
     lokasi:'Rumah Klien — Bintaro Sektor 9', jadwal:'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
-    hargaPaket:2800000, transport:100000, extra:0, extraKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0,
+    hargaPaket:2800000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0,
     total:2620000,
   },
   'INV/EFM/PP/2026/0087': {
@@ -1119,7 +1111,7 @@ const invoiceData = {
     programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
     picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
     lokasi:'Gym Senayan City Lt.3', jadwal:'Selasa 18:00 · Kamis 18:00',
-    hargaPaket:600000, transport:0, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:600000, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
     total:600000,
   },
   'INV/EFM/PP/2026/0085': {
@@ -1128,7 +1120,7 @@ const invoiceData = {
     programId:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari', partisipan:1,
     picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
     lokasi:'Cilandak Town Square', jadwal:'Rabu 07:30 · Sabtu 08:00',
-    hargaPaket:1100000, transport:75000, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:1100000, biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0,
     total:1175000,
   },
 };
@@ -1289,16 +1281,13 @@ function renderInvoiceTab() {
   };
 
   // compute rows
-  const transport = d.transport || 0;
-  const extra     = d.extra || 0;
+  const biayaLain = d.biayaLain || 0;
   const diskon    = d.diskon || 0;
   const cashback  = d.cashback || 0;
   const pajak     = d.pajak || 0;
 
-  const transportRow = transport > 0
-    ? `<tr><td>Biaya Transportasi PIC</td><td class="r">—</td><td class="r">${fmtRp(transport)}</td></tr>` : '';
-  const extraRow = extra > 0
-    ? `<tr><td>Biaya Tambahan<div style="font-size:11px;color:var(--gray-text)">${d.extraKet||''}</div></td><td class="r">—</td><td class="r">${fmtRp(extra)}</td></tr>` : '';
+  const extraRow = biayaLain > 0
+    ? `<tr><td>Biaya Lain<div style="font-size:11px;color:var(--gray-text)">${d.biayaLainKet||''}</div></td><td class="r">—</td><td class="r">${fmtRp(biayaLain)}</td></tr>` : '';
   const diskonRow = diskon > 0
     ? `<tr><td style="color:#27AE60">Diskon Promo <span style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px">${d.promoKode||''}</span></td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(diskon)}</td></tr>` : '';
   const cashbackRow = cashback > 0
@@ -1389,7 +1378,7 @@ function renderInvoiceTab() {
             <td class="r">${d.sesi}</td>
             <td class="r" style="font-weight:600">${fmtRp(d.hargaPaket)}</td>
           </tr>
-          ${transportRow}${extraRow}${diskonRow}${cashbackRow}${pajakRow}
+          ${extraRow}${diskonRow}${cashbackRow}${pajakRow}
         </tbody>
       </table>
     </div>
