@@ -262,7 +262,7 @@
       <div class="form-row3" style="margin-bottom:14px">
         <div class="form-group" style="margin:0">
           <label>Jumlah Sesi <span>*</span></label>
-          <input type="number" class="form-control" id="f_sesi" placeholder="12" min="1"/>
+          <input type="number" class="form-control" id="f_sesi" placeholder="12" min="1" oninput="autoCalcHarga()"/>
         </div>
         <div class="form-group" style="margin:0">
           <label>Pertemuan / Minggu <span>*</span></label>
@@ -307,9 +307,20 @@
       </div>
 
       <div class="section-label" style="margin-top:6px">Harga</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Harga Persesi (Rp) <span>*</span></label>
+          <input type="number" class="form-control" id="f_harga_persesi" placeholder="125000" min="0" oninput="autoCalcHarga()"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Diskon Paket (Rp)</label>
+          <input type="number" class="form-control" id="f_diskon_paket" placeholder="0" min="0" value="0" oninput="autoCalcHarga()"/>
+        </div>
+      </div>
       <div class="form-group">
-        <label>Harga Paket (Rp) <span>*</span></label>
-        <input type="number" class="form-control" id="f_harga" placeholder="1500000" min="0"/>
+        <label>Harga Paket / Total (Rp) <span>*</span></label>
+        <input type="number" class="form-control" id="f_harga" placeholder="1500000" min="0" readonly style="background:#f8f9fa;color:var(--gray-text)"/>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Auto-hitung: (Harga Persesi × Jumlah Sesi) − Diskon Paket</div>
       </div>
     </div>
     <div class="modal-footer">
@@ -339,12 +350,12 @@ const PIC_DB = {
 
 // Data program (localStorage persisted)
 let programs = JSON.parse(localStorage.getItem('efm_programs') || 'null') || [
-  { id:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  sesi:4,  pertemuan:2, partisipan:1, masa:'30 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:600000,  status:'aktif' },
-  { id:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     sesi:8,  pertemuan:2, partisipan:1, masa:'45 hari', picId:'EFM-PIC-002', biayaSesiPIC:75000, harga:1100000, status:'aktif' },
-  { id:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:1500000, status:'aktif' },
-  { id:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   sesi:24, pertemuan:5, partisipan:1, masa:'90 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:2800000, status:'aktif' },
-  { id:'PRG-TH-001', namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',  sesi:8,  pertemuan:2, partisipan:2, masa:'45 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:900000,  status:'aktif' },
-  { id:'PRG-TH-002', namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab', sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-004', biayaSesiPIC:80000, harga:1800000, status:'aktif' },
+  { id:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  sesi:4,  pertemuan:2, partisipan:1, masa:'30 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:600000,  hargaPersesi:150000, diskonPaket:0,      status:'aktif' },
+  { id:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     sesi:8,  pertemuan:2, partisipan:1, masa:'45 hari', picId:'EFM-PIC-002', biayaSesiPIC:75000, harga:1100000, hargaPersesi:137500, diskonPaket:0,      status:'aktif' },
+  { id:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-001', biayaSesiPIC:75000, harga:1500000, hargaPersesi:125000, diskonPaket:0,      status:'aktif' },
+  { id:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   sesi:24, pertemuan:5, partisipan:1, masa:'90 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:2800000, hargaPersesi:125000, diskonPaket:200000, status:'aktif' },
+  { id:'PRG-TH-001', namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',  sesi:8,  pertemuan:2, partisipan:2, masa:'45 hari', picId:'EFM-PIC-003', biayaSesiPIC:70000, harga:900000,  hargaPersesi:112500, diskonPaket:0,      status:'aktif' },
+  { id:'PRG-TH-002', namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab', sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-004', biayaSesiPIC:80000, harga:1800000, hargaPersesi:150000, diskonPaket:0,      status:'aktif' },
 ];
 
 function fmtRp(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
@@ -392,7 +403,7 @@ let _editIdx = -1;
 function openAddModal() {
   _editIdx = -1;
   document.getElementById('modalTitle').textContent = 'Tambah Program Baru';
-  ['f_id','f_nama_latihan','f_nama_paket','f_masa','f_biaya_sesi','f_harga'].forEach(id => document.getElementById(id).value = '');
+  ['f_id','f_nama_latihan','f_nama_paket','f_masa','f_biaya_sesi','f_harga','f_harga_persesi','f_diskon_paket'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('f_sesi').value = '';
   document.getElementById('f_pertemuan').value = '';
   document.getElementById('f_partisipan').value = '1';
@@ -416,6 +427,8 @@ function openEditModal(idx) {
   document.getElementById('f_pic').value          = p.picId;
   document.getElementById('f_biaya_sesi').value   = p.biayaSesiPIC;
   document.getElementById('f_harga').value        = p.harga;
+  document.getElementById('f_harga_persesi').value = p.hargaPersesi || 0;
+  document.getElementById('f_diskon_paket').value  = p.diskonPaket  || 0;
   document.getElementById('f_status').value       = p.status;
   onModalPICChange();
   document.getElementById('modalOverlay').classList.add('show');
@@ -437,6 +450,13 @@ function onModalPICChange() {
   box.style.display = 'block';
 }
 
+function autoCalcHarga() {
+  const sesi = parseInt(document.getElementById('f_sesi').value) || 0;
+  const rate = parseInt(document.getElementById('f_harga_persesi').value) || 0;
+  const disc = parseInt(document.getElementById('f_diskon_paket').value) || 0;
+  document.getElementById('f_harga').value = Math.max(0, sesi * rate - disc);
+}
+
 function saveProgram() {
   const id = document.getElementById('f_id').value.trim().toUpperCase();
   if (!id || !document.getElementById('f_nama_latihan').value || !document.getElementById('f_pic').value) {
@@ -454,6 +474,8 @@ function saveProgram() {
     picId:        document.getElementById('f_pic').value,
     biayaSesiPIC: parseInt(document.getElementById('f_biaya_sesi').value) || 0,
     harga:        parseInt(document.getElementById('f_harga').value) || 0,
+    hargaPersesi: parseInt(document.getElementById('f_harga_persesi').value) || 0,
+    diskonPaket:  parseInt(document.getElementById('f_diskon_paket').value) || 0,
     status:       document.getElementById('f_status').value,
   };
   if (_editIdx >= 0) {

@@ -992,7 +992,7 @@ function toggleSama() {
 }
 
 // Paket yang dipilih
-let _selectedPackage = { price: 600000, label: '4 Sesi - Starter', sesi: '4' };
+let _selectedPackage = { price:600000, label:'4 Sesi - Starter', sesi:'4', hargaPersesi:150000, diskonPaket:0 };
 
 function selectPackage(card, price, label, sesi) {
   document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
@@ -1018,24 +1018,28 @@ function promoLabel(type, val, kode) {
 }
 
 function recalcTotal() {
-  const base      = _selectedPackage.price || 0;
-  const extra     = parseInt(document.getElementById('inp_extra').value) || 0;
-  const extraKet  = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain';
-  const promoType = document.getElementById('inp_promo_type').value;
-  const promoVal  = parseFloat(document.getElementById('inp_promo_val').value) || 0;
+  const hargaPersesi = _selectedPackage.hargaPersesi || 0;
+  const sesiCount    = parseInt(_selectedPackage.sesi) || 0;
+  const hargaKotor   = hargaPersesi * sesiCount;
+  const diskonPaket  = _selectedPackage.diskonPaket || 0;
+  const base         = hargaKotor - diskonPaket;  // = net package price
+  const extra        = parseInt(document.getElementById('inp_extra').value) || 0;
+  const extraKet     = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain';
+  const promoType    = document.getElementById('inp_promo_type').value;
+  const promoVal     = parseFloat(document.getElementById('inp_promo_val').value) || 0;
   const ppn       = document.getElementById('chk_ppn').checked;
   const pph       = document.getElementById('chk_pph').checked;
   const taxCustom = document.getElementById('chk_tax_custom').checked;
   const taxPct    = taxCustom ? (parseFloat(document.getElementById('inp_tax_custom').value) || 0) : 0;
 
-  let subtotal = base + extra;
+  let subtotal = base + extra;  // subtotal = net package + biaya lain
 
-  // Diskon
+  // Promo diskon — only monetary types affect price
   let diskon = 0;
-  if (promoType === 'diskon_persen') diskon = Math.round(subtotal * promoVal / 100);
+  if (promoType === 'diskon_persen')  diskon = Math.round((base + extra) * promoVal / 100);
   else if (promoType === 'diskon_nominal') diskon = promoVal;
-  else if (promoType === 'cashback') diskon = promoVal; // cashback reduces invoice total
-  // free_session / free_treatment / free_training → diskon stays 0
+  else if (promoType === 'cashback')  diskon = promoVal;
+  // free_session / free_treatment / free_training → diskon = 0, no price effect
   subtotal -= diskon;
 
   // Pajak
@@ -1065,7 +1069,7 @@ function recalcTotal() {
   document.getElementById('calc_total').textContent = fmtRp(grandTotal);
 
   // Simpan untuk review
-  window._calc = { base, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal };
+  window._calc = { base, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal, hargaKotor, diskonPaket, hargaPersesi, sesiCount };
 }
 
 // Demo kode promo (frontend only)
@@ -1163,12 +1167,12 @@ const PIC_DB = {
 
 // ─── DATABASE PROGRAM (disinkron dengan pp-program-db) ───
 const PROGRAM_DB = {
-  'PRG-PP-001': { namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  partisipan:1, sesi:4,  pertemuan:2, masa:'30 hari',  harga:600000,  picId:'EFM-PIC-001', biayaSesiPIC:75000 },
-  'PRG-PP-002': { namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     partisipan:1, sesi:8,  pertemuan:2, masa:'45 hari',  harga:1100000, picId:'EFM-PIC-002', biayaSesiPIC:75000 },
-  'PRG-PP-003': { namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1500000, picId:'EFM-PIC-001', biayaSesiPIC:75000 },
-  'PRG-PP-004': { namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   partisipan:1, sesi:24, pertemuan:5, masa:'90 hari',  harga:2800000, picId:'EFM-PIC-003', biayaSesiPIC:70000 },
-  'PRG-TH-001': { namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',   partisipan:2, sesi:8,  pertemuan:2, masa:'45 hari',  harga:900000,  picId:'EFM-PIC-003', biayaSesiPIC:70000 },
-  'PRG-TH-002': { namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab',  partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1800000, picId:'EFM-PIC-004', biayaSesiPIC:80000 },
+  'PRG-PP-001': { namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  partisipan:1, sesi:4,  pertemuan:2, masa:'30 hari',  harga:600000,  hargaPersesi:150000, diskonPaket:0,      picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-002': { namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     partisipan:1, sesi:8,  pertemuan:2, masa:'45 hari',  harga:1100000, hargaPersesi:137500, diskonPaket:0,      picId:'EFM-PIC-002', biayaSesiPIC:75000 },
+  'PRG-PP-003': { namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1500000, hargaPersesi:125000, diskonPaket:0,      picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-004': { namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   partisipan:1, sesi:24, pertemuan:5, masa:'90 hari',  harga:2800000, hargaPersesi:125000, diskonPaket:200000, picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-001': { namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',   partisipan:2, sesi:8,  pertemuan:2, masa:'45 hari',  harga:900000,  hargaPersesi:112500, diskonPaket:0,      picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-002': { namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab',  partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1800000, hargaPersesi:150000, diskonPaket:0,      picId:'EFM-PIC-004', biayaSesiPIC:80000 },
 };
 
 function populateProgramDropdown() {
@@ -1213,7 +1217,7 @@ function onProgramChange() {
   emp.style.display = 'none';
 
   // Simpan ke _selectedPackage untuk kalkulasi
-  _selectedPackage = { price: p.harga, label: `${p.namaPaket} (${p.namaLatihan})`, sesi: String(p.sesi) };
+  _selectedPackage = { price: p.harga, label: `${p.namaPaket} (${p.namaLatihan})`, sesi: String(p.sesi), hargaPersesi: p.hargaPersesi || Math.round(p.harga / p.sesi), diskonPaket: p.diskonPaket || 0 };
 
   // Sync ke step 3 konfirmasi PIC
   document.getElementById('s3_pic_id').textContent   = p.picId;
@@ -1300,7 +1304,7 @@ const invoiceData = {
     // lokasi & jadwal
     lokasi:'Apartemen Sudirman Park', jadwal:'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
     // keuangan
-    hargaPaket:1500000, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
     total:1550000,
   },
   'INV/EFM/PP/2026/0088': {
@@ -1309,7 +1313,7 @@ const invoiceData = {
     programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari', partisipan:1,
     picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
     lokasi:'Rumah Klien — Bintaro Sektor 9', jadwal:'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
-    hargaPaket:2800000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10,
+    hargaPaket:2800000, hargaPersesi:125000, diskonPaket:200000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10,
     total:2620000,
   },
   'INV/EFM/PP/2026/0087': {
@@ -1318,7 +1322,7 @@ const invoiceData = {
     programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
     picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
     lokasi:'Gym Senayan City Lt.3', jadwal:'Selasa 18:00 · Kamis 18:00',
-    hargaPaket:600000, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    hargaPaket:600000, hargaPersesi:150000, diskonPaket:0, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
     total:600000,
   },
   'INV/EFM/PP/2026/0085': {
