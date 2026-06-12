@@ -1092,10 +1092,45 @@ function toggleMenu(e, subId, arrowId) {
 
 /* ─── INVOICE DATA (mirrored from pp-invoice) ─── */
 const invoiceData = {
-  'INV/EFM/PP/2026/0089': { client:'Alex Mercer',   pkg:'12 Sesi - Pro Package',    sesi:'12', pic:'Sarah Jenkins',   subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',    orderId:'#PP-8042' },
-  'INV/EFM/PP/2026/0088': { client:'Robert Taylor', pkg:'24 Sesi - Elite Package',  sesi:'24', pic:'Elena Rodriguez', subtotal:'Rp 2.800.000', total:'Rp 2.800.000', date:'8 Jun 2026',  due:'22 Jun 2026', status:'pending', orderId:'#PP-8038' },
-  'INV/EFM/PP/2026/0087': { client:'Emily Chen',    pkg:'4 Sesi - Starter Package', sesi:'4',  pic:'Marcus Chen',    subtotal:'Rp 600.000',   total:'Rp 600.000',   date:'5 Jun 2026',  due:'19 Jun 2026', status:'paid',    orderId:'#PP-8041' },
-  'INV/EFM/PP/2026/0085': { client:'James Wilson',  pkg:'8 Sesi - Base Package',    sesi:'8',  pic:'Sarah Jenkins',  subtotal:'Rp 1.100.000', total:'Rp 1.100.000', date:'1 Jun 2026',  due:'15 Jun 2026', status:'overdue', orderId:'#PP-8035' },
+  'INV/EFM/PP/2026/0089': {
+    client:'Alex Mercer', hp:'+62 812-3333-0001', email:'alex@example.com',
+    orderId:'#PP-8042', date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
+    // program
+    programId:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari', partisipan:1,
+    picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
+    // lokasi & jadwal
+    lokasi:'Apartemen Sudirman Park', jadwal:'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
+    // keuangan
+    hargaPaket:1500000, transport:50000, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    total:1550000,
+  },
+  'INV/EFM/PP/2026/0088': {
+    client:'Robert Taylor', hp:'+62 812-3333-0002', email:'robert@example.com',
+    orderId:'#PP-8038', date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
+    programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari', partisipan:1,
+    picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
+    lokasi:'Rumah Klien — Bintaro Sektor 9', jadwal:'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
+    hargaPaket:2800000, transport:100000, extra:0, extraKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0,
+    total:2620000,
+  },
+  'INV/EFM/PP/2026/0087': {
+    client:'Emily Chen', hp:'+62 812-3333-0003', email:'emily@example.com',
+    orderId:'#PP-8041', date:'5 Jun 2026', due:'19 Jun 2026', status:'paid',
+    programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
+    picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
+    lokasi:'Gym Senayan City Lt.3', jadwal:'Selasa 18:00 · Kamis 18:00',
+    hargaPaket:600000, transport:0, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    total:600000,
+  },
+  'INV/EFM/PP/2026/0085': {
+    client:'James Wilson', hp:'+62 812-3333-0004', email:'james@example.com',
+    orderId:'#PP-8035', date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
+    programId:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari', partisipan:1,
+    picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
+    lokasi:'Cilandak Town Square', jadwal:'Rabu 07:30 · Sabtu 08:00',
+    hargaPaket:1100000, transport:75000, extra:0, extraKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    total:1175000,
+  },
 };
 
 let _drawerRow = null;
@@ -1232,6 +1267,8 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2800);
 }
 
+function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
 function renderInvoiceTab() {
   if (!_drawerRow) return;
   const actionCell = _drawerRow.querySelector('td[data-inv]');
@@ -1245,31 +1282,121 @@ function renderInvoiceTab() {
     return;
   }
 
-  const statusMap = {
-    paid:    '<span class="badge" style="background:#EAFAF1;color:#27AE60">✅ Lunas</span>',
-    pending: '<span class="badge" style="background:#FEF9E7;color:#F39C12">⏳ Pending</span>',
-    overdue: '<span class="badge" style="background:#FDEDEC;color:#E74C3C">🔴 Overdue</span>',
+  const statusBadge = {
+    paid:    '<span style="background:#EAFAF1;color:#27AE60;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">✅ LUNAS</span>',
+    pending: '<span style="background:#FEF9E7;color:#E67E22;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">⏳ PENDING</span>',
+    overdue: '<span style="background:#FDEDEC;color:#E74C3C;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">🔴 OVERDUE</span>',
   };
 
+  // compute rows
+  const transport = d.transport || 0;
+  const extra     = d.extra || 0;
+  const diskon    = d.diskon || 0;
+  const cashback  = d.cashback || 0;
+  const pajak     = d.pajak || 0;
+
+  const transportRow = transport > 0
+    ? `<tr><td>Biaya Transportasi PIC</td><td class="r">—</td><td class="r">${fmtRp(transport)}</td></tr>` : '';
+  const extraRow = extra > 0
+    ? `<tr><td>Biaya Tambahan<div style="font-size:11px;color:var(--gray-text)">${d.extraKet||''}</div></td><td class="r">—</td><td class="r">${fmtRp(extra)}</td></tr>` : '';
+  const diskonRow = diskon > 0
+    ? `<tr><td style="color:#27AE60">Diskon Promo <span style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px">${d.promoKode||''}</span></td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(diskon)}</td></tr>` : '';
+  const cashbackRow = cashback > 0
+    ? `<tr><td style="color:#27AE60">Cashback</td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(cashback)}</td></tr>` : '';
+  const pajakRow = pajak > 0
+    ? `<tr><td style="color:var(--gray-text)">Pajak</td><td class="r">—</td><td class="r">${fmtRp(pajak)}</td></tr>` : '';
+
   document.getElementById('drawerBody').innerHTML = `
-    <div class="inv-section">
-      <div class="inv-num">📄 ${invNo}</div>
-      <div class="inv-meta">
-        Klien: ${d.client}<br/>
-        Tanggal: ${d.date} &nbsp;·&nbsp; Jatuh Tempo: ${d.due}
+    <!-- Invoice Header -->
+    <div style="background:var(--navy);border-radius:12px;padding:14px 18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Nomor Invoice</div>
+          <div style="font-size:14px;font-weight:800;color:white">📄 ${invNo}</div>
+        </div>
+        ${statusBadge[invStatus] || ''}
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15);display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="font-size:11px;color:rgba(255,255,255,.6)">Klien</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6)">Order ID</div>
+        <div style="font-size:12px;font-weight:700;color:white">${d.client}</div>
+        <div style="font-size:12px;font-weight:700;color:white">${d.orderId}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Tanggal</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Jatuh Tempo</div>
+        <div style="font-size:12px;color:white">${d.date}</div>
+        <div style="font-size:12px;color:white;font-weight:${invStatus==='overdue'?'700':'400'};color:${invStatus==='overdue'?'#FF6B6B':'white'}">${d.due}</div>
       </div>
     </div>
-    <div class="inv-items">
+
+    <!-- Detail Program -->
+    <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden;margin-bottom:14px">
+      <div style="background:#F8F9FA;padding:8px 14px;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--gray-border)">Detail Program</div>
+      <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Nama Latihan</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-top:2px">${d.namaLatihan}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Nama Paket</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-top:2px">${d.namaPaket}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Sesi</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.sesi} sesi</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Pertemuan/Mgg</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.pertemuan}x seminggu</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Masa Paket</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.masa}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Partisipan</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.partisipan} orang</div>
+        </div>
+      </div>
+      <!-- PIC row -->
+      <div style="padding:10px 14px;background:#FFFBF5;border-top:1px solid var(--gray-border);display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">${d.picNick.charAt(0)}</div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">PIC / Pelatih</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy)">${d.picFull} <span style="font-size:10px;color:var(--gray-text);font-weight:400">(${d.picId})</span></div>
+          <div style="font-size:11px;color:var(--gray-text)">${d.picSpesialis}</div>
+        </div>
+      </div>
+      <!-- Lokasi & Jadwal -->
+      <div style="padding:10px 14px;border-top:1px solid var(--gray-border);display:grid;grid-template-columns:1fr;gap:6px">
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Lokasi Latihan</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">📍 ${d.lokasi}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Jadwal</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">🗓 ${d.jadwal}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rincian Biaya -->
+    <div class="inv-items" style="margin-bottom:0">
       <table>
-        <thead><tr><th>Deskripsi</th><th class="r">Sesi</th><th class="r">Total</th></tr></thead>
+        <thead><tr><th>Deskripsi</th><th class="r">Sesi</th><th class="r">Jumlah</th></tr></thead>
         <tbody>
-          <tr><td><strong>${d.pkg}</strong><div style="font-size:11px;color:var(--gray-text)">PIC: ${d.pic}</div></td><td class="r">${d.sesi}</td><td class="r" style="font-weight:600">${d.subtotal}</td></tr>
-          <tr><td>Biaya Transportasi PIC</td><td class="r">-</td><td class="r" style="font-weight:600">Rp 0</td></tr>
+          <tr>
+            <td><strong>${d.namaPaket}</strong><div style="font-size:11px;color:var(--gray-text)">${d.namaLatihan} · PIC: ${d.picFull}</div></td>
+            <td class="r">${d.sesi}</td>
+            <td class="r" style="font-weight:600">${fmtRp(d.hargaPaket)}</td>
+          </tr>
+          ${transportRow}${extraRow}${diskonRow}${cashbackRow}${pajakRow}
         </tbody>
       </table>
     </div>
-    <div class="inv-total"><span>Total Tagihan</span><span>${d.total}</span></div>
-    <div class="inv-status-bar">
+    <div class="inv-total"><span>Total Tagihan</span><span>${fmtRp(d.total)}</span></div>
+
+    <!-- Status & Konfirmasi -->
+    <div class="inv-status-bar" style="margin-top:14px">
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Pembayaran</span>
       <select class="status-select" id="invStatusSelect" data-orig="${invStatus}" data-inv="${invNo}" onchange="onInvStatusChange(this)">
         <option value="paid"    ${invStatus==='paid'    ? 'selected':''}>✅ Lunas</option>
@@ -1278,8 +1405,8 @@ function renderInvoiceTab() {
       </select>
     </div>
     ${invStatus !== 'paid' ? `
-    <div id="payConfirmBox" style="margin-top:16px;padding:14px 16px;background:#FEF9E7;border-radius:10px;border-left:3px solid var(--yellow)">
-      <p style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:8px">KONFIRMASI PEMBAYARAN</p>
+    <div id="payConfirmBox" style="margin-top:12px;padding:14px 16px;background:#FEF9E7;border-radius:10px;border-left:3px solid var(--yellow)">
+      <p style="font-size:11px;font-weight:700;color:#E67E22;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Konfirmasi Pembayaran</p>
       <div class="form-group"><label>Tanggal Pembayaran</label><input type="date" class="form-control" id="drPaidDate" value="${new Date().toISOString().split('T')[0]}"/></div>
       <div class="form-group"><label>Metode Pembayaran</label>
         <select class="form-control" id="drPayMethod">
