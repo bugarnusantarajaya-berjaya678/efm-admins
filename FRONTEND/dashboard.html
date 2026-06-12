@@ -123,6 +123,12 @@
   </style>
 </head>
 <body>
+<script>
+  const _role = localStorage.getItem('efm_role');
+  if (_role === 'owner') {
+    window.location.replace('dashboard-owner.html');
+  }
+</script>
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
