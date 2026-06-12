@@ -316,7 +316,7 @@
       <select class="filter-select" id="filterInvoice" onchange="applyFilterAndPaginate()">
         <option value="">Status Invoice</option>
         <option value="paid">Lunas</option>
-        <option value="pending">Pending</option>
+        <option value="pending">Menunggu Pembayaran</option>
         <option value="overdue">Overdue</option>
       </select>
       <select class="filter-select" id="filterPIC" onchange="applyFilterAndPaginate()">
@@ -379,7 +379,7 @@
               <td>24 Sesi - Elite</td><td>Elena Rodriguez</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
               <td>18 Okt 2026</td><td><span class="badge active">Aktif</span></td>
-              <td><span class="badge pending">Pending</span></td>
+              <td><span class="badge pending">Menunggu Pembayaran</span></td>
               <td data-inv="INV/EFM/PP/2026/0088" data-status="pending">
                 <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                 <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
@@ -1464,7 +1464,7 @@ function renderInvoiceTab() {
 
   const statusBadge = {
     paid:    '<span style="background:#EAFAF1;color:#27AE60;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">✅ LUNAS</span>',
-    pending: '<span style="background:#FEF9E7;color:#E67E22;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">⏳ PENDING</span>',
+    pending: '<span style="background:#FEF9E7;color:#E67E22;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">⏳ MENUNGGU PEMBAYARAN</span>',
     overdue: '<span style="background:#FDEDEC;color:#E74C3C;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">🔴 OVERDUE</span>',
   };
 
@@ -1577,20 +1577,82 @@ function renderInvoiceTab() {
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Pembayaran</span>
       <select class="status-select" id="invStatusSelect" data-orig="${invStatus}" data-inv="${invNo}" onchange="onInvStatusChange(this)">
         <option value="paid"    ${invStatus==='paid'    ? 'selected':''}>✅ Lunas</option>
-        <option value="pending" ${invStatus==='pending' ? 'selected':''}>⏳ Pending</option>
+        <option value="pending" ${invStatus==='pending' ? 'selected':''}>⏳ Menunggu Pembayaran</option>
         <option value="overdue" ${invStatus==='overdue' ? 'selected':''}>🔴 Overdue</option>
       </select>
     </div>
-    ${invStatus !== 'paid' ? `
-    <div id="payConfirmBox" style="margin-top:12px;padding:14px 16px;background:#FEF9E7;border-radius:10px;border-left:3px solid var(--yellow)">
-      <p style="font-size:11px;font-weight:700;color:#E67E22;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px">Konfirmasi Pembayaran</p>
-      <div class="form-group"><label>Tanggal Pembayaran</label><input type="date" class="form-control" id="drPaidDate" value="${new Date().toISOString().split('T')[0]}"/></div>
-      <div class="form-group"><label>Metode Pembayaran</label>
-        <select class="form-control" id="drPayMethod">
-          <option>Transfer Bank (BCA)</option><option>Transfer Bank (Mandiri)</option><option>Cash</option><option>QRIS</option>
-        </select>
+
+    <!-- Konfirmasi Pembayaran — selalu tampil, warna beda tergantung status -->
+    <div id="payConfirmBox" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1.5px solid ${invStatus==='paid' ? '#A9DFBF' : '#F5CBA7'}">
+      <div style="padding:10px 16px;background:${invStatus==='paid' ? '#EAFAF1' : '#FFF3E0'};display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;font-weight:700;color:${invStatus==='paid' ? '#27AE60' : '#E67E22'};text-transform:uppercase;letter-spacing:.5px">${invStatus==='paid' ? '✅ Rincian Pembayaran' : '📋 Konfirmasi Pembayaran'}</span>
+        ${invStatus==='paid' ? '<span style="font-size:10px;background:#27AE60;color:white;padding:2px 8px;border-radius:10px;font-weight:700">LUNAS</span>' : '<span style="font-size:10px;background:#E67E22;color:white;padding:2px 8px;border-radius:10px;font-weight:700">BELUM LUNAS</span>'}
       </div>
-    </div>` : ''}`;
+      <div style="padding:14px 16px;background:white;display:flex;flex-direction:column;gap:12px">
+
+        <!-- Upload Bukti Transfer -->
+        <div class="form-group" style="margin:0">
+          <label style="font-size:12px;font-weight:600;color:var(--navy)">Foto Bukti Transfer / Pembayaran ${invStatus!=='paid'?'<span style="color:var(--orange)">*</span>':''}</label>
+          ${invStatus==='paid'
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px 14px;background:#F8F9FA;border-radius:8px;border:1.5px solid #A9DFBF">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:12px;font-weight:600;color:var(--navy);flex:1" id="drFileName">bukti_transfer.jpg</span>
+                <span style="font-size:11px;color:#27AE60;font-weight:700">Tersimpan</span>
+              </div>`
+            : `<div id="drUploadArea" onclick="document.getElementById('drBuktiInput').click()"
+                style="margin-top:6px;border:2px dashed #F5CBA7;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:#FFFBF7"
+                onmouseover="this.style.borderColor='var(--orange)';this.style.background='#FFF3E0'"
+                onmouseout="this.style.borderColor='#F5CBA7';this.style.background='#FFFBF7'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" style="color:var(--orange);margin-bottom:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:2px">Klik untuk upload bukti</p>
+                <p style="font-size:11px;color:var(--gray-text)">JPG, PNG, atau PDF (Maks. 5MB)</p>
+                <input type="file" id="drBuktiInput" style="display:none" accept="image/*,.pdf" onchange="drPreviewFile(this)"/>
+              </div>
+              <div id="drFilePreview" style="display:none;margin-top:8px;padding:10px 14px;background:#F8F9FA;border-radius:8px;align-items:center;gap:10px;border:1.5px solid var(--gray-border)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2" width="16" height="16" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                <span id="drFileName" style="font-size:12px;font-weight:600;color:var(--navy);flex:1">—</span>
+                <button onclick="drRemoveFile()" style="border:none;background:none;cursor:pointer;color:var(--red);font-size:18px;line-height:1">×</button>
+              </div>`
+          }
+        </div>
+
+        <!-- Tanggal & Metode -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group" style="margin:0">
+            <label style="font-size:12px;font-weight:600;color:var(--navy)">Tanggal Pembayaran</label>
+            <input type="date" class="form-control" id="drPaidDate" value="${invStatus==='paid' ? d.paidDate||'' : new Date().toISOString().split('T')[0]}" ${invStatus==='paid'?'readonly style="background:#F8F9FA"':''}/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label style="font-size:12px;font-weight:600;color:var(--navy)">Metode Pembayaran</label>
+            <select class="form-control" id="drPayMethod" ${invStatus==='paid'?'disabled style="background:#F8F9FA"':''}>
+              <option ${(d.payMethod||'')==='Transfer Bank (BCA)'?'selected':''}>Transfer Bank (BCA)</option>
+              <option ${(d.payMethod||'')==='Transfer Bank (Mandiri)'?'selected':''}>Transfer Bank (Mandiri)</option>
+              <option ${(d.payMethod||'')==='Cash'?'selected':''}>Cash</option>
+              <option ${(d.payMethod||'')==='QRIS'?'selected':''}>QRIS</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+
+  // helper upload functions (scoped to drawer)
+  window.drPreviewFile = function(inp) {
+    if (!inp.files.length) return;
+    document.getElementById('drFileName').textContent = inp.files[0].name;
+    const prev = document.getElementById('drFilePreview');
+    const area = document.getElementById('drUploadArea');
+    if (prev) { prev.style.display = 'flex'; }
+    if (area) { area.style.display = 'none'; }
+  };
+  window.drRemoveFile = function() {
+    document.getElementById('drBuktiInput').value = '';
+    document.getElementById('drFileName').textContent = '—';
+    const prev = document.getElementById('drFilePreview');
+    const area = document.getElementById('drUploadArea');
+    if (prev) prev.style.display = 'none';
+    if (area) area.style.display = 'block';
+  };
 
   const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
   const footerBtns = invStatus !== 'paid'
@@ -1635,7 +1697,7 @@ function confirmSaveInvStatus(invNo) {
   const sel = document.getElementById('invStatusSelect');
   if (!sel) return;
   const newStatus = sel.value;
-  const labelMap = { paid:'Lunas', pending:'Pending', overdue:'Overdue' };
+  const labelMap = { paid:'Lunas', pending:'Menunggu Pembayaran', overdue:'Overdue' };
   const classMap  = { paid:'paid', pending:'pending', overdue:'overdue' };
   if (invoiceData[invNo]) invoiceData[invNo].status = newStatus;
   const actionCell = _drawerRow ? _drawerRow.querySelector('td[data-inv]') : null;
@@ -1649,7 +1711,13 @@ function confirmSaveInvStatus(invNo) {
 }
 
 function confirmPaidFromDrawer(invNo) {
-  if (invoiceData[invNo]) invoiceData[invNo].status = 'paid';
+  const paidDate  = document.getElementById('drPaidDate')?.value || '';
+  const payMethod = document.getElementById('drPayMethod')?.value || '';
+  if (invoiceData[invNo]) {
+    invoiceData[invNo].status    = 'paid';
+    invoiceData[invNo].paidDate  = paidDate;
+    invoiceData[invNo].payMethod = payMethod;
+  }
   const actionCell = _drawerRow.querySelector('td[data-inv]');
   if (actionCell) {
     actionCell.dataset.status = 'paid';
