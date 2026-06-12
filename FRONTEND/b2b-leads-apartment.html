@@ -580,13 +580,15 @@ document.addEventListener('DOMContentLoaded', function() {
     buildRow: function(lead,i,tbody){
       const today=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
       const id='#BA-'+(100+tbody.rows.length+1);
+      const rawNilai = String(lead.program||'').replace(/[^\d]/g,'');
+      const nilai = rawNilai ? 'Rp '+parseInt(rawNilai,10).toLocaleString('id-ID') : '—';
       const tr=document.createElement('tr');
       tr.innerHTML=`
         <td>${id}</td>
         <td><strong>${lead.nama}</strong></td>
         <td>${lead.sumber||'—'}</td>
         <td>${lead.no_hp}</td>
-        <td>${lead.program||'—'}</td>
+        <td>${nilai}</td>
         <td><span class="badge new">New</span></td>
         <td>${today}</td>
         <td>
