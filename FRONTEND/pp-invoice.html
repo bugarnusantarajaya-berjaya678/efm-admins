@@ -445,17 +445,17 @@
       <div class="stats-row">
         <div class="stat-mini"><div class="label">Total Invoice</div><div class="value">89</div><div class="sub">Bulan ini</div></div>
         <div class="stat-mini highlight"><div class="label">Belum Dibayar</div><div class="value">12</div><div class="sub">Perlu follow up</div></div>
-        <div class="stat-mini"><div class="label">Sudah Lunas</div><div class="value">74</div><div class="sub">✅ Terbayar</div></div>
-        <div class="stat-mini"><div class="label">Jatuh Tempo</div><div class="value">3</div><div class="sub">⚠️ Lewat Jatuh Tempo</div></div>
+        <div class="stat-mini"><div class="label">Paid</div><div class="value">74</div><div class="sub">✅ Terbayar</div></div>
+        <div class="stat-mini"><div class="label">Overdue</div><div class="value">3</div><div class="sub">⚠️ Lewat Jatuh Tempo</div></div>
       </div>
 
       <!-- Filters -->
       <div class="filters-bar">
         <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
           <option value="">Semua Status</option>
-          <option value="paid">Lunas</option>
-          <option value="pending">Menunggu Pembayaran</option>
-          <option value="overdue">Lewat Jatuh Tempo</option>
+          <option value="paid">Paid</option>
+          <option value="pending">Awaiting Payment</option>
+          <option value="overdue">Overdue</option>
           <option value="draft">Draft</option>
         </select>
         <select class="filter-select" id="filterBulan" onchange="applyFilterAndPaginate()">
@@ -495,7 +495,7 @@
                 <td>Sarah Jenkins</td>
                 <td>10 Jun 2026</td>
                 <td style="font-weight:600">Rp 1.500.000</td>
-                <td><span class="badge paid">Lunas</span></td>
+                <td><span class="badge paid">Paid</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')" style="cursor:pointer">
@@ -505,7 +505,7 @@
                 <td>Elena Rodriguez</td>
                 <td>8 Jun 2026</td>
                 <td style="font-weight:600">Rp 2.800.000</td>
-                <td><span class="badge pending">Menunggu Pembayaran</span></td>
+                <td><span class="badge pending">Awaiting Payment</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')" style="cursor:pointer">
@@ -515,7 +515,7 @@
                 <td>Marcus Chen</td>
                 <td>5 Jun 2026</td>
                 <td style="font-weight:600">Rp 600.000</td>
-                <td><span class="badge paid">Lunas</span></td>
+                <td><span class="badge paid">Paid</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')" style="cursor:pointer">
@@ -525,7 +525,7 @@
                 <td>Sarah Jenkins</td>
                 <td>1 Jun 2026</td>
                 <td style="font-weight:600">Rp 1.100.000</td>
-                <td><span class="badge overdue">Lewat Jatuh Tempo</span></td>
+                <td><span class="badge overdue">Overdue</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')" style="cursor:pointer">
@@ -535,7 +535,7 @@
                 <td>David Kim</td>
                 <td>28 Mei 2026</td>
                 <td style="font-weight:600">Rp 1.500.000</td>
-                <td><span class="badge paid">Lunas</span></td>
+                <td><span class="badge paid">Paid</span></td>
                 <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
             </tbody>
@@ -735,7 +735,7 @@
 <div class="modal-overlay" id="markPaidModal">
   <div class="modal">
     <div class="modal-header">
-      <h3>Tandai sebagai Lunas</h3>
+      <h3>Konfirmasi Pembayaran</h3>
       <button class="modal-close" onclick="closeMarkPaid()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
@@ -776,7 +776,7 @@
       <button class="btn-cancel" onclick="closeMarkPaid()">Batal</button>
       <button class="btn-green" onclick="confirmPaid()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
-        Konfirmasi Lunas
+        Konfirmasi Paid
       </button>
     </div>
   </div>
@@ -1116,7 +1116,7 @@ function confirmPaid() {
   rows.forEach(row => {
     if (row.textContent.includes(invNo)) {
       const badge = row.querySelector('.badge');
-      if (badge) { badge.className = 'badge paid'; badge.textContent = 'Lunas'; }
+      if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
     }
   });
 
