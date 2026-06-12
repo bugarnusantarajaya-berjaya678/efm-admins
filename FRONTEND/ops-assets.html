@@ -157,9 +157,9 @@
     </div>
 
     <div class="filters-bar">
-      <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option>Semua Kondisi</option><option>Baik</option><option>Servis</option><option>Rusak</option><option>Dipinjam</option></select>
-      <select class="filter-select" id="filterSel2" onchange="applyFilterAndPaginate()"><option>Semua Lokasi</option><option>Gudang Utama</option><option>Dipinjamkan ke Klien</option><option>Dalam Servis</option></select>
-      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari nama atau kode aset..."/></div>
+      <select class="filter-select" id="filterSel1" onchange="applyFilterAndPaginate()"><option value="">Semua Kondisi</option><option>Baik</option><option>Servis</option><option>Rusak</option><option>Dipinjam</option></select>
+      <select class="filter-select" id="filterSel2" onchange="applyFilterAndPaginate()"><option value="">Semua Lokasi</option><option>Gudang Utama</option><option>Dipinjamkan ke Klien</option><option>Dalam Servis</option></select>
+      <div class="filter-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama atau kode aset..."/></div>
     </div>
 
     <div class="table-card">

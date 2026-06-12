@@ -252,14 +252,14 @@
     </div>
 
     <div class="filters-bar">
-      <select class="filter-select" id="filterStatus">
+      <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
         <option value="">Semua Status</option>
         <option value="new">New</option>
         <option value="follow up">Follow Up</option>
         <option value="closing">Closing</option>
         <option value="gagal">Gagal</option>
       </select>
-      <select class="filter-select" id="filterSource">
+      <select class="filter-select" id="filterSource" onchange="applyFilterAndPaginate()">
         <option value="">Semua Sumber</option>
         <option value="ads">Ads</option>
         <option value="website">Website</option>
