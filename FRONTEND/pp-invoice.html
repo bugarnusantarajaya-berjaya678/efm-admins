@@ -183,6 +183,38 @@
     .note-item h5 { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
     .note-item p { font-size:11px; color:var(--gray-text); line-height:1.7; }
 
+    /* Receipt Modal */
+    .receipt-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:300; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
+    .receipt-overlay.show { display:flex; }
+    .receipt-modal { background:white; border-radius:16px; width:100%; max-width:560px; box-shadow:0 20px 60px rgba(0,0,0,.25); overflow:hidden; }
+    .receipt-card { background:white; }
+    /* Receipt header stripe */
+    .receipt-top { background:var(--navy); padding:24px 28px; display:flex; justify-content:space-between; align-items:center; }
+    .receipt-top-left h2 { font-size:14px; font-weight:800; color:white; letter-spacing:.3px; }
+    .receipt-top-left p { font-size:11px; color:rgba(255,255,255,.55); margin-top:3px; }
+    .receipt-badge { background:#27AE60; color:white; font-size:11px; font-weight:700; padding:4px 14px; border-radius:20px; letter-spacing:.3px; }
+    /* Receipt body */
+    .receipt-body { padding:24px 28px; }
+    .receipt-meta { display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--gray-border); }
+    .receipt-meta-item .lbl { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
+    .receipt-meta-item .val { font-size:13px; font-weight:600; color:var(--navy); }
+    /* Barcode area */
+    .receipt-barcode { background:var(--gray-bg); border-radius:12px; padding:20px; text-align:center; margin-bottom:20px; border:1.5px solid var(--gray-border); }
+    .barcode-svg { display:inline-block; }
+    .barcode-svg svg { width:160px; height:160px; color:var(--navy); }
+    .barcode-label { font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; margin-top:10px; }
+    .barcode-sub { font-size:11px; color:var(--gray-text); margin-top:4px; }
+    /* Receipt items */
+    .receipt-items { border:1px solid var(--gray-border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
+    .receipt-items table { width:100%; border-collapse:collapse; font-size:12px; }
+    .receipt-items th { background:var(--gray-bg); padding:9px 14px; font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.4px; text-align:left; }
+    .receipt-items th.r, .receipt-items td.r { text-align:right; }
+    .receipt-items td { padding:11px 14px; border-top:1px solid var(--gray-border); }
+    .receipt-total { display:flex; justify-content:space-between; padding:12px 14px; background:#EAFAF1; border-radius:10px; font-weight:700; color:var(--navy); }
+    .receipt-total .amt { color:#27AE60; font-size:16px; }
+    /* Receipt footer */
+    .receipt-footer-note { font-size:11px; color:var(--gray-text); text-align:center; margin-top:14px; line-height:1.7; border-top:1px dashed var(--gray-border); padding-top:14px; }
+
     /* Mark paid modal */
     .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
     .modal-overlay.show { display:flex; }
@@ -205,7 +237,7 @@
     @media print {
       * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
       @page { size: A4; margin: 8mm; }
-      .sidebar, .header, .detail-header, .back-btn, #markPaidBtn, #sendWaBtn, .btn-outline, .btn-wa, .btn-green { display:none !important; }
+      .sidebar, .header, .detail-header, .back-btn, #markPaidBtn, #sendReceiptBtn, #viewReceiptBtn, .btn-outline, .btn-wa, .btn-green, .receipt-overlay .receipt-modal > div:first-child { display:none !important; }
       body { background:white !important; }
       .main { margin-left:0 !important; }
       .content { padding:0 !important; }
@@ -469,14 +501,18 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
             Print
           </button>
-          <!-- Kirim WA — hanya muncul kalau status = Paid -->
-          <button class="btn-wa" id="sendWaBtn" style="display:none" onclick="sendToWA()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Kirim ke WA Klien
+          <!-- Kirim Receipt (muncul setelah lunas) -->
+          <button class="btn-wa" id="sendReceiptBtn" style="display:none" onclick="showReceipt()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            Kirim Receipt ke Klien
+          </button>
+          <button class="btn-outline" id="viewReceiptBtn" style="display:none" onclick="showReceipt()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Lihat Receipt
           </button>
           <button class="btn-green" id="markPaidBtn" onclick="openMarkPaid()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
-            Mark as Paid
+            Konfirmasi Pembayaran
           </button>
         </div>
       </div>
@@ -501,32 +537,17 @@
               <div>Tanggal: <strong id="invDate">10 Jun 2026</strong></div>
               <div>Jatuh Tempo: <strong id="invDueDate">24 Jun 2026</strong></div>
             </div>
-            <div id="invStatusBadge"><span class="inv-status paid">✅ Lunas</span></div>
           </div>
         </div>
 
         <!-- Body -->
         <div class="invoice-body">
 
-          <!-- Billing Info -->
-          <div class="billing-row">
-            <div class="billing-section">
-              <h4>Tagihan Kepada</h4>
-              <div class="client-name" id="invClientName">Alex Mercer</div>
-              <p id="invClientDetail">Order ID: #PP-8042<br/>alex.mercer@example.com<br/>+62 812-3456-7890</p>
-            </div>
-            <div class="billing-section qr-section">
-              <h4>Attendance Barcode</h4>
-              <div class="qr-box">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                  <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
-                  <rect x="3" y="14" width="7" height="7"/>
-                  <path d="M14 14h1v1h-1zM16 14h1v1h-1zM14 16h3v1h-3zM18 14h1v3h-1zM17 17h1v1h-1z"/>
-                </svg>
-              </div>
-              <div class="qr-label">Scan untuk validasi sesi</div>
-              <div class="qr-sub" id="invOrderId">Order: #PP-8042</div>
-            </div>
+          <!-- Billing Info — single column, no barcode on invoice -->
+          <div style="margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--gray-border)">
+            <h4 style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Tagihan Kepada</h4>
+            <div class="client-name" id="invClientName">Alex Mercer</div>
+            <p id="invClientDetail" style="font-size:12px;color:var(--gray-text);margin-top:6px;line-height:1.8">Order ID: #PP-8042<br/>alex.mercer@example.com<br/>+62 812-3456-7890</p>
           </div>
 
           <!-- Items -->
@@ -648,6 +669,111 @@
   </div>
 </div>
 
+<!-- Modal: Receipt Bukti Lunas -->
+<div class="receipt-overlay" id="receiptOverlay">
+  <div class="receipt-modal">
+    <!-- Actions bar (tidak ikut print) -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--gray-border)">
+      <span style="font-size:13px;font-weight:700;color:var(--navy)">Receipt Pembayaran</span>
+      <div style="display:flex;gap:8px">
+        <button onclick="window.print()" style="padding:7px 14px;border:1.5px solid var(--gray-border);border-radius:8px;background:white;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--navy)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print
+        </button>
+        <button onclick="sendReceiptWA()" style="padding:7px 14px;border:none;border-radius:8px;background:#25D366;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:white">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Kirim WA
+        </button>
+        <button onclick="closeReceipt()" style="width:32px;height:32px;border:1.5px solid var(--gray-border);border-radius:8px;background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray-text)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Receipt Card (printable) -->
+    <div class="receipt-card" id="receiptPrintArea">
+
+      <!-- Header -->
+      <div class="receipt-top">
+        <div class="receipt-top-left">
+          <h2>Essential Fitness Management</h2>
+          <p>CV. Bugar Nusantara Jaya · Jl. Terogong Raya No.18, Jakarta Selatan</p>
+        </div>
+        <span class="receipt-badge">✅ LUNAS</span>
+      </div>
+
+      <div class="receipt-body">
+
+        <!-- No Receipt & Ref -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--gray-border)">
+          <div>
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Nomor Receipt</div>
+            <div style="font-size:14px;font-weight:800;color:var(--navy)" id="rcptNumber">RCP/EFM/PP/2026/0089</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Ref. Invoice</div>
+            <div style="font-size:12px;font-weight:600;color:var(--navy)" id="rcptInvRef">INV/EFM/PP/2026/0089</div>
+            <div style="font-size:11px;color:var(--gray-text)" id="rcptInvDate">10 Jun 2026</div>
+          </div>
+        </div>
+
+        <!-- Meta grid -->
+        <div class="receipt-meta">
+          <div class="receipt-meta-item"><div class="lbl">Klien</div><div class="val" id="rcptClient">Alex Mercer</div></div>
+          <div class="receipt-meta-item"><div class="lbl">Order ID</div><div class="val" id="rcptOrderId">#PP-8042</div></div>
+          <div class="receipt-meta-item"><div class="lbl">Tanggal Bayar</div><div class="val" id="rcptPaidDate">—</div></div>
+          <div class="receipt-meta-item"><div class="lbl">Metode</div><div class="val" id="rcptPayMethod">—</div></div>
+          <div class="receipt-meta-item"><div class="lbl">Program</div><div class="val" id="rcptPaket">12 Sesi - Pro</div></div>
+          <div class="receipt-meta-item"><div class="lbl">PIC / Pelatih</div><div class="val" id="rcptPIC">Sarah Jenkins</div></div>
+        </div>
+
+        <!-- Barcode absen pelatih -->
+        <div class="receipt-barcode">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Barcode Absensi Pelatih</div>
+          <div class="barcode-svg">
+            <!-- QR placeholder — in production replace with real QR library -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="2" y="2" width="9" height="9" rx="1"/><rect x="3.5" y="3.5" width="6" height="6" rx=".5" fill="currentColor" opacity=".15"/>
+              <rect x="13" y="2" width="9" height="9" rx="1"/><rect x="14.5" y="3.5" width="6" height="6" rx=".5" fill="currentColor" opacity=".15"/>
+              <rect x="2" y="13" width="9" height="9" rx="1"/><rect x="3.5" y="14.5" width="6" height="6" rx=".5" fill="currentColor" opacity=".15"/>
+              <rect x="13" y="13" width="3" height="3"/><rect x="17" y="13" width="2" height="2"/><rect x="20" y="13" width="2" height="2"/>
+              <rect x="13" y="17" width="2" height="2"/><rect x="16" y="16" width="3" height="3"/><rect x="20" y="17" width="2" height="4"/>
+              <rect x="13" y="20" width="6" height="2"/>
+            </svg>
+          </div>
+          <div class="barcode-label">Scan untuk validasi sesi</div>
+          <div class="barcode-sub" id="rcptBarcodeRef">Order: #PP-8042 · 12 Sesi</div>
+        </div>
+
+        <!-- Items ringkasan -->
+        <div class="receipt-items">
+          <table>
+            <thead><tr><th>Deskripsi</th><th class="r">Jumlah</th></tr></thead>
+            <tbody>
+              <tr><td id="rcptItemDesc">12 Sesi - Pro Package<br/><span style="font-size:11px;color:var(--gray-text)">Private Training · PIC: Sarah Jenkins</span></td><td class="r" style="font-weight:600" id="rcptItemAmt">Rp 1.500.000</td></tr>
+              <tr id="rcptBiayaLainRow" style="display:none"><td id="rcptBiayaLainDesc">Biaya Lain</td><td class="r" id="rcptBiayaLainAmt">Rp 0</td></tr>
+              <tr id="rcptDiskonRow" style="display:none"><td style="color:#27AE60">Diskon <span id="rcptPromoTag" style="font-size:10px;background:#EAFAF1;padding:1px 7px;border-radius:10px;font-weight:700"></span></td><td class="r" style="color:#27AE60" id="rcptDiskonAmt">— Rp 0</td></tr>
+              <tr id="rcptPajakRow" style="display:none"><td style="color:var(--gray-text)">Pajak</td><td class="r" id="rcptPajakAmt">Rp 0</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="receipt-total">
+          <span>Total Dibayar</span>
+          <span class="amt" id="rcptTotal">Rp 1.500.000</span>
+        </div>
+
+        <!-- Footer note -->
+        <div class="receipt-footer-note">
+          Terima kasih atas kepercayaan Anda kepada Essential Fitness Management.<br/>
+          Receipt ini adalah bukti pembayaran sah. Simpan sebagai referensi Anda.<br/>
+          <strong>Barcode di atas digunakan oleh pelatih untuk validasi sesi latihan.</strong>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 function toggleMenu(e,s,a){
   e.preventDefault();
@@ -715,7 +841,7 @@ function showDetail(invNo) {
   document.getElementById('invNumber').textContent = invNo;
   document.getElementById('invClientName').textContent = d.client;
   document.getElementById('invClientDetail').innerHTML = 'Order ID: ' + d.orderId + '<br/>email@example.com<br/>+62 812-xxxx-xxxx';
-  document.getElementById('invOrderId').textContent = 'Order: ' + d.orderId;
+
   document.getElementById('invPackage').textContent = d.namaPaket || d.package || '—';
   document.getElementById('invSesi').textContent = d.sesi;
   document.getElementById('invPIC').textContent = (d.namaLatihan||'Private Training') + ' · PIC: ' + (d.picFull || d.pic || '—');
@@ -752,22 +878,17 @@ function showDetail(invNo) {
   document.getElementById('invDate').textContent = d.date;
   document.getElementById('invDueDate').textContent = d.due;
 
-  const statusMap = {
-    paid:    '<span class="inv-status paid">✅ Lunas</span>',
-    pending: '<span class="inv-status pending">⏳ Menunggu Pembayaran</span>',
-    overdue: '<span class="inv-status overdue">🔴 Lewat Jatuh Tempo</span>',
-    draft:   '<span class="inv-status pending">📝 Draft</span>'
-  };
-  document.getElementById('invStatusBadge').innerHTML = statusMap[d.status] || '';
-
-  const markBtn = document.getElementById('markPaidBtn');
-  const waBtn   = document.getElementById('sendWaBtn');
+  const markBtn        = document.getElementById('markPaidBtn');
+  const sendReceiptBtn = document.getElementById('sendReceiptBtn');
+  const viewReceiptBtn = document.getElementById('viewReceiptBtn');
   if (d.status === 'paid') {
-    markBtn.style.display = 'none';
-    waBtn.style.display   = 'inline-flex';
+    markBtn.style.display        = 'none';
+    sendReceiptBtn.style.display = 'inline-flex';
+    viewReceiptBtn.style.display = 'inline-flex';
   } else {
-    markBtn.style.display = 'inline-flex';
-    waBtn.style.display   = 'none';
+    markBtn.style.display        = 'inline-flex';
+    sendReceiptBtn.style.display = 'none';
+    viewReceiptBtn.style.display = 'none';
   }
 
   document.getElementById('paidDate').value = new Date().toISOString().split('T')[0];
@@ -816,19 +937,32 @@ function openMarkPaid() { document.getElementById('markPaidModal').classList.add
 function closeMarkPaid() { document.getElementById('markPaidModal').classList.remove('show'); }
 
 function confirmPaid() {
-  const file = document.getElementById('buktiInput').files[0];
+  const file       = document.getElementById('buktiInput').files[0];
+  const paidDate   = document.getElementById('paidDate').value;
+  const payMethodEl = document.querySelector('#markPaidModal .form-control:not(#paidDate)');
+  const payMethod  = payMethodEl ? payMethodEl.value : '—';
+
   if (!file) {
     document.getElementById('uploadArea').style.borderColor = 'var(--red)';
     document.getElementById('uploadArea').style.background = '#FFF5F5';
     return;
   }
+
   const invNo = document.getElementById('invNumber').textContent;
-  if (invoiceData[invNo]) invoiceData[invNo].status = 'paid';
+  const d = invoiceData[invNo];
+  if (d) {
+    d.status    = 'paid';
+    d.paidDate  = paidDate;
+    d.payMethod = payMethod;
+  }
   closeMarkPaid();
-  document.getElementById('invStatusBadge').innerHTML = '<span class="inv-status paid">✅ Lunas</span>';
-  document.getElementById('markPaidBtn').style.display = 'none';
-  document.getElementById('sendWaBtn').style.display   = 'inline-flex';
-  // Update badge di list view juga
+
+  // Update action buttons
+  document.getElementById('markPaidBtn').style.display        = 'none';
+  document.getElementById('sendReceiptBtn').style.display     = 'inline-flex';
+  document.getElementById('viewReceiptBtn').style.display     = 'inline-flex';
+
+  // Update badge di list view
   const rows = document.querySelectorAll('#invoiceBody tr');
   rows.forEach(row => {
     if (row.textContent.includes(invNo)) {
@@ -836,6 +970,61 @@ function confirmPaid() {
       if (badge) { badge.className = 'badge paid'; badge.textContent = 'Lunas'; }
     }
   });
+
+  // Otomatis buka receipt setelah konfirmasi
+  if (d) populateReceipt(invNo, d);
+  document.getElementById('receiptOverlay').classList.add('show');
+}
+
+function showReceipt() {
+  const invNo = document.getElementById('invNumber').textContent;
+  const d = invoiceData[invNo];
+  if (d) populateReceipt(invNo, d);
+  document.getElementById('receiptOverlay').classList.add('show');
+}
+
+function closeReceipt() {
+  document.getElementById('receiptOverlay').classList.remove('show');
+}
+
+function populateReceipt(invNo, d) {
+  // No receipt = RCP prefix
+  document.getElementById('rcptNumber').textContent   = invNo.replace('INV/', 'RCP/');
+  document.getElementById('rcptInvRef').textContent   = invNo;
+  document.getElementById('rcptInvDate').textContent  = d.date || '—';
+  document.getElementById('rcptClient').textContent   = d.client || '—';
+  document.getElementById('rcptOrderId').textContent  = d.orderId || '—';
+  document.getElementById('rcptPaidDate').textContent = d.paidDate || '—';
+  document.getElementById('rcptPayMethod').textContent= d.payMethod || '—';
+  document.getElementById('rcptPaket').textContent    = d.namaPaket || '—';
+  document.getElementById('rcptPIC').textContent      = d.picFull || '—';
+  document.getElementById('rcptBarcodeRef').textContent = (d.orderId||'—') + ' · ' + (d.sesi||'?') + ' Sesi';
+  document.getElementById('rcptItemDesc').innerHTML   =
+    (d.namaPaket||'—') + '<br/><span style="font-size:11px;color:var(--gray-text)">' + (d.namaLatihan||'') + ' · PIC: ' + (d.picFull||'—') + '</span>';
+  document.getElementById('rcptItemAmt').textContent  = fmtRp(d.hargaPaket||0);
+
+  const bl = d.biayaLain || 0;
+  document.getElementById('rcptBiayaLainRow').style.display = bl > 0 ? '' : 'none';
+  document.getElementById('rcptBiayaLainDesc').textContent  = 'Biaya Lain' + (d.biayaLainKet ? ' — ' + d.biayaLainKet : '');
+  document.getElementById('rcptBiayaLainAmt').textContent   = fmtRp(bl);
+
+  const dis = d.diskon || 0;
+  document.getElementById('rcptDiskonRow').style.display = dis > 0 ? '' : 'none';
+  document.getElementById('rcptPromoTag').textContent       = d.promoKode || '';
+  document.getElementById('rcptDiskonAmt').textContent      = '− ' + fmtRp(dis);
+
+  const pjk = d.pajak || 0;
+  document.getElementById('rcptPajakRow').style.display = pjk > 0 ? '' : 'none';
+  document.getElementById('rcptPajakAmt').textContent       = fmtRp(pjk);
+
+  document.getElementById('rcptTotal').textContent = fmtRp(d.total||0);
+}
+
+function sendReceiptWA() {
+  const invNo = document.getElementById('invNumber').textContent;
+  const d = invoiceData[invNo];
+  const msg = `Halo ${d ? d.client : ''},\n\nBerikut adalah Receipt pembayaran Anda untuk program ${d ? d.namaPaket : ''} di Essential Fitness Management.\n\nNo. Receipt: ${invNo.replace('INV/','RCP/')}\nTotal Dibayar: ${d ? fmtRp(d.total) : ''}\nStatus: ✅ LUNAS\n\nTerima kasih atas kepercayaan Anda. Receipt dan barcode absensi dapat dilihat di link berikut atau hubungi admin EFM.\n\n_Essential Fitness Management_`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
 function previewFile(input) {
