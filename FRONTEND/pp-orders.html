@@ -309,7 +309,10 @@
 
 
     <div class="filters-bar">
-      <span class="filters-label">Filter</span>
+      <div class="filter-search" style="flex:2;min-width:220px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau order ID..."/>
+      </div>
       <div class="filters-divider"></div>
       <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
         <option value="">Status Order</option>
@@ -336,11 +339,6 @@
         <option>12 Sesi - Pro</option>
         <option>24 Sesi - Elite</option>
       </select>
-      <div class="filters-divider"></div>
-      <div class="filter-search">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau order ID..."/>
-      </div>
       <button class="btn-clear" onclick="clearFilter()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         Reset
