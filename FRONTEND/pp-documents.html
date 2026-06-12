@@ -70,13 +70,17 @@
     .stat-info .label { font-size:11px; color:var(--gray-text); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
     .stat-info .value { font-size:22px; font-weight:700; color:var(--navy); }
 
-    /* Table */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
-    .table-toolbar { padding:16px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; gap:12px; }
+    /* Filters */
+    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:14px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
     .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; cursor:pointer; outline:none; }
-    .filter-search { flex:1; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filter-search { min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; margin-left:auto; }
     .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
     .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
+
+    /* Table */
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
     .table-wrap { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; }
     th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
@@ -265,20 +269,23 @@
       <button class="tab" onclick="setTab(this,'agreement')">Agreement Klien</button>
     </div>
 
+    <!-- Filters -->
+    <div class="filters-bar">
+      <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
+        <option value="">Semua Status</option>
+        <option value="signed">Sudah TTD</option>
+        <option value="pending">Pending TTD</option>
+        <option value="expired">Expired</option>
+      </select>
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama PIC atau klien..."/>
+      </div>
+      <button class="btn-clear" onclick="clearFilter()">Reset</button>
+    </div>
+
     <!-- Table -->
     <div class="table-card">
-      <div class="table-toolbar">
-        <select class="filter-select">
-          <option>Semua Status</option>
-          <option>Pending TTD</option>
-          <option>Sudah TTD</option>
-          <option>Expired</option>
-        </select>
-        <div class="filter-search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" placeholder="Cari nama PIC atau klien..."/>
-        </div>
-      </div>
       <div class="table-wrap">
         <table id="docTable">
           <thead>
@@ -292,7 +299,7 @@
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="docBody">
             <tr>
               <td><span style="font-weight:600;color:var(--navy)">#PKS-001</span></td>
               <td>Sarah Jenkins</td>
@@ -345,14 +352,8 @@
         </table>
       </div>
       <div class="pagination">
-        <div class="pagination-info">Menampilkan 1–4 dari 60 dokumen</div>
-        <div class="pagination-btns">
-          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></button>
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <button class="page-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg></button>
-        </div>
+        <div class="pagination-info" id="paginationInfo">Memuat data...</div>
+        <div class="pagination-btns" id="paginationBtns"></div>
       </div>
     </div>
   </div>
@@ -408,13 +409,105 @@ function toggleMenu(e, subId, arrowId) {
   sub.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
-function setTab(el) {
+function setTab(el, type) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
+  applyFilterAndPaginate();
 }
 function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 function saveDoc() { alert('Dokumen berhasil diupload!'); closeModal(); }
+
+/* ─── FILTER + PAGINATION ENGINE ─── */
+const ROWS_PER_PAGE = 10;
+let currentPage  = 1;
+let filteredRows = [];
+
+function getAllRows() {
+  return Array.from(document.querySelectorAll('#docBody tr'));
+}
+
+function applyFilterAndPaginate() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const f1 = document.getElementById('filterStatus').value.toLowerCase();
+
+  filteredRows = getAllRows().filter(row => {
+    const text = row.textContent.toLowerCase();
+    return (!search || text.includes(search))
+        && (!f1 || text.includes(f1));
+  });
+
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage() {
+  const total      = filteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * ROWS_PER_PAGE;
+  const end   = start + ROWS_PER_PAGE;
+
+  getAllRows().forEach(row => { row.style.display = 'none'; });
+  filteredRows.forEach((row, i) => { row.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+  const from = total === 0 ? 0 : start + 1;
+  const to   = Math.min(end, total);
+  document.getElementById('paginationInfo').textContent =
+    'Menampilkan ' + from + '–' + to + ' dari ' + total + ' dokumen';
+
+  buildPaginationBtns(currentPage, totalPages);
+}
+
+function buildPaginationBtns(current, total) {
+  const container = document.getElementById('paginationBtns');
+  container.innerHTML = '';
+  const mkBtn = (label, page, isActive, isDisabled) => {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (isActive ? ' active' : '');
+    btn.disabled  = isDisabled;
+    btn.style.opacity = isDisabled ? '0.35' : '1';
+    btn.innerHTML = label;
+    if (!isDisabled) btn.onclick = () => goToPage(page);
+    return btn;
+  };
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>', current-1, false, current===1));
+  pageRange(current, total).forEach(p => {
+    if (p === '...') {
+      const s = document.createElement('span');
+      s.textContent = '…'; s.style.cssText = 'padding:0 6px;color:var(--gray-text);font-size:13px;display:flex;align-items:center;';
+      container.appendChild(s);
+    } else {
+      container.appendChild(mkBtn(p, p, p === current, false));
+    }
+  });
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>', current+1, false, current===total));
+}
+
+function pageRange(current, total) {
+  if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
+  const pages = [1];
+  if (current > 3) pages.push('...');
+  for (let p = Math.max(2, current-1); p <= Math.min(total-1, current+1); p++) pages.push(p);
+  if (current < total - 2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+function goToPage(page) {
+  const total = Math.max(1, Math.ceil(filteredRows.length / ROWS_PER_PAGE));
+  currentPage = Math.max(1, Math.min(page, total));
+  renderPage();
+  document.querySelector('.table-card').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function clearFilter() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterStatus').selectedIndex = 0;
+  applyFilterAndPaginate();
+}
+
+document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
 </script>
 
 <script>
