@@ -79,9 +79,9 @@
     .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:20px; font-size:10px; font-weight:600; white-space:normal; text-align:center; line-height:1.3; max-width:110px; word-break:break-word; }
     .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .badge.active { background:#EAFAF1; color:#27AE60; }
-    .badge.completed { background:#F2F3F4; color:#7F8C8D; }
-    .badge.cancelled { background:#FDEDEC; color:#E74C3C; }
+    .badge.order-paid { background:#EAFAF1; color:#27AE60; }
+    .badge.order-awaiting { background:#FEF9E7; color:#F39C12; }
+    .badge.order-overdue { background:#FDEDEC; color:#E74C3C; }
     .badge.paid { background:#EAFAF1; color:#27AE60; }
     .badge.pending { background:#FEF9E7; color:#F39C12; }
     .badge.overdue { background:#FDEDEC; color:#E74C3C; }
@@ -309,9 +309,9 @@
     <div class="filters-bar">
       <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
         <option value="">Status Order</option>
-        <option value="aktif">Aktif</option>
-        <option value="selesai">Selesai</option>
-        <option value="dibatalkan">Dibatalkan</option>
+        <option value="paid">Paid</option>
+        <option value="awaiting">Awaiting Payment</option>
+        <option value="overdue">Overdue</option>
       </select>
       <select class="filter-select" id="filterInvoice" onchange="applyFilterAndPaginate()">
         <option value="">Status Invoice</option>
@@ -354,7 +354,7 @@
               <td><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
               <td>12 Sesi - Pro</td><td>Sarah Jenkins</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
-              <td>24 Okt 2026</td><td><span class="badge active">Aktif</span></td>
+              <td>24 Okt 2026</td><td><span class="badge order-paid">Paid</span></td>
               <td><span class="badge paid">Lunas</span></td>
               <td data-inv="INV/EFM/PP/2026/0089" data-status="paid">
                 <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -366,7 +366,7 @@
               <td><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
               <td>4 Sesi - Starter</td><td>Marcus Chen</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
-              <td>22 Okt 2026</td><td><span class="badge completed">Selesai</span></td>
+              <td>22 Okt 2026</td><td><span class="badge order-paid">Paid</span></td>
               <td><span class="badge paid">Lunas</span></td>
               <td data-inv="INV/EFM/PP/2026/0087" data-status="paid">
                 <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -378,7 +378,7 @@
               <td><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
               <td>24 Sesi - Elite</td><td>Elena Rodriguez</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
-              <td>18 Okt 2026</td><td><span class="badge active">Aktif</span></td>
+              <td>18 Okt 2026</td><td><span class="badge order-awaiting">Awaiting Payment</span></td>
               <td><span class="badge pending">Menunggu Pembayaran</span></td>
               <td data-inv="INV/EFM/PP/2026/0088" data-status="pending">
                 <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -390,7 +390,7 @@
               <td><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
               <td>8 Sesi - Base</td><td>Sarah Jenkins</td>
               <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
-              <td>15 Okt 2026</td><td><span class="badge cancelled">Dibatalkan</span></td>
+              <td>15 Okt 2026</td><td><span class="badge order-overdue">Overdue</span></td>
               <td><span class="badge overdue">Lewat Jatuh Tempo</span></td>
               <td data-inv="INV/EFM/PP/2026/0085" data-status="overdue">
                 <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
@@ -858,7 +858,7 @@
           <div class="total-row"><span>Total Tagihan</span><span style="color:var(--orange)" id="rev_total">Rp 0</span></div>
         </div>
         <div style="background:#EBF5FB;border-radius:10px;padding:12px 16px;font-size:12px;color:#2980B9;font-weight:600;border-left:3px solid #2980B9">
-          ℹ️ Order akan dibuat dengan status <strong>Aktif</strong> dan invoice akan di-generate otomatis sebagai <strong>Pending</strong>.
+          ℹ️ Order akan dibuat dengan status <strong>Awaiting Payment</strong> dan invoice akan di-generate otomatis sebagai <strong>Menunggu Pembayaran</strong>.
         </div>
       </div>
 
@@ -1397,9 +1397,9 @@ function renderOrderTab() {
     <div class="inv-status-bar">
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Order</span>
       <select class="status-select" id="statusOrderSelect" data-orig="${_origStatus}" onchange="onStatusOrderChange(this)">
-        <option value="aktif" ${currentStatus.includes('aktif') ? 'selected' : ''}>Aktif</option>
-        <option value="selesai" ${currentStatus.includes('selesai') ? 'selected' : ''}>Selesai</option>
-        <option value="dibatalkan" ${currentStatus.includes('dibatalkan') ? 'selected' : ''}>Dibatalkan</option>
+        <option value="paid"     ${currentStatus.includes('paid')     ? 'selected' : ''}>Paid</option>
+        <option value="awaiting" ${currentStatus.includes('awaiting') ? 'selected' : ''}>Awaiting Payment</option>
+        <option value="overdue"  ${currentStatus.includes('overdue')  ? 'selected' : ''}>Overdue</option>
       </select>
     </div>
     <div class="cancel-note" id="cancelNoteBox">
@@ -1449,8 +1449,8 @@ function confirmSaveOrderStatus() {
   const newStatus = sel.value;
   const statusCell = _drawerRow.querySelectorAll('td')[6];
   const badge = statusCell ? statusCell.querySelector('.badge') : null;
-  const classMap = { aktif:'active', selesai:'completed', dibatalkan:'cancelled' };
-  const labelMap = { aktif:'Aktif', selesai:'Selesai', dibatalkan:'Dibatalkan' };
+  const classMap = { paid:'order-paid', awaiting:'order-awaiting', overdue:'order-overdue' };
+  const labelMap = { paid:'Paid', awaiting:'Awaiting Payment', overdue:'Overdue' };
   if (badge) {
     badge.className = 'badge ' + (classMap[newStatus] || 'active');
     badge.textContent = labelMap[newStatus] || newStatus;
