@@ -304,8 +304,8 @@
 
       /* ── ITEMS TABLE ── */
       .items-table { margin-bottom: 10px !important; }
-      .items-table th { padding: 6px 10px !important; font-size: 7.5pt !important; letter-spacing: 0.05em !important; }
-      .items-table td { padding: 7px 10px !important; font-size: 9pt !important; line-height: 1.45 !important; }
+      .items-table th { padding: 5px 7px !important; font-size: 7pt !important; letter-spacing: 0.05em !important; }
+      .items-table td { padding: 6px 7px !important; font-size: 8pt !important; line-height: 1.45 !important; }
       .item-name { font-size: 9pt !important; }
       .item-desc { font-size: 8pt !important; }
 
@@ -621,6 +621,8 @@
                 <th>Deskripsi</th>
                 <th class="right">Harga Persesi</th>
                 <th class="center">Jumlah Sesi</th>
+                <th class="right">Harga Paket</th>
+                <th class="right">Diskon Paket (Rp)</th>
                 <th class="right">Total</th>
               </tr>
             </thead>
@@ -632,6 +634,8 @@
                 </td>
                 <td class="right" id="invRateSesi">Rp 125.000</td>
                 <td class="center" id="invSesi">12</td>
+                <td class="right" id="invHargaKotor">Rp 1.500.000</td>
+                <td class="right" id="invDiskonPaket" style="color:#27AE60">—</td>
                 <td class="right" style="font-weight:600" id="invSubtotal">Rp 1.500.000</td>
               </tr>
               <tr id="invBiayaLainRow" style="display:none">
@@ -641,6 +645,8 @@
                 </td>
                 <td class="right">—</td>
                 <td class="center">—</td>
+                <td class="right">—</td>
+                <td class="right">—</td>
                 <td class="right" style="font-weight:600" id="invBiayaLainAmt">Rp 0</td>
               </tr>
             </tbody>
@@ -650,21 +656,24 @@
           <div class="summary-wrap">
             <div class="summary-box">
               <div class="summary-row"><span class="lbl">Subtotal</span><span class="val" id="invTotal">Rp 1.500.000</span></div>
-              <div class="summary-row discount" id="invDiskonRow" style="display:none">
-                <span class="lbl">Diskon Paket (Rp)</span>
-                <span class="val" id="invDiskonVal" style="color:#27AE60">- Rp 0</span>
-              </div>
-              <div class="summary-row" id="invAfterDiskonRow" style="display:none">
-                <span class="lbl">Harga Setelah Diskon Paket</span>
-                <span class="val" id="invAfterDiskonVal">Rp 0</span>
-              </div>
-              <div class="summary-row" id="invPromoRow" style="display:none">
-                <span class="lbl" style="font-weight:600;color:var(--navy)">Jenis Benefit Promo</span>
-                <span class="val" id="invPromoTag" style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:2px 9px;border-radius:10px;font-weight:700"></span>
+              <div class="summary-row discount" id="invPromoDiskonRow" style="display:none">
+                <span class="lbl" id="invPromoDiskonLabel">Diskon Promo</span>
+                <span class="val" style="color:#27AE60" id="invPromoDiskonVal">- Rp 0</span>
               </div>
               <div class="summary-row" id="invPajakRow" style="display:none"><span class="lbl">Pajak</span><span class="val" id="invPajakVal">Rp 0</span></div>
               <div class="summary-divider"></div>
               <div class="total-row"><span style="white-space:nowrap;flex-shrink:0">Total Tagihan</span><span class="val" id="invGrandTotal" style="white-space:nowrap;flex-shrink:0">Rp 1.500.000</span></div>
+            </div>
+          </div>
+
+          <!-- Benefit box for non-monetary promos -->
+          <div id="invBenefitBox" style="display:none;margin-top:16px;background:#EAFAF1;border:1.5px solid #27AE60;border-radius:10px;padding:12px 16px;align-items:center;gap:10px">
+            <div style="width:32px;height:32px;background:#27AE60;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size:11px;font-weight:700;color:#27AE60;text-transform:uppercase;letter-spacing:0.5px">Benefit Tambahan</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="invBenefitLabel">Free Treatment</div>
             </div>
           </div>
 
@@ -908,35 +917,35 @@ const invoiceData = {
     client:'Alex Mercer', initials:'AM', color:'#2980B9', orderId:'#PP-8042',
     date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
-    picFull:'Sarah Jenkins', hargaPaket:1500000,
+    picFull:'Sarah Jenkins', hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0,
     biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1550000,
   },
   'INV/EFM/PP/2026/0088': {
     client:'Robert Taylor', initials:'RT', color:'#E05945', orderId:'#PP-8038',
     date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
     namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari',
-    picFull:'Elena Rodriguez', hargaPaket:2800000,
+    picFull:'Elena Rodriguez', hargaPaket:2800000, hargaPersesi:125000, diskonPaket:200000,
     biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10, total:2520000,
   },
   'INV/EFM/PP/2026/0087': {
     client:'Emily Chen', initials:'EC', color:'#27AE60', orderId:'#PP-8041',
     date:'5 Jun 2026', due:'19 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari',
-    picFull:'Marcus Chen', hargaPaket:600000,
+    picFull:'Marcus Chen', hargaPaket:600000, hargaPersesi:150000, diskonPaket:0,
     biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:600000,
   },
   'INV/EFM/PP/2026/0085': {
     client:'James Wilson', initials:'JW', color:'#8E44AD', orderId:'#PP-8035',
     date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
     namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari',
-    picFull:'Sarah Jenkins', hargaPaket:1100000,
+    picFull:'Sarah Jenkins', hargaPaket:1100000, hargaPersesi:137500, diskonPaket:0,
     biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1175000,
   },
   'INV/EFM/PP/2026/0084': {
     client:'Anita Kumar', initials:'AK', color:'#F39C12', orderId:'#PP-8033',
     date:'28 Mei 2026', due:'11 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
-    picFull:'David Kim', hargaPaket:1500000,
+    picFull:'David Kim', hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0,
     biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1500000,
   },
 };
@@ -964,11 +973,6 @@ function showDetail(invNo) {
   document.getElementById('invSesi').textContent = d.sesi;
   document.getElementById('invPIC').textContent = (d.namaLatihan||'Private Training') + ' · PIC: ' + (d.picFull || d.pic || '—');
 
-  // Rate per sesi
-  const rateSesi = d.sesi ? Math.round(d.hargaPaket / d.sesi) : 0;
-  document.getElementById('invRateSesi').textContent = fmtRp(rateSesi);
-  document.getElementById('invSubtotal').textContent = fmtRp(d.hargaPaket);
-
   // Biaya Lain row
   const biayaLain = d.biayaLain || 0;
   const blRow = document.getElementById('invBiayaLainRow');
@@ -976,42 +980,50 @@ function showDetail(invNo) {
   document.getElementById('invBiayaLainKet').textContent = d.biayaLainKet || '';
   document.getElementById('invBiayaLainAmt').textContent = fmtRp(biayaLain);
 
-  // Subtotal (paket + biayaLain)
-  const subtotal = d.hargaPaket + biayaLain;
-  document.getElementById('invTotal').textContent = fmtRp(subtotal);
+  // Table: Harga Kotor, Diskon Paket, Net
+  const hargaPersesi = d.hargaPersesi || Math.round((d.hargaPaket || 0) / (d.sesi || 1));
+  const hargaKotor   = hargaPersesi * (d.sesi || 0);
+  const diskonPaket  = d.diskonPaket  || 0;
+  document.getElementById('invRateSesi').textContent     = fmtRp(hargaPersesi);
+  document.getElementById('invHargaKotor').textContent   = fmtRp(hargaKotor);
+  document.getElementById('invDiskonPaket').textContent  = diskonPaket > 0 ? '- ' + fmtRp(diskonPaket) : '—';
+  document.getElementById('invDiskonPaket').style.color  = diskonPaket > 0 ? '#27AE60' : 'var(--gray-text)';
+  document.getElementById('invSubtotal').textContent     = fmtRp(d.hargaPaket);  // net package = hargaKotor - diskonPaket
 
-  // Diskon / Cashback rows
-  const diskon      = d.diskon || 0;
-  const promoType   = d.promoType || '';
-  const promoVal    = d.promoVal  || 0;
-  const promoKode   = d.promoKode || '';
-  const isCashback  = promoType === 'cashback';
-  const isMonetary  = diskon > 0;
+  // Subtotal = net package + biaya lain
+  const subtotalAmt = (d.hargaPaket || 0) + biayaLain;
+  document.getElementById('invTotal').textContent = fmtRp(subtotalAmt);
 
-  // Diskon Paket row — label changes for cashback
-  const diskonRowEl = document.getElementById('invDiskonRow');
-  diskonRowEl.style.display = isMonetary ? '' : 'none';
-  diskonRowEl.querySelector('.lbl').textContent = isCashback ? 'Cashback (Rp)' : 'Diskon Paket (Rp)';
-  document.getElementById('invDiskonVal').textContent = '- ' + fmtRp(diskon);
+  // Promo: monetary types (diskon_persen, diskon_nominal, cashback) deduct from invoice
+  const promoType  = d.promoType  || '';
+  const promoVal   = d.promoVal   || 0;
+  const promoKode  = d.promoKode  || '';
+  const diskon     = d.diskon     || 0;
+  const isMonetaryPromo = ['diskon_persen','diskon_nominal','cashback'].includes(promoType) && diskon > 0;
+  const isFreePromo     = ['free_session','free_treatment','free_training'].includes(promoType);
 
-  // Harga Setelah Diskon — only for non-cashback discounts
-  const afterDiskonRow = document.getElementById('invAfterDiskonRow');
-  afterDiskonRow.style.display = (isMonetary && !isCashback) ? '' : 'none';
-  document.getElementById('invAfterDiskonVal').textContent = fmtRp(subtotal - diskon);
-
-  // Jenis Benefit Promo row
-  const promoRow = document.getElementById('invPromoRow');
-  const hasPromo = promoType !== '';
-  promoRow.style.display = hasPromo ? '' : 'none';
-  document.getElementById('invPromoTag').innerHTML = promoLabel(promoType, promoVal, promoKode);
+  // Promo deduction row in summary
+  const promoDiskonRow = document.getElementById('invPromoDiskonRow');
+  promoDiskonRow.style.display = isMonetaryPromo ? '' : 'none';
+  if (isMonetaryPromo) {
+    const lbl = promoType === 'cashback' ? 'Cashback' : 'Diskon Promo';
+    document.getElementById('invPromoDiskonLabel').innerHTML = lbl + (promoKode ? ` <span style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 8px;border-radius:10px;font-weight:700">${promoKode}</span>` : '');
+    document.getElementById('invPromoDiskonVal').textContent = '- ' + fmtRp(diskon);
+  }
 
   // Pajak
   const pajak = d.pajak || 0;
-  const pajakRow = document.getElementById('invPajakRow');
-  pajakRow.style.display = pajak > 0 ? '' : 'none';
-  document.getElementById('invPajakVal').textContent = fmtRp(pajak);
+  document.getElementById('invPajakRow').style.display = pajak > 0 ? '' : 'none';
+  document.getElementById('invPajakVal').textContent   = fmtRp(pajak);
 
   document.getElementById('invGrandTotal').textContent = fmtRp(d.total);
+
+  // Benefit box for free promos
+  const benefitBox = document.getElementById('invBenefitBox');
+  benefitBox.style.display = isFreePromo ? 'flex' : 'none';
+  if (isFreePromo) {
+    document.getElementById('invBenefitLabel').innerHTML = promoLabel(promoType, promoVal, promoKode);
+  }
   document.getElementById('invDate').textContent = d.date;
   document.getElementById('invDueDate').textContent = d.due;
 
