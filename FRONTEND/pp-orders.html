@@ -167,7 +167,7 @@
     .step-label { font-size:11px; font-weight:500; color:var(--gray-text); margin-top:6px; text-align:center; }
     .step.active .step-label { color:var(--navy); font-weight:600; }
     .step.done .step-label { color:var(--green); }
-    .step-content { padding:24px 28px; min-height:300px; }
+    .step-content { padding:24px 28px; min-height:300px; max-height:62vh; overflow-y:auto; }
     .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; justify-content:space-between; align-items:center; }
     .form-group { margin-bottom:18px; }
     .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
@@ -462,7 +462,7 @@
                   oninput="filterLeads('pemesan')" onfocus="showDropdown('pemesan')" onblur="setTimeout(()=>hideDropdown('pemesan'),200)"
                   style="padding-right:36px"/>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:200px;overflow-y:auto"></div>
+                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:260px;overflow-y:auto"></div>
               </div>
             </div>
             <!-- Info Card Pemesan -->
@@ -502,7 +502,7 @@
                   oninput="filterLeads('klien')" onfocus="showDropdown('klien')" onblur="setTimeout(()=>hideDropdown('klien'),200)"
                   style="padding-right:36px"/>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:200px;overflow-y:auto"></div>
+                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:999;max-height:260px;overflow-y:auto"></div>
               </div>
             </div>
             <!-- Info Card Klien -->
@@ -910,12 +910,13 @@ function renderDropdown(role, list) {
   }
   dd.innerHTML = list.map(l => `
     <div onmousedown="selectLead('${role}','${l.id}')"
-      style="padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--gray-border);transition:background .15s"
+      style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--gray-border);transition:background .15s"
       onmouseover="this.style.background='#F8F9FA'" onmouseout="this.style.background='white'">
-      <div style="width:32px;height:32px;border-radius:50%;background:${l.color};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:white;flex-shrink:0">${initials(l.nama)}</div>
+      <div style="width:42px;height:42px;border-radius:50%;background:${l.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0">${initials(l.nama)}</div>
       <div style="flex:1;min-width:0">
-        <div style="font-size:12px;font-weight:700;color:var(--navy)">${l.nama}</div>
-        <div style="font-size:11px;color:var(--gray-text)">${l.hp} · ${l.id} · ${l.minat}</div>
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px">${l.nama}</div>
+        <div style="font-size:12px;color:var(--gray-text)">${l.hp}</div>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:1px">${l.id} &nbsp;·&nbsp; ${l.minat}</div>
       </div>
     </div>`).join('');
 }
