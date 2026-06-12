@@ -4,7 +4,8 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Invoice PP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -241,59 +242,114 @@
     .btn-wa:hover { background:#1DA851; }
 
     @media print {
-      * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; font-family:'Poppins',sans-serif !important; letter-spacing:0.2px !important; }
-      @page { size: A4; margin: 10mm; }
-      .sidebar, .header, .detail-header, .back-btn, #markPaidBtn, #sendReceiptBtn, #viewReceiptBtn, .btn-outline, .btn-wa, .btn-green, .receipt-overlay { display:none !important; }
-      body { background:white !important; }
-      .main { margin-left:0 !important; }
-      .content { padding:0 !important; }
-      #listView { display:none !important; }
-      #detailView { display:block !important; }
+      /* ── Font & rendering ── */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
+        -webkit-font-smoothing: antialiased !important;
+        text-rendering: optimizeLegibility !important;
+        letter-spacing: 0.02em !important;
+        box-sizing: border-box !important;
+      }
 
-      /* Invoice card */
-      .invoice-card { border:none !important; max-width:100% !important; box-shadow:none !important; }
-      .invoice-header { padding:16px 24px !important; }
-      .invoice-company h2 { font-size:17px !important; letter-spacing:0.3px !important; }
-      .invoice-company p { font-size:12px !important; margin-top:2px !important; line-height:1.5 !important; }
-      .inv-logo-circle img { width:64px !important; height:64px !important; }
-      .inv-logo-circle svg { width:22px !important; height:22px !important; }
-      .inv-number { font-size:14px !important; margin-bottom:7px !important; }
-      .inv-dates { font-size:13px !important; line-height:1.7 !important; }
-      .inv-status { font-size:12px !important; padding:4px 12px !important; margin-top:7px !important; }
+      /* ── Page: A4, tight margins, 1 page only ── */
+      @page { size: 210mm 297mm; margin: 10mm 12mm; }
+      html, body { width: 210mm !important; background: white !important; overflow: visible !important; }
 
-      /* Body */
-      .invoice-body { padding:16px 24px !important; }
-      .billing-row { grid-template-columns:1fr 1fr !important; gap:16px !important; margin-bottom:16px !important; padding-bottom:14px !important; }
-      .billing-section h4 { font-size:12px !important; margin-bottom:7px !important; }
-      .billing-section .client-name { font-size:17px !important; margin-bottom:4px !important; }
-      .billing-section p { font-size:13px !important; line-height:1.6 !important; }
+      /* ── Hide all UI chrome ── */
+      .sidebar, .header, .detail-header, .back-btn,
+      #markPaidBtn, #sendReceiptBtn, #viewReceiptBtn,
+      .btn-outline, .btn-wa, .btn-green,
+      .receipt-overlay, .modal-overlay,
+      #listView { display: none !important; }
 
-      /* Items table */
-      .items-table th { padding:9px 13px !important; font-size:12px !important; }
-      .items-table td { padding:10px 13px !important; font-size:14px !important; }
-      .item-name { font-size:14px !important; }
-      .item-desc { font-size:12px !important; }
+      /* ── Layout reset ── */
+      .main    { margin-left: 0 !important; display: block !important; }
+      .content { padding: 0 !important; }
+      #detailView { display: block !important; }
 
-      /* Summary */
-      .summary-wrap { margin-bottom:14px !important; }
-      .summary-box { width:240px !important; }
-      .summary-row { padding:5px 0 !important; font-size:14px !important; }
-      .total-row { padding:10px 0 4px !important; font-size:17px !important; }
-      .total-row .val { font-size:19px !important; }
+      /* ── Invoice card: full width, no border/shadow, no break ── */
+      .invoice-card {
+        border: none !important; border-radius: 0 !important; box-shadow: none !important;
+        max-width: 100% !important; width: 100% !important;
+        page-break-inside: avoid !important; overflow: visible !important;
+      }
 
-      /* Notes — Informasi Pembayaran enlarged ~45% */
-      .invoice-notes { padding:16px 24px !important; }
-      .notes-grid { gap:16px !important; }
-      .note-item:first-child h5 { font-size:13px !important; margin-bottom:7px !important; letter-spacing:0.6px !important; }
-      .note-item:first-child p { font-size:14px !important; line-height:1.8 !important; }
-      .note-item:last-child h5 { display:none !important; }
-      .note-item:last-child { display:none !important; }
+      /* ── HEADER (navy) ── */
+      .invoice-header { padding: 13px 20px !important; }
+      /* EXCEPTION: EFM company name — larger */
+      .invoice-company h2 { font-size: 13pt !important; font-weight: 700 !important; line-height: 1.3 !important; }
+      /* EXCEPTION: Address block — slightly larger, packaged */
+      .invoice-company p  { font-size: 8.5pt !important; line-height: 1.55 !important; margin-top: 1px !important; }
+      .inv-logo-circle img { width: 56px !important; height: 56px !important; }
+      .inv-logo-circle svg { width: 18px !important; height: 18px !important; }
+      /* Uniform: invoice number, dates */
+      .inv-number      { font-size: 9pt !important; margin-bottom: 5px !important; }
+      .inv-number span { font-size: 8.5pt !important; }
+      .inv-dates       { font-size: 8.5pt !important; line-height: 1.65 !important; }
+      .inv-status      { font-size: 8pt !important; padding: 3px 9px !important; margin-top: 5px !important; }
 
-      /* Syarat & Ketentuan */
-      .syarat-section { padding:14px 24px 20px !important; }
-      .syarat-section h5 { font-size:12px !important; margin-bottom:8px !important; }
-      .syarat-table td { font-size:12px !important; padding:8px 12px !important; line-height:1.65 !important; }
-      .syarat-table td:first-child { font-size:12px !important; }
+      /* ── BODY ── */
+      .invoice-body { padding: 11px 20px !important; }
+      /* "Tagihan Kepada" label */
+      h4, .billing-section h4 { font-size: 7.5pt !important; margin-bottom: 6px !important; letter-spacing: 0.06em !important; }
+      /* EXCEPTION: Client name — larger */
+      .client-name, #invClientName { font-size: 14pt !important; font-weight: 700 !important; margin-bottom: 3px !important; }
+      /* Uniform: client detail lines */
+      #invClientDetail, .billing-section p { font-size: 8.5pt !important; line-height: 1.58 !important; margin-top: 2px !important; }
+      /* Inline billing block: tighten spacing */
+      .invoice-body > div:first-child { margin-bottom: 10px !important; padding-bottom: 8px !important; }
+      .billing-row { gap: 14px !important; margin-bottom: 10px !important; padding-bottom: 9px !important; }
+
+      /* ── ITEMS TABLE ── */
+      .items-table { margin-bottom: 10px !important; }
+      .items-table th { padding: 6px 10px !important; font-size: 7.5pt !important; letter-spacing: 0.05em !important; }
+      .items-table td { padding: 7px 10px !important; font-size: 9pt !important; line-height: 1.45 !important; }
+      .item-name { font-size: 9pt !important; }
+      .item-desc { font-size: 8pt !important; }
+
+      /* ── SUMMARY ── */
+      .summary-wrap  { margin-bottom: 0 !important; }
+      .summary-box   { width: 285px !important; }
+      /* Uniform: subtotal/diskon/pajak rows */
+      .summary-row {
+        padding: 3px 0 !important; font-size: 9pt !important;
+        display: flex !important; justify-content: space-between !important;
+        flex-wrap: nowrap !important;
+      }
+      .summary-row .lbl, .summary-row .val { white-space: nowrap !important; }
+      .summary-divider { margin: 3px 0 !important; }
+
+      /* EXCEPTION: Total Tagihan — larger, MUST be on 1 line */
+      .total-row {
+        display: flex !important; justify-content: space-between !important;
+        align-items: baseline !important; flex-wrap: nowrap !important;
+        white-space: nowrap !important; gap: 12px !important;
+        padding: 7px 0 2px !important; margin-top: 3px !important;
+        font-size: 11pt !important; font-weight: 700 !important;
+        border-top: 1.5pt solid #1E1C43 !important;
+        page-break-inside: avoid !important;
+      }
+      .total-row > span:first-child { white-space: nowrap !important; flex-shrink: 0 !important; }
+      /* EXCEPTION: Total amount — largest on page */
+      .total-row .val {
+        font-size: 13pt !important; font-weight: 700 !important;
+        white-space: nowrap !important; flex-shrink: 0 !important;
+      }
+
+      /* ── NOTES ── */
+      .invoice-notes  { padding: 9px 20px !important; }
+      .notes-grid     { gap: 12px !important; }
+      .note-item h5   { font-size: 7.5pt !important; margin-bottom: 3px !important; letter-spacing: 0.06em !important; }
+      .note-item p    { font-size: 8.5pt !important; line-height: 1.58 !important; }
+      .note-item:last-child { display: none !important; }
+
+      /* ── SYARAT & KETENTUAN ── */
+      .syarat-section { padding: 7px 20px 10px !important; page-break-inside: avoid !important; }
+      .syarat-section h5 { font-size: 7.5pt !important; margin-bottom: 5px !important; letter-spacing: 0.06em !important; }
+      .syarat-table td { font-size: 7.5pt !important; padding: 4px 8px !important; line-height: 1.5 !important; }
+      .syarat-table td:first-child { font-size: 7.5pt !important; }
     }
   </style>
 </head>
@@ -597,7 +653,7 @@
               <div class="summary-row discount" id="invDiskonRow" style="display:none"><span class="lbl">Diskon <span id="invPromoTag" style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px;font-weight:700"></span></span><span class="val" id="invDiskonVal" style="color:#27AE60">- Rp 0</span></div>
               <div class="summary-row" id="invPajakRow" style="display:none"><span class="lbl">Pajak</span><span class="val" id="invPajakVal">Rp 0</span></div>
               <div class="summary-divider"></div>
-              <div class="total-row"><span>Total Tagihan</span><span class="val" id="invGrandTotal">Rp 1.500.000</span></div>
+              <div class="total-row"><span style="white-space:nowrap;flex-shrink:0">Total Tagihan</span><span class="val" id="invGrandTotal" style="white-space:nowrap;flex-shrink:0">Rp 1.500.000</span></div>
             </div>
           </div>
 
