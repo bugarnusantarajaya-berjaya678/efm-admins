@@ -59,14 +59,18 @@
     .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
     .btn-primary:hover { background:var(--orange-hover); }
 
-    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:16px 20px; display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
-    .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; cursor:pointer; outline:none; }
-    .filter-search { flex:1; min-width:200px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filters-bar { background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:14px 18px; display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+    .filters-label { font-size:11px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.6px; white-space:nowrap; flex-shrink:0; }
+    .filters-divider { width:1px; height:22px; background:var(--gray-border); flex-shrink:0; }
+    .filter-select { padding:7px 10px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; color:var(--text-dark); background:white; cursor:pointer; outline:none; min-width:0; flex-shrink:1; transition:border-color 0.2s; }
+    .filter-select:focus, .filter-select:hover { border-color:var(--navy); }
+    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 12px; transition:border-color 0.2s; }
+    .filter-search:focus-within { border-color:var(--navy); background:white; }
     .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
-    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
-    .btn-filter { padding:8px 16px; background:var(--navy); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-    .btn-clear  { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-    .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
+    .btn-clear { display:inline-flex; align-items:center; gap:5px; padding:7px 12px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap; flex-shrink:0; transition:all 0.2s; }
+    .btn-clear:hover { background:var(--navy); color:white; border-color:var(--navy); }
+    .btn-clear svg { width:13px; height:13px; }
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
     .table-wrap { overflow-x:auto; }
     table { width:100%; border-collapse:collapse; }
@@ -305,14 +309,16 @@
 
 
     <div class="filters-bar">
+      <span class="filters-label">Filter</span>
+      <div class="filters-divider"></div>
       <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
-        <option value="">Semua Status Order</option>
+        <option value="">Status Order</option>
         <option value="aktif">Aktif</option>
         <option value="selesai">Selesai</option>
         <option value="dibatalkan">Dibatalkan</option>
       </select>
       <select class="filter-select" id="filterInvoice" onchange="applyFilterAndPaginate()">
-        <option value="">Semua Status Invoice</option>
+        <option value="">Status Invoice</option>
         <option value="paid">Lunas</option>
         <option value="pending">Pending</option>
         <option value="overdue">Overdue</option>
@@ -330,11 +336,15 @@
         <option>12 Sesi - Pro</option>
         <option>24 Sesi - Elite</option>
       </select>
-      <div class="filter-search" style="margin-left:auto">
+      <div class="filters-divider"></div>
+      <div class="filter-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau order ID..."/>
       </div>
-      <button class="btn-clear" onclick="clearFilter()">Reset</button>
+      <button class="btn-clear" onclick="clearFilter()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reset
+      </button>
     </div>
 
     <div class="table-card">
