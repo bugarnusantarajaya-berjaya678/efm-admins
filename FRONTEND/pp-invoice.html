@@ -659,7 +659,7 @@
                 <span class="val" id="invAfterDiskonVal">Rp 0</span>
               </div>
               <div class="summary-row" id="invPromoRow" style="display:none">
-                <span class="lbl" style="color:var(--gray-text);font-style:italic">Keterangan Promo</span>
+                <span class="lbl" style="font-weight:600;color:var(--navy)">Jenis Benefit Promo</span>
                 <span class="val" id="invPromoTag" style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:2px 9px;border-radius:10px;font-weight:700"></span>
               </div>
               <div class="summary-row" id="invPajakRow" style="display:none"><span class="lbl">Pajak</span><span class="val" id="invPajakVal">Rp 0</span></div>
@@ -856,7 +856,8 @@
             <tbody>
               <tr><td id="rcptItemDesc">12 Sesi - Pro Package<br/><span style="font-size:11px;color:var(--gray-text)">Private Training · PIC: Sarah Jenkins</span></td><td class="r" style="font-weight:600" id="rcptItemAmt">Rp 1.500.000</td></tr>
               <tr id="rcptBiayaLainRow" style="display:none"><td id="rcptBiayaLainDesc">Biaya Lain</td><td class="r" id="rcptBiayaLainAmt">Rp 0</td></tr>
-              <tr id="rcptDiskonRow" style="display:none"><td style="color:#27AE60">Diskon <span id="rcptPromoTag" style="font-size:10px;background:#EAFAF1;padding:1px 7px;border-radius:10px;font-weight:700"></span></td><td class="r" style="color:#27AE60" id="rcptDiskonAmt">— Rp 0</td></tr>
+              <tr id="rcptPromoInfoRow" style="display:none"><td style="color:#27AE60;font-style:italic" id="rcptPromoInfoLabel">—</td><td class="r" style="color:#27AE60">Gratis ✓</td></tr>
+              <tr id="rcptDiskonRow" style="display:none"><td style="color:#27AE60" id="rcptDiskonLabel">Diskon <span id="rcptPromoTag" style="font-size:10px;background:#EAFAF1;padding:1px 7px;border-radius:10px;font-weight:700"></span></td><td class="r" style="color:#27AE60" id="rcptDiskonAmt">— Rp 0</td></tr>
               <tr id="rcptPajakRow" style="display:none"><td style="color:var(--gray-text)">Pajak</td><td class="r" id="rcptPajakAmt">Rp 0</td></tr>
             </tbody>
           </table>
@@ -888,6 +889,19 @@ function toggleMenu(e,s,a){
 
 function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
 
+function promoLabel(type, val, kode) {
+  const badge = kode ? ` <span style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 8px;border-radius:10px;font-weight:700">${kode}</span>` : '';
+  switch(type) {
+    case 'diskon_persen':   return `Diskon ${val}%${badge}`;
+    case 'diskon_nominal':  return `Diskon Nominal${badge}`;
+    case 'cashback':        return `Cashback Rp ${Number(val).toLocaleString('id-ID')}${badge}`;
+    case 'free_session':    return `Free ${val} Sesi Tambahan${badge}`;
+    case 'free_treatment':  return `Free Treatment${badge}`;
+    case 'free_training':   return `Free Training${badge}`;
+    default: return kode || '';
+  }
+}
+
 // Invoice data mapping
 const invoiceData = {
   'INV/EFM/PP/2026/0089': {
@@ -895,35 +909,35 @@ const invoiceData = {
     date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
     picFull:'Sarah Jenkins', hargaPaket:1500000,
-    biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, total:1550000,
+    biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1550000,
   },
   'INV/EFM/PP/2026/0088': {
     client:'Robert Taylor', initials:'RT', color:'#E05945', orderId:'#PP-8038',
     date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
     namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari',
     picFull:'Elena Rodriguez', hargaPaket:2800000,
-    biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, total:2520000,
+    biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10, total:2520000,
   },
   'INV/EFM/PP/2026/0087': {
     client:'Emily Chen', initials:'EC', color:'#27AE60', orderId:'#PP-8041',
     date:'5 Jun 2026', due:'19 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari',
     picFull:'Marcus Chen', hargaPaket:600000,
-    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, total:600000,
+    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:600000,
   },
   'INV/EFM/PP/2026/0085': {
     client:'James Wilson', initials:'JW', color:'#8E44AD', orderId:'#PP-8035',
     date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
     namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari',
     picFull:'Sarah Jenkins', hargaPaket:1100000,
-    biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, total:1175000,
+    biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1175000,
   },
   'INV/EFM/PP/2026/0084': {
     client:'Anita Kumar', initials:'AK', color:'#F39C12', orderId:'#PP-8033',
     date:'28 Mei 2026', due:'11 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
     picFull:'David Kim', hargaPaket:1500000,
-    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, total:1500000,
+    biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1500000,
   },
 };
 
@@ -966,20 +980,30 @@ function showDetail(invNo) {
   const subtotal = d.hargaPaket + biayaLain;
   document.getElementById('invTotal').textContent = fmtRp(subtotal);
 
-  // Diskon Paket + Harga Setelah Diskon
-  const diskon = d.diskon || 0;
-  const diskonRow       = document.getElementById('invDiskonRow');
-  const afterDiskonRow  = document.getElementById('invAfterDiskonRow');
-  diskonRow.style.display      = diskon > 0 ? '' : 'none';
-  afterDiskonRow.style.display = diskon > 0 ? '' : 'none';
-  document.getElementById('invDiskonVal').textContent    = '- ' + fmtRp(diskon);
+  // Diskon / Cashback rows
+  const diskon      = d.diskon || 0;
+  const promoType   = d.promoType || '';
+  const promoVal    = d.promoVal  || 0;
+  const promoKode   = d.promoKode || '';
+  const isCashback  = promoType === 'cashback';
+  const isMonetary  = diskon > 0;
+
+  // Diskon Paket row — label changes for cashback
+  const diskonRowEl = document.getElementById('invDiskonRow');
+  diskonRowEl.style.display = isMonetary ? '' : 'none';
+  diskonRowEl.querySelector('.lbl').textContent = isCashback ? 'Cashback (Rp)' : 'Diskon Paket (Rp)';
+  document.getElementById('invDiskonVal').textContent = '- ' + fmtRp(diskon);
+
+  // Harga Setelah Diskon — only for non-cashback discounts
+  const afterDiskonRow = document.getElementById('invAfterDiskonRow');
+  afterDiskonRow.style.display = (isMonetary && !isCashback) ? '' : 'none';
   document.getElementById('invAfterDiskonVal').textContent = fmtRp(subtotal - diskon);
 
-  // Keterangan Promo
-  const promoKode = d.promoKode || '';
-  const promoRow  = document.getElementById('invPromoRow');
-  promoRow.style.display = promoKode ? '' : 'none';
-  document.getElementById('invPromoTag').textContent = promoKode;
+  // Jenis Benefit Promo row
+  const promoRow = document.getElementById('invPromoRow');
+  const hasPromo = promoType !== '';
+  promoRow.style.display = hasPromo ? '' : 'none';
+  document.getElementById('invPromoTag').innerHTML = promoLabel(promoType, promoVal, promoKode);
 
   // Pajak
   const pajak = d.pajak || 0;

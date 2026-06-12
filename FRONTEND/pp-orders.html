@@ -1004,6 +1004,19 @@ function fmtRp(n) {
   return 'Rp ' + Math.max(0, Math.round(n)).toLocaleString('id-ID');
 }
 
+function promoLabel(type, val, kode) {
+  const badge = kode ? ` <span style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 8px;border-radius:10px;font-weight:700">${kode}</span>` : '';
+  switch(type) {
+    case 'diskon_persen':   return `Diskon ${val}%${badge}`;
+    case 'diskon_nominal':  return `Diskon Nominal${badge}`;
+    case 'cashback':        return `Cashback Rp ${Number(val).toLocaleString('id-ID')}${badge}`;
+    case 'free_session':    return `Free ${val} Sesi Tambahan${badge}`;
+    case 'free_treatment':  return `Free Treatment${badge}`;
+    case 'free_training':   return `Free Training${badge}`;
+    default: return kode || '—';
+  }
+}
+
 function recalcTotal() {
   const base      = _selectedPackage.price || 0;
   const extra     = parseInt(document.getElementById('inp_extra').value) || 0;
@@ -1019,8 +1032,10 @@ function recalcTotal() {
 
   // Diskon
   let diskon = 0;
-  if (promoType === 'diskon_persen') diskon = subtotal * promoVal / 100;
-  else if (promoType === 'diskon_nominal' || promoType === 'cashback') diskon = promoVal;
+  if (promoType === 'diskon_persen') diskon = Math.round(subtotal * promoVal / 100);
+  else if (promoType === 'diskon_nominal') diskon = promoVal;
+  else if (promoType === 'cashback') diskon = promoVal; // cashback reduces invoice total
+  // free_session / free_treatment / free_training → diskon stays 0
   subtotal -= diskon;
 
   // Pajak
@@ -1118,8 +1133,12 @@ function fillReview() {
 
   const promoRow = document.getElementById('rev_promo_row');
   const diskon = c.diskon || 0;
-  promoRow.style.display = diskon > 0 ? 'flex' : 'none';
-  document.getElementById('rev_promo').textContent = '- ' + fmtRp(diskon);
+  const hasPromo = c.promoType && c.promoType !== '';
+  promoRow.style.display = hasPromo ? 'flex' : 'none';
+  const kodePromo = document.getElementById('inp_kode_promo').value.trim().toUpperCase();
+  const lbl = promoLabel(c.promoType, c.promoVal, kodePromo);
+  const suffix = diskon > 0 ? ` (−&nbsp;${fmtRp(diskon)})` : '';
+  document.getElementById('rev_promo').innerHTML = lbl + suffix;
 
   const refVal = document.getElementById('inp_referral').value.trim().toUpperCase();
   const refRow = document.getElementById('rev_referral_row');
@@ -1281,7 +1300,7 @@ const invoiceData = {
     // lokasi & jadwal
     lokasi:'Apartemen Sudirman Park', jadwal:'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
     // keuangan
-    hargaPaket:1500000, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:1500000, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
     total:1550000,
   },
   'INV/EFM/PP/2026/0088': {
@@ -1290,7 +1309,7 @@ const invoiceData = {
     programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari', partisipan:1,
     picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
     lokasi:'Rumah Klien — Bintaro Sektor 9', jadwal:'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
-    hargaPaket:2800000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0,
+    hargaPaket:2800000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10,
     total:2620000,
   },
   'INV/EFM/PP/2026/0087': {
@@ -1299,7 +1318,7 @@ const invoiceData = {
     programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
     picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
     lokasi:'Gym Senayan City Lt.3', jadwal:'Selasa 18:00 · Kamis 18:00',
-    hargaPaket:600000, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:600000, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
     total:600000,
   },
   'INV/EFM/PP/2026/0085': {
@@ -1308,7 +1327,7 @@ const invoiceData = {
     programId:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari', partisipan:1,
     picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
     lokasi:'Cilandak Town Square', jadwal:'Rabu 07:30 · Sabtu 08:00',
-    hargaPaket:1100000, biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0,
+    hargaPaket:1100000, biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
     total:1175000,
   },
 };
@@ -1476,10 +1495,10 @@ function renderInvoiceTab() {
 
   const extraRow = biayaLain > 0
     ? `<tr><td>Biaya Lain<div style="font-size:11px;color:var(--gray-text)">${d.biayaLainKet||''}</div></td><td class="r">—</td><td class="r">${fmtRp(biayaLain)}</td></tr>` : '';
+  const promoLabelStr = d.promoType ? promoLabel(d.promoType, d.promoVal||0, d.promoKode||'') : '';
   const diskonRow = diskon > 0
-    ? `<tr><td style="color:#27AE60">Diskon Promo <span style="font-size:11px;background:#EAFAF1;color:#27AE60;padding:1px 7px;border-radius:10px">${d.promoKode||''}</span></td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(diskon)}</td></tr>` : '';
-  const cashbackRow = cashback > 0
-    ? `<tr><td style="color:#27AE60">Cashback</td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(cashback)}</td></tr>` : '';
+    ? `<tr><td style="color:#27AE60">Diskon Paket<div style="font-size:11px">${promoLabelStr}</div></td><td class="r">—</td><td class="r" style="color:#27AE60">− ${fmtRp(diskon)}</td></tr>` : '';
+  const cashbackRow = ''; // cashback is already in diskonRow
   const pajakRow = pajak > 0
     ? `<tr><td style="color:var(--gray-text)">Pajak</td><td class="r">—</td><td class="r">${fmtRp(pajak)}</td></tr>` : '';
 
