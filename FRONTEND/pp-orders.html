@@ -84,7 +84,7 @@
     table th:nth-child(6), table td:nth-child(6) { width:120px; min-width:120px; }
     table th:nth-child(7), table td:nth-child(7) { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
     table th:nth-child(8), table td:nth-child(8) { width:110px; max-width:110px; text-align:center; }
-    table th:nth-child(9), table td:nth-child(9) { width:90px;  min-width:90px;  text-align:center; white-space:nowrap; }
+    table th:nth-child(9), table td:nth-child(9) { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
     .client-cell { display:flex; align-items:center; gap:10px; }
     .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:10px; font-weight:600; white-space:nowrap; line-height:1.4; }
@@ -102,7 +102,7 @@
     .session-bar { height:5px; background:var(--gray-border); border-radius:3px; width:110px; overflow:hidden; }
     .session-fill { height:100%; background:var(--orange); border-radius:2px; }
     .session-text { font-size:11px; color:var(--gray-text); }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
+    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; flex-shrink:0; }
     .action-btn:hover { border-color:var(--navy); color:var(--navy); }
     .action-btn svg { width:14px; height:14px; }
     .action-btn.invoice { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
@@ -387,8 +387,10 @@
               <td>24 Okt 2026</td><td><span class="badge active">Active</span></td>
               <td><span class="badge paid">Paid</span></td>
               <td data-inv="INV/EFM/PP/2026/0089" data-status="paid">
-                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -399,8 +401,10 @@
               <td>22 Okt 2026</td><td><span class="badge completed">Completed</span></td>
               <td><span class="badge paid">Paid</span></td>
               <td data-inv="INV/EFM/PP/2026/0087" data-status="paid">
-                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -411,8 +415,10 @@
               <td>18 Okt 2026</td><td><span class="badge active">Active</span></td>
               <td><span class="badge pending">Awaiting Payment</span></td>
               <td data-inv="INV/EFM/PP/2026/0088" data-status="pending">
-                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                </div>
               </td>
             </tr>
             <tr onclick="openDrawer(this)" style="cursor:pointer">
@@ -423,8 +429,10 @@
               <td>15 Okt 2026</td><td><span class="badge cancelled">Cancelled</span></td>
               <td><span class="badge overdue">Overdue</span></td>
               <td data-inv="INV/EFM/PP/2026/0085" data-status="overdue">
-                <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                </div>
               </td>
             </tr>
           </tbody>
