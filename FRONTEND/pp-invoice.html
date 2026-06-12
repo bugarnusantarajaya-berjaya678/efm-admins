@@ -335,8 +335,8 @@
 
   <div class="content">
 
-    <!-- LIST VIEW (hidden — management now in pp-orders) -->
-    <div class="view" id="listView" style="display:none">
+    <!-- LIST VIEW -->
+    <div class="view" id="listView">
       <div class="page-header">
         <div class="page-header-left">
           <h1>Invoice Private Training</h1>
@@ -391,7 +391,7 @@
               </tr>
             </thead>
             <tbody id="invoiceBody">
-              <tr onclick="showDetail('INV/EFM/PP/2026/0089','Alex Mercer','JW','#2980B9','12 Sesi - Pro','Sarah Jenkins','10 Jun 2026','24 Jun 2026','paid')">
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')" style="cursor:pointer">
                 <td><span class="invoice-id">INV/EFM/PP/2026/0089</span></td>
                 <td><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">AM</div>Alex Mercer</div></td>
                 <td>12 Sesi - Pro</td>
@@ -399,11 +399,9 @@
                 <td>10 Jun 2026</td>
                 <td style="font-weight:600">Rp 1.500.000</td>
                 <td><span class="badge paid">Paid</span></td>
-                <td>
-                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0089','Alex Mercer','AM','#2980B9','12 Sesi - Pro','Sarah Jenkins','10 Jun 2026','24 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                </td>
+                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
-              <tr onclick="showDetail('INV/EFM/PP/2026/0088','Robert Taylor','RT','#E05945','24 Sesi - Elite','Elena Rodriguez','8 Jun 2026','22 Jun 2026','pending')">
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')" style="cursor:pointer">
                 <td><span class="invoice-id">INV/EFM/PP/2026/0088</span></td>
                 <td><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
                 <td>24 Sesi - Elite</td>
@@ -411,11 +409,9 @@
                 <td>8 Jun 2026</td>
                 <td style="font-weight:600">Rp 2.800.000</td>
                 <td><span class="badge pending">Pending</span></td>
-                <td>
-                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0088','Robert Taylor','RT','#E05945','24 Sesi - Elite','Elena Rodriguez','8 Jun 2026','22 Jun 2026','pending')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                </td>
+                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
-              <tr onclick="showDetail('INV/EFM/PP/2026/0087','Emily Chen','EC','#27AE60','4 Sesi - Starter','Marcus Chen','5 Jun 2026','19 Jun 2026','paid')">
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')" style="cursor:pointer">
                 <td><span class="invoice-id">INV/EFM/PP/2026/0087</span></td>
                 <td><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
                 <td>4 Sesi - Starter</td>
@@ -423,11 +419,9 @@
                 <td>5 Jun 2026</td>
                 <td style="font-weight:600">Rp 600.000</td>
                 <td><span class="badge paid">Paid</span></td>
-                <td>
-                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0087','Emily Chen','EC','#27AE60','4 Sesi - Starter','Marcus Chen','5 Jun 2026','19 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                </td>
+                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
-              <tr onclick="showDetail('INV/EFM/PP/2026/0085','James Wilson','JW','#8E44AD','8 Sesi - Base','Sarah Jenkins','1 Jun 2026','15 Jun 2026','overdue')">
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')" style="cursor:pointer">
                 <td><span class="invoice-id">INV/EFM/PP/2026/0085</span></td>
                 <td><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">JW</div>James Wilson</div></td>
                 <td>8 Sesi - Base</td>
@@ -435,11 +429,9 @@
                 <td>1 Jun 2026</td>
                 <td style="font-weight:600">Rp 1.100.000</td>
                 <td><span class="badge overdue">Overdue</span></td>
-                <td>
-                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0085','James Wilson','JW','#8E44AD','8 Sesi - Base','Sarah Jenkins','1 Jun 2026','15 Jun 2026','overdue')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                </td>
+                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
-              <tr onclick="showDetail('INV/EFM/PP/2026/0084','Anita Kumar','AK','#F39C12','12 Sesi - Pro','David Kim','28 Mei 2026','11 Jun 2026','paid')">
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')" style="cursor:pointer">
                 <td><span class="invoice-id">INV/EFM/PP/2026/0084</span></td>
                 <td><div class="client-cell"><div class="avatar-sm" style="background:#F39C12">AK</div>Anita Kumar</div></td>
                 <td>12 Sesi - Pro</td>
@@ -447,9 +439,7 @@
                 <td>28 Mei 2026</td>
                 <td style="font-weight:600">Rp 1.500.000</td>
                 <td><span class="badge paid">Paid</span></td>
-                <td>
-                  <button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();showDetail('INV/EFM/PP/2026/0084','Anita Kumar','AK','#F39C12','12 Sesi - Pro','David Kim','28 Mei 2026','11 Jun 2026','paid')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                </td>
+                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
               </tr>
             </tbody>
           </table>
@@ -461,9 +451,9 @@
       </div>
     </div>
 
-    <!-- ===== DETAIL VIEW (default active) ===== -->
-    <div class="view active" id="detailView">
-      <button class="back-btn" onclick="window.location.href='pp-orders.html'">
+    <!-- ===== DETAIL VIEW ===== -->
+    <div class="view" id="detailView">
+      <button class="back-btn" id="backBtn" onclick="handleBack()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Kembali ke Orders
       </button>
@@ -673,16 +663,19 @@ const invoiceData = {
   'INV/EFM/PP/2026/0084': { client:'Anita Kumar', initials:'AK', color:'#F39C12', package:'12 Sesi - Pro Package', sesi:'12', pic:'PIC: David Kim', subtotal:'Rp 1.500.000', total:'Rp 1.500.000', date:'28 Mei 2026', due:'11 Jun 2026', status:'paid', orderId:'#PP-8033' },
 };
 
+// Track where the user came from so the back button knows where to go
+let _cameFromOrders = false;
+
 function showDetail(invNo) {
   const d = invoiceData[invNo];
   if (!d) {
-    // Show empty state
     document.getElementById('detailTitle').textContent = 'Invoice tidak ditemukan';
     document.getElementById('detailSubtitle').textContent = invNo || '—';
+    document.getElementById('listView').classList.remove('active');
+    document.getElementById('detailView').classList.add('active');
     return;
   }
 
-  // Update detail view
   document.getElementById('detailTitle').textContent = 'Invoice #' + invNo;
   document.getElementById('detailSubtitle').textContent = 'Private Training — ' + d.client;
   document.getElementById('invNumber').textContent = invNo;
@@ -698,48 +691,63 @@ function showDetail(invNo) {
   document.getElementById('invDate').textContent = d.date;
   document.getElementById('invDueDate').textContent = d.due;
 
-  // Status badge
   const statusMap = {
-    paid: '<span class="inv-status paid">✅ Lunas</span>',
+    paid:    '<span class="inv-status paid">✅ Lunas</span>',
     pending: '<span class="inv-status pending">⏳ Pending</span>',
     overdue: '<span class="inv-status overdue">🔴 Overdue</span>',
-    draft: '<span class="inv-status pending">📝 Draft</span>'
+    draft:   '<span class="inv-status pending">📝 Draft</span>'
   };
   document.getElementById('invStatusBadge').innerHTML = statusMap[d.status] || '';
 
-  // Mark as Paid button & WA button
   const markBtn = document.getElementById('markPaidBtn');
-  const waBtn = document.getElementById('sendWaBtn');
+  const waBtn   = document.getElementById('sendWaBtn');
   if (d.status === 'paid') {
     markBtn.style.display = 'none';
-    waBtn.style.display = 'inline-flex';
+    waBtn.style.display   = 'inline-flex';
   } else {
     markBtn.style.display = 'inline-flex';
-    waBtn.style.display = 'none';
+    waBtn.style.display   = 'none';
   }
 
-  // Set today as default paid date
   document.getElementById('paidDate').value = new Date().toISOString().split('T')[0];
 
-  // Switch view
+  // Update back button label
+  const backBtn = document.getElementById('backBtn');
+  backBtn.innerHTML = _cameFromOrders
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Kembali ke Orders'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg> Kembali ke Daftar Invoice';
+
   document.getElementById('listView').classList.remove('active');
   document.getElementById('detailView').classList.add('active');
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
 }
 
 function showList() {
-  window.location.href = 'pp-orders.html';
+  document.getElementById('detailView').classList.remove('active');
+  document.getElementById('listView').classList.add('active');
+  window.scrollTo(0, 0);
 }
 
-// Auto-load invoice from URL param: pp-invoice.html?inv=INV/EFM/PP/...
+function handleBack() {
+  if (_cameFromOrders) {
+    window.location.href = 'pp-orders.html';
+  } else {
+    showList();
+  }
+}
+
+// Auto-load: ?inv= param → langsung detail (dari pp-orders)
+// Tanpa param → tampilkan list view
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(window.location.search);
-  const invNo = params.get('inv');
+  const invNo  = params.get('inv');
   if (invNo) {
+    _cameFromOrders = true;
     showDetail(invNo);
   } else {
-    // Default: show first invoice
-    showDetail('INV/EFM/PP/2026/0089');
+    // Tampilkan list view
+    document.getElementById('listView').classList.add('active');
+    applyFilterAndPaginate();
   }
 });
 
@@ -749,14 +757,24 @@ function closeMarkPaid() { document.getElementById('markPaidModal').classList.re
 function confirmPaid() {
   const file = document.getElementById('buktiInput').files[0];
   if (!file) {
-    alert('Mohon upload bukti transfer terlebih dahulu.');
+    document.getElementById('uploadArea').style.borderColor = 'var(--red)';
+    document.getElementById('uploadArea').style.background = '#FFF5F5';
     return;
   }
+  const invNo = document.getElementById('invNumber').textContent;
+  if (invoiceData[invNo]) invoiceData[invNo].status = 'paid';
   closeMarkPaid();
   document.getElementById('invStatusBadge').innerHTML = '<span class="inv-status paid">✅ Lunas</span>';
   document.getElementById('markPaidBtn').style.display = 'none';
-  document.getElementById('sendWaBtn').style.display = 'inline-flex';
-  alert('Invoice berhasil ditandai sebagai Lunas!');
+  document.getElementById('sendWaBtn').style.display   = 'inline-flex';
+  // Update badge di list view juga
+  const rows = document.querySelectorAll('#invoiceBody tr');
+  rows.forEach(row => {
+    if (row.textContent.includes(invNo)) {
+      const badge = row.querySelector('.badge');
+      if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
+    }
+  });
 }
 
 function previewFile(input) {
