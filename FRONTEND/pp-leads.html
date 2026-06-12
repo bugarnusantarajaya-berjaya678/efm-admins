@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Leads Management</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/import-engine.css"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -115,56 +116,7 @@
     .form-control:focus { border-color:var(--navy); }
     .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-    .btn-import { padding:10px 20px; background:white; color:var(--navy); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; text-decoration:none; }
-    .btn-import:hover { border-color:var(--navy); background:var(--gray-bg); }
-
-    /* Import Modal Steps */
-    .import-steps { display:flex; align-items:center; gap:0; margin-bottom:24px; }
-    .import-step { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:600; color:var(--gray-text); }
-    .import-step .step-num { width:24px; height:24px; border-radius:50%; border:2px solid var(--gray-border); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; background:white; }
-    .import-step.active .step-num { background:var(--navy); border-color:var(--navy); color:white; }
-    .import-step.active { color:var(--navy); }
-    .import-step.done .step-num { background:var(--green); border-color:var(--green); color:white; }
-    .step-line { flex:1; height:2px; background:var(--gray-border); margin:0 8px; }
-    .step-line.done { background:var(--green); }
-
-    /* Drop Zone */
-    .drop-zone { border:2px dashed var(--gray-border); border-radius:12px; padding:40px 20px; text-align:center; cursor:pointer; transition:all 0.2s; background:var(--gray-bg); }
-    .drop-zone:hover, .drop-zone.dragover { border-color:var(--navy); background:#f0f1f8; }
-    .drop-zone svg { width:40px; height:40px; color:var(--gray-text); margin-bottom:12px; }
-    .drop-zone h4 { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; }
-    .drop-zone p { font-size:12px; color:var(--gray-text); }
-    .drop-zone .file-types { display:inline-flex; gap:6px; margin-top:12px; }
-    .file-type-tag { padding:3px 10px; background:white; border:1px solid var(--gray-border); border-radius:6px; font-size:11px; font-weight:600; color:var(--gray-text); }
-    .file-selected { display:flex; align-items:center; gap:10px; padding:12px 16px; background:#EAFAF1; border:1.5px solid #27AE60; border-radius:10px; margin-top:12px; }
-    .file-selected svg { width:20px; height:20px; color:#27AE60; flex-shrink:0; }
-    .file-selected .file-info { flex:1; }
-    .file-selected .file-name { font-size:13px; font-weight:600; color:var(--navy); }
-    .file-selected .file-meta { font-size:11px; color:var(--gray-text); margin-top:2px; }
-    .file-selected .remove-file { width:24px; height:24px; border-radius:50%; background:rgba(0,0,0,0.06); border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
-
-    /* Mapping Step */
-    .mapping-table { width:100%; border-collapse:collapse; }
-    .mapping-table th { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; padding:8px 12px; background:var(--gray-bg); border-bottom:1.5px solid var(--gray-border); text-align:left; }
-    .mapping-table td { padding:10px 12px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
-    .mapping-table tr:last-child td { border-bottom:none; }
-    .field-label { font-size:13px; font-weight:600; color:var(--navy); }
-    .field-required { color:var(--orange); margin-left:2px; }
-    .field-hint { font-size:11px; color:var(--gray-text); margin-top:2px; }
-    .mapping-select { width:100%; padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; }
-    .mapping-select:focus { border-color:var(--navy); }
-    .import-preview { margin-top:16px; padding:12px 16px; background:var(--gray-bg); border-radius:8px; border:1px solid var(--gray-border); }
-    .import-preview p { font-size:12px; color:var(--gray-text); }
-    .import-preview strong { color:var(--navy); }
-    .import-result { padding:20px; text-align:center; }
-    .import-result svg { width:48px; height:48px; margin-bottom:12px; }
-    .import-result h4 { font-size:16px; font-weight:700; color:var(--navy); margin-bottom:6px; }
-    .import-result p { font-size:13px; color:var(--gray-text); }
-    .import-result .result-stats { display:flex; gap:16px; justify-content:center; margin-top:16px; }
-    .result-stat { padding:10px 20px; border-radius:8px; font-size:13px; font-weight:600; }
-    .result-stat.success { background:#EAFAF1; color:#27AE60; }
-    .result-stat.skip { background:#FEF9E7; color:#F39C12; }
-    .result-stat.error { background:#FDEDEC; color:#E74C3C; }
+    /* Import styles → assets/css/import-engine.css */
   </style>
 </head>
 <body>
@@ -406,108 +358,7 @@
   </div>
 </div>
 
-<!-- Modal Import Leads -->
-<div class="modal-overlay" id="modalImportLeads">
-  <div class="modal" style="max-width:600px;">
-    <div class="modal-header">
-      <h3>Import Leads dari File</h3>
-      <button class="modal-close" onclick="closeImportModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-
-      <!-- Step Indicator -->
-      <div class="import-steps" id="importSteps">
-        <div class="import-step active" id="stepIndicator1">
-          <div class="step-num">1</div>Upload File
-        </div>
-        <div class="step-line" id="stepLine1"></div>
-        <div class="import-step" id="stepIndicator2">
-          <div class="step-num">2</div>Petakan Kolom
-        </div>
-      </div>
-
-      <!-- STEP 1: Upload -->
-      <div id="importStep1">
-        <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <h4>Seret file ke sini atau klik untuk pilih</h4>
-          <p>Dukung ekspor dari Google Form, Google Ads, Meta Ads, Landing Page, dll.</p>
-          <div class="file-types">
-            <span class="file-type-tag">CSV</span>
-            <span class="file-type-tag">XLSX</span>
-            <span class="file-type-tag">XLS</span>
-          </div>
-        </div>
-        <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" style="display:none" onchange="handleFileSelect(this.files[0])"/>
-        <div id="fileSelectedInfo" style="display:none"></div>
-
-        <!-- Row-start control + auto-detect result -->
-        <div style="margin-top:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-          <label style="font-size:12px;font-weight:600;color:var(--navy);white-space:nowrap;">Mulai baca data dari baris ke:</label>
-          <input type="number" id="startRowInput" value="1" min="1" max="100"
-            style="width:64px;padding:6px 10px;border:1.5px solid var(--gray-border);border-radius:7px;font-family:'Poppins',sans-serif;font-size:13px;color:var(--text-dark);outline:none;"
-            oninput="onStartRowChange()" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--gray-border)'"/>
-          <span style="font-size:11px;color:var(--gray-text);">(ubah jika baris 1 bukan header — mis. laporan Google Ads)</span>
-        </div>
-        <div id="autoDetectHint" style="display:none;margin-top:8px;padding:8px 12px;background:#FEF9E7;border:1px solid #F9D86B;border-radius:8px;font-size:12px;color:#856404;"></div>
-
-        <div style="margin-top:14px;padding:12px 16px;background:#EBF5FB;border-radius:8px;border:1px solid #AED6F1;">
-          <p style="font-size:12px;color:#2980B9;line-height:1.6;">
-            <strong>Tips format file:</strong><br/>
-            • <strong>Google Form:</strong> Respons → Unduh sebagai CSV (header biasanya baris 1)<br/>
-            • <strong>Google Ads / Meta Ads:</strong> Export leads → baris 1-2 sering berisi judul laporan, coba mulai dari baris 3<br/>
-            • <strong>Landing Page:</strong> Export kontak → CSV/XLSX<br/>
-            • Kolom tidak perlu urut — Anda bisa petakan di langkah berikutnya.
-          </p>
-        </div>
-      </div>
-
-      <!-- STEP 2: Mapping -->
-      <div id="importStep2" style="display:none">
-        <div class="import-preview" id="importPreviewInfo"></div>
-        <p style="font-size:13px;color:var(--gray-text);margin:16px 0 10px;">Petakan kolom dari file Anda ke field database kami:</p>
-        <table class="mapping-table">
-          <thead>
-            <tr>
-              <th style="width:40%">Field Database Kami</th>
-              <th>Kolom dari File Anda</th>
-            </tr>
-          </thead>
-          <tbody id="mappingBody">
-            <tr>
-              <td><div class="field-label">Nama Lengkap <span class="field-required">*</span></div><div class="field-hint">Nama prospek/lead</div></td>
-              <td><select class="mapping-select" id="mapNama"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-            <tr>
-              <td><div class="field-label">No HP / WhatsApp <span class="field-required">*</span></div><div class="field-hint">Nomor yang bisa dihubungi</div></td>
-              <td><select class="mapping-select" id="mapNoHp"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-            <tr>
-              <td><div class="field-label">Email</div><div class="field-hint">Alamat email kontak</div></td>
-              <td><select class="mapping-select" id="mapEmail"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-            <tr>
-              <td><div class="field-label">Sumber Lead</div><div class="field-hint">Asal perolehan lead</div></td>
-              <td><select class="mapping-select" id="mapSumber"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-            <tr>
-              <td><div class="field-label">Program Diminati</div><div class="field-hint">Jenis olahraga/program</div></td>
-              <td><select class="mapping-select" id="mapProgram"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-            <tr>
-              <td><div class="field-label">Catatan Tambahan</div><div class="field-hint">Info lain yang relevan</div></td>
-              <td><select class="mapping-select" id="mapCatatan"><option value="">— Pilih kolom —</option></select></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- STEP 3: Result (shown after submit) -->
-      <div id="importStep3" style="display:none">
-        <div class="import-result" id="importResultContent"></div>
-      </div>
-
-    </div>
+<!-- #modalImportLeads injected by import-engine.js -->
     <div class="modal-footer" id="importModalFooter">
       <button class="btn-cancel" onclick="closeImportModal()">Batal</button>
       <button class="btn-primary" id="importNextBtn" onclick="importNextStep()" disabled style="opacity:0.5;cursor:not-allowed">
@@ -660,410 +511,50 @@ document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
 function refreshPagination() { applyFilterAndPaginate(); }
 </script>
 
-<!-- CDN Libraries for file parsing -->
+<!-- Import Engine (shared) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="assets/js/import-engine.js"></script>
 <script>
-/* ─── IMPORT LEADS STATE ─── */
-let importCurrentStep = 1;
-let importParsedData  = [];   // array of row objects [{col:val,...},...]
-let importHeaders     = [];   // column names from file
-let importFirstRow    = {};   // first data row for preview
-
-/* ─── OPEN / CLOSE ─── */
-function openImportModal() {
-  resetImportModal();
-  document.getElementById('modalImportLeads').classList.add('show');
-}
-function closeImportModal() {
-  document.getElementById('modalImportLeads').classList.remove('show');
-}
-function resetImportModal() {
-  importCurrentStep = 1;
-  importParsedData  = [];
-  importHeaders     = [];
-  importFirstRow    = {};
-  document.getElementById('importStep1').style.display  = 'block';
-  document.getElementById('importStep2').style.display  = 'none';
-  document.getElementById('importStep3').style.display  = 'none';
-  document.getElementById('fileSelectedInfo').style.display = 'none';
-  document.getElementById('autoDetectHint').style.display   = 'none';
-  document.getElementById('fileInput').value = '';
-  document.getElementById('startRowInput').value = '1';
-  document.getElementById('importModalFooter').style.display = 'flex';
-  setImportBtn(false, 'Lanjut →');
-  setStepIndicators(1);
-}
-
-/* Called when user manually changes start-row input after a file is loaded */
-function onStartRowChange() {
-  if (importParsedData.length === 0) return; // no file loaded yet, nothing to re-parse
-  const fi = document.getElementById('fileInput');
-  if (fi.files && fi.files[0]) handleFileSelect(fi.files[0]);
-}
-
-/* ─── STEP INDICATOR HELPERS ─── */
-function setStepIndicators(activeStep) {
-  ['1','2'].forEach(n => {
-    const ind  = document.getElementById('stepIndicator' + n);
-    ind.classList.remove('active','done');
-    const num  = parseInt(n);
-    if (num < activeStep)       ind.classList.add('done');
-    else if (num === activeStep) ind.classList.add('active');
-  });
-  const line = document.getElementById('stepLine1');
-  if (line) line.className = 'step-line' + (activeStep > 1 ? ' done' : '');
-}
-function setImportBtn(enabled, label) {
-  const btn = document.getElementById('importNextBtn');
-  btn.textContent = label;
-  btn.disabled    = !enabled;
-  btn.style.opacity = enabled ? '1' : '0.5';
-  btn.style.cursor  = enabled ? 'pointer' : 'not-allowed';
-}
-
-/* ─── DRAG AND DROP ─── */
-function handleDragOver(e) {
-  e.preventDefault();
-  document.getElementById('dropZone').classList.add('dragover');
-}
-function handleDragLeave(e) {
-  document.getElementById('dropZone').classList.remove('dragover');
-}
-function handleDrop(e) {
-  e.preventDefault();
-  document.getElementById('dropZone').classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFileSelect(file);
-}
-
-/* ─── FILE SELECTION & PARSING ─── */
-function handleFileSelect(file) {
-  if (!file) return;
-  const ext = file.name.split('.').pop().toLowerCase();
-  if (!['csv','xlsx','xls'].includes(ext)) {
-    alert('Format file tidak didukung. Gunakan CSV atau Excel (.xlsx/.xls).');
-    return;
-  }
-  const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-  if (file.size > 10 * 1024 * 1024) {
-    alert('Ukuran file maksimal 10 MB.');
-    return;
-  }
-  showFileSelectedInfo(file.name, sizeMB, ext.toUpperCase());
-  if (ext === 'csv') {
-    parseCSV(file);
-  } else {
-    parseExcel(file);
-  }
-}
-
-function showFileSelectedInfo(name, sizeMB, type) {
-  const box = document.getElementById('fileSelectedInfo');
-  box.style.display = 'flex';
-  box.innerHTML = `
-    <div class="file-selected">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      <div class="file-info">
-        <div class="file-name">${name}</div>
-        <div class="file-meta">${type} · ${sizeMB} MB</div>
-      </div>
-      <button class="remove-file" onclick="removeSelectedFile()" title="Hapus">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>`;
-}
-
-function removeSelectedFile() {
-  document.getElementById('fileInput').value = '';
-  document.getElementById('fileSelectedInfo').style.display = 'none';
-  document.getElementById('autoDetectHint').style.display = 'none';
-  importParsedData = [];
-  importHeaders    = [];
-  importFirstRow   = {};
-  setImportBtn(false, 'Lanjut →');
-}
-
-/* ─── ROW-DENSITY HELPER ────────────────────────────────────────────
- * Scans the first `scanLimit` rows of a 2-D array (array-of-arrays)
- * and returns the 0-based index of the row with the most non-empty cells.
- * That row is almost always the true header row.
- * ─────────────────────────────────────────────────────────────────── */
-function detectHeaderRow(rawRows, scanLimit) {
-  const limit = Math.min(scanLimit || 20, rawRows.length);
-  let bestIdx = 0, bestCount = 0;
-  for (let i = 0; i < limit; i++) {
-    const count = rawRows[i].filter(c => c !== null && c !== undefined && c.toString().trim() !== '').length;
-    if (count > bestCount) { bestCount = count; bestIdx = i; }
-  }
-  return bestIdx;
-}
-
-function showAutoDetectHint(detected1Based, override1Based) {
-  const box = document.getElementById('autoDetectHint');
-  if (detected1Based !== override1Based) {
-    box.style.display = 'block';
-    box.innerHTML = `⚠️ <strong>Auto-detect:</strong> Header paling padat terdeteksi di baris <strong>${detected1Based}</strong>, bukan baris ${override1Based}. Pertimbangkan mengubah nilai "Mulai baca dari baris ke" jika kolom tidak sesuai.`;
-  } else {
-    box.style.display = 'none';
-  }
-}
-
-function getStartRow() {
-  const v = parseInt(document.getElementById('startRowInput').value, 10);
-  return (isNaN(v) || v < 1) ? 1 : v;
-}
-
-function applyParsedResult(headers, data) {
-  if (!headers.length || !data.length) {
-    alert('Tidak ada data yang dapat dibaca. Coba ubah "Mulai baca dari baris ke".');
-    return;
-  }
-  importHeaders    = headers;
-  importParsedData = data;
-  importFirstRow   = data[0] || {};
-  setImportBtn(true, 'Lanjut →');
-}
-
-function parseCSV(file) {
-  /* First pass: read everything as raw arrays to run density detection */
-  Papa.parse(file, {
-    header: false,
-    skipEmptyLines: false,
-    complete: function(raw) {
-      const allRows  = raw.data;
-      const startRow = getStartRow();                         // user override (1-based)
-      const detected = detectHeaderRow(allRows, 20) + 1;     // 1-based
-      showAutoDetectHint(detected, startRow);
-
-      const headerIdx = startRow - 1;                        // 0-based
-      if (headerIdx >= allRows.length) {
-        alert('Baris ke-' + startRow + ' tidak ditemukan. File hanya memiliki ' + allRows.length + ' baris.');
-        return;
-      }
-
-      const headers = allRows[headerIdx].map((h, i) =>
-        (h !== null && h !== undefined && h.toString().trim() !== '') ? h.toString().trim() : ('Kolom ' + (i + 1))
-      );
-
-      /* Second pass: parse from headerIdx onward with correct header */
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        beforeFirstChunk: function(chunk) {
-          /* Strip lines before the header row */
-          const lines = chunk.split('\n');
-          return lines.slice(headerIdx).join('\n');
-        },
-        complete: function(results) {
-          applyParsedResult(results.meta.fields || headers, results.data);
-        },
-        error: function(err) { alert('Gagal membaca CSV: ' + err.message); }
-      });
-    },
-    error: function(err) { alert('Gagal membaca CSV: ' + err.message); }
-  });
-}
-
-function parseExcel(file) {
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const wb       = XLSX.read(new Uint8Array(e.target.result), { type:'array' });
-      const ws       = wb.Sheets[wb.SheetNames[0]];
-
-      /* Read as array-of-arrays first for density detection */
-      const rawAoA   = XLSX.utils.sheet_to_json(ws, { header:1, defval:'' });
-      const startRow = getStartRow();                        // 1-based (user)
-      const detected = detectHeaderRow(rawAoA, 20) + 1;     // 1-based
-      showAutoDetectHint(detected, startRow);
-
-      const headerIdx = startRow - 1;                       // 0-based
-      if (headerIdx >= rawAoA.length) {
-        alert('Baris ke-' + startRow + ' tidak ditemukan. Sheet hanya memiliki ' + rawAoA.length + ' baris.');
-        return;
-      }
-
-      /* Build headers from chosen row; fallback to "Kolom N" for blanks */
-      const rawHeaders = rawAoA[headerIdx];
-      const headers    = rawHeaders.map((h, i) =>
-        (h !== null && h !== undefined && h.toString().trim() !== '') ? h.toString().trim() : ('Kolom ' + (i + 1))
-      );
-
-      /* Deduplicate: if two columns share the same name, append index */
-      const seen = {};
-      const dedupedHeaders = headers.map(h => {
-        if (seen[h] === undefined) { seen[h] = 0; return h; }
-        seen[h]++;
-        return h + '_' + seen[h];
-      });
-
-      /* Convert data rows (everything after headerIdx) to objects */
-      const dataRows = rawAoA.slice(headerIdx + 1)
-        .filter(row => row.some(c => c !== null && c !== undefined && c.toString().trim() !== ''))
-        .map(row => {
-          const obj = {};
-          dedupedHeaders.forEach((h, i) => { obj[h] = (row[i] !== undefined ? row[i].toString() : ''); });
-          return obj;
-        });
-
-      applyParsedResult(dedupedHeaders, dataRows);
-    } catch(err) {
-      alert('Gagal membaca Excel: ' + err.message);
+document.addEventListener('DOMContentLoaded', function() {
+  initImportEngine({
+    tbodyId:     'leadsBody',
+    apiEndpoint: '/api/leads-pp/import',
+    fields: [
+      { id:'nama',    label:'Nama Lengkap',      required:true,  hint:'Nama prospek/lead' },
+      { id:'no_hp',   label:'No HP / WhatsApp',  required:true,  hint:'Nomor yang bisa dihubungi' },
+      { id:'email',   label:'Email',             required:false, hint:'Alamat email kontak' },
+      { id:'sumber',  label:'Sumber Lead',       required:false, hint:'Asal perolehan lead' },
+      { id:'program', label:'Program Diminati',  required:false, hint:'Jenis olahraga/program' },
+      { id:'catatan', label:'Catatan Tambahan',  required:false, hint:'Info lain yang relevan' },
+    ],
+    buildRow: function(lead, i, tbody) {
+      const colors  = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
+      const initials= lead.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+      const color   = colors[i % colors.length];
+      const today   = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+      const leadId  = '#L-' + (2000 + tbody.rows.length + 1);
+      const sumber  = lead.sumber ? '<span class="source-tag">'+lead.sumber+'</span>' : '—';
+      const tr      = document.createElement('tr');
+      tr.innerHTML  = `
+        <td>${leadId}</td>
+        <td><div class="lead-name-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${lead.nama}</div></td>
+        <td>${lead.no_hp}</td>
+        <td>${sumber}</td>
+        <td>${lead.program||'—'}</td>
+        <td><span class="badge new">New</span></td>
+        <td>${today}</td>
+        <td>
+          <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+          <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+        </td>`;
+      return tr;
     }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-/* ─── STEP NAVIGATION ─── */
-function importNextStep() {
-  if (importCurrentStep === 1) {
-    goToMappingStep();
-  } else if (importCurrentStep === 2) {
-    runImport();
-  }
-}
-
-function goToMappingStep() {
-  importCurrentStep = 2;
-  document.getElementById('importStep1').style.display = 'none';
-  document.getElementById('importStep2').style.display = 'block';
-  setStepIndicators(2);
-
-  /* Build dropdown options: "Nama Kolom  —  Contoh: <nilai baris pertama>" */
-  const selects = ['mapNama','mapNoHp','mapEmail','mapSumber','mapProgram','mapCatatan'];
-  selects.forEach(id => {
-    const sel = document.getElementById(id);
-    while (sel.options.length > 1) sel.remove(1);
-    importHeaders.forEach(col => {
-      const opt       = document.createElement('option');
-      opt.value       = col;
-      const sample    = (importFirstRow[col] || '').toString().trim();
-      const preview   = sample.length > 30 ? sample.substring(0, 30) + '…' : sample;
-      opt.textContent = sample ? `${col}  —  contoh: ${preview}` : col;
-      sel.appendChild(opt);
-    });
   });
-
-  autoDetectMapping();
-
-  /* Preview bar: show detected row count + first-row sample values */
-  const samplePairs = importHeaders.slice(0, 5).map(h => {
-    const v = (importFirstRow[h] || '').toString().trim();
-    return v ? `<em>${h}</em>: "${v}"` : `<em>${h}</em>`;
-  }).join(' · ');
-  document.getElementById('importPreviewInfo').innerHTML =
-    `<p>📄 <strong>${importParsedData.length} baris</strong> data · <strong>${importHeaders.length} kolom</strong> terdeteksi</p>
-     <p style="margin-top:6px;font-size:11px;color:var(--gray-text);">Baris pertama: ${samplePairs}${importHeaders.length > 5 ? ' · …' : ''}</p>`;
-
-  setImportBtn(true, 'Import Sekarang →');
-}
-
-function autoDetectMapping() {
-  const patterns = {
-    mapNama:    [/nama/i, /name/i, /full.?name/i],
-    mapNoHp:    [/hp/i, /phone/i, /wa/i, /whatsapp/i, /telp/i, /no.?hp/i, /handphone/i],
-    mapEmail:   [/email/i, /e-?mail/i, /surel/i],
-    mapSumber:  [/sumber/i, /source/i, /channel/i, /media/i, /referral/i],
-    mapProgram: [/program/i, /produk/i, /layanan/i, /service/i, /interest/i, /minat/i],
-    mapCatatan: [/catatan/i, /notes?/i, /keterangan/i, /message/i, /pesan/i, /comment/i]
-  };
-  importHeaders.forEach(col => {
-    Object.entries(patterns).forEach(([selectId, regexList]) => {
-      const sel = document.getElementById(selectId);
-      if (sel.value) return; // already set
-      if (regexList.some(r => r.test(col))) sel.value = col;
-    });
-  });
-}
-
-/* ─── RUN IMPORT ─── */
-function runImport() {
-  const mapping = {
-    nama:    document.getElementById('mapNama').value,
-    no_hp:   document.getElementById('mapNoHp').value,
-    email:   document.getElementById('mapEmail').value,
-    sumber:  document.getElementById('mapSumber').value,
-    program: document.getElementById('mapProgram').value,
-    catatan: document.getElementById('mapCatatan').value
-  };
-
-  if (!mapping.nama || !mapping.no_hp) {
-    alert('Kolom "Nama Lengkap" dan "No HP" wajib dipetakan.');
-    return;
-  }
-
-  // Build normalized rows
-  const rows = importParsedData.map(row => ({
-    nama:    (row[mapping.nama]    || '').toString().trim(),
-    no_hp:   (row[mapping.no_hp]   || '').toString().trim(),
-    email:   (row[mapping.email]   || '').toString().trim(),
-    sumber:  (row[mapping.sumber]  || '').toString().trim(),
-    program: (row[mapping.program] || '').toString().trim(),
-    catatan: (row[mapping.catatan] || '').toString().trim()
-  })).filter(r => r.nama && r.no_hp); // skip empty rows
-
-  const skipped = importParsedData.length - rows.length;
-
-  /* ── INTEGRATION POINT ──────────────────────────────────────────────
-   * Untuk produksi, ganti blok di bawah dengan fetch ke API backend:
-   *
-   * const res = await fetch('/api/leads/import', {
-   *   method: 'POST',
-   *   headers: { 'Content-Type': 'application/json',
-   *              'Authorization': 'Bearer ' + getCookie('efm_token') },
-   *   body: JSON.stringify({ leads: rows })
-   * });
-   * const result = await res.json();
-   * // result: { inserted: N, skipped: N, errors: [...] }
-   *
-   * ─────────────────────────────────────────────────────────────────── */
-
-  // Client-side: render rows into the table
-  const avatarColors = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
-  const tbody = document.getElementById('leadsBody');
-  let insertedCount = 0;
-  rows.forEach((lead, i) => {
-    const initials = lead.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-    const color    = avatarColors[i % avatarColors.length];
-    const today    = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-    const leadId   = '#L-' + (2000 + tbody.rows.length + 1);
-    const sumberTag = lead.sumber ? `<span class="source-tag">${lead.sumber}</span>` : '—';
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${leadId}</td>
-      <td><div class="lead-name-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${lead.nama}</div></td>
-      <td>${lead.no_hp}</td>
-      <td>${sumberTag}</td>
-      <td>${lead.program || '—'}</td>
-      <td><span class="badge new">New</span></td>
-      <td>${today}</td>
-      <td>
-        <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-        <button class="action-btn" title="Buat Order" onclick="window.location.href='pp-orders.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-        <button class="action-btn danger" title="Hapus"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-      </td>`;
-    tbody.appendChild(row);
-    insertedCount++;
-  });
-  refreshPagination();
-
-  // Show result step
-  document.getElementById('importStep2').style.display = 'none';
-  document.getElementById('importStep3').style.display = 'block';
-  document.getElementById('importModalFooter').style.display = 'none';
-  document.getElementById('importResultContent').innerHTML = `
-    <svg viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-    <h4>Import Berhasil!</h4>
-    <p>Data leads telah ditambahkan ke tabel.</p>
-    <div class="result-stats">
-      <div class="result-stat success">${insertedCount} leads diimport</div>
-      ${skipped > 0 ? `<div class="result-stat skip">${skipped} baris dilewati</div>` : ''}
-    </div>
-    <br/>
-    <button class="btn-primary" onclick="closeImportModal()" style="margin-top:8px">Selesai</button>`;
-}
+});
 </script>
+
 
 <script>
 const role = localStorage.getItem('efm_role');

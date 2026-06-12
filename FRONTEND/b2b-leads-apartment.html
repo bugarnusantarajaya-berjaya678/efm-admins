@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Leads Apartment</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/import-engine.css"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root { --navy:#1E1C43; --orange:#E05945; --orange-hover:#C94A38; --gray-bg:#F8F9FA; --gray-border:#E2E6EA; --gray-text:#6C757D; --text-dark:#1E1C43; --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --sidebar-w:240px; }
@@ -177,7 +178,13 @@
   <div class="content">
     <div class="page-header">
       <div class="page-header-left"><h1>Leads Apartment</h1><p>Kelola prospek klien apartemen B2B — Klik ✓ untuk convert lead Closing menjadi Klien</p></div>
-      <button class="btn-primary" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Lead</button>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn-import" data-open-import>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Import Leads
+        </button>
+        <button class="btn-primary" onclick="openAddModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Tambah Lead</button>
+      </div>
     </div>
 
     <div class="stats-row">
@@ -552,5 +559,45 @@ function goToPage(page) {
 
 document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
 </script>
+
+<!-- Import Engine (shared) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="assets/js/import-engine.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  initImportEngine({
+    tbodyId:      'dataBody',
+    apiEndpoint:  '/api/leads-apartment/import',
+    fields: [
+      { id:'nama',    label:'Nama Apartemen',     required:true,  hint:'Nama gedung/apartemen' },
+      { id:'no_hp',   label:'No HP PIC',          required:true,  hint:'Nomor kontak PIC' },
+      { id:'email',   label:'Email',              required:false, hint:'Email PIC' },
+      { id:'sumber',  label:'Sumber Lead',        required:false, hint:'Asal perolehan lead' },
+      { id:'program', label:'Est. Nilai Kontrak', required:false, hint:'Misal: Rp 7jt/bln' },
+      { id:'catatan', label:'Catatan',            required:false, hint:'Info tambahan' }
+    ],
+    buildRow: function(lead,i,tbody){
+      const today=new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+      const id='#BA-'+(100+tbody.rows.length+1);
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td>${id}</td>
+        <td><strong>${lead.nama}</strong></td>
+        <td>${lead.email||'—'}</td>
+        <td>${lead.no_hp}</td>
+        <td>${lead.program||'—'}</td>
+        <td><span class="badge new">New</span></td>
+        <td>${today}</td>
+        <td>
+          <button class="action-btn" title="Detail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn disabled" title="Hanya tersedia saat stage = Closing" onclick="showConvertHint()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></button>
+        </td>`;
+      return tr;
+    }
+  });
+});
+</script>
+
 </body>
 </html>
