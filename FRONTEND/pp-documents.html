@@ -253,10 +253,10 @@
         <h1>Agreement Klien</h1>
         <p>Kelola dokumen persetujuan dan kontrak klien Private Training</p>
       </div>
-      <button class="btn-primary" onclick="openModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Upload Agreement
-      </button>
+      <div style="display:flex;align-items:center;gap:8px;background:rgba(39,174,96,0.1);border:1.5px solid rgba(39,174,96,0.25);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;color:var(--green)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Paperless · Sign-on-Glass
+      </div>
     </div>
 
     <!-- Stats -->
@@ -336,70 +336,75 @@
   </div>
 </main>
 
-<!-- Modal: Preview Agreement -->
+<!-- Modal: Dynamic Agreement Viewer -->
 <div class="modal-overlay" id="previewModal">
-  <div class="modal" style="max-width:500px">
+  <div class="modal" style="max-width:720px">
     <div class="modal-header">
-      <h3 id="prevTitle">Preview Agreement</h3>
-      <button class="modal-close" onclick="closePreview()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div style="background:var(--gray-bg);border-radius:12px;padding:28px;text-align:center;margin-bottom:16px">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="52" height="52" style="color:var(--navy);margin-bottom:12px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        <div id="prevFileName" style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:4px"></div>
-        <div id="prevFileMeta" style="font-size:12px;color:var(--gray-text)"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="prevDetails"></div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closePreview()">Tutup</button>
-      <button class="btn-primary" id="prevDownloadBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal: Upload Agreement -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>Upload Agreement Klien</h3>
-      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div class="form-group">
-        <label>Nama Klien <span>*</span></label>
-        <input type="text" class="form-control" id="uploadNama" placeholder="Nama klien..."/>
-      </div>
-      <div class="form-group">
-        <label>Order ID <span>*</span></label>
-        <input type="text" class="form-control" id="uploadOrderId" placeholder="Contoh: PP-8042"/>
-      </div>
-      <div class="form-group">
-        <label>Paket <span>*</span></label>
-        <select class="form-control" id="uploadPaket">
-          <option value="">— Pilih Paket —</option>
-          <option>4 Sesi - Starter</option>
-          <option>8 Sesi - Base</option>
-          <option>12 Sesi - Pro</option>
-          <option>24 Sesi - Elite</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Upload File <span>*</span></label>
-        <div class="upload-area" onclick="document.getElementById('fileInput').click()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <h4>Klik untuk upload file</h4>
-          <p>PDF, DOC, DOCX (Maks. 10MB)</p>
-          <input type="file" id="fileInput" style="display:none" accept=".pdf,.doc,.docx"/>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:32px;height:32px;background:rgba(30,28,67,0.08);border-radius:8px;display:flex;align-items:center;justify-content:center;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div>
+          <h3 id="prevTitle" style="font-size:14px;font-weight:700;color:var(--navy);line-height:1.2">Agreement Klien</h3>
+          <div id="prevSubtitle" style="font-size:11px;color:var(--gray-text);margin-top:1px"></div>
         </div>
       </div>
+      <button class="modal-close" onclick="closePreview()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
-    <div class="modal-footer">
-      <button class="btn-cancel" onclick="closeModal()">Batal</button>
-      <button class="btn-primary" onclick="saveDoc()">Upload Agreement</button>
+    <div class="modal-body" style="padding:0">
+      <!-- Contract document area -->
+      <div id="contractDoc" style="padding:36px 40px;font-family:'Poppins',sans-serif;max-height:70vh;overflow-y:auto;">
+
+        <!-- Kop -->
+        <div style="text-align:center;border-bottom:2px solid var(--navy);padding-bottom:20px;margin-bottom:24px">
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">EFM — Elite Fitness Management</div>
+          <h2 style="font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">PERJANJIAN LAYANAN PRIVATE TRAINING</h2>
+          <div id="docNomor" style="font-size:11px;color:var(--gray-text)"></div>
+        </div>
+
+        <!-- Detail klien & paket -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px" id="docDetails"></div>
+
+        <!-- Pasal-pasal -->
+        <div style="margin-bottom:24px">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray-border)">Pasal &amp; Ketentuan Layanan</div>
+          <div style="font-size:12px;line-height:1.8;color:var(--text-dark)">
+            <p style="margin-bottom:10px"><strong>Pasal 1 — Lingkup Layanan.</strong> Pihak Pertama (EFM) sepakat untuk menyediakan layanan pelatihan fisik perseorangan (Private Training) kepada Pihak Kedua (Klien) sesuai dengan paket yang dipilih, meliputi sesi latihan terjadwal, penyusunan program latihan, serta pendampingan oleh Pelatih (PIC) yang ditugaskan.</p>
+            <p style="margin-bottom:10px"><strong>Pasal 2 — Pembayaran &amp; Pembatalan.</strong> Klien wajib menyelesaikan pembayaran sesuai tagihan yang tertera pada Invoice terkait sebelum atau pada sesi pertama dimulai. Pembatalan sesi yang dilakukan kurang dari 3 (tiga) jam sebelum jadwal berlangsung tidak dapat dijadwalkan ulang dan dihitung sebagai sesi terpakai.</p>
+            <p><strong>Pasal 3 — Kesehatan &amp; Keselamatan.</strong> Klien menyatakan dalam kondisi kesehatan yang layak untuk mengikuti program latihan fisik intensitas sedang-tinggi. EFM tidak bertanggung jawab atas cedera yang timbul akibat penyembunyian kondisi medis yang relevan. Klien berhak menghentikan sesi kapan pun dan PIC wajib menghormati keputusan tersebut.</p>
+          </div>
+        </div>
+
+        <!-- Area Tanda Tangan -->
+        <div style="border-top:1px solid var(--gray-border);padding-top:20px">
+          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px">Tanda Tangan Para Pihak</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <!-- EFM side -->
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Pihak Pertama — EFM</div>
+              <div style="height:72px;border:1.5px solid var(--gray-border);border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--gray-bg);margin-bottom:8px">
+                <svg viewBox="0 0 160 48" width="120" height="36">
+                  <path d="M10,36 C20,10 30,40 45,20 C55,6 65,38 80,22 C90,10 100,34 115,18 C125,8 135,30 150,24" fill="none" stroke="var(--navy)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div style="font-size:11px;color:var(--navy);font-weight:600">Manajemen EFM</div>
+              <div style="font-size:10px;color:var(--gray-text)">Ditandatangani secara digital</div>
+            </div>
+            <!-- Client side -->
+            <div>
+              <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Pihak Kedua — Klien</div>
+              <div id="sigBox" style="height:72px;border:1.5px solid var(--gray-border);border-radius:8px;display:flex;align-items:center;justify-content:center;margin-bottom:8px"></div>
+              <div id="sigName" style="font-size:11px;color:var(--navy);font-weight:600"></div>
+              <div id="sigMeta" style="font-size:10px;color:var(--gray-text)"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <div id="prevBadgeWrap"></div>
+      <button class="btn-cancel" onclick="closePreview()">Tutup</button>
     </div>
   </div>
 </div>
@@ -412,14 +417,14 @@ const AGREEMENT_DB = {
     nama_klien: 'James Wilson', avatar_initials: 'JW', avatar_color: '#2980B9',
     order_id: 'PP-8042', paket: '12 Sesi - Pro',
     tgl_dibuat: '24 Okt 2026',
-    status_ttd: 'signed',
+    status_ttd: 'signed', tgl_ttd: '25 Okt 2026',
   },
   'AGR-002': {
     berkas_id: 'AGR-002', display_id: '#AGR-002',
     nama_klien: 'Emily Chen', avatar_initials: 'EC', avatar_color: '#27AE60',
     order_id: 'PP-8041', paket: '4 Sesi - Starter',
     tgl_dibuat: '22 Okt 2026',
-    status_ttd: 'signed',
+    status_ttd: 'signed', tgl_ttd: '22 Okt 2026',
   },
   'AGR-003': {
     berkas_id: 'AGR-003', display_id: '#AGR-003',
@@ -440,14 +445,14 @@ const AGREEMENT_DB = {
     nama_klien: 'Budi Santoso', avatar_initials: 'BS', avatar_color: '#16A085',
     order_id: 'PP-8031', paket: '12 Sesi - Pro',
     tgl_dibuat: '10 Okt 2026',
-    status_ttd: 'signed',
+    status_ttd: 'signed', tgl_ttd: '11 Okt 2026',
   },
   'AGR-006': {
     berkas_id: 'AGR-006', display_id: '#AGR-006',
     nama_klien: 'Rina Kusuma', avatar_initials: 'RK', avatar_color: '#D35400',
     order_id: 'PP-8027', paket: '4 Sesi - Starter',
     tgl_dibuat: '5 Okt 2026',
-    status_ttd: 'signed',
+    status_ttd: 'signed', tgl_ttd: '5 Okt 2026',
   },
   'AGR-007': {
     berkas_id: 'AGR-007', display_id: '#AGR-007',
@@ -476,8 +481,7 @@ function buildDocRow(a) {
       <td class="col-status" data-status="${a.status_ttd}"><span class="badge ${s.cls}">${s.label}</span></td>
       <td class="col-aksi">
         <div class="action-wrap">
-          <button class="action-btn" title="Preview" onclick="event.stopPropagation();previewDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          <button class="action-btn download" title="Download" onclick="event.stopPropagation();downloadDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+          <button class="action-btn" title="Lihat Dokumen" onclick="event.stopPropagation();previewDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
         </div>
       </td>
     </tr>`;
@@ -497,52 +501,76 @@ function updateAgreementStats() {
 }
 
 /* ─── MODAL ─── */
-function openModal()  { document.getElementById('modalOverlay').classList.add('show'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
 function closePreview() { document.getElementById('previewModal').classList.remove('show'); }
-
-function saveDoc() {
-  const nama    = document.getElementById('uploadNama').value.trim();
-  const orderId = document.getElementById('uploadOrderId').value.trim();
-  const paket   = document.getElementById('uploadPaket').value;
-  if (!nama || !orderId || !paket) { alert('Harap lengkapi semua field wajib.'); return; }
-  const newId = 'AGR-' + String(Object.keys(AGREEMENT_DB).length + 1).padStart(3,'0');
-  AGREEMENT_DB[newId] = {
-    berkas_id: newId, display_id: '#' + newId,
-    nama_klien: nama, avatar_initials: nama.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(), avatar_color: '#6C757D',
-    order_id: orderId.replace('#',''), paket,
-    tgl_dibuat: new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}),
-    status_ttd: 'pending',
-  };
-  initDocTable();
-  applyFilterAndPaginate();
-  closeModal();
-  document.getElementById('uploadNama').value = '';
-  document.getElementById('uploadOrderId').value = '';
-  document.getElementById('uploadPaket').selectedIndex = 0;
-}
 
 function previewDoc(id) {
   const a = AGREEMENT_DB[id];
   if (!a) return;
-  const statusMap = { signed:'Signed', pending:'Pending', expired:'Expired' };
-  const clsMap    = { signed:'signed', pending:'pending', expired:'expired' };
-  document.getElementById('prevTitle').textContent    = 'Preview — ' + a.display_id;
-  document.getElementById('prevFileName').textContent = 'Agreement Klien — ' + a.nama_klien + '.pdf';
-  document.getElementById('prevFileMeta').textContent = 'Tanggal dibuat: ' + a.tgl_dibuat + '  •  Order: #' + a.order_id;
-  const cell = (lbl, val) => `<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${lbl}</div><div style="font-size:13px;font-weight:700;color:var(--navy)">${val}</div></div>`;
-  document.getElementById('prevDetails').innerHTML =
-    cell('ID Berkas', a.display_id) +
-    cell('Nama Klien', a.nama_klien) +
-    cell('Paket', a.paket) +
-    `<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Status TTD</div><span class="badge ${clsMap[a.status_ttd]}">${statusMap[a.status_ttd]}</span></div>`;
-  document.getElementById('prevDownloadBtn').onclick = () => downloadDoc(id);
-  document.getElementById('previewModal').classList.add('show');
-}
 
-function downloadDoc(id) {
-  const a = AGREEMENT_DB[id];
-  alert('Mengunduh: Agreement Klien — ' + a.nama_klien + ' (' + a.display_id + ')\n\nFitur ini akan terhubung ke sistem penyimpanan dokumen.');
+  /* Header */
+  document.getElementById('prevTitle').textContent    = 'Agreement Klien — ' + a.display_id;
+  document.getElementById('prevSubtitle').textContent = a.nama_klien + '  ·  #' + a.order_id;
+  document.getElementById('docNomor').textContent     = 'No. ' + a.display_id + ' / EFM / PP / ' + a.tgl_dibuat.split(' ').pop();
+
+  /* Detail grid */
+  const cell = (lbl, val) =>
+    `<div style="background:var(--gray-bg);border-radius:8px;padding:11px 14px">
+       <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${lbl}</div>
+       <div style="font-size:13px;font-weight:700;color:var(--navy)">${val}</div>
+     </div>`;
+  document.getElementById('docDetails').innerHTML =
+    cell('Nama Klien', a.nama_klien) +
+    cell('Order ID', '#' + a.order_id) +
+    cell('Paket Dipilih', a.paket) +
+    cell('Tanggal Dibuat', a.tgl_dibuat);
+
+  /* Signature box */
+  const sigBox  = document.getElementById('sigBox');
+  const sigName = document.getElementById('sigName');
+  const sigMeta = document.getElementById('sigMeta');
+
+  if (a.status_ttd === 'signed') {
+    /* Simulated digital signature SVG */
+    sigBox.style.background = '#EAFAF1';
+    sigBox.style.borderColor = 'var(--green)';
+    sigBox.innerHTML = `
+      <svg viewBox="0 0 160 48" width="120" height="36">
+        <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#27AE60" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30,42 C40,38 50,44 60,40" fill="none" stroke="#27AE60" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>`;
+    sigName.textContent = a.nama_klien;
+    sigMeta.innerHTML   = '✓ Ditandatangani pada: ' + (a.tgl_ttd || a.tgl_dibuat);
+    sigMeta.style.color = 'var(--green)';
+  } else if (a.status_ttd === 'expired') {
+    sigBox.style.background = '#FDEDEC';
+    sigBox.style.borderColor = 'var(--red)';
+    sigBox.innerHTML = `<div style="text-align:center"><div style="font-size:11px;font-weight:700;color:var(--red)">Agreement Expired</div><div style="font-size:10px;color:var(--red);margin-top:3px;opacity:.75">Perlu pembaharuan dokumen</div></div>`;
+    sigName.textContent = a.nama_klien;
+    sigMeta.textContent = 'Expired — ' + a.tgl_dibuat;
+    sigMeta.style.color = 'var(--red)';
+  } else {
+    /* Pending */
+    sigBox.style.background = 'var(--gray-bg)';
+    sigBox.style.borderColor = 'var(--gray-border)';
+    sigBox.style.borderStyle = 'dashed';
+    sigBox.innerHTML = `
+      <div style="text-align:center">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--gray-text)" stroke-width="1.5" width="22" height="22" style="margin-bottom:4px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        <div style="font-size:10px;font-weight:600;color:var(--gray-text)">Menunggu TTD Klien</div>
+        <div style="font-size:9px;color:var(--gray-text);margin-top:2px;opacity:.75">di Perangkat Pelatih</div>
+      </div>`;
+    sigName.textContent = a.nama_klien;
+    sigMeta.textContent = 'Status: Pending TTD';
+    sigMeta.style.color = 'var(--yellow)';
+  }
+
+  /* Footer badge */
+  const statusMap = { signed:'Signed', pending:'Pending TTD', expired:'Expired' };
+  const clsMap    = { signed:'signed', pending:'pending',     expired:'expired' };
+  document.getElementById('prevBadgeWrap').innerHTML =
+    `<span class="badge ${clsMap[a.status_ttd]}">${statusMap[a.status_ttd]}</span>`;
+
+  document.getElementById('previewModal').classList.add('show');
 }
 
 /* ─── FILTER + PAGINATION ENGINE ─── */
