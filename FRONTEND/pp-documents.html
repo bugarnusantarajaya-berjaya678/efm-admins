@@ -152,6 +152,75 @@
     .upload-area svg { width:30px; height:30px; color:var(--gray-text); margin-bottom:8px; }
     .upload-area h4 { font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px; }
     .upload-area p { font-size:11px; color:var(--gray-text); }
+
+    /* ══════════════════════════════════════════════════════
+       @media print — Agreement PDF A4
+       Mirrors invoice print CSS: 10mm 12mm margins, navy bg preserved
+    ══════════════════════════════════════════════════════ */
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
+        -webkit-font-smoothing: antialiased !important;
+        box-sizing: border-box !important;
+      }
+      @page { size: 210mm 297mm; margin: 10mm 12mm; }
+      html, body { width: 210mm !important; background: white !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
+
+      /* Hide everything except agreement print area */
+      .sidebar, .header, .main > .header,
+      .content > .page-header, .stats-row, .filters-bar, .table-card,
+      .modal-overlay, #confirmModule { display: none !important; }
+
+      /* Show only the print shell */
+      body    { display: block !important; }
+      .main   { margin-left: 0 !important; display: block !important; height: auto !important; overflow: visible !important; }
+      .content { display: none !important; }
+
+      /* Agreement print shell */
+      #agreementPrintShell {
+        display: block !important;
+        width: 100% !important;
+        background: white !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        border: none !important;
+      }
+
+      /* Kop (navy header) */
+      #agr-print-kop {
+        background: var(--navy) !important;
+        padding: 14px 18px !important;
+      }
+      #agr-print-kop .kop-company-name { font-size: 13pt !important; font-weight: 700 !important; }
+      #agr-print-kop .kop-company-sub  { font-size: 8pt !important; line-height: 1.55 !important; }
+      #agr-print-kop .kop-doc-right    { font-size: 8pt !important; line-height: 1.7 !important; }
+      #agr-print-kop .kop-main-title-print { font-size: 13pt !important; letter-spacing: 1px !important; padding-top: 10px !important; }
+
+      /* Detail grid */
+      #agr-print-detail { padding: 10px 18px !important; }
+      #agr-print-detail .dc { padding: 8px 12px !important; }
+      #agr-print-detail .dc .lbl { font-size: 7pt !important; }
+      #agr-print-detail .dc .val { font-size: 11pt !important; }
+
+      /* Body / pasal */
+      #agr-print-body { padding: 12px 18px 0 !important; }
+      #agr-print-body .sec-title  { font-size: 8pt !important; margin-bottom: 8px !important; }
+      #agr-print-body .pasal-head { font-size: 8pt !important; margin-bottom: 4px !important; }
+      #agr-print-body ol li       { font-size: 8.5pt !important; line-height: 1.65 !important; margin-bottom: 3px !important; }
+
+      /* Signature section */
+      #agr-print-sig { padding: 10px 18px 14px !important; }
+      #agr-print-sig .sig-cell-label { font-size: 7.5pt !important; }
+      #agr-print-sig .sig-cell-box   { height: 52px !important; }
+      #agr-print-sig .sig-cell-name  { font-size: 9pt !important; }
+      #agr-print-sig .sig-cell-sub   { font-size: 7.5pt !important; }
+
+      /* Page break control */
+      #agr-print-body { page-break-inside: avoid; }
+      #agr-print-sig  { page-break-inside: avoid; }
+    }
   </style>
 </head>
 <body>
@@ -543,7 +612,13 @@
     </div>
     <div class="modal-footer" style="justify-content:space-between">
       <div id="prevBadgeWrap"></div>
-      <button class="btn-cancel" onclick="closePreview()">Tutup</button>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn-cancel" onclick="closePreview()">Tutup</button>
+        <button id="btnDownloadPdf" onclick="downloadAgreementPDF()" style="padding:10px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -935,6 +1010,159 @@ if (role === 'owner') {
 } else {
   const ownerLabel = document.getElementById('ownerLabel');
   if (ownerLabel) ownerLabel.style.display = 'none';
+}
+</script>
+
+<!-- ═══ HIDDEN PRINT SHELL (diisi saat download PDF) ═══ -->
+<div id="agreementPrintShell" style="display:none"></div>
+
+<script>
+/* ─── DOWNLOAD PDF ────────────────────────────────────────────────── */
+function downloadAgreementPDF() {
+  const id = _activeAgreementId;
+  const a  = id ? AGREEMENT_DB[id] : null;
+  if (!a) return;
+
+  const statusMap = { signed:'Signed', pending:'Pending TTD', expired:'Expired' };
+  const clsMap    = { signed:'signed', pending:'pending', expired:'expired' };
+
+  /* Build EFM signature SVG */
+  const efmSig = `<svg viewBox="0 0 160 48" width="110" height="33">
+    <path d="M10,36 C20,10 30,40 45,20 C55,6 65,38 80,22 C90,10 100,34 115,18 C125,8 135,30 150,24" fill="none" stroke="#1E1C43" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  /* Client signature */
+  let clientSigHtml = '';
+  if (a.status_ttd === 'signed' && _sigPad && !_sigPad.isEmpty()) {
+    clientSigHtml = `<img src="${_sigPad.toDataURL()}" style="max-width:110px;max-height:33px;object-fit:contain"/>`;
+  } else if (a.status_ttd === 'signed') {
+    clientSigHtml = `<svg viewBox="0 0 160 48" width="110" height="33">
+      <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#27AE60" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  } else {
+    clientSigHtml = `<span style="font-size:9pt;color:#6C757D;font-style:italic">Belum ditandatangani</span>`;
+  }
+
+  const nomor   = a.display_id + '/EFM/PP/' + a.tgl_dibuat.split(' ').pop();
+  const logoSrc = 'assets/white-logo-circle-pure.png';
+
+  const shell = document.getElementById('agreementPrintShell');
+  shell.innerHTML = `
+  <div id="agr-print-kop" style="background:#1E1C43;padding:20px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:14px">
+        <img src="${logoSrc}" style="width:62px;height:62px;border-radius:50%;object-fit:cover;flex-shrink:0"
+             onerror="this.style.display='none'"/>
+        <div>
+          <div class="kop-company-name" style="font-size:15px;font-weight:700;color:white;line-height:1.3">Essential Fitness Management</div>
+          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.7">CV. Bugar Nusantara Jaya</div>
+          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">Jl. Terogong Raya No.18, Jakarta Selatan</div>
+          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">essentialfitnessmanagement@gmail.com</div>
+        </div>
+      </div>
+      <div class="kop-doc-right" style="text-align:right;font-size:11px;color:rgba(255,255,255,.6);line-height:1.9">
+        <div style="font-size:13px;font-weight:700;color:white;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,.6)">No. Dokumen: </span>${nomor}
+        </div>
+        <div>Tanggal Dibuat: <strong style="color:white">${a.tgl_dibuat}</strong></div>
+        <div>Order ID: <strong style="color:white">#${a.order_id}</strong></div>
+      </div>
+    </div>
+    <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center">
+      <div class="kop-main-title-print" style="font-size:15px;font-weight:700;color:white;letter-spacing:1.5px;text-transform:uppercase">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.5px">EFM — Essential Fitness Management</div>
+    </div>
+  </div>
+
+  <div id="agr-print-detail" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #1E1C43;padding:0">
+    ${[
+      ['Nama Klien', a.nama_klien],
+      ['Order ID', '#' + a.order_id],
+      ['Paket Dipilih', a.paket],
+      ['Tanggal Dibuat', a.tgl_dibuat],
+    ].map(([l,v], i) => `
+      <div class="dc" style="padding:12px 16px;border-right:${i%2===0?'1px solid #E2E6EA':'none'};border-bottom:1px solid #E2E6EA;background:${i<2?'rgba(30,28,67,.03)':'white'}">
+        <div class="lbl" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">${l}</div>
+        <div class="val" style="font-size:13px;font-weight:700;color:#1E1C43">${v}</div>
+      </div>`).join('')}
+  </div>
+
+  <div id="agr-print-body" style="padding:18px 24px 0">
+    <div class="sec-title" style="font-size:11px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.8px;border-left:3px solid #E05945;padding-left:10px;margin-bottom:14px">Syarat dan Ketentuan Layanan</div>
+    ${[
+      ['Pasal 1 — Ruang Lingkup Layanan', [
+        'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih pada tabel rincian di atas.',
+        'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih (Coach) atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
+      ]],
+      ['Pasal 2 — Masa Berlaku Paket (Validity Period)', [
+        'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan secara tuntas dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
+        'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem dan tidak dapat diakumulasikan ke periode berikutnya, kecuali terdapat persetujuan tertulis khusus dari Manajemen EFM.',
+      ]],
+      ['Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang', [
+        'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai melalui sistem website atau WhatsApp resmi EFM.',
+        'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai dan kuota dipotong otomatis.',
+        'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis tanpa perlu konfirmasi ke Admin/AI Agent.',
+        'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui Pelatih/Terapis akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
+      ]],
+      ['Pasal 4 — Pembayaran dan Validasi Order', [
+        'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
+        'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable baik sebagian maupun seluruhnya.',
+      ]],
+      ['Pasal 5 — Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', [
+        'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
+        'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
+        'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi yang tidak diungkapkan secara jujur.',
+      ]],
+      ['Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis', [
+        'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
+        'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+      ]],
+      ['Pasal 7 — Pernyataan Kesadaran dan Persetujuan', [
+        'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
+        'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
+        'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
+      ]],
+    ].map(([title, items]) => `
+      <div style="margin-bottom:12px">
+        <div class="pasal-head" style="font-size:10.5px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px">${title}</div>
+        <ol style="padding-left:17px;margin:0">
+          ${items.map(t => `<li style="font-size:11px;line-height:1.75;color:#333;margin-bottom:3px">${t}</li>`).join('')}
+        </ol>
+      </div>`).join('')}
+  </div>
+
+  <div id="agr-print-sig" style="padding:14px 24px 20px;border-top:1px solid #E2E6EA;margin-top:16px">
+    <div style="font-size:10px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Tanda Tangan Para Pihak</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <div>
+        <div class="sig-cell-label" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Pihak Pertama — EFM</div>
+        <div class="sig-cell-box" style="height:60px;border:1.5px solid #E2E6EA;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#F8F9FA;margin-bottom:7px">${efmSig}</div>
+        <div class="sig-cell-name" style="font-size:11px;font-weight:700;color:#1E1C43">Manajemen EFM</div>
+        <div class="sig-cell-sub"  style="font-size:9.5px;color:#6C757D">Ditandatangani secara digital</div>
+      </div>
+      <div>
+        <div class="sig-cell-label" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Pihak Kedua — Klien</div>
+        <div class="sig-cell-box" style="height:60px;border:1.5px solid ${a.status_ttd==='signed'?'#27AE60':'#E2E6EA'};border-radius:8px;display:flex;align-items:center;justify-content:center;background:${a.status_ttd==='signed'?'#EAFAF1':'#F8F9FA'};margin-bottom:7px">${clientSigHtml}</div>
+        <div class="sig-cell-name" style="font-size:11px;font-weight:700;color:#1E1C43">${a.nama_klien}</div>
+        <div class="sig-cell-sub"  style="font-size:9.5px;color:${a.status_ttd==='signed'?'#27AE60':'#6C757D'}">${a.status_ttd==='signed'?'✓ Ditandatangani pada: '+(a.tgl_ttd||a.tgl_dibuat):'Belum ditandatangani'}</div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E2E6EA;text-align:center;font-size:8.5px;color:#9ca3af">
+      Dokumen ini dihasilkan secara digital oleh sistem EFM · ${nomor} · ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+    </div>
+  </div>`;
+
+  /* Trigger browser print dialog → Save as PDF */
+  shell.style.display = 'block';
+  document.querySelector('.modal-overlay.show').style.display = 'none';
+
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      shell.style.display = 'none';
+      document.getElementById('previewModal').style.display = 'flex';
+    }, 500);
+  }, 150);
 }
 </script>
 </body>
