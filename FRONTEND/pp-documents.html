@@ -928,6 +928,9 @@ function toggleMenu(e, subId, arrowId) {
 document.addEventListener('DOMContentLoaded', () => {
   initDocTable();
   applyFilterAndPaginate();
+  const params = new URLSearchParams(window.location.search);
+  const previewId = params.get('preview');
+  if (previewId && AGREEMENT_DB[previewId]) setTimeout(() => previewDoc(previewId), 150);
 });
 </script>
 
