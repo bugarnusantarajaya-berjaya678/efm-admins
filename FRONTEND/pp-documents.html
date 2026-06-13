@@ -356,33 +356,36 @@
       <div id="contractDoc" style="padding:36px 40px;font-family:'Poppins',sans-serif;max-height:70vh;overflow-y:auto;">
 
         <!-- Kop — identik dengan invoice header -->
-        <div style="background:var(--navy);padding:24px 28px;display:flex;justify-content:space-between;align-items:flex-start;margin:-0px;border-radius:0;margin-bottom:0">
-          <!-- Kiri: logo + nama instansi -->
-          <div style="display:flex;align-items:center;gap:14px">
-            <img src="assets/white-logo-circle-pure.png" style="width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
-            <div style="display:none;width:64px;height:64px;border-radius:50%;background:var(--orange);align-items:center;justify-content:center;flex-shrink:0">
-              <svg viewBox="0 0 24 24" fill="white" width="28" height="28"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        <div style="background:var(--navy);padding:22px 28px 20px;border-radius:0;margin-bottom:0">
+          <!-- Baris 1: logo kiri + nomor dokumen kanan -->
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+            <div style="display:flex;align-items:center;gap:14px">
+              <img src="assets/white-logo-circle-pure.png" style="width:60px;height:60px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+              <div style="display:none;width:60px;height:60px;border-radius:50%;background:var(--orange);align-items:center;justify-content:center;flex-shrink:0">
+                <svg viewBox="0 0 24 24" fill="white" width="26" height="26"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              </div>
+              <div>
+                <div style="font-size:15px;font-weight:700;color:white;line-height:1.3">Essential Fitness Management</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.7">CV. Bugar Nusantara Jaya</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">Jl. Terogong Raya No.18, Jakarta Selatan</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">essentialfitnessmanagement@gmail.com</div>
+              </div>
             </div>
-            <div>
-              <div style="font-size:15px;font-weight:700;color:white;line-height:1.3">Essential Fitness Management</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.7">CV. Bugar Nusantara Jaya</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">Jl. Terogong Raya No.18, Jakarta Selatan</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">essentialfitnessmanagement@gmail.com</div>
+            <div style="text-align:right">
+              <div style="font-size:13px;font-weight:700;color:white;margin-bottom:6px">
+                <span style="color:rgba(255,255,255,.6);font-weight:400;font-size:11px">No. Dokumen: </span>
+                <span id="docNomor"></span>
+              </div>
+              <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.9">
+                <div>Tanggal Dibuat: <strong id="docTglHeader" style="color:white"></strong></div>
+                <div>Order ID: <strong id="docOrderHeader" style="color:white"></strong></div>
+              </div>
             </div>
           </div>
-          <!-- Kanan: nomor dokumen & tanggal -->
-          <div style="text-align:right">
-            <div style="font-size:13px;font-weight:700;color:white;margin-bottom:8px">
-              <span style="color:rgba(255,255,255,.6);font-weight:400;font-size:11px">No. Dokumen: </span>
-              <span id="docNomor"></span>
-            </div>
-            <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.9">
-              <div>Tanggal Dibuat: <strong id="docTglHeader" style="color:white"></strong></div>
-              <div>Order ID: <strong id="docOrderHeader" style="color:white"></strong></div>
-            </div>
-            <div style="margin-top:10px">
-              <div style="display:inline-block;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:4px 12px;font-size:10px;font-weight:700;color:white;letter-spacing:.5px;text-transform:uppercase">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-            </div>
+          <!-- Baris 2: judul utama terpusat -->
+          <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:16px;text-align:center">
+            <div style="font-size:16px;font-weight:700;color:white;letter-spacing:1.5px;text-transform:uppercase;line-height:1.35">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.45);margin-top:4px;letter-spacing:.5px">EFM — Essential Fitness Management</div>
           </div>
         </div>
 
