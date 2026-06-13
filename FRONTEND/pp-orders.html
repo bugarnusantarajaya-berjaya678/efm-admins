@@ -75,23 +75,20 @@
     td { padding:12px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#FAFAFA; cursor:pointer; }
-    /* Per-column alignment */
-    table th:nth-child(1), table td:nth-child(1) { width:100px; min-width:100px; }
-    table th:nth-child(2), table td:nth-child(2) { width:180px; min-width:180px; max-width:180px; white-space:normal; word-break:break-word; }
-    table th:nth-child(3), table td:nth-child(3) { width:140px; min-width:140px; max-width:120px; white-space:normal; }
-    table th:nth-child(4), table td:nth-child(4) { width:150px; min-width:150px; max-width:140px; white-space:normal; word-break:break-word; }
-    table th:nth-child(5), table td:nth-child(5) { width:130px; min-width:130px; }
-    table th:nth-child(6), table td:nth-child(6) { width:120px; min-width:120px; }
-    table th:nth-child(7), table td:nth-child(7) { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
-    table th:nth-child(8) { width:140px; min-width:130px; max-width:140px; text-align:center; white-space:nowrap; }
-    table td:nth-child(8) { width:140px; min-width:130px; max-width:140px; text-align:center; }
-    table th:nth-child(9), table td:nth-child(9) { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
-    .client-cell { display:flex; align-items:center; gap:10px; }
-    .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:10px; font-weight:600; white-space:nowrap; line-height:1.4; }
-    /* Status Invoice badge (col 8) wraps to 2 lines inside narrow column */
-    table td:nth-child(8) .badge { white-space:normal; text-align:center; justify-content:center; max-width:100px; line-height:1.35; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+
+    /* ── Semantic column classes (safe to reorder/insert columns) ── */
+    .col-order-id      { width:100px; min-width:100px; }
+    .col-nama-klien    { width:180px; min-width:180px; max-width:180px; white-space:normal; word-break:break-word; }
+    .col-paket         { width:140px; min-width:140px; max-width:120px; white-space:normal; }
+    .col-pic           { width:150px; min-width:150px; max-width:140px; white-space:normal; word-break:break-word; }
+    .col-progress      { width:130px; min-width:130px; }
+    .col-tgl           { width:120px; min-width:120px; }
+    .col-status-order  { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
+    .col-status-inv    { width:140px; min-width:130px; max-width:140px; text-align:center; }
+    th.col-status-inv  { white-space:nowrap; }
+    .col-aksi          { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
+    /* Badge inside Status Invoice column wraps to 2 lines */
+    td.col-status-inv .badge { white-space:normal; text-align:center; justify-content:center; max-width:100px; line-height:1.35; }
     .badge.active { background:#EAFAF1; color:#27AE60; }
     .badge.completed { background:#EBF5FB; color:#2980B9; }
     .badge.cancelled { background:#FDEDEC; color:#E74C3C; }
@@ -356,80 +353,88 @@
       <div class="table-wrap">
         <table>
           <colgroup>
-            <col style="width:100px"/>  <!-- Order ID -->
-            <col style="width:180px"/>  <!-- Nama Klien -->
-            <col style="width:140px"/>  <!-- Paket -->
-            <col style="width:150px"/>  <!-- PIC -->
-            <col style="width:130px"/>  <!-- Progress Sesi -->
-            <col style="width:120px"/>  <!-- Tanggal Mulai -->
-            <col style="width:120px"/>  <!-- Status Order -->
-            <col style="width:140px"/>  <!-- Status Invoice -->
-            <col style="width:90px"/>   <!-- Actions -->
+            <col class="col-order-id"/>
+            <col class="col-nama-klien"/>
+            <col class="col-paket"/>
+            <col class="col-pic"/>
+            <col class="col-progress"/>
+            <col class="col-tgl"/>
+            <col class="col-status-order"/>
+            <col class="col-status-inv"/>
+            <col class="col-aksi"/>
           </colgroup>
           <thead>
             <tr>
-              <th>Order ID</th>
-              <th>Nama Klien</th>
-              <th>Paket</th>
-              <th>PIC (Pelatih)</th>
-              <th>Progress Sesi</th>
-              <th>Tgl. Mulai</th>
-              <th style="text-align:center">Status Order</th>
-              <th style="text-align:center">Status Invoice</th>
-              <th style="text-align:center">Aksi</th>
+              <th class="col-order-id">Order ID</th>
+              <th class="col-nama-klien">Nama Klien</th>
+              <th class="col-paket">Paket</th>
+              <th class="col-pic">PIC (Pelatih)</th>
+              <th class="col-progress">Progress Sesi</th>
+              <th class="col-tgl">Tgl. Mulai</th>
+              <th class="col-status-order">Status Order</th>
+              <th class="col-status-inv">Status Invoice</th>
+              <th class="col-aksi">Aksi</th>
             </tr>
           </thead>
           <tbody id="ordersBody">
-            <tr onclick="openDrawer(this)" style="cursor:pointer">
-              <td><span class="order-id">#PP-8042</span></td>
-              <td><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
-              <td>12 Sesi - Pro</td><td>Sarah Jenkins</td>
-              <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
-              <td>24 Okt 2026</td><td><span class="badge active">Active</span></td>
-              <td><span class="badge paid">Paid</span></td>
-              <td data-inv="INV/EFM/PP/2026/0089" data-status="paid">
+            <tr data-order-id="PP-8042" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8042</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+              <td class="col-paket">12 Sesi - Pro</td>
+              <td class="col-pic">Sarah Jenkins</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
+              <td class="col-tgl">24 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
                 <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
                 </div>
               </td>
             </tr>
-            <tr onclick="openDrawer(this)" style="cursor:pointer">
-              <td><span class="order-id">#PP-8041</span></td>
-              <td><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
-              <td>4 Sesi - Starter</td><td>Marcus Chen</td>
-              <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
-              <td>22 Okt 2026</td><td><span class="badge completed">Completed</span></td>
-              <td><span class="badge paid">Paid</span></td>
-              <td data-inv="INV/EFM/PP/2026/0087" data-status="paid">
+            <tr data-order-id="PP-8041" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8041</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+              <td class="col-paket">4 Sesi - Starter</td>
+              <td class="col-pic">Marcus Chen</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
+              <td class="col-tgl">22 Okt 2026</td>
+              <td class="col-status-order"><span class="badge completed">Completed</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
                 <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
                 </div>
               </td>
             </tr>
-            <tr onclick="openDrawer(this)" style="cursor:pointer">
-              <td><span class="order-id">#PP-8038</span></td>
-              <td><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
-              <td>24 Sesi - Elite</td><td>Elena Rodriguez</td>
-              <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
-              <td>18 Okt 2026</td><td><span class="badge active">Active</span></td>
-              <td><span class="badge pending">Awaiting Payment</span></td>
-              <td data-inv="INV/EFM/PP/2026/0088" data-status="pending">
+            <tr data-order-id="PP-8038" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8038</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+              <td class="col-paket">24 Sesi - Elite</td>
+              <td class="col-pic">Elena Rodriguez</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
+              <td class="col-tgl">18 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
+              <td class="col-aksi">
                 <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
                 </div>
               </td>
             </tr>
-            <tr onclick="openDrawer(this)" style="cursor:pointer">
-              <td><span class="order-id">#PP-8035</span></td>
-              <td><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
-              <td>8 Sesi - Base</td><td>Sarah Jenkins</td>
-              <td><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
-              <td>15 Okt 2026</td><td><span class="badge cancelled">Cancelled</span></td>
-              <td><span class="badge overdue">Overdue</span></td>
-              <td data-inv="INV/EFM/PP/2026/0085" data-status="overdue">
+            <tr data-order-id="PP-8035" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8035</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
+              <td class="col-paket">8 Sesi - Base</td>
+              <td class="col-pic">Sarah Jenkins</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
+              <td class="col-tgl">15 Okt 2026</td>
+              <td class="col-status-order"><span class="badge cancelled">Cancelled</span></td>
+              <td class="col-status-inv"><span class="badge overdue">Overdue</span></td>
+              <td class="col-aksi">
                 <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
@@ -1332,6 +1337,64 @@ function toggleMenu(e, subId, arrowId) {
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 
+/* ─── ORDER DATABASE (single source of truth) ───
+   Key names use snake_case → ready for Google Sheets / backend mapping.
+   invoiceData tetap ada di bawah (dipakai renderInvoiceTab & printInvoice). ─── */
+const ORDER_DB = {
+  'PP-8042': {
+    order_id: 'PP-8042', display_id: '#PP-8042',
+    nama_klien: 'James Wilson', avatar_initials: 'JW', avatar_color: '#2980B9',
+    paket: '12 Sesi - Pro', sesi_total: 12, sesi_selesai: 4,
+    pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
+    tgl_mulai: '24 Okt 2026',
+    status_order: 'active',   // active | completed | cancelled
+    status_invoice: 'paid',   // paid | pending | overdue
+    inv_no: 'INV/EFM/PP/2026/0089',
+    program_id: 'PRG-PP-003',
+    lokasi: 'Apartemen Sudirman Park',
+    jadwal: 'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
+  },
+  'PP-8041': {
+    order_id: 'PP-8041', display_id: '#PP-8041',
+    nama_klien: 'Emily Chen', avatar_initials: 'EC', avatar_color: '#27AE60',
+    paket: '4 Sesi - Starter', sesi_total: 4, sesi_selesai: 4,
+    pic_nama: 'Marcus Chen', pic_id: 'EFM-PIC-002',
+    tgl_mulai: '22 Okt 2026',
+    status_order: 'completed',
+    status_invoice: 'paid',
+    inv_no: 'INV/EFM/PP/2026/0087',
+    program_id: 'PRG-PP-001',
+    lokasi: 'Gym Senayan City Lt.3',
+    jadwal: 'Selasa 18:00 · Kamis 18:00',
+  },
+  'PP-8038': {
+    order_id: 'PP-8038', display_id: '#PP-8038',
+    nama_klien: 'Robert Taylor', avatar_initials: 'RT', avatar_color: '#E05945',
+    paket: '24 Sesi - Elite', sesi_total: 24, sesi_selesai: 12,
+    pic_nama: 'Elena Rodriguez', pic_id: 'EFM-PIC-003',
+    tgl_mulai: '18 Okt 2026',
+    status_order: 'active',
+    status_invoice: 'pending',
+    inv_no: 'INV/EFM/PP/2026/0088',
+    program_id: 'PRG-PP-004',
+    lokasi: 'Rumah Klien — Bintaro Sektor 9',
+    jadwal: 'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
+  },
+  'PP-8035': {
+    order_id: 'PP-8035', display_id: '#PP-8035',
+    nama_klien: 'Anita Kumar', avatar_initials: 'AK', avatar_color: '#8E44AD',
+    paket: '8 Sesi - Base', sesi_total: 8, sesi_selesai: 2,
+    pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
+    tgl_mulai: '15 Okt 2026',
+    status_order: 'cancelled',
+    status_invoice: 'overdue',
+    inv_no: 'INV/EFM/PP/2026/0085',
+    program_id: 'PRG-PP-002',
+    lokasi: 'Cilandak Town Square',
+    jadwal: 'Rabu 07:30 · Sabtu 08:00',
+  },
+};
+
 /* ─── INVOICE DATA (mirrored from pp-invoice) ─── */
 const invoiceData = {
   'INV/EFM/PP/2026/0089': {
@@ -1377,15 +1440,17 @@ const invoiceData = {
 
 let _drawerRow = null;
 let _drawerTab = 'order';
+let _drawerOrderId = null;  // ID aktif di drawer → kunci ke ORDER_DB
 
 function openDrawer(tr, tab) {
-  _drawerRow = tr;
-  _drawerTab = tab || 'order';
-  const cells   = tr.querySelectorAll('td');
-  const id      = cells[0].textContent.trim();
-  const klien   = cells[1].textContent.trim();
-  document.getElementById('drTitle').textContent    = id;
-  document.getElementById('drSubtitle').textContent = klien;
+  _drawerRow    = tr;
+  _drawerTab    = tab || 'order';
+  _drawerOrderId = tr.dataset.orderId || null;
+
+  const o = ORDER_DB[_drawerOrderId];
+  document.getElementById('drTitle').textContent    = o ? o.display_id   : _drawerOrderId;
+  document.getElementById('drSubtitle').textContent = o ? o.nama_klien   : '';
+
   switchDrawerTab(_drawerTab);
   document.getElementById('drawerOverlay').classList.add('show');
   document.getElementById('orderDrawer').classList.add('open');
@@ -1405,40 +1470,39 @@ function switchDrawerTab(tab) {
 }
 
 function renderOrderTab() {
-  if (!_drawerRow) return;
-  const cells   = _drawerRow.querySelectorAll('td');
-  const id      = cells[0].textContent.trim();
-  const klien   = cells[1].textContent.trim();
-  const paket   = cells[2].textContent.trim();
-  const pic     = cells[3].textContent.trim();
-  const progress = cells[4].querySelector('.session-text') ? cells[4].querySelector('.session-text').textContent.trim() : cells[4].textContent.trim();
-  const tanggal = cells[5].textContent.trim();
-  const badgeEl = cells[6].querySelector('.badge');
-  const barEl   = cells[4].querySelector('.session-fill');
-  const pct     = barEl ? barEl.style.width : '0%';
-  const barColor = barEl ? (barEl.style.background || 'var(--orange)') : 'var(--orange)';
+  if (!_drawerOrderId) return;
+  const o = ORDER_DB[_drawerOrderId];
+  if (!o) {
+    document.getElementById('drawerBody').innerHTML = '<p style="color:var(--gray-text);padding:20px 0;font-size:13px">Data order tidak ditemukan.</p>';
+    return;
+  }
 
-  const currentStatus = badgeEl ? badgeEl.textContent.trim().toLowerCase() : 'aktif';
-  const _origStatus = currentStatus;
+  const pct      = Math.round((o.sesi_selesai / o.sesi_total) * 100);
+  const barColor = o.status_order === 'completed' ? 'var(--green)'
+                 : o.status_order === 'cancelled'  ? 'var(--red)' : 'var(--orange)';
+  const progress = `${o.sesi_selesai}/${o.sesi_total} sesi`;
+  const s = o.status_order;
 
   document.getElementById('drawerBody').innerHTML = `
     <div class="info-grid">
-      <div class="info-box"><div class="lbl">Order ID</div><div class="val">${id}</div></div>
-      <div class="info-box"><div class="lbl">Nama Klien</div><div class="val">${klien}</div></div>
-      <div class="info-box"><div class="lbl">Paket</div><div class="val">${paket}</div></div>
-      <div class="info-box"><div class="lbl">PIC / Pelatih</div><div class="val">${pic}</div></div>
-      <div class="info-box"><div class="lbl">Tanggal Mulai</div><div class="val">${tanggal}</div></div>
+      <div class="info-box"><div class="lbl">Order ID</div><div class="val">${o.display_id}</div></div>
+      <div class="info-box"><div class="lbl">Nama Klien</div><div class="val">${o.nama_klien}</div></div>
+      <div class="info-box"><div class="lbl">Paket</div><div class="val">${o.paket}</div></div>
+      <div class="info-box"><div class="lbl">PIC / Pelatih</div><div class="val">${o.pic_nama}</div></div>
+      <div class="info-box"><div class="lbl">Tanggal Mulai</div><div class="val">${o.tgl_mulai}</div></div>
       <div class="info-box"><div class="lbl">Progress Sesi</div>
         <div class="val">${progress}</div>
-        <div style="height:4px;background:var(--gray-border);border-radius:2px;margin-top:6px;overflow:hidden"><div style="height:100%;width:${pct};background:${barColor};border-radius:2px"></div></div>
+        <div style="height:4px;background:var(--gray-border);border-radius:2px;margin-top:6px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${barColor};border-radius:2px"></div>
+        </div>
       </div>
     </div>
     <div class="inv-status-bar">
       <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Order</span>
-      <select class="status-select" id="statusOrderSelect" data-orig="${_origStatus}" onchange="onStatusOrderChange(this)">
-        <option value="active"    ${currentStatus.includes('active')    ? 'selected' : ''}>Active</option>
-        <option value="completed" ${currentStatus.includes('completed') ? 'selected' : ''}>Completed</option>
-        <option value="cancelled" ${currentStatus.includes('cancelled') ? 'selected' : ''}>Cancelled</option>
+      <select class="status-select" id="statusOrderSelect" data-orig="${s}" onchange="onStatusOrderChange(this)">
+        <option value="active"    ${s==='active'    ? 'selected' : ''}>Active</option>
+        <option value="completed" ${s==='completed' ? 'selected' : ''}>Completed</option>
+        <option value="cancelled" ${s==='cancelled' ? 'selected' : ''}>Cancelled</option>
       </select>
     </div>
     <div class="cancel-note" id="cancelNoteBox">
@@ -1484,14 +1548,18 @@ function cancelStatusChange() {
 
 function confirmSaveOrderStatus() {
   const sel = document.getElementById('statusOrderSelect');
-  if (!sel || !_drawerRow) return;
+  if (!sel || !_drawerRow || !_drawerOrderId) return;
   const newStatus = sel.value;
-  const statusCell = _drawerRow.querySelectorAll('td')[6];
-  const badge = statusCell ? statusCell.querySelector('.badge') : null;
-  const classMap = { active:'active', completed:'completed', cancelled:'cancelled' };
-  const labelMap = { active:'Active', completed:'Completed', cancelled:'Cancelled' };
+  const classMap  = { active:'active', completed:'completed', cancelled:'cancelled' };
+  const labelMap  = { active:'Active', completed:'Completed', cancelled:'Cancelled' };
+
+  // Update ORDER_DB (source of truth)
+  if (ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_order = newStatus;
+
+  // Update badge di DOM row via semantic class selector
+  const badge = _drawerRow.querySelector('td.col-status-order .badge');
   if (badge) {
-    badge.className = 'badge ' + (classMap[newStatus] || 'active');
+    badge.className   = 'badge ' + (classMap[newStatus] || 'active');
     badge.textContent = labelMap[newStatus] || newStatus;
   }
   sel.dataset.orig = newStatus;
@@ -1512,10 +1580,10 @@ function showToast(msg) {
 function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
 
 function renderInvoiceTab() {
-  if (!_drawerRow) return;
-  const actionCell = _drawerRow.querySelector('td[data-inv]');
-  const invNo   = actionCell ? actionCell.dataset.inv : '';
-  const invStatus = actionCell ? actionCell.dataset.status : '';
+  if (!_drawerOrderId) return;
+  const o       = ORDER_DB[_drawerOrderId] || {};
+  const invNo   = o.inv_no     || '';
+  const invStatus = o.status_invoice || '';
   const d = invoiceData[invNo];
 
   if (!d) {
@@ -1775,10 +1843,11 @@ function confirmSaveInvStatus(invNo) {
   const labelMap = { paid:'Paid', pending:'Awaiting Payment', overdue:'Overdue' };
   const classMap  = { paid:'paid', pending:'pending', overdue:'overdue' };
   if (invoiceData[invNo]) invoiceData[invNo].status = newStatus;
-  const actionCell = _drawerRow ? _drawerRow.querySelector('td[data-inv]') : null;
-  if (actionCell) {
-    actionCell.dataset.status = newStatus;
-    const badge = _drawerRow.querySelectorAll('td')[7]?.querySelector('.badge');
+  // Update ORDER_DB (source of truth)
+  if (_drawerOrderId && ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_invoice = newStatus;
+  // Update badge di DOM row via semantic class selector
+  if (_drawerRow) {
+    const badge = _drawerRow.querySelector('td.col-status-inv .badge');
     if (badge) { badge.className = 'badge ' + classMap[newStatus]; badge.textContent = labelMap[newStatus]; }
   }
   showToast('✅ Status Invoice diperbarui: ' + (labelMap[newStatus] || newStatus));
@@ -1793,10 +1862,11 @@ function confirmPaidFromDrawer(invNo) {
     invoiceData[invNo].paidDate  = paidDate;
     invoiceData[invNo].payMethod = payMethod;
   }
-  const actionCell = _drawerRow.querySelector('td[data-inv]');
-  if (actionCell) {
-    actionCell.dataset.status = 'paid';
-    const badge = _drawerRow.querySelectorAll('td')[7]?.querySelector('.badge');
+  // Update ORDER_DB
+  if (_drawerOrderId && ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_invoice = 'paid';
+  // Update DOM badge via semantic class selector
+  if (_drawerRow) {
+    const badge = _drawerRow.querySelector('td.col-status-inv .badge');
     if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
   }
   showToast('✅ Invoice ' + invNo + ' berhasil dikonfirmasi Lunas!');
