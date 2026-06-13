@@ -65,28 +65,45 @@
       overflow: hidden;
     }
 
-    /* ── Kop ──────────────────────────────────────────────────────── */
+    /* ── Kop — invoice-style ──────────────────────────────────────── */
     .doc-kop {
       background: var(--navy);
-      padding: 28px 36px 24px;
+      padding: 28px 36px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .kop-left {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 14px;
     }
     .kop-logo {
-      width: 52px; height: 52px;
+      width: 74px; height: 74px;
       background: var(--orange);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
       flex-shrink: 0;
     }
-    .kop-logo svg { width: 28px; height: 28px; fill: white; }
-    .kop-text { flex: 1; }
-    .kop-text .org  { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 4px; }
-    .kop-text .title { font-size: 17px; font-weight: 700; color: white; line-height: 1.25; }
+    .kop-logo svg { width: 32px; height: 32px; fill: white; }
+    .kop-company { }
+    .kop-name  { font-size: 16px; font-weight: 700; color: white; line-height: 1.3; }
+    .kop-company p { font-size: 11px; color: rgba(255,255,255,.6); margin-top: 3px; line-height: 1.7; }
     .kop-nomor { text-align: right; flex-shrink: 0; }
-    .kop-nomor .lbl { font-size: 9px; font-weight: 600; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-    .kop-nomor .val { font-size: 13px; font-weight: 700; color: white; font-family: monospace; }
+    .kop-doc-no { font-size: 13px; font-weight: 700; color: white; margin-bottom: 8px; }
+    .lbl-sm     { color: rgba(255,255,255,.6); font-weight: 400; font-size: 11px; }
+    .kop-doc-no .val { color: white; }
+    .kop-dates  { font-size: 11px; color: rgba(255,255,255,.6); line-height: 1.9; }
+    .kop-dates strong { color: white; }
+    .kop-badge  {
+      display: inline-block;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      border-radius: 6px;
+      padding: 4px 12px;
+      font-size: 10px; font-weight: 700;
+      color: white; letter-spacing: .5px; text-transform: uppercase;
+    }
 
     /* ── Detail Grid ──────────────────────────────────────────────── */
     .detail-grid {
@@ -287,19 +304,36 @@
 <!-- ═══════════════════════════════════════════════════════════════════ -->
 <div class="doc-shell">
 
-  <!-- KOP -->
+  <!-- KOP — identik dengan invoice header -->
   <div class="doc-kop">
-    <div class="kop-logo">
-      <!-- Replace with <img src="/assets/logo.png"> if available -->
-      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    <!-- Kiri: logo + nama instansi -->
+    <div class="kop-left">
+      <img src="assets/white-logo-circle-pure.png"
+           style="width:74px;height:74px;border-radius:50%;object-fit:cover;flex-shrink:0"
+           onerror="this.style.display='none';document.getElementById('kopLogoFallback').style.display='flex'"/>
+      <div id="kopLogoFallback" class="kop-logo" style="display:none">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="kop-company">
+        <div class="kop-name">Essential Fitness Management</div>
+        <p>CV. Bugar Nusantara Jaya</p>
+        <p>Jl. Terogong Raya No.18, Jakarta Selatan</p>
+        <p>essentialfitnessmanagement@gmail.com</p>
+      </div>
     </div>
-    <div class="kop-text">
-      <div class="org">EFM — Essential Fitness Management · CV Bugar Nusantara Jaya</div>
-      <div class="title">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-    </div>
+    <!-- Kanan: nomor dokumen, tanggal, label -->
     <div class="kop-nomor">
-      <div class="lbl">No. Dokumen</div>
-      <div class="val">{{nomor_dokumen}}</div>
+      <div class="kop-doc-no">
+        <span class="lbl-sm">No. Dokumen: </span>
+        <span class="val">{{nomor_dokumen}}</span>
+      </div>
+      <div class="kop-dates">
+        <div>Tanggal Dibuat: <strong>{{tanggal_dibuat}}</strong></div>
+        <div>Order ID: <strong>{{order_id}}</strong></div>
+      </div>
+      <div style="margin-top:10px">
+        <span class="kop-badge">PERJANJIAN LAYANAN PRIVATE PROGRAM</span>
+      </div>
     </div>
   </div>
 
