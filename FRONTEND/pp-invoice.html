@@ -99,9 +99,20 @@
     /* Table */
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
     .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; border-collapse:collapse; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
+    table { width:100%; min-width:900px; border-collapse:collapse; table-layout:fixed; }
+    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; position:sticky; top:0; z-index:2; overflow:hidden; text-overflow:ellipsis; }
+    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    /* Column widths */
+    th:nth-child(1) { width:195px; } /* No. Invoice */
+    th:nth-child(2) { width:100px; } /* Order ID */
+    th:nth-child(3) { width:160px; } /* Nama Klien */
+    th:nth-child(4) { width:120px; } /* Paket */
+    th:nth-child(5) { width:130px; } /* PIC Pelatih */
+    th:nth-child(6) { width:100px; } /* Tanggal */
+    th:nth-child(7) { width:110px; } /* Total */
+    th:nth-child(8) { width:120px; } /* Status */
+    th:nth-child(9) { width:64px; text-align:center; } /* Actions */
+    td:nth-child(9) { text-align:center; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#FAFAFA; cursor:pointer; }
     .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
