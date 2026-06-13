@@ -155,71 +155,19 @@
 
     /* ══════════════════════════════════════════════════════
        @media print — Agreement PDF A4
-       Mirrors invoice print CSS: 10mm 12mm margins, navy bg preserved
+       Uses body.efm-printing class to nuke everything except #agreementPrintShell
     ══════════════════════════════════════════════════════ */
     @media print {
       * {
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
-        font-family: 'Poppins', 'Segoe UI', Arial, sans-serif !important;
-        -webkit-font-smoothing: antialiased !important;
-        box-sizing: border-box !important;
       }
       @page { size: 210mm 297mm; margin: 10mm 12mm; }
-      html, body { width: 210mm !important; background: white !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
 
-      /* Hide everything except agreement print area */
-      .sidebar, .header, .main > .header,
-      .content > .page-header, .stats-row, .filters-bar, .table-card,
-      .modal-overlay, #confirmModule { display: none !important; }
-
-      /* Show only the print shell */
-      body    { display: block !important; }
-      .main   { margin-left: 0 !important; display: block !important; height: auto !important; overflow: visible !important; }
-      .content { display: none !important; }
-
-      /* Agreement print shell */
-      #agreementPrintShell {
-        display: block !important;
-        width: 100% !important;
-        background: white !important;
-        box-shadow: none !important;
-        border-radius: 0 !important;
-        border: none !important;
-      }
-
-      /* Kop (navy header) */
-      #agr-print-kop {
-        background: var(--navy) !important;
-        padding: 14px 18px !important;
-      }
-      #agr-print-kop .kop-company-name { font-size: 13pt !important; font-weight: 700 !important; }
-      #agr-print-kop .kop-company-sub  { font-size: 8pt !important; line-height: 1.55 !important; }
-      #agr-print-kop .kop-doc-right    { font-size: 8pt !important; line-height: 1.7 !important; }
-      #agr-print-kop .kop-main-title-print { font-size: 13pt !important; letter-spacing: 1px !important; padding-top: 10px !important; }
-
-      /* Detail grid */
-      #agr-print-detail { padding: 10px 18px !important; }
-      #agr-print-detail .dc { padding: 8px 12px !important; }
-      #agr-print-detail .dc .lbl { font-size: 7pt !important; }
-      #agr-print-detail .dc .val { font-size: 11pt !important; }
-
-      /* Body / pasal */
-      #agr-print-body { padding: 12px 18px 0 !important; }
-      #agr-print-body .sec-title  { font-size: 8pt !important; margin-bottom: 8px !important; }
-      #agr-print-body .pasal-head { font-size: 8pt !important; margin-bottom: 4px !important; }
-      #agr-print-body ol li       { font-size: 8.5pt !important; line-height: 1.65 !important; margin-bottom: 3px !important; }
-
-      /* Signature section */
-      #agr-print-sig { padding: 10px 18px 14px !important; }
-      #agr-print-sig .sig-cell-label { font-size: 7.5pt !important; }
-      #agr-print-sig .sig-cell-box   { height: 52px !important; }
-      #agr-print-sig .sig-cell-name  { font-size: 9pt !important; }
-      #agr-print-sig .sig-cell-sub   { font-size: 7.5pt !important; }
-
-      /* Page break control */
-      #agr-print-body { page-break-inside: avoid; }
-      #agr-print-sig  { page-break-inside: avoid; }
+      /* Kill EVERY direct child of body, then bring back only the shell */
+      body { display: block !important; width: 210mm !important; margin: 0 !important; padding: 0 !important; background: white !important; overflow: visible !important; }
+      body > *            { display: none !important; }
+      body > #agreementPrintShell { display: block !important; width: 100% !important; background: white !important; }
     }
   </style>
 </head>
@@ -1153,16 +1101,20 @@ function downloadAgreementPDF() {
   </div>`;
 
   /* Trigger browser print dialog → Save as PDF */
+  /* We move #agreementPrintShell to body's first child so body>* rule hits it correctly */
+  document.body.appendChild(shell);
   shell.style.display = 'block';
-  document.querySelector('.modal-overlay.show').style.display = 'none';
 
-  setTimeout(() => {
-    window.print();
-    setTimeout(() => {
-      shell.style.display = 'none';
-      document.getElementById('previewModal').style.display = 'flex';
-    }, 500);
-  }, 150);
+  /* afterprint: restore UI */
+  function _afterPrint() {
+    window.removeEventListener('afterprint', _afterPrint);
+    shell.style.display = 'none';
+    document.getElementById('previewModal').style.display = 'flex';
+  }
+  window.addEventListener('afterprint', _afterPrint);
+
+  /* Small delay so browser has time to render shell before print dialog opens */
+  setTimeout(() => { window.print(); }, 200);
 }
 </script>
 </body>
