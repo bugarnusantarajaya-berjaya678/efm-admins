@@ -391,14 +391,8 @@
               </div>
             </div>
             <div style="text-align:right">
-              <div style="font-size:13px;font-weight:700;color:white;margin-bottom:6px">
-                <span style="color:rgba(255,255,255,.6);font-weight:400;font-size:11px">No. Dokumen: </span>
-                <span id="docNomor"></span>
-              </div>
-              <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.9">
-                <div>Tanggal Dibuat: <strong id="docTglHeader" style="color:white"></strong></div>
-                <div>Order ID: <strong id="docOrderHeader" style="color:white"></strong></div>
-              </div>
+              <div style="font-size:10px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">No. Dokumen</div>
+              <div id="docNomor" style="font-size:14px;font-weight:700;color:white;letter-spacing:.3px"></div>
             </div>
           </div>
           <!-- Baris 2: judul utama terpusat -->
@@ -1008,12 +1002,9 @@ function downloadAgreementPDF() {
           <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">essentialfitnessmanagement@gmail.com</div>
         </div>
       </div>
-      <div class="kop-doc-right" style="text-align:right;font-size:11px;color:rgba(255,255,255,.6);line-height:1.9">
-        <div style="font-size:13px;font-weight:700;color:white;margin-bottom:6px">
-          <span style="font-size:11px;font-weight:400;color:rgba(255,255,255,.6)">No. Dokumen: </span>${nomor}
-        </div>
-        <div>Tanggal Dibuat: <strong style="color:white">${a.tgl_dibuat}</strong></div>
-        <div>Order ID: <strong style="color:white">#${a.order_id}</strong></div>
+      <div class="kop-doc-right" style="text-align:right">
+        <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">No. Dokumen</div>
+        <div style="font-size:13px;font-weight:700;color:white;letter-spacing:.3px">${nomor}</div>
       </div>
     </div>
     <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center">
