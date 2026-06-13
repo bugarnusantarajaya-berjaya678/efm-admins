@@ -87,23 +87,61 @@
     .col-status-inv    { width:140px; min-width:130px; max-width:140px; text-align:center; }
     th.col-status-inv  { white-space:nowrap; }
     .col-aksi          { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
-    /* Badge inside Status Invoice column wraps to 2 lines */
-    td.col-status-inv .badge { white-space:normal; text-align:center; justify-content:center; max-width:100px; line-height:1.35; }
-    .badge.active { background:#EAFAF1; color:#27AE60; }
-    .badge.completed { background:#EBF5FB; color:#2980B9; }
-    .badge.cancelled { background:#FDEDEC; color:#E74C3C; }
-    .badge.paid { background:#EAFAF1; color:#27AE60; }
-    .badge.pending { background:#FEF9E7; color:#F39C12; }
-    .badge.overdue { background:#FDEDEC; color:#E74C3C; }
-    .order-id { font-weight:600; color:var(--navy); font-size:13px; }
+    /* ── Avatar & Client Cell ── */
+    .client-cell { display:flex; align-items:center; gap:10px; }
+    .avatar-sm {
+      width:35px; height:35px; border-radius:50%;
+      color:white; font-size:12px; font-weight:700; letter-spacing:0.5px;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; user-select:none;
+    }
+
+    /* ── Badge (pill / kapsul) ── */
+    .badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:50px;
+      font-size:11px; font-weight:600; line-height:1.4;
+      white-space:nowrap;
+    }
+    .badge::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background:currentColor; flex-shrink:0;
+    }
+    .badge.active    { background:#EAFAF1; color:#1E8449; }
+    .badge.completed { background:#EBF5FB; color:#1A6FA3; }
+    .badge.cancelled { background:#FDEDEC; color:#C0392B; }
+    .badge.paid      { background:#EAFAF1; color:#1E8449; }
+    .badge.pending   { background:#FEF9E7; color:#D68910; }
+    .badge.overdue   { background:#FDEDEC; color:#C0392B; }
+    /* Status Invoice badge wraps "Awaiting Payment" ke 2 baris */
+    td.col-status-inv .badge {
+      white-space:normal; text-align:center; justify-content:center;
+      max-width:110px; line-height:1.35;
+    }
+
+    /* ── Order ID ── */
+    .order-id { font-weight:700; color:var(--navy); font-size:13px; }
+
+    /* ── Session Progress Bar ── */
     .session-progress { display:flex; flex-direction:column; gap:4px; }
     .session-bar { height:5px; background:var(--gray-border); border-radius:3px; width:110px; overflow:hidden; }
     .session-fill { height:100%; background:var(--orange); border-radius:2px; }
     .session-text { font-size:11px; color:var(--gray-text); }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; flex-shrink:0; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+
+    /* ── Action Buttons ── */
+    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
+    .action-btn {
+      width:30px; height:30px;
+      border-radius:6px; border:1px solid #E2E6EA;
+      background:white; cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      color:var(--gray-text); transition:all 0.15s; flex-shrink:0;
+      padding:6px;
+    }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
     .action-btn svg { width:14px; height:14px; }
-    .action-btn.invoice { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
+    .action-btn.invoice { background:#EBF5FB; color:#2980B9; border-color:#AED6F1; }
+    .action-btn.invoice:hover { background:#D6EAF8; border-color:#2980B9; }
     .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
     .pagination-info { font-size:12px; color:var(--gray-text); }
     .pagination-btns { display:flex; gap:4px; }
@@ -387,7 +425,7 @@
               <td class="col-status-order"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                <div class="action-wrap">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
                 </div>
@@ -403,7 +441,7 @@
               <td class="col-status-order"><span class="badge completed">Completed</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                <div class="action-wrap">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
                 </div>
@@ -419,7 +457,7 @@
               <td class="col-status-order"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
               <td class="col-aksi">
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                <div class="action-wrap">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
                 </div>
@@ -435,7 +473,7 @@
               <td class="col-status-order"><span class="badge cancelled">Cancelled</span></td>
               <td class="col-status-inv"><span class="badge overdue">Overdue</span></td>
               <td class="col-aksi">
-                <div style="display:flex;align-items:center;justify-content:center;gap:10px;">
+                <div class="action-wrap">
                   <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
                 </div>
