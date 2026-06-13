@@ -549,8 +549,7 @@ const STATUS_LABEL = { 'new':'New', 'follow-up':'Follow Up', 'closed-won':'Close
 /* ─── BUAT ORDER: ambil dari LEADS_DB, bukan dari teks DOM ─── */
 function buatOrder(btn) {
   const tr = btn.closest('tr');
-  if (!tr) { window.location.href = 'pp-orders.html'; return; }
-  const lead = getLeadFromRow(tr);
+  const lead = tr ? getLeadFromRow(tr) : (_detailLeadId ? LEADS_DB[_detailLeadId] : null);
   if (!lead) { window.location.href = 'pp-orders.html'; return; }
   sessionStorage.setItem('prefill_lead', JSON.stringify({
     id: lead.display_id, nama: lead.nama, hp: lead.no_hp,
