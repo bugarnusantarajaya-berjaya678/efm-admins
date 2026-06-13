@@ -357,21 +357,83 @@
 
         <!-- Kop -->
         <div style="text-align:center;border-bottom:2px solid var(--navy);padding-bottom:20px;margin-bottom:24px">
-          <div style="font-size:11px;font-weight:600;color:var(--gray-text);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">EFM — Elite Fitness Management</div>
-          <h2 style="font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">PERJANJIAN LAYANAN PRIVATE TRAINING</h2>
+          <div style="font-size:11px;font-weight:600;color:var(--gray-text);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">EFM — Essential Fitness Management · CV Bugar Nusantara Jaya</div>
+          <h2 style="font-size:17px;font-weight:700;color:var(--navy);margin-bottom:4px">PERJANJIAN LAYANAN PRIVATE PROGRAM</h2>
           <div id="docNomor" style="font-size:11px;color:var(--gray-text)"></div>
         </div>
 
         <!-- Detail klien & paket -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px" id="docDetails"></div>
 
-        <!-- Pasal-pasal -->
+        <!-- Pasal-pasal (7 Pasal lengkap) -->
         <div style="margin-bottom:24px">
-          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--gray-border)">Pasal &amp; Ketentuan Layanan</div>
-          <div style="font-size:12px;line-height:1.8;color:var(--text-dark)">
-            <p style="margin-bottom:10px"><strong>Pasal 1 — Lingkup Layanan.</strong> Pihak Pertama (EFM) sepakat untuk menyediakan layanan pelatihan fisik perseorangan (Private Training) kepada Pihak Kedua (Klien) sesuai dengan paket yang dipilih, meliputi sesi latihan terjadwal, penyusunan program latihan, serta pendampingan oleh Pelatih (PIC) yang ditugaskan.</p>
-            <p style="margin-bottom:10px"><strong>Pasal 2 — Pembayaran &amp; Pembatalan.</strong> Klien wajib menyelesaikan pembayaran sesuai tagihan yang tertera pada Invoice terkait sebelum atau pada sesi pertama dimulai. Pembatalan sesi yang dilakukan kurang dari 3 (tiga) jam sebelum jadwal berlangsung tidak dapat dijadwalkan ulang dan dihitung sebagai sesi terpakai.</p>
-            <p><strong>Pasal 3 — Kesehatan &amp; Keselamatan.</strong> Klien menyatakan dalam kondisi kesehatan yang layak untuk mengikuti program latihan fisik intensitas sedang-tinggi. EFM tidak bertanggung jawab atas cedera yang timbul akibat penyembunyian kondisi medis yang relevan. Klien berhak menghentikan sesi kapan pun dan PIC wajib menghormati keputusan tersebut.</p>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--gray-border)">Syarat dan Ketentuan Layanan</div>
+
+          <!-- P1 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 1 — Ruang Lingkup Layanan</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih pada tabel rincian di atas.</li>
+              <li>Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih (Coach) atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.</li>
+            </ol>
+          </div>
+
+          <!-- P2 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 2 — Masa Berlaku Paket (Validity Period)</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan secara tuntas dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.</li>
+              <li>Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan <strong>hangus secara otomatis</strong> oleh sistem backend dan tidak dapat diakumulasikan ke periode berikutnya, kecuali terdapat persetujuan tertulis khusus dari Manajemen EFM.</li>
+            </ol>
+          </div>
+
+          <!-- P3 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px"><strong>Non-Darurat:</strong> Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya <strong>24 jam</strong> sebelum sesi dimulai melalui sistem website atau WhatsApp resmi EFM.</li>
+              <li style="margin-bottom:5px"><strong>Darurat/Sakit:</strong> Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai dan kuota dipotong otomatis.</li>
+              <li style="margin-bottom:5px"><strong>Sesi Pengganti:</strong> Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis tanpa perlu konfirmasi ke Admin/AI Agent.</li>
+              <li>Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui Pelatih/Terapis akan menyebabkan sesi tersebut <strong>hangus otomatis</strong> dari total kuota.</li>
+            </ol>
+          </div>
+
+          <!-- P4 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 4 — Pembayaran dan Validasi Order</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.</li>
+              <li>Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat <strong>final, tidak dapat dibatalkan, dan non-refundable</strong> baik sebagian maupun seluruhnya.</li>
+            </ol>
+          </div>
+
+          <!-- P5 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 5 — Jaminan Data dan Tanggung Jawab Kesehatan Mandiri</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah <strong>benar, akurat, dan jujur</strong>.</li>
+              <li style="margin-bottom:5px">Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.</li>
+              <li>EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi yang tidak diungkapkan secara jujur.</li>
+            </ol>
+          </div>
+
+          <!-- P6 -->
+          <div style="margin-bottom:14px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.</li>
+              <li>Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen <strong>tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya</strong>, termasuk menjadikan pelatih sebagai private trainer pribadi di luar agenda resmi EFM.</li>
+            </ol>
+          </div>
+
+          <!-- P7 -->
+          <div style="margin-bottom:0">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Pasal 7 — Pernyataan Kesadaran dan Persetujuan</div>
+            <ol style="padding-left:18px;font-size:11.5px;line-height:1.8;color:#333">
+              <li style="margin-bottom:5px">Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.</li>
+              <li style="margin-bottom:5px">Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.</li>
+              <li>Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.</li>
+            </ol>
           </div>
         </div>
 
