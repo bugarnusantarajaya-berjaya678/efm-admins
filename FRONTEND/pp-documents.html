@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Agreement Klien PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4/dist/signature_pad.umd.min.js"></script>
+  <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -489,6 +491,54 @@
           </div>
         </div>
 
+        <!-- ═══ MODUL KONFIRMASI & TTD DIGITAL (tampil hanya saat Pending) ═══ -->
+        <div id="confirmModule" style="display:none;margin-top:24px">
+
+          <!-- Garis separator -->
+          <div style="border-top:2px dashed var(--gray-border);margin-bottom:20px"></div>
+
+          <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px;border-left:3px solid var(--orange);padding-left:10px;margin-bottom:16px">
+            Konfirmasi &amp; Tanda Tangan Digital Klien
+          </div>
+
+          <!-- Checkbox Deklarasi -->
+          <label id="cbxWrap" style="display:flex;gap:12px;align-items:flex-start;background:white;border:1.5px solid var(--gray-border);border-radius:10px;padding:16px 18px;margin-bottom:6px;cursor:pointer;transition:border-color .2s">
+            <input type="checkbox" id="cbxDeclaration" onchange="onCbxChange()" style="width:17px;height:17px;accent-color:var(--green);flex-shrink:0;margin-top:2px;cursor:pointer"/>
+            <div style="font-size:11.5px;line-height:1.8;color:#333">
+              Saya yang bertanda tangan di bawah ini menyatakan bahwa <strong>seluruh data yang terlampir dan saya berikan dalam agreement ini adalah benar</strong>. Saya menandatangani dokumen ini dalam keadaan <strong>sadar, sehat walafiat, tanpa paksaan</strong>, dan sepakat menjalani paket program privat yang sudah saya beli. Dengan ini saya juga menyatakan <strong>bertanggung jawab penuh atas kesehatan serta keselamatan diri saya sendiri</strong> selama mengikuti program.
+            </div>
+          </label>
+          <div id="msgCbx" style="font-size:11px;color:var(--red);margin-bottom:14px;display:none;padding-left:4px">⚠ Wajib dicentang sebelum tanda tangan.</div>
+
+          <!-- Signature Pad -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">
+              Tanda Tangan Digital <span style="color:var(--red)">*</span>
+            </div>
+            <div id="sigPadWrap" style="position:relative;border:2px dashed var(--gray-border);border-radius:10px;background:white;overflow:hidden;transition:border-color .2s">
+              <canvas id="sigPadCanvas" style="display:block;width:100%;height:130px;touch-action:none"></canvas>
+              <div id="sigPadHint" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" width="26" height="26" style="margin-bottom:5px"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                <span style="font-size:11px;color:#bbb;font-weight:500">Tanda tangan di sini menggunakan jari atau stylus</span>
+              </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:6px">
+              <button onclick="clearSigPad()" style="padding:5px 12px;border-radius:6px;border:1.5px solid var(--gray-border);background:white;font-family:'Poppins',sans-serif;font-size:11px;font-weight:600;color:var(--gray-text);cursor:pointer">Hapus</button>
+            </div>
+            <div id="msgSigPad" style="font-size:11px;color:var(--red);margin-top:4px;display:none;padding-left:4px">⚠ Tanda tangan wajib diisi.</div>
+          </div>
+
+          <!-- Submit -->
+          <button id="btnSubmitAgr" onclick="submitAgreementModal()" style="width:100%;padding:13px;background:var(--orange);color:white;border:none;border-radius:10px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;opacity:.45;pointer-events:none;transition:all .2s">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><polyline points="20 6 9 17 4 12"/></svg>
+            Submit &amp; Setujui Perjanjian
+          </button>
+          <div style="font-size:10px;color:var(--gray-text);text-align:center;margin-top:8px;line-height:1.6">
+            Tanda tangan digital Anda berkekuatan hukum setara tanda tangan basah.
+          </div>
+        </div>
+        <!-- ═══ END MODUL KONFIRMASI ═══ -->
+
       </div>
     </div>
     <div class="modal-footer" style="justify-content:space-between">
@@ -661,7 +711,100 @@ function previewDoc(id) {
   document.getElementById('prevBadgeWrap').innerHTML =
     `<span class="badge ${clsMap[a.status_ttd]}">${statusMap[a.status_ttd]}</span>`;
 
+  /* Confirm module — tampil hanya saat pending */
+  const confirmMod = document.getElementById('confirmModule');
+  if (a.status_ttd === 'pending') {
+    confirmMod.style.display = 'block';
+    /* Reset state */
+    document.getElementById('cbxDeclaration').checked = false;
+    document.getElementById('cbxWrap').style.borderColor = 'var(--gray-border)';
+    document.getElementById('cbxWrap').style.background  = 'white';
+    document.getElementById('msgCbx').style.display    = 'none';
+    document.getElementById('msgSigPad').style.display = 'none';
+    document.getElementById('btnSubmitAgr').style.opacity       = '.45';
+    document.getElementById('btnSubmitAgr').style.pointerEvents = 'none';
+    initSigPad();
+  } else {
+    confirmMod.style.display = 'none';
+  }
+
+  /* Store active id for submit */
+  _activeAgreementId = id;
+
   document.getElementById('previewModal').classList.add('show');
+}
+
+/* ─── SIGNATURE PAD ─── */
+let _sigPad = null;
+let _activeAgreementId = null;
+
+function initSigPad() {
+  const canvas = document.getElementById('sigPadCanvas');
+  const ratio  = Math.max(window.devicePixelRatio || 1, 1);
+  const rect   = canvas.getBoundingClientRect();
+  /* getBoundingClientRect returns 0 before first paint — use offsetWidth fallback */
+  const w = rect.width  || canvas.offsetWidth  || 560;
+  const h = rect.height || canvas.offsetHeight || 130;
+  canvas.width  = w * ratio;
+  canvas.height = h * ratio;
+  canvas.getContext('2d').scale(ratio, ratio);
+  if (_sigPad) _sigPad.clear();
+  else {
+    _sigPad = new SignaturePad(canvas, { minWidth:1, maxWidth:3, penColor:'#1E1C43', backgroundColor:'rgba(0,0,0,0)' });
+  }
+  _sigPad.addEventListener('beginStroke', () => {
+    document.getElementById('sigPadWrap').style.borderColor = 'var(--green)';
+    document.getElementById('sigPadWrap').style.borderStyle = 'solid';
+    document.getElementById('sigPadHint').style.opacity = '0';
+    document.getElementById('msgSigPad').style.display  = 'none';
+    evalAgreementReady();
+  });
+}
+
+function clearSigPad() {
+  if (_sigPad) _sigPad.clear();
+  document.getElementById('sigPadWrap').style.borderColor = 'var(--gray-border)';
+  document.getElementById('sigPadWrap').style.borderStyle = 'dashed';
+  document.getElementById('sigPadHint').style.opacity = '1';
+  evalAgreementReady();
+}
+
+function onCbxChange() {
+  const checked = document.getElementById('cbxDeclaration').checked;
+  document.getElementById('cbxWrap').style.borderColor = checked ? 'var(--green)' : 'var(--gray-border)';
+  document.getElementById('cbxWrap').style.background  = checked ? '#EAFAF1' : 'white';
+  document.getElementById('msgCbx').style.display = 'none';
+  evalAgreementReady();
+}
+
+function evalAgreementReady() {
+  const checked = document.getElementById('cbxDeclaration').checked;
+  const signed  = _sigPad && !_sigPad.isEmpty();
+  const btn = document.getElementById('btnSubmitAgr');
+  btn.style.opacity       = (checked && signed) ? '1'    : '.45';
+  btn.style.pointerEvents = (checked && signed) ? 'auto' : 'none';
+}
+
+function submitAgreementModal() {
+  const checked = document.getElementById('cbxDeclaration').checked;
+  const signed  = _sigPad && !_sigPad.isEmpty();
+  if (!checked) { document.getElementById('msgCbx').style.display = 'block'; return; }
+  if (!signed)  { document.getElementById('msgSigPad').style.display = 'block'; return; }
+
+  const btn = document.getElementById('btnSubmitAgr');
+  btn.style.background = 'var(--navy)';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-3.1-6.8"/></svg> Menyimpan...';
+
+  /* Simulasi submit — ganti dengan fetch('/api/agreements/sign', {...}) saat backend siap */
+  setTimeout(() => {
+    if (_activeAgreementId && AGREEMENT_DB[_activeAgreementId]) {
+      AGREEMENT_DB[_activeAgreementId].status_ttd = 'signed';
+      AGREEMENT_DB[_activeAgreementId].tgl_ttd    = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+    }
+    initDocTable();
+    applyFilterAndPaginate();
+    closePreview();
+  }, 1000);
 }
 
 /* ─── FILTER + PAGINATION ENGINE ─── */
