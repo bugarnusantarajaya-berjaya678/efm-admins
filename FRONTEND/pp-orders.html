@@ -574,6 +574,7 @@
     <div class="drawer-tabs">
       <button class="drawer-tab active" id="tabOrder" onclick="switchDrawerTab('order')">📋 Detail Order</button>
       <button class="drawer-tab" id="tabInvoice" onclick="switchDrawerTab('invoice')">🧾 Invoice</button>
+      <button class="drawer-tab" id="tabAgreement" onclick="switchDrawerTab('agreement')">📄 Agreement</button>
     </div>
     <div class="drawer-body" id="drawerBody"><!-- filled by JS --></div>
     <div class="drawer-footer" id="drawerFooter"><!-- filled by JS --></div>
@@ -1453,12 +1454,13 @@ const ORDER_DB = {
     paket: '12 Sesi - Pro', sesi_total: 12, sesi_selesai: 4,
     pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
     tgl_mulai: '24 Okt 2026',
-    status_order: 'active',   // active | completed | cancelled
-    status_invoice: 'paid',   // paid | pending | overdue
+    status_order: 'active',
+    status_invoice: 'paid',
     inv_no: 'INV/EFM/PP/2026/0089',
     program_id: 'PRG-PP-003',
     lokasi: 'Apartemen Sudirman Park',
     jadwal: 'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
+    agr_id: 'AGR-001', agr_status: 'signed', agr_tgl_dibuat: '24 Okt 2026', agr_tgl_ttd: '24 Okt 2026',
   },
   'PP-8041': {
     order_id: 'PP-8041', display_id: '#PP-8041',
@@ -1472,6 +1474,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-001',
     lokasi: 'Gym Senayan City Lt.3',
     jadwal: 'Selasa 18:00 · Kamis 18:00',
+    agr_id: 'AGR-002', agr_status: 'signed', agr_tgl_dibuat: '22 Okt 2026', agr_tgl_ttd: '22 Okt 2026',
   },
   'PP-8038': {
     order_id: 'PP-8038', display_id: '#PP-8038',
@@ -1485,6 +1488,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-004',
     lokasi: 'Rumah Klien — Bintaro Sektor 9',
     jadwal: 'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
+    agr_id: 'AGR-003', agr_status: 'pending', agr_tgl_dibuat: '18 Okt 2026', agr_tgl_ttd: null,
   },
   'PP-8035': {
     order_id: 'PP-8035', display_id: '#PP-8035',
@@ -1498,6 +1502,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-002',
     lokasi: 'Cilandak Town Square',
     jadwal: 'Rabu 07:30 · Sabtu 08:00',
+    agr_id: 'AGR-004', agr_status: 'expired', agr_tgl_dibuat: '15 Okt 2026', agr_tgl_ttd: null,
   },
   'PP-8031': {
     order_id: 'PP-8031', display_id: '#PP-8031',
@@ -1511,6 +1516,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-003',
     lokasi: 'Gym Kemang Village Lt.2',
     jadwal: 'Selasa 07:00 · Kamis 07:00 · Sabtu 08:00',
+    agr_id: 'AGR-005', agr_status: 'signed', agr_tgl_dibuat: '10 Okt 2026', agr_tgl_ttd: '10 Okt 2026',
   },
   'PP-8027': {
     order_id: 'PP-8027', display_id: '#PP-8027',
@@ -1524,6 +1530,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-001',
     lokasi: 'Rumah Klien — Pondok Indah',
     jadwal: 'Rabu 09:00 · Jumat 09:00',
+    agr_id: 'AGR-006', agr_status: 'signed', agr_tgl_dibuat: '5 Okt 2026', agr_tgl_ttd: '5 Okt 2026',
   },
   'PP-8024': {
     order_id: 'PP-8024', display_id: '#PP-8024',
@@ -1537,6 +1544,7 @@ const ORDER_DB = {
     program_id: 'PRG-PP-004',
     lokasi: 'Apartemen Thamrin Residences',
     jadwal: 'Senin 06:30 · Rabu 06:30 · Jumat 06:30 · Minggu 07:00',
+    agr_id: 'AGR-007', agr_status: 'pending', agr_tgl_dibuat: '1 Okt 2026', agr_tgl_ttd: null,
   },
 };
 
@@ -1618,8 +1626,83 @@ function switchDrawerTab(tab) {
   _drawerTab = tab;
   document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
   document.getElementById('tabInvoice').classList.toggle('active', tab === 'invoice');
+  document.getElementById('tabAgreement').classList.toggle('active', tab === 'agreement');
   if (tab === 'order') renderOrderTab();
-  else renderInvoiceTab();
+  else if (tab === 'invoice') renderInvoiceTab();
+  else renderAgreementTab();
+}
+
+function renderAgreementTab() {
+  if (!_drawerOrderId) return;
+  const o = ORDER_DB[_drawerOrderId];
+  if (!o || !o.agr_id) {
+    document.getElementById('drawerBody').innerHTML = '<p style="color:var(--gray-text);padding:20px 0;font-size:13px">Data agreement tidak ditemukan.</p>';
+    document.getElementById('drawerFooter').innerHTML = '';
+    return;
+  }
+
+  const statusCfg = {
+    signed:  { label:'Signed',      cls:'signed',  bg:'#EAFAF1', color:'#1E8449', border:'#A9DFBF', icon:'✓' },
+    pending: { label:'Pending TTD', cls:'pending',  bg:'#FEF9E7', color:'#D68910', border:'#F9E79F', icon:'⏳' },
+    expired: { label:'Expired',     cls:'expired',  bg:'#FDEDEC', color:'#C0392B', border:'#F5B7B1', icon:'✕' },
+  };
+  const s = statusCfg[o.agr_status] || statusCfg['pending'];
+  const nomor = o.agr_id + '/EFM/PP/' + (o.agr_tgl_dibuat || '').split(' ').pop();
+
+  const cell = (label, val) => `
+    <div style="background:var(--gray-bg);border-radius:8px;padding:11px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${label}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--navy)">${val}</div>
+    </div>`;
+
+  document.getElementById('drawerBody').innerHTML = `
+    <!-- Status Banner -->
+    <div style="background:${s.bg};border:1.5px solid ${s.border};border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0">${s.icon}</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:${s.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Status Dokumen</div>
+        <div style="font-size:17px;font-weight:700;color:${s.color}">${s.label}</div>
+        ${o.agr_status === 'signed'
+          ? `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Ditandatangani secara digital pada ${o.agr_tgl_ttd}</div>`
+          : o.agr_status === 'pending'
+            ? `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Menunggu tanda tangan klien di perangkat pelatih</div>`
+            : `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Dokumen telah melewati masa berlaku</div>`
+        }
+      </div>
+    </div>
+
+    <!-- Detail Grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${cell('No. Dokumen', nomor)}
+      ${cell('Klien', o.nama_klien)}
+      ${cell('Paket Program', o.paket)}
+      ${cell('Tanggal Dibuat', o.agr_tgl_dibuat)}
+      ${o.agr_status === 'signed'
+        ? cell('Tanggal Ditandatangani', o.agr_tgl_ttd)
+        : `<div style="background:var(--gray-bg);border-radius:8px;padding:11px 14px">
+             <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Tanggal Ditandatangani</div>
+             <div style="font-size:13px;font-weight:600;color:var(--gray-text);font-style:italic">Belum ditandatangani</div>
+           </div>`
+      }
+      ${cell('PIC / Pelatih', o.pic_nama)}
+    </div>
+
+    <!-- Pasal Info -->
+    <div style="background:var(--navy);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="20" height="20" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:white">Perjanjian Layanan Private Program</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">7 Pasal · EFM — CV. Bugar Nusantara Jaya</div>
+      </div>
+      <a href="pp-documents.html" style="margin-left:auto;padding:7px 14px;background:var(--orange);color:white;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0">Lihat Dokumen</a>
+    </div>`;
+
+  document.getElementById('drawerFooter').innerHTML = `
+    <button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>
+    <a href="pp-documents.html" style="padding:9px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Buka Agreement Klien
+    </a>`;
 }
 
 function renderOrderTab() {
