@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EFM Portal — Dokumen PP</title>
+  <title>EFM Portal — Agreement Klien PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,6 +15,8 @@
       --sidebar-w:240px;
     }
     body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; overflow:hidden; }
+
+    /* SIDEBAR */
     .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
     .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
     .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -35,6 +37,8 @@
     .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
     .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
     .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
+
+    /* MAIN */
     .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; min-width:0; }
     .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
     .header-title { font-size:15px; font-weight:600; color:var(--navy); }
@@ -46,86 +50,106 @@
     .icon-btn svg { width:17px; height:17px; }
     .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
     .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
-    .content { padding:20px 28px 0; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-shrink:0; }
+
+    /* CONTENT */
+    .content { padding:20px 28px 28px; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0; }
     .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
     .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
     .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
     .btn-primary:hover { background:var(--orange-hover); }
 
-    /* Tabs */
-    .tabs { display:flex; gap:4px; background:white; border-radius:12px; border:1.5px solid var(--gray-border); padding:6px; margin-bottom:24px; width:fit-content; }
-    .tab { padding:8px 24px; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; color:var(--gray-text); transition:all 0.2s; border:none; background:none; font-family:'Poppins',sans-serif; }
-    .tab.active { background:var(--navy); color:white; font-weight:600; }
-    .tab:hover:not(.active) { background:var(--gray-bg); }
-
-    /* Stats */
+    /* STATS */
     .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; flex-shrink:0; }
-    .stat-mini { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:12px 16px; display:flex; align-items:center; gap:14px; }
-    .stat-icon { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .stat-icon svg { width:18px; height:18px; }
-    .stat-icon.orange { background:rgba(224,89,69,0.12); color:var(--orange); }
-    .stat-icon.green { background:rgba(39,174,96,0.12); color:var(--green); }
-    .stat-icon.navy { background:rgba(30,28,67,0.1); color:var(--navy); }
-    .stat-info .label { font-size:10px; color:var(--gray-text); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; }
-    .stat-info .value { font-size:20px; font-weight:700; color:var(--navy); }
+    .stat-mini { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:12px 16px; }
+    .stat-mini .label { font-size:10px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+    .stat-mini .value { font-size:20px; font-weight:700; color:var(--navy); }
+    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .stat-mini.highlight-yellow { border-color:var(--yellow); }
+    .stat-mini.highlight-yellow .value { color:var(--yellow); }
+    .stat-mini.highlight-green { border-color:var(--green); }
+    .stat-mini.highlight-green .value { color:var(--green); }
+    @media (max-width:768px) { .stats-row { grid-template-columns:repeat(2,1fr); } }
 
-    /* Filters */
+    /* FILTERS */
     .filters-bar { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:10px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; flex-shrink:0; }
-    .filter-select { padding:8px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; cursor:pointer; outline:none; }
-    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:8px 14px; }
+    .filter-select { padding:7px 10px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; color:var(--text-dark); background:white; cursor:pointer; outline:none; min-width:0; flex-shrink:1; transition:border-color 0.2s; }
+    .filter-select:focus, .filter-select:hover { border-color:var(--navy); }
+    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 12px; transition:border-color 0.2s; }
+    .filter-search:focus-within { border-color:var(--navy); background:white; }
     .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
-    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
-    .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
+    .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
-    /* Table */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:28px; }
+    /* TABLE */
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; }
     .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; border-collapse:collapse; }
-    th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; position:sticky; top:0; z-index:2; }
-    td { padding:10px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; }
+    table { width:100%; min-width:900px; border-collapse:collapse; table-layout:fixed; }
+    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
+    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
     tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; }
-    .doc-name { font-weight:600; color:var(--navy); }
-    .doc-sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .badge.signed { background:#EAFAF1; color:#27AE60; }
-    .badge.pending { background:#FEF9E7; color:#F39C12; }
-    .badge.expired { background:#FDEDEC; color:#E74C3C; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
+    tr:hover td { background:#FAFAFA; cursor:pointer; }
+
+    /* Column widths */
+    .col-id-berkas  { width:120px; min-width:110px; }
+    .col-nama       { width:180px; min-width:160px; white-space:normal; word-break:break-word; }
+    .col-order-id   { width:110px; min-width:100px; }
+    .col-paket      { width:160px; min-width:140px; white-space:normal; }
+    .col-tgl        { width:130px; min-width:120px; }
+    .col-status     { width:130px; min-width:120px; text-align:center; }
+    .col-aksi       { width:100px; min-width:90px; text-align:center; white-space:nowrap; }
+
+    /* Badges */
+    .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600; white-space:nowrap; }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+    .badge.signed  { background:#EAFAF1; color:var(--green); }
+    .badge.pending { background:#FEF9E7; color:var(--yellow); }
+    .badge.expired { background:#FDEDEC; color:var(--red); }
+
+    /* Avatar */
+    .client-cell { display:flex; align-items:center; gap:10px; }
+    .avatar-sm { width:35px; height:35px; border-radius:50%; color:white; font-size:12px; font-weight:700; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; user-select:none; }
+
+    /* ID berkas */
+    .doc-id { font-weight:700; color:var(--navy); font-size:13px; }
+
+    /* Action buttons */
+    .action-wrap { display:flex; align-items:center; justify-content:center; gap:6px; }
+    .action-btn { width:30px; height:30px; border-radius:6px; border:1px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; }
     .action-btn:hover { border-color:var(--navy); color:var(--navy); }
     .action-btn.download { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
     .action-btn svg { width:14px; height:14px; }
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
+
+    /* Pagination */
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
     .pagination-info { font-size:12px; color:var(--gray-text); }
     .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
+    .page-btn { width:32px; height:32px; border-radius:6px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
     .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
     .page-btn svg { width:14px; height:14px; }
 
-    /* Modal Upload */
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
     .modal-overlay.show { display:flex; }
-    .modal { background:white; border-radius:16px; width:100%; max-width:480px; }
-    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
+    .modal { background:white; border-radius:16px; width:100%; max-width:480px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
     .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
     .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
     .modal-close svg { width:16px; height:16px; }
-    .modal-body { padding:24px 28px; }
-    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; }
+    .modal-body { padding:24px 28px; overflow-y:auto; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; flex-shrink:0; }
     .form-group { margin-bottom:18px; }
     .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
     .form-group label span { color:var(--orange); }
     .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; transition:border-color 0.2s; }
     .form-control:focus { border-color:var(--navy); }
     .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-    .upload-area { border:2px dashed var(--gray-border); border-radius:12px; padding:32px; text-align:center; cursor:pointer; transition:all 0.2s; }
+    .upload-area { border:2px dashed var(--gray-border); border-radius:12px; padding:28px; text-align:center; cursor:pointer; transition:all 0.2s; }
     .upload-area:hover { border-color:var(--navy); background:var(--gray-bg); }
-    .upload-area svg { width:32px; height:32px; color:var(--gray-text); margin-bottom:10px; }
-    .upload-area h4 { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:4px; }
-    .upload-area p { font-size:12px; color:var(--gray-text); }
+    .upload-area svg { width:30px; height:30px; color:var(--gray-text); margin-bottom:8px; }
+    .upload-area h4 { font-size:13px; font-weight:600; color:var(--navy); margin-bottom:4px; }
+    .upload-area p { font-size:11px; color:var(--gray-text); }
   </style>
 </head>
 <body>
@@ -150,7 +174,7 @@
       <a href="pp-leads.html" class="nav-sub-item">Leads</a>
       <a href="pp-orders.html" class="nav-sub-item">Orders</a>
       <a href="pp-invoice.html" class="nav-sub-item">Invoice</a>
-      <a href="pp-documents.html" class="nav-sub-item active">Dokumen</a>
+      <a href="pp-documents.html" class="nav-sub-item active">Agreement Klien</a>
       <a href="pp-program-db.html" class="nav-sub-item">Database Program</a>
     </div>
     <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
@@ -181,6 +205,7 @@
       <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
       <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
     </div>
+    <!-- Operational -->
     <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>
       Operational
@@ -188,7 +213,7 @@
     </a>
     <div id="opsSub" style="display:none">
       <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
-      <a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a>
+      <a href="ops-assets.html" class="nav-sub-item">Barang &amp; Aset</a>
       <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
       <a href="ops-trainer.html" class="nav-sub-item">Data Pelatih &amp; PKS</a>
     </div>
@@ -212,7 +237,7 @@
     <div class="header-right">
       <div class="search-bar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" placeholder="Cari dokumen..."/>
+        <input type="text" placeholder="Cari agreement..."/>
       </div>
       <div class="icon-btn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -225,50 +250,32 @@
   <div class="content">
     <div class="page-header">
       <div class="page-header-left">
-        <h1>Pemberkasan Private Training</h1>
-        <p>Kelola PKS PIC dan Agreement Klien</p>
+        <h1>Agreement Klien</h1>
+        <p>Kelola dokumen persetujuan dan kontrak klien Private Training</p>
       </div>
       <button class="btn-primary" onclick="openModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Upload Dokumen
+        Upload Agreement
       </button>
     </div>
 
     <!-- Stats -->
     <div class="stats-row">
-      <div class="stat-mini">
-        <div class="stat-icon orange">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="label">Pending TTD</div>
-          <div class="value">12</div>
-        </div>
+      <div class="stat-mini highlight-yellow">
+        <div class="label">Pending TTD</div>
+        <div class="value" id="statPending">0</div>
+        <div class="sub">Menunggu tanda tangan</div>
+      </div>
+      <div class="stat-mini highlight-green">
+        <div class="label">Sudah TTD</div>
+        <div class="value" id="statSigned">0</div>
+        <div class="sub">Agreement aktif</div>
       </div>
       <div class="stat-mini">
-        <div class="stat-icon green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="label">Sudah TTD</div>
-          <div class="value">48</div>
-        </div>
+        <div class="label">Total Agreement</div>
+        <div class="value" id="statTotal">0</div>
+        <div class="sub">Semua dokumen</div>
       </div>
-      <div class="stat-mini">
-        <div class="stat-icon navy">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-        </div>
-        <div class="stat-info">
-          <div class="label">Total Dokumen</div>
-          <div class="value">60</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab active" onclick="setTab(this,'pks')">PKS PIC</button>
-      <button class="tab" onclick="setTab(this,'agreement')">Agreement Klien</button>
     </div>
 
     <!-- Filters -->
@@ -279,9 +286,16 @@
         <option value="pending">Pending TTD</option>
         <option value="expired">Expired</option>
       </select>
+      <select class="filter-select" id="filterPaket" onchange="applyFilterAndPaginate()">
+        <option value="">Semua Paket</option>
+        <option value="starter">Starter</option>
+        <option value="base">Base</option>
+        <option value="pro">Pro</option>
+        <option value="elite">Elite</option>
+      </select>
       <div class="filter-search">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama PIC atau klien..."/>
+        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau order ID..."/>
       </div>
       <button class="btn-clear" onclick="clearFilter()">Reset</button>
     </div>
@@ -290,66 +304,27 @@
     <div class="table-card">
       <div class="table-wrap">
         <table id="docTable">
+          <colgroup>
+            <col class="col-id-berkas"/>
+            <col class="col-nama"/>
+            <col class="col-order-id"/>
+            <col class="col-paket"/>
+            <col class="col-tgl"/>
+            <col class="col-status"/>
+            <col class="col-aksi"/>
+          </colgroup>
           <thead>
             <tr>
-              <th>ID Berkas</th>
-              <th>Nama PIC</th>
-              <th>Jenis Dokumen</th>
-              <th>Tanggal Upload</th>
-              <th>Berlaku Hingga</th>
-              <th>Status TTD</th>
-              <th>Actions</th>
+              <th class="col-id-berkas">ID Berkas</th>
+              <th class="col-nama">Nama Klien</th>
+              <th class="col-order-id">Order ID</th>
+              <th class="col-paket">Paket</th>
+              <th class="col-tgl">Tanggal Dibuat</th>
+              <th class="col-status">Status TTD</th>
+              <th class="col-aksi">Actions</th>
             </tr>
           </thead>
           <tbody id="docBody">
-            <tr>
-              <td><span style="font-weight:600;color:var(--navy)">#PKS-001</span></td>
-              <td>Sarah Jenkins</td>
-              <td>PKS PIC</td>
-              <td>1 Jan 2026</td>
-              <td>31 Des 2026</td>
-              <td><span class="badge signed">Signed</span></td>
-              <td>
-                <button class="action-btn" title="Preview" onclick="previewDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn download" title="Download" onclick="downloadDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-              </td>
-            </tr>
-            <tr>
-              <td><span style="font-weight:600;color:var(--navy)">#PKS-002</span></td>
-              <td>Marcus Chen</td>
-              <td>PKS PIC</td>
-              <td>5 Jan 2026</td>
-              <td>31 Des 2026</td>
-              <td><span class="badge pending">Pending</span></td>
-              <td>
-                <button class="action-btn" title="Preview" onclick="previewDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn download" title="Download" onclick="downloadDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-              </td>
-            </tr>
-            <tr>
-              <td><span style="font-weight:600;color:var(--navy)">#PKS-003</span></td>
-              <td>Elena Rodriguez</td>
-              <td>PKS PIC</td>
-              <td>10 Jan 2026</td>
-              <td>31 Des 2026</td>
-              <td><span class="badge signed">Signed</span></td>
-              <td>
-                <button class="action-btn" title="Preview" onclick="previewDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn download" title="Download" onclick="downloadDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-              </td>
-            </tr>
-            <tr>
-              <td><span style="font-weight:600;color:var(--navy)">#PKS-004</span></td>
-              <td>David Kim</td>
-              <td>PKS PIC</td>
-              <td>15 Jan 2026</td>
-              <td>31 Des 2025</td>
-              <td><span class="badge expired">Expired</span></td>
-              <td>
-                <button class="action-btn" title="Preview" onclick="previewDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn download" title="Download" onclick="downloadDoc(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>
@@ -361,11 +336,11 @@
   </div>
 </main>
 
-<!-- Modal: Preview Dokumen -->
+<!-- Modal: Preview Agreement -->
 <div class="modal-overlay" id="previewModal">
   <div class="modal" style="max-width:500px">
     <div class="modal-header">
-      <h3 id="prevTitle">Preview Dokumen</h3>
+      <h3 id="prevTitle">Preview Agreement</h3>
       <button class="modal-close" onclick="closePreview()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
@@ -386,29 +361,31 @@
   </div>
 </div>
 
-<!-- Modal Upload -->
+<!-- Modal: Upload Agreement -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <h3>Upload Dokumen Baru</h3>
+      <h3>Upload Agreement Klien</h3>
       <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-group">
-        <label>Jenis Dokumen <span>*</span></label>
-        <select class="form-control">
-          <option>Pilih Jenis...</option>
-          <option>PKS PIC</option>
-          <option>Agreement Klien</option>
+        <label>Nama Klien <span>*</span></label>
+        <input type="text" class="form-control" id="uploadNama" placeholder="Nama klien..."/>
+      </div>
+      <div class="form-group">
+        <label>Order ID <span>*</span></label>
+        <input type="text" class="form-control" id="uploadOrderId" placeholder="Contoh: PP-8042"/>
+      </div>
+      <div class="form-group">
+        <label>Paket <span>*</span></label>
+        <select class="form-control" id="uploadPaket">
+          <option value="">— Pilih Paket —</option>
+          <option>4 Sesi - Starter</option>
+          <option>8 Sesi - Base</option>
+          <option>12 Sesi - Pro</option>
+          <option>24 Sesi - Elite</option>
         </select>
-      </div>
-      <div class="form-group">
-        <label>Nama PIC / Klien <span>*</span></label>
-        <input type="text" class="form-control" placeholder="Cari atau ketik nama..."/>
-      </div>
-      <div class="form-group">
-        <label>Tanggal Berlaku Hingga <span>*</span></label>
-        <input type="date" class="form-control"/>
       </div>
       <div class="form-group">
         <label>Upload File <span>*</span></label>
@@ -422,62 +399,150 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Batal</button>
-      <button class="btn-primary" onclick="saveDoc()">Upload Dokumen</button>
+      <button class="btn-primary" onclick="saveDoc()">Upload Agreement</button>
     </div>
   </div>
 </div>
 
 <script>
-function toggleMenu(e, subId, arrowId) {
-  e.preventDefault();
-  const sub = document.getElementById(subId);
-  const arrow = document.getElementById(arrowId);
-  const isOpen = sub.style.display !== 'none';
-  sub.style.display = isOpen ? 'none' : 'block';
-  if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+/* ─── AGREEMENT_DB (SSoT) ─── */
+const AGREEMENT_DB = {
+  'AGR-001': {
+    berkas_id: 'AGR-001', display_id: '#AGR-001',
+    nama_klien: 'James Wilson', avatar_initials: 'JW', avatar_color: '#2980B9',
+    order_id: 'PP-8042', paket: '12 Sesi - Pro',
+    tgl_dibuat: '24 Okt 2026',
+    status_ttd: 'signed',
+  },
+  'AGR-002': {
+    berkas_id: 'AGR-002', display_id: '#AGR-002',
+    nama_klien: 'Emily Chen', avatar_initials: 'EC', avatar_color: '#27AE60',
+    order_id: 'PP-8041', paket: '4 Sesi - Starter',
+    tgl_dibuat: '22 Okt 2026',
+    status_ttd: 'signed',
+  },
+  'AGR-003': {
+    berkas_id: 'AGR-003', display_id: '#AGR-003',
+    nama_klien: 'Robert Taylor', avatar_initials: 'RT', avatar_color: '#E05945',
+    order_id: 'PP-8038', paket: '24 Sesi - Elite',
+    tgl_dibuat: '18 Okt 2026',
+    status_ttd: 'pending',
+  },
+  'AGR-004': {
+    berkas_id: 'AGR-004', display_id: '#AGR-004',
+    nama_klien: 'Anita Kumar', avatar_initials: 'AK', avatar_color: '#8E44AD',
+    order_id: 'PP-8035', paket: '8 Sesi - Base',
+    tgl_dibuat: '15 Okt 2026',
+    status_ttd: 'expired',
+  },
+  'AGR-005': {
+    berkas_id: 'AGR-005', display_id: '#AGR-005',
+    nama_klien: 'Budi Santoso', avatar_initials: 'BS', avatar_color: '#16A085',
+    order_id: 'PP-8031', paket: '12 Sesi - Pro',
+    tgl_dibuat: '10 Okt 2026',
+    status_ttd: 'signed',
+  },
+  'AGR-006': {
+    berkas_id: 'AGR-006', display_id: '#AGR-006',
+    nama_klien: 'Rina Kusuma', avatar_initials: 'RK', avatar_color: '#D35400',
+    order_id: 'PP-8027', paket: '4 Sesi - Starter',
+    tgl_dibuat: '5 Okt 2026',
+    status_ttd: 'signed',
+  },
+  'AGR-007': {
+    berkas_id: 'AGR-007', display_id: '#AGR-007',
+    nama_klien: 'Hendra Wijaya', avatar_initials: 'HW', avatar_color: '#2C3E50',
+    order_id: 'PP-8024', paket: '24 Sesi - Elite',
+    tgl_dibuat: '1 Okt 2026',
+    status_ttd: 'pending',
+  },
+};
+
+/* ─── RENDER TABLE FROM AGREEMENT_DB ─── */
+function buildDocRow(a) {
+  const statusMap = {
+    signed:  { label:'Signed',  cls:'signed' },
+    pending: { label:'Pending', cls:'pending' },
+    expired: { label:'Expired', cls:'expired' },
+  };
+  const s = statusMap[a.status_ttd] || { label: a.status_ttd, cls:'pending' };
+  return `
+    <tr data-berkas-id="${a.berkas_id}" onclick="previewDoc('${a.berkas_id}')" style="cursor:pointer">
+      <td class="col-id-berkas"><span class="doc-id">${a.display_id}</span></td>
+      <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${a.avatar_color}">${a.avatar_initials}</div>${a.nama_klien}</div></td>
+      <td class="col-order-id" style="font-weight:600;color:var(--navy)">#${a.order_id}</td>
+      <td class="col-paket">${a.paket}</td>
+      <td class="col-tgl">${a.tgl_dibuat}</td>
+      <td class="col-status" data-status="${a.status_ttd}"><span class="badge ${s.cls}">${s.label}</span></td>
+      <td class="col-aksi">
+        <div class="action-wrap">
+          <button class="action-btn" title="Preview" onclick="event.stopPropagation();previewDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn download" title="Download" onclick="event.stopPropagation();downloadDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+        </div>
+      </td>
+    </tr>`;
 }
-function setTab(el, type) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  applyFilterAndPaginate();
+
+function initDocTable() {
+  const tbody = document.getElementById('docBody');
+  tbody.innerHTML = Object.values(AGREEMENT_DB).map(buildDocRow).join('');
+  updateAgreementStats();
 }
-function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
+
+function updateAgreementStats() {
+  const docs = Object.values(AGREEMENT_DB);
+  document.getElementById('statPending').textContent = docs.filter(d => d.status_ttd === 'pending').length;
+  document.getElementById('statSigned').textContent  = docs.filter(d => d.status_ttd === 'signed').length;
+  document.getElementById('statTotal').textContent   = docs.length;
+}
+
+/* ─── MODAL ─── */
+function openModal()  { document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
-function saveDoc() { alert('Dokumen berhasil diupload!'); closeModal(); }
+function closePreview() { document.getElementById('previewModal').classList.remove('show'); }
 
-function previewDoc(btn) {
-  const tr    = btn.closest('tr');
-  const cells = tr.querySelectorAll('td');
-  const docId   = cells[0].textContent.trim();
-  const nama    = cells[1].textContent.trim();
-  const jenis   = cells[2].textContent.trim();
-  const tglUp   = cells[3].textContent.trim();
-  const berlaku = cells[4].textContent.trim();
-  const badge   = cells[5].querySelector('.badge');
-  const statusHtml = badge ? badge.outerHTML : '';
+function saveDoc() {
+  const nama    = document.getElementById('uploadNama').value.trim();
+  const orderId = document.getElementById('uploadOrderId').value.trim();
+  const paket   = document.getElementById('uploadPaket').value;
+  if (!nama || !orderId || !paket) { alert('Harap lengkapi semua field wajib.'); return; }
+  const newId = 'AGR-' + String(Object.keys(AGREEMENT_DB).length + 1).padStart(3,'0');
+  AGREEMENT_DB[newId] = {
+    berkas_id: newId, display_id: '#' + newId,
+    nama_klien: nama, avatar_initials: nama.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(), avatar_color: '#6C757D',
+    order_id: orderId.replace('#',''), paket,
+    tgl_dibuat: new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'}),
+    status_ttd: 'pending',
+  };
+  initDocTable();
+  applyFilterAndPaginate();
+  closeModal();
+  document.getElementById('uploadNama').value = '';
+  document.getElementById('uploadOrderId').value = '';
+  document.getElementById('uploadPaket').selectedIndex = 0;
+}
 
-  document.getElementById('prevTitle').textContent = 'Preview — ' + docId;
-  document.getElementById('prevFileName').textContent = jenis + ' — ' + nama + '.pdf';
-  document.getElementById('prevFileMeta').textContent = 'Diupload: ' + tglUp + '  •  Berlaku s/d: ' + berlaku;
+function previewDoc(id) {
+  const a = AGREEMENT_DB[id];
+  if (!a) return;
+  const statusMap = { signed:'Signed', pending:'Pending', expired:'Expired' };
+  const clsMap    = { signed:'signed', pending:'pending', expired:'expired' };
+  document.getElementById('prevTitle').textContent    = 'Preview — ' + a.display_id;
+  document.getElementById('prevFileName').textContent = 'Agreement Klien — ' + a.nama_klien + '.pdf';
+  document.getElementById('prevFileMeta').textContent = 'Tanggal dibuat: ' + a.tgl_dibuat + '  •  Order: #' + a.order_id;
+  const cell = (lbl, val) => `<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${lbl}</div><div style="font-size:13px;font-weight:700;color:var(--navy)">${val}</div></div>`;
   document.getElementById('prevDetails').innerHTML =
-    '<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Berkas</div><div style="font-size:13px;font-weight:700;color:var(--navy)">' + docId + '</div></div>' +
-    '<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama</div><div style="font-size:13px;font-weight:700;color:var(--navy)">' + nama + '</div></div>' +
-    '<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Jenis</div><div style="font-size:13px;font-weight:700;color:var(--navy)">' + jenis + '</div></div>' +
-    '<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Status TTD</div>' + statusHtml + '</div>';
-
-  document.getElementById('prevDownloadBtn').onclick = () => downloadDoc(btn);
+    cell('ID Berkas', a.display_id) +
+    cell('Nama Klien', a.nama_klien) +
+    cell('Paket', a.paket) +
+    `<div style="background:var(--gray-bg);border-radius:8px;padding:12px 14px"><div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Status TTD</div><span class="badge ${clsMap[a.status_ttd]}">${statusMap[a.status_ttd]}</span></div>`;
+  document.getElementById('prevDownloadBtn').onclick = () => downloadDoc(id);
   document.getElementById('previewModal').classList.add('show');
 }
 
-function closePreview() { document.getElementById('previewModal').classList.remove('show'); }
-
-function downloadDoc(btn) {
-  const tr    = btn.closest('tr');
-  const cells = tr.querySelectorAll('td');
-  const docId = cells[0].textContent.trim();
-  const nama  = cells[1].textContent.trim();
-  const jenis = cells[2].textContent.trim();
-  alert('Mengunduh: ' + jenis + ' — ' + nama + ' (' + docId + ')\n\nFitur download akan terhubung ke sistem penyimpanan dokumen.');
+function downloadDoc(id) {
+  const a = AGREEMENT_DB[id];
+  alert('Mengunduh: Agreement Klien — ' + a.nama_klien + ' (' + a.display_id + ')\n\nFitur ini akan terhubung ke sistem penyimpanan dokumen.');
 }
 
 /* ─── FILTER + PAGINATION ENGINE ─── */
@@ -492,11 +557,15 @@ function getAllRows() {
 function applyFilterAndPaginate() {
   const search = document.getElementById('searchInput').value.toLowerCase();
   const f1 = document.getElementById('filterStatus').value.toLowerCase();
+  const f2 = document.getElementById('filterPaket').value.toLowerCase();
 
   filteredRows = getAllRows().filter(row => {
-    const text = row.textContent.toLowerCase();
+    const text      = row.textContent.toLowerCase();
+    const statusEl  = row.querySelector('td[data-status]');
+    const statusVal = statusEl ? statusEl.dataset.status : '';
     return (!search || text.includes(search))
-        && (!f1 || text.includes(f1));
+        && (!f1 || statusVal === f1)
+        && (!f2 || text.includes(f2));
   });
 
   currentPage = 1;
@@ -516,7 +585,7 @@ function renderPage() {
   const from = total === 0 ? 0 : start + 1;
   const to   = Math.min(end, total);
   document.getElementById('paginationInfo').textContent =
-    'Menampilkan ' + from + '–' + to + ' dari ' + total + ' dokumen';
+    'Menampilkan ' + from + '–' + to + ' dari ' + total + ' agreement';
 
   buildPaginationBtns(currentPage, totalPages);
 }
@@ -566,22 +635,33 @@ function goToPage(page) {
 function clearFilter() {
   document.getElementById('searchInput').value = '';
   document.getElementById('filterStatus').selectedIndex = 0;
+  document.getElementById('filterPaket').selectedIndex = 0;
   applyFilterAndPaginate();
 }
 
-document.addEventListener('DOMContentLoaded', () => applyFilterAndPaginate());
+function toggleMenu(e, subId, arrowId) {
+  e.preventDefault();
+  const sub   = document.getElementById(subId);
+  const arrow = document.getElementById(arrowId);
+  const isOpen = sub.style.display !== 'none';
+  sub.style.display = isOpen ? 'none' : 'block';
+  if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initDocTable();
+  applyFilterAndPaginate();
+});
 </script>
 
 <script>
 const role = localStorage.getItem('efm_role');
-const nama = localStorage.getItem('efm_nama');
 if (role === 'owner') {
   const menuSettings = document.getElementById('menuSettings');
   if (menuSettings) menuSettings.style.display = 'flex';
   const headerRight = document.querySelector('.header-right');
   if (headerRight) {
     const badge = document.createElement('span');
-    badge.className = 'owner-badge';
     badge.style.cssText = 'background:rgba(224,89,69,0.1);color:#E05945;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)';
     badge.textContent = '👑 Owner';
     headerRight.insertBefore(badge, headerRight.firstChild);
@@ -591,10 +671,8 @@ if (role === 'owner') {
   const ownerLabel = document.getElementById('ownerLabel');
   if (ownerLabel) ownerLabel.style.display = 'block';
 } else {
-  const ownerLabel = document.querySelector('.nav-label:last-of-type');
-  if (ownerLabel && ownerLabel.textContent.trim() === 'Owner Only') {
-    ownerLabel.style.display = 'none';
-  }
+  const ownerLabel = document.getElementById('ownerLabel');
+  if (ownerLabel) ownerLabel.style.display = 'none';
 }
 </script>
 </body>
