@@ -666,9 +666,7 @@ function previewDoc(id) {
   /* Header */
   document.getElementById('prevTitle').textContent    = 'Agreement Klien — ' + a.display_id;
   document.getElementById('prevSubtitle').textContent = a.nama_klien + '  ·  #' + a.order_id;
-  document.getElementById('docNomor').textContent     = a.display_id + '/EFM/PP/' + a.tgl_dibuat.split(' ').pop();
-  document.getElementById('docTglHeader').textContent  = a.tgl_dibuat;
-  document.getElementById('docOrderHeader').textContent = '#' + a.order_id;
+  document.getElementById('docNomor').textContent = a.display_id + '/EFM/PP/' + a.tgl_dibuat.split(' ').pop();
 
   /* Detail grid */
   const cell = (lbl, val) =>
@@ -1100,7 +1098,7 @@ function downloadAgreementPDF() {
   function _afterPrint() {
     window.removeEventListener('afterprint', _afterPrint);
     shell.style.display = 'none';
-    document.getElementById('previewModal').style.display = 'flex';
+    document.getElementById('previewModal').classList.add('show');
   }
   window.addEventListener('afterprint', _afterPrint);
 
