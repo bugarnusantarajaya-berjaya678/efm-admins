@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  EFM — TEMPLATE PERJANJIAN LAYANAN PRIVATE PROGRAM                  ║
+  ║  File   : template-agreement.html                                   ║
+  ║  Render : Server-side (Node.js / PHP str_replace / Twig / EJS)      ║
+  ║                                                                      ║
+  ║  PLACEHOLDER → BACKEND VARIABLE MAPPING                             ║
+  ║  {{nomor_dokumen}}   → AGR-{id} / auto-generate                     ║
+  ║  {{nama_klien}}      → orders.client_name                           ║
+  ║  {{order_id}}        → orders.order_id                              ║
+  ║  {{nama_program}}    → programs.name                                ║
+  ║  {{total_sesi}}      → orders.total_sessions                        ║
+  ║  {{tanggal_dibuat}}  → agreements.created_at (formatted)            ║
+  ║  {{nomor_telepon}}   → clients.phone                                ║
+  ║  {{email_klien}}     → clients.email                                ║
+  ║  {{tanggal_mulai}}   → orders.start_date (formatted)                ║
+  ║  {{tanggal_habis}}   → orders.expiry_date (formatted)               ║
+  ║  {{tanda_tangan}}    → agreements.signature_data_url (base64 PNG)   ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Perjanjian Layanan — {{nomor_dokumen}}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+
+  <!--
+    signature_pad v4 — MIT License
+    CDN: https://cdn.jsdelivr.net/npm/signature_pad@4/dist/signature_pad.umd.min.js
+    Self-host: /assets/js/signature_pad.umd.min.js
+  -->
+  <script src="https://cdn.jsdelivr.net/npm/signature_pad@4/dist/signature_pad.umd.min.js"></script>
+
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:    #1E1C43;
+      --navy2:   #2D2B5A;
+      --orange:  #E05945;
+      --green:   #27AE60;
+      --red:     #E74C3C;
+      --yellow:  #F39C12;
+      --gray-bg: #F8F9FA;
+      --gray-bd: #E2E6EA;
+      --gray-tx: #6C757D;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--gray-bg);
+      color: var(--navy);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    /* ── Document Shell ───────────────────────────────────────────── */
+    .doc-shell {
+      max-width: 780px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+      overflow: hidden;
+    }
+
+    /* ── Kop ──────────────────────────────────────────────────────── */
+    .doc-kop {
+      background: var(--navy);
+      padding: 28px 36px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .kop-logo {
+      width: 52px; height: 52px;
+      background: var(--orange);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .kop-logo svg { width: 28px; height: 28px; fill: white; }
+    .kop-text { flex: 1; }
+    .kop-text .org  { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.5); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 4px; }
+    .kop-text .title { font-size: 17px; font-weight: 700; color: white; line-height: 1.25; }
+    .kop-nomor { text-align: right; flex-shrink: 0; }
+    .kop-nomor .lbl { font-size: 9px; font-weight: 600; color: rgba(255,255,255,.4); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+    .kop-nomor .val { font-size: 13px; font-weight: 700; color: white; font-family: monospace; }
+
+    /* ── Detail Grid ──────────────────────────────────────────────── */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-bottom: 2px solid var(--navy);
+    }
+    .detail-cell {
+      padding: 14px 20px;
+      border-right: 1px solid var(--gray-bd);
+      border-bottom: 1px solid var(--gray-bd);
+    }
+    .detail-cell:nth-child(even) { border-right: none; }
+    .detail-cell .lbl {
+      font-size: 9px; font-weight: 700; color: var(--gray-tx);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 5px;
+    }
+    .detail-cell .val {
+      font-size: 14px; font-weight: 700; color: var(--navy);
+      line-height: 1.35;
+    }
+    .detail-cell .val.mono { font-family: monospace; font-size: 13px; }
+    .detail-cell .val.sm   { font-size: 12px; font-weight: 500; color: var(--gray-tx); }
+    /* Accent on first two cells */
+    .detail-cell:nth-child(1) { background: rgba(30,28,67,.03); }
+    .detail-cell:nth-child(2) { background: rgba(224,89,69,.04); }
+
+    /* ── Body ─────────────────────────────────────────────────────── */
+    .doc-body { padding: 32px 36px; }
+
+    /* ── Section heading ──────────────────────────────────────────── */
+    .section-title {
+      font-size: 11px; font-weight: 700; color: var(--navy);
+      text-transform: uppercase; letter-spacing: .8px;
+      border-left: 3px solid var(--orange);
+      padding-left: 10px; margin-bottom: 16px;
+    }
+
+    /* ── Pasal list ───────────────────────────────────────────────── */
+    .pasal { margin-bottom: 22px; }
+    .pasal-title {
+      font-size: 12px; font-weight: 700; color: var(--navy);
+      margin-bottom: 8px; text-transform: uppercase; letter-spacing: .3px;
+    }
+    .pasal ol {
+      list-style: decimal;
+      padding-left: 20px;
+    }
+    .pasal ol li {
+      font-size: 11.5px; line-height: 1.85; color: #333;
+      margin-bottom: 6px;
+    }
+    .pasal ol li:last-child { margin-bottom: 0; }
+
+    .divider {
+      border: none; border-top: 1px solid var(--gray-bd);
+      margin: 24px 0;
+    }
+
+    /* ── Konfirmasi Module ────────────────────────────────────────── */
+    .confirm-module {
+      background: var(--gray-bg);
+      border: 1.5px solid var(--gray-bd);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-top: 28px;
+    }
+    .confirm-module .section-title { margin-bottom: 20px; }
+
+    /* Checkbox */
+    .checkbox-wrap {
+      display: flex; gap: 12px; align-items: flex-start;
+      background: white; border: 1.5px solid var(--gray-bd);
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 24px;
+      cursor: pointer; transition: border-color .2s;
+    }
+    .checkbox-wrap:has(input:checked) { border-color: var(--green); background: #EAFAF1; }
+    .checkbox-wrap input[type="checkbox"] {
+      width: 18px; height: 18px; accent-color: var(--green);
+      flex-shrink: 0; margin-top: 2px; cursor: pointer;
+    }
+    .checkbox-wrap .cbx-text {
+      font-size: 11.5px; line-height: 1.75; color: #333;
+    }
+    .checkbox-wrap .cbx-text strong { color: var(--navy); }
+
+    /* Signature pad area */
+    .sig-section { margin-bottom: 24px; }
+    .sig-section .sig-label {
+      font-size: 10px; font-weight: 700; color: var(--gray-tx);
+      text-transform: uppercase; letter-spacing: .8px; margin-bottom: 10px;
+    }
+    .sig-canvas-wrap {
+      position: relative;
+      border: 2px dashed var(--gray-bd);
+      border-radius: 10px;
+      background: white;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .sig-canvas-wrap.has-sig { border-color: var(--green); border-style: solid; }
+    .sig-canvas-wrap canvas {
+      display: block;
+      width: 100%;
+      height: 140px;
+      touch-action: none;
+    }
+    .sig-placeholder {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none; transition: opacity .2s;
+    }
+    .sig-placeholder svg { color: #ccc; margin-bottom: 6px; }
+    .sig-placeholder span { font-size: 11px; color: #bbb; font-weight: 500; }
+    .sig-canvas-wrap.has-sig .sig-placeholder { opacity: 0; }
+    .sig-actions {
+      display: flex; gap: 8px; margin-top: 8px; justify-content: flex-end;
+    }
+    .sig-btn {
+      padding: 6px 14px; border-radius: 6px; border: 1.5px solid var(--gray-bd);
+      background: white; font-family: 'Poppins', sans-serif; font-size: 11px;
+      font-weight: 600; color: var(--gray-tx); cursor: pointer; transition: all .15s;
+    }
+    .sig-btn:hover { border-color: var(--navy); color: var(--navy); }
+    .sig-btn.danger:hover { border-color: var(--red); color: var(--red); }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%; padding: 14px;
+      background: var(--orange); color: white; border: none;
+      border-radius: 10px; font-family: 'Poppins', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background .2s; opacity: .45; pointer-events: none;
+    }
+    .btn-submit.ready { opacity: 1; pointer-events: auto; }
+    .btn-submit.ready:hover { background: #C94A38; }
+    .btn-submit.loading { background: var(--navy); }
+
+    /* Validation messages */
+    .val-msg {
+      font-size: 11px; color: var(--red); margin-top: 6px;
+      display: none; font-weight: 500;
+    }
+    .val-msg.show { display: block; }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.55); z-index: 999;
+      align-items: center; justify-content: center; padding: 20px;
+    }
+    .success-overlay.show { display: flex; }
+    .success-card {
+      background: white; border-radius: 16px; padding: 40px 36px;
+      text-align: center; max-width: 360px; width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    }
+    .success-icon {
+      width: 64px; height: 64px; background: #EAFAF1;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .success-icon svg { width: 30px; height: 30px; color: var(--green); }
+    .success-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .success-card p  { font-size: 13px; color: var(--gray-tx); line-height: 1.6; }
+    .btn-next {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 20px; padding: 12px 24px;
+      background: var(--navy); color: white; border: none; border-radius: 8px;
+      font-family: 'Poppins', sans-serif; font-size: 13px; font-weight: 600;
+      cursor: pointer; text-decoration: none; transition: background .2s;
+    }
+    .btn-next:hover { background: var(--navy2); }
+
+    /* ── Print-friendly ───────────────────────────────────────────── */
+    @media print {
+      body { background: white; padding: 0; }
+      .doc-shell { box-shadow: none; border-radius: 0; }
+      .confirm-module { display: none; }
+      .success-overlay { display: none !important; }
+    }
+
+    /* ── Mobile adjustments ───────────────────────────────────────── */
+    @media (max-width: 520px) {
+      .doc-kop { flex-direction: column; align-items: flex-start; gap: 12px; padding: 20px 20px 18px; }
+      .kop-nomor { text-align: left; }
+      .doc-body { padding: 20px 20px; }
+      .confirm-module { padding: 18px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  DOCUMENT SHELL                                                    -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="doc-shell">
+
+  <!-- KOP -->
+  <div class="doc-kop">
+    <div class="kop-logo">
+      <!-- Replace with <img src="/assets/logo.png"> if available -->
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="kop-text">
+      <div class="org">EFM — Essential Fitness Management · CV Bugar Nusantara Jaya</div>
+      <div class="title">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+    </div>
+    <div class="kop-nomor">
+      <div class="lbl">No. Dokumen</div>
+      <div class="val">{{nomor_dokumen}}</div>
+    </div>
+  </div>
+
+  <!-- DETAIL GRID — 3 rows × 2 cols = 6 cells -->
+  <div class="detail-grid">
+    <div class="detail-cell">
+      <div class="lbl">Nama Klien</div>
+      <div class="val">{{nama_klien}}</div>
+    </div>
+    <div class="detail-cell">
+      <div class="lbl">Order ID</div>
+      <div class="val mono">{{order_id}}</div>
+    </div>
+    <div class="detail-cell">
+      <div class="lbl">Paket Dipilih</div>
+      <div class="val">{{nama_program}} <span style="font-weight:500;color:var(--gray-tx)">({{total_sesi}} Sesi)</span></div>
+    </div>
+    <div class="detail-cell">
+      <div class="lbl">Tanggal Dibuat</div>
+      <div class="val">{{tanggal_dibuat}}</div>
+    </div>
+    <div class="detail-cell">
+      <div class="lbl">Kontak Klien</div>
+      <div class="val sm">{{nomor_telepon}}<br>{{email_klien}}</div>
+    </div>
+    <div class="detail-cell">
+      <div class="lbl">Masa Berlaku Paket</div>
+      <div class="val sm">{{tanggal_mulai}} <span style="color:var(--gray-tx)">s/d</span> {{tanggal_habis}}</div>
+    </div>
+  </div>
+
+  <!-- BODY — Syarat & Ketentuan -->
+  <div class="doc-body">
+
+    <div class="section-title">Syarat dan Ketentuan Layanan</div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 1 — Ruang Lingkup Layanan</div>
+      <ol>
+        <li>Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih pada tabel rincian di atas.</li>
+        <li>Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih (Coach) atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 2 — Masa Berlaku Paket (Validity Period)</div>
+      <ol>
+        <li>Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan secara tuntas dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.</li>
+        <li>Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi latihan, maka sisa sesi yang tersisa akan dinyatakan <strong>hangus secara otomatis</strong> oleh sistem backend dan tidak dapat diakumulasikan ke periode berikutnya, kecuali terdapat persetujuan tertulis khusus dari kewenangan Manajemen EFM.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang (Rescheduling)</div>
+      <ol>
+        <li><strong>Pemberitahuan Jauh Hari (Non-Darurat):</strong> Klien wajib melakukan konfirmasi perubahan jadwal (rescheduling) atau pembatalan sesi latihan sekurang-kurangnya <strong>24 jam</strong> sebelum sesi dimulai melalui sistem website atau WhatsApp resmi EFM.</li>
+        <li><strong>Kondisi Sakit / Darurat:</strong> Apabila Klien membatalkan sesi secara mendadak karena alasan sakit atau izin darurat, Klien wajib menyertakan bukti pendukung yang sah (seperti Surat Keterangan Dokter) untuk divalidasi. Jika pembatalan mendadak dilakukan tanpa alasan darurat yang sah, maka sesi latihan tersebut tetap dihitung berjalan dan kuota dipotong secara otomatis oleh sistem.</li>
+        <li><strong>Fleksibilitas Sesi Pengganti:</strong> Untuk paket yang sudah berjalan, segala bentuk pengaturan jadwal mendadak atau penjadwalan sesi pengganti akibat Klien sakit/izin menjadi hak dan tanggung jawab penuh antara Klien dan Pelatih/Terapis secara langsung. Pelatih/Terapis berhak mengatur ulang waktu latihan pengganti sesuai kesepakatan bersama tanpa perlu melalui konfirmasi ke pihak Admin/AI Agent.</li>
+        <li><strong>Konsekuensi Keterlambatan Mepet:</strong> Pembatalan sepihak atau perubahan jadwal yang dilakukan kurang dari batas waktu 24 jam tanpa alasan darurat yang disetujui oleh Pelatih/Terapis akan menyebabkan sesi tersebut <strong>hangus secara otomatis</strong> dari total kuota paket Klien.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 4 — Pembayaran dan Validasi Order via Asisten Virtual</div>
+      <ol>
+        <li>Seluruh transaksi pemesanan paket program dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan sistem pembayaran resmi (payment gateway) CV Bugar Nusantara Jaya.</li>
+        <li>Klien wajib memastikan bahwa detail pesanan yang dikonfirmasi oleh WhatsApp AI Agent (Nama Paket, Jumlah Sesi, dan Harga) sudah sesuai sebelum melakukan pelunasan. Pembayaran yang telah divalidasi oleh sistem bersifat <strong>final, tidak dapat dibatalkan, dan tidak dapat dikembalikan (non-refundable)</strong> baik sebagian maupun seluruhnya untuk alasan apa pun.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 5 — Jaminan Keabsahan Data dan Tanggung Jawab Kesehatan Mandiri</div>
+      <ol>
+        <li>Klien menyatakan, menjamin, dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, serta catatan medis yang dilampirkan atau diisi secara terpisah dalam Menu Rekam Medis / Lampiran Assessment pada website EFM adalah <strong>benar, akurat, jujur, dan sesuai dengan kondisi tubuh yang sebenarnya</strong>.</li>
+        <li>Klien secara sadar memahami bahwa setiap aktivitas fisik, latihan berat, atau terapi memiliki risiko cedera fisik bawaan. Oleh karena itu, Klien menyatakan bertanggung jawab penuh atas kesehatan, keselamatan, dan kondisi dirinya sendiri selama maupun sesudah rangkaian sesi latihan berlangsung.</li>
+        <li>EFM beserta seluruh jajaran manajemen, pelatih, dan terapis resmi dibebaskan dari segala bentuk tuntutan hukum, ganti rugi, ataupun gugatan pidana maupun perdata atas segala risiko cedera, gangguan kesehatan, atau kondisi fatal yang timbul akibat kelalaian Klien atau karena adanya kondisi medis tersembunyi yang tidak diisikan secara jujur oleh Klien.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis</div>
+      <ol>
+        <li>Setiap Pelatih atau Terapis yang bertugas di Essential Fitness Management memiliki kontrak resmi dengan manajemen. Aturan ini diberlakukan untuk melindungi profesionalitas, menjaga hubungan kerja, dan memastikan kualitas layanan bagi semua klien.</li>
+        <li>Klien dilarang keras melakukan kerja sama, membuat kesepakatan jadwal, atau mempekerjakan Pelatih/Terapis EFM di luar manajemen Essential Fitness Management <strong>tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya</strong>. Hal ini mencakup tetapi tidak terbatas pada menjadikan pelatih sebagai private trainer pribadi atau mengundang pelatih untuk acara di luar agenda resmi EFM.</li>
+      </ol>
+    </div>
+
+    <div class="pasal">
+      <div class="pasal-title">Pasal 7 — Pernyataan Kesadaran dan Persetujuan</div>
+      <ol>
+        <li>Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan yang diatur dalam dokumen perjanjian ini.</li>
+        <li>Perjanjian ini disetujui dan ditandatangani secara elektronik oleh Klien dalam keadaan sadar, sehat jasmani serta rohani, dan tanpa ada paksaan, tekanan, atau bujukan dari pihak manapun.</li>
+        <li>Klien secara penuh sepakat, berkomitmen, dan berniat murni untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai dengan regulasi operasional yang berlaku di EFM.</li>
+      </ol>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <!--  MODUL KONFIRMASI & TTD DIGITAL                            -->
+    <!-- ═══════════════════════════════════════════════════════════ -->
+    <div class="confirm-module" id="confirmModule">
+      <div class="section-title">Konfirmasi &amp; Tanda Tangan Digital Klien</div>
+
+      <!-- Checkbox Deklarasi -->
+      <label class="checkbox-wrap" for="cbxDeclaration">
+        <input type="checkbox" id="cbxDeclaration" onchange="onCheckboxChange()"/>
+        <div class="cbx-text">
+          Saya yang bertanda tangan di bawah ini menyatakan bahwa <strong>seluruh data yang terlampir dan saya berikan dalam agreement ini adalah benar</strong>. Saya menandatangani dokumen ini dalam keadaan <strong>sadar, sehat walafiat, tanpa paksaan</strong>, dan sepakat menjalani paket program privat yang sudah saya beli. Dengan ini saya juga menyatakan <strong>bertanggung jawab penuh atas kesehatan serta keselamatan diri saya sendiri</strong> selama mengikuti program.
+        </div>
+      </label>
+      <div class="val-msg" id="msgCheckbox">⚠ Anda wajib mencentang pernyataan di atas untuk melanjutkan.</div>
+
+      <!-- Signature Pad -->
+      <div class="sig-section">
+        <div class="sig-label">Tanda Tangan Digital Klien <span style="color:#E74C3C">*</span></div>
+        <div class="sig-canvas-wrap" id="sigWrap">
+          <canvas id="sigCanvas"></canvas>
+          <div class="sig-placeholder" id="sigPlaceholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            <span>Tanda tangan di sini menggunakan jari atau stylus</span>
+          </div>
+        </div>
+        <div class="sig-actions">
+          <button class="sig-btn danger" onclick="clearSig()">Hapus</button>
+        </div>
+        <div class="val-msg" id="msgSig">⚠ Tanda tangan wajib diisi sebelum submit.</div>
+      </div>
+
+      <!-- Submit -->
+      <button class="btn-submit" id="btnSubmit" onclick="submitAgreement()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+        Submit &amp; Setujui Perjanjian
+      </button>
+      <div style="font-size:10px;color:var(--gray-tx);text-align:center;margin-top:10px;line-height:1.6">
+        Dengan klik tombol di atas, tanda tangan digital Anda akan disimpan secara aman di server EFM<br>
+        dan dokumen ini berkekuatan hukum yang setara dengan tanda tangan basah.
+      </div>
+    </div><!-- /confirm-module -->
+
+  </div><!-- /doc-body -->
+</div><!-- /doc-shell -->
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  SUCCESS OVERLAY                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h3>Agreement Berhasil Ditandatangani!</h3>
+    <p>Dokumen perjanjian Anda telah disimpan dan diverifikasi secara digital. Langkah berikutnya adalah mengisi formulir Medical Assessment.</p>
+    <a href="/medical-assessment?order_id={{order_id}}" class="btn-next">
+      Lanjut ke Medical Assessment
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<!--  JAVASCRIPT                                                        -->
+<!-- ═══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ── Signature Pad init ─────────────────────────────────────────────── */
+let sigPad;
+
+function initSigPad() {
+  const canvas = document.getElementById('sigCanvas');
+  /* Match canvas resolution to physical display size */
+  function resizeCanvas() {
+    const ratio  = Math.max(window.devicePixelRatio || 1, 1);
+    const rect   = canvas.getBoundingClientRect();
+    canvas.width  = rect.width  * ratio;
+    canvas.height = rect.height * ratio;
+    canvas.getContext('2d').scale(ratio, ratio);
+    if (sigPad) sigPad.clear();
+  }
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  sigPad = new SignaturePad(canvas, {
+    minWidth:   1,
+    maxWidth:   3,
+    penColor:   '#1E1C43',
+    backgroundColor: 'rgba(0,0,0,0)',
+  });
+  sigPad.addEventListener('beginStroke', () => {
+    document.getElementById('sigWrap').classList.add('has-sig');
+    document.getElementById('sigPlaceholder').style.opacity = '0';
+    document.getElementById('msgSig').classList.remove('show');
+    evalReadiness();
+  });
+}
+
+function clearSig() {
+  sigPad.clear();
+  document.getElementById('sigWrap').classList.remove('has-sig');
+  document.getElementById('sigPlaceholder').style.opacity = '1';
+  evalReadiness();
+}
+
+/* ── Checkbox ───────────────────────────────────────────────────────── */
+function onCheckboxChange() {
+  document.getElementById('msgCheckbox').classList.remove('show');
+  evalReadiness();
+}
+
+/* ── Enable submit only when both conditions met ────────────────────── */
+function evalReadiness() {
+  const checked = document.getElementById('cbxDeclaration').checked;
+  const signed  = sigPad && !sigPad.isEmpty();
+  const btn     = document.getElementById('btnSubmit');
+  btn.classList.toggle('ready', checked && signed);
+}
+
+/* ── Submit handler ─────────────────────────────────────────────────── */
+async function submitAgreement() {
+  const checked = document.getElementById('cbxDeclaration').checked;
+  const signed  = !sigPad.isEmpty();
+  let valid = true;
+
+  if (!checked) { document.getElementById('msgCheckbox').classList.add('show'); valid = false; }
+  if (!signed)  { document.getElementById('msgSig').classList.add('show');      valid = false; }
+  if (!valid) return;
+
+  const btn = document.getElementById('btnSubmit');
+  btn.classList.remove('ready');
+  btn.classList.add('loading');
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 1 1-3.1-6.8"/></svg> Menyimpan...';
+
+  /* ──────────────────────────────────────────────────────────────────
+     BACKEND CALL — Kirim payload ke API endpoint
+     ──────────────────────────────────────────────────────────────────
+     Payload:
+       order_id        → dari {{order_id}} yang sudah di-render server
+       signature_data  → base64 PNG dari signature_pad
+       agreed_at       → timestamp ISO klien
+       checkbox_agreed → true
+
+     Node.js endpoint contoh:   POST /api/agreements/sign
+     PHP endpoint contoh:       POST /api/sign-agreement.php
+
+     Server harus:
+       1. Validasi order_id milik session user
+       2. Simpan signature_data (base64 PNG) ke Storage/Signatures/{order_id}.png
+       3. Update agreements SET status_ttd='signed', tgl_ttd=NOW(), signature_path=...
+       4. Generate PDF contract (puppeteer / wkhtmltopdf / dompdf) → Storage/Contracts/{nomor_dokumen}.pdf
+       5. Kirim email konfirmasi + PDF ke klien
+       6. Return { success: true, redirect: '/medical-assessment?order_id=...' }
+  ────────────────────────────────────────────────────────────────── */
+  const payload = {
+    order_id:       '{{order_id}}',
+    signature_data: sigPad.toDataURL('image/png'),
+    agreed_at:      new Date().toISOString(),
+    checkbox_agreed: true,
+  };
+
+  try {
+    /*
+    const res  = await fetch('/api/agreements/sign', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': '{{csrf_token}}' },
+      body:    JSON.stringify(payload),
+    });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.message || 'Server error');
+    */
+
+    /* ── SIMULASI (hapus blok ini saat backend sudah terhubung) ── */
+    await new Promise(r => setTimeout(r, 1200));
+    console.log('[EFM Agreement] Payload siap dikirim:', payload);
+    /* ── END SIMULASI ── */
+
+    /* Tampilkan success overlay */
+    document.getElementById('confirmModule').style.display = 'none';
+    document.getElementById('successOverlay').classList.add('show');
+
+    /* Redirect ke Medical Assessment setelah 3 detik (opsional — bisa juga via backend redirect) */
+    // setTimeout(() => { window.location.href = '/medical-assessment?order_id={{order_id}}'; }, 3000);
+
+  } catch (err) {
+    btn.classList.add('ready');
+    btn.classList.remove('loading');
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg> Submit &amp; Setujui Perjanjian';
+    alert('Gagal menyimpan agreement: ' + err.message);
+  }
+}
+
+/* ── CSS keyframe for spinner ───────────────────────────────────────── */
+const style = document.createElement('style');
+style.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+document.head.appendChild(style);
+
+/* ── Init on load ───────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', initSigPad);
+</script>
+
+<!--
+════════════════════════════════════════════════════════════════════════
+  BACKEND INTEGRATION NOTES
+════════════════════════════════════════════════════════════════════════
+
+  NODE.JS (Express + Puppeteer) — Contoh flow lengkap:
+  ──────────────────────────────────────────────────────
+  // 1. Render template dengan data dari DB
+  app.get('/agreement/:orderId', authMiddleware, async (req, res) => {
+    const order = await db.orders.findById(req.params.orderId);
+    const html  = fs.readFileSync('template-agreement.html', 'utf8')
+      .replace(/\{\{nama_klien\}\}/g,     order.client_name)
+      .replace(/\{\{order_id\}\}/g,       order.order_id)
+      .replace(/\{\{nama_program\}\}/g,   order.program_name)
+      .replace(/\{\{total_sesi\}\}/g,     order.total_sessions)
+      .replace(/\{\{tanggal_dibuat\}\}/g, formatDate(order.created_at))
+      .replace(/\{\{nomor_telepon\}\}/g,  order.client_phone)
+      .replace(/\{\{email_klien\}\}/g,    order.client_email)
+      .replace(/\{\{tanggal_mulai\}\}/g,  formatDate(order.start_date))
+      .replace(/\{\{tanggal_habis\}\}/g,  formatDate(order.expiry_date))
+      .replace(/\{\{nomor_dokumen\}\}/g,  `AGR-${order.id}`)
+      .replace(/\{\{csrf_token\}\}/g,     req.csrfToken());
+    res.send(html);
+  });
+
+  // 2. Handle TTD submit
+  app.post('/api/agreements/sign', authMiddleware, async (req, res) => {
+    const { order_id, signature_data, agreed_at } = req.body;
+    const order = await db.orders.findById(order_id);
+    if (!order) return res.status(404).json({ success: false });
+
+    // Simpan PNG tanda tangan
+    const sigPath  = `Storage/Signatures/${order_id}.png`;
+    const base64   = signature_data.replace(/^data:image\/png;base64,/, '');
+    fs.writeFileSync(sigPath, Buffer.from(base64, 'base64'));
+
+    // Generate PDF via Puppeteer
+    const browser  = await puppeteer.launch({ args: ['--no-sandbox'] });
+    const page     = await browser.newPage();
+    await page.goto(`${BASE_URL}/agreement/${order_id}?print=1`, { waitUntil: 'networkidle0' });
+    const pdfPath  = `Storage/Contracts/AGR-${order_id}.pdf`;
+    await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+    await browser.close();
+
+    // Update DB
+    await db.agreements.update({ order_id }, {
+      status_ttd:     'signed',
+      tgl_ttd:        agreed_at,
+      signature_path: sigPath,
+      pdf_path:       pdfPath,
+    });
+
+    // Kirim email konfirmasi (nodemailer)
+    await mailer.send({ to: order.client_email, subject: 'Agreement EFM Anda', attachments: [pdfPath] });
+
+    res.json({ success: true, redirect: `/medical-assessment?order_id=${order_id}` });
+  });
+
+  ──────────────────────────────────────────────────────
+  PHP (Laravel / Native) — Contoh singkat:
+  ──────────────────────────────────────────────────────
+  // render: str_replace(array_keys($vars), array_values($vars), file_get_contents('template-agreement.html'))
+  // sign:   file_put_contents("Storage/Signatures/{$order_id}.png", base64_decode($sigData));
+  //         PDF: Dompdf / wkhtmltopdf / mPDF
+  //         Storage/Contracts/AGR-{id}.pdf
+
+  ──────────────────────────────────────────────────────
+  REDIRECT ke Medical Assessment setelah sign:
+  /medical-assessment?order_id={{order_id}}
+  → halaman terpisah berisi form riwayat medis, alergi, cedera, dll.
+
+════════════════════════════════════════════════════════════════════════
+-->
+</body>
+</html>
