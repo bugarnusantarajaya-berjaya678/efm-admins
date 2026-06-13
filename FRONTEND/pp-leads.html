@@ -75,60 +75,73 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); overflow:hidden; }
-    .table-wrap { overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; }
-    th { background:var(--gray-bg); padding:12px 16px; font-size:11px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
-    td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--gray-border); color:var(--text-dark); vertical-align:middle; }
+    .table-wrap { overflow-x:auto; width:100%; -webkit-overflow-scrolling:touch; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:860px; }
+    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    td { padding:12px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#FAFAFA; cursor:pointer; }
+
+    /* ── Semantic column classes ── */
+    .col-lead-id  { width:90px;  min-width:90px; }
+    .col-nama     { width:200px; min-width:180px; max-width:200px; white-space:normal; word-break:break-word; }
+    .col-hp       { width:150px; min-width:130px; white-space:nowrap; }
+    .col-sumber   { width:120px; min-width:100px; }
+    .col-program  { width:180px; min-width:150px; white-space:normal; }
+    .col-status   { width:140px; min-width:130px; text-align:center; }
+    .col-tanggal  { width:120px; min-width:110px; white-space:nowrap; }
+    .col-aksi     { width:120px; min-width:110px; text-align:center; white-space:nowrap; }
+
+    /* ── Avatar & Name Cell ── */
     .lead-name-cell { display:flex; align-items:center; gap:10px; }
-    .avatar-sm { width:34px; height:34px; border-radius:50%; color:white; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .badge.new { background:#EBF5FB; color:#2980B9; }
-    .badge.follow-up { background:#FEF9E7; color:#F39C12; }
-    .badge.closed-won { background:#EAFAF1; color:#27AE60; }
-    .badge.closed-lost { background:#FDEDEC; color:#E74C3C; }
+    .avatar-sm {
+      width:35px; height:35px; border-radius:50%;
+      color:white; font-size:12px; font-weight:700; letter-spacing:0.5px;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; user-select:none;
+    }
+
+    /* ── Badge (pill) ── */
+    .badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:50px;
+      font-size:11px; font-weight:600; line-height:1.4; white-space:nowrap;
+    }
+    .badge::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background:currentColor; flex-shrink:0;
+    }
+    .badge.new          { background:#EBF5FB; color:#1A6FA3; }
+    .badge.follow-up    { background:#FEF9E7; color:#D68910; }
+    .badge.closed-won   { background:#EAFAF1; color:#1E8449; }
+    .badge.closed-lost  { background:#FDEDEC; color:#C0392B; }
+
+    /* ── Source Tag ── */
     .source-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:500; background:var(--gray-bg); color:var(--gray-text); border:1px solid var(--gray-border); white-space:nowrap; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; margin-right:4px; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
-    .action-btn.danger:hover { border-color:var(--red); color:var(--red); }
+
+    /* ── Action Buttons ── */
+    .action-wrap { display:flex; align-items:center; justify-content:center; gap:6px; }
+    .action-btn {
+      width:30px; height:30px; border-radius:6px;
+      border:1px solid #E2E6EA; background:white; cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      color:var(--gray-text); transition:all 0.15s; flex-shrink:0; padding:6px;
+    }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
+    .action-btn.success { background:#EAFAF1; color:#1E8449; border-color:#A9DFBF; }
+    .action-btn.success:hover { background:#D5F5E3; border-color:#1E8449; }
+    .action-btn.danger:hover  { border-color:var(--red); color:var(--red); background:#FDEDEC; }
     .action-btn svg { width:14px; height:14px; }
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-top:1px solid var(--gray-border); }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn:hover { border-color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
-    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:20px; }
-    .modal-overlay.show { display:flex; }
-    .modal { background:white; border-radius:16px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
-    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
-    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
-    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
-    .modal-close svg { width:16px; height:16px; }
-    .modal-body { padding:24px 28px; }
-    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; gap:12px; justify-content:flex-end; }
-    .form-group { margin-bottom:18px; }
-    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
-    .form-group label span { color:var(--orange); }
-    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; transition:border-color 0.2s; }
-    .form-control:focus { border-color:var(--navy); }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-    /* Import styles → assets/css/import-engine.css */
-    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px 24px; margin-top:4px; }
-    .detail-item .detail-label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px; }
-    .detail-item .detail-value { font-size:13px; font-weight:500; color:var(--text-dark); }
-    .detail-item.full { grid-column:1/-1; }
+
+    /* ── Status option buttons in detail modal ── */
     .status-edit { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
-    .status-opt { padding:5px 12px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:2px solid transparent; transition:all 0.15s; }
-    .status-opt.new        { background:#EBF5FB; color:#2980B9; }
-    .status-opt.follow-up  { background:#FEF9E7; color:#F39C12; }
-    .status-opt.closed-won { background:#EAFAF1; color:#27AE60; }
-    .status-opt.closed-lost{ background:#FDEDEC; color:#E74C3C; }
-    .status-opt.selected { border-color:currentColor; }
+    .status-opt { padding:5px 12px; border-radius:50px; font-size:12px; font-weight:600; cursor:pointer; border:2px solid transparent; transition:all 0.15s; display:inline-flex; align-items:center; gap:5px; }
+    .status-opt::before { content:''; width:5px; height:5px; border-radius:50%; background:currentColor; }
+    .status-opt.new          { background:#EBF5FB; color:#1A6FA3; }
+    .status-opt.follow-up    { background:#FEF9E7; color:#D68910; }
+    .status-opt.closed-won   { background:#EAFAF1; color:#1E8449; }
+    .status-opt.closed-lost  { background:#FDEDEC; color:#C0392B; }
+    .status-opt.selected     { border-color:currentColor; }
   </style>
 </head>
 <body>
@@ -278,55 +291,91 @@
     <div class="table-card">
       <div class="table-wrap">
         <table id="leadsTable">
+          <colgroup>
+            <col class="col-lead-id"/>
+            <col class="col-nama"/>
+            <col class="col-hp"/>
+            <col class="col-sumber"/>
+            <col class="col-program"/>
+            <col class="col-status"/>
+            <col class="col-tanggal"/>
+            <col class="col-aksi"/>
+          </colgroup>
           <thead>
             <tr>
-              <th>Lead ID</th><th>Nama</th><th>No HP</th><th>Sumber</th>
-              <th>Program Diminati</th><th>Status Pipeline</th><th>Tanggal</th><th>Actions</th>
+              <th class="col-lead-id">Lead ID</th>
+              <th class="col-nama">Nama</th>
+              <th class="col-hp">No HP</th>
+              <th class="col-sumber">Sumber</th>
+              <th class="col-program">Program Diminati</th>
+              <th class="col-status">Status Pipeline</th>
+              <th class="col-tanggal">Tanggal</th>
+              <th class="col-aksi">Aksi</th>
             </tr>
           </thead>
           <tbody id="leadsBody">
-            <tr>
-              <td>#L-1001</td>
-              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#E05945">AR</div>Ahmad Ridwan</div></td>
-              <td>0812-3456-7890</td><td><span class="source-tag">🌐 Website</span></td>
-              <td>Fatloss & Bodyshape</td><td><span class="badge new">New</span></td><td>10 Jun 2026</td>
-              <td>
-                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+            <tr data-lead-id="L-1001">
+              <td class="col-lead-id"><span style="font-weight:700;color:var(--navy)">#L-1001</span></td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#E05945">AR</div>Ahmad Ridwan</div></td>
+              <td class="col-hp">0812-3456-7890</td>
+              <td class="col-sumber"><span class="source-tag">🌐 Website</span></td>
+              <td class="col-program">Fatloss & Bodyshape</td>
+              <td class="col-status"><span class="badge new">New</span></td>
+              <td class="col-tanggal">10 Jun 2026</td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
               </td>
             </tr>
-            <tr>
-              <td>#L-1002</td>
-              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
-              <td>0856-7890-1234</td><td><span class="source-tag">📱 Ads</span></td>
-              <td>Yoga</td><td><span class="badge follow-up">Follow Up</span></td><td>9 Jun 2026</td>
-              <td>
-                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+            <tr data-lead-id="L-1002">
+              <td class="col-lead-id"><span style="font-weight:700;color:var(--navy)">#L-1002</span></td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
+              <td class="col-hp">0856-7890-1234</td>
+              <td class="col-sumber"><span class="source-tag">📱 Ads</span></td>
+              <td class="col-program">Yoga</td>
+              <td class="col-status"><span class="badge follow-up">Follow Up</span></td>
+              <td class="col-tanggal">9 Jun 2026</td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
               </td>
             </tr>
-            <tr>
-              <td>#L-1003</td>
-              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
-              <td>0811-2233-4455</td><td><span class="source-tag">🚶 Walk-in</span></td>
-              <td>Boxing</td><td><span class="badge closed-won">Closed Won</span></td><td>8 Jun 2026</td>
-              <td>
-                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn" title="Buat Order" style="background:#EAFAF1;color:#27AE60;border-color:#27AE60" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+            <tr data-lead-id="L-1003">
+              <td class="col-lead-id"><span style="font-weight:700;color:var(--navy)">#L-1003</span></td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
+              <td class="col-hp">0811-2233-4455</td>
+              <td class="col-sumber"><span class="source-tag">🚶 Walk-in</span></td>
+              <td class="col-program">Boxing</td>
+              <td class="col-status"><span class="badge closed-won">Closed Won</span></td>
+              <td class="col-tanggal">8 Jun 2026</td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn success" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
               </td>
             </tr>
-            <tr>
-              <td>#L-1004</td>
-              <td><div class="lead-name-cell"><div class="avatar-sm" style="background:#8E44AD">DA</div>Dewi Ayu</div></td>
-              <td>0877-6655-4433</td><td><span class="source-tag">👥 Referral</span></td>
-              <td>Tennis</td><td><span class="badge closed-lost">Closed Lost</span></td><td>7 Jun 2026</td>
-              <td>
-                <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-                <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+            <tr data-lead-id="L-1004">
+              <td class="col-lead-id"><span style="font-weight:700;color:var(--navy)">#L-1004</span></td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#8E44AD">DA</div>Dewi Ayu</div></td>
+              <td class="col-hp">0877-6655-4433</td>
+              <td class="col-sumber"><span class="source-tag">👥 Referral</span></td>
+              <td class="col-program">Tennis</td>
+              <td class="col-status"><span class="badge closed-lost">Closed Lost</span></td>
+              <td class="col-tanggal">7 Jun 2026</td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -428,125 +477,212 @@
 <script>
 function toggleMenu(e, subId, arrowId) {
   e.preventDefault();
-  const sub = document.getElementById(subId);
+  const sub   = document.getElementById(subId);
   const arrow = document.getElementById(arrowId);
   const isOpen = sub.style.display !== 'none';
   sub.style.display = isOpen ? 'none' : 'block';
   if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
 }
 
-/* ─── BUAT ORDER: kirim data lead ke pp-orders.html via sessionStorage ─── */
+/* ─── LEADS DATABASE (Single Source of Truth) ───
+   snake_case keys → siap mapping Google Sheets / backend.          ─── */
+const LEADS_DB = {
+  'L-1001': {
+    lead_id: 'L-1001', display_id: '#L-1001',
+    nama: 'Ahmad Ridwan',   initials: 'AR', avatar_color: '#E05945',
+    no_hp: '0812-3456-7890', email: 'ahmad.ridwan@email.com',
+    sumber: 'Website', sumber_icon: '🌐',
+    program_diminati: 'Fatloss & Bodyshape',
+    status_pipeline: 'new',   // new | follow-up | closed-won | closed-lost
+    tanggal_masuk: '10 Jun 2026',
+    catatan: '',
+  },
+  'L-1002': {
+    lead_id: 'L-1002', display_id: '#L-1002',
+    nama: 'Siti Nurhaliza',  initials: 'SN', avatar_color: '#2980B9',
+    no_hp: '0856-7890-1234', email: 'siti.nurhaliza@email.com',
+    sumber: 'Ads', sumber_icon: '📱',
+    program_diminati: 'Yoga',
+    status_pipeline: 'follow-up',
+    tanggal_masuk: '9 Jun 2026',
+    catatan: '',
+  },
+  'L-1003': {
+    lead_id: 'L-1003', display_id: '#L-1003',
+    nama: 'Budi Pratama',    initials: 'BP', avatar_color: '#27AE60',
+    no_hp: '0811-2233-4455', email: 'budi.pratama@email.com',
+    sumber: 'Walk-in', sumber_icon: '🚶',
+    program_diminati: 'Boxing',
+    status_pipeline: 'closed-won',
+    tanggal_masuk: '8 Jun 2026',
+    catatan: '',
+  },
+  'L-1004': {
+    lead_id: 'L-1004', display_id: '#L-1004',
+    nama: 'Dewi Ayu',        initials: 'DA', avatar_color: '#8E44AD',
+    no_hp: '0877-6655-4433', email: 'dewi.ayu@email.com',
+    sumber: 'Referral', sumber_icon: '👥',
+    program_diminati: 'Tennis',
+    status_pipeline: 'closed-lost',
+    tanggal_masuk: '7 Jun 2026',
+    catatan: '',
+  },
+};
+
+/* Helper: get lead data from a <tr> via data-lead-id */
+function getLeadFromRow(tr) {
+  return LEADS_DB[tr.dataset.leadId] || null;
+}
+
+/* Helper: build action buttons HTML */
+function _actionBtnsHtml(statusPipeline) {
+  const orderClass = statusPipeline === 'closed-won' ? 'success' : '';
+  return `<div class="action-wrap">
+    <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="action-btn ${orderClass}" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+    <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
+  </div>`;
+}
+
+const STATUS_LABEL = { 'new':'New', 'follow-up':'Follow Up', 'closed-won':'Closed Won', 'closed-lost':'Closed Lost' };
+
+/* ─── BUAT ORDER: ambil dari LEADS_DB, bukan dari teks DOM ─── */
 function buatOrder(btn) {
   const tr = btn.closest('tr');
   if (!tr) { window.location.href = 'pp-orders.html'; return; }
-  const cells = tr.querySelectorAll('td');
-  const leadId   = cells[0] ? cells[0].textContent.trim() : '';
-  const namaEl   = cells[1] ? cells[1].querySelector('.lead-name-cell') : null;
-  const nama     = namaEl ? namaEl.textContent.trim() : (cells[1] ? cells[1].textContent.trim() : '');
-  const hp       = cells[2] ? cells[2].textContent.trim() : '';
-  const minat    = cells[4] ? cells[4].textContent.trim() : '';
-  const avatarEl = cells[1] ? cells[1].querySelector('.avatar-sm') : null;
-  const color    = avatarEl ? avatarEl.style.background : '#2980B9';
-  sessionStorage.setItem('prefill_lead', JSON.stringify({ id:leadId, nama, hp, email:'', minat, color }));
+  const lead = getLeadFromRow(tr);
+  if (!lead) { window.location.href = 'pp-orders.html'; return; }
+  sessionStorage.setItem('prefill_lead', JSON.stringify({
+    id: lead.display_id, nama: lead.nama, hp: lead.no_hp,
+    email: lead.email || '', minat: lead.program_diminati,
+    color: lead.avatar_color,
+  }));
   window.location.href = 'pp-orders.html?openOrder=1';
 }
 
-/* ─── DETAIL MODAL ─── */
-let _detailRow = null;
-function openDetailModal(btn) {
-  _detailRow = btn.closest('tr');
-  const cells = _detailRow.cells;
-  const leadId  = cells[0].textContent.trim();
-  const namaEl  = cells[1].querySelector('.avatar-sm') || cells[1];
-  const nama    = cells[1].textContent.trim();
-  const initials= nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  const color   = (cells[1].querySelector('.avatar-sm') || {style:{background:'#1E1C43'}}).style.background || '#1E1C43';
-  const noHp    = cells[2].textContent.trim();
-  const sumber  = cells[3].textContent.trim() || '—';
-  const program = cells[4].textContent.trim() || '—';
-  const statusEl= cells[5].querySelector('.badge');
-  const statusCls= statusEl ? statusEl.className.replace('badge','').trim() : 'new';
-  const statusTxt= statusEl ? statusEl.textContent.trim() : 'New';
-  const tanggal = cells[6].textContent.trim();
+/* ─── DETAIL MODAL (data dari LEADS_DB) ─── */
+let _detailLeadId = null;
+let _detailRow    = null;
 
-  document.getElementById('dtAvatar').textContent   = initials;
-  document.getElementById('dtAvatar').style.background = color;
-  document.getElementById('dtNama').textContent     = nama;
-  document.getElementById('dtLeadId').textContent   = leadId;
-  document.getElementById('dtNoHp').textContent     = noHp;
-  document.getElementById('dtSumber').textContent   = sumber;
-  document.getElementById('dtProgram').textContent  = program;
-  document.getElementById('dtTanggal').textContent  = tanggal;
+function openDetailModal(btn) {
+  _detailRow    = btn.closest('tr');
+  _detailLeadId = _detailRow.dataset.leadId;
+  const lead    = LEADS_DB[_detailLeadId];
+  if (!lead) return;
+
+  document.getElementById('dtAvatar').textContent      = lead.initials;
+  document.getElementById('dtAvatar').style.background = lead.avatar_color;
+  document.getElementById('dtNama').textContent        = lead.nama;
+  document.getElementById('dtLeadId').textContent      = lead.display_id;
+  document.getElementById('dtNoHp').textContent        = lead.no_hp;
+  document.getElementById('dtSumber').textContent      = lead.sumber_icon + ' ' + lead.sumber;
+  document.getElementById('dtProgram').textContent     = lead.program_diminati;
+  document.getElementById('dtTanggal').textContent     = lead.tanggal_masuk;
 
   document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('selected'));
-  const active = document.querySelector('.status-opt.' + statusCls);
+  const active = document.querySelector('.status-opt.' + lead.status_pipeline);
   if (active) active.classList.add('selected');
 
   document.getElementById('detailModal').classList.add('show');
 }
-function closeDetailModal() { document.getElementById('detailModal').classList.remove('show'); _detailRow = null; }
+function closeDetailModal() {
+  document.getElementById('detailModal').classList.remove('show');
+  _detailRow = null; _detailLeadId = null;
+}
 
 function setLeadStatus(btn, cls, label) {
   document.querySelectorAll('.status-opt').forEach(b => b.classList.remove('selected'));
   btn.classList.add('selected');
+
+  // Update LEADS_DB (source of truth)
+  if (LEADS_DB[_detailLeadId]) LEADS_DB[_detailLeadId].status_pipeline = cls;
+
+  // Update DOM badge via semantic class selector
   if (_detailRow) {
-    const badge = _detailRow.cells[5].querySelector('.badge');
+    const badge = _detailRow.querySelector('td.col-status .badge');
     if (badge) { badge.className = 'badge ' + cls; badge.textContent = label; }
+    // Update order button highlight
+    const orderBtn = _detailRow.querySelector('.action-btn[title="Buat Order"]');
+    if (orderBtn) {
+      orderBtn.classList.toggle('success', cls === 'closed-won');
+    }
   }
 }
 
 /* ─── HAPUS ROW ─── */
 function deleteRow(btn) {
-  const tr = btn.closest('tr');
-  const nama = tr.cells[1].textContent.trim();
+  const tr   = btn.closest('tr');
+  const lead = getLeadFromRow(tr);
+  const nama = lead ? lead.nama : 'lead ini';
   if (!confirm('Hapus lead "' + nama + '"? Tindakan ini tidak dapat dibatalkan.')) return;
+  if (lead) delete LEADS_DB[lead.lead_id];
   tr.remove();
   applyFilterAndPaginate();
 }
 
-function openModal() { document.getElementById('modalOverlay').classList.add('show'); }
+/* ─── ADD LEAD ─── */
+function openModal()  { document.getElementById('modalOverlay').classList.add('show'); }
 function closeModal() {
   document.getElementById('modalOverlay').classList.remove('show');
   ['addNama','addNoHp','addEmail','addCatatan'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('addSumber').selectedIndex = 0;
   document.getElementById('addProgram').selectedIndex = 0;
 }
+
 function saveLead() {
   const nama    = document.getElementById('addNama').value.trim();
   const noHp    = document.getElementById('addNoHp').value.trim();
+  const email   = document.getElementById('addEmail').value.trim();
   const sumber  = document.getElementById('addSumber').value;
   const program = document.getElementById('addProgram').value;
+  const catatan = document.getElementById('addCatatan').value.trim();
 
   if (!nama)  { alert('Nama Lengkap wajib diisi.'); return; }
   if (!noHp)  { alert('No HP / WhatsApp wajib diisi.'); return; }
   if (!sumber){ alert('Sumber Lead wajib dipilih.'); return; }
 
-  const colors   = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
+  const COLORS   = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
   const tbody    = document.getElementById('leadsBody');
-  const idx      = tbody.rows.length;
+  const idx      = Object.keys(LEADS_DB).length;
   const initials = nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-  const color    = colors[idx % colors.length];
+  const color    = COLORS[idx % COLORS.length];
   const today    = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-  const leadId   = '#L-' + (2000 + idx + 1);
+  const rawId    = 'L-' + (2000 + idx + 1);
+  const displayId = '#' + rawId;
 
-  const sumberTag = sumber ? '<span class="source-tag">' + sumber + '</span>' : '—';
-  const tr = document.createElement('tr');
-  tr.innerHTML = `
-    <td>${leadId}</td>
-    <td><div class="lead-name-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
-    <td>${noHp}</td>
-    <td>${sumberTag}</td>
-    <td>${program || '—'}</td>
-    <td><span class="badge new">New</span></td>
-    <td>${today}</td>
-    <td>
-      <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-      <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-      <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-    </td>`;
+  // Simpan ke LEADS_DB dulu
+  LEADS_DB[rawId] = {
+    lead_id: rawId, display_id: displayId,
+    nama, initials, avatar_color: color,
+    no_hp: noHp, email,
+    sumber, sumber_icon: '',
+    program_diminati: program || '—',
+    status_pipeline: 'new',
+    tanggal_masuk: today,
+    catatan,
+  };
+
+  const tr = _buildLeadRow(LEADS_DB[rawId]);
   tbody.appendChild(tr);
   applyFilterAndPaginate();
   closeModal();
+}
+
+/* Build a <tr> from a lead object */
+function _buildLeadRow(lead) {
+  const tr = document.createElement('tr');
+  tr.dataset.leadId = lead.lead_id;
+  const sumberTxt = (lead.sumber_icon ? lead.sumber_icon + ' ' : '') + lead.sumber;
+  tr.innerHTML = `
+    <td class="col-lead-id"><span style="font-weight:700;color:var(--navy)">${lead.display_id}</span></td>
+    <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:${lead.avatar_color}">${lead.initials}</div>${lead.nama}</div></td>
+    <td class="col-hp">${lead.no_hp}</td>
+    <td class="col-sumber"><span class="source-tag">${sumberTxt}</span></td>
+    <td class="col-program">${lead.program_diminati}</td>
+    <td class="col-status"><span class="badge ${lead.status_pipeline}">${STATUS_LABEL[lead.status_pipeline] || lead.status_pipeline}</span></td>
+    <td class="col-tanggal">${lead.tanggal_masuk}</td>
+    <td class="col-aksi">${_actionBtnsHtml(lead.status_pipeline)}</td>`;
+  return tr;
 }
 
 /* ─── PAGINATION ENGINE ────────────────────────────────────────────── */
@@ -697,27 +833,26 @@ document.addEventListener('DOMContentLoaded', function() {
       { id:'catatan', label:'Catatan Tambahan',  required:false, hint:'Info lain yang relevan' },
     ],
     buildRow: function(lead, i, tbody) {
-      const colors  = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
-      const initials= lead.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
-      const color   = colors[i % colors.length];
-      const today   = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-      const leadId  = '#L-' + (2000 + tbody.rows.length + 1);
-      const sumber  = lead.sumber ? '<span class="source-tag">'+lead.sumber+'</span>' : '—';
-      const tr      = document.createElement('tr');
-      tr.innerHTML  = `
-        <td>${leadId}</td>
-        <td><div class="lead-name-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${lead.nama}</div></td>
-        <td>${lead.no_hp}</td>
-        <td>${sumber}</td>
-        <td>${lead.program||'—'}</td>
-        <td><span class="badge new">New</span></td>
-        <td>${today}</td>
-        <td>
-          <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-          <button class="action-btn" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
-          <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
-        </td>`;
-      return tr;
+      const colors = ['#E05945','#2980B9','#27AE60','#8E44AD','#F39C12','#16A085','#E67E22'];
+      const rawId  = 'L-' + (2000 + tbody.rows.length + 1);
+      const today  = new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+      const entry  = {
+        lead_id:           rawId,
+        display_id:        '#' + rawId,
+        nama:              lead.nama,
+        initials:          lead.nama.split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase(),
+        avatar_color:      colors[i % colors.length],
+        no_hp:             lead.no_hp || '—',
+        email:             lead.email || '',
+        sumber:            lead.sumber || '',
+        sumber_icon:       '',
+        program_diminati:  lead.program || '—',
+        status_pipeline:   'new',
+        tanggal_masuk:     today,
+        catatan:           lead.catatan || '',
+      };
+      LEADS_DB[rawId] = entry;
+      return _buildLeadRow(entry);
     }
   });
 });
