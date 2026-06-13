@@ -988,44 +988,46 @@ function downloadAgreementPDF() {
 
   const shell = document.getElementById('agreementPrintShell');
   shell.innerHTML = `
-  <div id="agr-print-kop" style="background:#1E1C43;padding:20px 24px">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:14px">
-        <img src="${logoSrc}" style="width:62px;height:62px;border-radius:50%;object-fit:cover;flex-shrink:0"
+  <div id="agr-print-kop" style="background:#1E1C43;padding:22px 28px 18px">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+      <div style="display:flex;align-items:center;gap:16px">
+        <img src="${logoSrc}" style="width:66px;height:66px;border-radius:50%;object-fit:cover;flex-shrink:0"
              onerror="this.style.display='none'"/>
         <div>
-          <div class="kop-company-name" style="font-size:15px;font-weight:700;color:white;line-height:1.3">Essential Fitness Management</div>
-          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px;line-height:1.7">CV. Bugar Nusantara Jaya</div>
-          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">Jl. Terogong Raya No.18, Jakarta Selatan</div>
-          <div class="kop-company-sub" style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.7">essentialfitnessmanagement@gmail.com</div>
+          <div style="font-size:17px;font-weight:700;color:white;line-height:1.25;letter-spacing:.2px">Essential Fitness Management</div>
+          <div style="font-size:11.5px;color:rgba(255,255,255,.65);margin-top:4px;line-height:1.75">CV. Bugar Nusantara Jaya</div>
+          <div style="font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.75">Jl. Terogong Raya No.18, Jakarta Selatan</div>
+          <div style="font-size:11.5px;color:rgba(255,255,255,.65);line-height:1.75">essentialfitnessmanagement@gmail.com</div>
         </div>
       </div>
-      <div class="kop-doc-right" style="text-align:right">
-        <div style="font-size:9px;font-weight:600;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">No. Dokumen</div>
-        <div style="font-size:13px;font-weight:700;color:white;letter-spacing:.3px">${nomor}</div>
+      <div style="text-align:right;padding-top:4px">
+        <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px">No. Dokumen</div>
+        <div style="font-size:14px;font-weight:700;color:white;letter-spacing:.4px">${nomor}</div>
       </div>
     </div>
-    <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center">
-      <div class="kop-main-title-print" style="font-size:15px;font-weight:700;color:white;letter-spacing:1.5px;text-transform:uppercase">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-      <div style="font-size:9px;color:rgba(255,255,255,.45);margin-top:3px;letter-spacing:.5px">EFM — Essential Fitness Management</div>
+    <div style="border-top:1px solid rgba(255,255,255,.18);padding-top:14px;text-align:center">
+      <div style="font-size:16px;font-weight:700;color:white;letter-spacing:2px;text-transform:uppercase">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+      <div style="font-size:9.5px;color:rgba(255,255,255,.45);margin-top:4px;letter-spacing:.8px">EFM — Essential Fitness Management</div>
     </div>
   </div>
 
-  <div id="agr-print-detail" style="display:grid;grid-template-columns:1fr 1fr;border-bottom:2px solid #1E1C43;padding:0">
+  <div id="agr-print-detail" style="margin:16px 28px;border:1.5px solid #D0D5DD;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(30,28,67,.07)">
+    <div style="display:grid;grid-template-columns:1fr 1fr">
     ${[
       ['Nama Klien', a.nama_klien],
       ['Order ID', '#' + a.order_id],
       ['Paket Dipilih', a.paket],
       ['Tanggal Dibuat', a.tgl_dibuat],
     ].map(([l,v], i) => `
-      <div class="dc" style="padding:12px 16px;border-right:${i%2===0?'1px solid #E2E6EA':'none'};border-bottom:1px solid #E2E6EA;background:${i<2?'rgba(30,28,67,.03)':'white'}">
-        <div class="lbl" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">${l}</div>
-        <div class="val" style="font-size:13px;font-weight:700;color:#1E1C43">${v}</div>
+      <div style="padding:13px 18px;border-right:${i%2===0?'1.5px solid #E2E6EA':'none'};border-bottom:${i<2?'1.5px solid #E2E6EA':'none'};background:${i<2?'rgba(30,28,67,.025)':'white'}">
+        <div style="font-size:8.5px;font-weight:700;color:#8896A5;text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px">${l}</div>
+        <div style="font-size:13.5px;font-weight:700;color:#1E1C43">${v}</div>
       </div>`).join('')}
+    </div>
   </div>
 
-  <div id="agr-print-body" style="padding:18px 24px 0">
-    <div class="sec-title" style="font-size:11px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.8px;border-left:3px solid #E05945;padding-left:10px;margin-bottom:14px">Syarat dan Ketentuan Layanan</div>
+  <div id="agr-print-body" style="padding:4px 28px 0">
+    <div style="font-size:10.5px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.9px;border-left:3.5px solid #E05945;padding-left:10px;margin-bottom:16px">Syarat dan Ketentuan Layanan</div>
     ${[
       ['Pasal 1 — Ruang Lingkup Layanan', [
         'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih pada tabel rincian di atas.',
@@ -1060,31 +1062,31 @@ function downloadAgreementPDF() {
         'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
       ]],
     ].map(([title, items]) => `
-      <div style="margin-bottom:12px">
-        <div class="pasal-head" style="font-size:10.5px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.3px;margin-bottom:5px">${title}</div>
-        <ol style="padding-left:17px;margin:0">
-          ${items.map(t => `<li style="font-size:11px;line-height:1.75;color:#333;margin-bottom:3px">${t}</li>`).join('')}
+      <div style="margin-bottom:14px;padding:12px 16px;background:#FAFBFC;border:1px solid #E8ECF0;border-radius:8px">
+        <div style="font-size:10px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.4px;margin-bottom:7px;padding-bottom:6px;border-bottom:1px solid #E8ECF0">${title}</div>
+        <ol style="padding-left:18px;margin:0">
+          ${items.map(t => `<li style="font-size:10.5px;line-height:1.75;color:#374151;margin-bottom:4px">${t}</li>`).join('')}
         </ol>
       </div>`).join('')}
   </div>
 
-  <div id="agr-print-sig" style="padding:14px 24px 20px;border-top:1px solid #E2E6EA;margin-top:16px">
-    <div style="font-size:10px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Tanda Tangan Para Pihak</div>
+  <div id="agr-print-sig" style="margin:16px 28px 20px;padding:16px 20px;border:1.5px solid #D0D5DD;border-radius:10px;background:#FAFBFC">
+    <div style="font-size:9.5px;font-weight:700;color:#1E1C43;text-transform:uppercase;letter-spacing:.7px;margin-bottom:14px">Tanda Tangan Para Pihak</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
       <div>
-        <div class="sig-cell-label" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Pihak Pertama — EFM</div>
-        <div class="sig-cell-box" style="height:60px;border:1.5px solid #E2E6EA;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#F8F9FA;margin-bottom:7px">${efmSig}</div>
-        <div class="sig-cell-name" style="font-size:11px;font-weight:700;color:#1E1C43">Manajemen EFM</div>
-        <div class="sig-cell-sub"  style="font-size:9.5px;color:#6C757D">Ditandatangani secara digital</div>
+        <div style="font-size:8.5px;font-weight:700;color:#8896A5;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Pihak Pertama — EFM</div>
+        <div style="height:64px;border:1.5px solid #D0D5DD;border-radius:8px;display:flex;align-items:center;justify-content:center;background:white;margin-bottom:8px">${efmSig}</div>
+        <div style="font-size:11.5px;font-weight:700;color:#1E1C43">Manajemen EFM</div>
+        <div style="font-size:9.5px;color:#6C757D;margin-top:2px">Ditandatangani secara digital</div>
       </div>
       <div>
-        <div class="sig-cell-label" style="font-size:9px;font-weight:700;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px">Pihak Kedua — Klien</div>
-        <div class="sig-cell-box" style="height:60px;border:1.5px solid ${a.status_ttd==='signed'?'#27AE60':'#E2E6EA'};border-radius:8px;display:flex;align-items:center;justify-content:center;background:${a.status_ttd==='signed'?'#EAFAF1':'#F8F9FA'};margin-bottom:7px">${clientSigHtml}</div>
-        <div class="sig-cell-name" style="font-size:11px;font-weight:700;color:#1E1C43">${a.nama_klien}</div>
-        <div class="sig-cell-sub"  style="font-size:9.5px;color:${a.status_ttd==='signed'?'#27AE60':'#6C757D'}">${a.status_ttd==='signed'?'✓ Ditandatangani pada: '+(a.tgl_ttd||a.tgl_dibuat):'Belum ditandatangani'}</div>
+        <div style="font-size:8.5px;font-weight:700;color:#8896A5;text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">Pihak Kedua — Klien</div>
+        <div style="height:64px;border:1.5px solid ${a.status_ttd==='signed'?'#27AE60':'#D0D5DD'};border-radius:8px;display:flex;align-items:center;justify-content:center;background:${a.status_ttd==='signed'?'#EAFAF1':'white'};margin-bottom:8px">${clientSigHtml}</div>
+        <div style="font-size:11.5px;font-weight:700;color:#1E1C43">${a.nama_klien}</div>
+        <div style="font-size:9.5px;color:${a.status_ttd==='signed'?'#27AE60':'#6C757D'};margin-top:2px">${a.status_ttd==='signed'?'✓ Ditandatangani pada: '+(a.tgl_ttd||a.tgl_dibuat):'Belum ditandatangani'}</div>
       </div>
     </div>
-    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E2E6EA;text-align:center;font-size:8.5px;color:#9ca3af">
+    <div style="margin-top:16px;padding-top:12px;border-top:1px solid #E2E6EA;text-align:center;font-size:8px;color:#9ca3af;letter-spacing:.3px">
       Dokumen ini dihasilkan secara digital oleh sistem EFM · ${nomor} · ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
     </div>
   </div>`;
