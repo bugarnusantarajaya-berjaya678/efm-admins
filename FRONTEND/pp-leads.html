@@ -404,7 +404,7 @@
               <td class="col-lead-id"><span>#L-1002</span></td>
               <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
               <td class="col-hp">0856-7890-1234</td>
-              <td class="col-sumber"><span class="source-tag">📱 Ads</span></td>
+              <td class="col-sumber"><span class="source-tag">📱 Meta Ads</span></td>
               <td class="col-program">Yoga</td>
               <td class="col-status"><span class="badge follow-up">Follow Up</span></td>
               <td class="col-tanggal">9 Jun 2026</td>
@@ -571,7 +571,7 @@ const LEADS_DB = {
     lead_id: 'L-1002', display_id: '#L-1002',
     nama: 'Siti Nurhaliza',  initials: 'SN', avatar_color: '#2980B9',
     no_hp: '0856-7890-1234', email: 'siti.nurhaliza@email.com',
-    sumber: 'Ads', sumber_icon: '📱',
+    sumber: 'Meta Ads', sumber_icon: '📱',
     program_diminati: 'Yoga',
     status_pipeline: 'follow-up',
     tanggal_masuk: '9 Jun 2026',
@@ -698,6 +698,14 @@ function closeModal() {
   document.getElementById('addProgram').selectedIndex = 0;
 }
 
+function _sumberIcon(s) {
+  const map = {
+    'meta ads':'📱', 'youtube ads':'▶️', 'google ads':'🔍',
+    'website':'🌐', 'referral':'👥', 'walk-in':'🚶', 'whatsapp':'💬'
+  };
+  return map[(s||'').toLowerCase()] || '📌';
+}
+
 function saveLead() {
   const nama    = document.getElementById('addNama').value.trim();
   const noHp    = document.getElementById('addNoHp').value.trim();
@@ -724,7 +732,7 @@ function saveLead() {
     lead_id: rawId, display_id: displayId,
     nama, initials, avatar_color: color,
     no_hp: noHp, email,
-    sumber, sumber_icon: '',
+    sumber, sumber_icon: _sumberIcon(sumber),
     program_diminati: program || '—',
     status_pipeline: 'new',
     tanggal_masuk: today,
@@ -916,7 +924,7 @@ document.addEventListener('DOMContentLoaded', function() {
         no_hp:             lead.no_hp || '—',
         email:             lead.email || '',
         sumber:            lead.sumber || '',
-        sumber_icon:       '',
+        sumber_icon:       _sumberIcon(lead.sumber || ''),
         program_diminati:  lead.program || '—',
         status_pipeline:   'new',
         tanggal_masuk:     today,
