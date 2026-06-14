@@ -6,6 +6,7 @@
   <title>EFM Portal — Invoice PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -1242,14 +1243,23 @@ function removeFile() {
 let currentInvoice = {};
 
 function downloadInvoicePDF() {
-  const orderId = document.getElementById('invOrderId').textContent.trim();
-  const client  = document.getElementById('invClientName').textContent.trim();
-  const prev    = document.title;
-  document.title = 'Invoice-' + orderId + ' (' + client + ')';
-  window.print();
-  window.addEventListener('afterprint', function _r() {
-    document.title = prev;
-    window.removeEventListener('afterprint', _r);
+  const orderId  = document.getElementById('invOrderId').textContent.trim();
+  const client   = document.getElementById('invClientName').textContent.trim();
+  const filename = 'Invoice-' + orderId + ' (' + client + ').pdf';
+  const element  = document.getElementById('invoicePrintArea');
+
+  const btn = document.querySelector('button[onclick="downloadInvoicePDF()"]');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Memproses...'; }
+
+  html2pdf().set({
+    margin:       [10, 12, 10, 12],
+    filename:     filename,
+    image:        { type:'jpeg', quality:0.98 },
+    html2canvas:  { scale:2, useCORS:true, logging:false },
+    jsPDF:        { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:    { mode:'avoid-all' }
+  }).from(element).save().then(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF'; }
   });
 }
 
