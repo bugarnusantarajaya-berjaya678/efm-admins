@@ -1265,9 +1265,8 @@ function confirmPaid() {
 
 function showReceipt() {
   const invNo = document.getElementById('invNumber').textContent;
-  const d = invoiceData[invNo];
-  if (d) populateReceipt(invNo, d);
-  document.getElementById('receiptOverlay').classList.add('show');
+  const rcpNo = invNo.replace('INV/', 'RCP/');
+  window.location.href = 'pp-receipt.html?rcp=' + encodeURIComponent(rcpNo);
 }
 
 function closeReceipt() {

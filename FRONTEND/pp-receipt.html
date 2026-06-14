@@ -670,6 +670,13 @@ function downloadReceiptPDF() {
 document.addEventListener('DOMContentLoaded', function(){
   applyFilter();
   updateStats();
+
+  /* Auto-open detail if URL has ?rcp= param (from invoice "Lihat Receipt" button) */
+  var params = new URLSearchParams(window.location.search);
+  var rcpParam = params.get('rcp');
+  if (rcpParam && RECEIPT_DB[rcpParam]) {
+    openDetail(rcpParam);
+  }
 });
 </script>
 <script src="assets/js/mobile.js"></script>
