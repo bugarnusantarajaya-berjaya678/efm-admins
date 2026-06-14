@@ -671,11 +671,22 @@ document.addEventListener('DOMContentLoaded', function(){
   applyFilter();
   updateStats();
 
-  /* Auto-open detail if URL has ?rcp= param (from invoice "Lihat Receipt" button) */
+  /* Highlight row if URL has ?rcp= param (from invoice "Lihat Receipt" button) */
   var params = new URLSearchParams(window.location.search);
   var rcpParam = params.get('rcp');
   if (rcpParam && RECEIPT_DB[rcpParam]) {
-    openDetail(rcpParam);
+    /* Stay on list view, scroll to and highlight the matching row */
+    setTimeout(function(){
+      var rows = document.querySelectorAll('#receiptTbody tr');
+      rows.forEach(function(row){
+        if (row.textContent.indexOf(rcpParam) !== -1) {
+          row.style.background = 'rgba(224,89,69,0.08)';
+          row.style.transition = 'background 1.5s';
+          row.scrollIntoView({ behavior:'smooth', block:'center' });
+          setTimeout(function(){ row.style.background = ''; }, 2500);
+        }
+      });
+    }, 100);
   }
 });
 </script>
