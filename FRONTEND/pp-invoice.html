@@ -393,42 +393,53 @@
       box-sizing: border-box !important;
     }
 
-    /* ── Mobile: syarat table word-wrap fix ── */
+    /* ── Mobile: syarat table — flex row approach ── */
     @media (max-width: 768px) {
       .syarat-section {
-        padding: 10px 10px 14px !important;
+        padding: 10px 8px 14px !important;
         overflow: hidden !important;
         box-sizing: border-box !important;
       }
-      .syarat-table,
-      .syarat-table td,
-      .syarat-table tr {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-        word-break: break-word !important;
-      }
-      .syarat-table {
-        width: 100% !important;
-        max-width: 100% !important;
-        table-layout: fixed !important;
-        border-collapse: collapse !important;
-        display: table !important;
-      }
-      .syarat-section h5,
-      .syarat-section h4 {
-        font-size: 11px !important;
+      .syarat-section h5 {
+        font-size: 10px !important;
         margin-bottom: 8px !important;
       }
+      /* Convert table to flex rows */
+      .syarat-table          { display: block !important; width: 100% !important; border: none !important; }
+      .syarat-table tbody    { display: block !important; width: 100% !important; }
+      .syarat-table tr {
+        display: flex !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding: 6px 0 !important;
+        border: none !important;
+        border-bottom: 1px solid var(--gray-border, #E2E6EA) !important;
+      }
+      .syarat-table tr:last-child { border-bottom: none !important; }
       .syarat-table td {
+        display: block !important;
+        border: none !important;
         font-size: 11px !important;
         line-height: 1.55 !important;
-        padding: 6px 6px !important;
-        vertical-align: top !important;
+        padding: 0 !important;
+        white-space: normal !important;
+        word-break: break-word !important;
+        overflow-wrap: break-word !important;
+        background: transparent !important;
       }
       .syarat-table td:first-child {
-        width: 22px !important;
-        font-weight: bold !important;
+        width: 18px !important;
+        min-width: 18px !important;
+        flex-shrink: 0 !important;
+        font-weight: 700 !important;
+        color: var(--navy, #1E1C43) !important;
+        text-align: center !important;
+        padding-top: 1px !important;
+      }
+      .syarat-table td:last-child {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        color: var(--gray-text, #6C757D) !important;
       }
     }
 
