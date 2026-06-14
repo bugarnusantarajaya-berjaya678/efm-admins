@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════════════════════════
+   EFM Portal — Responsive / Mobile Styles
+   Breakpoints:
+     ≤ 1024px  → tablet
+     ≤  768px  → large phone / small tablet
+     ≤  480px  → phone
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Hamburger toggle button (hidden on desktop) ── */
+.hamburger {
+  display: none;
+  width: 40px; height: 40px;
+  border: 1.5px solid var(--gray-border);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--navy);
+  z-index: 201;
+}
+.hamburger svg { width: 20px; height: 20px; }
+
+/* Sidebar dark overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 99;
+}
+.sidebar-overlay.show { display: block; }
+
+/* ── TABLET (≤ 1024px) ── */
+@media (max-width: 1024px) {
+
+  /* Sidebar: hidden off-screen, slides in */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    z-index: 200;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  /* Main: full width */
+  .main { margin-left: 0 !important; }
+
+  /* Header: show hamburger */
+  .hamburger { display: flex; }
+
+  /* Stats: 2 columns */
+  .stats-row { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Filters: wrap naturally */
+  .filters-bar { flex-wrap: wrap; gap: 8px; }
+  .filter-select { flex: 1 1 140px; }
+  .filter-search { flex: 1 1 200px; }
+
+  /* Page header: stack on tablet */
+  .page-header { flex-wrap: wrap; gap: 10px; }
+
+  /* Detail actions: wrap */
+  .detail-actions { flex-wrap: wrap; gap: 8px; }
+
+  /* Invoice / receipt card: full width */
+  .invoice-card,
+  .receipt-card { max-width: 100% !important; }
+
+  /* Billing row: stack */
+  .billing-row { grid-template-columns: 1fr !important; gap: 16px; }
+
+  /* Notes grid: stack */
+  .notes-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ── PHONE (≤ 768px) ── */
+@media (max-width: 768px) {
+
+  /* Header */
+  .header { padding: 0 14px; height: 56px; }
+  .header-title { font-size: 13px; }
+  .search-bar { display: none; } /* collapsed on phone — use header search if needed */
+
+  /* Content padding */
+  .content { padding: 14px 14px 0 !important; }
+
+  /* Stats: 2×2 always */
+  .stats-row { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+  .stat-mini { padding: 10px 12px; }
+  .stat-mini .value { font-size: 18px; }
+
+  /* Filters */
+  .filters-bar { padding: 8px 12px; gap: 8px; }
+  .filter-select,
+  .filter-search { flex: 1 1 100%; }
+  .btn-clear { flex: 1 1 100%; text-align: center; }
+
+  /* Page header */
+  .page-header { margin-bottom: 12px; }
+  .page-header-left h1 { font-size: 18px; }
+  .page-header-left p  { font-size: 12px; }
+  .btn-primary,
+  .btn-outline { font-size: 12px; padding: 8px 14px; }
+
+  /* Table card */
+  .table-card { border-radius: 10px; }
+  td, th { padding: 9px 10px; font-size: 12px; }
+
+  /* Pagination */
+  .pagination { flex-direction: column; gap: 8px; padding: 10px 14px; }
+  .pagination-info { font-size: 11px; }
+
+  /* Modal */
+  .modal-overlay { padding: 10px; align-items: flex-end; }
+  .modal { border-radius: 16px 16px 0 0; max-width: 100% !important; max-height: 92vh; overflow-y: auto; }
+  .modal-header { padding: 16px 18px 14px; }
+  .modal-body   { padding: 16px 18px; }
+  .modal-footer { padding: 12px 18px; flex-wrap: wrap; gap: 8px; }
+  .modal-footer button { flex: 1 1 auto; }
+
+  /* Receipt overlay */
+  .receipt-overlay { padding: 10px; align-items: flex-end; }
+  .receipt-modal {
+    border-radius: 16px 16px 0 0;
+    max-width: 100% !important;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+
+  /* Detail header: stack */
+  .detail-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .detail-actions { width: 100%; }
+  .detail-actions button,
+  .detail-actions a { flex: 1 1 auto; justify-content: center; }
+
+  /* Back btn */
+  .back-btn { margin-bottom: 12px; }
+
+  /* Invoice / receipt body padding */
+  .invoice-body,
+  .receipt-body { padding: 14px 16px; }
+  .invoice-header,
+  .receipt-top  { padding: 16px 18px; }
+
+  /* Receipt meta: 1 column on phone */
+  .receipt-meta { grid-template-columns: 1fr !important; }
+
+  /* Summary box: full width */
+  .summary-box { width: 100% !important; }
+
+  /* Drawer (orders detail) */
+  .drawer { width: 100% !important; right: -100% !important; }
+
+  /* Kanban / card lists */
+  .kanban-col { min-width: 260px; }
+
+  /* Import modal */
+  #modalImportLeads .modal { max-width: 100% !important; border-radius: 16px 16px 0 0; }
+}
+
+/* ── SMALL PHONE (≤ 480px) ── */
+@media (max-width: 480px) {
+
+  /* Stats: full width each */
+  .stats-row { grid-template-columns: 1fr 1fr !important; }
+
+  /* Table: enforce horizontal scroll, hide less-important cols via class */
+  .table-wrap { overflow-x: auto; }
+  table { min-width: 600px; }
+
+  /* Header shrink */
+  .header { gap: 8px; }
+  .icon-btn { width: 32px; height: 32px; }
+  .user-avatar { width: 32px; height: 32px; font-size: 11px; }
+
+  /* Page header: stack */
+  .page-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .page-header .btn-primary,
+  .page-header .btn-import { width: 100%; justify-content: center; }
+
+  /* Invoice meta numbers */
+  .inv-number { font-size: 11px; }
+  .invoice-company h2 { font-size: 12px; }
+  .invoice-company p  { font-size: 9.5px; }
+
+  /* Billing row */
+  .billing-row { grid-template-columns: 1fr !important; }
+  .billing-section .client-name { font-size: 15px; }
+
+  /* Syarat table: hide number col */
+  .syarat-table td:first-child { display: none; }
+  .syarat-table td:last-child  { width: 100% !important; }
+
+  /* Receipt barcode: smaller */
+  .barcode-svg svg { width: 120px; height: 120px; }
+
+  /* Mapping modal: stack columns */
+  .mapping-grid-header,
+  .mapping-row { grid-template-columns: 1fr !important; }
+  .mapping-grid-header div:first-child { display: none; }
+}
+
+/* ── Sidebar close button (inside sidebar, mobile only) ── */
+.sidebar-close {
+  display: none;
+  position: absolute; top: 14px; right: 14px;
+  width: 32px; height: 32px;
+  border-radius: 8px; border: 1px solid rgba(255,255,255,0.15);
+  background: transparent; cursor: pointer;
+  align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7);
+}
+.sidebar-close svg { width: 16px; height: 16px; }
+
+@media (max-width: 1024px) {
+  .sidebar { position: fixed; }
+  .sidebar-close { display: flex; }
+}
