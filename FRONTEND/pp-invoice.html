@@ -822,9 +822,9 @@
     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--gray-border)">
       <span style="font-size:13px;font-weight:700;color:var(--navy)">Receipt Pembayaran</span>
       <div style="display:flex;gap:8px">
-        <button onclick="window.print()" style="padding:7px 14px;border:1.5px solid var(--gray-border);border-radius:8px;background:white;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--navy)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-          Print
+        <button onclick="downloadReceiptPDF()" id="btnDownloadReceipt" style="padding:7px 14px;border:1.5px solid var(--gray-border);border-radius:8px;background:white;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--navy)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download PDF
         </button>
         <button onclick="sendReceiptWA()" style="padding:7px 14px;border:none;border-radius:8px;background:#25D366;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;color:white">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -1270,6 +1270,25 @@ function downloadInvoicePDF() {
     pagebreak:    { mode:'avoid-all' }
   }).from(element).save().then(() => {
     if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF'; }
+  });
+}
+
+function downloadReceiptPDF() {
+  const orderId  = document.getElementById('rcptOrderId').textContent.trim();
+  const client   = document.getElementById('rcptClient').textContent.trim();
+  const filename = 'Receipt-' + orderId + ' (' + client + ').pdf';
+  const element  = document.getElementById('receiptPrintArea');
+  const btn      = document.getElementById('btnDownloadReceipt');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Memproses...'; }
+  html2pdf().set({
+    margin:      [8, 10, 8, 10],
+    filename:    filename,
+    image:       { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true, logging:false, windowWidth:600 },
+    jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:   { mode:'avoid-all' }
+  }).from(element).save().then(() => {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF'; }
   });
 }
 
