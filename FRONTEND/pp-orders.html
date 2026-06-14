@@ -2155,7 +2155,73 @@ function nextStep() {
     fillReview();
   }
   if (currentStep < TOTAL_STEPS) { currentStep++; updateStepUI(); }
-  else { alert('✅ Order berhasil dibuat! Invoice draft sedang digenerate.'); closeModal(); }
+  else { _commitNewOrder(); closeModal(); }
+}
+
+function _commitNewOrder() {
+  // Generate Order ID baru
+  const existingNums = Object.keys(ORDER_DB).map(k => parseInt(k.replace('PP-',''),10)).filter(n=>!isNaN(n));
+  const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 9000;
+  const newId   = 'PP-' + nextNum;
+
+  // Ambil data dari form
+  const klienL   = (_selectedLead && _selectedLead.klien)   || {};
+  const progId   = document.getElementById('inp_program_id').value;
+  const progData = PROGRAM_DB[progId] || {};
+  const picData  = PIC_DB[progData.picId] || {};
+  const tglMulai = document.getElementById('inp_tgl_mulai').value;
+  const lokasi   = document.getElementById('inp_lokasi').value || '—';
+  const jadwals  = [
+    { hari: document.getElementById('inp_hari1').value, jam: document.getElementById('inp_jam1').value },
+    { hari: document.getElementById('inp_hari2').value, jam: document.getElementById('inp_jam2').value },
+    { hari: document.getElementById('inp_hari3').value, jam: document.getElementById('inp_jam3').value },
+  ].filter(j => j.hari).map(j => `${j.hari} ${j.jam}`).join(' · ');
+
+  const nama    = klienL.nama  || document.getElementById('inp_nama').value  || '—';
+  const color   = klienL.color || '#2980B9';
+  const initials= nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const paketLbl= progData.namaPaket || _selectedPackage.label || '—';
+  const sesiTotal= progData.sesi || 0;
+
+  // Simpan ke ORDER_DB
+  ORDER_DB[newId] = {
+    order_id: newId, display_id: '#' + newId,
+    nama_klien: nama, avatar_initials: initials, avatar_color: color,
+    paket: paketLbl, sesi_total: sesiTotal, sesi_selesai: 0,
+    pic_nama: picData.fullname || '—', pic_id: progData.picId || '—',
+    tgl_mulai: tglMulai || 'Baru',
+    status_order: 'active', status_invoice: 'pending',
+    inv_no: '—', program_id: progId, lokasi, jadwal: jadwals || '—',
+    agr_id: null, agr_status: 'pending', agr_tgl_dibuat: tglMulai || '—', agr_tgl_ttd: null,
+  };
+
+  // Buat baris baru dan sisipkan di atas tabel
+  const tbody = document.getElementById('ordersBody');
+  const tr = document.createElement('tr');
+  tr.dataset.orderId = newId;
+  tr.style.cursor = 'pointer';
+  tr.onclick = function() { openDrawer(this); };
+  tr.innerHTML = `
+    <td class="col-order-id"><span class="order-id">#${newId}</span></td>
+    <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
+    <td class="col-paket">${paketLbl}</td>
+    <td class="col-pic">${picData.fullname || '—'}</td>
+    <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:0%"></div></div><span class="session-text">0/${sesiTotal} sesi</span></div></td>
+    <td class="col-tgl">${tglMulai || '—'}</td>
+    <td class="col-status-order"><span class="badge active">Active</span></td>
+    <td class="col-status-inv"><span class="badge pending">Pending</span></td>
+    <td class="col-aksi"><div class="action-wrap">
+      <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    </div></td>`;
+  tbody.insertBefore(tr, tbody.firstChild);
+  applyFilterAndPaginate();
+
+  // Tampilkan notifikasi sukses
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#27AE60;color:white;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.18)';
+  toast.textContent = '✅ Order #' + newId + ' berhasil dibuat!';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
 }
 function prevStep() { if (currentStep > 1) { currentStep--; updateStepUI(); } }
 function updateStepUI() {
