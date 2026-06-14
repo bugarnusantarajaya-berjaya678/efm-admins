@@ -1372,13 +1372,20 @@ function _pdfCloneFixInvoice(doc) {
     '.inv-number { font-size:13px !important; }',
     '.inv-dates  { font-size:11px !important; }',
     /* Body layout */
-    '.invoice-body { padding:20px 24px !important; }',
-    '.billing-row { display:grid !important; grid-template-columns:1fr 1fr !important; gap:28px !important; }',
+    '.invoice-body { padding:16px 24px !important; }',
+    '.billing-row { display:grid !important; grid-template-columns:1fr 1fr !important; gap:28px !important; margin-bottom:16px !important; padding-bottom:14px !important; }',
     '.qr-section { display:flex !important; }',
-    '.notes-grid { display:grid !important; grid-template-columns:1fr 1fr !important; }',
+    /* Items & summary */
+    '.items-table { margin-bottom:12px !important; }',
+    '.summary-wrap { margin-bottom:12px !important; }',
     '.summary-box { width:320px !important; }',
-    /* Syarat table */
-    '.syarat-section { padding:14px 24px 20px !important; }',
+    /* Notes: compact, hide empty second column */
+    '.invoice-notes { padding:10px 24px !important; }',
+    '.notes-grid { display:grid !important; grid-template-columns:1fr 1fr !important; gap:14px !important; }',
+    '.note-item:last-child { display:none !important; }',
+    /* Syarat: compact, no extra space */
+    '.syarat-section { padding:10px 24px 14px !important; margin-top:0 !important; }',
+    '.syarat-table td { padding:5px 8px !important; font-size:11px !important; line-height:1.5 !important; }',
   ].join('\n');
   doc.head.appendChild(s);
 }
