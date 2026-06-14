@@ -376,6 +376,34 @@
       .syarat-table td { font-size: 7.5pt !important; padding: 4px 8px !important; line-height: 1.5 !important; }
       .syarat-table td:first-child { font-size: 7.5pt !important; }
     }
+
+    /* ── Global table fix: prevent overflow ── */
+    .items-table, .syarat-table, .receipt-items table {
+      width: 100% !important;
+      max-width: 100% !important;
+      table-layout: fixed !important;
+      border-collapse: collapse;
+    }
+    .items-table th, .items-table td,
+    .syarat-table td,
+    .receipt-items th, .receipt-items td {
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+      white-space: normal !important;
+      box-sizing: border-box !important;
+    }
+
+    /* ── Print: A4 fit + card lock ── */
+    @media print {
+      @page { size: A4 portrait; margin: 10mm; }
+      body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .invoice-card, .receipt-card {
+        width: 100% !important; max-width: 100% !important;
+        margin: 0 !important; box-sizing: border-box !important; overflow: hidden !important;
+      }
+      .syarat-table td:first-child { width: 5% !important; }
+      .syarat-table td:last-child  { width: 95% !important; }
+    }
   </style>
 </head>
 <body>
