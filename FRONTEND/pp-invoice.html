@@ -1349,33 +1349,38 @@ let currentInvoice = {};
 function _pdfCloneFixInvoice(doc) {
   const el = doc.getElementById('invoicePrintArea');
   if (!el) return;
-  /* Force desktop width so mobile responsive CSS doesn't apply */
-  el.style.cssText += ';width:690px!important;max-width:690px!important;min-width:690px!important;position:static!important;margin:0!important;border-radius:0!important;box-shadow:none!important;';
 
-  /* Reset invoice-header: horizontal layout (logo left, meta right) */
-  const hdr = el.querySelector('.invoice-header');
-  if (hdr) hdr.style.cssText += ';flex-direction:row!important;align-items:flex-start!important;padding:20px 24px!important;gap:0!important;';
+  /* Set fixed width on the element directly */
+  el.style.width    = '690px';
+  el.style.maxWidth = '690px';
+  el.style.minWidth = '690px';
+  el.style.position = 'static';
+  el.style.margin   = '0';
 
-  /* Reset invoice-meta: right-aligned */
-  const meta = el.querySelector('.invoice-meta');
-  if (meta) meta.style.cssText += ';text-align:right!important;border-top:none!important;padding-top:0!important;';
-
-  /* Reset billing-row: two columns */
-  const billing = el.querySelector('.billing-row');
-  if (billing) billing.style.cssText += ';grid-template-columns:1fr 1fr!important;';
-
-  /* Show QR box (hidden on mobile) */
-  const qr = el.querySelector('.qr-section');
-  if (qr) qr.style.cssText += ';display:flex!important;';
-
-  /* Reset notes grid: two columns */
-  const notes = el.querySelector('.notes-grid');
-  if (notes) notes.style.cssText += ';grid-template-columns:1fr 1fr!important;';
-
-  /* Restore syarat-table if JS converted it to divs */
-  el.querySelectorAll('.syarat-section > div[style]').forEach(function(wrapper) {
-    /* already converted by JS — leave as-is, it renders fine in PDF too */
-  });
+  /* Inject a <style> tag at end of <head> — last stylesheet wins over all media queries */
+  const s = doc.createElement('style');
+  s.textContent = [
+    /* Force desktop layout — overrides all @media (max-width:768px) rules */
+    'body, .main, .content { height: auto !important; overflow: visible !important; }',
+    '.sidebar { display: none !important; }',
+    '.main { margin-left: 0 !important; }',
+    '#invoicePrintArea { width:690px !important; max-width:690px !important; }',
+    /* Header: logo LEFT, meta RIGHT side by side */
+    '.invoice-header { display:flex !important; flex-direction:row !important; justify-content:space-between !important; align-items:flex-start !important; padding:20px 24px !important; gap:0 !important; }',
+    '.invoice-logo { flex-shrink:0 !important; }',
+    '.invoice-meta { text-align:right !important; border-top:none !important; padding-top:0 !important; }',
+    '.inv-number { font-size:13px !important; }',
+    '.inv-dates  { font-size:11px !important; }',
+    /* Body layout */
+    '.invoice-body { padding:20px 24px !important; }',
+    '.billing-row { display:grid !important; grid-template-columns:1fr 1fr !important; gap:28px !important; }',
+    '.qr-section { display:flex !important; }',
+    '.notes-grid { display:grid !important; grid-template-columns:1fr 1fr !important; }',
+    '.summary-box { width:320px !important; }',
+    /* Syarat table */
+    '.syarat-section { padding:14px 24px 20px !important; }',
+  ].join('\n');
+  doc.head.appendChild(s);
 }
 function _pdfCloneFixReceipt(doc) {
   const el = doc.getElementById('receiptPrintArea');
