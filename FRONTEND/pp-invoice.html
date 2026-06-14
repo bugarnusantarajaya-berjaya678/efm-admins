@@ -157,6 +157,18 @@
     .invoice-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow-x:hidden; max-width:720px; width:100%; box-sizing:border-box; }
     #invoicePrintArea { width:100%; max-width:100%; box-sizing:border-box; overflow-x:hidden; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     #invoicePrintArea *, .invoice-card * { box-sizing:border-box; }
+
+    /* ── Screen-only zoom: shrink invoice preview ~35% so it fits without scrolling ── */
+    @media screen {
+      #invoicePrintArea {
+        zoom: 0.65;
+        /* Firefox fallback (zoom not supported) */
+        -moz-transform: scale(0.65);
+        -moz-transform-origin: top left;
+      }
+      /* Compensate: wrapper needs less height since content is zoomed */
+      #detailView.active { padding-bottom: 8px; }
+    }
     .invoice-header { background:var(--navy); padding:20px 24px; display:flex; justify-content:space-between; align-items:flex-start; }
     .invoice-logo { display:flex; align-items:center; gap:12px; }
     .inv-logo-circle { width:58px; height:58px; background:transparent; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
