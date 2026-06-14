@@ -56,8 +56,8 @@
 
 /* Mapping step */
 .mapping-grid                { width:100%; }
-.mapping-grid-header         { display:grid; grid-template-columns:200px minmax(0,1fr); gap:12px; padding:9px 12px; background:var(--gray-bg); border-bottom:1.5px solid var(--gray-border); font-size:10.5px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; box-sizing:border-box; }
-.mapping-row                 { display:grid; grid-template-columns:200px minmax(0,1fr); gap:12px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--gray-border); box-sizing:border-box; }
+.mapping-grid-header         { display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; padding:9px 12px; background:var(--gray-bg); border-bottom:1.5px solid var(--gray-border); font-size:10.5px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; box-sizing:border-box; }
+.mapping-row                 { display:grid; grid-template-columns:auto minmax(0,1fr); gap:12px; align-items:center; padding:10px 12px; border-bottom:1px solid var(--gray-border); box-sizing:border-box; }
 .mapping-row:last-child      { border-bottom:none; }
 .field-label                 { font-size:13px; font-weight:600; color:var(--navy); }
 .field-required              { color:var(--orange); margin-left:2px; }
