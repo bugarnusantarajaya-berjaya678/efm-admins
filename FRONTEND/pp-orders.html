@@ -2201,6 +2201,13 @@ function _commitNewOrder() {
   const initials= nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
   const paketLbl= progData.namaPaket || _selectedPackage.label || '—';
   const sesiTotal= progData.sesi || 0;
+  const grandTotal = (window._calc && window._calc.grandTotal) || _selectedPackage.price || 0;
+
+  // Generate nomor invoice
+  const now = new Date();
+  const yyyyy = now.getFullYear();
+  const invSeq = String(Date.now()).slice(-4);
+  const invNo  = `INV/EFM/PP/${yyyyy}/${invSeq}`;
 
   // Simpan ke ORDER_DB
   ORDER_DB[newId] = {
@@ -2210,9 +2217,26 @@ function _commitNewOrder() {
     pic_nama: picData.fullname || '—', pic_id: progData.picId || '—',
     tgl_mulai: tglMulai || 'Baru',
     status_order: 'active', status_invoice: 'pending',
-    inv_no: '—', program_id: progId, lokasi, jadwal: jadwals || '—',
+    inv_no: invNo, program_id: progId, lokasi, jadwal: jadwals || '—',
     agr_id: null, agr_status: 'pending', agr_tgl_dibuat: tglMulai || '—', agr_tgl_ttd: null,
   };
+
+  // Simpan data invoice ke sessionStorage agar pp-invoice.html bisa langsung buka
+  const tglInvStr = now.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+  const invData = {
+    inv_no: invNo, orderId: '#' + newId,
+    client: nama, initials, color, email: klienL.email || '—', hp: klienL.hp || '—',
+    date: tglInvStr, due: '—', status: 'pending',
+    namaLatihan: progData.namaLatihan || 'Private Training',
+    namaPaket: paketLbl, sesi: progData.sesi || 0,
+    pertemuan: progData.pertemuan || 0, masa: progData.masa || '—',
+    picFull: picData.fullname || '—',
+    hargaPaket: progData.harga || grandTotal, hargaPersesi: progData.hargaPersesi || 0,
+    diskonPaket: progData.diskonPaket || 0,
+    biayaLain: 0, biayaLainKet: '', diskon: 0, promoKode: '', cashback: 0,
+    pajak: 0, promoType: '', promoVal: 0, total: grandTotal,
+  };
+  sessionStorage.setItem('new_invoice_data', JSON.stringify(invData));
 
   // Buat baris baru dan sisipkan di atas tabel
   const tbody = document.getElementById('ordersBody');
@@ -2231,7 +2255,7 @@ function _commitNewOrder() {
     <td class="col-status-inv"><span class="badge pending">Pending</span></td>
     <td class="col-aksi"><div class="action-wrap">
       <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-      <button class="action-btn invoice" title="Lihat Invoice" onclick="event.stopPropagation();window.location.href='pp-invoice.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+      <button class="action-btn invoice" title="Lihat Invoice" onclick="event.stopPropagation();window.location.href='pp-invoice.html?inv=${encodeURIComponent(invNo)}'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
     </div></td>`;
   tbody.insertBefore(tr, tbody.firstChild);
   applyFilterAndPaginate();

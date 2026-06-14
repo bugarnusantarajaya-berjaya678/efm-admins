@@ -1104,6 +1104,16 @@ function handleBack() {
 // Auto-load: ?inv= param → langsung detail (dari pp-orders)
 // Tanpa param → tampilkan list view
 document.addEventListener('DOMContentLoaded', () => {
+  // Inject invoice baru dari sessionStorage (jika ada)
+  const rawNew = sessionStorage.getItem('new_invoice_data');
+  if (rawNew) {
+    try {
+      const d = JSON.parse(rawNew);
+      if (d && d.inv_no) invoiceData[d.inv_no] = d;
+    } catch(e) {}
+    sessionStorage.removeItem('new_invoice_data');
+  }
+
   const params = new URLSearchParams(window.location.search);
   const invNo  = params.get('inv');
   if (invNo) {
