@@ -256,6 +256,84 @@
   .mapping-grid-header div:first-child { display: none; }
 }
 
+/* ── INVOICE & RECEIPT DETAIL — mobile fixes ── */
+@media (max-width: 768px) {
+
+  /* Invoice card: no rounded corners, full bleed */
+  .invoice-card {
+    border-radius: 10px !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  /* Invoice header: stack logo+company on top, meta below */
+  .invoice-header {
+    flex-direction: column !important;
+    gap: 14px !important;
+    padding: 16px !important;
+  }
+  .invoice-logo { flex-wrap: wrap; }
+  .invoice-meta {
+    text-align: left !important;
+    width: 100% !important;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 12px;
+  }
+  .inv-number    { font-size: 12px !important; margin-bottom: 6px; }
+  .inv-dates     { font-size: 11px !important; line-height: 1.8; }
+  .inv-logo-circle { width: 44px !important; height: 44px !important; }
+  .invoice-company h2 { font-size: 13px !important; }
+  .invoice-company p  { font-size: 10px !important; }
+
+  /* Invoice body: tighter padding */
+  .invoice-body { padding: 14px 14px !important; }
+
+  /* Billing row: stack vertically */
+  .billing-row {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+    padding-bottom: 14px !important;
+  }
+  .billing-section .client-name { font-size: 16px !important; }
+  .billing-section p { font-size: 12px !important; }
+
+  /* QR box: hide on mobile (optional) */
+  .qr-section { display: none !important; }
+
+  /* Items table: compact, wrap text */
+  .items-table th { padding: 8px 10px !important; font-size: 10px !important; }
+  .items-table td { padding: 10px 10px !important; font-size: 12px !important; }
+  .item-name { font-size: 12px !important; }
+  .item-desc { font-size: 10px !important; }
+
+  /* Summary: full width */
+  .summary-wrap  { justify-content: stretch !important; }
+  .summary-box   { width: 100% !important; }
+  .summary-row   { font-size: 12px !important; }
+  .total-row     { font-size: 14px !important; }
+  .total-row .val { font-size: 16px !important; }
+
+  /* Notes: single column */
+  .invoice-notes { padding: 12px 14px !important; }
+  .notes-grid    { grid-template-columns: 1fr !important; gap: 10px !important; }
+  .note-item h5  { font-size: 11px !important; }
+  .note-item p   { font-size: 12px !important; }
+
+  /* Syarat & Ketentuan: fix overflow */
+  .syarat-section { padding: 12px 14px 16px !important; }
+  .syarat-table   { table-layout: fixed !important; width: 100% !important; }
+  .syarat-table td {
+    font-size: 11px !important;
+    padding: 6px 8px !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+  }
+  .syarat-table td:first-child { width: 26px !important; }
+  .syarat-table td:last-child  { width: calc(100% - 26px) !important; }
+}
+
 /* ── Sidebar close button (inside sidebar, mobile only) ── */
 .sidebar-close {
   display: none;
