@@ -1252,24 +1252,34 @@ function removeFile() {
 // Current invoice data
 let currentInvoice = {};
 
+function _pdfCloneFixInvoice(doc) {
+  const el = doc.getElementById('invoicePrintArea');
+  if (!el) return;
+  el.style.cssText += ';width:690px!important;max-width:690px!important;min-width:690px!important;position:static!important;margin:0!important;border-radius:0!important;box-shadow:none!important;';
+}
+function _pdfCloneFixReceipt(doc) {
+  const el = doc.getElementById('receiptPrintArea');
+  if (!el) return;
+  el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;border-radius:0!important;box-shadow:none!important;';
+}
+
 function downloadInvoicePDF() {
   const orderId  = document.getElementById('invOrderId').textContent.trim();
   const client   = document.getElementById('invClientName').textContent.trim();
   const filename = 'Invoice-' + orderId + ' (' + client + ').pdf';
   const element  = document.getElementById('invoicePrintArea');
-
   const btn = document.querySelector('button[onclick="downloadInvoicePDF()"]');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Memproses...'; }
-
+  const SVG_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  if (btn) { btn.disabled = true; btn.innerHTML = SVG_DL + ' Memproses...'; }
   html2pdf().set({
-    margin:       [8, 10, 8, 10],
-    filename:     filename,
-    image:        { type:'jpeg', quality:0.98 },
-    html2canvas:  { scale:2, useCORS:true, logging:false, windowWidth:760 },
-    jsPDF:        { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak:    { mode:'avoid-all' }
+    margin:      [10, 10, 10, 10],
+    filename:    filename,
+    image:       { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true, logging:false, onclone: _pdfCloneFixInvoice },
+    jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download PDF'; }
   });
 }
 
@@ -1279,16 +1289,17 @@ function downloadReceiptPDF() {
   const filename = 'Receipt-' + orderId + ' (' + client + ').pdf';
   const element  = document.getElementById('receiptPrintArea');
   const btn      = document.getElementById('btnDownloadReceipt');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Memproses...'; }
+  const SVG_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  if (btn) { btn.disabled = true; btn.innerHTML = SVG_DL + ' Memproses...'; }
   html2pdf().set({
-    margin:      [8, 10, 8, 10],
+    margin:      [10, 10, 10, 10],
     filename:    filename,
     image:       { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false, windowWidth:600 },
+    html2canvas: { scale:2, useCORS:true, logging:false, onclone: _pdfCloneFixReceipt },
     jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download PDF'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download PDF'; }
   });
 }
 
