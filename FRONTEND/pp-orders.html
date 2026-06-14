@@ -2139,6 +2139,25 @@ function confirmPaidFromDrawer(invNo) {
 function openModal() {
   currentStep = 1;
   _selectedPackage = { price:0, label:'—', sesi:'0' };
+  _selectedLead = { pemesan: null, klien: null };
+
+  // Reset search inputs & cards step 1
+  ['pemesan','klien'].forEach(role => {
+    const s = document.getElementById('search_' + role);
+    const c = document.getElementById('card_' + role);
+    const e = document.getElementById('empty_' + role);
+    if (s) s.value = '';
+    if (c) c.style.display = 'none';
+    if (e) e.style.display = 'block';
+  });
+  const chkSama = document.getElementById('chk_sama');
+  if (chkSama) { chkSama.checked = false; }
+  const boxKlien = document.getElementById('box_klien');
+  if (boxKlien) { boxKlien.style.opacity = '1'; boxKlien.style.pointerEvents = ''; }
+  ['inp_nama','inp_hp','inp_email'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+
   populateProgramDropdown();
   updateStepUI();
   document.getElementById('modalOverlay').classList.add('show');
