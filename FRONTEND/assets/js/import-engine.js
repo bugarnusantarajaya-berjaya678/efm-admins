@@ -44,13 +44,13 @@
    * ════════════════════════════════════════════════════════════════ */
   function buildModalHTML(fields) {
     const fieldRows = (fields || defaultFields()).map(f => `
-      <tr>
-        <td>
+      <div class="mapping-row">
+        <div class="field-info">
           <div class="field-label">${f.label}${f.required ? ' <span class="field-required">*</span>' : ''}</div>
           <div class="field-hint">${f.hint || ''}</div>
-        </td>
-        <td><select class="mapping-select" id="map_${f.id}"><option value="">— Pilih kolom —</option></select></td>
-      </tr>`).join('');
+        </div>
+        <div><select class="mapping-select" id="map_${f.id}"><option value="">— Pilih kolom —</option></select></div>
+      </div>`).join('');
 
     return `
 <div class="modal-overlay" id="modalImportLeads">
@@ -120,15 +120,13 @@
       <div id="impStep2" style="display:none">
         <div class="import-preview" id="impPreviewInfo"></div>
         <p style="font-size:13px;color:var(--gray-text);margin:16px 0 10px;">Petakan kolom dari file Anda ke field database kami:</p>
-        <table class="mapping-table">
-          <thead>
-            <tr>
-              <th style="width:40%">Field Database Kami</th>
-              <th>Kolom dari File Anda</th>
-            </tr>
-          </thead>
-          <tbody>${fieldRows}</tbody>
-        </table>
+        <div class="mapping-grid">
+          <div class="mapping-grid-header">
+            <div>Field Database Kami</div>
+            <div>Kolom dari File Anda</div>
+          </div>
+          ${fieldRows}
+        </div>
       </div>
 
       <!-- STEP 3: Result -->
