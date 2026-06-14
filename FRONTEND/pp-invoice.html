@@ -1544,6 +1544,51 @@ if (role === 'owner') {
   }
 }
 </script>
+<script>
+/* Convert syarat-table to div list on mobile to bypass browser table layout */
+(function() {
+  function convertSyaratTable() {
+    if (window.innerWidth > 768) return;
+    var tables = document.querySelectorAll('.syarat-table');
+    tables.forEach(function(table) {
+      if (table.dataset.converted) return;
+      table.dataset.converted = '1';
+      var rows = table.querySelectorAll('tr');
+      var wrapper = document.createElement('div');
+      wrapper.style.cssText = 'width:100%;';
+      rows.forEach(function(row, idx) {
+        var cells = row.querySelectorAll('td');
+        if (cells.length < 2) return;
+        var div = document.createElement('div');
+        div.style.cssText = [
+          'display:flex',
+          'align-items:flex-start',
+          'gap:8px',
+          'padding:7px 0',
+          'border-bottom:' + (idx < rows.length - 1 ? '1px solid #E2E6EA' : 'none'),
+          'width:100%',
+          'box-sizing:border-box'
+        ].join(';');
+        var numSpan = document.createElement('span');
+        numSpan.style.cssText = 'flex-shrink:0;width:18px;min-width:18px;font-size:11px;font-weight:700;color:#1E1C43;text-align:center;line-height:1.55';
+        numSpan.textContent = cells[0].textContent.trim();
+        var txtSpan = document.createElement('span');
+        txtSpan.style.cssText = 'flex:1;min-width:0;font-size:11px;line-height:1.55;color:#6C757D;word-break:break-word;overflow-wrap:break-word;white-space:normal';
+        txtSpan.innerHTML = cells[1].innerHTML;
+        div.appendChild(numSpan);
+        div.appendChild(txtSpan);
+        wrapper.appendChild(div);
+      });
+      table.parentNode.replaceChild(wrapper, table);
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', convertSyaratTable);
+  } else {
+    convertSyaratTable();
+  }
+})();
+</script>
 <script src="assets/js/mobile.js"></script>
 </body>
 </html>
