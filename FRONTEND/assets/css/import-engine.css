@@ -56,8 +56,8 @@
 /* Mapping step */
 .mapping-table               { width:100%; border-collapse:collapse; table-layout:fixed; }
 .mapping-table th            { font-size:10.5px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; padding:9px 12px; background:var(--gray-bg); border-bottom:1.5px solid var(--gray-border); text-align:left; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.mapping-table th:first-child  { width:36%; }
-.mapping-table th:last-child   { width:64%; }
+.mapping-table th:first-child  { width:50%; }
+.mapping-table th:last-child   { width:50%; }
 .mapping-table td              { padding:8px 12px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; max-width:0; }
 .mapping-table tr:last-child td { border-bottom:none; }
 .field-label                 { font-size:13px; font-weight:600; color:var(--navy); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
