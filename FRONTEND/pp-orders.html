@@ -1779,17 +1779,24 @@ function renderOrderTab() {
 }
 
 function _renderOrderFooter(isDirty) {
+  const o = ORDER_DB[_drawerOrderId] || {};
   const invoiceBtn = `<button class="btn-primary" onclick="switchDrawerTab('invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Lihat Invoice</button>`;
+  const receiptBtn = o.status_invoice === 'paid'
+    ? `<button class="btn-outline-sm" onclick="goToReceipt('${_drawerOrderId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Lihat Receipt</button>` : '';
   if (isDirty) {
     document.getElementById('drawerFooter').innerHTML =
       `<button class="btn-outline-sm" onclick="cancelStatusChange()">Batal Ubah</button>
        <div style="flex:1"></div>
        <button class="btn-green" onclick="confirmSaveOrderStatus()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status</button>
-       ${invoiceBtn}`;
+       ${receiptBtn}${invoiceBtn}`;
   } else {
     document.getElementById('drawerFooter').innerHTML =
-      `<button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>${invoiceBtn}`;
+      `<button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>${receiptBtn}${invoiceBtn}`;
   }
+}
+
+function goToReceipt(orderId) {
+  window.location.href = 'pp-receipt.html?orderId=' + encodeURIComponent(orderId) + '&direct=1';
 }
 
 function onStatusOrderChange(sel) {
@@ -2063,10 +2070,12 @@ function renderInvoiceTab() {
   };
 
   const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+  const rcpIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`;
   const footerBtns = invStatus !== 'paid'
     ? `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
        <button class="btn-green" id="btnKonfirmasiLunas" onclick="confirmPaidFromDrawer('${invNo}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Paid</button>`
     : `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Buka & Print</button>
+       <button class="btn-outline-sm" onclick="goToReceipt('${_drawerOrderId}')">${rcpIcon} Lihat Receipt</button>
        <button class="btn-primary" onclick="closeDrawer()">Selesai</button>`;
 
   document.getElementById('drawerFooter').innerHTML = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>${footerBtns}`;

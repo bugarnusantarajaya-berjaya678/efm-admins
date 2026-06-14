@@ -447,8 +447,34 @@
 </main>
 
 <script>
-/* ── Demo data (static seed) ── */
+/* ── Receipt database — synced with ORDER_DB paid orders ── */
 var RECEIPT_DB = {
+  /* Active paid orders (PP-8042, PP-8041, PP-8031, PP-8027) */
+  'RCP/EFM/PP/2026/0089': {
+    rcp_no:'RCP/EFM/PP/2026/0089', inv_no:'INV/EFM/PP/2026/0089',
+    order_id:'PP-8042', client:'James Wilson', initials:'JW', color:'#2980B9',
+    paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
+    metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'pending', wa_tgl:'—'
+  },
+  'RCP/EFM/PP/2026/0087': {
+    rcp_no:'RCP/EFM/PP/2026/0087', inv_no:'INV/EFM/PP/2026/0087',
+    order_id:'PP-8041', client:'Emily Chen', initials:'EC', color:'#27AE60',
+    paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'22 Okt 2026',
+    metode:'QRIS', total:'Rp 600.000', wa_status:'sent', wa_tgl:'22 Okt 2026'
+  },
+  'RCP/EFM/PP/2026/0082': {
+    rcp_no:'RCP/EFM/PP/2026/0082', inv_no:'INV/EFM/PP/2026/0082',
+    order_id:'PP-8031', client:'Budi Santoso', initials:'BS', color:'#16A085',
+    paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'10 Okt 2026',
+    metode:'Transfer Bank (Mandiri)', total:'Rp 1.500.000', wa_status:'sent', wa_tgl:'10 Okt 2026'
+  },
+  'RCP/EFM/PP/2026/0078': {
+    rcp_no:'RCP/EFM/PP/2026/0078', inv_no:'INV/EFM/PP/2026/0078',
+    order_id:'PP-8027', client:'Rina Kusuma', initials:'RK', color:'#D35400',
+    paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'5 Okt 2026',
+    metode:'Cash', total:'Rp 600.000', wa_status:'sent', wa_tgl:'5 Okt 2026'
+  },
+  /* Historical demo data */
   'RCP/EFM/PP/2025/001': {
     rcp_no:'RCP/EFM/PP/2025/001', inv_no:'INV/EFM/PP/2025/001',
     order_id:'PP-9000', client:'Alex Mercer', initials:'AM', color:'#1E1C43',
@@ -468,6 +494,13 @@ var RECEIPT_DB = {
     metode:'Tunai', total:'Rp 8.000.000', wa_status:'failed', wa_tgl:'—'
   }
 };
+
+/* ── Order ID → rcp_no index (rebuilt whenever RECEIPT_DB changes) ── */
+function buildOrderIndex() {
+  var idx = {};
+  Object.values(RECEIPT_DB).forEach(function(r){ idx[r.order_id] = r.rcp_no; });
+  return idx;
+}
 
 /* ── Merge localStorage receipts ── */
 (function(){
@@ -671,20 +704,31 @@ document.addEventListener('DOMContentLoaded', function(){
   applyFilter();
   updateStats();
 
-  /* Handle ?rcp= param (from invoice page) */
-  var params = new URLSearchParams(window.location.search);
-  var rcpParam = params.get('rcp');
+  /* ── Deep-link handler: supports ?orderId=PP-8042 or ?rcp=RCP/... ──
+     Both accept &direct=1 to open detail immediately.
+     Without direct=1, highlight the matching row in the list. */
+  var params   = new URLSearchParams(window.location.search);
   var direct   = params.get('direct') === '1';
+
+  /* Resolve receipt key — prefer orderId (from pp-orders), fall back to rcp */
+  var rcpParam = null;
+  var orderIdParam = params.get('orderId');
+  if (orderIdParam) {
+    var orderIdx = buildOrderIndex();
+    rcpParam = orderIdx[orderIdParam] || null;
+  } else {
+    rcpParam = params.get('rcp');
+  }
+
   if (rcpParam && RECEIPT_DB[rcpParam]) {
     if (direct) {
-      /* "Lihat Receipt" — open detail directly, ready to send WA */
       openDetail(rcpParam);
     } else {
-      /* Highlight matching row in list */
       setTimeout(function(){
         var rows = document.querySelectorAll('#receiptTbody tr');
         rows.forEach(function(row){
-          if (row.textContent.indexOf(rcpParam) !== -1) {
+          if (row.textContent.indexOf(rcpParam) !== -1 ||
+              (orderIdParam && row.textContent.indexOf(orderIdParam) !== -1)) {
             row.style.background = 'rgba(224,89,69,0.08)';
             row.style.transition = 'background 1.5s';
             row.scrollIntoView({ behavior:'smooth', block:'center' });
