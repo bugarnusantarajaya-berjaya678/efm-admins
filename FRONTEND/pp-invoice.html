@@ -1379,13 +1379,17 @@ function _pdfCloneFixInvoice(doc) {
     '.items-table { margin-bottom:12px !important; }',
     '.summary-wrap { margin-bottom:12px !important; }',
     '.summary-box { width:320px !important; }',
-    /* Notes: compact, hide empty second column */
-    '.invoice-notes { padding:10px 24px !important; }',
-    '.notes-grid { display:grid !important; grid-template-columns:1fr 1fr !important; gap:14px !important; }',
+    /* Notes: single column, minimal padding */
+    '.invoice-notes { padding:8px 24px 6px !important; }',
+    '.notes-grid { display:block !important; }',
     '.note-item:last-child { display:none !important; }',
-    /* Syarat: compact, no extra space */
-    '.syarat-section { padding:10px 24px 14px !important; margin-top:0 !important; }',
-    '.syarat-table td { padding:5px 8px !important; font-size:11px !important; line-height:1.5 !important; }',
+    '.note-item { margin-bottom:0 !important; }',
+    '.note-item h5 { margin-bottom:4px !important; font-size:9px !important; }',
+    '.note-item p  { font-size:11px !important; line-height:1.5 !important; }',
+    /* Syarat: glue directly under notes, minimal gap */
+    '.syarat-section { padding:8px 24px 12px !important; margin-top:0 !important; border-top:1px solid #E2E6EA !important; }',
+    '.syarat-section h5 { font-size:9px !important; margin-bottom:6px !important; }',
+    '.syarat-table td { padding:4px 8px !important; font-size:11px !important; line-height:1.5 !important; }',
   ].join('\n');
   doc.head.appendChild(s);
 }
