@@ -212,7 +212,7 @@
     .syarat-section { padding:14px 24px 20px; border-top:1px solid var(--gray-border); background:var(--gray-bg); }
     .syarat-section h5 { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
     .syarat-table { width:100%; border-collapse:collapse; font-size:11px; table-layout:fixed; }
-    .syarat-table td { padding:7px 10px; border:1px solid var(--gray-border); color:var(--gray-text); line-height:1.6; vertical-align:top; word-break:normal; white-space:normal; overflow-wrap:break-word; }
+    .syarat-table td { padding:7px 10px; border:1px solid var(--gray-border); color:var(--gray-text); line-height:1.6; vertical-align:top; word-break:break-word; white-space:normal; overflow-wrap:break-word; }
     .syarat-table td:first-child { width:28px; font-weight:700; color:var(--navy); text-align:center; background:white; }
 
     /* Receipt Modal */
@@ -391,6 +391,45 @@
       overflow-wrap: break-word !important;
       white-space: normal !important;
       box-sizing: border-box !important;
+    }
+
+    /* ── Mobile: syarat table word-wrap fix ── */
+    @media (max-width: 768px) {
+      .syarat-section {
+        padding: 10px 10px 14px !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+      }
+      .syarat-table,
+      .syarat-table td,
+      .syarat-table tr {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        word-break: break-word !important;
+      }
+      .syarat-table {
+        width: 100% !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        display: table !important;
+      }
+      .syarat-section h5,
+      .syarat-section h4 {
+        font-size: 11px !important;
+        margin-bottom: 8px !important;
+      }
+      .syarat-table td {
+        font-size: 11px !important;
+        line-height: 1.55 !important;
+        padding: 6px 6px !important;
+        vertical-align: top !important;
+      }
+      .syarat-table td:first-child {
+        width: 22px !important;
+        font-weight: bold !important;
+      }
     }
 
     /* ── Print: A4 fit + card lock ── */
