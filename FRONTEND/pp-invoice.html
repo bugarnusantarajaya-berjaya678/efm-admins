@@ -159,37 +159,65 @@
     #invoicePrintArea *, .invoice-card * { box-sizing:border-box; }
 
     /* ══════════════════════════════════════════════════════════
-       PDF VIEWER — Screen only (print overrides below reset all)
+       INVOICE PREVIEW CANVAS — Screen only, synced with Receipt style
        ══════════════════════════════════════════════════════════ */
     @media screen {
-      /* 1. Grey canvas — mimics Acrobat / Google Drive PDF viewer */
+      /* 1. Soft grey canvas — same standard as receipt preview */
       .invoice-preview-canvas {
-        background: #e8eaed;
-        padding: 36px 24px 60px;
+        background: #f3f4f6;
+        padding: 24px;
         display: flex;
         justify-content: center;
         align-items: flex-start;
-        overflow-x: auto;
+        overflow-y: auto;
         border-radius: 0 0 12px 12px;
       }
 
-      /* 2. A4-proportioned paper with shadow + zoom-in 25% */
+      /* 2. Invoice card: max-width 750px, no transform scale */
       .invoice-preview-canvas #invoicePrintArea {
-        width: 794px !important;
-        min-width: 794px !important;
-        max-width: 794px !important;
+        width: 100% !important;
+        max-width: 750px !important;
+        min-width: unset !important;
         background: #ffffff !important;
-        padding: 40px !important;
-        border-radius: 3px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10) !important;
-        transform: scale(1.25) !important;
-        transform-origin: top center !important;
-        margin-bottom: 200px !important; /* compensate for scale pushing content down */
+        padding: 32px !important;
+        border-radius: 8px !important;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06) !important;
+        transform: none !important;
+        margin: 0 auto !important;
+        box-sizing: border-box !important;
         border: none !important;
         overflow: visible !important;
       }
 
-      /* 3. Crisp font rendering on high-DPI screens */
+      /* 3. Items table: proportional, no overflow */
+      .invoice-preview-canvas .items-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+      }
+      .invoice-preview-canvas .items-table th,
+      .invoice-preview-canvas .items-table td {
+        font-size: 13px !important;
+        padding: 10px 6px !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        white-space: normal !important;
+      }
+
+      /* 4. Syarat & Ketentuan: clean flowing text */
+      .invoice-preview-canvas .syarat-table {
+        width: 100% !important;
+        table-layout: fixed !important;
+      }
+      .invoice-preview-canvas .syarat-table td {
+        font-size: 12px !important;
+        line-height: 1.5 !important;
+        padding: 6px 4px !important;
+      }
+      .invoice-preview-canvas .syarat-table td:first-child {
+        width: 25px !important;
+      }
+
+      /* 5. Crisp font rendering */
       .invoice-preview-canvas #invoicePrintArea * {
         -webkit-font-smoothing: antialiased !important;
         -moz-osx-font-smoothing: grayscale !important;
@@ -545,7 +573,7 @@
         display: block !important;
         overflow: visible !important;
       }
-      /* Reset zoom & shadow on the card */
+      /* Reset canvas effects for print */
       #invoicePrintArea {
         transform: none !important;
         box-shadow: none !important;
