@@ -691,13 +691,13 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Download PDF
           </button>
-          <!-- Kirim Receipt (muncul setelah lunas) -->
-          <button class="btn-wa" id="sendReceiptBtn" style="display:none" onclick="showReceipt()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-            Kirim Receipt ke Klien
+          <!-- Kirim Invoice via WA (muncul setelah lunas) -->
+          <button class="btn-wa" id="sendReceiptBtn" style="display:none" onclick="kirimInvoiceWA()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Kirim Invoice ke Klien
           </button>
           <button class="btn-outline" id="viewReceiptBtn" style="display:none" onclick="showReceipt()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
             Lihat Receipt
           </button>
           <button class="btn-green" id="markPaidBtn" onclick="openMarkPaid()">
@@ -1263,10 +1263,28 @@ function confirmPaid() {
   document.getElementById('receiptOverlay').classList.add('show');
 }
 
+function kirimInvoiceWA() {
+  const invNo = document.getElementById('invNumber').textContent;
+  const d = invoiceData[invNo];
+  if (!d) return;
+  const msg =
+    'Halo *' + (d.client || '') + '*,\n\n' +
+    'Berikut adalah detail Invoice Anda dari *Elite Fitness Management*:\n\n' +
+    '🧾 *No. Invoice:* ' + invNo + '\n' +
+    '📋 *Program:* ' + (d.namaPaket || '—') + '\n' +
+    '💰 *Total:* ' + fmtRp(d.total) + '\n' +
+    '📅 *Tanggal Invoice:* ' + (d.date || '—') + '\n' +
+    '⏰ *Jatuh Tempo:* ' + (d.due || '—') + '\n' +
+    '✅ *Status:* LUNAS\n\n' +
+    'Terima kasih telah bergabung bersama *Elite Fitness Management*! 💪\n' +
+    '_Tim EFM_';
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
 function showReceipt() {
   const invNo = document.getElementById('invNumber').textContent;
   const rcpNo = invNo.replace('INV/', 'RCP/');
-  window.location.href = 'pp-receipt.html?rcp=' + encodeURIComponent(rcpNo);
+  window.location.href = 'pp-receipt.html?rcp=' + encodeURIComponent(rcpNo) + '&direct=1';
 }
 
 function closeReceipt() {

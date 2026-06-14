@@ -671,22 +671,28 @@ document.addEventListener('DOMContentLoaded', function(){
   applyFilter();
   updateStats();
 
-  /* Highlight row if URL has ?rcp= param (from invoice "Lihat Receipt" button) */
+  /* Handle ?rcp= param (from invoice page) */
   var params = new URLSearchParams(window.location.search);
   var rcpParam = params.get('rcp');
+  var direct   = params.get('direct') === '1';
   if (rcpParam && RECEIPT_DB[rcpParam]) {
-    /* Stay on list view, scroll to and highlight the matching row */
-    setTimeout(function(){
-      var rows = document.querySelectorAll('#receiptTbody tr');
-      rows.forEach(function(row){
-        if (row.textContent.indexOf(rcpParam) !== -1) {
-          row.style.background = 'rgba(224,89,69,0.08)';
-          row.style.transition = 'background 1.5s';
-          row.scrollIntoView({ behavior:'smooth', block:'center' });
-          setTimeout(function(){ row.style.background = ''; }, 2500);
-        }
-      });
-    }, 100);
+    if (direct) {
+      /* "Lihat Receipt" — open detail directly, ready to send WA */
+      openDetail(rcpParam);
+    } else {
+      /* Highlight matching row in list */
+      setTimeout(function(){
+        var rows = document.querySelectorAll('#receiptTbody tr');
+        rows.forEach(function(row){
+          if (row.textContent.indexOf(rcpParam) !== -1) {
+            row.style.background = 'rgba(224,89,69,0.08)';
+            row.style.transition = 'background 1.5s';
+            row.scrollIntoView({ behavior:'smooth', block:'center' });
+            setTimeout(function(){ row.style.background = ''; }, 2500);
+          }
+        });
+      }, 100);
+    }
   }
 });
 </script>
