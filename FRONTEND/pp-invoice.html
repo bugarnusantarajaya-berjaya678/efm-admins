@@ -154,7 +154,9 @@
     .detail-actions { display:flex; gap:12px; }
 
     /* Invoice Card */
-    .invoice-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow:hidden; max-width:720px; width:100%; }
+    .invoice-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow-x:hidden; max-width:720px; width:100%; box-sizing:border-box; }
+    #invoicePrintArea { width:100%; max-width:100%; box-sizing:border-box; overflow-x:hidden; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
+    #invoicePrintArea *, .invoice-card * { box-sizing:border-box; }
     .invoice-header { background:var(--navy); padding:20px 24px; display:flex; justify-content:space-between; align-items:flex-start; }
     .invoice-logo { display:flex; align-items:center; gap:12px; }
     .inv-logo-circle { width:58px; height:58px; background:transparent; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -183,14 +185,21 @@
     .qr-sub { font-size:11px; color:var(--gray-text); margin-top:3px; }
 
     /* Items table */
-    .items-table { width:100%; border-collapse:collapse; margin-bottom:24px; }
-    .items-table th { background:var(--gray-bg); padding:11px 14px; font-size:11px; font-weight:700; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; }
+    .items-table { width:100%; max-width:100%; border-collapse:collapse; table-layout:fixed; margin-bottom:24px; }
+    .items-table th { background:var(--gray-bg); padding:10px 8px; font-size:11px; font-weight:700; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:normal; word-wrap:break-word; overflow-wrap:break-word; }
     .items-table th.right, .items-table td.right { text-align:right; }
     .items-table th.center, .items-table td.center { text-align:center; }
-    .items-table td { padding:15px 14px; font-size:13px; border-bottom:1px solid var(--gray-border); }
+    .items-table td { padding:12px 8px; font-size:12.5px; border-bottom:1px solid var(--gray-border); white-space:normal; word-wrap:break-word; overflow-wrap:break-word; vertical-align:middle; }
     .items-table tr:last-child td { border-bottom:none; }
     .item-name { font-weight:600; color:var(--navy); margin-bottom:3px; }
     .item-desc { font-size:11px; color:var(--gray-text); }
+    /* Column widths: Deskripsi | Harga/Sesi | Jml Sesi | Harga Paket | Diskon Paket | Total */
+    .items-table th:nth-child(1), .items-table td:nth-child(1) { width:28%; text-align:left; }
+    .items-table th:nth-child(2), .items-table td:nth-child(2) { width:16%; text-align:right; }
+    .items-table th:nth-child(3), .items-table td:nth-child(3) { width:10%; text-align:center; }
+    .items-table th:nth-child(4), .items-table td:nth-child(4) { width:16%; text-align:right; }
+    .items-table th:nth-child(5), .items-table td:nth-child(5) { width:15%; text-align:right; }
+    .items-table th:nth-child(6), .items-table td:nth-child(6) { width:15%; text-align:right; }
 
     /* Summary */
     .summary-wrap { display:flex; justify-content:flex-end; margin-bottom:24px; }
@@ -374,25 +383,14 @@
       .syarat-table td:first-child { font-size: 7.5pt !important; }
     }
 
-    /* ── Global table fix: prevent overflow ── */
-    .items-table, .receipt-items table {
-      width: 100% !important;
-      max-width: 100% !important;
-      table-layout: fixed !important;
-      border-collapse: collapse;
+    /* ── Global table fix: receipt items ── */
+    .receipt-items table {
+      width: 100% !important; max-width: 100% !important;
+      table-layout: fixed !important; border-collapse: collapse;
     }
-    .items-table th, .items-table td,
     .receipt-items th, .receipt-items td {
-      word-wrap: break-word !important;
-      overflow-wrap: break-word !important;
-      white-space: normal !important;
-      box-sizing: border-box !important;
-    }
-
-    /* ── iOS Safari: disable text inflation ── */
-    #invoicePrintArea {
-      -webkit-text-size-adjust: 100% !important;
-      text-size-adjust: 100% !important;
+      word-wrap: break-word !important; overflow-wrap: break-word !important;
+      white-space: normal !important; box-sizing: border-box !important;
     }
 
     /* ══════════════════════════════════════════════════════
@@ -443,8 +441,12 @@
       .syarat-table td:first-child { width: 25px !important; }
     }
 
-    /* 3. MOBILE (≤ 768px) — convert to flexbox rows */
+    /* 3. MOBILE (≤ 768px) — items table scrollable, syarat flexbox */
     @media (max-width: 768px) {
+      /* Items table: allow horizontal scroll on narrow screens */
+      .invoice-body { overflow-x: auto !important; }
+      .items-table { table-layout: auto !important; }
+
       .syarat-section {
         padding: 10px 8px 14px !important;
         overflow: hidden !important;
