@@ -78,13 +78,53 @@
 /* ── PHONE (≤ 768px) ── */
 @media (max-width: 768px) {
 
+  /* ── CRITICAL: switch from fixed-height flex to scrollable layout ──
+     The desktop layout uses height:100vh + overflow:hidden on .main/.content
+     so the table fills remaining space with flex:1. On mobile this causes
+     the table to collapse when filters wrap into multiple rows.
+     Fix: let content scroll naturally instead. */
+  body {
+    overflow: auto !important;
+    height: auto !important;
+  }
+  .main {
+    height: auto !important;
+    overflow: visible !important;
+    min-height: 100vh;
+  }
+  .content {
+    overflow: visible !important;
+    height: auto !important;
+    flex: none !important;
+    padding: 14px 14px 24px !important;
+  }
+  /* Make table-card show fully instead of collapsing */
+  .table-card {
+    flex: none !important;
+    min-height: 300px;
+    height: auto !important;
+  }
+  .table-wrap {
+    flex: none !important;
+    height: auto !important;
+    min-height: 200px;
+    max-height: 60vh;
+    overflow: auto;
+  }
+  /* Views: always visible (no flex:1 collapse) */
+  .view.active {
+    display: block !important;
+    flex: none !important;
+  }
+  #detailView.active {
+    display: block !important;
+    overflow-y: visible !important;
+  }
+
   /* Header */
   .header { padding: 0 14px; height: 56px; }
   .header-title { font-size: 13px; }
-  .search-bar { display: none; } /* collapsed on phone — use header search if needed */
-
-  /* Content padding */
-  .content { padding: 14px 14px 0 !important; }
+  .search-bar { display: none; }
 
   /* Stats: 2×2 always */
   .stats-row { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
@@ -94,7 +134,7 @@
   /* Filters */
   .filters-bar { padding: 8px 12px; gap: 8px; }
   .filter-select,
-  .filter-search { flex: 1 1 100%; }
+  .filter-search { flex: 1 1 calc(50% - 4px); min-width: 0; }
   .btn-clear { flex: 1 1 100%; text-align: center; }
 
   /* Page header */
@@ -112,18 +152,35 @@
   .pagination { flex-direction: column; gap: 8px; padding: 10px 14px; }
   .pagination-info { font-size: 11px; }
 
-  /* Modal */
-  .modal-overlay { padding: 10px; align-items: flex-end; }
-  .modal { border-radius: 16px 16px 0 0; max-width: 100% !important; max-height: 92vh; overflow-y: auto; }
+  /* Modal: bottom sheet */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal {
+    border-radius: 20px 20px 0 0;
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
   .modal-header { padding: 16px 18px 14px; }
   .modal-body   { padding: 16px 18px; }
   .modal-footer { padding: 12px 18px; flex-wrap: wrap; gap: 8px; }
   .modal-footer button { flex: 1 1 auto; }
 
+  /* Drawer (orders detail): bottom sheet */
+  .drawer-overlay { padding: 0 !important; align-items: flex-end !important; }
+  .drawer {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 92vh !important;
+    border-radius: 20px 20px 0 0 !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
   /* Receipt overlay */
-  .receipt-overlay { padding: 10px; align-items: flex-end; }
+  .receipt-overlay { padding: 0; align-items: flex-end; }
   .receipt-modal {
-    border-radius: 16px 16px 0 0;
+    border-radius: 20px 20px 0 0;
     max-width: 100% !important;
     max-height: 92vh;
     overflow-y: auto;
@@ -150,14 +207,11 @@
   /* Summary box: full width */
   .summary-box { width: 100% !important; }
 
-  /* Drawer (orders detail) */
-  .drawer { width: 100% !important; right: -100% !important; }
-
   /* Kanban / card lists */
   .kanban-col { min-width: 260px; }
 
   /* Import modal */
-  #modalImportLeads .modal { max-width: 100% !important; border-radius: 16px 16px 0 0; }
+  #modalImportLeads .modal { max-width: 100% !important; border-radius: 20px 20px 0 0; }
 }
 
 /* ── SMALL PHONE (≤ 480px) ── */
