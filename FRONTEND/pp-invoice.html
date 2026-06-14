@@ -158,16 +158,42 @@
     #invoicePrintArea { width:100%; max-width:100%; box-sizing:border-box; overflow-x:hidden; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
     #invoicePrintArea *, .invoice-card * { box-sizing:border-box; }
 
-    /* ── Screen-only zoom: shrink invoice preview ~35% so it fits without scrolling ── */
+    /* ══════════════════════════════════════════════════════════
+       PDF VIEWER — Screen only (print overrides below reset all)
+       ══════════════════════════════════════════════════════════ */
     @media screen {
-      #invoicePrintArea {
-        zoom: 0.65;
-        /* Firefox fallback (zoom not supported) */
-        -moz-transform: scale(0.65);
-        -moz-transform-origin: top left;
+      /* 1. Grey canvas — mimics Acrobat / Google Drive PDF viewer */
+      .invoice-preview-canvas {
+        background: #e8eaed;
+        padding: 36px 24px 60px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        overflow-x: auto;
+        border-radius: 0 0 12px 12px;
       }
-      /* Compensate: wrapper needs less height since content is zoomed */
-      #detailView.active { padding-bottom: 8px; }
+
+      /* 2. A4-proportioned paper with shadow + zoom-in 25% */
+      .invoice-preview-canvas #invoicePrintArea {
+        width: 794px !important;
+        min-width: 794px !important;
+        max-width: 794px !important;
+        background: #ffffff !important;
+        padding: 40px !important;
+        border-radius: 3px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10) !important;
+        transform: scale(1.25) !important;
+        transform-origin: top center !important;
+        margin-bottom: 200px !important; /* compensate for scale pushing content down */
+        border: none !important;
+        overflow: visible !important;
+      }
+
+      /* 3. Crisp font rendering on high-DPI screens */
+      .invoice-preview-canvas #invoicePrintArea * {
+        -webkit-font-smoothing: antialiased !important;
+        -moz-osx-font-smoothing: grayscale !important;
+      }
     }
     .invoice-header { background:var(--navy); padding:20px 24px; display:flex; justify-content:space-between; align-items:flex-start; }
     .invoice-logo { display:flex; align-items:center; gap:12px; }
@@ -508,10 +534,29 @@
       }
     }
 
-    /* ── Print: A4 fit + card lock ── */
+    /* ── Print: A4 fit — RESET all PDF-viewer effects ── */
     @media print {
       @page { size: A4 portrait; margin: 10mm; }
       body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      /* Remove canvas bg & padding */
+      .invoice-preview-canvas {
+        background: none !important;
+        padding: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+      }
+      /* Reset zoom & shadow on the card */
+      #invoicePrintArea {
+        transform: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
       .invoice-card, .receipt-card {
         width: 100% !important; max-width: 100% !important;
         margin: 0 !important; box-sizing: border-box !important; overflow: hidden !important;
@@ -756,6 +801,8 @@
         </div>
       </div>
 
+      <!-- PDF Viewer Canvas -->
+      <div class="invoice-preview-canvas">
       <!-- Invoice Card -->
       <div class="invoice-card" id="invoicePrintArea">
 
@@ -902,6 +949,7 @@
         </div>
 
       </div>
+      </div><!-- /invoice-preview-canvas -->
     </div>
 
   </div><!-- /content -->
