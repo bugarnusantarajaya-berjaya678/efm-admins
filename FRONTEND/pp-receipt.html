@@ -6,7 +6,7 @@
   <title>EFM Portal — Receipt &amp; Barcode PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -158,13 +158,13 @@
     .receipt-meta-item .lbl { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
     .receipt-meta-item .val { font-size:13px; font-weight:600; color:var(--navy); }
     .receipt-barcode { background:var(--gray-bg); border-radius:12px; padding:20px; text-align:center; margin-bottom:20px; border:1.5px solid var(--gray-border); }
-    .barcode-svg { display:flex; justify-content:center; align-items:center; min-height:120px; }
-    .barcode-svg svg { max-width:100%; height:auto; }
-    #receiptBarcode { max-width:280px; height:auto; }
-    .barcode-label { font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; margin-top:10px; }
+    .barcode-svg { display:flex; justify-content:center; align-items:center; }
+    #receiptBarcode { width:190px; height:190px; margin:0 auto; }
+    #receiptBarcode canvas, #receiptBarcode img { width:190px !important; height:190px !important; display:block; }
+    .barcode-label { font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; margin-top:12px; }
     .barcode-sub { font-size:11px; color:var(--gray-text); margin-top:4px; }
     @media print {
-      #receiptBarcode {
+      #receiptBarcode canvas, #receiptBarcode img {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
@@ -406,7 +406,7 @@
 
             <div class="receipt-barcode">
               <div class="barcode-svg">
-                <svg id="receiptBarcode"></svg>
+                <div id="receiptBarcode"></div>
               </div>
               <div class="barcode-label" id="rcptBarLabel">—</div>
               <div class="barcode-sub">Scan untuk verifikasi pembayaran</div>
@@ -603,20 +603,24 @@ function renderPagination(total) {
   }
 }
 
-/* ── Generate Receipt Barcode ── */
+/* ── Generate Receipt QR Code ── */
+var _qrInstance = null;
 function generateReceiptBarcode(receiptNo) {
-  if (!receiptNo || !window.JsBarcode) return;
+  if (!receiptNo || !window.QRCode) return;
+  var el = document.getElementById('receiptBarcode');
+  if (!el) return;
+  el.innerHTML = '';                /* clear previous QR */
   try {
-    JsBarcode("#receiptBarcode", receiptNo, {
-      format: "CODE128",
-      width: 1.5,
-      height: 50,
-      displayValue: false,
-      lineColor: "#1E1C43",
-      margin: 5
+    _qrInstance = new QRCode(el, {
+      text:         receiptNo,
+      width:        190,
+      height:       190,
+      colorDark:    '#1E1C43',
+      colorLight:   '#F8F9FA',      /* match .gray-bg background */
+      correctLevel: QRCode.CorrectLevel.M
     });
   } catch (err) {
-    console.warn('Barcode generation failed:', err);
+    console.warn('QR generation failed:', err);
   }
 }
 
@@ -700,9 +704,15 @@ function _pdfCloneFixReceipt(doc) {
   el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;';
   var card = el.querySelector('.receipt-card');
   if (card) card.style.cssText += ';border-radius:0!important;box-shadow:none!important;';
-  /* Fix QR SVG — currentColor needs an explicit color since CSS vars don't resolve in clone */
-  var barcodeSvg = el.querySelector('.barcode-svg svg');
-  if (barcodeSvg) barcodeSvg.style.color = '#1E1C43';
+  /* QR is rendered as <canvas> by QRCode.js — html2canvas captures canvas natively.
+     No color fix needed (canvas pixels are raster, not CSS-dependent). */
+  var qrCanvas = el.querySelector('#receiptBarcode canvas');
+  if (qrCanvas) {
+    qrCanvas.style.width  = '190px';
+    qrCanvas.style.height = '190px';
+    qrCanvas.style.display = 'block';
+    qrCanvas.style.margin  = '0 auto';
+  }
 }
 
 function downloadReceiptPDF() {
