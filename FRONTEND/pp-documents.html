@@ -932,7 +932,24 @@ document.addEventListener('DOMContentLoaded', () => {
   applyFilterAndPaginate();
   const params = new URLSearchParams(window.location.search);
   const previewId = params.get('preview');
-  if (previewId && AGREEMENT_DB[previewId]) setTimeout(() => previewDoc(previewId), 150);
+  if (previewId) {
+    /* If not in DB yet (e.g. new order with timestamp agr_id), build a temp entry from URL params */
+    if (!AGREEMENT_DB[previewId]) {
+      const klien = params.get('klien');
+      const orderId = params.get('order');
+      if (klien && orderId) {
+        AGREEMENT_DB[previewId] = {
+          berkas_id: previewId, display_id: '#' + previewId,
+          nama_klien: klien, order_id: orderId,
+          paket: params.get('paket') || '—',
+          tgl_dibuat: params.get('tgl') || '—',
+          status_ttd: params.get('status') || 'pending',
+          tgl_ttd: null,
+        };
+      }
+    }
+    if (AGREEMENT_DB[previewId]) setTimeout(() => previewDoc(previewId), 150);
+  }
 });
 </script>
 
