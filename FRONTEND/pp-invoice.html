@@ -1502,81 +1502,90 @@ function _pdfCloneFixInvoice(doc) {
   const el = doc.getElementById('invoicePrintArea');
   if (!el) return;
 
-  /* Set fixed width on the element directly — border-box:850px = content:770px */
-  el.style.width    = '850px';
-  el.style.maxWidth = '850px';
-  el.style.minWidth = '850px';
-  el.style.boxSizing = 'border-box';
-  el.style.padding  = '40px';
-  el.style.position = 'static';
-  el.style.margin   = '0';
-
-  /* If convertSyaratTable() already replaced .syarat-table with divs (mobile),
-     restore the original <table> so PDF always gets the desktop table layout. */
+  /* ── 1. SYARAT SECTION: restore table if mobile-converted, then wrap as page-break unit ── */
   if (window._syaratOrigHTML) {
-    const syaratSection = el.querySelector('.syarat-section');
-    if (syaratSection && !syaratSection.querySelector('.syarat-table')) {
-      /* Remove the converted div wrapper and put the original table back */
-      const divWrapper = syaratSection.querySelector('div[style]');
+    const syaratSec = el.querySelector('.syarat-section');
+    if (syaratSec && !syaratSec.querySelector('.syarat-table')) {
+      const divWrapper = syaratSec.querySelector('div[style]');
       if (divWrapper) {
         const tmp = doc.createElement('div');
         tmp.innerHTML = window._syaratOrigHTML;
-        const restoredTable = tmp.firstChild;
-        syaratSection.replaceChild(restoredTable, divWrapper);
+        syaratSec.replaceChild(tmp.firstChild, divWrapper);
       }
     }
   }
+  /* Wrap heading + table together so they move as one unit across page breaks */
+  const syaratSection = el.querySelector('.syarat-section');
+  if (syaratSection && syaratSection.parentNode) {
+    const wrap = doc.createElement('div');
+    wrap.style.cssText = 'page-break-inside:avoid;break-inside:avoid;display:block';
+    syaratSection.parentNode.insertBefore(wrap, syaratSection);
+    wrap.appendChild(syaratSection);
+    /* Each row avoids an internal split too (for future long syarat) */
+    syaratSection.querySelectorAll('.syarat-table tr').forEach(tr => {
+      tr.style.pageBreakInside = 'avoid';
+      tr.style.breakInside = 'avoid';
+    });
+  }
 
-  /* Inject a <style> tag at end of <head> — last stylesheet wins over all media queries */
+  /* ── 2. INJECTED CSS (appended to <head>; !important wins original rules) ── */
   const s = doc.createElement('style');
   s.textContent = [
-    /* Force desktop layout — overrides all @media (max-width:768px) rules */
-    'body, .main, .content { height: auto !important; overflow: visible !important; }',
-    '.sidebar { display: none !important; }',
-    '.main { margin-left: 0 !important; }',
-    /* Invoice card: 850px border-box = 770px content (matches browser preview) */
-    '#invoicePrintArea { width:850px !important; max-width:850px !important; min-width:0 !important; padding:40px !important; box-sizing:border-box !important; }',
-    /* Undo any leaked global table min-width; set width:100% of 770px content area */
-    '#invoicePrintArea table, #invoicePrintArea .items-table, #invoicePrintArea .syarat-table { min-width:0 !important; width:100% !important; table-layout:fixed !important; }',
-    /* Header: logo LEFT, meta RIGHT side by side */
-    '.invoice-header { display:flex !important; flex-direction:row !important; justify-content:space-between !important; align-items:flex-start !important; padding:16px 24px !important; gap:0 !important; }',
-    '.invoice-logo { flex-shrink:0 !important; }',
-    '.invoice-meta { text-align:right !important; border-top:none !important; padding-top:0 !important; }',
-    '.inv-number { font-size:13px !important; }',
-    '.inv-dates  { font-size:11px !important; }',
-    /* Body layout */
-    '.invoice-body { padding:0 !important; overflow:visible !important; }',
-    '.billing-row { display:grid !important; grid-template-columns:1fr 1fr !important; gap:28px !important; margin-bottom:14px !important; padding-bottom:12px !important; }',
-    '.qr-section { display:flex !important; }',
-    /* Items table: force fixed layout; columns sum to exactly 100% */
-    '.items-table { margin-bottom:10px !important; border-collapse:collapse !important; }',
-    '.items-table th, .items-table td { white-space:normal !important; word-break:break-word !important; overflow-wrap:break-word !important; overflow:visible !important; font-size:12px !important; padding:8px 7px !important; }',
-    '.items-table th:first-child,  .items-table td:first-child  { width:28% !important; text-align:left !important; }',
-    '.items-table th:nth-child(2), .items-table td:nth-child(2) { width:13% !important; text-align:right !important; }',
-    '.items-table th:nth-child(3), .items-table td:nth-child(3) { width:12% !important; text-align:center !important; }',
-    '.items-table th:nth-child(4), .items-table td:nth-child(4) { width:15% !important; text-align:right !important; }',
-    '.items-table th:nth-child(5), .items-table td:nth-child(5) { width:14% !important; text-align:right !important; }',
-    '.items-table th:nth-child(6), .items-table td:nth-child(6) { width:18% !important; text-align:right !important; }',
+    /* Desktop layout — kill sidebar, scroll locks */
+    'body, html                { background:none !important; }',
+    'body, .main, .content    { height:auto !important; overflow:visible !important; }',
+    '.sidebar                  { display:none !important; }',
+    '.main                     { margin-left:0 !important; }',
+    '.invoice-preview-canvas   { background:none !important; padding:0 !important; margin:0 !important; overflow:visible !important; height:auto !important; display:block !important; }',
+
+    /* Card: 850px border-box = 770px content. Override overflow:hidden and margin-bottom:40px */
+    '#invoicePrintArea { width:850px !important; max-width:850px !important; min-width:0 !important; padding:40px !important; margin:0 !important; box-sizing:border-box !important; overflow:visible !important; }',
+
+    /* Undo leaked global table min-width */
+    '#invoicePrintArea table, #invoicePrintArea .syarat-table { min-width:0 !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }',
+
+    /* Header */
+    '.invoice-header  { display:flex !important; flex-direction:row !important; justify-content:space-between !important; align-items:flex-start !important; padding:16px 24px !important; gap:0 !important; }',
+    '.invoice-logo    { flex-shrink:0 !important; }',
+    '.invoice-meta    { text-align:right !important; border-top:none !important; padding-top:0 !important; }',
+    '.inv-number      { font-size:13px !important; }',
+    '.inv-dates       { font-size:11px !important; }',
+
+    /* Body */
+    '.invoice-body  { padding:0 !important; overflow:visible !important; }',
+    '.billing-row   { display:grid !important; grid-template-columns:1fr 1fr !important; gap:24px !important; margin-bottom:12px !important; padding-bottom:12px !important; }',
+    '.qr-section    { display:flex !important; }',
+
+    /* Items table: explicit px widths (sum = 770px); overflow:visible to prevent clipping */
+    '.items-table { width:770px !important; margin-bottom:10px !important; border-collapse:collapse !important; overflow:visible !important; }',
+    '.items-table th, .items-table td { white-space:normal !important; word-break:break-word !important; overflow-wrap:break-word !important; overflow:visible !important; font-size:12px !important; padding:7px 7px !important; box-sizing:border-box !important; }',
+    '.items-table th:nth-child(1), .items-table td:nth-child(1) { width:210px !important; text-align:left !important; }',
+    '.items-table th:nth-child(2), .items-table td:nth-child(2) { width:95px !important;  text-align:right !important; }',
+    '.items-table th:nth-child(3), .items-table td:nth-child(3) { width:110px !important; text-align:center !important; }',
+    '.items-table th:nth-child(4), .items-table td:nth-child(4) { width:115px !important; text-align:right !important; }',
+    '.items-table th:nth-child(5), .items-table td:nth-child(5) { width:115px !important; text-align:right !important; }',
+    '.items-table th:nth-child(6), .items-table td:nth-child(6) { width:125px !important; text-align:right !important; }',
+
     /* Summary */
     '.summary-wrap { margin-bottom:10px !important; }',
-    '.summary-box { width:320px !important; }',
-    /* Notes: single column, minimal padding */
-    '.invoice-notes { padding:12px 0 6px !important; }',
-    '.notes-grid { display:block !important; }',
+    '.summary-box  { width:320px !important; }',
+
+    /* Notes: single column, compact */
+    '.invoice-notes        { padding:12px 0 6px !important; }',
+    '.notes-grid           { display:block !important; }',
     '.note-item:last-child { display:none !important; }',
-    '.note-item { margin-bottom:0 !important; }',
-    '.note-item h5 { margin-bottom:4px !important; font-size:9px !important; }',
-    '.note-item p  { font-size:11px !important; line-height:1.5 !important; }',
-    /* Syarat: keep as unit — avoid page-break-inside on the whole section wrapper */
-    '.syarat-section { padding:8px 0 !important; margin-top:0 !important; border-top:1px solid #E2E6EA !important; overflow:visible !important; }',
+    '.note-item            { margin-bottom:0 !important; }',
+    '.note-item h5         { margin-bottom:4px !important; font-size:9px !important; }',
+    '.note-item p          { font-size:11px !important; line-height:1.5 !important; }',
+
+    /* Syarat */
+    '.syarat-section    { padding:8px 0 !important; margin-top:0 !important; border-top:1px solid #E2E6EA !important; overflow:visible !important; }',
     '.syarat-section h5 { font-size:9px !important; margin-bottom:5px !important; }',
-    '.syarat-table { display:table !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }',
+    '.syarat-table      { display:table !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }',
     '.syarat-table tbody { display:table-row-group !important; }',
-    '.syarat-table tr { display:table-row !important; }',
-    '.syarat-table td { display:table-cell !important; padding:4px 7px !important; font-size:10.5px !important; line-height:1.5 !important; white-space:normal !important; word-break:break-word !important; border:1px solid #E2E6EA !important; }',
+    '.syarat-table tr   { display:table-row !important; }',
+    '.syarat-table td   { display:table-cell !important; padding:4px 7px !important; font-size:10.5px !important; line-height:1.5 !important; white-space:normal !important; word-break:break-word !important; border:1px solid #E2E6EA !important; overflow:visible !important; }',
     '.syarat-table td:first-child { width:24px !important; }',
-    /* Canvas: no bg, no padding */
-    '.invoice-preview-canvas { background:none !important; padding:0 !important; display:block !important; }',
   ].join('\n');
   doc.head.appendChild(s);
 }
@@ -1598,9 +1607,9 @@ function downloadInvoicePDF() {
     margin:      [10, 10, 10, 10],
     filename:    filename,
     image:       { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false, windowWidth:850, onclone: _pdfCloneFixInvoice },
+    html2canvas: { scale:2, useCORS:true, logging:false, windowWidth:1440, onclone: _pdfCloneFixInvoice },
     jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak:   { mode:'css', avoid:'.syarat-section' }
+    pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
     if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download PDF'; }
   });
