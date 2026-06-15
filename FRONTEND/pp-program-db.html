@@ -79,25 +79,25 @@
     /* Table */
     .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
     .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:1060px; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:top; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:1430px; }
+    th { background:var(--gray-bg); padding:11px 14px; font-size:12px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:visible; text-overflow:clip; position:sticky; top:0; z-index:2; }
+    td { padding:10px 14px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#FAFAFA; cursor:pointer; }
 
-    /* Column widths — proportional, text columns wrap */
-    .col-id       { width:110px; min-width:110px; }
-    .col-latihan  { width:130px; min-width:110px; white-space:normal; word-break:break-word; }
-    .col-paket    { width:145px; min-width:120px; white-space:normal; word-break:break-word; }
-    .col-sesi     { width:55px;  min-width:55px;  text-align:center; white-space:nowrap; }
-    .col-pertemuan{ width:75px;  min-width:70px;  text-align:center; white-space:nowrap; }
-    .col-masa     { width:90px;  min-width:80px;  white-space:nowrap; }
-    .col-partis   { width:80px;  min-width:75px;  text-align:center; white-space:nowrap; }
-    .col-pic      { width:145px; min-width:130px; white-space:normal; word-break:break-word; }
-    .col-biaya    { width:105px; min-width:95px;  white-space:nowrap; }
-    .col-harga    { width:115px; min-width:100px; white-space:nowrap; }
-    .col-status   { width:90px;  min-width:85px;  text-align:center; }
-    .col-aksi     { width:80px;  min-width:75px;  text-align:center; white-space:nowrap; }
+    /* Column widths — sized for 12px uppercase headers + 28px horizontal padding */
+    .col-id       { width:120px; min-width:120px; white-space:nowrap; }
+    .col-latihan  { width:145px; min-width:130px; white-space:normal; word-break:break-word; }
+    .col-paket    { width:155px; min-width:140px; white-space:normal; word-break:break-word; }
+    .col-sesi     { width:68px;  min-width:68px;  text-align:center; white-space:nowrap; }
+    .col-pertemuan{ width:128px; min-width:128px; text-align:center; white-space:nowrap; }
+    .col-masa     { width:145px; min-width:140px; white-space:nowrap; }
+    .col-partis   { width:95px;  min-width:90px;  text-align:center; white-space:nowrap; }
+    .col-pic      { width:155px; min-width:140px; white-space:normal; word-break:break-word; }
+    .col-biaya    { width:120px; min-width:115px; text-align:right; white-space:nowrap; }
+    .col-harga    { width:130px; min-width:120px; text-align:right; white-space:nowrap; }
+    .col-status   { width:100px; min-width:95px;  text-align:center; }
+    .col-aksi     { width:70px;  min-width:70px;  text-align:center; white-space:nowrap; }
 
     .prog-id { font-weight:700; color:var(--navy); font-size:12.5px; white-space:nowrap; }
     .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600; line-height:1.4; white-space:nowrap; }
