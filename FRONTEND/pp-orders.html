@@ -2236,7 +2236,7 @@ function _commitNewOrder() {
     tgl_mulai: tglMulai || 'Baru',
     status_order: 'active', status_invoice: 'pending',
     inv_no: invNo, program_id: progId, lokasi, jadwal: jadwals || '—',
-    agr_id: null, agr_status: 'pending', agr_tgl_dibuat: tglMulai || '—', agr_tgl_ttd: null,
+    agr_id: 'AGR-' + String(Date.now()).slice(-5), agr_status: 'pending', agr_tgl_dibuat: tglMulai || tglInvStr, agr_tgl_ttd: null,
   };
 
   // Simpan data invoice ke sessionStorage agar pp-invoice.html bisa langsung buka
@@ -2248,7 +2248,13 @@ function _commitNewOrder() {
     namaLatihan: progData.namaLatihan || 'Private Training',
     namaPaket: paketLbl, sesi: progData.sesi || 0,
     pertemuan: progData.pertemuan || 0, masa: progData.masa || '—',
+    partisipan: progData.partisipan || 1,
     picFull: picData.fullname || '—',
+    picNick: picData.nick || (picData.fullname||'P').split(' ')[0],
+    picId: progData.picId || '—',
+    picSpesialis: picData.spesialis || '—',
+    lokasi: lokasi,
+    jadwal: jadwals || '—',
     hargaPaket: progData.harga || grandTotal, hargaPersesi: progData.hargaPersesi || 0,
     diskonPaket: progData.diskonPaket || 0,
     biayaLain: 0, biayaLainKet: '', diskon: 0, promoKode: '', cashback: 0,
