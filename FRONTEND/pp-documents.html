@@ -1203,7 +1203,7 @@ function downloadAgreementPDF() {
   </div>`;
 
   /* Render shell off-screen so html2canvas can measure it */
-  shell.style.cssText = 'display:block;position:fixed;left:-9999px;top:0;width:794px;background:white;z-index:-1';
+  shell.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:9999';
   document.body.appendChild(shell);
 
   const filename = 'Agreement Klien - #' + a.order_id + ' ' + a.nama_klien + '.pdf';
