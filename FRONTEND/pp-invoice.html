@@ -153,77 +153,55 @@
     .detail-header p { font-size:13px; color:var(--gray-text); margin-top:4px; }
     .detail-actions { display:flex; gap:12px; }
 
-    /* Invoice Card */
-    .invoice-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow-x:hidden; max-width:720px; width:100%; box-sizing:border-box; }
-    #invoicePrintArea { width:100%; max-width:100%; box-sizing:border-box; overflow-x:hidden; -webkit-text-size-adjust:100%; text-size-adjust:100%; }
-    #invoicePrintArea, #invoicePrintArea * { box-sizing:border-box !important; max-width:100% !important; }
-    .invoice-card * { box-sizing:border-box; }
+    /* ── Invoice Card — base container (screen override below in @media screen) ── */
+    .invoice-card {
+      width: 100% !important;
+      max-width: 850px !important;
+      background: #ffffff !important;
+      padding: 40px !important;
+      border-radius: 8px !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+      margin: 0 auto 40px auto !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      border: none !important;
+    }
+    #invoicePrintArea {
+      width: 100% !important;
+      max-width: 850px !important;
+      box-sizing: border-box !important;
+      overflow: hidden !important;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+    /* Force all children to stay inside the box */
+    #invoicePrintArea *, .invoice-card * {
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
     /* Typography scale */
-    #invoicePrintArea .invoice-title { font-size:20px !important; font-weight:700; }
-    #invoicePrintArea .section-title { font-size:13px !important; font-weight:600; }
     #invoicePrintArea p { font-size:11.5px !important; line-height:1.4 !important; }
+    #invoicePrintArea .invoice-title { font-size:20px !important; font-weight:700; }
+    #invoicePrintArea .section-title,
+    #invoicePrintArea h4,
+    #invoicePrintArea h5 { font-size:13px !important; font-weight:600; }
     #invoicePrintArea .text-muted { font-size:10.5px !important; }
 
     /* ══════════════════════════════════════════════════════════
-       INVOICE PREVIEW CANVAS — Screen only, synced with Receipt style
+       INVOICE PREVIEW CANVAS — Screen only
        ══════════════════════════════════════════════════════════ */
     @media screen {
-      /* 1. Soft grey canvas — same standard as receipt preview */
+      /* Grey canvas, card centered, max 850px matching action bar */
       .invoice-preview-canvas {
         background: #f3f4f6;
-        padding: 24px;
+        padding: 28px 24px;
         display: flex;
         justify-content: center;
         align-items: flex-start;
         overflow-y: auto;
         border-radius: 0 0 12px 12px;
       }
-
-      /* 2. Invoice card: max-width 750px, no transform scale */
-      .invoice-preview-canvas #invoicePrintArea {
-        width: 100% !important;
-        max-width: 750px !important;
-        min-width: unset !important;
-        background: #ffffff !important;
-        padding: 32px !important;
-        border-radius: 8px !important;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.10), 0 2px 4px -1px rgba(0,0,0,0.06) !important;
-        transform: none !important;
-        margin: 0 auto !important;
-        box-sizing: border-box !important;
-        border: none !important;
-        overflow: visible !important;
-      }
-
-      /* 3. Items table: proportional, no overflow */
-      .invoice-preview-canvas .items-table {
-        width: 100% !important;
-        table-layout: fixed !important;
-      }
-      .invoice-preview-canvas .items-table th,
-      .invoice-preview-canvas .items-table td {
-        font-size: 13px !important;
-        padding: 10px 6px !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-        white-space: normal !important;
-      }
-
-      /* 4. Syarat & Ketentuan: clean flowing text */
-      .invoice-preview-canvas .syarat-table {
-        width: 100% !important;
-        table-layout: fixed !important;
-      }
-      .invoice-preview-canvas .syarat-table td {
-        font-size: 12px !important;
-        line-height: 1.5 !important;
-        padding: 6px 4px !important;
-      }
-      .invoice-preview-canvas .syarat-table td:first-child {
-        width: 25px !important;
-      }
-
-      /* 5. Crisp font rendering */
+      /* Crisp font rendering */
       .invoice-preview-canvas #invoicePrintArea * {
         -webkit-font-smoothing: antialiased !important;
         -moz-osx-font-smoothing: grayscale !important;
@@ -256,16 +234,16 @@
     .qr-label { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; }
     .qr-sub { font-size:11px; color:var(--gray-text); margin-top:3px; }
 
-    /* Items table */
-    .items-table { width:100% !important; max-width:100% !important; border-collapse:collapse !important; table-layout:fixed !important; margin:15px 0 !important; }
-    .items-table th { background:#f8fafc; padding:10px 8px !important; font-size:12px !important; font-weight:600 !important; color:#1e293b !important; text-align:left; text-transform:uppercase; letter-spacing:0.4px; white-space:normal; word-break:break-word; overflow-wrap:break-word; vertical-align:middle !important; }
-    .items-table td { padding:10px 8px !important; font-size:12px !important; border-bottom:1px solid var(--gray-border); white-space:normal; word-break:break-word; overflow-wrap:break-word; vertical-align:middle !important; }
+    /* Items table — 6 col, table-layout:fixed, total 100% */
+    .items-table { width:100% !important; max-width:100% !important; border-collapse:collapse !important; table-layout:fixed !important; margin:20px 0 !important; }
+    .items-table th { background:#f8fafc; padding:12px 8px !important; font-size:12px !important; font-weight:600 !important; color:#1e293b !important; text-align:left; text-transform:uppercase; letter-spacing:0.4px; white-space:normal; word-break:break-word; overflow-wrap:break-word; vertical-align:middle !important; }
+    .items-table td { padding:12px 8px !important; font-size:12px !important; border-bottom:1px solid var(--gray-border); white-space:normal; word-break:break-word; overflow-wrap:break-word; vertical-align:middle !important; }
     .items-table th.right, .items-table td.right { text-align:right; }
     .items-table th.center, .items-table td.center { text-align:center; }
     .items-table tr:last-child td { border-bottom:none; }
     .item-name { font-weight:600; color:var(--navy); margin-bottom:3px; }
     .item-desc { font-size:11px; color:var(--gray-text); }
-    /* Column widths — total exactly 100%: 34+14+10+14+13+15 */
+    /* Column widths — 34+14+10+14+13+15 = 100% */
     .items-table th:nth-child(1), .items-table td:nth-child(1) { width:34% !important; text-align:left; }
     .items-table th:nth-child(2), .items-table td:nth-child(2) { width:14% !important; text-align:right; }
     .items-table th:nth-child(3), .items-table td:nth-child(3) { width:10% !important; text-align:center; }
@@ -286,9 +264,9 @@
 
     /* Notes */
     .invoice-notes { padding:16px 24px; border-top:1px solid var(--gray-border); background:var(--gray-bg); }
-    .notes-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .notes-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:24px; margin-top:0; }
     .note-item h5 { font-size:13px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-    .note-item p { font-size:14.3px; color:var(--gray-text); line-height:1.75; }
+    .note-item p { font-size:12px; color:var(--gray-text); line-height:1.6; }
     /* Syarat & Ketentuan section — base layout (responsive rules in second <style> block below) */
     .syarat-section { padding:14px 24px 20px; border-top:1px solid var(--gray-border); background:var(--gray-bg); }
     .syarat-section h5 { font-size:10px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
@@ -582,17 +560,16 @@
         display: block !important;
         overflow: visible !important;
       }
-      /* Reset canvas effects for print */
-      #invoicePrintArea {
-        transform: none !important;
+      /* Reset canvas / box effects for print */
+      #invoicePrintArea, .invoice-card {
+        max-width: 100% !important;
+        padding: 0 !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 0 !important;
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
+        overflow: visible !important;
         border: none !important;
         border-radius: 0 !important;
+        transform: none !important;
       }
       .invoice-card, .receipt-card {
         width: 100% !important; max-width: 100% !important;
