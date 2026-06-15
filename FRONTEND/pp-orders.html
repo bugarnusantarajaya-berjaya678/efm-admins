@@ -2255,6 +2255,7 @@ function _commitNewOrder() {
     pajak: 0, promoType: '', promoVal: 0, total: grandTotal,
   };
   sessionStorage.setItem('new_invoice_data', JSON.stringify(invData));
+  invoiceData[invNo] = invData; // langsung tersedia untuk renderInvoiceTab() sesi ini
 
   // Buat baris baru dan sisipkan di atas tabel
   const tbody = document.getElementById('ordersBody');
