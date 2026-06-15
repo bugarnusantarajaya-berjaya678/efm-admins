@@ -1607,7 +1607,7 @@ function downloadInvoicePDF() {
     margin:      [10, 10, 10, 10],
     filename:    filename,
     image:       { type:'jpeg', quality:0.98 },
-    html2canvas: { scale:2, useCORS:true, logging:false, windowWidth:1440, onclone: _pdfCloneFixInvoice },
+    html2canvas: { scale:2, useCORS:true, logging:false, onclone: _pdfCloneFixInvoice },
     jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
