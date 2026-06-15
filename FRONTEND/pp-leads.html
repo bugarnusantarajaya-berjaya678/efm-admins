@@ -93,13 +93,13 @@
     .page-btn:hover:not(:disabled) { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
     .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); font-weight:700; }
     table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:1230px; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
+    th { background:var(--gray-bg); padding:11px 12px; font-size:12px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:visible; position:sticky; top:0; z-index:2; }
+    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:#FAFAFA; cursor:pointer; }
 
     /* ── Semantic column classes ── */
-    .col-lead-id  { width:140px; min-width:140px; }
+    .col-lead-id  { width:140px; min-width:140px; white-space:nowrap; }
     td.col-lead-id { font-weight:700; color:var(--navy); padding-left:16px; }
     .col-nama     { width:200px; min-width:200px; white-space:normal; word-break:break-word; }
     .col-hp       { width:180px; min-width:180px; white-space:nowrap; }
@@ -396,8 +396,8 @@
               <td class="col-tanggal">10 Jun 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
               </td>
@@ -412,8 +412,8 @@
               <td class="col-tanggal">9 Jun 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
               </td>
@@ -428,8 +428,8 @@
               <td class="col-tanggal">8 Jun 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn success" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
               </td>
@@ -444,8 +444,8 @@
               <td class="col-tanggal">7 Jun 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
               </td>
@@ -610,8 +610,8 @@ function getLeadFromRow(tr) {
 function _actionBtnsHtml(statusPipeline) {
   const orderClass = statusPipeline === 'closed-won' ? 'success' : '';
   return `<div class="action-wrap" onclick="event.stopPropagation()">
-    <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button class="action-btn ${orderClass}" title="Buat Order" onclick="buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+    <button class="action-btn" title="Detail" onclick="openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
     <button class="action-btn danger" title="Hapus" onclick="deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
   </div>`;
 }
