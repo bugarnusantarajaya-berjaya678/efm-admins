@@ -1176,7 +1176,7 @@ function promoLabel(type, val, kode) {
 // Invoice data mapping
 const invoiceData = {
   'INV/EFM/PP/2026/0089': {
-    client:'Alex Mercer', initials:'AM', color:'#2980B9', orderId:'#PP-8042',
+    client:'James Wilson', initials:'JW', color:'#2980B9', orderId:'#PP-8042',
     date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
     picFull:'Sarah Jenkins', hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0,
@@ -1550,9 +1550,13 @@ function _pdfCloneFixInvoice(doc) {
     /* Items table: force fixed layout, columns */
     '.items-table { margin-bottom:12px !important; border-collapse:collapse !important; }',
     '.items-table th, .items-table td { white-space:normal !important; word-break:break-word !important; overflow-wrap:break-word !important; font-size:12px !important; padding:10px 8px !important; }',
-    '.items-table th:first-child, .items-table td:first-child { width:36% !important; text-align:left !important; }',
+    '.items-table th:first-child,  .items-table td:first-child  { width:28% !important; text-align:left !important; }',
+    '.items-table th:nth-child(2), .items-table td:nth-child(2) { width:12% !important; text-align:right !important; }',
+    '.items-table th:nth-child(3), .items-table td:nth-child(3) { width:8%  !important; text-align:center !important; }',
+    '.items-table th:nth-child(4), .items-table td:nth-child(4) { width:17% !important; text-align:right !important; }',
+    '.items-table th:nth-child(5), .items-table td:nth-child(5) { width:17% !important; text-align:right !important; }',
+    '.items-table th:nth-child(6), .items-table td:nth-child(6) { width:18% !important; text-align:right !important; }',
     '.items-table th:not(:first-child), .items-table td:not(:first-child) { text-align:right !important; }',
-    '.items-table th:nth-child(3), .items-table td:nth-child(3) { text-align:center !important; }',
     /* Summary */
     '.summary-wrap { margin-bottom:12px !important; }',
     '.summary-box { width:320px !important; }',
@@ -1564,7 +1568,7 @@ function _pdfCloneFixInvoice(doc) {
     '.note-item h5 { margin-bottom:4px !important; font-size:9px !important; }',
     '.note-item p  { font-size:11px !important; line-height:1.5 !important; }',
     /* Syarat: restore table layout, undo any flex conversion */
-    '.syarat-section { padding:12px 0 !important; margin-top:0 !important; border-top:1px solid #E2E6EA !important; overflow:visible !important; }',
+    '.syarat-section { padding:8px 0 !important; margin-top:0 !important; border-top:1px solid #E2E6EA !important; overflow:visible !important; page-break-inside:avoid !important; page-break-before:auto !important; }',
     '.syarat-section h5 { font-size:9px !important; margin-bottom:6px !important; }',
     '.syarat-table { display:table !important; width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }',
     '.syarat-table tbody { display:table-row-group !important; }',
