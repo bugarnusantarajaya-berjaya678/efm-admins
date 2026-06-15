@@ -362,7 +362,7 @@
         <div class="receipt-card">
           <div class="receipt-top">
             <div class="receipt-top-left">
-              <h2>ELITE FITNESS MANAGEMENT</h2>
+              <h2>Essential Fitness Management</h2>
               <p id="rcptOrderId">Order ID: —</p>
             </div>
             <span class="receipt-badge">LUNAS</span>
@@ -436,7 +436,7 @@
             <div class="receipt-footer-note">
               Terima kasih telah mempercayakan program fitness Anda kepada kami.<br/>
               Simpan receipt ini sebagai bukti pembayaran yang sah.<br/>
-              <strong>Elite Fitness Management</strong> — Profesional &amp; Terpercaya
+              <strong>Essential Fitness Management</strong> — Profesional &amp; Terpercaya
             </div>
           </div>
         </div>
@@ -681,6 +681,9 @@ function _pdfCloneFixReceipt(doc) {
   el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;';
   var card = el.querySelector('.receipt-card');
   if (card) card.style.cssText += ';border-radius:0!important;box-shadow:none!important;';
+  /* Fix QR SVG — currentColor needs an explicit color since CSS vars don't resolve in clone */
+  var barcodeSvg = el.querySelector('.barcode-svg svg');
+  if (barcodeSvg) barcodeSvg.style.color = '#1E1C43';
 }
 
 function downloadReceiptPDF() {
