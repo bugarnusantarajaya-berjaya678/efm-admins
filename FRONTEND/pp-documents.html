@@ -62,7 +62,7 @@
     .btn-primary:hover { background:var(--orange-hover); }
 
     /* STATS */
-    .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:14px; flex-shrink:0; }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; flex-shrink:0; }
     .stat-mini { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:12px 16px; }
     .stat-mini .label { font-size:10px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
     .stat-mini .value { font-size:20px; font-weight:700; color:var(--navy); }
@@ -71,6 +71,8 @@
     .stat-mini.highlight-yellow .value { color:var(--yellow); }
     .stat-mini.highlight-green { border-color:var(--green); }
     .stat-mini.highlight-green .value { color:var(--green); }
+    .stat-mini.highlight-blue { border-color:#2980B9; }
+    .stat-mini.highlight-blue .value { color:#2980B9; }
     @media (max-width:768px) { .stats-row { grid-template-columns:repeat(2,1fr); } }
 
     /* FILTERS */
@@ -105,9 +107,10 @@
     /* Badges */
     .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600; white-space:nowrap; }
     .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
-    .badge.signed  { background:#EAFAF1; color:var(--green); }
-    .badge.pending { background:#FEF9E7; color:var(--yellow); }
-    .badge.expired { background:#FDEDEC; color:var(--red); }
+    .badge.signed   { background:#EAFAF1; color:var(--green); }
+    .badge.pending  { background:#FEF9E7; color:var(--yellow); }
+    .badge.expired  { background:#FDEDEC; color:var(--red); }
+    .badge.waiting  { background:#EBF5FB; color:#2980B9; }
 
     /* Avatar */
     .client-cell { display:flex; align-items:center; gap:10px; }
@@ -292,6 +295,11 @@
         <div class="value" id="statSigned">0</div>
         <div class="sub">Agreement aktif</div>
       </div>
+      <div class="stat-mini highlight-blue">
+        <div class="label">Menunggu Approval</div>
+        <div class="value" id="statWaiting">0</div>
+        <div class="sub">Klien sudah TTD</div>
+      </div>
       <div class="stat-mini">
         <div class="label">Total Agreement</div>
         <div class="value" id="statTotal">0</div>
@@ -305,6 +313,7 @@
         <option value="">Semua Status</option>
         <option value="signed">Sudah TTD</option>
         <option value="pending">Pending TTD</option>
+        <option value="waiting_approval">Menunggu Approval</option>
         <option value="expired">Expired</option>
       </select>
       <select class="filter-select" id="filterPaket" onchange="applyFilterAndPaginate()">
@@ -558,7 +567,11 @@
       <div id="prevBadgeWrap"></div>
       <div style="display:flex;gap:10px;align-items:center">
         <button class="btn-cancel" onclick="closePreview()">Tutup</button>
-        <button id="btnDownloadPdf" onclick="downloadAgreementPDF()" style="padding:10px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:background .2s">
+        <button id="btnApproveAgr" onclick="approveAgreement()" style="display:none;padding:10px 18px;background:#2980B9;color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+          Approve Agreement
+        </button>
+        <button id="btnDownloadPdf" onclick="downloadAgreementPDF()" style="padding:10px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Download PDF
         </button>
@@ -573,6 +586,10 @@ const AGREEMENT_DB = {
   'AGR-001': {
     berkas_id: 'AGR-001', display_id: '#AGR-001',
     nama_klien: 'James Wilson', avatar_initials: 'JW', avatar_color: '#2980B9',
+    nama_lengkap_pendaftar: 'James Wilson', nama_panggilan: 'James',
+    no_wa: '081234567890', email: 'james.wilson@email.com',
+    alamat_lengkap: 'Jl. Sudirman No. 12, Jakarta Pusat',
+    detail_pesanan: '12 Sesi Private Training - Paket Pro',
     order_id: 'PP-8042', paket: '12 Sesi - Pro',
     tgl_dibuat: '24 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '25 Okt 2026',
@@ -580,6 +597,10 @@ const AGREEMENT_DB = {
   'AGR-002': {
     berkas_id: 'AGR-002', display_id: '#AGR-002',
     nama_klien: 'Emily Chen', avatar_initials: 'EC', avatar_color: '#27AE60',
+    nama_lengkap_pendaftar: 'Emily Chen', nama_panggilan: 'Emily',
+    no_wa: '082345678901', email: 'emily.chen@email.com',
+    alamat_lengkap: 'Jl. Gatot Subroto No. 45, Jakarta Selatan',
+    detail_pesanan: '4 Sesi Private Training - Paket Starter',
     order_id: 'PP-8041', paket: '4 Sesi - Starter',
     tgl_dibuat: '22 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '22 Okt 2026',
@@ -587,13 +608,21 @@ const AGREEMENT_DB = {
   'AGR-003': {
     berkas_id: 'AGR-003', display_id: '#AGR-003',
     nama_klien: 'Robert Taylor', avatar_initials: 'RT', avatar_color: '#E05945',
+    nama_lengkap_pendaftar: 'Robert Taylor', nama_panggilan: 'Rob',
+    no_wa: '083456789012', email: 'robert.taylor@email.com',
+    alamat_lengkap: 'Jl. Kuningan Raya No. 88, Jakarta Selatan',
+    detail_pesanan: '24 Sesi Private Training - Paket Elite',
     order_id: 'PP-8038', paket: '24 Sesi - Elite',
     tgl_dibuat: '18 Okt 2026',
-    status_ttd: 'pending',
+    status_ttd: 'waiting_approval', tgl_ttd: '20 Okt 2026',
   },
   'AGR-004': {
     berkas_id: 'AGR-004', display_id: '#AGR-004',
     nama_klien: 'Anita Kumar', avatar_initials: 'AK', avatar_color: '#8E44AD',
+    nama_lengkap_pendaftar: 'Anita Kumar', nama_panggilan: 'Anita',
+    no_wa: '084567890123', email: 'anita.kumar@email.com',
+    alamat_lengkap: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
+    detail_pesanan: '8 Sesi Private Training - Paket Base',
     order_id: 'PP-8035', paket: '8 Sesi - Base',
     tgl_dibuat: '15 Okt 2026',
     status_ttd: 'expired',
@@ -601,6 +630,10 @@ const AGREEMENT_DB = {
   'AGR-005': {
     berkas_id: 'AGR-005', display_id: '#AGR-005',
     nama_klien: 'Budi Santoso', avatar_initials: 'BS', avatar_color: '#16A085',
+    nama_lengkap_pendaftar: 'Budi Santoso', nama_panggilan: 'Budi',
+    no_wa: '085678901234', email: 'budi.santoso@email.com',
+    alamat_lengkap: 'Jl. Rasuna Said No. 5, Jakarta Selatan',
+    detail_pesanan: '12 Sesi Private Training - Paket Pro',
     order_id: 'PP-8031', paket: '12 Sesi - Pro',
     tgl_dibuat: '10 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '11 Okt 2026',
@@ -608,6 +641,10 @@ const AGREEMENT_DB = {
   'AGR-006': {
     berkas_id: 'AGR-006', display_id: '#AGR-006',
     nama_klien: 'Rina Kusuma', avatar_initials: 'RK', avatar_color: '#D35400',
+    nama_lengkap_pendaftar: 'Rina Kusuma', nama_panggilan: 'Rina',
+    no_wa: '086789012345', email: 'rina.kusuma@email.com',
+    alamat_lengkap: 'Jl. Kebon Sirih No. 33, Jakarta Pusat',
+    detail_pesanan: '4 Sesi Private Training - Paket Starter',
     order_id: 'PP-8027', paket: '4 Sesi - Starter',
     tgl_dibuat: '5 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '5 Okt 2026',
@@ -615,18 +652,23 @@ const AGREEMENT_DB = {
   'AGR-007': {
     berkas_id: 'AGR-007', display_id: '#AGR-007',
     nama_klien: 'Hendra Wijaya', avatar_initials: 'HW', avatar_color: '#2C3E50',
+    nama_lengkap_pendaftar: 'Hendra Wijaya', nama_panggilan: 'Hendra',
+    no_wa: '087890123456', email: 'hendra.wijaya@email.com',
+    alamat_lengkap: 'Jl. Ampera Raya No. 7, Jakarta Selatan',
+    detail_pesanan: '24 Sesi Private Training - Paket Elite',
     order_id: 'PP-8024', paket: '24 Sesi - Elite',
     tgl_dibuat: '1 Okt 2026',
-    status_ttd: 'pending',
+    status_ttd: 'waiting_approval', tgl_ttd: '3 Okt 2026',
   },
 };
 
 /* ─── RENDER TABLE FROM AGREEMENT_DB ─── */
 function buildDocRow(a) {
   const statusMap = {
-    signed:  { label:'Signed',  cls:'signed' },
-    pending: { label:'Pending', cls:'pending' },
-    expired: { label:'Expired', cls:'expired' },
+    signed:           { label:'Signed',   cls:'signed' },
+    pending:          { label:'Pending',  cls:'pending' },
+    expired:          { label:'Expired',  cls:'expired' },
+    waiting_approval: { label:'Waiting Approval', cls:'waiting' },
   };
   const s = statusMap[a.status_ttd] || { label: a.status_ttd, cls:'pending' };
   return `
@@ -653,9 +695,10 @@ function initDocTable() {
 
 function updateAgreementStats() {
   const docs = Object.values(AGREEMENT_DB);
-  document.getElementById('statPending').textContent = docs.filter(d => d.status_ttd === 'pending').length;
-  document.getElementById('statSigned').textContent  = docs.filter(d => d.status_ttd === 'signed').length;
-  document.getElementById('statTotal').textContent   = docs.length;
+  document.getElementById('statPending').textContent  = docs.filter(d => d.status_ttd === 'pending').length;
+  document.getElementById('statSigned').textContent   = docs.filter(d => d.status_ttd === 'signed').length;
+  document.getElementById('statWaiting').textContent  = docs.filter(d => d.status_ttd === 'waiting_approval').length;
+  document.getElementById('statTotal').textContent    = docs.length;
 }
 
 /* ─── MODAL ─── */
@@ -678,6 +721,10 @@ function previewDoc(id) {
      </div>`;
   document.getElementById('docDetails').innerHTML =
     cell('Nama Klien', a.nama_klien) +
+    cell('Nama Panggilan', a.nama_panggilan || '—') +
+    cell('No. WhatsApp', a.no_wa || '—') +
+    cell('Email', a.email || '—') +
+    cell('Alamat', a.alamat_lengkap || '—') +
     cell('Order ID', '#' + a.order_id) +
     cell('Paket Dipilih', a.paket) +
     cell('Tanggal Dibuat', a.tgl_dibuat);
@@ -688,9 +735,9 @@ function previewDoc(id) {
   const sigMeta = document.getElementById('sigMeta');
 
   if (a.status_ttd === 'signed') {
-    /* Simulated digital signature SVG */
     sigBox.style.background = '#EAFAF1';
     sigBox.style.borderColor = 'var(--green)';
+    sigBox.style.borderStyle = 'solid';
     sigBox.innerHTML = `
       <svg viewBox="0 0 160 48" width="120" height="36">
         <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#27AE60" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -699,9 +746,22 @@ function previewDoc(id) {
     sigName.textContent = a.nama_klien;
     sigMeta.innerHTML   = '✓ Ditandatangani pada: ' + (a.tgl_ttd || a.tgl_dibuat);
     sigMeta.style.color = 'var(--green)';
+  } else if (a.status_ttd === 'waiting_approval') {
+    sigBox.style.background = '#EBF5FB';
+    sigBox.style.borderColor = '#2980B9';
+    sigBox.style.borderStyle = 'solid';
+    sigBox.innerHTML = `
+      <svg viewBox="0 0 160 48" width="120" height="36">
+        <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#2980B9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M30,42 C40,38 50,44 60,40" fill="none" stroke="#2980B9" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>`;
+    sigName.textContent = a.nama_klien;
+    sigMeta.innerHTML   = '⏳ Klien TTD pada: ' + (a.tgl_ttd || a.tgl_dibuat) + ' — Menunggu approval admin';
+    sigMeta.style.color = '#2980B9';
   } else if (a.status_ttd === 'expired') {
     sigBox.style.background = '#FDEDEC';
     sigBox.style.borderColor = 'var(--red)';
+    sigBox.style.borderStyle = 'solid';
     sigBox.innerHTML = `<div style="text-align:center"><div style="font-size:11px;font-weight:700;color:var(--red)">Agreement Expired</div><div style="font-size:10px;color:var(--red);margin-top:3px;opacity:.75">Perlu pembaharuan dokumen</div></div>`;
     sigName.textContent = a.nama_klien;
     sigMeta.textContent = 'Expired — ' + a.tgl_dibuat;
@@ -723,10 +783,16 @@ function previewDoc(id) {
   }
 
   /* Footer badge */
-  const statusMap = { signed:'Signed', pending:'Pending TTD', expired:'Expired' };
-  const clsMap    = { signed:'signed', pending:'pending',     expired:'expired' };
+  const statusMap = { signed:'Signed', pending:'Pending TTD', expired:'Expired', waiting_approval:'Waiting Approval' };
+  const clsMap    = { signed:'signed', pending:'pending',     expired:'expired', waiting_approval:'waiting' };
   document.getElementById('prevBadgeWrap').innerHTML =
-    `<span class="badge ${clsMap[a.status_ttd]}">${statusMap[a.status_ttd]}</span>`;
+    `<span class="badge ${clsMap[a.status_ttd]||'pending'}">${statusMap[a.status_ttd]||a.status_ttd}</span>`;
+
+  /* Button visibility */
+  const btnDl  = document.getElementById('btnDownloadPdf');
+  const btnApp = document.getElementById('btnApproveAgr');
+  btnDl.style.display  = a.status_ttd === 'signed' ? 'inline-flex' : 'none';
+  btnApp.style.display = a.status_ttd === 'waiting_approval' ? 'inline-flex' : 'none';
 
   /* Confirm module — tampil hanya saat pending */
   const confirmMod = document.getElementById('confirmModule');
@@ -979,6 +1045,24 @@ if (role === 'owner') {
 <div id="agreementPrintShell" style="display:none"></div>
 
 <script>
+/* ─── APPROVE AGREEMENT ─────────────────────────────────────────── */
+function approveAgreement() {
+  const id = _activeAgreementId;
+  const a  = id ? AGREEMENT_DB[id] : null;
+  if (!a || a.status_ttd !== 'waiting_approval') return;
+
+  if (!confirm('Setujui agreement klien ' + a.nama_klien + '?\nStatus akan berubah menjadi Signed.')) return;
+
+  const today = new Date();
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  a.status_ttd = 'signed';
+  a.tgl_ttd    = today.getDate() + ' ' + months[today.getMonth()] + ' ' + today.getFullYear();
+
+  updateAgreementStats();
+  applyFilterAndPaginate();
+  previewDoc(id);
+}
+
 /* ─── DOWNLOAD PDF ────────────────────────────────────────────────── */
 function downloadAgreementPDF() {
   const id = _activeAgreementId;
