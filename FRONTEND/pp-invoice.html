@@ -119,8 +119,18 @@
     .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
     .client-cell { display:flex; align-items:center; }
     .invoice-id { font-weight:700; color:var(--navy); font-size:12px; }
-    .order-id-link { font-weight:700; color:var(--orange); font-size:12px; cursor:pointer; }
-    .order-id-link:hover { text-decoration:underline; }
+    .order-id-link { 
+      font-weight: 700; 
+      color: var(--navy); /* Mengubah warna dari orange ke navy */
+      font-size: 12px; 
+      pointer-events: none; /* Menonaktifkan fungsi link (tidak bisa diklik) */
+      cursor: default; /* Mengubah kursor tangan kembali jadi kursor panah biasa */
+      text-decoration: none; 
+    }
+    .order-id-link:hover { 
+      color: var(--navy) !important;
+      text-decoration: none !important; 
+    }
 
     /* Badges */
     .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:20px; font-size:10px; font-weight:600; white-space:normal; text-align:center; line-height:1.3; max-width:110px; word-break:break-word; }
@@ -296,7 +306,7 @@
     .syarat-table { width:100% !important; max-width:100% !important; table-layout:fixed !important; border-collapse:collapse !important; }
     .syarat-table td { font-size:11.5px !important; line-height:1.6 !important; padding:6px 8px !important; vertical-align:top !important; white-space:normal !important; word-break:break-word !important; overflow-wrap:break-word !important; }
     .syarat-table td:first-child { width:24px !important; font-weight:700 !important; }
-    .syarat-table td:last-child { padding-right:15px !important; }
+    .syarat-:last-child { padding-right:15px !important; }
 
     /* Receipt Modal */
     .receipt-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:300; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
