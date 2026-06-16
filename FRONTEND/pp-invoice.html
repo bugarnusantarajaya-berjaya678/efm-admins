@@ -128,6 +128,7 @@
 
     /* Action buttons (base dari table-standard.css; modifier unik di sini) */
     .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
+    .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
 
     /* ===== DETAIL VIEW ===== */
     .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--gray-text); font-size:13px; font-weight:500; cursor:pointer; margin-bottom:20px; padding:8px 0; border:none; background:none; font-family:'Poppins',sans-serif; transition:color 0.2s; }
@@ -750,7 +751,7 @@
                 <td class="col-tgl">10 Jun 2026</td>
                 <td class="col-nominal" style="font-weight:600">Rp 1.500.000</td>
                 <td class="col-status"><span class="badge paid">Paid</span></td>
-                <td class="col-aksi"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')" style="cursor:pointer">
                 <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0088</span></td>
@@ -762,7 +763,7 @@
                 <td class="col-tgl">8 Jun 2026</td>
                 <td class="col-nominal" style="font-weight:600">Rp 2.620.000</td>
                 <td class="col-status"><span class="badge pending">Awaiting Payment</span></td>
-                <td class="col-aksi"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')" style="cursor:pointer">
                 <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0087</span></td>
@@ -774,7 +775,7 @@
                 <td class="col-tgl">5 Jun 2026</td>
                 <td class="col-nominal" style="font-weight:600">Rp 600.000</td>
                 <td class="col-status"><span class="badge paid">Paid</span></td>
-                <td class="col-aksi"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')" style="cursor:pointer">
                 <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0085</span></td>
@@ -786,7 +787,7 @@
                 <td class="col-tgl">1 Jun 2026</td>
                 <td class="col-nominal" style="font-weight:600">Rp 1.175.000</td>
                 <td class="col-status"><span class="badge overdue">Overdue</span></td>
-                <td class="col-aksi"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0082')" style="cursor:pointer">
                 <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0082</span></td>
@@ -798,7 +799,7 @@
                 <td class="col-tgl">25 Mei 2026</td>
                 <td class="col-nominal" style="font-weight:600">Rp 1.500.000</td>
                 <td class="col-status"><span class="badge paid">Paid</span></td>
-                <td class="col-aksi"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
             </tbody>
           </table>
@@ -1402,8 +1403,8 @@ function confirmPaid() {
   document.getElementById('receiptOverlay').classList.add('show');
 }
 
-function kirimInvoiceWA() {
-  const invNo = document.getElementById('invNumber').textContent;
+function kirimInvoiceWA(invNo) {
+  invNo = invNo || document.getElementById('invNumber').textContent;
   const d = invoiceData[invNo];
   if (!d) return;
   const msg =
