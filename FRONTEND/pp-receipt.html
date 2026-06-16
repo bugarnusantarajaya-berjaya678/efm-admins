@@ -10,10 +10,19 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
-      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
-      --gray-text:#6C757D; --text-dark:#1E1C43;
-      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
+      --navy:#1E1C43; 
+      --navy2:#2D2B5A; 
+      --orange:#E05945; 
+      --orange-hover:#C94A38;
+      --white:#FFFFFF; 
+      --gray-bg:#F8F9FA; 
+      --gray-border:#E2E6EA;
+      --gray-text:#6C757D; 
+      --text-dark:#1E1C43;
+      --green:#27AE60; 
+      --yellow:#F39C12; 
+      --red:#E74C3C; 
+      --blue:#2980B9;
       --sidebar-w:240px;
     }
     body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; overflow:hidden; }
@@ -590,7 +599,7 @@ function renderTable() {
         <td>${r.paket}</td>
         <td>${r.pic}</td>
         <td>${r.tgl_bayar}</td>
-        <td style="font-weight:800;color:var(--navy)">${r.total}</td>
+        <td style="font-weight:600;color:var(--navy)">${r.total}</td>
         <td><span class="badge ${badgeClass}">${badgeText}</span></td>
         <td>
           <div class="action-wrap">
