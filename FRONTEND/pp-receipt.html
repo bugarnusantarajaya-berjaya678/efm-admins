@@ -1,777 +1,304 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EFM Portal — Receipt &amp; Barcode PP</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
-      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
-      --gray-text:#6C757D; --text-dark:#1E1C43;
-      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
-      --sidebar-w:240px;
-    }
-    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; overflow:hidden; }
-
-    /* SIDEBAR */
-    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
-    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-    .logo-circle svg { width:22px; height:22px; fill:white; }
-    .logo-text h2 { font-size:14px; font-weight:700; color:white; line-height:1.2; }
-    .logo-text span { font-size:10px; color:rgba(255,255,255,0.5); }
-    .sidebar-nav { flex:1; padding:8px 0; }
-    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
-    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
-    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
-    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
-    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
-    .nav-sub-item { display:flex; align-items:center; padding:8px 20px 8px 52px; color:rgba(255,255,255,0.45); text-decoration:none; font-size:12px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; }
-    .nav-sub-item:hover { color:white; background:rgba(255,255,255,0.04); }
-    .nav-sub-item.active { color:white; border-left-color:var(--orange); background:rgba(224,89,69,0.08); }
-    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
-    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
-    .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
-
-    /* MAIN */
-    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; min-width:0; }
-    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
-    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
-    .header-right { display:flex; align-items:center; gap:16px; }
-    .search-bar { display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 14px; width:220px; }
-    .search-bar svg { width:15px; height:15px; color:var(--gray-text); flex-shrink:0; }
-    .search-bar input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
-    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
-    .icon-btn svg { width:17px; height:17px; }
-    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
-    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
-
-    /* CONTENT */
-    .content { padding:20px 28px 0; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
-
-    /* VIEWS */
-    .view { display:none; flex-direction:column; flex:1; min-height:0; }
-    .view.active { display:flex; }
-    #detailView.active { display:block; overflow-y:auto; padding-bottom:28px; }
-
-    /* List View */
-    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0; }
-    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
-    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
-
-    /* Stats */
-    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; flex-shrink:0; }
-    .stat-mini { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:12px 16px; }
-    .stat-mini .label { font-size:10px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
-    .stat-mini .value { font-size:20px; font-weight:700; color:var(--navy); }
-    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
-    .stat-mini.highlight-green { border-color:var(--green); }
-    .stat-mini.highlight-green .value { color:var(--green); }
-    .stat-mini.highlight-red { border-color:var(--red); }
-    .stat-mini.highlight-red .value { color:var(--red); }
-    .stat-mini.highlight-yellow { border-color:var(--yellow); }
-    .stat-mini.highlight-yellow .value { color:var(--yellow); }
-
-    /* Filters */
-    .filters-bar { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:10px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; flex-shrink:0; }
-    .filter-select { padding:7px 10px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; color:var(--text-dark); background:white; cursor:pointer; outline:none; min-width:0; flex-shrink:1; transition:border-color 0.2s; }
-    .filter-select:focus, .filter-select:hover { border-color:var(--navy); }
-    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 12px; transition:border-color 0.2s; }
-    .filter-search:focus-within { border-color:var(--navy); background:white; }
-    .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
-    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
-    .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
-
-    /* Table */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; min-width:1180px; border-collapse:collapse; table-layout:fixed; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; position:sticky; top:0; z-index:2; overflow:hidden; text-overflow:ellipsis; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    th:nth-child(1)  { width:195px; }
-    th:nth-child(2)  { width:165px; }
-    th:nth-child(3)  { width:105px; }
-    th:nth-child(4)  { width:150px; }
-    th:nth-child(5)  { width:130px; }
-    th:nth-child(6)  { width:105px; }
-    th:nth-child(7)  { width:110px; }
-    th:nth-child(8)  { width:105px; }
-    th:nth-child(9)  { width:110px; }
-    th:nth-child(10) { width:110px; text-align:center; }
-    td:nth-child(10) { text-align:center; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
-    .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
-    .client-cell { display:flex; align-items:center; }
-    .rcp-id { font-weight:700; color:var(--navy); font-size:12px; }
-    .inv-ref { font-size:12px; color:var(--blue); }
-
-    /* Badges */
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:20px; font-size:10px; font-weight:600; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
-    .badge.wa-sent    { background:#EAFAF1; color:#27AE60; }
-    .badge.wa-pending { background:#FEF9E7; color:#F39C12; }
-    .badge.wa-failed  { background:#FDEDEC; color:#E74C3C; }
-
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:6px; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
-    .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
-    .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
-    .action-btn svg { width:14px; height:14px; }
-
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
-
-    /* DETAIL VIEW */
-    .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--gray-text); font-size:13px; font-weight:500; cursor:pointer; margin-bottom:20px; padding:8px 0; border:none; background:none; font-family:'Poppins',sans-serif; transition:color 0.2s; }
-    .back-btn:hover { color:var(--navy); }
-    .back-btn svg { width:16px; height:16px; }
-    .detail-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
-    .detail-header h1 { font-size:22px; font-weight:700; color:var(--navy); }
-    .detail-header p { font-size:13px; color:var(--gray-text); margin-top:4px; }
-    .detail-actions { display:flex; gap:12px; }
-    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
-    .btn-primary:hover { background:var(--orange-hover); }
-    .btn-outline { padding:10px 20px; background:white; color:var(--navy); border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
-    .btn-outline:hover { background:var(--navy); color:white; }
-    .btn-wa { padding:10px 20px; background:#25D366; color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
-    .btn-wa:hover { background:#1DA851; }
-
-    /* Receipt Card */
-    .receipt-card { background:white; border-radius:16px; border:1.5px solid var(--gray-border); overflow:hidden; max-width:560px; width:100%; }
-    .receipt-top { background:var(--navy); padding:24px 28px; display:flex; justify-content:space-between; align-items:center; }
-    .receipt-top-left h2 { font-size:14px; font-weight:800; color:white; letter-spacing:.3px; }
-    .receipt-top-left p { font-size:11px; color:rgba(255,255,255,.55); margin-top:3px; }
-    .receipt-badge { background:#27AE60; color:white; font-size:11px; font-weight:700; padding:4px 14px; border-radius:20px; letter-spacing:.3px; }
-    .receipt-body { padding:24px 28px; }
-    .receipt-meta { display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--gray-border); }
-    .receipt-meta-item .lbl { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
-    .receipt-meta-item .val { font-size:13px; font-weight:600; color:var(--navy); }
-    .receipt-barcode { background:var(--gray-bg); border-radius:12px; padding:20px; text-align:center; margin-bottom:20px; border:1.5px solid var(--gray-border); }
-    .barcode-svg { display:flex; justify-content:center; align-items:center; }
-    #receiptBarcode { width:190px; height:190px; margin:0 auto; }
-    #receiptBarcode canvas, #receiptBarcode img { width:190px !important; height:190px !important; display:block; }
-    .barcode-label { font-size:11px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:.5px; margin-top:12px; }
-    .barcode-sub { font-size:11px; color:var(--gray-text); margin-top:4px; }
-    @media print {
-      #receiptBarcode canvas, #receiptBarcode img {
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-      }
-    }
-    .receipt-items { border:1px solid var(--gray-border); border-radius:10px; overflow:hidden; margin-bottom:16px; }
-    .receipt-items table { width:100%; border-collapse:collapse; font-size:12px; table-layout:fixed; }
-    .receipt-items th { background:var(--gray-bg); padding:9px 14px; font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.4px; text-align:left; }
-    .receipt-items th.r, .receipt-items td.r { text-align:right; }
-    .receipt-items td { padding:11px 14px; border-top:1px solid var(--gray-border); word-wrap:break-word; overflow-wrap:break-word; white-space:normal; }
-    .receipt-total { display:flex; justify-content:space-between; padding:12px 14px; background:#EAFAF1; border-radius:10px; font-weight:700; color:var(--navy); }
-    .receipt-total .amt { color:#27AE60; font-size:16px; }
-    .receipt-footer-note { font-size:11px; color:var(--gray-text); text-align:center; margin-top:14px; line-height:1.7; border-top:1px dashed var(--gray-border); padding-top:14px; }
-
-    @media print {
-      * { -webkit-print-color-adjust:exact!important; print-color-adjust:exact!important; box-sizing:border-box!important; }
-      @page { size:A4 portrait; margin:10mm; }
-      .sidebar, .header, .detail-header, .back-btn, .detail-actions, #listView { display:none!important; }
-      .main { margin-left:0!important; display:block!important; }
-      .content { padding:0!important; }
-      #detailView { display:block!important; }
-      .receipt-card { width:100%!important; max-width:100%!important; margin:0!important; border:none!important; border-radius:0!important; box-shadow:none!important; }
-    }
-  </style>
-  <link rel="stylesheet" href="assets/css/responsive.css"/>
-</head>
-<body>
-
-<!-- SIDEBAR -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <img src="assets/logo-circle-white.png" style="max-height:60px;width:auto;display:block;background:transparent"/>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-label">Main Menu</div>
-    <a href="dashboard.html" class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
-    <a href="#" class="nav-item active" onclick="toggleMenu(event,'ppSub','ppArrow')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Private Training
-      <svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
-    </a>
-    <div id="ppSub" style="display:block">
-      <a href="pp-leads.html" class="nav-sub-item">Leads</a>
-      <a href="pp-orders.html" class="nav-sub-item">Orders</a>
-      <a href="pp-invoice.html" class="nav-sub-item">Invoice</a>
-      <a href="pp-receipt.html" class="nav-sub-item active">Receipt &amp; Barcode</a>
-      <a href="pp-documents.html" class="nav-sub-item">Agreement Klien</a>
-      <a href="pp-program-db.html" class="nav-sub-item">Database Program</a>
-    </div>
-    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>B2B Management
-      <svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
-    </a>
-    <div id="b2bSub" style="display:none">
-      <a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a>
-      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a>
-      <a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a>
-      <a href="b2b-clients.html" class="nav-sub-item">Database Klien</a>
-      <a href="b2b-invoice.html" class="nav-sub-item">Invoice</a>
-      <a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a>
-      <a href="b2b-live-report.html" class="nav-sub-item">Live Report</a>
-      <a href="b2b-revenue.html" class="nav-sub-item">Revenue</a>
-    </div>
-    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Event Management
-      <svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
-    </a>
-    <div id="eventSub" style="display:none">
-      <a href="event-dashboard.html" class="nav-sub-item">Dashboard</a>
-      <a href="event-leads.html" class="nav-sub-item">Leads Event</a>
-      <a href="event-tracker.html" class="nav-sub-item">Event Tracker</a>
-      <a href="event-invoice.html" class="nav-sub-item">Invoice</a>
-      <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
-      <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
-    </div>
-    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Operational
-      <svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
-    </a>
-    <div id="opsSub" style="display:none">
-      <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
-      <a href="ops-assets.html" class="nav-sub-item">Barang &amp; Aset</a>
-      <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
-      <a href="ops-trainer.html" class="nav-sub-item">Data Pelatih &amp; PKS</a>
-    </div>
-  </nav>
-  <div class="sidebar-footer">
-    <a href="index.html" class="nav-item logout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Logout</a>
-  </div>
-</aside>
-
-<!-- MAIN -->
-<main class="main">
-  <header class="header">
-    <span class="header-title">EFM Management</span>
-    <div class="header-right">
-      <div class="search-bar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Cari receipt..."/></div>
-      <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><div class="notif-dot"></div></div>
-      <div class="user-avatar">A</div>
-    </div>
-  </header>
-
-  <div class="content">
-
-    <!-- LIST VIEW -->
-    <div id="listView" class="view active">
-      <div class="page-header">
-        <div class="page-header-left">
-          <h1>Receipt &amp; Barcode</h1>
-          <p>Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="stats-row">
-        <div class="stat-mini">
-          <div class="label">Total Receipt</div>
-          <div class="value" id="statTotal">0</div>
-          <div class="sub">Semua receipt</div>
-        </div>
-        <div class="stat-mini highlight-green">
-          <div class="label">WA Sent</div>
-          <div class="value" id="statSent">0</div>
-          <div class="sub">Notifikasi berhasil</div>
-        </div>
-        <div class="stat-mini highlight-yellow">
-          <div class="label">Not Sent</div>
-          <div class="value" id="statPending">0</div>
-          <div class="sub">Belum dikirim</div>
-        </div>
-        <div class="stat-mini highlight-red">
-          <div class="label">Failed</div>
-          <div class="value" id="statFailed">0</div>
-          <div class="sub">Kirim ulang WA</div>
-        </div>
-      </div>
-
-      <!-- Filters -->
-      <div class="filters-bar">
-        <select class="filter-select" id="filterWA" onchange="applyFilter()">
-          <option value="">Semua Status WA</option>
-          <option value="sent">Sent</option>
-          <option value="Not Sent">Not Sent</option>
-          <option value="failed">Failed</option>
-        </select>
-        <div class="filter-search">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="searchInput" placeholder="Cari nama klien, no. receipt..." oninput="applyFilter()"/>
-        </div>
-        <button class="btn-clear" onclick="clearFilter()">Reset</button>
-      </div>
-
-      <!-- Table -->
-      <div class="table-card">
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>No. Receipt</th>
-                <th>Ref. Invoice</th>
-                <th>Order ID</th>
-                <th>Nama Klien</th>
-                <th>Program</th>
-                <th>PIC</th>
-                <th>Tgl Bayar</th>
-                <th>Total</th>
-                <th>Status WA</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody id="rcpTbody"></tbody>
-          </table>
-        </div>
-        <div class="pagination">
-          <div class="pagination-info" id="pageInfo">Menampilkan 0 data</div>
-          <div class="pagination-btns" id="pageBtns"></div>
-        </div>
-      </div>
-    </div><!-- /listView -->
-
-    <!-- DETAIL VIEW -->
-    <div id="detailView" class="view">
-      <button class="back-btn" onclick="showList()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        Kembali ke Daftar Receipt
-      </button>
-      <div class="detail-header">
-        <div>
-          <h1 id="detailRcpNo">—</h1>
-          <p id="detailSubtitle">Receipt pembayaran</p>
-        </div>
-        <div class="detail-actions">
-          <button class="btn-wa" id="btnResendWA" onclick="resendWADetail()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Resend WA
-          </button>
-          <button class="btn-primary" onclick="downloadReceiptPDF()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
-          </button>
-        </div>
-      </div>
-
-      <!-- Receipt Card for PDF -->
-      <div id="receiptPrintArea">
-        <div class="receipt-card">
-          <div class="receipt-top">
-            <div class="receipt-top-left">
-              <h2>Essential Fitness Management</h2>
-              <p id="rcptOrderId">Order ID: —</p>
-            </div>
-            <span class="receipt-badge">LUNAS</span>
-          </div>
-          <div class="receipt-body">
-            <div class="receipt-meta">
-              <div class="receipt-meta-item">
-                <div class="lbl">No. Receipt</div>
-                <div class="val" id="rcptNo">—</div>
-              </div>
-              <div class="receipt-meta-item">
-                <div class="lbl">Ref. Invoice</div>
-                <div class="val" id="rcptInvNo">—</div>
-              </div>
-              <div class="receipt-meta-item">
-                <div class="lbl">Nama Klien</div>
-                <div class="val" id="rcptClient">—</div>
-              </div>
-              <div class="receipt-meta-item">
-                <div class="lbl">Tgl Pembayaran</div>
-                <div class="val" id="rcptDate">—</div>
-              </div>
-              <div class="receipt-meta-item">
-                <div class="lbl">Metode Bayar</div>
-                <div class="val" id="rcptMetode">—</div>
-              </div>
-              <div class="receipt-meta-item">
-                <div class="lbl">PIC Pelatih</div>
-                <div class="val" id="rcptPIC">—</div>
-              </div>
-            </div>
-
-            <div class="receipt-barcode">
-              <div class="barcode-svg">
-                <div id="receiptBarcode"></div>
-              </div>
-              <div class="barcode-label" id="rcptBarLabel">—</div>
-              <div class="barcode-sub">Scan untuk verifikasi pembayaran</div>
-            </div>
-
-            <div class="receipt-items">
-              <table>
-                <thead>
-                  <tr>
-                    <th style="width:55%">Program / Layanan</th>
-                    <th class="r" style="width:20%">Sesi</th>
-                    <th class="r" style="width:25%">Total</th>
-                  </tr>
-                </thead>
-                <tbody id="rcptItemsBody">
-                  <tr><td>—</td><td class="r">—</td><td class="r">—</td></tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="receipt-total">
-              <span>Total Pembayaran</span>
-              <span class="amt" id="rcptTotal">Rp 0</span>
-            </div>
-
-            <div class="receipt-footer-note">
-              Terima kasih telah mempercayakan program fitness Anda kepada kami.<br/>
-              Simpan receipt ini sebagai bukti pembayaran yang sah.<br/>
-              <strong>Essential Fitness Management</strong> — Profesional &amp; Terpercaya
-            </div>
-          </div>
-        </div>
-      </div>
-    </div><!-- /detailView -->
-
-  </div><!-- /content -->
-</main>
-
-<script>
-/* ── Receipt database — synced with ORDER_DB paid orders ── */
-var RECEIPT_DB = {
-  /* Active paid orders (PP-8042, PP-8041, PP-8031, PP-8027) */
-  'RCP/EFM/PP/2026/0089': {
-    rcp_no:'RCP/EFM/PP/2026/0089', inv_no:'INV/EFM/PP/2026/0089',
-    order_id:'PP-8042', client:'James Wilson', initials:'JW', color:'#2980B9',
-    paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
-    metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'Not Sent', wa_tgl:'—'
-  },
-  'RCP/EFM/PP/2026/0087': {
-    rcp_no:'RCP/EFM/PP/2026/0087', inv_no:'INV/EFM/PP/2026/0087',
-    order_id:'PP-8041', client:'Emily Chen', initials:'EC', color:'#27AE60',
-    paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'22 Okt 2026',
-    metode:'QRIS', total:'Rp 600.000', wa_status:'sent', wa_tgl:'22 Okt 2026'
-  },
-  'RCP/EFM/PP/2026/0082': {
-    rcp_no:'RCP/EFM/PP/2026/0082', inv_no:'INV/EFM/PP/2026/0082',
-    order_id:'PP-8031', client:'Budi Santoso', initials:'BS', color:'#16A085',
-    paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'10 Okt 2026',
-    metode:'Transfer Bank (Mandiri)', total:'Rp 1.500.000', wa_status:'sent', wa_tgl:'10 Okt 2026'
-  },
-  'RCP/EFM/PP/2026/0078': {
-    rcp_no:'RCP/EFM/PP/2026/0078', inv_no:'INV/EFM/PP/2026/0078',
-    order_id:'PP-8027', client:'Rina Kusuma', initials:'RK', color:'#D35400',
-    paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'5 Okt 2026',
-    metode:'Cash', total:'Rp 600.000', wa_status:'sent', wa_tgl:'5 Okt 2026'
-  },
-  /* Historical demo data */
-  'RCP/EFM/PP/2025/001': {
-    rcp_no:'RCP/EFM/PP/2025/001', inv_no:'INV/EFM/PP/2025/001',
-    order_id:'PP-9000', client:'Alex Mercer', initials:'AM', color:'#1E1C43',
-    paket:'Premium — 12 Sesi', pic:'Andi Susanto', tgl_bayar:'10 Jan 2025',
-    metode:'Transfer Bank', total:'Rp 4.800.000', wa_status:'sent', wa_tgl:'10 Jan 2025'
-  },
-  'RCP/EFM/PP/2025/002': {
-    rcp_no:'RCP/EFM/PP/2025/002', inv_no:'INV/EFM/PP/2025/002',
-    order_id:'PP-9001', client:'Emily Chen', initials:'EC', color:'#8E44AD',
-    paket:'Basic — 6 Sesi', pic:'Budi Hartono', tgl_bayar:'14 Jan 2025',
-    metode:'QRIS', total:'Rp 2.400.000', wa_status:'sent', wa_tgl:'14 Jan 2025'
-  },
-  'RCP/EFM/PP/2025/003': {
-    rcp_no:'RCP/EFM/PP/2025/003', inv_no:'INV/EFM/PP/2025/003',
-    order_id:'PP-9002', client:'Anita Kumar', initials:'AK', color:'#E74C3C',
-    paket:'Intensif — 20 Sesi', pic:'Citra Dewi', tgl_bayar:'18 Jan 2025',
-    metode:'Tunai', total:'Rp 8.000.000', wa_status:'failed', wa_tgl:'—'
+Object.assign(RECEIPT_DB, stored);
+  } catch(e) {
+    console.error("Gagal memuat local storage receipts:", e);
   }
-};
-
-/* ── Order ID → rcp_no index (rebuilt whenever RECEIPT_DB changes) ── */
-function buildOrderIndex() {
-  var idx = {};
-  Object.values(RECEIPT_DB).forEach(function(r){ idx[r.order_id] = r.rcp_no; });
-  return idx;
-}
-
-/* ── Merge localStorage receipts ── */
-(function(){
-  try {
-    var stored = JSON.parse(localStorage.getItem('efm_receipts') || '{}');
-    Object.assign(RECEIPT_DB, stored);
-  } catch(e){}
 })();
 
-var _currentRcp = null;
-var _filtered   = [];
-var _page       = 1;
-var PAGE_SIZE   = 15;
+var orderIndex = buildOrderIndex();
 
-/* ── Sidebar toggle ── */
+/* ── State Pagination & Filter ── */
+var filteredKeys = [];
+var currentPage = 1;
+var rowsPerPage = 5;
+var currentActiveRcpId = null;
+var qrcodeObj = null;
+
+document.addEventListener("DOMContentLoaded", function() {
+  initReceiptPage();
+});
+
+function initReceiptPage() {
+  // Cek parameter URL jika diakses via modul invoice/orders
+  var urlParams = new URLSearchParams(window.location.search);
+  var orderIdParam = urlParams.get('order_id');
+  
+  if (orderIdParam && orderIndex[orderIdParam]) {
+    showDetail(orderIndex[orderIdParam]);
+  } else {
+    applyFilter();
+  }
+}
+
+/* ── Menu Sidebar Toggle ── */
 function toggleMenu(e, subId, arrowId) {
-  e.preventDefault();
-  var sub   = document.getElementById(subId);
+  if(e) e.preventDefault();
+  var sub = document.getElementById(subId);
   var arrow = document.getElementById(arrowId);
-  var open  = sub.style.display !== 'none';
-  sub.style.display   = open ? 'none' : 'block';
-  arrow.style.transform = open ? '' : 'rotate(180deg)';
+  if(sub.style.display === "none" || !sub.style.display) {
+    sub.style.display = "block";
+    if(arrow) arrow.style.transform = "rotate(180deg)";
+  } else {
+    sub.style.display = "none";
+    if(arrow) arrow.style.transform = "rotate(0deg)";
+  }
 }
 
-/* ── Stats ── */
-function updateStats() {
-  var list = Object.values(RECEIPT_DB);
-  document.getElementById('statTotal').textContent   = list.length;
-  document.getElementById('statSent').textContent    = list.filter(r=>r.wa_status==='sent').length;
-  document.getElementById('statPending').textContent = list.filter(r=>r.wa_status==='Not Sent').length;
-  document.getElementById('statFailed').textContent  = list.filter(r=>r.wa_status==='failed').length;
-}
-
-/* ── Filter & render ── */
+/* ── Filter & Search Logic ── */
 function applyFilter() {
-  var wa     = document.getElementById('filterWA').value;
-  var q      = document.getElementById('searchInput').value.toLowerCase();
-  _filtered  = Object.values(RECEIPT_DB).filter(function(r){
-    var matchWA = !wa || r.wa_status === wa;
-    var matchQ  = !q  || r.rcp_no.toLowerCase().includes(q) || r.client.toLowerCase().includes(q) || r.order_id.toLowerCase().includes(q);
-    return matchWA && matchQ;
+  var waVal = document.getElementById("filterWA").value.toLowerCase();
+  var searchVal = document.getElementById("searchInput").value.toLowerCase();
+  
+  var allItems = Object.values(RECEIPT_DB);
+  
+  // Urutkan berdasarkan tahun dan nomor urut terbaru
+  allItems.sort(function(a, b) {
+    return b.rcp_no.localeCompare(a.rcp_no);
   });
-  _page = 1;
+  
+  var filtered = allItems.filter(function(item) {
+    var matchWA = !waVal || item.wa_status.toLowerCase() === waVal;
+    var matchSearch = !searchVal || 
+                      item.client.toLowerCase().includes(searchVal) || 
+                      item.rcp_no.toLowerCase().includes(searchVal) || 
+                      item.inv_no.toLowerCase().includes(searchVal) || 
+                      item.order_id.toLowerCase().includes(searchVal);
+    return matchWA && matchSearch;
+  });
+  
+  filteredKeys = filtered.map(function(item) { return item.rcp_no; });
+  currentPage = 1;
+  
+  updateStats();
   renderTable();
 }
 
 function clearFilter() {
-  document.getElementById('filterWA').value    = '';
-  document.getElementById('searchInput').value = '';
+  document.getElementById("filterWA").value = "";
+  document.getElementById("searchInput").value = "";
   applyFilter();
 }
 
-function waBadge(status) {
-  var map = { sent:'wa-sent', 'Not Sent':'wa-pending', failed:'wa-failed' };
-  var lbl = { sent:'Sent', 'Not Sent':'Not Sent', failed:'Failed' };
-  return '<span class="badge '+( map[status]||'wa-Not Sent' )+'">'+( lbl[status]||'Not Sent' )+'</span>';
+/* ── Dashboard Stats Counter ── */
+function updateStats() {
+  var allItems = Object.values(RECEIPT_DB);
+  var total = allItems.length;
+  var sent = allItems.filter(function(i){ return i.wa_status.toLowerCase() === 'sent'; }).length;
+  var pending = allItems.filter(function(i){ return i.wa_status.toLowerCase() === 'not sent'; }).length;
+  var failed = allItems.filter(function(i){ return i.wa_status.toLowerCase() === 'failed'; }).length;
+  
+  document.getElementById("statTotal").innerText = total;
+  document.getElementById("statSent").innerText = sent;
+  document.getElementById("statPending").innerText = pending;
+  document.getElementById("statFailed").innerText = failed;
 }
 
+/* ── Render Main Data Table ── */
 function renderTable() {
-  var start = (_page-1)*PAGE_SIZE;
-  var slice = _filtered.slice(start, start+PAGE_SIZE);
-  var tbody = document.getElementById('rcpTbody');
-  if (!slice.length) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--gray-text);">Tidak ada data receipt</td></tr>';
+  var tbody = document.getElementById("rcpTbody");
+  tbody.innerHTML = "";
+  
+  if (filteredKeys.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;color:var(--gray-text);padding:30px;">Tidak ada data receipt ditemukan</td></tr>`;
+    document.getElementById("pageInfo").innerText = "Menampilkan 0 data";
+    document.getElementById("pageBtns").innerHTML = "";
+    return;
+  }
+  
+  var start = (currentPage - 1) * rowsPerPage;
+  var end = Math.min(start + rowsPerPage, filteredKeys.length);
+  
+  for (var i = start; i < end; i++) {
+    var item = RECEIPT_DB[filteredKeys[i]];
+    var tr = document.createElement("tr");
+    tr.setAttribute("onclick", `showDetail('${item.rcp_no}')`);
+    
+    var waBadgeClass = 'wa-pending';
+    if(item.wa_status.toLowerCase() === 'sent') waBadgeClass = 'wa-sent';
+    if(item.wa_status.toLowerCase() === 'failed') waBadgeClass = 'wa-failed';
+    
+    // Pecah nama paket jika terlalu panjang untuk baris list table
+    var cleanPaket = item.paket.split('—')[0].split('-')[0].trim();
+
+    tr.innerHTML = `
+      <td><span class="rcp-id">${item.rcp_no}</span></td>
+      <td><span class="inv-ref">${item.inv_no}</span></td>
+      <td style="font-weight:500;">${item.order_id}</td>
+      <td>
+        <div class="client-cell">
+          <span class="avatar-sm" style="background:${item.color}">${item.initials}</span>
+          <span style="font-weight:600;color:var(--navy);">${item.client}</span>
+        </div>
+      </td>
+      <td>${cleanPaket}</td>
+      <td style="color:var(--gray-text);">${item.pic.split(' ')[0]}</td>
+      <td>${item.tgl_bayar}</td>
+      <td style="font-weight:700;color:var(--navy);">${item.total}</td>
+      <td><span class="badge ${waBadgeClass}">${item.wa_status}</span></td>
+      <td onclick="event.stopPropagation();">
+        <div class="action-wrap">
+          <button class="action-btn view-btn" title="Lihat Detail" onclick="showDetail('${item.rcp_no}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+          <button class="action-btn wa-btn" title="Kirim WhatsApp" onclick="instantSendWA('${item.rcp_no}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  }
+  
+  document.getElementById("pageInfo").innerText = `Menampilkan ${start + 1}-${end} dari ${filteredKeys.length} receipt`;
+  renderPagination();
+}
+
+function renderPagination() {
+  var btnsContainer = document.getElementById("pageBtns");
+  btnsContainer.innerHTML = "";
+  var totalPages = Math.ceil(filteredKeys.length / rowsPerPage);
+  if(totalPages <= 1) return;
+  
+  var maxVisible = 3;
+  var startPage = Math.max(1, currentPage - 1);
+  var endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  
+  if(endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  if (currentPage > 1) {
+    var prevBtn = document.createElement("button");
+    prevBtn.className = "page-btn";
+    prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>`;
+    prevBtn.onclick = function() { currentPage--; renderTable(); };
+    btnsContainer.appendChild(prevBtn);
+  }
+
+  for (var i = startPage; i <= endPage; i++) {
+    var btn = document.createElement("button");
+    btn.className = "page-btn" + (i === currentPage ? " active" : "");
+    btn.innerText = i;
+    (function(page) {
+      btn.onclick = function() { currentPage = page; renderTable(); };
+    })(i);
+    btnsContainer.appendChild(btn);
+  }
+
+  if (currentPage < totalPages) {
+    var nextBtn = document.createElement("button");
+    nextBtn.className = "page-btn";
+    nextBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>`;
+    nextBtn.onclick = function() { currentPage++; renderTable(); };
+    btnsContainer.appendChild(nextBtn);
+  }
+}
+
+/* ── Detail View Rendering ── */
+function showDetail(rcpId) {
+  var item = RECEIPT_DB[rcpId];
+  if(!item) return;
+  currentActiveRcpId = rcpId;
+
+  document.getElementById("listView").classList.remove("active");
+  document.getElementById("detailView").classList.add("active");
+
+  // Main Headers
+  document.getElementById("detailRcpNo").innerText = item.rcp_no;
+  document.getElementById("detailSubtitle").innerText = `Receipt Pembayaran atas nama ${item.client} (${item.order_id})`;
+  
+  // Card Meta
+  document.getElementById("rcptOrderId").innerText = `Order ID: ${item.order_id}`;
+  document.getElementById("rcptNo").innerText = item.rcp_no;
+  document.getElementById("rcptInvNo").innerText = item.inv_no;
+  document.getElementById("rcptClient").innerText = item.client;
+  document.getElementById("rcptDate").innerText = item.tgl_bayar;
+  document.getElementById("rcptMetode").innerText = item.metode;
+  document.getElementById("rcptPIC").innerText = item.pic;
+  document.getElementById("rcptTotal").innerText = item.total;
+  document.getElementById("rcptBarLabel").innerText = item.rcp_no;
+
+  // Render Table Item Pembelian
+  var itemsBody = document.getElementById("rcptItemsBody");
+  itemsBody.innerHTML = `
+    <tr>
+      <td style="font-weight:600;color:var(--navy);">${item.paket}</td>
+      <td class="r">${item.paket.toLowerCase().includes('12 sesi') ? '12 Sesi' : '4 Sesi'}</td>
+      <td class="r" style="font-weight:600;color:var(--navy);">${item.total}</td>
+    </tr>
+  `;
+
+  // Dynamic QR Code Generation
+  var qrContainer = document.getElementById("receiptBarcode");
+  qrContainer.innerHTML = ""; 
+  
+  // Modifikasi teks verifikasi payload QR Code
+  var qrPayload = `VERIFIED: ${item.rcp_no} | Client: ${item.client} | Total: ${item.total} | Status: LUNAS`;
+  
+  qrcodeObj = new QRCode(qrContainer, {
+    text: qrPayload,
+    width: 190,
+    height: 190,
+    colorDark: "#1E1C43",
+    colorLight: "#FFFFFF",
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  // Konfigurasi visual tombol WhatsApp Berdasarkan status
+  var btnWA = document.getElementById("btnResendWA");
+  if(item.wa_status.toLowerCase() === 'sent') {
+    btnWA.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Sent to WA`;
+    btnWA.style.background = "#27AE60";
   } else {
-    tbody.innerHTML = slice.map(function(r){
-      return '<tr onclick="openDetail(\''+r.rcp_no+'\')" style="cursor:pointer">' +
-        '<td><span class="rcp-id">'+r.rcp_no+'</span></td>' +
-        '<td><span class="inv-ref">'+r.inv_no+'</span></td>' +
-        '<td>'+r.order_id+'</td>' +
-        '<td><div class="client-cell"><span class="avatar-sm" style="background:'+r.color+'">'+r.initials+'</span>'+r.client+'</div></td>' +
-        '<td>'+r.paket+'</td>' +
-        '<td>'+r.pic+'</td>' +
-        '<td>'+r.tgl_bayar+'</td>' +
-        '<td>'+r.total+'</td>' +
-        '<td id="waBadge_'+r.rcp_no.replace(/\//g,'_')+'">'+waBadge(r.wa_status)+'</td>' +
-        '<td><div class="action-wrap" onclick="event.stopPropagation()">'+
-          '<button class="action-btn view-btn" title="Lihat Detail" onclick="openDetail(\''+r.rcp_no+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>'+
-          '<button class="action-btn wa-btn" title="Resend WA" onclick="resendWA(\''+r.rcp_no+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>'+
-        '</div></td>' +
-      '</tr>';
-    }).join('');
+    btnWA.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> Resend WA`;
+    btnWA.style.background = "#25D366";
   }
-
-  var total = _filtered.length;
-  document.getElementById('pageInfo').textContent = 'Menampilkan '+(start+1)+'-'+Math.min(start+slice.length,total)+' dari '+total+' data';
-  renderPagination(total);
-}
-
-function renderPagination(total) {
-  var pages = Math.ceil(total / PAGE_SIZE) || 1;
-  var btns  = document.getElementById('pageBtns');
-  btns.innerHTML = '';
-  for (var i=1; i<=pages; i++) {
-    var b = document.createElement('button');
-    b.className = 'page-btn' + (i===_page?' active':'');
-    b.textContent = i;
-    b.setAttribute('data-page', i);
-    b.onclick = (function(pg){ return function(){ _page=pg; renderTable(); }; })(i);
-    btns.appendChild(b);
-  }
-}
-
-/* ── Generate Receipt QR Code ── */
-var _qrInstance = null;
-function generateReceiptBarcode(receiptNo) {
-  if (!receiptNo || !window.QRCode) return;
-  var el = document.getElementById('receiptBarcode');
-  if (!el) return;
-  el.innerHTML = '';                /* clear previous QR */
-  try {
-    _qrInstance = new QRCode(el, {
-      text:         receiptNo,
-      width:        190,
-      height:       190,
-      colorDark:    '#1E1C43',
-      colorLight:   '#F8F9FA',      /* match .gray-bg background */
-      correctLevel: QRCode.CorrectLevel.M
-    });
-  } catch (err) {
-    console.warn('QR generation failed:', err);
-  }
-}
-
-/* ── Detail View ── */
-function openDetail(rcpNo) {
-  var r = RECEIPT_DB[rcpNo];
-  if (!r) return;
-  _currentRcp = r;
-
-  document.getElementById('listView').classList.remove('active');
-  document.getElementById('detailView').classList.add('active');
-
-  document.getElementById('detailRcpNo').textContent   = r.rcp_no;
-  document.getElementById('detailSubtitle').textContent = 'Ref. ' + r.inv_no + ' · ' + r.client;
-
-  document.getElementById('rcptOrderId').textContent = 'Order ID: #' + r.order_id;
-  document.getElementById('rcptNo').textContent      = r.rcp_no;
-  document.getElementById('rcptInvNo').textContent   = r.inv_no;
-  document.getElementById('rcptClient').textContent  = r.client;
-  document.getElementById('rcptDate').textContent    = r.tgl_bayar;
-  document.getElementById('rcptMetode').textContent  = r.metode;
-  document.getElementById('rcptPIC').textContent     = r.pic;
-  document.getElementById('rcptTotal').textContent   = r.total;
-  document.getElementById('rcptBarLabel').textContent = 'ORDER ID: #' + r.order_id;
-
-  document.getElementById('rcptItemsBody').innerHTML =
-    '<tr><td>'+r.paket+'</td><td class="r">—</td><td class="r">'+r.total+'</td></tr>';
-
-  /* Generate barcode otomatis */
-  setTimeout(() => generateReceiptBarcode(r.rcp_no), 50);
 }
 
 function showList() {
-  document.getElementById('detailView').classList.remove('active');
-  document.getElementById('listView').classList.add('active');
-}
-
-/* ── Resend WA (from table) ── */
-function resendWA(rcpNo) {
-  var r = RECEIPT_DB[rcpNo];
-  if (!r) return;
-  var msg = encodeURIComponent(
-    'Halo *' + r.client + '*,\n\n' +
-    'Berikut konfirmasi pembayaran Anda:\n' +
-    '🧾 *' + r.rcp_no + '*\n' +
-    '📋 Ref. Invoice: ' + r.inv_no + '\n' +
-    '💼 Program: ' + r.paket + '\n' +
-    '💰 Total: ' + r.total + '\n' +
-    '📅 Tgl Bayar: ' + r.tgl_bayar + '\n\n' +
-    'Terima kasih telah bergabung bersama *Elite Fitness Management*! 💪'
-  );
-  window.open('https://wa.me/?text=' + msg, '_blank');
-
-  var today = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'});
-  r.wa_status = 'sent';
-  r.wa_tgl    = today;
-
-  /* persist */
-  try {
-    var stored = JSON.parse(localStorage.getItem('efm_receipts') || '{}');
-    stored[rcpNo] = r;
-    localStorage.setItem('efm_receipts', JSON.stringify(stored));
-  } catch(e){}
-
-  /* update badge in table without full re-render */
-  var badgeId = 'waBadge_' + rcpNo.replace(/\//g,'_');
-  var cell = document.getElementById(badgeId);
-  if (cell) cell.innerHTML = waBadge('sent');
-  updateStats();
-}
-
-/* ── Resend WA (from detail) ── */
-function resendWADetail() {
-  if (_currentRcp) resendWA(_currentRcp.rcp_no);
-}
-
-/* ── Download Receipt PDF ── */
-function _pdfCloneFixReceipt(doc) {
-  var el = doc.getElementById('receiptPrintArea');
-  if (!el) return;
-  el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;';
-  var card = el.querySelector('.receipt-card');
-  if (card) card.style.cssText += ';border-radius:0!important;box-shadow:none!important;';
-  /* QR is rendered as <canvas> by QRCode.js — html2canvas captures canvas natively.
-     No color fix needed (canvas pixels are raster, not CSS-dependent). */
-  var qrCanvas = el.querySelector('#receiptBarcode canvas');
-  if (qrCanvas) {
-    qrCanvas.style.width  = '190px';
-    qrCanvas.style.height = '190px';
-    qrCanvas.style.display = 'block';
-    qrCanvas.style.margin  = '0 auto';
-  }
-}
-
-function downloadReceiptPDF() {
-  if (!_currentRcp) return;
-  var el   = document.getElementById('receiptPrintArea');
-  var name = 'Receipt-' + (_currentRcp.order_id||'') + ' (' + (_currentRcp.client||'') + ')';
-  var opt  = {
-    margin:      [8, 8, 8, 8],
-    filename:    name + '.pdf',
-    image:       { type:'jpeg', quality:0.97 },
-    html2canvas: { scale:2, useCORS:true, logging:false,
-                   onclone: function(doc){ _pdfCloneFixReceipt(doc); } },
-    jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
-    pagebreak:   { mode:'avoid-all' }
-  };
-  html2pdf().set(opt).from(el).save();
-}
-
-/* ── Init ── */
-document.addEventListener('DOMContentLoaded', function(){
+  document.getElementById("detailView").classList.remove("active");
+  document.getElementById("listView").classList.add("active");
+  currentActiveRcpId = null;
   applyFilter();
-  updateStats();
+}
 
-  /* ── Deep-link handler: supports ?orderId=PP-8042 or ?rcp=RCP/... ──
-     Both accept &direct=1 to open detail immediately.
-     Without direct=1, highlight the matching row in the list. */
-  var params   = new URLSearchParams(window.location.search);
-  var direct   = params.get('direct') === '1';
+/* ── Simulation Core System WhatsApp Integration ── */
+function instantSendWA(rcpId) {
+  var item = RECEIPT_DB[rcpId];
+  if(!item) return;
+  
+  item.wa_status = "sent";
+  item.wa_tgl = "16 Jun 2026";
+  
+  try {
+    localStorage.setItem('efm_receipts', JSON.stringify(RECEIPT_DB));
+  } catch(e) { console.error(e); }
+  
+  alert(`Receipt ${item.rcp_no} berhasil dikirim ulang via WhatsApp Gateway ke klien ${item.client}!`);
+  applyFilter();
+}
 
-  /* Resolve receipt key — prefer orderId (from pp-orders), fall back to rcp */
-  var rcpParam = null;
-  var orderIdParam = params.get('orderId');
-  if (orderIdParam) {
-    var orderIdx = buildOrderIndex();
-    rcpParam = orderIdx[orderIdParam] || null;
-  } else {
-    rcpParam = params.get('rcp');
-  }
+function resendWADetail() {
+  if(!currentActiveRcpId) return;
+  instantSendWA(currentActiveRcpId);
+  showDetail(currentActiveRcpId);
+}
 
-  if (rcpParam && RECEIPT_DB[rcpParam]) {
-    if (direct) {
-      openDetail(rcpParam);
-    } else {
-      setTimeout(function(){
-        var rows = document.querySelectorAll('#receiptTbody tr');
-        rows.forEach(function(row){
-          if (row.textContent.indexOf(rcpParam) !== -1 ||
-              (orderIdParam && row.textContent.indexOf(orderIdParam) !== -1)) {
-            row.style.background = 'rgba(224,89,69,0.08)';
-            row.style.transition = 'background 1.5s';
-            row.scrollIntoView({ behavior:'smooth', block:'center' });
-            setTimeout(function(){ row.style.background = ''; }, 2500);
-          }
-        });
-      }, 100);
-    }
-  }
-});
+/* ── Export Core Layout to PDF Engine (html2pdf) ── */
+function downloadReceiptPDF() {
+  var element = document.getElementById("receiptPrintArea");
+  var item = RECEIPT_DB[currentActiveRcpId] || { rcp_no: "Receipt" };
+  var filenameClean = item.rcp_no.replace(/\//g, '-');
+
+  var opt = {
+    margin:       [10, 10, 10, 10],
+    filename:     `EFM_Receipt_${filenameClean}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, useCORS: true, letterRendering: true },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opt).from(element).save();
+}
 </script>
-<script src="assets/js/mobile.js"></script>
 </body>
 </html>
