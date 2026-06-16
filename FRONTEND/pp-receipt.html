@@ -99,11 +99,13 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
 
     /* Table */
-    table { min-width:1470px; }
+    table { min-width:1635px; }
 
     /* ── Page-unique column classes (shared: col-id, col-nama, col-program, col-pic, col-nominal, col-status, col-aksi) ── */
     .col-receipt-no { width:200px; min-width:200px; white-space:nowrap; }
     .col-ref-invoice { width:200px; min-width:200px; white-space:nowrap; }
+    .col-latihan { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan { white-space:normal; line-height:1.3; }
     .col-tgl { width:120px; min-width:120px; white-space:nowrap; }
 
     .rcp-id { font-weight:700; color:var(--navy); font-size:12px; }
@@ -303,6 +305,7 @@
               <col class="col-ref-invoice"/>
               <col class="col-id"/>
               <col class="col-nama"/>
+              <col class="col-latihan"/>
               <col class="col-program"/>
               <col class="col-pic"/>
               <col class="col-tgl"/>
@@ -316,7 +319,8 @@
                 <th class="col-ref-invoice">Ref. Invoice</th>
                 <th class="col-id">Order ID</th>
                 <th class="col-nama">Nama Klien</th>
-                <th class="col-program">Program</th>
+                <th class="col-latihan">Nama Latihan/ Terapi</th>
+                <th class="col-program">Nama Paket</th>
                 <th class="col-pic">PIC</th>
                 <th class="col-tgl">Tgl Bayar</th>
                 <th class="col-nominal">Total</th>
@@ -436,25 +440,25 @@ var RECEIPT_DB = {
   'RCP/EFM/PP/2026/0089': {
     rcp_no:'RCP/EFM/PP/2026/0089', inv_no:'INV/EFM/PP/2026/0089',
     order_id:'PP-8042', client:'James Wilson', initials:'JW', color:'#2980B9',
-    paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
+    namaLatihan:'Private Training', paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
     metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'Not Sent', wa_tgl:'—'
   },
   'RCP/EFM/PP/2026/0087': {
     rcp_no:'RCP/EFM/PP/2026/0087', inv_no:'INV/EFM/PP/2026/0087',
     order_id:'PP-8041', client:'Emily Chen', initials:'EC', color:'#27AE60',
-    paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'15 Jun 2026',
+    namaLatihan:'Private Training', paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'15 Jun 2026',
     metode:'QRIS', total:'Rp 600.000', wa_status:'sent', wa_tgl:'15 Jun 2026'
   },
   'RCP/EFM/PP/2026/0082': {
     rcp_no:'RCP/EFM/PP/2026/0082', inv_no:'INV/EFM/PP/2026/0082',
     order_id:'PP-8031', client:'Budi Santoso', initials:'BS', color:'#16A085',
-    paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'2 Jun 2026',
+    namaLatihan:'Private Training', paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'2 Jun 2026',
     metode:'Transfer Bank (Mandiri)', total:'Rp 1.500.000', wa_status:'sent', wa_tgl:'2 Jun 2026'
   },
   'RCP/EFM/PP/2026/0078': {
     rcp_no:'RCP/EFM/PP/2026/0078', inv_no:'INV/EFM/PP/2026/0078',
     order_id:'PP-8027', client:'Rina Kusuma', initials:'RK', color:'#D35400',
-    paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'28 Mei 2026',
+    namaLatihan:'Private Training', paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'28 Mei 2026',
     metode:'Cash', total:'Rp 600.000', wa_status:'sent', wa_tgl:'28 Mei 2026'
   }
 };
@@ -567,6 +571,7 @@ function renderTable() {
             <span>${r.client}</span>
           </div>
         </td>
+        <td class="col-latihan">${r.namaLatihan || 'Private Training'}</td>
         <td class="col-program">${r.paket}</td>
         <td class="col-pic">${r.pic}</td>
         <td class="col-tgl">${r.tgl_bayar}</td>
