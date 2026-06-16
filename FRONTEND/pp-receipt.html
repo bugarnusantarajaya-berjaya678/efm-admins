@@ -553,8 +553,8 @@ function clearFilter() {
 }
 
 function waBadge(status) {
-  var map = { sent:'wa-sent', Not Sent:'wa-Not Sent', failed:'wa-failed' };
-  var lbl = { sent:'Sent', Not Sent:'Not Sent', failed:'Failed' };
+  var map = { sent:'wa-sent', 'Not Sent':'wa-pending', failed:'wa-failed' };
+  var lbl = { sent:'Sent', 'Not Sent':'Not Sent', failed:'Failed' };
   return '<span class="badge '+( map[status]||'wa-Not Sent' )+'">'+( lbl[status]||'Not Sent' )+'</span>';
 }
 
