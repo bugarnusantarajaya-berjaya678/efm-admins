@@ -69,6 +69,7 @@
     .view { display:none; flex-direction:column; flex:1; min-height:0; }
     .view.active { display:flex; }
     #detailView.active { display:block; overflow-y:auto; padding-bottom:28px; }
+    .detail-center-wrap { max-width:560px; width:100%; margin:0 auto; }
 
     /* List View */
     .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0; }
@@ -336,7 +337,7 @@
           <div class="pagination-btns" id="pageBtns"></div>
         </div>
       </div>
-    </div><div id="detailView" class="view">
+    </div><div id="detailView" class="view"><div class="detail-center-wrap">
       <button class="back-btn" onclick="showList()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Kembali ke Daftar Receipt
@@ -427,7 +428,7 @@
           </div>
         </div>
       </div>
-    </div></div></main>
+    </div></div></div></main>
 
 <script>
 /* ── Receipt database — synced with ORDER_DB paid orders ── */
