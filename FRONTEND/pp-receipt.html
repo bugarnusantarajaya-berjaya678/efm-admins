@@ -347,13 +347,9 @@
           <p id="detailSubtitle">Receipt pembayaran</p>
         </div>
         <div class="detail-actions">
-          <button class="btn-wa" id="btnResendWA" onclick="resendWADetail()">
+          <button class="btn-wa" id="btnKirimReceipt" onclick="kirimReceiptKeKlien()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Resend WA
-          </button>
-          <button class="btn-primary" onclick="downloadReceiptPDF()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
+            Kirim Receipt ke Klien
           </button>
         </div>
       </div>
@@ -670,20 +666,23 @@ function showList() {
 
 // Actions
 function resendWA(id) {
-  alert(`Sistem: Permintaan pengiriman WhatsApp untuk receipt ${id} sedang diproses...`);
+  const r = RECEIPT_DB[id];
+  if (!r) return;
+  const msg =
+    `Halo ${r.client} 👋\n\n` +
+    `Receipt pembayaran *${r.rcp_no}* untuk paket *${r.paket}* sebesar *${r.total}* sudah kami kirimkan ✅\n\n` +
+    `Terima kasih atas kepercayaan Anda kepada Essential Fitness Management.\n\n` +
+    `Salam,\nTim EFM`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
 }
 
-function resendWADetail() {
-  if (currentDetailId) resendWA(currentDetailId);
-}
-
-function downloadReceiptPDF() {
+function downloadReceiptPDF(onComplete) {
   const element = document.getElementById('receiptPrintArea');
   const r = RECEIPT_DB[currentDetailId];
-  
+
   // Format nama file
   const filenameStr = `${r.rcp_no.replace(/\//g, '_')}_${r.client.replace(/\s/g, '')}.pdf`;
-  
+
   const opt = {
     margin:       [10, 10, 10, 10], // top, left, bottom, right
     filename:     filenameStr,
@@ -691,8 +690,26 @@ function downloadReceiptPDF() {
     html2canvas:  { scale: 2, useCORS: true },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
-  
-  html2pdf().set(opt).from(element).save();
+
+  const btn = document.getElementById('btnKirimReceipt');
+  if (btn) { btn.disabled = true; }
+  html2pdf().set(opt).from(element).save().then(() => {
+    if (btn) { btn.disabled = false; }
+    if (typeof onComplete === 'function') onComplete(r);
+  });
+}
+
+function kirimReceiptKeKlien() {
+  downloadReceiptPDF(function(r) {
+    const msg =
+      `Halo ${r.client} 👋\n\n` +
+      `Receipt pembayaran *${r.rcp_no}* untuk paket *${r.paket}* sebesar *${r.total}* sudah kami kirimkan dalam bentuk PDF ✅\n\n` +
+      `Mohon disimpan sebagai bukti pembayaran. Terima kasih atas kepercayaan Anda kepada Essential Fitness Management.\n\n` +
+      `Salam,\nTim EFM`;
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
+  });
 }
 </script>
 </body>
