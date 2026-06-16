@@ -7,7 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
+  <style> .text-bold {
+  font-weight: 700 !important;
+  color: var(--navy);
+  }  
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --navy:#1E1C43; 
@@ -588,8 +591,8 @@ function renderTable() {
 
       tr.innerHTML = `
         <td><div class="rcp-id">${r.rcp_no}</div></td>
-        <td><div class="inv-ref">${r.inv_no}</div></td>
-        <td>#${r.order_id}</td>
+        <td><div class="inv-ref text-bold">${r.inv_no}</div></td>
+        <td class="text-bold">#${r.order_id}</td>
         <td>
           <div class="client-cell">
             <div class="avatar-sm" style="background:${r.color}">${r.initials}</div>
@@ -635,6 +638,8 @@ function renderPagination() {
     btn.innerText = i;
     btn.onclick = () => { currentPage = i; renderTable(); };
     btns.appendChild(btn);
+  }
+}
   }
 }
 
