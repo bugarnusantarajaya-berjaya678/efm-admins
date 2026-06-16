@@ -284,17 +284,17 @@
           <div class="sub">Semua receipt</div>
         </div>
         <div class="stat-mini highlight-green">
-          <div class="label">WA Terkirim</div>
+          <div class="label">WA Sent</div>
           <div class="value" id="statSent">0</div>
           <div class="sub">Notifikasi berhasil</div>
         </div>
         <div class="stat-mini highlight-yellow">
-          <div class="label">Pending</div>
+          <div class="label">Not Sent</div>
           <div class="value" id="statPending">0</div>
           <div class="sub">Belum dikirim</div>
         </div>
         <div class="stat-mini highlight-red">
-          <div class="label">Gagal</div>
+          <div class="label">Failed</div>
           <div class="value" id="statFailed">0</div>
           <div class="sub">Kirim ulang WA</div>
         </div>
@@ -304,9 +304,9 @@
       <div class="filters-bar">
         <select class="filter-select" id="filterWA" onchange="applyFilter()">
           <option value="">Semua Status WA</option>
-          <option value="sent">Terkirim</option>
-          <option value="pending">Pending</option>
-          <option value="failed">Gagal</option>
+          <option value="sent">Sent</option>
+          <option value="Not Sent">Not Sent</option>
+          <option value="failed">Failed</option>
         </select>
         <div class="filter-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -453,7 +453,7 @@ var RECEIPT_DB = {
     rcp_no:'RCP/EFM/PP/2026/0089', inv_no:'INV/EFM/PP/2026/0089',
     order_id:'PP-8042', client:'James Wilson', initials:'JW', color:'#2980B9',
     paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
-    metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'pending', wa_tgl:'—'
+    metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'Not Sent', wa_tgl:'—'
   },
   'RCP/EFM/PP/2026/0087': {
     rcp_no:'RCP/EFM/PP/2026/0087', inv_no:'INV/EFM/PP/2026/0087',
@@ -529,7 +529,7 @@ function updateStats() {
   var list = Object.values(RECEIPT_DB);
   document.getElementById('statTotal').textContent   = list.length;
   document.getElementById('statSent').textContent    = list.filter(r=>r.wa_status==='sent').length;
-  document.getElementById('statPending').textContent = list.filter(r=>r.wa_status==='pending').length;
+  document.getElementById('statPending').textContent = list.filter(r=>r.wa_status==='Not Sent').length;
   document.getElementById('statFailed').textContent  = list.filter(r=>r.wa_status==='failed').length;
 }
 
@@ -553,9 +553,9 @@ function clearFilter() {
 }
 
 function waBadge(status) {
-  var map = { sent:'wa-sent', pending:'wa-pending', failed:'wa-failed' };
-  var lbl = { sent:'Terkirim', pending:'Pending', failed:'Gagal' };
-  return '<span class="badge '+( map[status]||'wa-pending' )+'">'+( lbl[status]||'Pending' )+'</span>';
+  var map = { sent:'wa-sent', Not Sent:'wa-Not Sent', failed:'wa-failed' };
+  var lbl = { sent:'Sent', Not Sent:'Not Sent', failed:'Failed' };
+  return '<span class="badge '+( map[status]||'wa-Not Sent' )+'">'+( lbl[status]||'Not Sent' )+'</span>';
 }
 
 function renderTable() {
