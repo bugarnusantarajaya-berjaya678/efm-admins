@@ -81,9 +81,10 @@
     .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
-    table { min-width:1200px; }
+    table { min-width:1330px; }
 
     /* ── Page-unique column classes (shared: col-id, col-nama, col-status, col-aksi) ── */
+    .col-latihan       { width:145px; min-width:130px; white-space:normal; word-break:break-word; }
     .col-paket         { width:140px; min-width:140px; max-width:120px; white-space:normal; }
     .col-pic           { width:150px; min-width:150px; max-width:140px; white-space:normal; word-break:break-word; }
     .col-progress      { width:130px; min-width:130px; }
@@ -377,6 +378,7 @@
           <colgroup>
             <col class="col-id"/>
             <col class="col-nama"/>
+            <col class="col-latihan"/>
             <col class="col-paket"/>
             <col class="col-pic"/>
             <col class="col-progress"/>
@@ -389,7 +391,8 @@
             <tr>
               <th class="col-id">Order ID</th>
               <th class="col-nama">Nama Klien</th>
-              <th class="col-paket">Paket</th>
+              <th class="col-latihan">Nama Latihan/ Terapi</th>
+              <th class="col-paket">Nama Paket</th>
               <th class="col-pic">PIC</th>
               <th class="col-progress">Progress Sesi</th>
               <th class="col-tgl">Tgl. Mulai</th>
@@ -402,6 +405,7 @@
             <tr data-order-id="PP-8042" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8042</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">12 Sesi - Pro</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
@@ -418,6 +422,7 @@
             <tr data-order-id="PP-8041" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8041</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">4 Sesi - Starter</td>
               <td class="col-pic">Marcus Chen</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
@@ -434,6 +439,7 @@
             <tr data-order-id="PP-8038" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8038</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">24 Sesi - Elite</td>
               <td class="col-pic">Elena Rodriguez</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
@@ -450,6 +456,7 @@
             <tr data-order-id="PP-8035" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8035</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">8 Sesi - Base</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
@@ -466,6 +473,7 @@
             <tr data-order-id="PP-8031" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8031</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">12 Sesi - Pro</td>
               <td class="col-pic">Marcus Chen</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:58%"></div></div><span class="session-text">7/12 sesi</span></div></td>
@@ -482,6 +490,7 @@
             <tr data-order-id="PP-8027" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8027</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#D35400">RK</div>Rina Kusuma</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">4 Sesi - Starter</td>
               <td class="col-pic">Elena Rodriguez</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
@@ -498,6 +507,7 @@
             <tr data-order-id="PP-8024" onclick="openDrawer(this)" style="cursor:pointer">
               <td class="col-id"><span class="order-id">#PP-8024</span></td>
               <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#2C3E50">HW</div>Hendra Wijaya</div></td>
+              <td class="col-latihan">Private Training</td>
               <td class="col-paket">24 Sesi - Elite</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:12%;background:var(--red)"></div></div><span class="session-text">3/24 sesi</span></div></td>
@@ -2227,6 +2237,7 @@ function _commitNewOrder() {
   tr.innerHTML = `
     <td class="col-id"><span class="order-id">#${newId}</span></td>
     <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
+    <td class="col-latihan">${progData.namaLatihan || 'Private Training'}</td>
     <td class="col-paket">${paketLbl}</td>
     <td class="col-pic">${picData.fullname || '—'}</td>
     <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:0%"></div></div><span class="session-text">0/${sesiTotal} sesi</span></div></td>
