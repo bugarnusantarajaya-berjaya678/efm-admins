@@ -112,6 +112,7 @@
 
     /* Action buttons (base dari table-standard.css; modifier unik di sini) */
     .action-btn.download { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
+    .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
 
     /* Modal */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -558,9 +559,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
           Approve Agreement
         </button>
-        <button id="btnDownloadPdf" onclick="downloadAgreementPDF()" style="padding:10px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Agreement
+        <button id="btnDownloadPdf" onclick="kirimAgreementKeKlien()" style="padding:10px 18px;background:#27AE60;color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Kirim Agreement ke Klien
         </button>
       </div>
     </div>
@@ -680,6 +681,7 @@ function buildDocRow(a) {
       <td class="col-aksi">
         <div class="action-wrap">
           <button class="action-btn" title="Lihat Dokumen" onclick="event.stopPropagation();previewDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimAgreementWA('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
         </div>
       </td>
     </tr>`;
@@ -1061,8 +1063,35 @@ function approveAgreement() {
   previewDoc(id);
 }
 
+/* ─── KIRIM WA (list aksi, tanpa download) ───────────────────────── */
+function kirimAgreementWA(id) {
+  const a = AGREEMENT_DB[id];
+  if (!a) return;
+  const msg =
+    `Halo ${a.nama_klien} 👋\n\n` +
+    `Dokumen *Perjanjian Layanan Private Program (Agreement)* Anda untuk paket *${a.paket}* (Order #${a.order_id}) sudah kami siapkan ✅\n\n` +
+    `Silakan cek dokumen yang telah kami kirimkan. Jika ada pertanyaan terkait isi perjanjian, jangan ragu menghubungi kami.\n\n` +
+    `Terima kasih,\nTim EFM`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+}
+
+/* ─── KIRIM AGREEMENT KE KLIEN (download PDF lalu lanjut WA) ───────── */
+function kirimAgreementKeKlien() {
+  const id = _activeAgreementId;
+  downloadAgreementPDF(function(a) {
+    const msg =
+      `Halo ${a.nama_klien} 👋\n\n` +
+      `Dokumen *Perjanjian Layanan Private Program (Agreement)* Anda untuk paket *${a.paket}* (Order #${a.order_id}) sudah ditandatangani dan kami kirimkan dalam bentuk PDF ✅\n\n` +
+      `Mohon disimpan sebagai bukti perjanjian. Jika ada pertanyaan, jangan ragu menghubungi kami.\n\n` +
+      `Terima kasih,\nTim EFM`;
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
+  });
+}
+
 /* ─── DOWNLOAD PDF ────────────────────────────────────────────────── */
-function downloadAgreementPDF() {
+function downloadAgreementPDF(onComplete) {
   const id = _activeAgreementId;
   const a  = id ? AGREEMENT_DB[id] : null;
   if (!a) return;
@@ -1219,7 +1248,8 @@ function downloadAgreementPDF() {
     pagebreak:   { mode:'avoid-all' },
   }).from(shell).save().then(() => {
     shell.style.cssText = 'display:none';
-    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download Agreement'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Kirim Agreement ke Klien'; }
+    if (typeof onComplete === 'function') onComplete(a);
   });
 }
 </script>
