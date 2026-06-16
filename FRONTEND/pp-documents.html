@@ -665,8 +665,8 @@ function buildDocRow(a) {
   return `
     <tr data-berkas-id="${a.berkas_id}" onclick="previewDoc('${a.berkas_id}')" style="cursor:pointer">
       <td class="col-id"><span class="doc-id">${a.display_id}</span></td>
-      <td class="col-no-receipt">${a.no_receipt}</td>
-      <td class="col-ref-invoice">${a.ref_invoice}</td>
+      <td class="col-no-receipt" style="font-weight:600;color:var(--navy)">${a.no_receipt}</td>
+      <td class="col-ref-invoice" style="font-weight:600;color:var(--navy)">${a.ref_invoice}</td>
       <td class="col-order" style="font-weight:600;color:var(--navy)">#${a.order_id}</td>
       <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${a.avatar_color}">${a.avatar_initials}</div>${a.nama_klien}</div></td>
       <td class="col-latihan">${a.namaLatihan || 'Private Training'}</td>
