@@ -89,10 +89,12 @@
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
     /* TABLE — base styles dari table-standard.css; di sini hanya kolom unik halaman */
-    table { min-width:1320px; }
+    table { min-width:1485px; }
     .col-no-receipt { width:190px; min-width:170px; white-space:normal; word-break:break-word; }
     .col-ref-invoice{ width:190px; min-width:170px; white-space:normal; word-break:break-word; }
     .col-order      { width:100px; min-width:90px; white-space:nowrap; }
+    .col-latihan    { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan  { white-space:normal; line-height:1.3; }
     .col-paket      { width:140px; min-width:120px; white-space:normal; }
     .col-tgl        { width:120px; min-width:110px; }
 
@@ -314,6 +316,7 @@
             <col class="col-ref-invoice"/>
             <col class="col-order"/>
             <col class="col-nama"/>
+            <col class="col-latihan"/>
             <col class="col-paket"/>
             <col class="col-pic"/>
             <col class="col-tgl"/>
@@ -327,7 +330,8 @@
               <th class="col-ref-invoice">Ref. Invoice</th>
               <th class="col-order">Order ID</th>
               <th class="col-nama">Nama Klien</th>
-              <th class="col-paket">Paket</th>
+              <th class="col-latihan">Nama Latihan/ Terapi</th>
+              <th class="col-paket">Nama Paket</th>
               <th class="col-pic">PIC</th>
               <th class="col-tgl">Tanggal Dibuat</th>
               <th class="col-status">Status TTD</th>
@@ -570,7 +574,7 @@ const AGREEMENT_DB = {
     no_wa: '081234567890', email: 'james.wilson@email.com',
     alamat_lengkap: 'Jl. Sudirman No. 12, Jakarta Pusat',
     detail_pesanan: '12 Sesi Private Training - Paket Pro',
-    order_id: 'PP-8042', paket: '12 Sesi - Pro',
+    order_id: 'PP-8042', paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0089', ref_invoice: 'INV/EFM/PP/2026/0089', pic: 'Sarah Jenkins',
     tgl_dibuat: '24 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '25 Okt 2026',
@@ -582,7 +586,7 @@ const AGREEMENT_DB = {
     no_wa: '082345678901', email: 'emily.chen@email.com',
     alamat_lengkap: 'Jl. Gatot Subroto No. 45, Jakarta Selatan',
     detail_pesanan: '4 Sesi Private Training - Paket Starter',
-    order_id: 'PP-8041', paket: '4 Sesi - Starter',
+    order_id: 'PP-8041', paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0087', ref_invoice: 'INV/EFM/PP/2026/0087', pic: 'Marcus Chen',
     tgl_dibuat: '22 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '22 Okt 2026',
@@ -594,7 +598,7 @@ const AGREEMENT_DB = {
     no_wa: '083456789012', email: 'robert.taylor@email.com',
     alamat_lengkap: 'Jl. Kuningan Raya No. 88, Jakarta Selatan',
     detail_pesanan: '24 Sesi Private Training - Paket Elite',
-    order_id: 'PP-8038', paket: '24 Sesi - Elite',
+    order_id: 'PP-8038', paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
     no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0088', pic: 'Elena Rodriguez',
     tgl_dibuat: '18 Okt 2026',
     status_ttd: 'waiting_approval', tgl_ttd: '20 Okt 2026',
@@ -606,7 +610,7 @@ const AGREEMENT_DB = {
     no_wa: '084567890123', email: 'anita.kumar@email.com',
     alamat_lengkap: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
     detail_pesanan: '8 Sesi Private Training - Paket Base',
-    order_id: 'PP-8035', paket: '8 Sesi - Base',
+    order_id: 'PP-8035', paket: '8 Sesi - Base', namaLatihan: 'Private Training',
     no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0085', pic: 'Sarah Jenkins',
     tgl_dibuat: '15 Okt 2026',
     status_ttd: 'expired',
@@ -618,7 +622,7 @@ const AGREEMENT_DB = {
     no_wa: '085678901234', email: 'budi.santoso@email.com',
     alamat_lengkap: 'Jl. Rasuna Said No. 5, Jakarta Selatan',
     detail_pesanan: '12 Sesi Private Training - Paket Pro',
-    order_id: 'PP-8031', paket: '12 Sesi - Pro',
+    order_id: 'PP-8031', paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0082', ref_invoice: 'INV/EFM/PP/2026/0082', pic: 'Marcus Chen',
     tgl_dibuat: '10 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '11 Okt 2026',
@@ -630,7 +634,7 @@ const AGREEMENT_DB = {
     no_wa: '086789012345', email: 'rina.kusuma@email.com',
     alamat_lengkap: 'Jl. Kebon Sirih No. 33, Jakarta Pusat',
     detail_pesanan: '4 Sesi Private Training - Paket Starter',
-    order_id: 'PP-8027', paket: '4 Sesi - Starter',
+    order_id: 'PP-8027', paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0078', ref_invoice: 'INV/EFM/PP/2026/0078', pic: 'Elena Rodriguez',
     tgl_dibuat: '5 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '5 Okt 2026',
@@ -642,7 +646,7 @@ const AGREEMENT_DB = {
     no_wa: '087890123456', email: 'hendra.wijaya@email.com',
     alamat_lengkap: 'Jl. Ampera Raya No. 7, Jakarta Selatan',
     detail_pesanan: '24 Sesi Private Training - Paket Elite',
-    order_id: 'PP-8024', paket: '24 Sesi - Elite',
+    order_id: 'PP-8024', paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
     no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0074', pic: 'Sarah Jenkins',
     tgl_dibuat: '1 Okt 2026',
     status_ttd: 'waiting_approval', tgl_ttd: '3 Okt 2026',
@@ -665,6 +669,7 @@ function buildDocRow(a) {
       <td class="col-ref-invoice">${a.ref_invoice}</td>
       <td class="col-order" style="font-weight:600;color:var(--navy)">#${a.order_id}</td>
       <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${a.avatar_color}">${a.avatar_initials}</div>${a.nama_klien}</div></td>
+      <td class="col-latihan">${a.namaLatihan || 'Private Training'}</td>
       <td class="col-paket">${a.paket}</td>
       <td class="col-pic">${a.pic}</td>
       <td class="col-tgl">${a.tgl_dibuat}</td>
