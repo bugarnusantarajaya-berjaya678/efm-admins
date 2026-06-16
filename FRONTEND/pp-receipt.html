@@ -582,7 +582,7 @@ function renderTable() {
       tr.innerHTML = `
         <td><div class="rcp-id">${r.rcp_no}</div></td>
         <td><div class="inv-ref">${r.inv_no}</div></td>
-        <td>${r.order_id}</td>
+        <td>#${r.order_id}</td>
         <td>
           <div class="client-cell">
             <div class="avatar-sm" style="background:${r.color}">${r.initials}</div>
@@ -643,7 +643,7 @@ function viewDetail(id) {
 
   // Populate Details
   document.getElementById('detailRcpNo').innerText = r.rcp_no;
-  document.getElementById('rcptOrderId').innerText = `Order ID: ${r.order_id}`;
+  document.getElementById('rcptOrderId').innerText = `Order ID:#${r.order_id}`;
   document.getElementById('rcptNo').innerText = r.rcp_no;
   document.getElementById('rcptInvNo').innerText = r.inv_no;
   document.getElementById('rcptClient').innerText = r.client;
