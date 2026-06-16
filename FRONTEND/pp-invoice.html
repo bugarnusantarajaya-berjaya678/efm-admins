@@ -99,7 +99,7 @@
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
     /* Table — LIST VIEW ONLY (base styles dari table-standard.css; di sini hanya kolom unik halaman) */
-    table { min-width:1395px; }
+    table { min-width:1415px; }
     .col-invoice  { width:170px; min-width:170px; white-space:nowrap; font-weight:700; color:var(--navy); }
     .col-order    { width:110px; min-width:110px; white-space:nowrap; }
     .col-latihan  { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
@@ -125,6 +125,14 @@
     .badge.pending { background:#FEF9E7; color:#F39C12; }
     .badge.overdue { background:#FDEDEC; color:#E74C3C; }
     .badge.draft { background:#F2F3F4; color:#7F8C8D; }
+
+    /* Status badge wraps "Awaiting Payment" ke 2 baris */
+    .col-status { width:140px; min-width:130px; max-width:140px; }
+    th.col-status { white-space:nowrap; }
+    td.col-status .badge {
+      white-space:normal; text-align:center; justify-content:center;
+      max-width:110px; line-height:1.35;
+    }
 
     /* Action buttons (base dari table-standard.css; modifier unik di sini) */
     .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
