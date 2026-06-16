@@ -1,0 +1,2479 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EFM Portal — Private Training Orders</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#1E1C43; --navy2:#2D2B5A; --orange:#E05945; --orange-hover:#C94A38;
+      --white:#FFFFFF; --gray-bg:#F8F9FA; --gray-border:#E2E6EA;
+      --gray-text:#6C757D; --text-dark:#1E1C43;
+      --green:#27AE60; --yellow:#F39C12; --red:#E74C3C; --blue:#2980B9;
+      --sidebar-w:240px;
+    }
+    body { font-family:'Poppins',sans-serif; background:var(--gray-bg); color:var(--text-dark); min-height:100vh; display:flex; overflow:hidden; }
+
+    /* SIDEBAR */
+    .sidebar { width:var(--sidebar-w); background:var(--navy); min-height:100vh; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; z-index:100; overflow-y:auto; }
+    .sidebar-logo { padding:24px 20px; border-bottom:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .logo-circle { width:40px; height:40px; background:var(--orange); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .logo-circle svg { width:22px; height:22px; fill:white; }
+    .logo-text h2 { font-size:14px; font-weight:700; color:white; line-height:1.2; }
+    .logo-text span { font-size:10px; color:rgba(255,255,255,0.5); }
+    .btn-new-entry { margin:16px; padding:11px 16px; background:var(--orange); color:white; border:none; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:background 0.2s; text-decoration:none; justify-content:center; flex-shrink:0; }
+    .btn-new-entry:hover { background:var(--orange-hover); }
+    .sidebar-nav { flex:1; padding:8px 0; }
+    .nav-label { font-size:10px; font-weight:600; color:rgba(255,255,255,0.3); letter-spacing:1px; text-transform:uppercase; padding:16px 20px 8px; }
+    .nav-item { display:flex; align-items:center; gap:12px; padding:11px 20px; color:rgba(255,255,255,0.65); text-decoration:none; font-size:13px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; cursor:pointer; }
+    .nav-item:hover { background:rgba(255,255,255,0.06); color:white; }
+    .nav-item.active { background:rgba(224,89,69,0.15); color:white; border-left-color:var(--orange); }
+    .nav-item svg { width:18px; height:18px; flex-shrink:0; }
+    .nav-sub-item { display:flex; align-items:center; padding:8px 20px 8px 52px; color:rgba(255,255,255,0.45); text-decoration:none; font-size:12px; font-weight:500; transition:all 0.2s; border-left:3px solid transparent; }
+    .nav-sub-item:hover { color:white; background:rgba(255,255,255,0.04); }
+    .nav-sub-item.active { color:white; border-left-color:var(--orange); background:rgba(224,89,69,0.08); }
+    .sidebar-footer { padding:16px; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+    .nav-item.logout { color:rgba(255,255,255,0.4); border-radius:8px; }
+    .nav-item.logout:hover { color:var(--orange); background:rgba(224,89,69,0.1); }
+
+    /* MAIN */
+    .main { margin-left:var(--sidebar-w); flex:1; display:flex; flex-direction:column; height:100vh; overflow:hidden; min-width:0; }
+    .header { background:white; padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-border); position:sticky; top:0; z-index:50; }
+    .header-title { font-size:15px; font-weight:600; color:var(--navy); }
+    .header-right { display:flex; align-items:center; gap:16px; }
+    .search-bar { display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 14px; width:220px; }
+    .search-bar svg { width:15px; height:15px; color:var(--gray-text); flex-shrink:0; }
+    .search-bar input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:13px; outline:none; width:100%; }
+    .icon-btn { width:36px; height:36px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--gray-text); position:relative; }
+    .icon-btn svg { width:17px; height:17px; }
+    .notif-dot { position:absolute; top:6px; right:6px; width:7px; height:7px; background:var(--orange); border-radius:50%; border:1.5px solid white; }
+    .user-avatar { width:36px; height:36px; border-radius:50%; background:var(--navy); color:white; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; cursor:pointer; }
+
+    /* CONTENT */
+    .content { padding:20px 28px 28px; flex:1; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+    .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0; }
+    .stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:14px; flex-shrink:0; }
+    .stat-mini { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:12px 16px; }
+    .stat-mini .label { font-size:10px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
+    .stat-mini .value { font-size:20px; font-weight:700; color:var(--navy); }
+    .stat-mini .sub { font-size:11px; color:var(--gray-text); margin-top:2px; }
+    .stat-mini.highlight { border-color:var(--orange); }
+    .stat-mini.highlight .value { color:var(--orange); }
+    .stat-mini.highlight-green { border-color:var(--green); }
+    .stat-mini.highlight-green .value { color:var(--green); }
+    .stat-mini.highlight-red { border-color:var(--red); }
+    .stat-mini.highlight-red .value { color:var(--red); }
+    @media (max-width:768px) { .stats-row { grid-template-columns:repeat(2,1fr); } }
+    .page-header-left h1 { font-size:22px; font-weight:700; color:var(--navy); }
+    .page-header-left p { font-size:13px; color:var(--gray-text); margin-top:4px; }
+    .btn-primary { padding:10px 20px; background:var(--orange); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
+    .btn-primary:hover { background:var(--orange-hover); }
+
+    .filters-bar { background:white; border-radius:10px; border:1.5px solid var(--gray-border); padding:10px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; flex-shrink:0; }
+.filter-select { padding:7px 10px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; color:var(--text-dark); background:white; cursor:pointer; outline:none; min-width:0; flex-shrink:1; transition:border-color 0.2s; }
+    .filter-select:focus, .filter-select:hover { border-color:var(--navy); }
+    .filter-search { flex:1; min-width:180px; display:flex; align-items:center; gap:8px; background:var(--gray-bg); border:1.5px solid var(--gray-border); border-radius:8px; padding:7px 12px; transition:border-color 0.2s; }
+    .filter-search:focus-within { border-color:var(--navy); background:white; }
+    .filter-search svg { width:14px; height:14px; color:var(--gray-text); flex-shrink:0; }
+    .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
+    .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
+    .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
+    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
+    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
+    table { width:100%; min-width:1170px; border-collapse:collapse; table-layout:fixed; }
+    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
+    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
+    tr:last-child td { border-bottom:none; }
+    tr:hover td { background:#FAFAFA; cursor:pointer; }
+
+    /* ── Semantic column classes (safe to reorder/insert columns) ── */
+    .col-order-id      { width:100px; min-width:100px; }
+    .col-nama-klien    { width:180px; min-width:180px; max-width:180px; white-space:normal; word-break:break-word; }
+    .col-paket         { width:140px; min-width:140px; max-width:120px; white-space:normal; }
+    .col-pic           { width:150px; min-width:150px; max-width:140px; white-space:normal; word-break:break-word; }
+    .col-progress      { width:130px; min-width:130px; }
+    .col-tgl           { width:120px; min-width:120px; }
+    .col-status-order  { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
+    .col-status-inv    { width:140px; min-width:130px; max-width:140px; text-align:center; }
+    th.col-status-inv  { white-space:nowrap; }
+    .col-aksi          { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
+    /* ── Avatar & Client Cell ── */
+    .client-cell { display:flex; align-items:center; gap:10px; }
+    .avatar-sm {
+      width:35px; height:35px; border-radius:50%;
+      color:white; font-size:12px; font-weight:700; letter-spacing:0.5px;
+      display:flex; align-items:center; justify-content:center;
+      flex-shrink:0; user-select:none;
+    }
+
+    /* ── Badge (pill / kapsul) ── */
+    .badge {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:4px 12px; border-radius:50px;
+      font-size:11px; font-weight:600; line-height:1.4;
+      white-space:nowrap;
+    }
+    .badge::before {
+      content:''; width:6px; height:6px; border-radius:50%;
+      background:currentColor; flex-shrink:0;
+    }
+    .badge.active    { background:#EAFAF1; color:#1E8449; }
+    .badge.completed { background:#EBF5FB; color:#1A6FA3; }
+    .badge.cancelled { background:#FDEDEC; color:#C0392B; }
+    .badge.paid      { background:#EAFAF1; color:#1E8449; }
+    .badge.pending   { background:#FEF9E7; color:#D68910; }
+    .badge.overdue   { background:#FDEDEC; color:#C0392B; }
+    /* Status Invoice badge wraps "Awaiting Payment" ke 2 baris */
+    td.col-status-inv .badge {
+      white-space:normal; text-align:center; justify-content:center;
+      max-width:110px; line-height:1.35;
+    }
+
+    /* ── Order ID ── */
+    .order-id { font-weight:700; color:var(--navy); font-size:13px; }
+
+    /* ── Session Progress Bar ── */
+    .session-progress { display:flex; flex-direction:column; gap:4px; }
+    .session-bar { height:5px; background:var(--gray-border); border-radius:3px; width:110px; overflow:hidden; }
+    .session-fill { height:100%; background:var(--orange); border-radius:2px; }
+    .session-text { font-size:11px; color:var(--gray-text); }
+
+    /* ── Action Buttons ── */
+    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
+    .action-btn {
+      width:30px; height:30px;
+      border-radius:6px; border:1px solid #E2E6EA;
+      background:white; cursor:pointer;
+      display:inline-flex; align-items:center; justify-content:center;
+      color:var(--gray-text); transition:all 0.15s; flex-shrink:0;
+      padding:6px;
+    }
+    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
+    .action-btn svg { width:14px; height:14px; }
+    .action-btn.invoice { background:#EBF5FB; color:#2980B9; border-color:#AED6F1; }
+    .action-btn.invoice:hover { background:#D6EAF8; border-color:#2980B9; }
+    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
+    .pagination-info { font-size:12px; color:var(--gray-text); }
+    .pagination-btns { display:flex; gap:4px; }
+    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
+    .page-btn:hover { border-color:var(--navy); }
+    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
+    .page-btn svg { width:14px; height:14px; }
+
+    /* Modal */
+    .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
+    .modal-overlay.show { display:flex; }
+    .modal { background:white; border-radius:16px; width:100%; max-width:640px; }
+    .modal-header { padding:24px 28px 20px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; }
+
+    /* Centered Dialog (replaces side drawer) */
+    .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:300; align-items:center; justify-content:center; padding:24px 20px; }
+    .drawer-overlay.show { display:flex; }
+    .drawer { background:white; border-radius:18px; width:100%; max-width:660px; max-height:90vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.2); transform:scale(0.95); opacity:0; transition:transform 0.25s cubic-bezier(.4,0,.2,1), opacity 0.25s ease; }
+    .drawer.open { transform:scale(1); opacity:1; }
+    .drawer-header { padding:20px 24px 16px; border-bottom:1px solid var(--gray-border); display:flex; align-items:center; justify-content:space-between; flex-shrink:0; }
+    .drawer-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .drawer-header p { font-size:12px; color:var(--gray-text); margin-top:2px; }
+    .drawer-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); flex-shrink:0; }
+    .drawer-close svg { width:16px; height:16px; }
+    .drawer-tabs { display:flex; gap:4px; padding:10px 24px; border-bottom:1px solid var(--gray-border); background:var(--gray-bg); flex-shrink:0; }
+    .drawer-tab { padding:7px 18px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; color:var(--gray-text); border:none; background:none; font-family:'Poppins',sans-serif; transition:all 0.2s; }
+    .drawer-tab.active { background:var(--navy); color:white; }
+    .drawer-body { flex:1; overflow-y:auto; overflow-x:hidden; padding:20px 24px; box-sizing:border-box; min-width:0; }
+    .drawer-footer { padding:14px 24px; border-top:1px solid var(--gray-border); display:flex; gap:10px; justify-content:flex-end; flex-shrink:0; }
+    .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+    .info-box { background:var(--gray-bg); border-radius:10px; padding:12px 14px; }
+    .info-box .lbl { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+    .info-box .val { font-size:13px; font-weight:600; color:var(--navy); }
+    .inv-section { background:var(--navy); border-radius:12px; padding:16px 18px; margin-bottom:14px; }
+    .inv-section .inv-num { font-size:13px; font-weight:700; color:white; margin-bottom:4px; }
+    .inv-section .inv-meta { font-size:11px; color:rgba(255,255,255,.6); line-height:1.8; }
+    .inv-items { border-radius:10px; border:1.5px solid var(--gray-border); overflow:hidden; margin-bottom:14px; overflow-x:auto; }
+    .inv-items table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:460px; box-sizing:border-box; }
+    .inv-items th { background:var(--gray-bg); padding:9px 8px; font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.5px; text-align:left; word-wrap:break-word; overflow-wrap:break-word; white-space:normal; }
+    .inv-items th.r, .inv-items td.r { text-align:right; }
+    .inv-items td { padding:10px 8px; font-size:12px; border-top:1px solid var(--gray-border); word-wrap:break-word; overflow-wrap:break-word; white-space:normal; vertical-align:top; }
+    /* Column widths: Deskripsi | Harga/Sesi | Jml Sesi | Harga Paket | Diskon Paket | Total */
+    .inv-items th:nth-child(1), .inv-items td:nth-child(1) { width:28%; text-align:left; }
+    .inv-items th:nth-child(2), .inv-items td:nth-child(2) { width:14%; }
+    .inv-items th:nth-child(3), .inv-items td:nth-child(3) { width:10%; }
+    .inv-items th:nth-child(4), .inv-items td:nth-child(4) { width:16%; }
+    .inv-items th:nth-child(5), .inv-items td:nth-child(5) { width:16%; }
+    .inv-items th:nth-child(6), .inv-items td:nth-child(6) { width:16%; }
+    .inv-total { display:flex; justify-content:space-between; padding:12px 14px; background:var(--gray-bg); border-radius:10px; font-size:14px; font-weight:700; color:var(--navy); margin-bottom:14px; }
+    .inv-total span:last-child { color:var(--orange); font-size:16px; }
+    .inv-status-bar { display:flex; align-items:center; justify-content:space-between; padding:12px 14px; border-radius:10px; border:1.5px solid var(--gray-border); margin-bottom:12px; }
+    .status-select { padding:7px 12px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; color:var(--navy); background:white; cursor:pointer; outline:none; transition:border-color 0.2s; }
+    .status-select.dirty { border-color:var(--orange); box-shadow:0 0 0 3px rgba(224,89,69,0.12); }
+    .cancel-note { margin-top:12px; padding:14px 16px; background:#FFF5F5; border-radius:10px; border-left:3px solid var(--red); display:none; }
+    .cancel-note label { display:block; font-size:12px; font-weight:600; color:var(--red); margin-bottom:6px; }
+    .cancel-note textarea { width:100%; padding:9px 13px; border:1.5px solid #F5C6C6; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; resize:none; background:white; }
+    .cancel-note textarea:focus { border-color:var(--red); }
+    .toast-saved { position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(20px); background:#1E1C43; color:white; padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:999; opacity:0; transition:opacity 0.25s, transform 0.25s; pointer-events:none; display:flex; align-items:center; gap:8px; }
+    .toast-saved.show { opacity:1; transform:translateX(-50%) translateY(0); }
+    .btn-green { padding:9px 18px; background:var(--green); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    .btn-outline-sm { padding:9px 18px; background:white; color:var(--navy); border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    /* Mark paid form inside drawer */
+    .form-group { margin-bottom:14px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:5px; }
+    .form-control { width:100%; padding:9px 13px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); outline:none; }
+    .form-control:focus { border-color:var(--navy); }
+    .modal-header h3 { font-size:16px; font-weight:700; color:var(--navy); }
+    .modal-header p { font-size:12px; color:var(--gray-text); margin-top:2px; }
+    .modal-close { width:32px; height:32px; border-radius:8px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; color:var(--gray-text); }
+    .modal-close svg { width:16px; height:16px; }
+    .steps { display:flex; align-items:center; padding:20px 28px; border-bottom:1px solid var(--gray-border); }
+    .step { display:flex; flex-direction:column; align-items:center; flex:1; position:relative; }
+    .step:not(:last-child)::after { content:''; position:absolute; top:14px; left:60%; width:80%; height:2px; background:var(--gray-border); z-index:0; }
+    .step.done:not(:last-child)::after { background:var(--orange); }
+    .step-circle { width:28px; height:28px; border-radius:50%; border:2px solid var(--gray-border); background:white; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:var(--gray-text); z-index:1; position:relative; }
+    .step.active .step-circle { border-color:var(--orange); background:var(--orange); color:white; }
+    .step.done .step-circle { border-color:var(--green); background:var(--green); color:white; }
+    .step-label { font-size:11px; font-weight:500; color:var(--gray-text); margin-top:6px; text-align:center; }
+    .step.active .step-label { color:var(--navy); font-weight:600; }
+    .step.done .step-label { color:var(--green); }
+    .step-content { padding:24px 28px; min-height:300px; max-height:62vh; overflow-y:auto; }
+    .modal-footer { padding:16px 28px; border-top:1px solid var(--gray-border); display:flex; justify-content:space-between; align-items:center; }
+    .form-group { margin-bottom:18px; }
+    .form-group label { display:block; font-size:12px; font-weight:600; color:var(--navy); margin-bottom:6px; }
+    .form-group label span { color:var(--orange); }
+    .form-control { width:100%; padding:10px 14px; border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; color:var(--text-dark); background:white; outline:none; transition:border-color 0.2s; }
+    .form-control:focus { border-color:var(--navy); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    .btn-cancel { padding:10px 20px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
+    .package-cards { display:flex; flex-direction:column; gap:12px; }
+    .package-card { border:2px solid var(--gray-border); border-radius:12px; padding:16px 20px; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:16px; }
+    .package-card:hover { border-color:var(--navy); }
+    .package-card.selected { border-color:var(--orange); background:#FFF8F7; }
+    .package-card input[type=radio] { flex-shrink:0; accent-color:var(--orange); width:16px; height:16px; }
+    .package-info { flex:1; }
+    .package-info h4 { font-size:14px; font-weight:600; color:var(--navy); }
+    .package-info p { font-size:12px; color:var(--gray-text); margin-top:2px; }
+    .package-price { font-size:16px; font-weight:700; color:var(--orange); white-space:nowrap; }
+    .recommended { background:var(--orange); color:white; font-size:10px; font-weight:700; padding:2px 8px; border-radius:10px; margin-left:8px; }
+    .review-section { background:var(--gray-bg); border-radius:12px; padding:20px; margin-bottom:16px; }
+    .review-section h4 { font-size:13px; font-weight:700; color:var(--navy); margin-bottom:12px; }
+    .review-row { display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid var(--gray-border); font-size:13px; }
+    .review-row:last-child { border-bottom:none; }
+    .review-row .label { color:var(--gray-text); }
+    .review-row .value { font-weight:500; color:var(--navy); }
+    .total-row { display:flex; justify-content:space-between; padding:12px 0; font-size:15px; font-weight:700; color:var(--navy); border-top:2px solid var(--navy); margin-top:8px; }
+  </style>
+  <link rel="stylesheet" href="assets/css/responsive.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <img src="assets/logo-circle-white.png" style="max-height:60px;width:auto;display:block;background:transparent"/>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-label">Main Menu</div>
+    <a href="dashboard.html" class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Dashboard
+    </a>
+    <!-- Private Training - expanded -->
+    <a href="#" class="nav-item active" onclick="toggleMenu(event,'ppSub','ppArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Private Training
+      <svg id="ppArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transform:rotate(180deg);transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="ppSub" style="display:block">
+      <a href="pp-leads.html" class="nav-sub-item">Leads</a>
+      <a href="pp-orders.html" class="nav-sub-item active">Orders</a>
+      <a href="pp-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="pp-receipt.html" class="nav-sub-item">Receipt &amp; Barcode</a>
+      <a href="pp-documents.html" class="nav-sub-item">Agreement Klien</a>
+      <a href="pp-program-db.html" class="nav-sub-item">Database Program</a>
+    </div>
+    <!-- B2B -->
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'b2bSub','b2bArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      B2B Management
+      <svg id="b2bArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="b2bSub" style="display:none">
+      <a href="b2b-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="b2b-leads-corporate.html" class="nav-sub-item">Leads Corporate</a>
+      <a href="b2b-leads-apartment.html" class="nav-sub-item">Leads Apartment</a>
+      <a href="b2b-clients.html" class="nav-sub-item">Database Klien</a>
+      <a href="b2b-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="b2b-documents.html" class="nav-sub-item">Pemberkasan</a>
+      <a href="b2b-live-report.html" class="nav-sub-item">Live Report</a>
+      <a href="b2b-revenue.html" class="nav-sub-item">Revenue</a>
+    </div>
+    <!-- Event -->
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'eventSub','eventArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Event Management
+      <svg id="eventArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="eventSub" style="display:none">
+      <a href="event-dashboard.html" class="nav-sub-item">Dashboard</a>
+      <a href="event-leads.html" class="nav-sub-item">Leads Event</a>
+      <a href="event-tracker.html" class="nav-sub-item">Event Tracker</a>
+      <a href="event-invoice.html" class="nav-sub-item">Invoice</a>
+      <a href="event-revenue.html" class="nav-sub-item">Revenue</a>
+      <a href="event-documents.html" class="nav-sub-item">Pemberkasan</a>
+    </div>
+    <!-- Operational -->
+    <a href="#" class="nav-item" onclick="toggleMenu(event,'opsSub','opsArrow')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>
+      Operational
+      <svg id="opsArrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;width:14px;height:14px;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+    </a>
+    <div id="opsSub" style="display:none">
+      <a href="ops-pic.html" class="nav-sub-item">Database PIC</a>
+      <a href="ops-assets.html" class="nav-sub-item">Barang & Aset</a>
+      <a href="ops-mitra.html" class="nav-sub-item">Database Mitra</a>
+      <a href="ops-trainer.html" class="nav-sub-item">Data Pelatih &amp; PKS</a>
+    </div>
+  </nav>
+  <div class="nav-label" id="ownerLabel" style="display:none">Owner Only</div>
+  <a href="settings.html" class="nav-item" id="menuSettings" style="display:none">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M12 2v2M12 20v2M20 12h2M2 12h2M17.66 17.66l-1.41-1.41M6.34 17.66l1.41-1.41"/></svg>Settings
+  </a>
+  <div class="sidebar-footer">
+    <a href="index.html" class="nav-item logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Logout
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <header class="header">
+    <span class="header-title">EFM Management</span>
+    <div class="header-right">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Cari order, klien..."/>
+      </div>
+      <div class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Private Training Orders</h1>
+        <p>Kelola semua order klien private training</p>
+      </div>
+      <button class="btn-primary" onclick="openModal()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Order
+      </button>
+    </div>
+
+
+
+    <div class="stats-row">
+      <div class="stat-mini highlight"><div class="label">Total Orders</div><div class="value" id="statTotal">0</div><div class="sub">Semua order</div></div>
+      <div class="stat-mini"><div class="label">Active</div><div class="value" id="statActive">0</div><div class="sub">Sedang berjalan</div></div>
+      <div class="stat-mini highlight-green"><div class="label">Completed</div><div class="value" id="statCompleted">0</div><div class="sub">Selesai</div></div>
+      <div class="stat-mini highlight-red"><div class="label">Cancelled</div><div class="value" id="statCancelled">0</div><div class="sub">Dibatalkan</div></div>
+    </div>
+
+    <div class="filters-bar">
+      <select class="filter-select" id="filterStatus" onchange="applyFilterAndPaginate()">
+        <option value="">Status Order</option>
+        <option value="active">Active</option>
+        <option value="completed">Completed</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+      <select class="filter-select" id="filterInvoice" onchange="applyFilterAndPaginate()">
+        <option value="">Status Invoice</option>
+        <option value="paid">Paid</option>
+        <option value="pending">Awaiting Payment</option>
+        <option value="overdue">Overdue</option>
+      </select>
+      <select class="filter-select" id="filterPIC" onchange="applyFilterAndPaginate()">
+        <option value="">Semua PIC</option>
+        <option>Sarah Jenkins</option>
+        <option>Marcus Chen</option>
+        <option>Elena Rodriguez</option>
+      </select>
+      <select class="filter-select" id="filterPaket" onchange="applyFilterAndPaginate()">
+        <option value="">Semua Paket</option>
+        <option>4 Sesi - Starter</option>
+        <option>8 Sesi - Base</option>
+        <option>12 Sesi - Pro</option>
+        <option>24 Sesi - Elite</option>
+      </select>
+      <div class="filter-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" oninput="applyFilterAndPaginate()" placeholder="Cari nama klien atau order ID..."/>
+      </div>
+      <button class="btn-clear" onclick="clearFilter()">Reset</button>
+    </div>
+
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col class="col-order-id"/>
+            <col class="col-nama-klien"/>
+            <col class="col-paket"/>
+            <col class="col-pic"/>
+            <col class="col-progress"/>
+            <col class="col-tgl"/>
+            <col class="col-status-order"/>
+            <col class="col-status-inv"/>
+            <col class="col-aksi"/>
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="col-order-id">Order ID</th>
+              <th class="col-nama-klien">Nama Klien</th>
+              <th class="col-paket">Paket</th>
+              <th class="col-pic">PIC (Pelatih)</th>
+              <th class="col-progress">Progress Sesi</th>
+              <th class="col-tgl">Tgl. Mulai</th>
+              <th class="col-status-order">Status Order</th>
+              <th class="col-status-inv">Status Invoice</th>
+              <th class="col-aksi">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody">
+            <tr data-order-id="PP-8042" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8042</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+              <td class="col-paket">12 Sesi - Pro</td>
+              <td class="col-pic">Sarah Jenkins</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
+              <td class="col-tgl">24 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8041" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8041</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+              <td class="col-paket">4 Sesi - Starter</td>
+              <td class="col-pic">Marcus Chen</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
+              <td class="col-tgl">22 Okt 2026</td>
+              <td class="col-status-order"><span class="badge completed">Completed</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8038" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8038</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+              <td class="col-paket">24 Sesi - Elite</td>
+              <td class="col-pic">Elena Rodriguez</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
+              <td class="col-tgl">18 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8035" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8035</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
+              <td class="col-paket">8 Sesi - Base</td>
+              <td class="col-pic">Sarah Jenkins</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
+              <td class="col-tgl">15 Okt 2026</td>
+              <td class="col-status-order"><span class="badge cancelled">Cancelled</span></td>
+              <td class="col-status-inv"><span class="badge overdue">Overdue</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8031" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8031</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
+              <td class="col-paket">12 Sesi - Pro</td>
+              <td class="col-pic">Marcus Chen</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:58%"></div></div><span class="session-text">7/12 sesi</span></div></td>
+              <td class="col-tgl">10 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8027" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8027</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#D35400">RK</div>Rina Kusuma</div></td>
+              <td class="col-paket">4 Sesi - Starter</td>
+              <td class="col-pic">Elena Rodriguez</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
+              <td class="col-tgl">5 Okt 2026</td>
+              <td class="col-status-order"><span class="badge completed">Completed</span></td>
+              <td class="col-status-inv"><span class="badge paid">Paid</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Print Invoice" onclick="event.stopPropagation();printInvoice('INV/EFM/PP/2026/0078')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+                </div>
+              </td>
+            </tr>
+            <tr data-order-id="PP-8024" onclick="openDrawer(this)" style="cursor:pointer">
+              <td class="col-order-id"><span class="order-id">#PP-8024</span></td>
+              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#2C3E50">HW</div>Hendra Wijaya</div></td>
+              <td class="col-paket">24 Sesi - Elite</td>
+              <td class="col-pic">Sarah Jenkins</td>
+              <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:12%;background:var(--red)"></div></div><span class="session-text">3/24 sesi</span></div></td>
+              <td class="col-tgl">1 Okt 2026</td>
+              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
+              <td class="col-aksi">
+                <div class="action-wrap">
+                  <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                  <button class="action-btn invoice" title="Konfirmasi / Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'),'invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pagination-info" id="paginationInfo">Memuat data...</div>
+        <div class="pagination-btns" id="paginationBtns"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Toast feedback -->
+<div class="toast-saved" id="toastSaved">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toastMsg">Status diperbarui</span>
+</div>
+
+<!-- Centered Dialog -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()">
+  <div class="drawer" id="orderDrawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div><h3 id="drTitle">Detail Order</h3><p id="drSubtitle"></p></div>
+      <button class="drawer-close" onclick="closeDrawer()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="drawer-tabs">
+      <button class="drawer-tab active" id="tabOrder" onclick="switchDrawerTab('order')">📋 Detail Order</button>
+      <button class="drawer-tab" id="tabInvoice" onclick="switchDrawerTab('invoice')">🧾 Invoice</button>
+      <button class="drawer-tab" id="tabAgreement" onclick="switchDrawerTab('agreement')">📄 Agreement</button>
+    </div>
+    <div class="drawer-body" id="drawerBody"><!-- filled by JS --></div>
+    <div class="drawer-footer" id="drawerFooter"><!-- filled by JS --></div>
+  </div>
+</div>
+
+<!-- Modal: Create Order (5 Steps) -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div><h3>Buat Order Baru</h3><p id="stepSubtitle">Langkah 1 dari 5: Pilih Klien</p></div>
+      <button class="modal-close" onclick="closeModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="steps">
+      <div class="step active" id="step1"><div class="step-circle">1</div><div class="step-label">Klien</div></div>
+      <div class="step" id="step2"><div class="step-circle">2</div><div class="step-label">Program</div></div>
+      <div class="step" id="step3"><div class="step-circle">3</div><div class="step-label">Logistik</div></div>
+      <div class="step" id="step4"><div class="step-circle">4</div><div class="step-label">Biaya</div></div>
+      <div class="step" id="step5"><div class="step-circle">5</div><div class="step-label">Review</div></div>
+    </div>
+    <div class="step-content" id="stepContent">
+
+      <!-- STEP 1: KLIEN -->
+      <div id="content1">
+
+        <!-- Pemesan -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden;margin-bottom:16px">
+          <div style="background:var(--navy);padding:10px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div style="font-size:12px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">👤 Pemesan <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,.6)">(yang melakukan order)</span></div>
+          </div>
+          <div style="padding:14px 16px">
+            <div class="form-group" style="margin-bottom:10px">
+              <label>Cari dari Database Leads</label>
+              <div style="position:relative">
+                <input type="text" class="form-control" id="search_pemesan" placeholder="Ketik nama atau No HP..." autocomplete="off"
+                  oninput="filterLeads('pemesan')" onfocus="showDropdown('pemesan')" onblur="setTimeout(()=>hideDropdown('pemesan'),200)"
+                  style="padding-right:36px"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div id="dropdown_pemesan" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:9999;max-height:280px;overflow-y:auto"></div>
+              </div>
+            </div>
+            <!-- Info Card Pemesan -->
+            <div id="card_pemesan" style="display:none;background:#F0F4FF;border:1.5px solid #C5D3F0;border-radius:10px;padding:12px 14px;display:none">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div id="avatar_pemesan" style="width:38px;height:38px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">?</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--navy)" id="disp_pemesan_nama">—</div>
+                  <div style="font-size:11px;color:var(--gray-text);margin-top:2px"><span id="disp_pemesan_hp">—</span> · <span id="disp_pemesan_email">—</span></div>
+                  <div style="font-size:11px;color:var(--gray-text)">Lead ID: <span id="disp_pemesan_id" style="font-weight:600">—</span> · Minat: <span id="disp_pemesan_minat">—</span></div>
+                </div>
+                <button onclick="clearLead('pemesan')" style="border:none;background:none;cursor:pointer;color:var(--gray-text);font-size:18px;line-height:1;padding:2px">×</button>
+              </div>
+            </div>
+            <div id="empty_pemesan" style="font-size:12px;color:var(--gray-text);margin-top:6px">Belum dipilih</div>
+          </div>
+        </div>
+
+        <!-- Sama checkbox -->
+        <div style="margin-bottom:14px;display:flex;align-items:center;gap:10px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--navy)">
+            <input type="checkbox" id="chk_sama" onchange="toggleSama()" style="accent-color:var(--navy);width:15px;height:15px"/>
+            Klien yang latihan = Pemesan (orang yang sama)
+          </label>
+        </div>
+
+        <!-- Klien yang Latihan -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden" id="box_klien">
+          <div style="background:#F39C12;padding:10px 16px">
+            <div style="font-size:12px;font-weight:700;color:white;text-transform:uppercase;letter-spacing:.5px">🏋️ Klien yang Latihan <span style="font-size:10px;font-weight:400;color:rgba(255,255,255,.75)">(peserta program)</span></div>
+          </div>
+          <div style="padding:14px 16px">
+            <div class="form-group" style="margin-bottom:10px">
+              <label>Cari dari Database Leads</label>
+              <div style="position:relative">
+                <input type="text" class="form-control" id="search_klien" placeholder="Ketik nama atau No HP..." autocomplete="off"
+                  oninput="filterLeads('klien')" onfocus="showDropdown('klien')" onblur="setTimeout(()=>hideDropdown('klien'),200)"
+                  style="padding-right:36px"/>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--gray-text);pointer-events:none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <div id="dropdown_klien" style="display:none;position:absolute;left:0;right:0;top:calc(100% + 4px);background:white;border:1.5px solid var(--gray-border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:9999;max-height:280px;overflow-y:auto"></div>
+              </div>
+            </div>
+            <!-- Info Card Klien -->
+            <div id="card_klien" style="display:none;background:#FFF8F0;border:1.5px solid #F5CBA7;border-radius:10px;padding:12px 14px;display:none">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div id="avatar_klien" style="width:38px;height:38px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">?</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:var(--navy)" id="disp_klien_nama">—</div>
+                  <div style="font-size:11px;color:var(--gray-text);margin-top:2px"><span id="disp_klien_hp">—</span> · <span id="disp_klien_email">—</span></div>
+                  <div style="font-size:11px;color:var(--gray-text)">Lead ID: <span id="disp_klien_id" style="font-weight:600">—</span> · Minat: <span id="disp_klien_minat">—</span></div>
+                </div>
+                <button onclick="clearLead('klien')" style="border:none;background:none;cursor:pointer;color:var(--gray-text);font-size:18px;line-height:1;padding:2px">×</button>
+              </div>
+            </div>
+            <div id="empty_klien" style="font-size:12px;color:var(--gray-text);margin-top:6px">Belum dipilih</div>
+          </div>
+        </div>
+
+        <!-- hidden inputs (dipakai fillReview) -->
+        <input type="hidden" id="inp_nama"/>
+        <input type="hidden" id="inp_hp"/>
+        <input type="hidden" id="inp_email"/>
+        <input type="hidden" id="inp_pemesan_nama"/>
+        <input type="hidden" id="inp_pemesan_hp"/>
+
+      </div>
+
+      <!-- STEP 2: PROGRAM -->
+      <div id="content2" style="display:none">
+
+        <!-- Dropdown ID Program -->
+        <div class="form-group">
+          <label>Pilih ID Program <span style="color:var(--orange)">*</span></label>
+          <select class="form-control" id="inp_program_id" onchange="onProgramChange()" style="font-family:'Poppins',sans-serif">
+            <option value="">— Pilih Program —</option>
+          </select>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:5px">Program diambil dari <a href="pp-program-db.html" target="_blank" style="color:var(--navy);font-weight:600">Database Program</a></div>
+        </div>
+
+        <!-- Info Program (auto-fill) -->
+        <div id="program_info_box" style="display:none">
+          <div style="background:var(--navy);border-radius:12px;padding:14px 18px;margin-bottom:12px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+              <div>
+                <div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">ID Program</div>
+                <div style="font-size:14px;font-weight:700;color:white" id="prog_id_disp">—</div>
+              </div>
+              <div style="font-size:18px;font-weight:700;color:var(--orange)" id="prog_harga_disp">Rp 0</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Latihan</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_nama_latihan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Paket</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_nama_paket">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Partisipan</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_partisipan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Jumlah Sesi</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_sesi">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Pertemuan/Minggu</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_pertemuan">—</div>
+              </div>
+              <div>
+                <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Masa Habis</div>
+                <div style="font-size:12px;font-weight:600;color:white" id="prog_masa">—</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info PIC dari program -->
+          <div style="background:var(--gray-bg);border-radius:10px;padding:13px 16px;border-left:3px solid var(--orange)">
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">PIC / Pelatih yang Ditugaskan</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nomor ID PIC</div>
+                <div style="font-size:13px;font-weight:700;color:var(--orange)" id="prog_pic_id">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Panggilan</div>
+                <div style="font-size:13px;font-weight:600;color:var(--navy)" id="prog_pic_nick">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Nama Lengkap</div>
+                <div style="font-size:13px;font-weight:600;color:var(--navy)" id="prog_pic_fullname">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Spesialisasi</div>
+                <div style="font-size:12px;color:var(--navy)" id="prog_pic_spesialis">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Biaya/Sesi PIC</div>
+                <div style="font-size:12px;font-weight:600;color:var(--navy)" id="prog_pic_biaya">—</div>
+              </div>
+              <div>
+                <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">No. HP PIC</div>
+                <div style="font-size:12px;color:var(--navy)" id="prog_pic_hp">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div id="program_empty" style="text-align:center;padding:32px 20px;color:var(--gray-text)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40" style="opacity:.3;margin-bottom:10px"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <p style="font-size:13px">Pilih ID Program untuk melihat detail paket dan PIC</p>
+        </div>
+      </div>
+
+      <!-- STEP 3: LOGISTIK -->
+      <div id="content3" style="display:none">
+
+        <!-- Konfirmasi PIC dari program (read-only) -->
+        <div style="background:var(--gray-bg);border-radius:10px;padding:12px 16px;margin-bottom:14px;border-left:3px solid var(--orange)">
+          <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">PIC / Pelatih (dari Program)</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">ID PIC</div>
+              <div style="font-size:13px;font-weight:700;color:var(--orange)" id="s3_pic_id">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">Nama Panggilan</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="s3_pic_nick">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--gray-text);margin-bottom:2px">Nama Lengkap</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="s3_pic_full">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lokasi -->
+        <div class="form-group">
+          <label>Lokasi Latihan <span style="color:var(--orange)">*</span></label>
+          <input type="text" class="form-control" id="inp_lokasi" placeholder="Contoh: Apartemen ABC Lt.3, Jakarta Selatan"/>
+        </div>
+
+        <!-- Koordinat Google Maps -->
+        <div style="background:#EBF5FB;border:1.5px solid rgba(41,128,185,0.25);border-radius:10px;padding:13px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:#2980B9;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">📍 Koordinat Lokasi (untuk sistem absensi)</div>
+
+          <!-- Input URL -->
+          <div class="form-group" style="margin-bottom:10px">
+            <label style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:6px;display:block">Paste Link Google Maps</label>
+            <div style="display:flex;gap:8px">
+              <input type="text" class="form-control" id="inp_maps_url" placeholder="https://www.google.com/maps/place/..." style="flex:1;font-size:12px"/>
+              <button type="button" onclick="parseGoogleMapsURL()" style="padding:9px 14px;background:#2980B9;color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Deteksi</button>
+            </div>
+            <div id="maps_parse_msg" style="font-size:11px;margin-top:5px;display:none"></div>
+          </div>
+
+          <!-- Hasil koordinat (read-only, auto-filled) -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Latitude</div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);padding:8px 12px;background:white;border-radius:8px;border:1.5px solid var(--gray-border);min-height:36px" id="disp_lat">—</div>
+              <input type="hidden" id="inp_lat"/>
+            </div>
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Longitude</div>
+              <div style="font-size:13px;font-weight:700;color:var(--navy);padding:8px 12px;background:white;border-radius:8px;border:1.5px solid var(--gray-border);min-height:36px" id="disp_lng">—</div>
+              <input type="hidden" id="inp_lng"/>
+            </div>
+          </div>
+
+          <!-- Preview link -->
+          <div id="maps_link_box" style="display:none;margin-top:10px;padding:8px 12px;background:white;border-radius:8px;border:1.5px solid rgba(41,128,185,0.3);align-items:center;justify-content:space-between">
+            <span style="font-size:12px;color:#2980B9;font-weight:600" id="maps_link_label">—</span>
+            <a id="maps_link_href" href="#" target="_blank" style="font-size:11px;font-weight:700;color:#2980B9;text-decoration:none;padding:4px 10px;border:1px solid #2980B9;border-radius:6px;white-space:nowrap;margin-left:12px">Buka Maps ↗</a>
+          </div>
+        </div>
+
+        <!-- Tanggal Mulai -->
+        <div class="form-group">
+          <label>Tanggal Mulai Program Latihan / Terapi <span style="color:var(--orange)">*</span></label>
+          <input type="date" class="form-control" id="inp_tgl_mulai"/>
+        </div>
+
+        <!-- Jadwal -->
+        <div style="margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:10px">Jadwal Latihan <span style="color:var(--orange)">*</span> <span style="font-size:11px;font-weight:400;color:var(--gray-text)">(isi minimal 1 jadwal)</span></div>
+          <!-- Header kolom -->
+          <div style="display:grid;grid-template-columns:90px 1.4fr 1fr;gap:10px;margin-bottom:6px;padding:0 2px">
+            <div></div>
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Hari</div>
+            <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Jam Mulai</div>
+          </div>
+          <!-- Jadwal 1 -->
+          <div style="display:grid;grid-template-columns:90px 1.4fr 1fr;gap:10px;margin-bottom:8px;align-items:center">
+            <div style="font-size:12px;font-weight:700;color:white;background:var(--navy);border-radius:7px;padding:8px 10px;text-align:center;white-space:nowrap">Jadwal 1</div>
+            <select class="form-control" id="inp_hari1" style="font-size:13px">
+              <option value="">— Pilih Hari —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam1" value="07:00"/>
+          </div>
+          <!-- Jadwal 2 -->
+          <div style="display:grid;grid-template-columns:90px 1.4fr 1fr;gap:10px;margin-bottom:8px;align-items:center">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:7px;padding:8px 10px;text-align:center;white-space:nowrap">Jadwal 2</div>
+            <select class="form-control" id="inp_hari2" style="font-size:13px">
+              <option value="">— Opsional —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam2" value="07:00"/>
+          </div>
+          <!-- Jadwal 3 -->
+          <div style="display:grid;grid-template-columns:90px 1.4fr 1fr;gap:10px;align-items:center">
+            <div style="font-size:12px;font-weight:700;color:var(--navy);background:var(--gray-bg);border:1.5px solid var(--gray-border);border-radius:7px;padding:8px 10px;text-align:center;white-space:nowrap">Jadwal 3</div>
+            <select class="form-control" id="inp_hari3" style="font-size:13px">
+              <option value="">— Opsional —</option>
+              <option>Senin</option><option>Selasa</option><option>Rabu</option>
+              <option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option>
+            </select>
+            <input type="time" class="form-control" id="inp_jam3" value="07:00"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Catatan Tambahan</label>
+          <input type="text" class="form-control" id="inp_catatan" placeholder="Contoh: Preferensi alat, kondisi fisik, dst."/>
+        </div>
+      </div>
+
+      <!-- STEP 4: BIAYA & INVOICE -->
+      <div id="content4" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+
+          <!-- Biaya Paket (read-only) -->
+          <div style="grid-column:1/-1;background:var(--gray-bg);border-radius:10px;padding:13px 16px;display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Paket Dipilih</div>
+              <div style="font-size:13px;font-weight:600;color:var(--navy)" id="rev_paket_label">—</div>
+            </div>
+            <div style="font-size:16px;font-weight:700;color:var(--navy)" id="biaya_paket_disp">Rp 0</div>
+          </div>
+
+          <!-- Biaya Lain -->
+          <div style="grid-column:1/-1;background:#F8F9FA;border:1.5px solid var(--gray-border);border-radius:10px;padding:14px 16px">
+            <div style="font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">➕ Biaya Lain</div>
+            <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:12px;align-items:end">
+              <div class="form-group" style="margin:0">
+                <label>Nominal (Rp)</label>
+                <input type="number" class="form-control" id="inp_extra" placeholder="0" value="0" min="0" oninput="recalcTotal()"/>
+              </div>
+              <div class="form-group" style="margin:0">
+                <label>Keterangan</label>
+                <input type="text" class="form-control" id="inp_extra_ket" placeholder="Contoh: Biaya peralatan, suplemen, dll."/>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo & Diskon -->
+        <div style="background:#FFF8F7;border:1.5px solid rgba(224,89,69,0.2);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">🎁 Promo & Diskon</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-group" style="margin:0">
+              <label>Kode Promo / Voucher</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" class="form-control" id="inp_kode_promo" placeholder="Contoh: PROMO10" style="flex:1;text-transform:uppercase"/>
+                <button type="button" onclick="applyPromo()" style="padding:9px 14px;background:var(--orange);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Pakai</button>
+              </div>
+              <div id="promo_result" style="font-size:11px;margin-top:5px;display:none"></div>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Kode Referral</label>
+              <input type="text" class="form-control" id="inp_referral" placeholder="Contoh: REF-JOHN" style="text-transform:uppercase"/>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label>Jenis Benefit Promo</label>
+              <select class="form-control" id="inp_promo_type" onchange="recalcTotal()">
+                <option value="">— Pilih Jenis —</option>
+                <option value="diskon_persen">Diskon %</option>
+                <option value="diskon_nominal">Diskon Nominal (Rp)</option>
+                <option value="cashback">Cashback (Rp)</option>
+                <option value="free_session">Free Sesi Tambahan</option>
+                <option value="free_treatment">Free Treatment</option>
+                <option value="free_training">Free Training</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin:0">
+              <label id="promo_val_label">Nilai Promo</label>
+              <input type="number" class="form-control" id="inp_promo_val" placeholder="0" min="0" oninput="recalcTotal()"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pajak -->
+        <div style="background:var(--gray-bg);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">📋 Pajak</div>
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_ppn" onchange="recalcTotal()" style="accent-color:var(--navy);width:15px;height:15px"/> PPN 11%
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_pph" onchange="recalcTotal()" style="accent-color:var(--navy);width:15px;height:15px"/> PPh 2%
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+              <input type="checkbox" id="chk_tax_custom" onchange="toggleCustomTax()" style="accent-color:var(--navy);width:15px;height:15px"/> Pajak Custom
+            </label>
+            <div id="custom_tax_box" style="display:none;display:flex;align-items:center;gap:8px">
+              <input type="number" class="form-control" id="inp_tax_custom" placeholder="%" min="0" max="100" oninput="recalcTotal()" style="width:80px"/>
+              <span style="font-size:12px;color:var(--gray-text)">%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Kalkulasi -->
+        <div style="border:1.5px solid var(--gray-border);border-radius:10px;overflow:hidden">
+          <div style="background:var(--navy);padding:10px 16px;font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px">Draft Kalkulasi Invoice</div>
+          <div style="padding:12px 16px">
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)"><span style="color:var(--gray-text)">Harga Paket</span><span id="calc_paket">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_extra_row" style="display:none"><span style="color:var(--gray-text)" id="calc_extra_lbl">Biaya Lain</span><span id="calc_extra">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border);color:var(--green)" id="calc_diskon_row" style="display:none"><span>Diskon / Promo</span><span id="calc_diskon">- Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;border-bottom:1px solid var(--gray-border)" id="calc_tax_row" style="display:none"><span style="color:var(--gray-text)">Pajak</span><span id="calc_tax">Rp 0</span></div>
+            <div style="display:flex;justify-content:space-between;padding:10px 0 4px;font-size:15px;font-weight:700;color:var(--navy);border-top:2px solid var(--navy);margin-top:4px"><span>Total Tagihan</span><span style="color:var(--orange)" id="calc_total">Rp 0</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 5: REVIEW & KONFIRMASI -->
+      <div id="content5" style="display:none">
+        <div class="review-section">
+          <h4>👤 Detail Klien</h4>
+          <div class="review-row"><span class="label">Pemesan</span><span class="value" id="rev_pemesan">—</span></div>
+          <div class="review-row"><span class="label">Klien Latihan</span><span class="value" id="rev_nama">—</span></div>
+          <div class="review-row"><span class="label">No HP</span><span class="value" id="rev_hp">—</span></div>
+          <div class="review-row"><span class="label">Email</span><span class="value" id="rev_email">—</span></div>
+        </div>
+        <div class="review-section">
+          <h4>🏋️ Program & Logistik</h4>
+          <div class="review-row"><span class="label">Paket</span><span class="value" id="rev_paket">—</span></div>
+          <div class="review-row"><span class="label">PIC / Pelatih</span><span class="value" id="rev_pic">—</span></div>
+          <div class="review-row"><span class="label">Lokasi</span><span class="value" id="rev_lokasi">—</span></div>
+          <div class="review-row"><span class="label">Jadwal</span><span class="value" id="rev_jadwal">—</span></div>
+        </div>
+        <div class="review-section">
+          <h4>🧾 Draft Invoice</h4>
+          <div class="review-row"><span class="label">Harga Paket</span><span class="value" id="rev_harga">Rp 0</span></div>
+          <div class="review-row" id="rev_extra_row" style="display:none"><span class="label" id="rev_extra_lbl">Biaya Lain</span><span class="value" id="rev_extra">Rp 0</span></div>
+          <div class="review-row" id="rev_promo_row" style="color:var(--green)"><span class="label">Promo</span><span class="value" id="rev_promo">—</span></div>
+          <div class="review-row" id="rev_referral_row"><span class="label">Kode Referral</span><span class="value" id="rev_referral">—</span></div>
+          <div class="review-row" id="rev_tax_row"><span class="label">Pajak</span><span class="value" id="rev_tax">Rp 0</span></div>
+          <div class="total-row"><span>Total Tagihan</span><span style="color:var(--orange)" id="rev_total">Rp 0</span></div>
+        </div>
+        <div style="background:#EBF5FB;border-radius:10px;padding:12px 16px;font-size:12px;color:#2980B9;font-weight:600;border-left:3px solid #2980B9">
+          ℹ️ Order akan dibuat dengan status <strong>Active</strong> dan invoice akan di-generate otomatis sebagai <strong>Awaiting Payment</strong>.
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" id="btnBack" onclick="prevStep()" style="display:none">← Kembali</button>
+      <div style="flex:1"></div>
+      <button class="btn-primary" id="btnNext" onclick="nextStep()">Lanjut →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+const TOTAL_STEPS = 5;
+
+/* ─── LEADS DATABASE (sinkron dengan pp-leads) ─── */
+const LEADS_DB = [
+  { id:'#L-1001', nama:'Ahmad Ridwan',   hp:'0812-3456-7890', email:'ahmad.ridwan@email.com',   minat:'Fatloss & Bodyshape', color:'#E05945' },
+  { id:'#L-1002', nama:'Siti Nurhaliza', hp:'0856-7890-1234', email:'siti.nurhaliza@email.com', minat:'Yoga',                color:'#2980B9' },
+  { id:'#L-1003', nama:'Budi Pratama',   hp:'0811-2233-4455', email:'budi.pratama@email.com',   minat:'Boxing',              color:'#27AE60' },
+  { id:'#L-1004', nama:'Dewi Ayu',       hp:'0877-6655-4433', email:'dewi.ayu@email.com',       minat:'Tennis',              color:'#8E44AD' },
+  { id:'#L-1005', nama:'James Wilson',   hp:'+62 812-3333-0004', email:'james@example.com',     minat:'Strength Training',   color:'#8E44AD' },
+  { id:'#L-1006', nama:'Alex Mercer',    hp:'+62 812-3333-0001', email:'alex@example.com',      minat:'Private Training',    color:'#2980B9' },
+  { id:'#L-1007', nama:'Emily Chen',     hp:'+62 812-3333-0003', email:'emily@example.com',     minat:'Functional Training', color:'#27AE60' },
+  { id:'#L-1008', nama:'Robert Taylor',  hp:'+62 812-3333-0002', email:'robert@example.com',    minat:'Elite Training',      color:'#E05945' },
+];
+
+let _selectedLead = { pemesan: null, klien: null };
+
+function initials(nama) {
+  return nama.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function filterLeads(role) {
+  showDropdown(role);
+}
+
+function renderDropdown(role, list) {
+  const dd = document.getElementById('dropdown_' + role);
+  if (!list.length) {
+    dd.innerHTML = '<div style="padding:12px 14px;font-size:12px;color:var(--gray-text)">Tidak ada data yang cocok</div>';
+    return;
+  }
+  dd.innerHTML = list.map(l => `
+    <div onmousedown="selectLead('${role}','${l.id}')"
+      style="padding:12px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--gray-border);transition:background .15s"
+      onmouseover="this.style.background='#F8F9FA'" onmouseout="this.style.background='white'">
+      <div style="width:42px;height:42px;border-radius:50%;background:${l.color};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0">${initials(l.nama)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:14px;font-weight:700;color:var(--navy);margin-bottom:3px">${l.nama}</div>
+        <div style="font-size:12px;color:var(--gray-text)">${l.hp}</div>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:1px">${l.id} &nbsp;·&nbsp; ${l.minat}</div>
+      </div>
+    </div>`).join('');
+}
+
+function showDropdown(role) {
+  const q = document.getElementById('search_' + role).value.trim().toLowerCase();
+  const filtered = q
+    ? LEADS_DB.filter(l => l.nama.toLowerCase().includes(q) || l.hp.includes(q) || l.id.includes(q))
+    : LEADS_DB;
+  renderDropdown(role, filtered);
+  const inp = document.getElementById('search_' + role);
+  const dd  = document.getElementById('dropdown_' + role);
+  const rect = inp.getBoundingClientRect();
+  dd.style.position = 'fixed';
+  dd.style.top      = (rect.bottom + 4) + 'px';
+  dd.style.left     = rect.left + 'px';
+  dd.style.width    = rect.width + 'px';
+  dd.style.display  = 'block';
+}
+
+function hideDropdown(role) {
+  document.getElementById('dropdown_' + role).style.display = 'none';
+}
+
+function selectLead(role, leadId) {
+  const l = LEADS_DB.find(x => x.id === leadId);
+  if (!l) return;
+  _selectedLead[role] = l;
+  document.getElementById('search_' + role).value = l.nama;
+  hideDropdown(role);
+
+  const card = document.getElementById('card_' + role);
+  const empty = document.getElementById('empty_' + role);
+  document.getElementById('avatar_' + role).textContent = initials(l.nama);
+  document.getElementById('avatar_' + role).style.background = l.color;
+  document.getElementById('disp_' + role + '_nama').textContent  = l.nama;
+  document.getElementById('disp_' + role + '_hp').textContent    = l.hp;
+  document.getElementById('disp_' + role + '_email').textContent = l.email;
+  document.getElementById('disp_' + role + '_id').textContent    = l.id;
+  document.getElementById('disp_' + role + '_minat').textContent = l.minat;
+  card.style.display  = 'block';
+  empty.style.display = 'none';
+
+  // sync hidden inputs (klien = peserta latihan → dipakai fillReview)
+  if (role === 'klien') {
+    document.getElementById('inp_nama').value  = l.nama;
+    document.getElementById('inp_hp').value    = l.hp;
+    document.getElementById('inp_email').value = l.email;
+  }
+  if (role === 'pemesan') {
+    document.getElementById('inp_pemesan_nama').value = l.nama;
+    document.getElementById('inp_pemesan_hp').value   = l.hp;
+    // if chk_sama is checked, mirror to klien
+    if (document.getElementById('chk_sama').checked) selectLead('klien', leadId);
+  }
+}
+
+function clearLead(role) {
+  _selectedLead[role] = null;
+  document.getElementById('search_' + role).value = '';
+  document.getElementById('card_' + role).style.display  = 'none';
+  document.getElementById('empty_' + role).style.display = 'block';
+  if (role === 'klien') {
+    document.getElementById('inp_nama').value  = '';
+    document.getElementById('inp_hp').value    = '';
+    document.getElementById('inp_email').value = '';
+  }
+}
+
+function toggleSama() {
+  const checked = document.getElementById('chk_sama').checked;
+  const box = document.getElementById('box_klien');
+  box.style.opacity = checked ? '0.6' : '1';
+  box.style.pointerEvents = checked ? 'none' : '';
+  if (checked && _selectedLead.pemesan) {
+    selectLead('klien', _selectedLead.pemesan.id);
+  }
+}
+
+// Paket yang dipilih
+let _selectedPackage = { price:600000, label:'4 Sesi - Starter', sesi:'4', hargaPersesi:150000, diskonPaket:0 };
+
+function selectPackage(card, price, label, sesi) {
+  document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  _selectedPackage = { price, label, sesi };
+}
+
+function fmtRp(n) {
+  return 'Rp ' + Math.max(0, Math.round(n)).toLocaleString('id-ID');
+}
+
+function promoLabel(type, val, kode) {
+  const badge = kode ? ` <span style="font-size:10px;background:#EAFAF1;color:#27AE60;padding:1px 8px;border-radius:10px;font-weight:700">${kode}</span>` : '';
+  switch(type) {
+    case 'diskon_persen':   return `Diskon ${val}%${badge}`;
+    case 'diskon_nominal':  return `Diskon Nominal${badge}`;
+    case 'cashback':        return `Cashback Rp ${Number(val).toLocaleString('id-ID')}${badge}`;
+    case 'free_session':    return `Free ${val} Sesi Tambahan${badge}`;
+    case 'free_treatment':  return `Free Treatment${badge}`;
+    case 'free_training':   return `Free Training${badge}`;
+    default: return kode || '—';
+  }
+}
+
+function recalcTotal() {
+  const hargaPersesi = _selectedPackage.hargaPersesi || 0;
+  const sesiCount    = parseInt(_selectedPackage.sesi) || 0;
+  const hargaKotor   = hargaPersesi * sesiCount;
+  const diskonPaket  = _selectedPackage.diskonPaket || 0;
+  const base         = hargaKotor - diskonPaket;  // = net package price
+  const extra        = parseInt(document.getElementById('inp_extra').value) || 0;
+  const extraKet     = document.getElementById('inp_extra_ket').value.trim() || 'Biaya Lain';
+  const promoType    = document.getElementById('inp_promo_type').value;
+  const promoVal     = parseFloat(document.getElementById('inp_promo_val').value) || 0;
+  const ppn       = document.getElementById('chk_ppn').checked;
+  const pph       = document.getElementById('chk_pph').checked;
+  const taxCustom = document.getElementById('chk_tax_custom').checked;
+  const taxPct    = taxCustom ? (parseFloat(document.getElementById('inp_tax_custom').value) || 0) : 0;
+
+  let subtotal = base + extra;  // subtotal = net package + biaya lain
+
+  // Promo diskon — only monetary types affect price
+  let diskon = 0;
+  if (promoType === 'diskon_persen')  diskon = Math.round((base + extra) * promoVal / 100);
+  else if (promoType === 'diskon_nominal') diskon = promoVal;
+  else if (promoType === 'cashback')  diskon = promoVal;
+  // free_session / free_treatment / free_training → diskon = 0, no price effect
+  subtotal -= diskon;
+
+  // Pajak
+  let taxTotal = 0;
+  if (ppn)  taxTotal += subtotal * 0.11;
+  if (pph)  taxTotal += subtotal * 0.02;
+  if (taxCustom) taxTotal += subtotal * taxPct / 100;
+
+  const grandTotal = subtotal + taxTotal;
+
+  // Update kalkulasi di step 4
+  document.getElementById('calc_paket').textContent = fmtRp(base);
+
+  const extraRow = document.getElementById('calc_extra_row');
+  extraRow.style.display = extra > 0 ? 'flex' : 'none';
+  document.getElementById('calc_extra_lbl').textContent = extraKet || 'Biaya Lain';
+  document.getElementById('calc_extra').textContent     = fmtRp(extra);
+
+  const diskonRow = document.getElementById('calc_diskon_row');
+  diskonRow.style.display = diskon > 0 ? 'flex' : 'none';
+  document.getElementById('calc_diskon').textContent = '- ' + fmtRp(diskon);
+
+  const taxRow = document.getElementById('calc_tax_row');
+  taxRow.style.display = taxTotal > 0 ? 'flex' : 'none';
+  document.getElementById('calc_tax').textContent = fmtRp(taxTotal);
+
+  document.getElementById('calc_total').textContent = fmtRp(grandTotal);
+
+  // Simpan untuk review
+  window._calc = { base, extra, extraKet, diskon, promoType, promoVal, taxTotal, grandTotal, hargaKotor, diskonPaket, hargaPersesi, sesiCount };
+}
+
+// Demo kode promo (frontend only)
+const PROMO_CODES = {
+  'PROMO10':   { type: 'diskon_persen',  val: 10,     desc: '✅ Diskon 10% diterapkan' },
+  'CASHBACK50':{ type: 'cashback',       val: 50000,  desc: '✅ Cashback Rp 50.000 diterapkan' },
+  'FREE1SESI': { type: 'free_session',   val: 1,      desc: '✅ 1 sesi gratis ditambahkan' },
+};
+
+function applyPromo() {
+  const kode  = document.getElementById('inp_kode_promo').value.trim().toUpperCase();
+  const resEl = document.getElementById('promo_result');
+  const promo = PROMO_CODES[kode];
+  resEl.style.display = 'block';
+  if (promo) {
+    resEl.style.color = 'var(--green)';
+    resEl.textContent = promo.desc;
+    document.getElementById('inp_promo_type').value = promo.type;
+    document.getElementById('inp_promo_val').value  = promo.val;
+    recalcTotal();
+  } else if (!kode) {
+    resEl.style.color = 'var(--gray-text)';
+    resEl.textContent = 'Masukkan kode promo terlebih dahulu.';
+  } else {
+    resEl.style.color = 'var(--red)';
+    resEl.textContent = '❌ Kode promo tidak valid atau sudah kadaluarsa.';
+  }
+}
+
+function toggleCustomTax() {
+  const box = document.getElementById('custom_tax_box');
+  box.style.display = document.getElementById('chk_tax_custom').checked ? 'flex' : 'none';
+  recalcTotal();
+}
+
+function fillReview() {
+  const c = window._calc || {};
+  const klienL   = _selectedLead.klien;
+  const pemesan  = _selectedLead.pemesan;
+  document.getElementById('rev_pemesan').textContent = pemesan ? pemesan.nama + ' (' + pemesan.id + ')' : '—';
+  document.getElementById('rev_nama').textContent    = klienL  ? klienL.nama  + ' (' + klienL.id  + ')' : (document.getElementById('inp_nama').value  || '—');
+  document.getElementById('rev_hp').textContent      = klienL  ? klienL.hp    : (document.getElementById('inp_hp').value    || '—');
+  document.getElementById('rev_email').textContent   = klienL  ? klienL.email : (document.getElementById('inp_email').value || '—');
+  document.getElementById('rev_paket').textContent   = _selectedPackage.label;
+  document.getElementById('rev_paket_label').textContent = _selectedPackage.label;
+  const progId  = document.getElementById('inp_program_id').value;
+  const progData = PROGRAM_DB[progId] || {};
+  const picData  = PIC_DB[progData.picId] || {};
+  document.getElementById('rev_pic').textContent = picData.fullname ? `${picData.fullname} (${progData.picId})` : '—';
+  document.getElementById('rev_lokasi').textContent = document.getElementById('inp_lokasi').value || '—';
+  const tglMulai = document.getElementById('inp_tgl_mulai').value;
+  const jadwals = [
+    { hari: document.getElementById('inp_hari1').value, jam: document.getElementById('inp_jam1').value },
+    { hari: document.getElementById('inp_hari2').value, jam: document.getElementById('inp_jam2').value },
+    { hari: document.getElementById('inp_hari3').value, jam: document.getElementById('inp_jam3').value },
+  ].filter(j => j.hari).map(j => `${j.hari} pukul ${j.jam}`);
+  const jadwalStr = jadwals.length ? jadwals.join(' · ') : '—';
+  document.getElementById('rev_jadwal').textContent = tglMulai ? `${jadwalStr} (mulai ${tglMulai})` : jadwalStr;
+  document.getElementById('rev_harga').textContent   = fmtRp(c.base   || _selectedPackage.price);
+  const extraReview = c.extra || 0;
+  const extraRow = document.getElementById('rev_extra_row');
+  extraRow.style.display = extraReview > 0 ? 'flex' : 'none';
+  document.getElementById('rev_extra').textContent   = fmtRp(extraReview);
+  document.getElementById('rev_extra_lbl').textContent = c.extraKet   || 'Biaya Lain';
+
+  const promoRow = document.getElementById('rev_promo_row');
+  const diskon = c.diskon || 0;
+  const hasPromo = c.promoType && c.promoType !== '';
+  promoRow.style.display = hasPromo ? 'flex' : 'none';
+  const kodePromo = document.getElementById('inp_kode_promo').value.trim().toUpperCase();
+  const lbl = promoLabel(c.promoType, c.promoVal, kodePromo);
+  const suffix = diskon > 0 ? ` (−&nbsp;${fmtRp(diskon)})` : '';
+  document.getElementById('rev_promo').innerHTML = lbl + suffix;
+
+  const refVal = document.getElementById('inp_referral').value.trim().toUpperCase();
+  const refRow = document.getElementById('rev_referral_row');
+  refRow.style.display = refVal ? 'flex' : 'none';
+  document.getElementById('rev_referral').textContent = refVal || '—';
+
+  const taxRow = document.getElementById('rev_tax_row');
+  const tax = c.taxTotal || 0;
+  taxRow.style.display = tax > 0 ? 'flex' : 'none';
+  document.getElementById('rev_tax').textContent = fmtRp(tax);
+
+  document.getElementById('rev_total').textContent = fmtRp(c.grandTotal || _selectedPackage.price);
+}
+
+// ─── DATABASE PIC ───
+const PIC_DB = {
+  'EFM-PIC-001': { nick:'Sarah',  fullname:'Sarah Jenkins',   spesialis:'Strength & Conditioning', hp:'+62 812-1111-0001', biayaSesi:75000 },
+  'EFM-PIC-002': { nick:'Marcus', fullname:'Marcus Chen',     spesialis:'Functional Training',      hp:'+62 812-1111-0002', biayaSesi:75000 },
+  'EFM-PIC-003': { nick:'Elena',  fullname:'Elena Rodriguez', spesialis:'Yoga & Flexibility',       hp:'+62 812-1111-0003', biayaSesi:70000 },
+  'EFM-PIC-004': { nick:'David',  fullname:'David Kim',       spesialis:'Sports Rehabilitation',    hp:'+62 812-1111-0004', biayaSesi:80000 },
+};
+
+// ─── DATABASE PROGRAM (disinkron dengan pp-program-db) ───
+const PROGRAM_DB = {
+  'PRG-PP-001': { namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  partisipan:1, sesi:4,  pertemuan:2, masa:'30 hari',  harga:600000,  hargaPersesi:150000, diskonPaket:0,      picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-002': { namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     partisipan:1, sesi:8,  pertemuan:2, masa:'45 hari',  harga:1100000, hargaPersesi:137500, diskonPaket:0,      picId:'EFM-PIC-002', biayaSesiPIC:75000 },
+  'PRG-PP-003': { namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1500000, hargaPersesi:125000, diskonPaket:0,      picId:'EFM-PIC-001', biayaSesiPIC:75000 },
+  'PRG-PP-004': { namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   partisipan:1, sesi:24, pertemuan:5, masa:'90 hari',  harga:2800000, hargaPersesi:125000, diskonPaket:200000, picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-001': { namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',   partisipan:2, sesi:8,  pertemuan:2, masa:'45 hari',  harga:900000,  hargaPersesi:112500, diskonPaket:0,      picId:'EFM-PIC-003', biayaSesiPIC:70000 },
+  'PRG-TH-002': { namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab',  partisipan:1, sesi:12, pertemuan:3, masa:'60 hari',  harga:1800000, hargaPersesi:150000, diskonPaket:0,      picId:'EFM-PIC-004', biayaSesiPIC:80000 },
+};
+
+function populateProgramDropdown() {
+  const sel = document.getElementById('inp_program_id');
+  sel.innerHTML = '<option value="">— Pilih Program —</option>';
+  Object.entries(PROGRAM_DB).forEach(([id, p]) => {
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = `${id} — ${p.namaLatihan} · ${p.namaPaket}`;
+    sel.appendChild(opt);
+  });
+}
+
+function onProgramChange() {
+  const id  = document.getElementById('inp_program_id').value;
+  const box = document.getElementById('program_info_box');
+  const emp = document.getElementById('program_empty');
+  if (!id || !PROGRAM_DB[id]) { box.style.display='none'; emp.style.display='block'; return; }
+
+  const p   = PROGRAM_DB[id];
+  const pic = PIC_DB[p.picId] || {};
+
+  // Fill program info
+  document.getElementById('prog_id_disp').textContent      = id;
+  document.getElementById('prog_harga_disp').textContent   = fmtRp(p.harga);
+  document.getElementById('prog_nama_latihan').textContent = p.namaLatihan;
+  document.getElementById('prog_nama_paket').textContent   = p.namaPaket;
+  document.getElementById('prog_partisipan').textContent   = p.partisipan + ' orang';
+  document.getElementById('prog_sesi').textContent         = p.sesi + ' sesi';
+  document.getElementById('prog_pertemuan').textContent    = p.pertemuan + 'x / minggu';
+  document.getElementById('prog_masa').textContent         = p.masa;
+
+  // Fill PIC info
+  document.getElementById('prog_pic_id').textContent       = p.picId;
+  document.getElementById('prog_pic_nick').textContent     = pic.nick      || '—';
+  document.getElementById('prog_pic_fullname').textContent = pic.fullname  || '—';
+  document.getElementById('prog_pic_spesialis').textContent= pic.spesialis || '—';
+  document.getElementById('prog_pic_biaya').textContent    = fmtRp(p.biayaSesiPIC) + ' / sesi';
+  document.getElementById('prog_pic_hp').textContent       = pic.hp        || '—';
+
+  box.style.display = 'block';
+  emp.style.display = 'none';
+
+  // Simpan ke _selectedPackage untuk kalkulasi
+  _selectedPackage = { price: p.harga, label: `${p.namaPaket} (${p.namaLatihan})`, sesi: String(p.sesi), hargaPersesi: p.hargaPersesi || Math.round(p.harga / p.sesi), diskonPaket: p.diskonPaket || 0 };
+
+  // Sync ke step 3 konfirmasi PIC
+  document.getElementById('s3_pic_id').textContent   = p.picId;
+  document.getElementById('s3_pic_nick').textContent = pic.nick     || '—';
+  document.getElementById('s3_pic_full').textContent = pic.fullname || '—';
+}
+
+function parseGoogleMapsURL() {
+  const raw = document.getElementById('inp_maps_url').value.trim();
+  const msg = document.getElementById('maps_parse_msg');
+  const box = document.getElementById('maps_link_box');
+  msg.style.display = 'block';
+
+  let lat = null, lng = null, src = '';
+
+  // ── Prioritas 1: !3d{lat}!4d{lng} → koordinat PIN lokasi sebenarnya ──
+  // Contoh: !3d-6.2913446!4d106.7996201
+  const m3d = raw.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (m3d) {
+    lat = parseFloat(m3d[1]);
+    lng = parseFloat(m3d[2]);
+    src = 'pin lokasi (akurat)';
+  }
+
+  // ── Prioritas 2: ?q=lat,lng atau &q=lat,lng ──
+  if (lat === null) {
+    const mq = raw.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mq) { lat = parseFloat(mq[1]); lng = parseFloat(mq[2]); src = 'query param'; }
+  }
+
+  // ── Prioritas 3: ll=lat,lng ──
+  if (lat === null) {
+    const mll = raw.match(/ll=(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mll) { lat = parseFloat(mll[1]); lng = parseFloat(mll[2]); src = 'll param'; }
+  }
+
+  // ── Fallback: @lat,lng (viewport center — kurang akurat) ──
+  if (lat === null) {
+    const mat = raw.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (mat) { lat = parseFloat(mat[1]); lng = parseFloat(mat[2]); src = 'viewport (perkiraan)'; }
+  }
+
+  if (lat === null) {
+    msg.style.color = 'var(--red)';
+    msg.textContent = '❌ Koordinat tidak terdeteksi. Pastikan link Google Maps lengkap (bukan link pendek).';
+    document.getElementById('disp_lat').textContent = '—';
+    document.getElementById('disp_lng').textContent = '—';
+    box.style.display = 'none';
+    return;
+  }
+
+  document.getElementById('inp_lat').value        = lat;
+  document.getElementById('inp_lng').value        = lng;
+  document.getElementById('disp_lat').textContent = lat;
+  document.getElementById('disp_lng').textContent = lng;
+
+  const mapsUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+  document.getElementById('maps_link_label').textContent = `${lat}, ${lng}`;
+  document.getElementById('maps_link_href').href         = mapsUrl;
+  box.style.display = 'flex';
+
+  const isAccurate = src === 'pin lokasi (akurat)';
+  msg.style.color = isAccurate ? 'var(--green)' : '#F39C12';
+  msg.textContent = `${isAccurate ? '✅' : '⚠️'} Koordinat terdeteksi (${src}): ${lat}, ${lng}`;
+}
+
+function toggleMenu(e, subId, arrowId) {
+  e.preventDefault();
+  const sub = document.getElementById(subId);
+  const arrow = document.getElementById(arrowId);
+  const isOpen = sub.style.display !== 'none';
+  sub.style.display = isOpen ? 'none' : 'block';
+  if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+/* ─── ORDER DATABASE (single source of truth) ───
+   Key names use snake_case → ready for Google Sheets / backend mapping.
+   invoiceData tetap ada di bawah (dipakai renderInvoiceTab & printInvoice). ─── */
+const ORDER_DB = {
+  'PP-8042': {
+    order_id: 'PP-8042', display_id: '#PP-8042',
+    nama_klien: 'James Wilson', avatar_initials: 'JW', avatar_color: '#2980B9',
+    paket: '12 Sesi - Pro', sesi_total: 12, sesi_selesai: 4,
+    pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
+    tgl_mulai: '24 Okt 2026',
+    status_order: 'active',
+    status_invoice: 'paid',
+    inv_no: 'INV/EFM/PP/2026/0089',
+    program_id: 'PRG-PP-003',
+    lokasi: 'Apartemen Sudirman Park',
+    jadwal: 'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
+    agr_id: 'AGR-001', agr_status: 'signed', agr_tgl_dibuat: '24 Okt 2026', agr_tgl_ttd: '24 Okt 2026',
+  },
+  'PP-8041': {
+    order_id: 'PP-8041', display_id: '#PP-8041',
+    nama_klien: 'Emily Chen', avatar_initials: 'EC', avatar_color: '#27AE60',
+    paket: '4 Sesi - Starter', sesi_total: 4, sesi_selesai: 4,
+    pic_nama: 'Marcus Chen', pic_id: 'EFM-PIC-002',
+    tgl_mulai: '22 Okt 2026',
+    status_order: 'completed',
+    status_invoice: 'paid',
+    inv_no: 'INV/EFM/PP/2026/0087',
+    program_id: 'PRG-PP-001',
+    lokasi: 'Gym Senayan City Lt.3',
+    jadwal: 'Selasa 18:00 · Kamis 18:00',
+    agr_id: 'AGR-002', agr_status: 'signed', agr_tgl_dibuat: '22 Okt 2026', agr_tgl_ttd: '22 Okt 2026',
+  },
+  'PP-8038': {
+    order_id: 'PP-8038', display_id: '#PP-8038',
+    nama_klien: 'Robert Taylor', avatar_initials: 'RT', avatar_color: '#E05945',
+    paket: '24 Sesi - Elite', sesi_total: 24, sesi_selesai: 12,
+    pic_nama: 'Elena Rodriguez', pic_id: 'EFM-PIC-003',
+    tgl_mulai: '18 Okt 2026',
+    status_order: 'active',
+    status_invoice: 'pending',
+    inv_no: 'INV/EFM/PP/2026/0088',
+    program_id: 'PRG-PP-004',
+    lokasi: 'Rumah Klien — Bintaro Sektor 9',
+    jadwal: 'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
+    agr_id: 'AGR-003', agr_status: 'pending', agr_tgl_dibuat: '18 Okt 2026', agr_tgl_ttd: null,
+  },
+  'PP-8035': {
+    order_id: 'PP-8035', display_id: '#PP-8035',
+    nama_klien: 'Anita Kumar', avatar_initials: 'AK', avatar_color: '#8E44AD',
+    paket: '8 Sesi - Base', sesi_total: 8, sesi_selesai: 2,
+    pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
+    tgl_mulai: '15 Okt 2026',
+    status_order: 'cancelled',
+    status_invoice: 'overdue',
+    inv_no: 'INV/EFM/PP/2026/0085',
+    program_id: 'PRG-PP-002',
+    lokasi: 'Cilandak Town Square',
+    jadwal: 'Rabu 07:30 · Sabtu 08:00',
+    agr_id: 'AGR-004', agr_status: 'expired', agr_tgl_dibuat: '15 Okt 2026', agr_tgl_ttd: null,
+  },
+  'PP-8031': {
+    order_id: 'PP-8031', display_id: '#PP-8031',
+    nama_klien: 'Budi Santoso', avatar_initials: 'BS', avatar_color: '#16A085',
+    paket: '12 Sesi - Pro', sesi_total: 12, sesi_selesai: 7,
+    pic_nama: 'Marcus Chen', pic_id: 'EFM-PIC-002',
+    tgl_mulai: '10 Okt 2026',
+    status_order: 'active',
+    status_invoice: 'paid',
+    inv_no: 'INV/EFM/PP/2026/0082',
+    program_id: 'PRG-PP-003',
+    lokasi: 'Gym Kemang Village Lt.2',
+    jadwal: 'Selasa 07:00 · Kamis 07:00 · Sabtu 08:00',
+    agr_id: 'AGR-005', agr_status: 'signed', agr_tgl_dibuat: '10 Okt 2026', agr_tgl_ttd: '10 Okt 2026',
+  },
+  'PP-8027': {
+    order_id: 'PP-8027', display_id: '#PP-8027',
+    nama_klien: 'Rina Kusuma', avatar_initials: 'RK', avatar_color: '#D35400',
+    paket: '4 Sesi - Starter', sesi_total: 4, sesi_selesai: 4,
+    pic_nama: 'Elena Rodriguez', pic_id: 'EFM-PIC-003',
+    tgl_mulai: '5 Okt 2026',
+    status_order: 'completed',
+    status_invoice: 'paid',
+    inv_no: 'INV/EFM/PP/2026/0078',
+    program_id: 'PRG-PP-001',
+    lokasi: 'Rumah Klien — Pondok Indah',
+    jadwal: 'Rabu 09:00 · Jumat 09:00',
+    agr_id: 'AGR-006', agr_status: 'signed', agr_tgl_dibuat: '5 Okt 2026', agr_tgl_ttd: '5 Okt 2026',
+  },
+  'PP-8024': {
+    order_id: 'PP-8024', display_id: '#PP-8024',
+    nama_klien: 'Hendra Wijaya', avatar_initials: 'HW', avatar_color: '#2C3E50',
+    paket: '24 Sesi - Elite', sesi_total: 24, sesi_selesai: 3,
+    pic_nama: 'Sarah Jenkins', pic_id: 'EFM-PIC-001',
+    tgl_mulai: '1 Okt 2026',
+    status_order: 'active',
+    status_invoice: 'pending',
+    inv_no: 'INV/EFM/PP/2026/0074',
+    program_id: 'PRG-PP-004',
+    lokasi: 'Apartemen Thamrin Residences',
+    jadwal: 'Senin 06:30 · Rabu 06:30 · Jumat 06:30 · Minggu 07:00',
+    agr_id: 'AGR-007', agr_status: 'pending', agr_tgl_dibuat: '1 Okt 2026', agr_tgl_ttd: null,
+  },
+};
+
+/* ─── INVOICE DATA (mirrored from pp-invoice) ─── */
+const invoiceData = {
+  'INV/EFM/PP/2026/0089': {
+    client:'James Wilson', hp:'+62 812-3333-0004', email:'james@example.com',
+    orderId:'#PP-8042', date:'10 Jun 2026', due:'24 Jun 2026', status:'paid',
+    // program
+    programId:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari', partisipan:1,
+    picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
+    // lokasi & jadwal
+    lokasi:'Apartemen Sudirman Park', jadwal:'Senin 07:00 · Rabu 07:00 · Jumat 07:00',
+    // keuangan
+    hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0, biayaLain:50000, biayaLainKet:'Biaya Peralatan Khusus', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:1550000,
+  },
+  'INV/EFM/PP/2026/0088': {
+    client:'Robert Taylor', hp:'+62 812-3333-0002', email:'robert@example.com',
+    orderId:'#PP-8038', date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
+    programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari', partisipan:1,
+    picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
+    lokasi:'Rumah Klien — Bintaro Sektor 9', jadwal:'Senin 06:00 · Selasa 06:00 · Kamis 06:00 · Jumat 06:00 · Sabtu 07:00',
+    hargaPaket:2800000, hargaPersesi:125000, diskonPaket:200000, biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10,
+    total:2620000,
+  },
+  'INV/EFM/PP/2026/0087': {
+    client:'Emily Chen', hp:'+62 812-3333-0003', email:'emily@example.com',
+    orderId:'#PP-8041', date:'5 Jun 2026', due:'19 Jun 2026', status:'paid',
+    programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
+    picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
+    lokasi:'Gym Senayan City Lt.3', jadwal:'Selasa 18:00 · Kamis 18:00',
+    hargaPaket:600000, hargaPersesi:150000, diskonPaket:0, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:600000,
+  },
+  'INV/EFM/PP/2026/0085': {
+    client:'James Wilson', hp:'+62 812-3333-0004', email:'james@example.com',
+    orderId:'#PP-8035', date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
+    programId:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari', partisipan:1,
+    picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
+    lokasi:'Cilandak Town Square', jadwal:'Rabu 07:30 · Sabtu 08:00',
+    hargaPaket:1100000, hargaPersesi:137500, diskonPaket:0, biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:1175000,
+  },
+  'INV/EFM/PP/2026/0082': {
+    client:'Budi Santoso', hp:'+62 812-3333-0005', email:'budi@example.com',
+    orderId:'#PP-8031', date:'25 Mei 2026', due:'8 Jun 2026', status:'paid',
+    programId:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari', partisipan:1,
+    picId:'EFM-PIC-002', picNick:'Marcus', picFull:'Marcus Chen', picSpesialis:'Functional Training',
+    lokasi:'Gym Kemang Village Lt.2', jadwal:'Selasa 07:00 · Kamis 07:00 · Sabtu 08:00',
+    hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:1500000,
+  },
+  'INV/EFM/PP/2026/0078': {
+    client:'Rina Kusuma', hp:'+62 812-3333-0006', email:'rina@example.com',
+    orderId:'#PP-8027', date:'20 Mei 2026', due:'3 Jun 2026', status:'paid',
+    programId:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter', sesi:4, pertemuan:2, masa:'30 hari', partisipan:1,
+    picId:'EFM-PIC-003', picNick:'Elena', picFull:'Elena Rodriguez', picSpesialis:'Yoga & Flexibility',
+    lokasi:'Rumah Klien — Pondok Indah', jadwal:'Rabu 09:00 · Jumat 09:00',
+    hargaPaket:600000, hargaPersesi:150000, diskonPaket:0, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:600000,
+  },
+  'INV/EFM/PP/2026/0074': {
+    client:'Hendra Wijaya', hp:'+62 812-3333-0007', email:'hendra@example.com',
+    orderId:'#PP-8024', date:'15 Mei 2026', due:'29 Mei 2026', status:'pending',
+    programId:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:4, masa:'90 hari', partisipan:1,
+    picId:'EFM-PIC-001', picNick:'Sarah', picFull:'Sarah Jenkins', picSpesialis:'Strength & Conditioning',
+    lokasi:'Apartemen Thamrin Residences', jadwal:'Senin 06:30 · Rabu 06:30 · Jumat 06:30 · Minggu 07:00',
+    hargaPaket:2800000, hargaPersesi:116667, diskonPaket:0, biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0,
+    total:2800000,
+  },
+};
+
+function updateOrderStats() {
+  const orders = Object.values(ORDER_DB);
+  document.getElementById('statTotal').textContent     = orders.length;
+  document.getElementById('statActive').textContent    = orders.filter(o => o.status_order === 'active').length;
+  document.getElementById('statCompleted').textContent = orders.filter(o => o.status_order === 'completed').length;
+  document.getElementById('statCancelled').textContent = orders.filter(o => o.status_order === 'cancelled').length;
+}
+
+let _drawerRow = null;
+let _drawerTab = 'order';
+let _drawerOrderId = null;  // ID aktif di drawer → kunci ke ORDER_DB
+
+function openDrawer(tr, tab) {
+  _drawerRow    = tr;
+  _drawerTab    = tab || 'order';
+  _drawerOrderId = tr.dataset.orderId || null;
+
+  const o = ORDER_DB[_drawerOrderId];
+  document.getElementById('drTitle').textContent    = o ? o.display_id   : _drawerOrderId;
+  document.getElementById('drSubtitle').textContent = o ? o.nama_klien   : '';
+
+  switchDrawerTab(_drawerTab);
+  document.getElementById('drawerOverlay').classList.add('show');
+  document.getElementById('orderDrawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.getElementById('orderDrawer').classList.remove('open');
+}
+
+function switchDrawerTab(tab) {
+  _drawerTab = tab;
+  document.getElementById('tabOrder').classList.toggle('active', tab === 'order');
+  document.getElementById('tabInvoice').classList.toggle('active', tab === 'invoice');
+  document.getElementById('tabAgreement').classList.toggle('active', tab === 'agreement');
+  if (tab === 'order') renderOrderTab();
+  else if (tab === 'invoice') renderInvoiceTab();
+  else renderAgreementTab();
+}
+
+function renderAgreementTab() {
+  if (!_drawerOrderId) return;
+  const o = ORDER_DB[_drawerOrderId];
+  if (!o || !o.agr_id) {
+    document.getElementById('drawerBody').innerHTML = '<p style="color:var(--gray-text);padding:20px 0;font-size:13px">Data agreement tidak ditemukan.</p>';
+    document.getElementById('drawerFooter').innerHTML = '';
+    return;
+  }
+
+  const statusCfg = {
+    signed:  { label:'Signed',      cls:'signed',  bg:'#EAFAF1', color:'#1E8449', border:'#A9DFBF', icon:'✓' },
+    pending: { label:'Pending TTD', cls:'pending',  bg:'#FEF9E7', color:'#D68910', border:'#F9E79F', icon:'⏳' },
+    expired: { label:'Expired',     cls:'expired',  bg:'#FDEDEC', color:'#C0392B', border:'#F5B7B1', icon:'✕' },
+  };
+  const s = statusCfg[o.agr_status] || statusCfg['pending'];
+  const nomor = o.agr_id + '/EFM/PP/' + (o.agr_tgl_dibuat || '').split(' ').pop();
+
+  const cell = (label, val) => `
+    <div style="background:var(--gray-bg);border-radius:8px;padding:11px 14px">
+      <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${label}</div>
+      <div style="font-size:13px;font-weight:600;color:var(--navy)">${val}</div>
+    </div>`;
+
+  document.getElementById('drawerBody').innerHTML = `
+    <!-- Status Banner -->
+    <div style="background:${s.bg};border:1.5px solid ${s.border};border-radius:12px;padding:14px 16px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+      <div style="width:44px;height:44px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0">${s.icon}</div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:${s.color};text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Status Dokumen</div>
+        <div style="font-size:17px;font-weight:700;color:${s.color}">${s.label}</div>
+        ${o.agr_status === 'signed'
+          ? `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Ditandatangani secara digital pada ${o.agr_tgl_ttd}</div>`
+          : o.agr_status === 'pending'
+            ? `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Menunggu tanda tangan klien di perangkat pelatih</div>`
+            : `<div style="font-size:11px;color:${s.color};margin-top:2px;opacity:.85">Dokumen telah melewati masa berlaku</div>`
+        }
+      </div>
+    </div>
+
+    <!-- Detail Grid -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${cell('No. Dokumen', nomor)}
+      ${cell('Klien', o.nama_klien)}
+      ${cell('Paket Program', o.paket)}
+      ${cell('Tanggal Dibuat', o.agr_tgl_dibuat)}
+      ${o.agr_status === 'signed'
+        ? cell('Tanggal Ditandatangani', o.agr_tgl_ttd)
+        : `<div style="background:var(--gray-bg);border-radius:8px;padding:11px 14px">
+             <div style="font-size:10px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Tanggal Ditandatangani</div>
+             <div style="font-size:13px;font-weight:600;color:var(--gray-text);font-style:italic">Belum ditandatangani</div>
+           </div>`
+      }
+      ${cell('PIC / Pelatih', o.pic_nama)}
+    </div>
+
+    <!-- Pasal Info -->
+    <div style="background:var(--navy);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px">
+      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" width="20" height="20" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:white">Perjanjian Layanan Private Program</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px">7 Pasal · EFM — CV. Bugar Nusantara Jaya</div>
+      </div>
+      <a href="pp-documents.html?preview=${o.agr_id}&klien=${encodeURIComponent(o.nama_klien)}&order=${encodeURIComponent(_drawerOrderId)}&paket=${encodeURIComponent(o.paket)}&tgl=${encodeURIComponent(o.agr_tgl_dibuat||'—')}&status=${o.agr_status}" style="margin-left:auto;padding:7px 14px;background:var(--orange);color:white;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;flex-shrink:0">Lihat Dokumen</a>
+    </div>`;
+
+  document.getElementById('drawerFooter').innerHTML = `
+    <button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>
+    <a href="pp-documents.html?preview=${o.agr_id}&klien=${encodeURIComponent(o.nama_klien)}&order=${encodeURIComponent(_drawerOrderId)}&paket=${encodeURIComponent(o.paket)}&tgl=${encodeURIComponent(o.agr_tgl_dibuat||'—')}&status=${o.agr_status}" style="padding:9px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:6px;text-decoration:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Buka Agreement Klien
+    </a>`;
+}
+
+function renderOrderTab() {
+  if (!_drawerOrderId) return;
+  const o = ORDER_DB[_drawerOrderId];
+  if (!o) {
+    document.getElementById('drawerBody').innerHTML = '<p style="color:var(--gray-text);padding:20px 0;font-size:13px">Data order tidak ditemukan.</p>';
+    return;
+  }
+
+  const pct      = Math.round((o.sesi_selesai / o.sesi_total) * 100);
+  const barColor = o.status_order === 'completed' ? 'var(--green)'
+                 : o.status_order === 'cancelled'  ? 'var(--red)' : 'var(--orange)';
+  const progress = `${o.sesi_selesai}/${o.sesi_total} sesi`;
+  const s = o.status_order;
+
+  document.getElementById('drawerBody').innerHTML = `
+    <div class="info-grid">
+      <div class="info-box"><div class="lbl">Order ID</div><div class="val">${o.display_id}</div></div>
+      <div class="info-box"><div class="lbl">Nama Klien</div><div class="val">${o.nama_klien}</div></div>
+      <div class="info-box"><div class="lbl">Paket</div><div class="val">${o.paket}</div></div>
+      <div class="info-box"><div class="lbl">PIC / Pelatih</div><div class="val">${o.pic_nama}</div></div>
+      <div class="info-box"><div class="lbl">Tanggal Mulai</div><div class="val">${o.tgl_mulai}</div></div>
+      <div class="info-box"><div class="lbl">Progress Sesi</div>
+        <div class="val">${progress}</div>
+        <div style="height:4px;background:var(--gray-border);border-radius:2px;margin-top:6px;overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${barColor};border-radius:2px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="inv-status-bar">
+      <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Order</span>
+      <select class="status-select" id="statusOrderSelect" data-orig="${s}" onchange="onStatusOrderChange(this)">
+        <option value="active"    ${s==='active'    ? 'selected' : ''}>Active</option>
+        <option value="completed" ${s==='completed' ? 'selected' : ''}>Completed</option>
+        <option value="cancelled" ${s==='cancelled' ? 'selected' : ''}>Cancelled</option>
+      </select>
+    </div>
+    <div class="cancel-note" id="cancelNoteBox">
+      <label>⚠️ Catatan Pembatalan (opsional)</label>
+      <textarea id="cancelNoteText" rows="2" placeholder="Tulis alasan pembatalan order..."></textarea>
+    </div>`;
+
+  _renderOrderFooter(false);
+}
+
+function _renderOrderFooter(isDirty) {
+  const o = ORDER_DB[_drawerOrderId] || {};
+  const invoiceBtn = `<button class="btn-primary" onclick="switchDrawerTab('invoice')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Lihat Invoice</button>`;
+  const receiptBtn = o.status_invoice === 'paid'
+    ? `<button class="btn-outline-sm" onclick="goToReceipt('${_drawerOrderId}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>Lihat Receipt</button>` : '';
+  if (isDirty) {
+    document.getElementById('drawerFooter').innerHTML =
+      `<button class="btn-outline-sm" onclick="cancelStatusChange()">Batal Ubah</button>
+       <div style="flex:1"></div>
+       <button class="btn-green" onclick="confirmSaveOrderStatus()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status</button>
+       ${receiptBtn}${invoiceBtn}`;
+  } else {
+    document.getElementById('drawerFooter').innerHTML =
+      `<button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>${receiptBtn}${invoiceBtn}`;
+  }
+}
+
+function goToReceipt(orderId) {
+  window.location.href = 'pp-receipt.html?orderId=' + encodeURIComponent(orderId) + '&direct=1';
+}
+
+function onStatusOrderChange(sel) {
+  const newVal = sel.value;
+  const isDirty = newVal !== sel.dataset.orig;
+  sel.classList.toggle('dirty', isDirty);
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = newVal === 'dibatalkan' ? 'block' : 'none';
+  _renderOrderFooter(isDirty);
+}
+
+function cancelStatusChange() {
+  const sel = document.getElementById('statusOrderSelect');
+  if (!sel) return;
+  sel.value = sel.dataset.orig;
+  sel.classList.remove('dirty');
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = 'none';
+  _renderOrderFooter(false);
+}
+
+function confirmSaveOrderStatus() {
+  const sel = document.getElementById('statusOrderSelect');
+  if (!sel || !_drawerRow || !_drawerOrderId) return;
+  const newStatus = sel.value;
+  const classMap  = { active:'active', completed:'completed', cancelled:'cancelled' };
+  const labelMap  = { active:'Active', completed:'Completed', cancelled:'Cancelled' };
+
+  // Update ORDER_DB (source of truth)
+  if (ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_order = newStatus;
+
+  // Update badge di DOM row via semantic class selector
+  const badge = _drawerRow.querySelector('td.col-status-order .badge');
+  if (badge) {
+    badge.className   = 'badge ' + (classMap[newStatus] || 'active');
+    badge.textContent = labelMap[newStatus] || newStatus;
+  }
+  sel.dataset.orig = newStatus;
+  sel.classList.remove('dirty');
+  const cancelBox = document.getElementById('cancelNoteBox');
+  if (cancelBox) cancelBox.style.display = 'none';
+  _renderOrderFooter(false);
+  showToast('✅ Status Order diperbarui: ' + (labelMap[newStatus] || newStatus));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toastSaved');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function fmtRp(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
+function renderInvoiceTab() {
+  if (!_drawerOrderId) return;
+  const o       = ORDER_DB[_drawerOrderId] || {};
+  const invNo   = o.inv_no     || '';
+  const invStatus = o.status_invoice || '';
+  const d = invoiceData[invNo];
+
+  if (!d) {
+    document.getElementById('drawerBody').innerHTML = '<p style="color:var(--gray-text);font-size:13px;padding:20px 0">Data invoice tidak ditemukan.</p>';
+    document.getElementById('drawerFooter').innerHTML = '<button class="btn-outline-sm" onclick="closeDrawer()">Tutup</button>';
+    return;
+  }
+
+  const statusBadge = {
+    paid:    '<span style="background:#EAFAF1;color:#27AE60;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">✅ LUNAS</span>',
+    pending: '<span style="background:#FEF9E7;color:#E67E22;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">⏳ MENUNGGU PEMBAYARAN</span>',
+    overdue: '<span style="background:#FDEDEC;color:#E74C3C;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px">🔴 LEWAT JATUH TEMPO</span>',
+  };
+
+  // compute rows
+  const biayaLain    = d.biayaLain || 0;
+  const diskon       = d.diskon || 0;
+  const pajak        = d.pajak || 0;
+  const hargaPersesi = d.hargaPersesi || Math.round((d.hargaPaket || 0) / (d.sesi || 1));
+  const hargaKotor   = hargaPersesi * (d.sesi || 0);
+  const diskonPaket  = d.diskonPaket || 0;
+  const subtotalAmt  = (d.hargaPaket || 0) + biayaLain;
+
+  const extraRow = biayaLain > 0
+    ? `<tr><td>Biaya Lain<div style="font-size:11px;color:var(--gray-text)">${d.biayaLainKet||''}</div></td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">—</td><td class="r">${fmtRp(biayaLain)}</td></tr>` : '';
+
+  const promoType = d.promoType || '';
+  const isMonetaryPromo = ['diskon_persen','diskon_nominal','cashback'].includes(promoType) && diskon > 0;
+  const isFreePromo     = ['free_session','free_treatment','free_training'].includes(promoType);
+  const promoDiskonRow  = isMonetaryPromo
+    ? `<tr style="font-size:12px"><td colspan="5" style="color:#27AE60;text-align:right;padding-right:8px">${promoType === 'cashback' ? 'Cashback' : 'Diskon Promo'}${d.promoKode ? ` <span style="font-size:10px;background:#EAFAF1;padding:1px 6px;border-radius:8px;font-weight:700">${d.promoKode}</span>` : ''}</td><td class="r" style="color:#27AE60">− ${fmtRp(diskon)}</td></tr>` : '';
+  const pajakRow = pajak > 0
+    ? `<tr style="font-size:12px"><td colspan="5" style="text-align:right;color:var(--gray-text);padding-right:8px">Pajak</td><td class="r">${fmtRp(pajak)}</td></tr>` : '';
+  const benefitBoxHtml = isFreePromo
+    ? `<div style="margin-top:10px;background:#EAFAF1;border:1.5px solid #27AE60;border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:8px"><div style="width:26px;height:26px;background:#27AE60;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg></div><div><div style="font-size:10px;font-weight:700;color:#27AE60;text-transform:uppercase;letter-spacing:0.5px">Benefit Tambahan</div><div style="font-size:12px;font-weight:600;color:var(--navy)">${promoLabel(promoType, d.promoVal||0, d.promoKode||'')}</div></div></div>` : '';
+
+  document.getElementById('drawerBody').innerHTML = `
+    <!-- Invoice Header -->
+    <div style="background:var(--navy);border-radius:12px;padding:14px 18px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:10px;color:rgba(255,255,255,.6);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-bottom:4px">Nomor Invoice</div>
+          <div style="font-size:14px;font-weight:800;color:white">📄 ${invNo}</div>
+        </div>
+        ${statusBadge[invStatus] || ''}
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.15);display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="font-size:11px;color:rgba(255,255,255,.6)">Klien</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6)">Order ID</div>
+        <div style="font-size:12px;font-weight:700;color:white">${d.client}</div>
+        <div style="font-size:12px;font-weight:700;color:white">${d.orderId}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Tanggal</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:4px">Jatuh Tempo</div>
+        <div style="font-size:12px;color:white">${d.date}</div>
+        <div style="font-size:12px;color:white;font-weight:${invStatus==='overdue'?'700':'400'};color:${invStatus==='overdue'?'#FF6B6B':'white'}">${d.due}</div>
+      </div>
+    </div>
+
+    <!-- Detail Program -->
+    <div style="border:1.5px solid var(--gray-border);border-radius:12px;overflow:hidden;margin-bottom:14px">
+      <div style="background:#F8F9FA;padding:8px 14px;font-size:11px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--gray-border)">Detail Program</div>
+      <div style="padding:12px 14px;display:grid;grid-template-columns:1fr 1fr;gap:8px 16px">
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Nama Latihan</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-top:2px">${d.namaLatihan}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Nama Paket</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);margin-top:2px">${d.namaPaket}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Sesi</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.sesi} sesi</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Pertemuan/Mgg</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.pertemuan}x seminggu</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Masa Paket</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.masa}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Partisipan</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">${d.partisipan} orang</div>
+        </div>
+      </div>
+      <!-- PIC row -->
+      <div style="padding:10px 14px;background:#FFFBF5;border-top:1px solid var(--gray-border);display:flex;align-items:center;gap:12px">
+        <div style="width:34px;height:34px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:white;flex-shrink:0">${d.picNick.charAt(0)}</div>
+        <div style="flex:1">
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">PIC / Pelatih</div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy)">${d.picFull} <span style="font-size:10px;color:var(--gray-text);font-weight:400">(${d.picId})</span></div>
+          <div style="font-size:11px;color:var(--gray-text)">${d.picSpesialis}</div>
+        </div>
+      </div>
+      <!-- Lokasi & Jadwal -->
+      <div style="padding:10px 14px;border-top:1px solid var(--gray-border);display:grid;grid-template-columns:1fr;gap:6px">
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Lokasi Latihan</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">📍 ${d.lokasi}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:.3px">Jadwal</div>
+          <div style="font-size:12px;font-weight:600;margin-top:2px">🗓 ${d.jadwal}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rincian Biaya -->
+    <div class="inv-items" style="margin-bottom:0">
+      <table>
+        <thead><tr><th>Deskripsi</th><th class="r">Harga/Sesi</th><th class="r">Jml Sesi</th><th class="r">Harga Paket</th><th class="r">Diskon Paket</th><th class="r">Total</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>${d.namaPaket}</strong><div style="font-size:11px;color:var(--gray-text)">${d.namaLatihan} · PIC: ${d.picFull}</div></td>
+            <td class="r">${fmtRp(hargaPersesi)}</td>
+            <td class="r">${d.sesi}</td>
+            <td class="r">${fmtRp(hargaKotor)}</td>
+            <td class="r" style="color:#27AE60">${diskonPaket > 0 ? '- ' + fmtRp(diskonPaket) : '—'}</td>
+            <td class="r" style="font-weight:600">${fmtRp(d.hargaPaket)}</td>
+          </tr>
+          ${extraRow}
+          <tr style="font-size:12px;background:#F8F9FA"><td colspan="5" style="text-align:right;padding-right:8px;font-weight:600">Subtotal</td><td class="r" style="font-weight:600">${fmtRp(subtotalAmt)}</td></tr>
+          ${promoDiskonRow}${pajakRow}
+        </tbody>
+      </table>
+    </div>
+    <div class="inv-total"><span>Total Tagihan</span><span>${fmtRp(d.total)}</span></div>
+    ${benefitBoxHtml}
+
+    <!-- Status & Konfirmasi -->
+    <div class="inv-status-bar" style="margin-top:14px">
+      <span style="font-size:12px;font-weight:600;color:var(--gray-text);text-transform:uppercase;letter-spacing:.5px">Status Pembayaran</span>
+      <select class="status-select" id="invStatusSelect" data-orig="${invStatus}" data-inv="${invNo}" onchange="onInvStatusChange(this)">
+        <option value="paid"    ${invStatus==='paid'    ? 'selected':''}>✅ Paid</option>
+        <option value="pending" ${invStatus==='pending' ? 'selected':''}>⏳ Awaiting Payment</option>
+        <option value="overdue" ${invStatus==='overdue' ? 'selected':''}>🔴 Overdue</option>
+      </select>
+    </div>
+
+    <!-- Konfirmasi Pembayaran — selalu tampil, warna beda tergantung status -->
+    <div id="payConfirmBox" style="margin-top:12px;border-radius:12px;overflow:hidden;border:1.5px solid ${invStatus==='paid' ? '#A9DFBF' : '#F5CBA7'}">
+      <div style="padding:10px 16px;background:${invStatus==='paid' ? '#EAFAF1' : '#FFF3E0'};display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;font-weight:700;color:${invStatus==='paid' ? '#27AE60' : '#E67E22'};text-transform:uppercase;letter-spacing:.5px">${invStatus==='paid' ? '✅ Rincian Pembayaran' : '📋 Konfirmasi Pembayaran'}</span>
+        ${invStatus==='paid' ? '<span style="font-size:10px;background:#27AE60;color:white;padding:2px 8px;border-radius:10px;font-weight:700">LUNAS</span>' : '<span style="font-size:10px;background:#E67E22;color:white;padding:2px 8px;border-radius:10px;font-weight:700">BELUM LUNAS</span>'}
+      </div>
+      <div style="padding:14px 16px;background:white;display:flex;flex-direction:column;gap:12px">
+
+        <!-- Upload Bukti Transfer -->
+        <div class="form-group" style="margin:0">
+          <label style="font-size:12px;font-weight:600;color:var(--navy)">Foto Bukti Transfer / Pembayaran ${invStatus!=='paid'?'<span style="color:var(--orange)">*</span>':''}</label>
+          ${invStatus==='paid'
+            ? `<div style="display:flex;align-items:center;gap:10px;margin-top:6px;padding:10px 14px;background:#F8F9FA;border-radius:8px;border:1.5px solid #A9DFBF">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>
+                <span style="font-size:12px;font-weight:600;color:var(--navy);flex:1" id="drFileName">bukti_transfer.jpg</span>
+                <span style="font-size:11px;color:#27AE60;font-weight:700">Tersimpan</span>
+              </div>`
+            : `<div id="drUploadArea" onclick="document.getElementById('drBuktiInput').click()"
+                style="margin-top:6px;border:2px dashed #F5CBA7;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:#FFFBF7"
+                onmouseover="this.style.borderColor='var(--orange)';this.style.background='#FFF3E0'"
+                onmouseout="this.style.borderColor='#F5CBA7';this.style.background='#FFFBF7'">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24" style="color:var(--orange);margin-bottom:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <p style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:2px">Klik untuk upload bukti</p>
+                <p style="font-size:11px;color:var(--gray-text)">JPG, PNG, atau PDF (Maks. 5MB)</p>
+                <input type="file" id="drBuktiInput" style="display:none" accept="image/*,.pdf" onchange="drPreviewFile(this)"/>
+              </div>
+              <div id="drFilePreview" style="display:none;margin-top:8px;padding:10px 14px;background:#F8F9FA;border-radius:8px;align-items:center;gap:10px;border:1.5px solid var(--gray-border)">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#27AE60" stroke-width="2" width="16" height="16" style="flex-shrink:0"><polyline points="20 6 9 17 4 12"/></svg>
+                <span id="drFileName" style="font-size:12px;font-weight:600;color:var(--navy);flex:1">—</span>
+                <button onclick="drRemoveFile()" style="border:none;background:none;cursor:pointer;color:var(--red);font-size:18px;line-height:1">×</button>
+              </div>`
+          }
+        </div>
+
+        <!-- Tanggal & Metode -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="form-group" style="margin:0">
+            <label style="font-size:12px;font-weight:600;color:var(--navy)">Tanggal Pembayaran</label>
+            <input type="date" class="form-control" id="drPaidDate" value="${invStatus==='paid' ? d.paidDate||'' : new Date().toISOString().split('T')[0]}" ${invStatus==='paid'?'readonly style="background:#F8F9FA"':''}/>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label style="font-size:12px;font-weight:600;color:var(--navy)">Metode Pembayaran</label>
+            <select class="form-control" id="drPayMethod" ${invStatus==='paid'?'disabled style="background:#F8F9FA"':''}>
+              <option ${(d.payMethod||'')==='Transfer Bank (BCA)'?'selected':''}>Transfer Bank (BCA)</option>
+              <option ${(d.payMethod||'')==='Transfer Bank (Mandiri)'?'selected':''}>Transfer Bank (Mandiri)</option>
+              <option ${(d.payMethod||'')==='Cash'?'selected':''}>Cash</option>
+              <option ${(d.payMethod||'')==='QRIS'?'selected':''}>QRIS</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+    </div>`;
+
+  // helper upload functions (scoped to drawer)
+  window.drPreviewFile = function(inp) {
+    if (!inp.files.length) return;
+    document.getElementById('drFileName').textContent = inp.files[0].name;
+    const prev = document.getElementById('drFilePreview');
+    const area = document.getElementById('drUploadArea');
+    if (prev) { prev.style.display = 'flex'; }
+    if (area) { area.style.display = 'none'; }
+  };
+  window.drRemoveFile = function() {
+    document.getElementById('drBuktiInput').value = '';
+    document.getElementById('drFileName').textContent = '—';
+    const prev = document.getElementById('drFilePreview');
+    const area = document.getElementById('drUploadArea');
+    if (prev) prev.style.display = 'none';
+    if (area) area.style.display = 'block';
+  };
+
+  const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+  const rcpIcon  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>`;
+  const footerBtns = invStatus !== 'paid'
+    ? `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Lihat Invoice</button>
+       <button class="btn-green" id="btnKonfirmasiLunas" onclick="confirmPaidFromDrawer('${invNo}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg> Konfirmasi Paid</button>`
+    : `<button class="btn-outline-sm" onclick="printInvoice('${invNo}')">${printIcon} Lihat Invoice</button>
+       <button class="btn-outline-sm" onclick="goToReceipt('${_drawerOrderId}')">${rcpIcon} Lihat Receipt</button>
+       <button class="btn-primary" onclick="closeDrawer()">Selesai</button>`;
+
+  document.getElementById('drawerFooter').innerHTML = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>${footerBtns}`;
+}
+
+function onInvStatusChange(sel) {
+  const newVal  = sel.value;
+  const origVal = sel.dataset.orig;
+  const isDirty = newVal !== origVal;
+  sel.classList.toggle('dirty', isDirty);
+
+  const payBox = document.getElementById('payConfirmBox');
+
+  if (isDirty) {
+    if (payBox) payBox.style.display = newVal !== 'paid' ? 'block' : 'none';
+    const backBtn = `<button class="btn-outline-sm" onclick="switchDrawerTab('order')">← Kembali</button>`;
+    const printIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>`;
+    document.getElementById('drawerFooter').innerHTML =
+      `${backBtn}
+       <button class="btn-outline-sm" onclick="cancelInvStatusChange()">Batal Ubah</button>
+       <div style="flex:1"></div>
+       <button class="btn-outline-sm" onclick="printInvoice('${sel.dataset.inv}')">${printIcon} Print</button>
+       <button class="btn-green" onclick="confirmSaveInvStatus('${sel.dataset.inv}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>Simpan Status</button>`;
+  } else {
+    renderInvoiceTab();
+  }
+}
+
+function cancelInvStatusChange() {
+  const sel = document.getElementById('invStatusSelect');
+  if (sel) { sel.value = sel.dataset.orig; sel.classList.remove('dirty'); }
+  renderInvoiceTab();
+}
+
+function confirmSaveInvStatus(invNo) {
+  const sel = document.getElementById('invStatusSelect');
+  if (!sel) return;
+  const newStatus = sel.value;
+  const labelMap = { paid:'Paid', pending:'Awaiting Payment', overdue:'Overdue' };
+  const classMap  = { paid:'paid', pending:'pending', overdue:'overdue' };
+  if (invoiceData[invNo]) invoiceData[invNo].status = newStatus;
+  // Update ORDER_DB (source of truth)
+  if (_drawerOrderId && ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_invoice = newStatus;
+  // Update badge di DOM row via semantic class selector
+  if (_drawerRow) {
+    const badge = _drawerRow.querySelector('td.col-status-inv .badge');
+    if (badge) { badge.className = 'badge ' + classMap[newStatus]; badge.textContent = labelMap[newStatus]; }
+  }
+  showToast('✅ Status Invoice diperbarui: ' + (labelMap[newStatus] || newStatus));
+  renderInvoiceTab();
+}
+
+function confirmPaidFromDrawer(invNo) {
+  const paidDate  = document.getElementById('drPaidDate')?.value || '';
+  const payMethod = document.getElementById('drPayMethod')?.value || '';
+  if (invoiceData[invNo]) {
+    invoiceData[invNo].status    = 'paid';
+    invoiceData[invNo].paidDate  = paidDate;
+    invoiceData[invNo].payMethod = payMethod;
+  }
+  // Update ORDER_DB
+  if (_drawerOrderId && ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_invoice = 'paid';
+  // Update DOM badge via semantic class selector
+  if (_drawerRow) {
+    const badge = _drawerRow.querySelector('td.col-status-inv .badge');
+    if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
+  }
+  showToast('✅ Invoice ' + invNo + ' berhasil dikonfirmasi Lunas!');
+  renderInvoiceTab();
+}
+
+function openModal() {
+  currentStep = 1;
+  _selectedPackage = { price:0, label:'—', sesi:'0' };
+  _selectedLead = { pemesan: null, klien: null };
+
+  // Reset search inputs & cards step 1
+  ['pemesan','klien'].forEach(role => {
+    const s = document.getElementById('search_' + role);
+    const c = document.getElementById('card_' + role);
+    const e = document.getElementById('empty_' + role);
+    if (s) s.value = '';
+    if (c) c.style.display = 'none';
+    if (e) e.style.display = 'block';
+  });
+  const chkSama = document.getElementById('chk_sama');
+  if (chkSama) { chkSama.checked = false; }
+  const boxKlien = document.getElementById('box_klien');
+  if (boxKlien) { boxKlien.style.opacity = '1'; boxKlien.style.pointerEvents = ''; }
+  ['inp_nama','inp_hp','inp_email'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+
+  populateProgramDropdown();
+  updateStepUI();
+  document.getElementById('modalOverlay').classList.add('show');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('show'); }
+function nextStep() {
+  if (currentStep === 3) {
+    // Masuk ke step Biaya — sync paket label & recalc
+    document.getElementById('biaya_paket_disp').textContent = fmtRp(_selectedPackage.price);
+    document.getElementById('rev_paket_label').textContent  = _selectedPackage.label;
+    recalcTotal();
+  }
+  if (currentStep === 4) {
+    fillReview();
+  }
+  if (currentStep < TOTAL_STEPS) { currentStep++; updateStepUI(); }
+  else { _commitNewOrder(); closeModal(); }
+}
+
+function _commitNewOrder() {
+  // Generate Order ID baru
+  const existingNums = Object.keys(ORDER_DB).map(k => parseInt(k.replace('PP-',''),10)).filter(n=>!isNaN(n));
+  const nextNum = existingNums.length ? Math.max(...existingNums) + 1 : 9000;
+  const newId   = 'PP-' + nextNum;
+
+  // Ambil data dari form
+  const klienL   = (_selectedLead && _selectedLead.klien)   || {};
+  const progId   = document.getElementById('inp_program_id').value;
+  const progData = PROGRAM_DB[progId] || {};
+  const picData  = PIC_DB[progData.picId] || {};
+  const tglMulai = document.getElementById('inp_tgl_mulai').value;
+  const lokasi   = document.getElementById('inp_lokasi').value || '—';
+  const jadwals  = [
+    { hari: document.getElementById('inp_hari1').value, jam: document.getElementById('inp_jam1').value },
+    { hari: document.getElementById('inp_hari2').value, jam: document.getElementById('inp_jam2').value },
+    { hari: document.getElementById('inp_hari3').value, jam: document.getElementById('inp_jam3').value },
+  ].filter(j => j.hari).map(j => `${j.hari} ${j.jam}`).join(' · ');
+
+  const nama    = klienL.nama  || document.getElementById('inp_nama').value  || '—';
+  const color   = klienL.color || '#2980B9';
+  const initials= nama.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const paketLbl= progData.namaPaket || _selectedPackage.label || '—';
+  const sesiTotal= progData.sesi || 0;
+  const grandTotal = (window._calc && window._calc.grandTotal) || _selectedPackage.price || 0;
+
+  // Generate nomor invoice
+  const now = new Date();
+  const yyyyy = now.getFullYear();
+  const invSeq = String(Date.now()).slice(-4);
+  const invNo  = `INV/EFM/PP/${yyyyy}/${invSeq}`;
+
+  // Simpan ke ORDER_DB
+  ORDER_DB[newId] = {
+    order_id: newId, display_id: '#' + newId,
+    nama_klien: nama, avatar_initials: initials, avatar_color: color,
+    paket: paketLbl, sesi_total: sesiTotal, sesi_selesai: 0,
+    pic_nama: picData.fullname || '—', pic_id: progData.picId || '—',
+    tgl_mulai: tglMulai || 'Baru',
+    status_order: 'active', status_invoice: 'pending',
+    inv_no: invNo, program_id: progId, lokasi, jadwal: jadwals || '—',
+    agr_id: 'AGR-' + String(Date.now()).slice(-5), agr_status: 'pending', agr_tgl_dibuat: tglMulai || tglInvStr, agr_tgl_ttd: null,
+  };
+
+  // Simpan data invoice ke sessionStorage agar pp-invoice.html bisa langsung buka
+  const tglInvStr = now.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'});
+  const invData = {
+    inv_no: invNo, orderId: '#' + newId,
+    client: nama, initials, color, email: klienL.email || '—', hp: klienL.hp || '—',
+    date: tglInvStr, due: '—', status: 'pending',
+    namaLatihan: progData.namaLatihan || 'Private Training',
+    namaPaket: paketLbl, sesi: progData.sesi || 0,
+    pertemuan: progData.pertemuan || 0, masa: progData.masa || '—',
+    partisipan: progData.partisipan || 1,
+    picFull: picData.fullname || '—',
+    picNick: picData.nick || (picData.fullname||'P').split(' ')[0],
+    picId: progData.picId || '—',
+    picSpesialis: picData.spesialis || '—',
+    lokasi: lokasi,
+    jadwal: jadwals || '—',
+    hargaPaket: progData.harga || grandTotal, hargaPersesi: progData.hargaPersesi || 0,
+    diskonPaket: progData.diskonPaket || 0,
+    biayaLain: 0, biayaLainKet: '', diskon: 0, promoKode: '', cashback: 0,
+    pajak: 0, promoType: '', promoVal: 0, total: grandTotal,
+  };
+  sessionStorage.setItem('new_invoice_data', JSON.stringify(invData));
+  invoiceData[invNo] = invData; // langsung tersedia untuk renderInvoiceTab() sesi ini
+
+  // Buat baris baru dan sisipkan di atas tabel
+  const tbody = document.getElementById('ordersBody');
+  const tr = document.createElement('tr');
+  tr.dataset.orderId = newId;
+  tr.style.cursor = 'pointer';
+  tr.onclick = function() { openDrawer(this); };
+  tr.innerHTML = `
+    <td class="col-order-id"><span class="order-id">#${newId}</span></td>
+    <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
+    <td class="col-paket">${paketLbl}</td>
+    <td class="col-pic">${picData.fullname || '—'}</td>
+    <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:0%"></div></div><span class="session-text">0/${sesiTotal} sesi</span></div></td>
+    <td class="col-tgl">${tglMulai || '—'}</td>
+    <td class="col-status-order"><span class="badge active">Active</span></td>
+    <td class="col-status-inv"><span class="badge pending">Pending</span></td>
+    <td class="col-aksi"><div class="action-wrap">
+      <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      <button class="action-btn invoice" title="Lihat Invoice" onclick="event.stopPropagation();window.location.href='pp-invoice.html?inv=${encodeURIComponent(invNo)}'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
+    </div></td>`;
+  tbody.insertBefore(tr, tbody.firstChild);
+  applyFilterAndPaginate();
+
+  // Tampilkan notifikasi sukses
+  const toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#27AE60;color:white;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:600;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,0.18)';
+  toast.textContent = '✅ Order #' + newId + ' berhasil dibuat!';
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3500);
+}
+function prevStep() { if (currentStep > 1) { currentStep--; updateStepUI(); } }
+function updateStepUI() {
+  const subtitles = [
+    'Langkah 1 dari 5: Pilih Klien',
+    'Langkah 2 dari 5: Pilih Program',
+    'Langkah 3 dari 5: Logistik & Jadwal',
+    'Langkah 4 dari 5: Biaya & Invoice',
+    'Langkah 5 dari 5: Review & Konfirmasi',
+  ];
+  document.getElementById('stepSubtitle').textContent = subtitles[currentStep-1];
+  for (let i=1; i<=TOTAL_STEPS; i++) {
+    const el      = document.getElementById('step'+i);
+    const content = document.getElementById('content'+i);
+    el.className  = 'step';
+    content.style.display = 'none';
+    if (i < currentStep) el.classList.add('done');
+    else if (i === currentStep) el.classList.add('active');
+  }
+  document.getElementById('content'+currentStep).style.display = 'block';
+  document.getElementById('btnBack').style.display = currentStep > 1 ? 'block' : 'none';
+  document.getElementById('btnNext').textContent = currentStep === TOTAL_STEPS ? '✓ Konfirmasi & Buat Order' : 'Lanjut →';
+}
+</script>
+
+<script>
+/* ─── PAGINATION + FILTER ENGINE (10 rows/page) ─── */
+const ROWS_PER_PAGE = 10;
+let currentPage  = 1;
+let filteredRows = [];
+
+function getAllRows() {
+  return Array.from(document.querySelectorAll('#ordersBody tr'));
+}
+
+function applyFilterAndPaginate() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const f1 = document.getElementById('filterStatus').value.toLowerCase();
+  const f2 = document.getElementById('filterPIC').value.toLowerCase();
+  const f3 = document.getElementById('filterPaket').value.toLowerCase();
+  const f4 = document.getElementById('filterInvoice').value.toLowerCase();
+
+  filteredRows = getAllRows().filter(row => {
+    const text = row.textContent.toLowerCase();
+    const invStatus = (row.querySelector('td[data-status]') || {}).dataset?.status || '';
+    return (!search || text.includes(search))
+        && (!f1 || text.includes(f1))
+        && (!f2 || text.includes(f2))
+        && (!f3 || text.includes(f3))
+        && (!f4 || invStatus === f4);
+  });
+
+  currentPage = 1;
+  renderPage();
+}
+
+function renderPage() {
+  const total      = filteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(total / ROWS_PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  const start = (currentPage - 1) * ROWS_PER_PAGE;
+  const end   = start + ROWS_PER_PAGE;
+
+  getAllRows().forEach(row => { row.style.display = 'none'; });
+  filteredRows.forEach((row, i) => { row.style.display = (i >= start && i < end) ? '' : 'none'; });
+
+  const from = total === 0 ? 0 : start + 1;
+  const to   = Math.min(end, total);
+  document.getElementById('paginationInfo').textContent =
+    'Menampilkan ' + from + '–' + to + ' dari ' + total + ' order';
+
+  buildPaginationBtns(currentPage, totalPages);
+}
+
+function buildPaginationBtns(current, total) {
+  const container = document.getElementById('paginationBtns');
+  container.innerHTML = '';
+  const mkBtn = (label, page, isActive, isDisabled) => {
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (isActive ? ' active' : '');
+    btn.disabled  = isDisabled;
+    btn.style.opacity = isDisabled ? '0.35' : '1';
+    btn.innerHTML = label;
+    if (!isDisabled) btn.onclick = () => goToPage(page);
+    return btn;
+  };
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>', current-1, false, current===1));
+  pageRange(current, total).forEach(p => {
+    if (p === '...') {
+      const s = document.createElement('span');
+      s.textContent = '…'; s.style.cssText = 'padding:0 6px;color:var(--gray-text);font-size:13px;display:flex;align-items:center;';
+      container.appendChild(s);
+    } else {
+      container.appendChild(mkBtn(p, p, p === current, false));
+    }
+  });
+  container.appendChild(mkBtn('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>', current+1, false, current===total));
+}
+
+function pageRange(current, total) {
+  if (total <= 7) return Array.from({length: total}, (_, i) => i + 1);
+  const pages = [1];
+  if (current > 3) pages.push('...');
+  for (let p = Math.max(2, current-1); p <= Math.min(total-1, current+1); p++) pages.push(p);
+  if (current < total - 2) pages.push('...');
+  pages.push(total);
+  return pages;
+}
+
+function goToPage(page) {
+  const total = Math.max(1, Math.ceil(filteredRows.length / ROWS_PER_PAGE));
+  currentPage = Math.max(1, Math.min(page, total));
+  renderPage();
+  document.querySelector('.table-card').scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function clearFilter() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('filterStatus').selectedIndex  = 0;
+  document.getElementById('filterInvoice').selectedIndex = 0;
+  document.getElementById('filterPIC').selectedIndex     = 0;
+  document.getElementById('filterPaket').selectedIndex   = 0;
+  applyFilterAndPaginate();
+}
+
+function printInvoice(invNo) {
+  window.location.href = 'pp-invoice.html?inv=' + encodeURIComponent(invNo);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateOrderStats();
+  applyFilterAndPaginate();
+  // Auto-open modal dan pre-fill lead jika datang dari pp-leads.html
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('openOrder') === '1') {
+    const raw = sessionStorage.getItem('prefill_lead');
+    sessionStorage.removeItem('prefill_lead');
+    openModal();
+    if (raw) {
+      try {
+        const l = JSON.parse(raw);
+        // Tambahkan ke LEADS_DB jika belum ada
+        if (!LEADS_DB.find(x => x.id === l.id)) LEADS_DB.push(l);
+        // Pre-fill sebagai Pemesan sekaligus Klien
+        setTimeout(() => {
+          selectLead('pemesan', l.id);
+          document.getElementById('chk_sama').checked = true;
+          toggleSama();
+        }, 80);
+      } catch(e) {}
+    }
+    // Bersihkan URL
+    history.replaceState({}, '', 'pp-orders.html');
+  }
+});
+</script>
+
+<script>
+const role = localStorage.getItem('efm_role');
+const nama = localStorage.getItem('efm_nama');
+if (role === 'owner') {
+  const menuSettings = document.getElementById('menuSettings');
+  if (menuSettings) menuSettings.style.display = 'flex';
+  const headerRight = document.querySelector('.header-right');
+  if (headerRight) {
+    const badge = document.createElement('span');
+    badge.className = 'owner-badge';
+    badge.style.cssText = 'background:rgba(224,89,69,0.1);color:#E05945;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(224,89,69,0.2)';
+    badge.textContent = '👑 Owner';
+    headerRight.insertBefore(badge, headerRight.firstChild);
+  }
+  const dashLink = document.querySelector('a[href="dashboard.html"]');
+  if (dashLink) dashLink.setAttribute('href', 'dashboard-owner.html');
+  const ownerLabel = document.getElementById('ownerLabel');
+  if (ownerLabel) ownerLabel.style.display = 'block';
+} else {
+  const ownerLabel = document.querySelector('.nav-label:last-of-type');
+  if (ownerLabel && ownerLabel.textContent.trim() === 'Owner Only') {
+    ownerLabel.style.display = 'none';
+  }
+}
+</script>
+<script src="assets/js/mobile.js"></script>
+</body>
+</html>
+
