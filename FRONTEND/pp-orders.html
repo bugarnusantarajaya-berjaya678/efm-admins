@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Private Training Orders</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -80,45 +81,17 @@
     .filter-search input { border:none; background:none; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; }
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; min-width:1170px; border-collapse:collapse; table-layout:fixed; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
+    table { min-width:1200px; }
 
-    /* ── Semantic column classes (safe to reorder/insert columns) ── */
-    .col-order-id      { width:100px; min-width:100px; }
-    .col-nama-klien    { width:180px; min-width:180px; max-width:180px; white-space:normal; word-break:break-word; }
+    /* ── Page-unique column classes (shared: col-id, col-nama, col-status, col-aksi) ── */
     .col-paket         { width:140px; min-width:140px; max-width:120px; white-space:normal; }
     .col-pic           { width:150px; min-width:150px; max-width:140px; white-space:normal; word-break:break-word; }
     .col-progress      { width:130px; min-width:130px; }
     .col-tgl           { width:120px; min-width:120px; }
-    .col-status-order  { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
     .col-status-inv    { width:140px; min-width:130px; max-width:140px; text-align:center; }
     th.col-status-inv  { white-space:nowrap; }
-    .col-aksi          { width:100px; min-width:100px; text-align:center; white-space:nowrap; }
-    /* ── Avatar & Client Cell ── */
-    .client-cell { display:flex; align-items:center; gap:10px; }
-    .avatar-sm {
-      width:35px; height:35px; border-radius:50%;
-      color:white; font-size:12px; font-weight:700; letter-spacing:0.5px;
-      display:flex; align-items:center; justify-content:center;
-      flex-shrink:0; user-select:none;
-    }
 
     /* ── Badge (pill / kapsul) ── */
-    .badge {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:4px 12px; border-radius:50px;
-      font-size:11px; font-weight:600; line-height:1.4;
-      white-space:nowrap;
-    }
-    .badge::before {
-      content:''; width:6px; height:6px; border-radius:50%;
-      background:currentColor; flex-shrink:0;
-    }
     .badge.active    { background:#EAFAF1; color:#1E8449; }
     .badge.completed { background:#EBF5FB; color:#1A6FA3; }
     .badge.cancelled { background:#FDEDEC; color:#C0392B; }
@@ -140,27 +113,9 @@
     .session-fill { height:100%; background:var(--orange); border-radius:2px; }
     .session-text { font-size:11px; color:var(--gray-text); }
 
-    /* ── Action Buttons ── */
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .action-btn {
-      width:30px; height:30px;
-      border-radius:6px; border:1px solid #E2E6EA;
-      background:white; cursor:pointer;
-      display:inline-flex; align-items:center; justify-content:center;
-      color:var(--gray-text); transition:all 0.15s; flex-shrink:0;
-      padding:6px;
-    }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
-    .action-btn svg { width:14px; height:14px; }
+    /* ── Action Buttons (page-unique modifier) ── */
     .action-btn.invoice { background:#EBF5FB; color:#2980B9; border-color:#AED6F1; }
     .action-btn.invoice:hover { background:#D6EAF8; border-color:#2980B9; }
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn:hover { border-color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
 
     /* Modal */
     .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto; }
@@ -420,38 +375,38 @@
       <div class="table-wrap">
         <table>
           <colgroup>
-            <col class="col-order-id"/>
-            <col class="col-nama-klien"/>
+            <col class="col-id"/>
+            <col class="col-nama"/>
             <col class="col-paket"/>
             <col class="col-pic"/>
             <col class="col-progress"/>
             <col class="col-tgl"/>
-            <col class="col-status-order"/>
+            <col class="col-status"/>
             <col class="col-status-inv"/>
             <col class="col-aksi"/>
           </colgroup>
           <thead>
             <tr>
-              <th class="col-order-id">Order ID</th>
-              <th class="col-nama-klien">Nama Klien</th>
+              <th class="col-id">Order ID</th>
+              <th class="col-nama">Nama Klien</th>
               <th class="col-paket">Paket</th>
               <th class="col-pic">PIC (Pelatih)</th>
               <th class="col-progress">Progress Sesi</th>
               <th class="col-tgl">Tgl. Mulai</th>
-              <th class="col-status-order">Status Order</th>
+              <th class="col-status">Status Order</th>
               <th class="col-status-inv">Status Invoice</th>
               <th class="col-aksi">Aksi</th>
             </tr>
           </thead>
           <tbody id="ordersBody">
             <tr data-order-id="PP-8042" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8042</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+              <td class="col-id"><span class="order-id">#PP-8042</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
               <td class="col-paket">12 Sesi - Pro</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:33%"></div></div><span class="session-text">4/12 sesi</span></div></td>
               <td class="col-tgl">24 Okt 2026</td>
-              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -461,13 +416,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8041" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8041</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+              <td class="col-id"><span class="order-id">#PP-8041</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
               <td class="col-paket">4 Sesi - Starter</td>
               <td class="col-pic">Marcus Chen</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
               <td class="col-tgl">22 Okt 2026</td>
-              <td class="col-status-order"><span class="badge completed">Completed</span></td>
+              <td class="col-status"><span class="badge completed">Completed</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -477,13 +432,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8038" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8038</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+              <td class="col-id"><span class="order-id">#PP-8038</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
               <td class="col-paket">24 Sesi - Elite</td>
               <td class="col-pic">Elena Rodriguez</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:50%"></div></div><span class="session-text">12/24 sesi</span></div></td>
               <td class="col-tgl">18 Okt 2026</td>
-              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -493,13 +448,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8035" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8035</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
+              <td class="col-id"><span class="order-id">#PP-8035</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
               <td class="col-paket">8 Sesi - Base</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:25%;background:var(--red)"></div></div><span class="session-text">2/8 sesi</span></div></td>
               <td class="col-tgl">15 Okt 2026</td>
-              <td class="col-status-order"><span class="badge cancelled">Cancelled</span></td>
+              <td class="col-status"><span class="badge cancelled">Cancelled</span></td>
               <td class="col-status-inv"><span class="badge overdue">Overdue</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -509,13 +464,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8031" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8031</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
+              <td class="col-id"><span class="order-id">#PP-8031</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
               <td class="col-paket">12 Sesi - Pro</td>
               <td class="col-pic">Marcus Chen</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:58%"></div></div><span class="session-text">7/12 sesi</span></div></td>
               <td class="col-tgl">10 Okt 2026</td>
-              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -525,13 +480,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8027" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8027</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#D35400">RK</div>Rina Kusuma</div></td>
+              <td class="col-id"><span class="order-id">#PP-8027</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#D35400">RK</div>Rina Kusuma</div></td>
               <td class="col-paket">4 Sesi - Starter</td>
               <td class="col-pic">Elena Rodriguez</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:100%;background:var(--green)"></div></div><span class="session-text">4/4 sesi</span></div></td>
               <td class="col-tgl">5 Okt 2026</td>
-              <td class="col-status-order"><span class="badge completed">Completed</span></td>
+              <td class="col-status"><span class="badge completed">Completed</span></td>
               <td class="col-status-inv"><span class="badge paid">Paid</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -541,13 +496,13 @@
               </td>
             </tr>
             <tr data-order-id="PP-8024" onclick="openDrawer(this)" style="cursor:pointer">
-              <td class="col-order-id"><span class="order-id">#PP-8024</span></td>
-              <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:#2C3E50">HW</div>Hendra Wijaya</div></td>
+              <td class="col-id"><span class="order-id">#PP-8024</span></td>
+              <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#2C3E50">HW</div>Hendra Wijaya</div></td>
               <td class="col-paket">24 Sesi - Elite</td>
               <td class="col-pic">Sarah Jenkins</td>
               <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:12%;background:var(--red)"></div></div><span class="session-text">3/24 sesi</span></div></td>
               <td class="col-tgl">1 Okt 2026</td>
-              <td class="col-status-order"><span class="badge active">Active</span></td>
+              <td class="col-status"><span class="badge active">Active</span></td>
               <td class="col-status-inv"><span class="badge pending">Awaiting Payment</span></td>
               <td class="col-aksi">
                 <div class="action-wrap">
@@ -1836,7 +1791,7 @@ function confirmSaveOrderStatus() {
   if (ORDER_DB[_drawerOrderId]) ORDER_DB[_drawerOrderId].status_order = newStatus;
 
   // Update badge di DOM row via semantic class selector
-  const badge = _drawerRow.querySelector('td.col-status-order .badge');
+  const badge = _drawerRow.querySelector('td.col-status .badge');
   if (badge) {
     badge.className   = 'badge ' + (classMap[newStatus] || 'active');
     badge.textContent = labelMap[newStatus] || newStatus;
@@ -2270,13 +2225,13 @@ function _commitNewOrder() {
   tr.style.cursor = 'pointer';
   tr.onclick = function() { openDrawer(this); };
   tr.innerHTML = `
-    <td class="col-order-id"><span class="order-id">#${newId}</span></td>
-    <td class="col-nama-klien"><div class="client-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
+    <td class="col-id"><span class="order-id">#${newId}</span></td>
+    <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${color}">${initials}</div>${nama}</div></td>
     <td class="col-paket">${paketLbl}</td>
     <td class="col-pic">${picData.fullname || '—'}</td>
     <td class="col-progress"><div class="session-progress"><div class="session-bar"><div class="session-fill" style="width:0%"></div></div><span class="session-text">0/${sesiTotal} sesi</span></div></td>
     <td class="col-tgl">${tglMulai || '—'}</td>
-    <td class="col-status-order"><span class="badge active">Active</span></td>
+    <td class="col-status"><span class="badge active">Active</span></td>
     <td class="col-status-inv"><span class="badge pending">Pending</span></td>
     <td class="col-aksi"><div class="action-wrap">
       <button class="action-btn" title="Detail & Invoice" onclick="event.stopPropagation();openDrawer(this.closest('tr'))"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>

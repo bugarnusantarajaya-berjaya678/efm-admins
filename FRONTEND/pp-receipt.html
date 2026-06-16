@@ -1,4 +1,3 @@
-<!-- Test push ke main dari Claude Code CLI -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -8,11 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style> .text-bold {
-  font-weight: 700 !important;
-  color: var(--navy);
-  }  
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
+  <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .text-bold { font-weight:700 !important; color:var(--navy); }
     :root {
       --navy:#1E1C43; 
       --navy2:#2D2B5A; 
@@ -101,48 +99,23 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
 
     /* Table */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; min-width:1365px; border-collapse:collapse; table-layout:fixed; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; position:sticky; top:0; z-index:2; overflow:hidden; text-overflow:ellipsis; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; white-space:normal; word-wrap:break-word; overflow-wrap:break-word; }
-    th:nth-child(1)  { width:200px; }
-    th:nth-child(2)  { width:195px; }
-    th:nth-child(3)  { width:100px; }
-    th:nth-child(4)  { width:160px; }
-    th:nth-child(5)  { width:150px; }
-    th:nth-child(6)  { width:130px; }
-    th:nth-child(7)  { width:100px; }
-    th:nth-child(8)  { width:120px; }
-    th:nth-child(9)  { width:110px; }
-    th:nth-child(10) { width:100px; text-align:center; }
-    td:nth-child(1), td:nth-child(2), td:nth-child(3), td:nth-child(7), td:nth-child(8), td:nth-child(9) { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-    td:nth-child(10) { text-align:center; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
-    .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
-    .client-cell { display:flex; align-items:center; }
-    .rcp-id { font-weight:800; color:var(--navy); font-size:12px; }
-    /* Badges */
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:20px; font-size:10px; font-weight:600; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    table { min-width:1390px; }
+
+    /* ── Page-unique column classes (shared: col-id, col-nama, col-program, col-pic, col-nominal, col-status, col-aksi) ── */
+    .col-receipt-no { width:160px; min-width:160px; white-space:nowrap; }
+    .col-ref-invoice { width:160px; min-width:160px; white-space:nowrap; }
+    .col-tgl { width:120px; min-width:120px; white-space:nowrap; }
+
+    .rcp-id { font-weight:700; color:var(--navy); font-size:12px; }
+
+    /* Badges (page-unique status colors) */
     .badge.wa-sent    { background:#EAFAF1; color:#27AE60; }
     .badge.wa-pending { background:#FEF9E7; color:#F39C12; }
     .badge.wa-failed  { background:#FDEDEC; color:#E74C3C; }
 
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:6px; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    /* Action buttons (page-unique modifiers) */
     .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
     .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
-    .action-btn svg { width:14px; height:14px; }
-
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
 
     /* DETAIL VIEW */
     .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--gray-text); font-size:13px; font-weight:500; cursor:pointer; margin-bottom:20px; padding:8px 0; border:none; background:none; font-family:'Poppins',sans-serif; transition:color 0.2s; }
@@ -325,18 +298,30 @@
       <div class="table-card">
         <div class="table-wrap">
           <table>
+            <colgroup>
+              <col class="col-receipt-no"/>
+              <col class="col-ref-invoice"/>
+              <col class="col-id"/>
+              <col class="col-nama"/>
+              <col class="col-program"/>
+              <col class="col-pic"/>
+              <col class="col-tgl"/>
+              <col class="col-nominal"/>
+              <col class="col-status"/>
+              <col class="col-aksi"/>
+            </colgroup>
             <thead>
               <tr>
-                <th>No. Receipt</th>
-                <th>Ref. Invoice</th>
-                <th>Order ID</th>
-                <th>Nama Klien</th>
-                <th>Program</th>
-                <th>PIC</th>
-                <th>Tgl Bayar</th>
-                <th>Total</th>
-                <th>Status WA</th>
-                <th>Aksi</th>
+                <th class="col-receipt-no">No. Receipt</th>
+                <th class="col-ref-invoice">Ref. Invoice</th>
+                <th class="col-id">Order ID</th>
+                <th class="col-nama">Nama Klien</th>
+                <th class="col-program">Program</th>
+                <th class="col-pic">PIC</th>
+                <th class="col-tgl">Tgl Bayar</th>
+                <th class="col-nominal">Total</th>
+                <th class="col-status">Status WA</th>
+                <th class="col-aksi">Aksi</th>
               </tr>
             </thead>
             <tbody id="rcpTbody"></tbody>
@@ -592,21 +577,21 @@ function renderTable() {
       };
 
       tr.innerHTML = `
-        <td><div class="rcp-id">${r.rcp_no}</div></td>
-        <td><div class="inv-ref text-bold">${r.inv_no}</div></td>
-        <td class="text-bold">#${r.order_id}</td>
-        <td>
+        <td class="col-receipt-no"><div class="rcp-id">${r.rcp_no}</div></td>
+        <td class="col-ref-invoice"><div class="inv-ref text-bold">${r.inv_no}</div></td>
+        <td class="col-id">#${r.order_id}</td>
+        <td class="col-nama">
           <div class="client-cell">
             <div class="avatar-sm" style="background:${r.color}">${r.initials}</div>
             <span>${r.client}</span>
           </div>
         </td>
-        <td>${r.paket}</td>
-        <td>${r.pic}</td>
-        <td>${r.tgl_bayar}</td>
-        <td style="font-weight:600;color:var(--navy)">${r.total}</td>
-        <td><span class="badge ${badgeClass}">${badgeText}</span></td>
-        <td>
+        <td class="col-program">${r.paket}</td>
+        <td class="col-pic">${r.pic}</td>
+        <td class="col-tgl">${r.tgl_bayar}</td>
+        <td class="col-nominal" style="font-weight:600;color:var(--navy)">${r.total}</td>
+        <td class="col-status"><span class="badge ${badgeClass}">${badgeText}</span></td>
+        <td class="col-aksi">
           <div class="action-wrap">
             <div class="action-btn view-btn" title="Lihat Detail" onclick="viewDetail('${r.rcp_no}')">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>

@@ -6,6 +6,7 @@
   <title>EFM Portal — Leads Management</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/import-engine.css"/>
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -83,51 +84,14 @@
     .btn-filter { padding:8px 16px; background:var(--navy); color:white; border:none; border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; align-items:center; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:6px; border:1.5px solid var(--gray-border); background:white; font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; color:var(--text-dark); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; }
-    .page-btn svg { width:14px; height:14px; }
-    .page-btn:hover:not(:disabled) { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); font-weight:700; }
-    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:1230px; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:12px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:visible; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
+    table { min-width:1090px; }
 
-    /* ── Semantic column classes ── */
-    .col-lead-id  { width:100px; min-width:100px; white-space:nowrap; }
-    td.col-lead-id { font-weight:700; color:var(--navy); padding-left:16px; }
-    .col-nama     { width:220px; min-width:220px; white-space:normal; word-break:break-word; }
+    /* ── Page-unique column classes (shared: col-id, col-nama, col-program, col-status, col-aksi) ── */
     .col-hp       { width:180px; min-width:180px; white-space:nowrap; }
-    .col-sumber   { width:120px; min-width:120px; white-space:normal; word-break:break-word; }
-    .col-program  { width:220px; min-width:220px; white-space:normal; word-break:break-word; }
-    .col-status   { width:150px; min-width:150px; text-align:center; }
+    .col-sumber   { width:120px; min-width:120px; }
     .col-tanggal  { width:120px; min-width:120px; white-space:nowrap; }
-    .col-aksi     { width:120px; min-width:120px; text-align:center; white-space:nowrap; }
-
-    /* ── Avatar & Name Cell ── */
-    .lead-name-cell { display:flex; align-items:center; gap:10px; }
-    .avatar-sm {
-      width:35px; height:35px; border-radius:50%;
-      color:white; font-size:12px; font-weight:700; letter-spacing:0.5px;
-      display:flex; align-items:center; justify-content:center;
-      flex-shrink:0; user-select:none;
-    }
 
     /* ── Badge (pill) ── */
-    .badge {
-      display:inline-flex; align-items:center; gap:6px;
-      padding:4px 12px; border-radius:50px;
-      font-size:11px; font-weight:600; line-height:1.4; white-space:nowrap;
-    }
-    .badge::before {
-      content:''; width:6px; height:6px; border-radius:50%;
-      background:currentColor; flex-shrink:0;
-    }
     .badge.new          { background:#EBF5FB; color:#1A6FA3; }
     .badge.follow-up    { background:#FEF9E7; color:#D68910; }
     .badge.closed-won   { background:#EAFAF1; color:#1E8449; }
@@ -136,19 +100,10 @@
     /* ── Source Tag ── */
     .source-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:500; background:var(--gray-bg); color:var(--gray-text); border:1px solid var(--gray-border); white-space:nowrap; }
 
-    /* ── Action Buttons ── */
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .action-btn {
-      width:30px; height:30px; border-radius:6px;
-      border:1px solid #E2E6EA; background:white; cursor:pointer;
-      display:inline-flex; align-items:center; justify-content:center;
-      color:var(--gray-text); transition:all 0.15s; flex-shrink:0; padding:6px;
-    }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
+    /* ── Action Buttons (page-unique modifiers) ── */
     .action-btn.success { background:#EAFAF1; color:#1E8449; border-color:#A9DFBF; }
     .action-btn.success:hover { background:#D5F5E3; border-color:#1E8449; }
     .action-btn.danger:hover  { border-color:var(--red); color:var(--red); background:#FDEDEC; }
-    .action-btn svg { width:14px; height:14px; }
 
     /* ── Status option buttons in detail modal ── */
     .status-edit { display:flex; gap:6px; flex-wrap:wrap; margin-top:6px; }
@@ -364,7 +319,7 @@
       <div class="table-wrap">
         <table id="leadsTable">
           <colgroup>
-            <col class="col-lead-id"/>
+            <col class="col-id"/>
             <col class="col-nama"/>
             <col class="col-hp"/>
             <col class="col-sumber"/>
@@ -375,7 +330,7 @@
           </colgroup>
           <thead>
             <tr>
-              <th class="col-lead-id">Lead ID</th>
+              <th class="col-id">Lead ID</th>
               <th class="col-nama">Nama</th>
               <th class="col-hp">No HP</th>
               <th class="col-sumber">Sumber</th>
@@ -387,7 +342,7 @@
           </thead>
           <tbody id="leadsBody">
             <tr data-lead-id="L-1001" onclick="openDetailModal(this)" style="cursor:pointer">
-              <td class="col-lead-id"><span>#L-1001</span></td>
+              <td class="col-id"><span>#L-1001</span></td>
               <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#E05945">AR</div>Ahmad Ridwan</div></td>
               <td class="col-hp">0812-3456-7890</td>
               <td class="col-sumber"><span class="source-tag">🌐 Website</span></td>
@@ -403,7 +358,7 @@
               </td>
             </tr>
             <tr data-lead-id="L-1002" onclick="openDetailModal(this)" style="cursor:pointer">
-              <td class="col-lead-id"><span>#L-1002</span></td>
+              <td class="col-id"><span>#L-1002</span></td>
               <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
               <td class="col-hp">0856-7890-1234</td>
               <td class="col-sumber"><span class="source-tag">📱 Meta Ads</span></td>
@@ -419,7 +374,7 @@
               </td>
             </tr>
             <tr data-lead-id="L-1003" onclick="openDetailModal(this)" style="cursor:pointer">
-              <td class="col-lead-id"><span>#L-1003</span></td>
+              <td class="col-id"><span>#L-1003</span></td>
               <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
               <td class="col-hp">0811-2233-4455</td>
               <td class="col-sumber"><span class="source-tag">🚶 Walk-in</span></td>
@@ -435,7 +390,7 @@
               </td>
             </tr>
             <tr data-lead-id="L-1004" onclick="openDetailModal(this)" style="cursor:pointer">
-              <td class="col-lead-id"><span>#L-1004</span></td>
+              <td class="col-id"><span>#L-1004</span></td>
               <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#8E44AD">DA</div>Dewi Ayu</div></td>
               <td class="col-hp">0877-6655-4433</td>
               <td class="col-sumber"><span class="source-tag">👥 Referral</span></td>
@@ -755,7 +710,7 @@ function _buildLeadRow(lead) {
   tr.onclick = function() { openDetailModal(this); };
   const sumberTxt = (lead.sumber_icon ? lead.sumber_icon + ' ' : '') + lead.sumber;
   tr.innerHTML = `
-    <td class="col-lead-id"><span>${lead.display_id}</span></td>
+    <td class="col-id"><span>${lead.display_id}</span></td>
     <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:${lead.avatar_color}">${lead.initials}</div>${lead.nama}</div></td>
     <td class="col-hp">${lead.no_hp}</td>
     <td class="col-sumber"><span class="source-tag">${sumberTxt}</span></td>
