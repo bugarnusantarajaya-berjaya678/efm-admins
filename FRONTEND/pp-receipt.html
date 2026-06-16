@@ -644,7 +644,7 @@ function openDetail(rcpNo) {
   document.getElementById('rcptMetode').textContent  = r.metode;
   document.getElementById('rcptPIC').textContent     = r.pic;
   document.getElementById('rcptTotal').textContent   = r.total;
-  document.getElementById('rcptBarLabel').textContent = r.rcp_no;
+  document.getElementById('rcptBarLabel').textContent = 'ORDER ID: #' + r.order_id;
 
   document.getElementById('rcptItemsBody').innerHTML =
     '<tr><td>'+r.paket+'</td><td class="r">—</td><td class="r">'+r.total+'</td></tr>';
