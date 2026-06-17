@@ -1400,10 +1400,6 @@ function confirmPaid() {
       if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
     }
   });
-
-  // Otomatis buka receipt setelah konfirmasi
-  if (d) populateReceipt(invNo, d);
-  document.getElementById('receiptOverlay').classList.add('show');
 }
 
 function kirimInvoiceWA(invNo) {
