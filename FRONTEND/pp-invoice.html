@@ -832,12 +832,8 @@
           <p id="detailSubtitle">Private Training — Alex Mercer</p>
         </div>
         <div class="detail-actions">
-          <button class="btn-outline" onclick="downloadInvoicePDF()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
-          </button>
-          <!-- Kirim Invoice via WA (muncul setelah lunas) -->
-          <button class="btn-wa" id="sendReceiptBtn" style="display:none" onclick="kirimInvoiceWA()">
+          <!-- Kirim Invoice ke Klien: selalu tampil, download PDF lalu buka WA -->
+          <button class="btn-wa" id="sendReceiptBtn" onclick="kirimInvoiceKeKlien()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             Kirim Invoice ke Klien
           </button>
@@ -1306,13 +1302,12 @@ function showDetail(invNo) {
   const markBtn        = document.getElementById('markPaidBtn');
   const sendReceiptBtn = document.getElementById('sendReceiptBtn');
   const viewReceiptBtn = document.getElementById('viewReceiptBtn');
+  sendReceiptBtn.style.display = 'inline-flex'; // selalu tampil
   if (d.status === 'paid') {
     markBtn.style.display        = 'none';
-    sendReceiptBtn.style.display = 'inline-flex';
     viewReceiptBtn.style.display = 'inline-flex';
   } else {
     markBtn.style.display        = 'inline-flex';
-    sendReceiptBtn.style.display = 'none';
     viewReceiptBtn.style.display = 'none';
   }
 
@@ -1608,13 +1603,15 @@ function _pdfCloneFixReceipt(doc) {
   el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;border-radius:0!important;box-shadow:none!important;';
 }
 
-function downloadInvoicePDF() {
+function downloadInvoicePDF(onComplete) {
   const orderId  = document.getElementById('invOrderId').textContent.trim();
   const client   = document.getElementById('invClientName').textContent.trim();
+  const invNo    = document.getElementById('invNumber').textContent.trim();
   const filename = 'Invoice-' + orderId + ' (' + client + ').pdf';
   const element  = document.getElementById('invoicePrintArea');
-  const btn = document.querySelector('button[onclick="downloadInvoicePDF()"]');
-  const SVG_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  const btn      = document.getElementById('sendReceiptBtn');
+  const SVG_WA   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+  const SVG_DL   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   if (btn) { btn.disabled = true; btn.innerHTML = SVG_DL + ' Memproses...'; }
   html2pdf().set({
     margin:      [10, 10, 10, 10],
@@ -1624,7 +1621,32 @@ function downloadInvoicePDF() {
     jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
-    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download PDF'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_WA + ' Kirim Invoice ke Klien'; }
+    if (typeof onComplete === 'function') onComplete(invNo);
+  });
+}
+
+function kirimInvoiceKeKlien() {
+  downloadInvoicePDF(function(invNo) {
+    const d = invoiceData[invNo];
+    if (!d) return;
+    const isPaid = d.status === 'paid';
+    const msg = isPaid
+      ? 'Halo *' + (d.client||'') + '*,\n\n' +
+        'Pembayaran Invoice *' + invNo + '* untuk program *' + (d.namaPaket||'—') + '* sebesar *' + fmtRp(d.total) + '* sudah kami terima dan tercatat *LUNAS* ✅\n\n' +
+        'Terlampir invoice sebagai bukti pembayaran Anda.\n\n' +
+        'Terima kasih telah bergabung bersama *Essential Fitness Management*! 💪\n_Tim EFM_'
+      : 'Halo *' + (d.client||'') + '*,\n\n' +
+        'Berikut adalah Invoice dari *Essential Fitness Management* untuk Anda:\n\n' +
+        '🧾 *No. Invoice:* ' + invNo + '\n' +
+        '📋 *Program:* ' + (d.namaPaket||'—') + '\n' +
+        '💰 *Total:* ' + fmtRp(d.total) + '\n' +
+        '📅 *Tanggal Invoice:* ' + (d.date||'—') + '\n' +
+        '⏰ *Jatuh Tempo:* ' + (d.due||'—') + '\n\n' +
+        'Mohon segera lakukan pembayaran sebelum jatuh tempo. Terima kasih 🙏\n_Tim EFM_';
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
   });
 }
 
