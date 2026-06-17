@@ -1065,14 +1065,10 @@ function approveAgreement() {
 
 /* ─── KIRIM WA (list aksi, tanpa download) ───────────────────────── */
 function kirimAgreementWA(id) {
-  const a = AGREEMENT_DB[id];
-  if (!a) return;
-  const msg =
-    `Halo ${a.nama_klien} 👋\n\n` +
-    `Dokumen *Perjanjian Layanan Private Program (Agreement)* Anda untuk paket *${a.paket}* (Order #${a.order_id}) sudah kami siapkan ✅\n\n` +
-    `Silakan cek dokumen yang telah kami kirimkan. Jika ada pertanyaan terkait isi perjanjian, jangan ragu menghubungi kami.\n\n` +
-    `Terima kasih,\nTim EFM`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  if (!AGREEMENT_DB[id]) return;
+  // Set active id lalu jalankan flow download PDF + buka WA (sama seperti tombol preview)
+  _activeAgreementId = id;
+  kirimAgreementKeKlien();
 }
 
 /* ─── KIRIM AGREEMENT KE KLIEN (download PDF lalu lanjut WA) ───────── */
