@@ -479,6 +479,13 @@ document.addEventListener('DOMContentLoaded', () => {
   filteredData = Object.values(RECEIPT_DB);
   updateStats();
   renderTable();
+
+  // Jika diarahkan dari pp-invoice via ?rcp=...&direct=1, langsung buka detail
+  const params = new URLSearchParams(window.location.search);
+  const rcpNo  = params.get('rcp');
+  if (rcpNo && RECEIPT_DB[rcpNo]) {
+    viewDetail(rcpNo);
+  }
 });
 
 // Sidebar Toggle Function
