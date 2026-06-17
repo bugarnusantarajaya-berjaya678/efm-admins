@@ -480,11 +480,11 @@ document.addEventListener('DOMContentLoaded', () => {
   updateStats();
   renderTable();
 
-  // Jika diarahkan dari pp-invoice via ?rcp=...&direct=1, langsung buka detail
-  const params = new URLSearchParams(window.location.search);
-  const rcpNo  = params.get('rcp');
-  if (rcpNo && RECEIPT_DB[rcpNo]) {
-    viewDetail(rcpNo);
+  // Jika diarahkan dari pp-invoice via sessionStorage, langsung buka detail receipt
+  const openId = sessionStorage.getItem('openReceiptId');
+  if (openId) {
+    sessionStorage.removeItem('openReceiptId');
+    if (RECEIPT_DB[openId]) viewDetail(openId);
   }
 });
 
