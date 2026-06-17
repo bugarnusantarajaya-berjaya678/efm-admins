@@ -1421,9 +1421,10 @@ function kirimInvoiceWA(invNo) {
 }
 
 function showReceipt() {
-  const invNo = document.getElementById('invNumber').textContent;
+  const invNo = document.getElementById('invNumber').textContent.trim();
   const rcpNo = invNo.replace('INV/', 'RCP/');
-  window.location.href = 'pp-receipt.html?rcp=' + encodeURIComponent(rcpNo) + '&direct=1';
+  sessionStorage.setItem('openReceiptId', rcpNo);
+  window.location.href = 'pp-receipt.html';
 }
 
 function closeReceipt() {
