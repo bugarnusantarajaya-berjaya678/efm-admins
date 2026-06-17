@@ -611,17 +611,11 @@ function renderPagination() {
   }
 }
 
-// View Detail & Generate Barcode
-function viewDetail(id) {
+// Populate receipt DOM (shared by viewDetail and resendWA)
+function _fillReceiptDOM(id) {
   const r = RECEIPT_DB[id];
-  if(!r) return;
+  if (!r) return;
   currentDetailId = id;
-
-  // Toggle Views
-  document.getElementById('listView').classList.remove('active');
-  document.getElementById('detailView').classList.add('active');
-
-  // Populate Details
   document.getElementById('detailRcpNo').innerText = r.rcp_no;
   document.getElementById('rcptOrderId').innerText = `Order ID:#${r.order_id}`;
   document.getElementById('rcptNo').innerText = r.rcp_no;
@@ -630,33 +624,31 @@ function viewDetail(id) {
   document.getElementById('rcptDate').innerText = r.tgl_bayar;
   document.getElementById('rcptMetode').innerText = r.metode;
   document.getElementById('rcptPIC').innerText = r.pic;
-
-  // Generate QR Code
   const qrContainer = document.getElementById('receiptBarcode');
-  qrContainer.innerHTML = ''; // bersihkan QR code lama
+  qrContainer.innerHTML = '';
   qrCodeObj = new QRCode(qrContainer, {
-    text: r.rcp_no,
-    width: 190,
-    height: 190,
-    colorDark : "#1E1C43",
-    colorLight : "#F8F9FA",
-    correctLevel : QRCode.CorrectLevel.H
+    text: r.rcp_no, width: 190, height: 190,
+    colorDark: '#1E1C43', colorLight: '#F8F9FA',
+    correctLevel: QRCode.CorrectLevel.H
   });
   document.getElementById('rcptBarLabel').innerText = r.rcp_no;
-
-  // Render Items
-  // Ekstrak angka sesi jika formatnya 'X Sesi'
-  let sesiMatch = r.paket.match(/(\d+)\s*sesi/i);
-  let sesi = sesiMatch ? sesiMatch[1] : '1';
-
+  const sesiMatch = r.paket.match(/(\d+)\s*sesi/i);
+  const sesi = sesiMatch ? sesiMatch[1] : '1';
   document.getElementById('rcptItemsBody').innerHTML = `
     <tr>
       <td><strong>${r.paket}</strong><br/><span style="color:var(--gray-text);font-size:10px">Sesi Personal Training EFM</span></td>
       <td class="r">${sesi}</td>
       <td class="r" style="font-weight:600">${r.total}</td>
-    </tr>
-  `;
+    </tr>`;
   document.getElementById('rcptTotal').innerText = r.total;
+}
+
+// View Detail & Generate Barcode
+function viewDetail(id) {
+  if (!RECEIPT_DB[id]) return;
+  document.getElementById('listView').classList.remove('active');
+  document.getElementById('detailView').classList.add('active');
+  _fillReceiptDOM(id);
 }
 
 // Back to List
@@ -667,14 +659,10 @@ function showList() {
 
 // Actions
 function resendWA(id) {
-  const r = RECEIPT_DB[id];
-  if (!r) return;
-  const msg =
-    `Halo ${r.client} 👋\n\n` +
-    `Receipt pembayaran *${r.rcp_no}* untuk paket *${r.paket}* sebesar *${r.total}* sudah kami kirimkan ✅\n\n` +
-    `Terima kasih atas kepercayaan Anda kepada Essential Fitness Management.\n\n` +
-    `Salam,\nTim EFM`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+  if (!RECEIPT_DB[id]) return;
+  // Populate DOM silently (tanpa pindah view) lalu download PDF + buka WA
+  _fillReceiptDOM(id);
+  setTimeout(() => kirimReceiptKeKlien(), 300); // tunggu QR render
 }
 
 function downloadReceiptPDF(onComplete) {
