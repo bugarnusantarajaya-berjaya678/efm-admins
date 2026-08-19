@@ -81,6 +81,18 @@ function getAvatarColor(name) {
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
 }
 
+function StatMini({ label, value, sub, accent }) {
+  const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
+  return (
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    </div>
+  )
+}
+
 export default function PPScreeningPage() {
   const navigate = useNavigate();
   const [screeningList, setScreeningList] = useState(dummyScreeningData);
@@ -141,18 +153,10 @@ export default function PPScreeningPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: "TOTAL SCREENING", value: screeningList.length, sub: "Semua data", topBorder: "border-t-[#1E1C43]" },
-          { label: "SELESAI", value: screeningList.filter(s => s.statusScreening === "Selesai").length, sub: "Hasil lengkap", topBorder: "border-t-green-400" },
-          { label: "DRAFT", value: screeningList.filter(s => s.statusScreening === "Draft").length, sub: "Belum selesai", topBorder: "border-t-yellow-400" },
-          { label: "TERHUBUNG ORDER", value: screeningList.filter(s => s.orderId).length, sub: "Sudah digunakan", topBorder: "border-t-blue-400" },
-        ].map(card => (
-          <div key={card.label} className={`bg-white rounded-xl border border-gray-100 border-t-2 ${card.topBorder} px-4 py-3`}>
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
-            <p className="text-2xl font-bold text-[#1E1C43]">{card.value}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{card.sub}</p>
-          </div>
-        ))}
+        <StatMini label="TOTAL SCREENING" value={screeningList.length} sub="Semua data" />
+        <StatMini label="SELESAI" value={screeningList.filter(s => s.statusScreening === "Selesai").length} sub="Hasil lengkap" accent="green" />
+        <StatMini label="DRAFT" value={screeningList.filter(s => s.statusScreening === "Draft").length} sub="Belum selesai" accent="yellow" />
+        <StatMini label="TERHUBUNG ORDER" value={screeningList.filter(s => s.orderId).length} sub="Sudah digunakan" accent="blue" />
       </div>
 
       {/* Filter Bar */}

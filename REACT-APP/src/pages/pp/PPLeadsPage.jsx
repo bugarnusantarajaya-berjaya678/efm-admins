@@ -197,6 +197,21 @@ const STAGE_BORDER = {
 }
 
 /* ═══════════════════════════════════════
+   StatMini
+═══════════════════════════════════════ */
+function StatMini({ label, value, sub, accent }) {
+  const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
+  return (
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
    Main Page
 ═══════════════════════════════════════ */
 export default function PPLeadsPage() {
@@ -339,26 +354,10 @@ export default function PPLeadsPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-4 gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Leads</p>
-            <p className="text-[28px] font-bold text-text-primary leading-none">{kpiTotal}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Semua pipeline</p>
-          </div>
-          <div className="bg-white rounded-2xl border-2 border-[#E05945] px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Hot Leads</p>
-            <p className="text-[28px] font-bold text-[#E05945] leading-none">{kpiHot}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Screening &amp; Invoicing</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-100 border-t-2 border-t-green-400 shadow-sm px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Converted</p>
-            <p className="text-[28px] font-bold text-green-600 leading-none">{kpiConverted}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Jadi klien aktif</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-100 border-t-2 border-t-red-400 shadow-sm px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Lost</p>
-            <p className="text-[28px] font-bold text-red-500 leading-none">{kpiLost}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Tidak convert</p>
-          </div>
+          <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" />
+          <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" />
+          <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" />
+          <StatMini label="Lost" value={kpiLost} sub="Tidak convert" accent="red" />
         </div>
 
         {/* Filter Bar */}
