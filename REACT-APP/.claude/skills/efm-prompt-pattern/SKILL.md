@@ -101,3 +101,13 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - All dummy data must follow ID formats from `efm-design-standards`
 - Use realistic Indonesian names, company names, and amounts (IDR) — not placeholder text like "Test Company" or "John Doe"
 - Dates should be realistic relative to the current project timeline (2026)
+
+---
+
+## 5. Claude Code Web — Branch & PR Workflow
+
+- Setiap task dikerjakan di branch terpisah, hasil akhir berupa PR
+- Jangan kerjakan banyak task besar secara paralel di branch berbeda tanpa sepengetahuan pengguna - selesaikan dan minta merge 1 task dulu sebelum mulai task besar berikutnya, supaya tidak ada branch menumpuk yang belum di-review
+- Task kecil/independen (bug fix satu file, ubah teks) boleh langsung jalan tanpa menunggu PR sebelumnya di-merge
+- Selalu akhiri laporan dengan link PR dan link Vercel branch preview (sesuai CLAUDE.md section Live Preview Workflow)
+- Setelah build sukses tapi SEBELUM melapor selesai, jalankan pengecekan skill (lihat skill efm-skill-maintenance)
