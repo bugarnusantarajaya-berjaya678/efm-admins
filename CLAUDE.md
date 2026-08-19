@@ -78,6 +78,25 @@ Setiap kali menyelesaikan sebuah task/perubahan kode:
 4. efm-admins.vercel.app (tanpa suffix branch) adalah production, 
    terhubung ke branch main - hanya update setelah PR di-merge
 
+## Pull Request Otomatis
+
+Setiap kali menyelesaikan task dan sudah push ke branch:
+
+1. Cek dulu apakah branch ini SUDAH punya PR yang masih open.
+   Kalau belum ada PR untuk branch/commit ini, BUAT PR baru
+   secara otomatis menggunakan GitHub CLI (gh pr create) -
+   jangan hanya push dan berhenti di situ.
+
+2. Kalau branch ini sebelumnya sudah pernah di-merge lewat PR
+   lain, dan sekarang ada commit baru menumpuk di branch yang
+   sama, BUAT PR BARU (branch baru kalau perlu) - jangan
+   mengandalkan PR lama yang sudah merged.
+
+3. Selalu sertakan nomor PR yang BENAR dan URL yang valid di
+   laporan akhir - verifikasi dulu PR itu benar dalam status
+   "Open" sebelum melaporkan ke pengguna, jangan asumsi atau
+   sebut nomor dari memori/sesi sebelumnya.
+
 ## Referensi Tambahan
 
 Daftar lengkap semua halaman/file di project (untuk referensi saat 
