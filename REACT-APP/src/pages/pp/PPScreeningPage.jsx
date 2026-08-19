@@ -159,23 +159,23 @@ export default function PPScreeningPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border border-gray-100 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Status</option>
           <option>Selesai</option>
           <option>Draft</option>
           <option>Perlu Review</option>
         </select>
         <select value={filterPic} onChange={e => setFilterPic(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua PIC</option>
           <option>Sarah Jenkins</option>
           <option>Marcus Chen</option>
           <option>Admin EFM</option>
         </select>
         <select value={filterTujuan} onChange={e => setFilterTujuan(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tujuan</option>
           <option>Penurunan Berat Badan</option>
           <option>Pembentukan Tubuh</option>
@@ -185,14 +185,14 @@ export default function PPScreeningPage() {
           <option>Kesehatan Umum</option>
           <option>Lainnya</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={14} className="text-gray-400 shrink-0" />
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari nama klien atau nomor screening..."
-            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-gray-400" />
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
         </div>
         <button onClick={() => { setSearch(""); setFilterStatus(""); setFilterPic(""); setFilterTujuan(""); }}
-          className="px-3.5 py-[7px] border border-gray-200 text-xs font-semibold text-gray-600 rounded-lg hover:bg-gray-50 transition-colors shrink-0">
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
           Reset
         </button>
       </div>
