@@ -225,7 +225,7 @@ export default function PPReceiptPage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Receipt &amp; Barcode</h1>
+        <h1 className="text-[22px] font-bold text-text-primary">Receipt &amp; Barcode</h1>
         <p className="text-sm text-text-muted mt-1">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
       </div>
 

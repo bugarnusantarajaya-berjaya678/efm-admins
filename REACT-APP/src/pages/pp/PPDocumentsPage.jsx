@@ -469,7 +469,7 @@ export default function PPDocumentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-text-primary">Agreement Klien</h1>
+            <h1 className="text-[22px] font-bold text-text-primary">Agreement Klien</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
               <CheckCircle size={11} />
               Paperless · Sign-on-Glass

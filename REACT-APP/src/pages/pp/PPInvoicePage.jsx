@@ -620,7 +620,7 @@ export default function PPInvoicePage() {
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Invoice Private Training</h1>
+        <h1 className="text-[22px] font-bold text-text-primary">Invoice Private Training</h1>
         <p className="text-sm text-text-muted mt-1">Semua tagihan klien program private</p>
       </div>
 

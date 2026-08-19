@@ -141,7 +141,7 @@ export default function PPScreeningPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1E1C43]">Screening Kesehatan Klien</h1>
+          <h1 className="text-[22px] font-bold text-text-primary">Screening Kesehatan Klien</h1>
           <p className="text-sm text-gray-500 mt-0.5">Form screening opsional untuk tracking kesehatan dan kebugaran klien</p>
         </div>
         <button onClick={() => setShowForm(true)}
