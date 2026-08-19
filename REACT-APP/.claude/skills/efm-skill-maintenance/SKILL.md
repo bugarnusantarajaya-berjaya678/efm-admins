@@ -38,31 +38,41 @@ Setelah menyelesaikan sebuah task, evaluasi:
 
 ## Cara Melapor ke Pengguna
 
-Setelah build sukses dan sebelum menutup laporan hasil kerja, 
-tambahkan section singkat:
+Kalau ditemukan pola baru yang layak masuk skill (sesuai kriteria
+yang sudah ada di skill ini), LANGSUNG update file skill terkait
+sebagai bagian dari task yang sama - tidak perlu bertanya/
+menunggu persetujuan dulu. Ini supaya skill selalu ikut
+berkembang otomatis setiap ada pola baru, tanpa pengguna perlu
+meminta secara eksplisit.
 
-"**Skill check:** [salah satu dari berikut]
-- Tidak ada pola baru yang perlu ditambahkan ke skill.
-- Ditemukan pola baru: [jelaskan singkat]. Rekomendasi: tambahkan 
-  ke [nama skill] sebagai [ringkasan]. Mau saya update sekarang?"
+Setelah update skill dilakukan, tetap laporkan secara singkat di
+akhir hasil kerja: "Skill diperbarui: [nama skill] -
+[ringkasan perubahan]" - supaya pengguna tetap tahu apa yang
+berubah, tapi TIDAK perlu approval sebelum perubahan itu di-commit.
 
-JANGAN langsung mengedit file skill tanpa konfirmasi pengguna 
-terlebih dahulu - selalu tawarkan dulu, karena skill adalah 
-dokumen standar yang harus disengaja perubahannya, bukan otomatis.
+Pengecualian: kalau perubahan yang diusulkan BERTENTANGAN dengan
+skill yang sudah ada (bukan cuma nambah, tapi mengoreksi aturan
+lama), tetap tanya dulu ke pengguna - karena ini berarti ada
+keputusan lama yang mungkin perlu didiskusikan ulang, bukan
+sekadar penambahan.
+
+Kalau tidak ada pola baru yang ditemukan, cukup tulis di akhir
+laporan: "**Skill check:** Tidak ada pola baru yang perlu
+ditambahkan."
 
 ## Kriteria "Layak Ditambahkan" (Hindari Skill Membengkak)
 
-Hanya usulkan update skill kalau pola tersebut:
+Hanya update skill kalau pola tersebut:
 - Kemungkinan besar akan dipakai lagi di modul/halaman lain 
   (bukan kasus one-off yang sangat spesifik untuk 1 halaman saja)
 - Cukup konkret untuk dituliskan sebagai aturan/contoh kode, 
   bukan sekadar preferensi samar
 
-Jangan usulkan update untuk hal yang terlalu spesifik/sekali pakai 
+Jangan update untuk hal yang terlalu spesifik/sekali pakai 
 - ini akan membuat skill jadi bengkak dan kurang berguna sebagai 
 referensi umum.
 
-## Setelah Pengguna Setuju Update
+## Cara Melakukan Update
 
 Edit file SKILL.md yang relevan langsung (bukan buat skill baru), 
 tambahkan section/contoh baru di bagian yang sesuai, pertahankan 
