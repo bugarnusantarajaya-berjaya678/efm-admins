@@ -480,7 +480,7 @@ export default function PPDocumentsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         <StatMini label="Pending TTD" value={stats.pending} color="yellow" />
         <StatMini label="Sudah TTD" value={stats.signed} color="green" />
         <StatMini label="Menunggu Approval" value={stats.waiting} color="blue" />

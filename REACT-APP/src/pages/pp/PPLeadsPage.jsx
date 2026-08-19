@@ -353,7 +353,7 @@ export default function PPLeadsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
           <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" />
           <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" />
           <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" />

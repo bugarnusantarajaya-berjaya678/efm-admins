@@ -152,7 +152,7 @@ export default function PPScreeningPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         <StatMini label="TOTAL SCREENING" value={screeningList.length} sub="Semua data" />
         <StatMini label="SELESAI" value={screeningList.filter(s => s.statusScreening === "Selesai").length} sub="Hasil lengkap" accent="green" />
         <StatMini label="DRAFT" value={screeningList.filter(s => s.statusScreening === "Draft").length} sub="Belum selesai" accent="yellow" />
