@@ -6,7 +6,6 @@ import LoginPage from './pages/auth/LoginPage'
 
 // Dashboard
 import DashboardAdmin from './pages/dashboard/DashboardAdmin'
-import DashboardPage from './pages/dashboard/DashboardPage'
 import DashboardOwnerPage from './pages/dashboard/DashboardOwnerPage'
 
 // PP (Private Program)
