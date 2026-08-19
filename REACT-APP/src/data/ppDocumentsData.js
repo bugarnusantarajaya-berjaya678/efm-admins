@@ -1,0 +1,103 @@
+export const DOCS_INIT = [
+  {
+    id: 'AGR-PP-26-0001', displayId: 'AGR-PP-26-0001',
+    namaKlien: 'James Wilson', initials: 'JW', color: '#2980B9',
+    namaPanggilan: 'James', noWa: '081234567890', email: 'james.wilson@email.com',
+    alamat: 'Jl. Sudirman No. 12, Jakarta Pusat',
+    detailPesanan: '12 Sesi Private Training - Paket Pro',
+    orderId: 'PP-26-0013', paket: '12 Sesi - Pro',
+    noReceipt: 'RCP-PP-26-0013', refInvoice: 'INV-PP-26-0013', pic: 'Sarah Jenkins',
+    tglDibuat: '24 Okt 2026', statusTtd: 'signed', tglTtd: '25 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0002', displayId: 'AGR-PP-26-0002',
+    namaKlien: 'Emily Chen', initials: 'EC', color: '#27AE60',
+    namaPanggilan: 'Emily', noWa: '082345678901', email: 'emily.chen@email.com',
+    alamat: 'Jl. Gatot Subroto No. 45, Jakarta Selatan',
+    detailPesanan: '4 Sesi Private Training - Paket Starter',
+    orderId: 'PP-26-0012', paket: '4 Sesi - Starter',
+    noReceipt: 'RCP-PP-26-0012', refInvoice: 'INV-PP-26-0012', pic: 'Marcus Chen',
+    tglDibuat: '22 Okt 2026', statusTtd: 'signed', tglTtd: '22 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0003', displayId: 'AGR-PP-26-0003',
+    namaKlien: 'Robert Taylor', initials: 'RT', color: '#E05945',
+    namaPanggilan: 'Rob', noWa: '083456789012', email: 'robert.taylor@email.com',
+    alamat: 'Jl. Kuningan Raya No. 88, Jakarta Selatan',
+    detailPesanan: '24 Sesi Private Training - Paket Elite',
+    orderId: 'PP-26-0011', paket: '24 Sesi - Elite',
+    noReceipt: '—', refInvoice: 'INV-PP-26-0011', pic: 'Elena Rodriguez',
+    tglDibuat: '18 Okt 2026', statusTtd: 'waiting_approval', tglTtd: '20 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0004', displayId: 'AGR-PP-26-0004',
+    namaKlien: 'Anita Kumar', initials: 'AK', color: '#8E44AD',
+    namaPanggilan: 'Anita', noWa: '084567890123', email: 'anita.kumar@email.com',
+    alamat: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
+    detailPesanan: '8 Sesi Private Training - Paket Base',
+    orderId: 'PP-26-0010', paket: '8 Sesi - Base',
+    noReceipt: '—', refInvoice: 'INV-PP-26-0010', pic: 'Sarah Jenkins',
+    tglDibuat: '15 Okt 2026', statusTtd: 'expired', tglTtd: null,
+  },
+  {
+    id: 'AGR-PP-26-0005', displayId: 'AGR-PP-26-0005',
+    namaKlien: 'Budi Santoso', initials: 'BS', color: '#16A085',
+    namaPanggilan: 'Budi', noWa: '085678901234', email: 'budi.santoso@email.com',
+    alamat: 'Jl. Rasuna Said No. 5, Jakarta Selatan',
+    detailPesanan: '12 Sesi Private Training - Paket Pro',
+    orderId: 'PP-26-0008', paket: '12 Sesi - Pro',
+    noReceipt: 'RCP-PP-26-0008', refInvoice: 'INV-PP-26-0008', pic: 'Marcus Chen',
+    tglDibuat: '10 Okt 2026', statusTtd: 'signed', tglTtd: '11 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0006', displayId: 'AGR-PP-26-0006',
+    namaKlien: 'Rina Kusuma', initials: 'RK', color: '#D35400',
+    namaPanggilan: 'Rina', noWa: '086789012345', email: 'rina.kusuma@email.com',
+    alamat: 'Jl. Kebon Sirih No. 33, Jakarta Pusat',
+    detailPesanan: '4 Sesi Private Training - Paket Starter',
+    orderId: 'PP-26-0007', paket: '4 Sesi - Starter',
+    noReceipt: 'RCP-PP-26-0007', refInvoice: 'INV-PP-26-0007', pic: 'Elena Rodriguez',
+    tglDibuat: '5 Okt 2026', statusTtd: 'signed', tglTtd: '5 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0007', displayId: 'AGR-PP-26-0007',
+    namaKlien: 'Hendra Wijaya', initials: 'HW', color: '#2C3E50',
+    namaPanggilan: 'Hendra', noWa: '087890123456', email: 'hendra.wijaya@email.com',
+    alamat: 'Jl. Ampera Raya No. 7, Jakarta Selatan',
+    detailPesanan: '24 Sesi Private Training - Paket Elite',
+    orderId: 'PP-26-0006', paket: '24 Sesi - Elite',
+    noReceipt: '—', refInvoice: 'INV-PP-26-0006', pic: 'Sarah Jenkins',
+    tglDibuat: '1 Okt 2026', statusTtd: 'waiting_approval', tglTtd: '3 Okt 2026',
+  },
+  {
+    id: 'AGR-PP-26-0008', displayId: 'AGR-PP-26-0008',
+    namaKlien: 'Dewi Rahayu', initials: 'DR', color: '#C0392B',
+    namaPanggilan: 'Dewi', noWa: '088901234567', email: 'dewi.rahayu@email.com',
+    alamat: 'Jl. Fatmawati No. 55, Jakarta Selatan',
+    detailPesanan: '8 Sesi Yoga & Stretching - Paket Base',
+    orderId: 'PP-26-0005', paket: '8 Sesi - Base',
+    noReceipt: '—', refInvoice: 'INV-PP-26-0005', pic: 'Elena Rodriguez',
+    tglDibuat: '25 Sep 2026', statusTtd: 'pending', tglTtd: null,
+  },
+]
+
+export const STATUS_LABEL = {
+  signed: 'Signed',
+  pending: 'Pending TTD',
+  expired: 'Expired',
+  waiting_approval: 'Waiting Approval',
+}
+
+export const STATUS_CLS = {
+  signed: 'bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]',
+  pending: 'bg-[#FEF9E7] text-[#B7770D] border border-[#FAD7A0]',
+  expired: 'bg-[#FDEDEC] text-[#C0392B] border border-[#F5B7B1]',
+  waiting_approval: 'bg-[#EBF5FB] text-[#1A5276] border border-[#AED6F1]',
+}
+
+export const PAKET_OPTS = [
+  '4 Sesi - Starter',
+  '8 Sesi - Base',
+  '12 Sesi - Pro',
+  '24 Sesi - Elite',
+]
