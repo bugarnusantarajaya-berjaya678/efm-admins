@@ -69,6 +69,7 @@
     .view { display:none; flex-direction:column; flex:1; min-height:0; }
     .view.active { display:flex; }
     #detailView.active { display:block; overflow-y:auto; padding-bottom:28px; }
+    .detail-center-wrap { max-width:560px; width:100%; margin:0 auto; }
 
     /* List View */
     .page-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-shrink:0; }
@@ -99,11 +100,13 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
 
     /* Table */
-    table { min-width:1390px; }
+    table { min-width:1635px; }
 
     /* ── Page-unique column classes (shared: col-id, col-nama, col-program, col-pic, col-nominal, col-status, col-aksi) ── */
-    .col-receipt-no { width:160px; min-width:160px; white-space:nowrap; }
-    .col-ref-invoice { width:160px; min-width:160px; white-space:nowrap; }
+    .col-receipt-no { width:200px; min-width:200px; white-space:nowrap; }
+    .col-ref-invoice { width:200px; min-width:200px; white-space:nowrap; }
+    .col-latihan { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan { white-space:normal; line-height:1.3; }
     .col-tgl { width:120px; min-width:120px; white-space:nowrap; }
 
     .rcp-id { font-weight:700; color:var(--navy); font-size:12px; }
@@ -303,6 +306,7 @@
               <col class="col-ref-invoice"/>
               <col class="col-id"/>
               <col class="col-nama"/>
+              <col class="col-latihan"/>
               <col class="col-program"/>
               <col class="col-pic"/>
               <col class="col-tgl"/>
@@ -313,10 +317,11 @@
             <thead>
               <tr>
                 <th class="col-receipt-no">No. Receipt</th>
-                <th class="col-ref-invoice">Ref. Invoice</th>
+                <th class="col-ref-invoice">No. Invoice</th>
                 <th class="col-id">Order ID</th>
                 <th class="col-nama">Nama Klien</th>
-                <th class="col-program">Program</th>
+                <th class="col-latihan">Nama Latihan/ Terapi</th>
+                <th class="col-program">Nama Paket</th>
                 <th class="col-pic">PIC</th>
                 <th class="col-tgl">Tgl Bayar</th>
                 <th class="col-nominal">Total</th>
@@ -332,7 +337,7 @@
           <div class="pagination-btns" id="pageBtns"></div>
         </div>
       </div>
-    </div><div id="detailView" class="view">
+    </div><div id="detailView" class="view"><div class="detail-center-wrap">
       <button class="back-btn" onclick="showList()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         Kembali ke Daftar Receipt
@@ -343,13 +348,9 @@
           <p id="detailSubtitle">Receipt pembayaran</p>
         </div>
         <div class="detail-actions">
-          <button class="btn-wa" id="btnResendWA" onclick="resendWADetail()">
+          <button class="btn-wa" id="btnKirimReceipt" onclick="kirimReceiptKeKlien()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Resend WA
-          </button>
-          <button class="btn-primary" onclick="downloadReceiptPDF()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
+            Kirim Receipt ke Klien
           </button>
         </div>
       </div>
@@ -427,7 +428,7 @@
           </div>
         </div>
       </div>
-    </div></div></main>
+    </div></div></div></main>
 
 <script>
 /* ── Receipt database — synced with ORDER_DB paid orders ── */
@@ -436,45 +437,26 @@ var RECEIPT_DB = {
   'RCP/EFM/PP/2026/0089': {
     rcp_no:'RCP/EFM/PP/2026/0089', inv_no:'INV/EFM/PP/2026/0089',
     order_id:'PP-8042', client:'James Wilson', initials:'JW', color:'#2980B9',
-    paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
+    namaLatihan:'Private Training', paket:'12 Sesi - Pro', pic:'Sarah Jenkins', tgl_bayar:'10 Jun 2026',
     metode:'Transfer Bank (BCA)', total:'Rp 1.500.000', wa_status:'Not Sent', wa_tgl:'—'
   },
   'RCP/EFM/PP/2026/0087': {
     rcp_no:'RCP/EFM/PP/2026/0087', inv_no:'INV/EFM/PP/2026/0087',
     order_id:'PP-8041', client:'Emily Chen', initials:'EC', color:'#27AE60',
-    paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'22 Okt 2026',
-    metode:'QRIS', total:'Rp 600.000', wa_status:'sent', wa_tgl:'22 Okt 2026'
+    namaLatihan:'Private Training', paket:'4 Sesi - Starter', pic:'Marcus Chen', tgl_bayar:'15 Jun 2026',
+    metode:'QRIS', total:'Rp 600.000', wa_status:'sent', wa_tgl:'15 Jun 2026'
   },
   'RCP/EFM/PP/2026/0082': {
     rcp_no:'RCP/EFM/PP/2026/0082', inv_no:'INV/EFM/PP/2026/0082',
     order_id:'PP-8031', client:'Budi Santoso', initials:'BS', color:'#16A085',
-    paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'10 Okt 2026',
-    metode:'Transfer Bank (Mandiri)', total:'Rp 1.500.000', wa_status:'sent', wa_tgl:'10 Okt 2026'
+    namaLatihan:'Private Training', paket:'12 Sesi - Pro', pic:'Marcus Chen', tgl_bayar:'2 Jun 2026',
+    metode:'Transfer Bank (Mandiri)', total:'Rp 1.500.000', wa_status:'sent', wa_tgl:'2 Jun 2026'
   },
   'RCP/EFM/PP/2026/0078': {
     rcp_no:'RCP/EFM/PP/2026/0078', inv_no:'INV/EFM/PP/2026/0078',
     order_id:'PP-8027', client:'Rina Kusuma', initials:'RK', color:'#D35400',
-    paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'5 Okt 2026',
-    metode:'Cash', total:'Rp 600.000', wa_status:'sent', wa_tgl:'5 Okt 2026'
-  },
-  /* Historical demo data */
-  'RCP/EFM/PP/2025/001': {
-    rcp_no:'RCP/EFM/PP/2025/001', inv_no:'INV/EFM/PP/2025/001',
-    order_id:'PP-9000', client:'Alex Mercer', initials:'AM', color:'#1E1C43',
-    paket:'Premium — 12 Sesi', pic:'Andi Susanto', tgl_bayar:'10 Jan 2025',
-    metode:'Transfer Bank', total:'Rp 4.800.000', wa_status:'sent', wa_tgl:'10 Jan 2025'
-  },
-  'RCP/EFM/PP/2025/002': {
-    rcp_no:'RCP/EFM/PP/2025/002', inv_no:'INV/EFM/PP/2025/002',
-    order_id:'PP-9001', client:'Emily Chen', initials:'EC', color:'#8E44AD',
-    paket:'Basic — 6 Sesi', pic:'Budi Hartono', tgl_bayar:'14 Jan 2025',
-    metode:'QRIS', total:'Rp 2.400.000', wa_status:'sent', wa_tgl:'14 Jan 2025'
-  },
-  'RCP/EFM/PP/2025/003': {
-    rcp_no:'RCP/EFM/PP/2025/003', inv_no:'INV/EFM/PP/2025/003',
-    order_id:'PP-9002', client:'Anita Kumar', initials:'AK', color:'#E74C3C',
-    paket:'Intensif — 20 Sesi', pic:'Citra Dewi', tgl_bayar:'18 Jan 2025',
-    metode:'Tunai', total:'Rp 8.000.000', wa_status:'failed', wa_tgl:'—'
+    namaLatihan:'Private Training', paket:'4 Sesi - Starter', pic:'Elena Rodriguez', tgl_bayar:'28 Mei 2026',
+    metode:'Cash', total:'Rp 600.000', wa_status:'sent', wa_tgl:'28 Mei 2026'
   }
 };
 
@@ -497,6 +479,13 @@ document.addEventListener('DOMContentLoaded', () => {
   filteredData = Object.values(RECEIPT_DB);
   updateStats();
   renderTable();
+
+  // Jika diarahkan dari pp-invoice via sessionStorage, langsung buka detail receipt
+  const openId = sessionStorage.getItem('openReceiptId');
+  if (openId) {
+    sessionStorage.removeItem('openReceiptId');
+    if (RECEIPT_DB[openId]) viewDetail(openId);
+  }
 });
 
 // Sidebar Toggle Function
@@ -586,6 +575,7 @@ function renderTable() {
             <span>${r.client}</span>
           </div>
         </td>
+        <td class="col-latihan">${r.namaLatihan || 'Private Training'}</td>
         <td class="col-program">${r.paket}</td>
         <td class="col-pic">${r.pic}</td>
         <td class="col-tgl">${r.tgl_bayar}</td>
@@ -628,17 +618,11 @@ function renderPagination() {
   }
 }
 
-// View Detail & Generate Barcode
-function viewDetail(id) {
+// Populate receipt DOM (shared by viewDetail and resendWA)
+function _fillReceiptDOM(id) {
   const r = RECEIPT_DB[id];
-  if(!r) return;
+  if (!r) return;
   currentDetailId = id;
-
-  // Toggle Views
-  document.getElementById('listView').classList.remove('active');
-  document.getElementById('detailView').classList.add('active');
-
-  // Populate Details
   document.getElementById('detailRcpNo').innerText = r.rcp_no;
   document.getElementById('rcptOrderId').innerText = `Order ID:#${r.order_id}`;
   document.getElementById('rcptNo').innerText = r.rcp_no;
@@ -647,33 +631,31 @@ function viewDetail(id) {
   document.getElementById('rcptDate').innerText = r.tgl_bayar;
   document.getElementById('rcptMetode').innerText = r.metode;
   document.getElementById('rcptPIC').innerText = r.pic;
-
-  // Generate QR Code
   const qrContainer = document.getElementById('receiptBarcode');
-  qrContainer.innerHTML = ''; // bersihkan QR code lama
+  qrContainer.innerHTML = '';
   qrCodeObj = new QRCode(qrContainer, {
-    text: r.rcp_no,
-    width: 190,
-    height: 190,
-    colorDark : "#1E1C43",
-    colorLight : "#F8F9FA",
-    correctLevel : QRCode.CorrectLevel.H
+    text: r.rcp_no, width: 190, height: 190,
+    colorDark: '#1E1C43', colorLight: '#F8F9FA',
+    correctLevel: QRCode.CorrectLevel.H
   });
   document.getElementById('rcptBarLabel').innerText = r.rcp_no;
-
-  // Render Items
-  // Ekstrak angka sesi jika formatnya 'X Sesi'
-  let sesiMatch = r.paket.match(/(\d+)\s*sesi/i);
-  let sesi = sesiMatch ? sesiMatch[1] : '1';
-
+  const sesiMatch = r.paket.match(/(\d+)\s*sesi/i);
+  const sesi = sesiMatch ? sesiMatch[1] : '1';
   document.getElementById('rcptItemsBody').innerHTML = `
     <tr>
       <td><strong>${r.paket}</strong><br/><span style="color:var(--gray-text);font-size:10px">Sesi Personal Training EFM</span></td>
       <td class="r">${sesi}</td>
       <td class="r" style="font-weight:600">${r.total}</td>
-    </tr>
-  `;
+    </tr>`;
   document.getElementById('rcptTotal').innerText = r.total;
+}
+
+// View Detail & Generate Barcode
+function viewDetail(id) {
+  if (!RECEIPT_DB[id]) return;
+  document.getElementById('listView').classList.remove('active');
+  document.getElementById('detailView').classList.add('active');
+  _fillReceiptDOM(id);
 }
 
 // Back to List
@@ -684,20 +666,19 @@ function showList() {
 
 // Actions
 function resendWA(id) {
-  alert(`Sistem: Permintaan pengiriman WhatsApp untuk receipt ${id} sedang diproses...`);
+  if (!RECEIPT_DB[id]) return;
+  // Populate DOM silently (tanpa pindah view) lalu download PDF + buka WA
+  _fillReceiptDOM(id);
+  setTimeout(() => kirimReceiptKeKlien(), 300); // tunggu QR render
 }
 
-function resendWADetail() {
-  if (currentDetailId) resendWA(currentDetailId);
-}
-
-function downloadReceiptPDF() {
+function downloadReceiptPDF(onComplete) {
   const element = document.getElementById('receiptPrintArea');
   const r = RECEIPT_DB[currentDetailId];
-  
+
   // Format nama file
   const filenameStr = `${r.rcp_no.replace(/\//g, '_')}_${r.client.replace(/\s/g, '')}.pdf`;
-  
+
   const opt = {
     margin:       [10, 10, 10, 10], // top, left, bottom, right
     filename:     filenameStr,
@@ -705,8 +686,26 @@ function downloadReceiptPDF() {
     html2canvas:  { scale: 2, useCORS: true },
     jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
-  
-  html2pdf().set(opt).from(element).save();
+
+  const btn = document.getElementById('btnKirimReceipt');
+  if (btn) { btn.disabled = true; }
+  html2pdf().set(opt).from(element).save().then(() => {
+    if (btn) { btn.disabled = false; }
+    if (typeof onComplete === 'function') onComplete(r);
+  });
+}
+
+function kirimReceiptKeKlien() {
+  downloadReceiptPDF(function(r) {
+    const msg =
+      `Halo ${r.client} 👋\n\n` +
+      `Receipt pembayaran *${r.rcp_no}* untuk paket *${r.paket}* sebesar *${r.total}* sudah kami kirimkan dalam bentuk PDF ✅\n\n` +
+      `Mohon disimpan sebagai bukti pembayaran. Terima kasih atas kepercayaan Anda kepada Essential Fitness Management.\n\n` +
+      `Salam,\nTim EFM`;
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
+  });
 }
 </script>
 </body>

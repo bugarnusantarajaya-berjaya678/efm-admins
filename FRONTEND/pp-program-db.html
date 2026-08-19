@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Database Program PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
     :root {
@@ -76,18 +78,13 @@
     .btn-clear { padding:8px 14px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; flex-shrink:0; white-space:nowrap; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
-    /* Table */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; border-collapse:collapse; table-layout:fixed; min-width:1430px; }
-    th { background:var(--gray-bg); padding:11px 14px; font-size:12px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:visible; text-overflow:clip; position:sticky; top:0; z-index:2; }
-    td { padding:10px 14px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:normal; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
+    /* Table — base styles dari table-standard.css; di sini hanya kolom unik halaman */
+    table { min-width:1495px; }
 
     /* Column widths — sized for 12px uppercase headers + 28px horizontal padding */
     .col-id       { width:120px; min-width:120px; white-space:nowrap; }
-    .col-latihan  { width:145px; min-width:130px; white-space:normal; word-break:break-word; }
+    .col-latihan  { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan { white-space:normal; line-height:1.3; }
     .col-paket    { width:155px; min-width:140px; white-space:normal; word-break:break-word; }
     .col-sesi     { width:68px;  min-width:68px;  text-align:center; white-space:nowrap; }
     .col-pertemuan{ width:128px; min-width:128px; text-align:center; white-space:nowrap; }
@@ -97,18 +94,14 @@
     .col-biaya    { width:120px; min-width:115px; text-align:right; white-space:nowrap; }
     .col-harga    { width:130px; min-width:120px; text-align:right; white-space:nowrap; }
     .col-status   { width:100px; min-width:95px;  text-align:center; }
-    .col-aksi     { width:70px;  min-width:70px;  text-align:center; white-space:nowrap; }
+    .col-aksi     { width:115px; min-width:110px; text-align:center; white-space:nowrap; }
 
     .prog-id { font-weight:700; color:var(--navy); font-size:12.5px; white-space:nowrap; }
-    .badge { display:inline-flex; align-items:center; gap:6px; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600; line-height:1.4; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+    /* Badge & action button base styles dari table-standard.css; warna/modifier unik di sini */
     .badge.active { background:#EAFAF1; color:#1E8449; }
     .badge.inactive { background:#F2F3F4; color:#7F8C8D; }
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .action-btn { width:30px; height:30px; border-radius:6px; border:1px solid #E2E6EA; background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; flex-shrink:0; padding:6px; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
     .action-btn.del:hover { border-color:var(--red); color:var(--red); background:#FDEDEC; }
-    .action-btn svg { width:14px; height:14px; }
+    .action-btn.pdf-btn:hover { border-color:var(--orange); color:var(--orange); background:#FEF0EE; }
 
     /* Modal */
     .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:200; align-items:center; justify-content:center; padding:24px 20px; }
@@ -129,13 +122,39 @@
     .form-row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; }
     .btn-cancel { padding:9px 18px; background:white; color:var(--gray-text); border:1.5px solid var(--gray-border); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
     .section-label { font-size:10px; font-weight:700; color:var(--gray-text); text-transform:uppercase; letter-spacing:.5px; margin-bottom:10px; margin-top:4px; }
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; align-items:center; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:6px; border:1.5px solid var(--gray-border); background:white; font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; color:var(--text-dark); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:all 0.15s; }
-    .page-btn svg { width:14px; height:14px; }
-    .page-btn:hover:not(:disabled) { border-color:var(--navy); color:var(--navy); background:#F8F9FA; }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); font-weight:700; }
+
+    /* ── Tab navigation ── */
+    .tab-nav { display:flex; gap:2px; background:white; border:1.5px solid var(--gray-border); border-radius:10px; padding:4px; flex-shrink:0; margin-bottom:14px; }
+    .tab-btn { flex:1; padding:9px 14px; border:none; background:transparent; border-radius:7px; font-family:'Poppins',sans-serif; font-size:12.5px; font-weight:600; color:var(--gray-text); cursor:pointer; transition:all 0.18s; white-space:nowrap; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+    .tab-btn:hover:not(.active) { background:var(--gray-bg); color:var(--navy); }
+    .tab-btn.active { background:var(--navy); color:white; }
+    .tab-panel { display:none; flex-direction:column; min-height:0; overflow:hidden; flex:1; }
+    .tab-panel.active { display:flex; }
+    /* ── Kolom tabel Kategori & Pelatih ── */
+    .col-kat-id { width:155px; min-width:140px; white-space:nowrap; }
+    .col-kat-nama { min-width:200px; }
+    .col-kat-urutan { width:90px; min-width:80px; text-align:center; white-space:nowrap; }
+    .col-pel-kode { width:145px; min-width:130px; white-space:nowrap; }
+    .col-pel-nama { min-width:180px; }
+    .col-pel-panggilan { width:145px; min-width:130px; }
+    .col-pel-sertif { width:90px; min-width:80px; text-align:center; }
+    .col-pel-foto { width:70px; min-width:70px; text-align:center; }
+    .tab-secondary-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-shrink:0; }
+    .tab-secondary-header h2 { font-size:15px; font-weight:700; color:var(--navy); }
+    /* ── Varian Harga rows ── */
+    .varian-row { display:grid; grid-template-columns:2fr 1fr 1fr 70px 1fr 32px; gap:8px; align-items:center; margin-bottom:8px; }
+    .varian-row input { padding:7px 10px; border:1.5px solid var(--gray-border); border-radius:7px; font-family:'Poppins',sans-serif; font-size:12px; outline:none; width:100%; background:white; transition:border-color .15s; }
+    .varian-row input:focus { border-color:var(--navy); }
+    .btn-add-varian { padding:8px 14px; background:var(--gray-bg); color:var(--navy); border:1.5px dashed var(--gray-border); border-radius:7px; font-family:'Poppins',sans-serif; font-size:12px; font-weight:600; cursor:pointer; width:100%; margin-top:4px; transition:all 0.15s; }
+    .btn-add-varian:hover { border-color:var(--navy); background:white; }
+    .btn-del-varian { width:28px; height:28px; border:1.5px solid var(--gray-border); background:white; border-radius:6px; cursor:pointer; color:var(--gray-text); font-size:15px; line-height:1; display:flex; align-items:center; justify-content:center; transition:all 0.15s; flex-shrink:0; padding:0; }
+    .btn-del-varian:hover { border-color:var(--red); color:var(--red); background:#FDEDEC; }
+    /* ── Ratecard toggle ── */
+    .toggle-vis { width:42px; height:22px; border-radius:11px; background:var(--gray-border); position:relative; transition:background 0.2s; flex-shrink:0; cursor:pointer; display:inline-block; }
+    .toggle-vis.on { background:var(--green); }
+    .toggle-thumb { width:18px; height:18px; border-radius:50%; background:white; position:absolute; top:2px; left:2px; transition:left 0.2s; box-shadow:0 1px 3px rgba(0,0,0,0.2); }
+    .toggle-vis.on .toggle-thumb { left:22px; }
+    /* Pagination base styles dari table-standard.css */
   </style>
   <link rel="stylesheet" href="assets/css/responsive.css"/>
 </head>
@@ -234,11 +253,30 @@
         <h1>Database Program Private Training</h1>
         <p>Kelola paket program, harga, dan penugasan PIC — terintegrasi dengan form Buat Order Baru</p>
       </div>
-      <button class="btn-primary" onclick="openAddModal()">
+      <button class="btn-primary" id="mainAddBtn" onclick="openAddModal()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Tambah Program
       </button>
     </div>
+
+    <!-- Tab navigation -->
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tabBtnProgram" onclick="switchTab('tabProgram')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Database Program
+      </button>
+      <button class="tab-btn" id="tabBtnKategori" onclick="switchTab('tabKategori')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 6h16M4 10h16M4 14h8"/></svg>
+        Kategori Program
+      </button>
+      <button class="tab-btn" id="tabBtnPelatih" onclick="switchTab('tabPelatih')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Profil Pelatih
+      </button>
+    </div>
+
+    <!-- Tab: Database Program -->
+    <div id="tabProgram" class="tab-panel active">
 
     <!-- Stats -->
     <div class="stats-row">
@@ -298,7 +336,7 @@
           <thead>
             <tr>
               <th class="col-id">ID Program</th>
-              <th class="col-latihan">Nama Latihan</th>
+              <th class="col-latihan">Nama Latihan/ Terapi</th>
               <th class="col-paket">Nama Paket</th>
               <th class="col-sesi">Sesi</th>
               <th class="col-pertemuan">Pertemuan</th>
@@ -319,6 +357,87 @@
         <div class="pagination-btns" id="paginationBtns"></div>
       </div>
     </div>
+    </div><!-- /tabProgram -->
+
+    <!-- Tab: Kategori Program -->
+    <div id="tabKategori" class="tab-panel">
+      <div class="tab-secondary-header">
+        <h2>Kategori Program</h2>
+        <button class="btn-primary" onclick="openAddKategoriModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Kategori
+        </button>
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table style="min-width:600px">
+            <colgroup>
+              <col class="col-kat-id"/>
+              <col class="col-kat-nama"/>
+              <col class="col-kat-urutan"/>
+              <col class="col-status"/>
+              <col class="col-aksi"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-kat-id">ID Kategori</th>
+                <th class="col-kat-nama">Nama Kategori</th>
+                <th class="col-kat-urutan">Urutan</th>
+                <th class="col-status">Status</th>
+                <th class="col-aksi">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="kategoriBody">
+              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--gray-text);font-size:13px">Memuat data kategori...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tabKategori -->
+
+    <!-- Tab: Profil Pelatih -->
+    <div id="tabPelatih" class="tab-panel">
+      <div class="tab-secondary-header">
+        <h2>Profil Pelatih Publik</h2>
+        <button class="btn-primary" onclick="openAddPelatihModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Tambah Pelatih
+        </button>
+      </div>
+      <div style="background:#EBF5FB;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#1A6FA3;border:1px solid #AED6F1;flex-shrink:0">
+        ⚠️ Data di sini KHUSUS untuk katalog publik. Jangan masukkan data sensitif (KTP, rekening, alamat rumah). Gunakan hanya nama, sertifikat, dan foto profil.
+      </div>
+      <div class="table-card">
+        <div class="table-wrap">
+          <table style="min-width:750px">
+            <colgroup>
+              <col class="col-pel-kode"/>
+              <col class="col-pel-nama"/>
+              <col class="col-pel-panggilan"/>
+              <col class="col-pel-sertif"/>
+              <col class="col-pel-foto"/>
+              <col class="col-status"/>
+              <col class="col-aksi"/>
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="col-pel-kode">Kode PIC</th>
+                <th class="col-pel-nama">Nama Lengkap</th>
+                <th class="col-pel-panggilan">Nama Panggilan</th>
+                <th class="col-pel-sertif">Sertifikat</th>
+                <th class="col-pel-foto">Foto</th>
+                <th class="col-status">Status</th>
+                <th class="col-aksi">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="pelatihBody">
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--gray-text);font-size:13px">Memuat data pelatih...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div><!-- /tabPelatih -->
+
   </div>
 </main>
 
@@ -379,29 +498,40 @@
       </div>
 
       <div class="section-label" style="margin-top:6px">PIC / Pelatih yang Ditugaskan</div>
-      <div class="form-row" style="margin-bottom:14px">
-        <div class="form-group" style="margin:0">
-          <label>Pilih PIC <span>*</span></label>
-          <select class="form-control" id="f_pic" onchange="onModalPICChange()">
-            <option value="">— Pilih PIC —</option>
-            <option value="EFM-PIC-001">EFM-PIC-001 — Sarah Jenkins</option>
-            <option value="EFM-PIC-002">EFM-PIC-002 — Marcus Chen</option>
-            <option value="EFM-PIC-003">EFM-PIC-003 — Elena Rodriguez</option>
-            <option value="EFM-PIC-004">EFM-PIC-004 — David Kim</option>
-          </select>
-        </div>
-        <div class="form-group" style="margin:0">
-          <label>Biaya Per Sesi PIC (Rp) <span>*</span></label>
-          <input type="number" class="form-control" id="f_biaya_sesi" placeholder="75000" min="0"/>
+      <!-- Ratecard toggle -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;padding:10px 13px;background:var(--gray-bg);border-radius:8px;border:1.5px solid var(--gray-border)">
+        <div class="toggle-vis" id="ratecardVis" onclick="onRatecardToggle()"><div class="toggle-thumb"></div></div>
+        <input type="checkbox" id="f_ratecard" style="display:none" onchange="onRatecardToggle()"/>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text-dark)">Pakai ratecard standar EFM</div>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:1px">Aktifkan jika tidak ada coach khusus — profil pelatih tidak ditampilkan di katalog publik</div>
         </div>
       </div>
-
-      <!-- Auto-fill info PIC -->
-      <div id="modal_pic_info" style="display:none;background:var(--gray-bg);border-radius:10px;padding:11px 14px;margin-bottom:14px;border-left:3px solid var(--orange)">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
-          <div><span style="color:var(--gray-text)">Spesialisasi:</span><br/><strong id="mpic_spesialis">—</strong></div>
-          <div><span style="color:var(--gray-text)">No. HP:</span><br/><strong id="mpic_hp">—</strong></div>
-          <div><span style="color:var(--gray-text)">Default Biaya/Sesi:</span><br/><strong id="mpic_biaya">—</strong></div>
+      <!-- PIC fields (hidden when ratecard ON) -->
+      <div id="picSection">
+        <div class="form-row" style="margin-bottom:14px">
+          <div class="form-group" style="margin:0">
+            <label>Pilih PIC <span>*</span></label>
+            <select class="form-control" id="f_pic" onchange="onModalPICChange()">
+              <option value="">— Pilih PIC —</option>
+              <option value="EFM-PIC-001">EFM-PIC-001 — Sarah Jenkins</option>
+              <option value="EFM-PIC-002">EFM-PIC-002 — Marcus Chen</option>
+              <option value="EFM-PIC-003">EFM-PIC-003 — Elena Rodriguez</option>
+              <option value="EFM-PIC-004">EFM-PIC-004 — David Kim</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Biaya Per Sesi PIC (Rp) <span>*</span></label>
+            <input type="number" class="form-control" id="f_biaya_sesi" placeholder="75000" min="0"/>
+          </div>
+        </div>
+        <!-- Auto-fill info PIC -->
+        <div id="modal_pic_info" style="display:none;background:var(--gray-bg);border-radius:10px;padding:11px 14px;margin-bottom:14px;border-left:3px solid var(--orange)">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;font-size:12px">
+            <div><span style="color:var(--gray-text)">Spesialisasi:</span><br/><strong id="mpic_spesialis">—</strong></div>
+            <div><span style="color:var(--gray-text)">No. HP:</span><br/><strong id="mpic_hp">—</strong></div>
+            <div><span style="color:var(--gray-text)">Default Biaya/Sesi:</span><br/><strong id="mpic_biaya">—</strong></div>
+          </div>
         </div>
       </div>
 
@@ -421,12 +551,183 @@
         <input type="number" class="form-control" id="f_harga" placeholder="1500000" min="0" readonly style="background:#f8f9fa;color:var(--gray-text)"/>
         <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Auto-hitung: (Harga Persesi × Jumlah Sesi) − Diskon Paket</div>
       </div>
+      <!-- T&C disimpan di data tapi tidak diisi per-program lagi (sekarang global di CONFIG sheet) -->
+      <input type="hidden" id="f_terms"/>
+
+      <div class="section-label" style="margin-top:10px">Konten Katalog Publik</div>
+
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Kategori Program</label>
+          <select class="form-control" id="f_kategori">
+            <option value="">— Pilih Kategori —</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Level Kelas</label>
+          <input type="text" class="form-control" id="f_level_kelas" placeholder="Contoh: Beginner, All Level"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Deskripsi Program</label>
+        <textarea class="form-control" id="f_deskripsi" rows="3" placeholder="Deskripsi singkat untuk ditampilkan di halaman katalog publik..." style="resize:vertical;font-size:12.5px;line-height:1.6"></textarea>
+      </div>
+
+      <div class="form-row3" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Batas Minggu</label>
+          <input type="number" class="form-control" id="f_batas_minggu" placeholder="12" min="1"/>
+          <div style="font-size:10px;color:var(--gray-text);margin-top:3px">minggu</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Pertemuan / Minggu</label>
+          <input type="number" class="form-control" id="f_pertemuan_minggu" placeholder="3" min="1"/>
+          <div style="font-size:10px;color:var(--gray-text);margin-top:3px">kali/minggu</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Durasi (menit)</label>
+          <input type="number" class="form-control" id="f_durasi_menit" placeholder="60" min="1"/>
+          <div style="font-size:10px;color:var(--gray-text);margin-top:3px">per sesi</div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Kapasitas Peserta</label>
+          <div style="display:flex;align-items:center;gap:6px">
+            <input type="number" class="form-control" id="f_kapasitas_min" placeholder="Min" min="1"/>
+            <span style="color:var(--gray-text);font-size:13px;flex-shrink:0">–</span>
+            <input type="number" class="form-control" id="f_kapasitas_max" placeholder="Max" min="1"/>
+          </div>
+          <div style="font-size:10px;color:var(--gray-text);margin-top:3px">orang</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Item Tidak Termasuk</label>
+          <input type="text" class="form-control" id="f_item_tidak_termasuk" placeholder="Contoh: Peralatan, Nutrisi"/>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Benefits <span style="color:var(--gray-text);font-weight:400">(Opsional)</span></label>
+        <textarea class="form-control" id="f_benefits" rows="4" placeholder="Satu poin per baris:&#10;- Penurunan berat badan terarah&#10;- Program personal sesuai kebutuhan&#10;- Laporan progress mingguan" style="resize:vertical;line-height:1.6;font-size:12.5px"></textarea>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Satu poin per baris — tampil sebagai daftar di katalog</div>
+      </div>
+
+      <div class="section-label" style="margin-top:4px">Varian Harga</div>
+      <div style="font-size:11px;color:var(--gray-text);margin-bottom:8px">Tambahkan jika program punya beberapa pilihan (contoh: 4 sesi, 8 sesi; atau 1 orang, 2 orang)</div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 70px 1fr 32px;gap:8px;margin-bottom:6px;padding:0 2px">
+        <span style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.4px">Label Varian</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.4px">Harga Awal</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.4px">Harga Akhir</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.4px">Diskon%</span>
+        <span style="font-size:10px;font-weight:700;color:var(--gray-text);text-transform:uppercase;letter-spacing:.4px">Per Unit</span>
+        <span></span>
+      </div>
+      <div id="varianHargaList"></div>
+      <button type="button" class="btn-add-varian" onclick="addVarianRow()">+ Tambah Varian Harga</button>
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeModal()">Batal</button>
       <button class="btn-primary" onclick="saveProgram()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
         Simpan Program
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Kategori -->
+<div class="modal-overlay" id="kategoriModalOverlay">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-header">
+      <h3 id="kategoriModalTitle">Tambah Kategori Program</h3>
+      <button class="modal-close" onclick="closeKategoriModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>ID Kategori <span>*</span></label>
+        <input type="text" class="form-control" id="kf_id" placeholder="Contoh: kat-fatloss"/>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Huruf kecil, gunakan tanda hubung. Dipakai sebagai parameter URL: <code style="background:var(--gray-bg);padding:1px 4px;border-radius:4px">?kategori=kat-fatloss</code></div>
+      </div>
+      <div class="form-group">
+        <label>Nama Kategori <span>*</span></label>
+        <input type="text" class="form-control" id="kf_nama" placeholder="Contoh: Fatloss &amp; Bodyshape"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group" style="margin:0">
+          <label>Urutan Tampil</label>
+          <input type="number" class="form-control" id="kf_urutan" placeholder="1" min="1" value="1"/>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Angka kecil = tampil lebih dulu</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Status</label>
+          <select class="form-control" id="kf_status">
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeKategoriModal()">Batal</button>
+      <button class="btn-primary" onclick="saveKategori()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan Kategori
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Profil Pelatih -->
+<div class="modal-overlay" id="pelatihModalOverlay">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-header">
+      <h3 id="pelatihModalTitle">Tambah Profil Pelatih</h3>
+      <button class="modal-close" onclick="closePelatihModal()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Kode PIC <span>*</span></label>
+          <input type="text" class="form-control" id="pf_kode" placeholder="EFM-PIC-005" style="text-transform:uppercase"/>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Harus sama dengan Kode PIC di Database PIC operasional</div>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Status</label>
+          <select class="form-control" id="pf_status">
+            <option value="Aktif">Aktif</option>
+            <option value="Nonaktif">Nonaktif</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row" style="margin-bottom:14px">
+        <div class="form-group" style="margin:0">
+          <label>Nama Lengkap <span>*</span></label>
+          <input type="text" class="form-control" id="pf_nama_lengkap" placeholder="Sarah Jenkins"/>
+        </div>
+        <div class="form-group" style="margin:0">
+          <label>Nama Panggilan</label>
+          <input type="text" class="form-control" id="pf_nama_panggilan" placeholder="Sarah"/>
+          <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Nama yang tampil di katalog</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Sertifikat <span style="color:var(--gray-text);font-weight:400">(Opsional)</span></label>
+        <textarea class="form-control" id="pf_sertifikat" rows="4" placeholder="Satu sertifikat per baris:&#10;NASM-CPT&#10;Strength &amp; Conditioning Specialist" style="resize:vertical;line-height:1.6;font-size:12.5px"></textarea>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Satu sertifikat per baris</div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>URL Foto Profil <span style="color:var(--gray-text);font-weight:400">(Opsional)</span></label>
+        <input type="url" class="form-control" id="pf_foto_url" placeholder="https://drive.google.com/uc?id=..."/>
+        <div style="font-size:11px;color:var(--gray-text);margin-top:4px">Link langsung ke file gambar (Google Drive CDN, dll). Upload file — menyusul fase selanjutnya.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closePelatihModal()">Batal</button>
+      <button class="btn-primary" onclick="savePelatih()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+        Simpan Pelatih
       </button>
     </div>
   </div>
@@ -567,6 +868,7 @@ function renderTable() {
       <td class="col-aksi">
         <div class="action-wrap">
           <button class="action-btn" title="Edit" onclick="event.stopPropagation();openEditModal(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="action-btn pdf-btn" title="Generate Pricelist PDF" onclick="event.stopPropagation();generatePricelistPDF(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
           <button class="action-btn del" title="Hapus" onclick="event.stopPropagation();deleteProgram(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
         </div>
       </td>`;
@@ -579,13 +881,22 @@ let _editIdx = -1;
 function openAddModal() {
   _editIdx = -1;
   document.getElementById('modalTitle').textContent = 'Tambah Program Baru';
-  ['f_id','f_nama_latihan','f_nama_paket','f_masa','f_biaya_sesi','f_harga','f_harga_persesi','f_diskon_paket'].forEach(id => document.getElementById(id).value = '');
+  ['f_id','f_nama_latihan','f_nama_paket','f_masa','f_biaya_sesi','f_harga','f_harga_persesi','f_diskon_paket','f_terms',
+   'f_deskripsi','f_batas_minggu','f_pertemuan_minggu','f_durasi_menit',
+   'f_kapasitas_min','f_kapasitas_max','f_level_kelas','f_item_tidak_termasuk','f_benefits'].forEach(id => {
+     const el = document.getElementById(id); if(el) el.value = '';
+  });
   document.getElementById('f_sesi').value = '';
   document.getElementById('f_pertemuan').value = '';
   document.getElementById('f_partisipan').value = '1';
   document.getElementById('f_pic').value = '';
   document.getElementById('f_status').value = 'aktif';
+  document.getElementById('f_kategori').value = '';
+  document.getElementById('f_ratecard').checked = false;
+  _setRatecardUI(false);
   document.getElementById('modal_pic_info').style.display = 'none';
+  _loadKategoriDropdown();
+  _resetVarianRows();
   document.getElementById('modalOverlay').classList.add('show');
 }
 
@@ -593,19 +904,38 @@ function openEditModal(idx) {
   _editIdx = idx;
   const p = programs[idx];
   document.getElementById('modalTitle').textContent = 'Edit Program — ' + p.id;
-  document.getElementById('f_id').value           = p.id;
-  document.getElementById('f_nama_latihan').value = p.namaLatihan;
-  document.getElementById('f_nama_paket').value   = p.namaPaket;
-  document.getElementById('f_sesi').value         = p.sesi;
-  document.getElementById('f_pertemuan').value    = p.pertemuan;
-  document.getElementById('f_partisipan').value   = p.partisipan;
-  document.getElementById('f_masa').value         = p.masa;
-  document.getElementById('f_pic').value          = p.picId;
-  document.getElementById('f_biaya_sesi').value   = p.biayaSesiPIC;
-  document.getElementById('f_harga').value        = p.harga;
+  document.getElementById('f_id').value            = p.id;
+  document.getElementById('f_nama_latihan').value  = p.namaLatihan;
+  document.getElementById('f_nama_paket').value    = p.namaPaket;
+  document.getElementById('f_sesi').value          = p.sesi;
+  document.getElementById('f_pertemuan').value     = p.pertemuan;
+  document.getElementById('f_partisipan').value    = p.partisipan;
+  document.getElementById('f_masa').value          = p.masa;
+  document.getElementById('f_pic').value           = p.picId || '';
+  document.getElementById('f_biaya_sesi').value    = p.biayaSesiPIC;
+  document.getElementById('f_harga').value         = p.harga;
   document.getElementById('f_harga_persesi').value = p.hargaPersesi || 0;
   document.getElementById('f_diskon_paket').value  = p.diskonPaket  || 0;
-  document.getElementById('f_status').value       = p.status;
+  document.getElementById('f_status').value        = p.status;
+  const termsEl = document.getElementById('f_terms'); if(termsEl) termsEl.value = p.terms_condition || '';
+  // Katalog fields
+  _loadKategoriDropdown(p.kategori_program || '');
+  const ratecard = !!p.pakai_ratecard_efm;
+  document.getElementById('f_ratecard').checked = ratecard;
+  _setRatecardUI(ratecard);
+  document.getElementById('f_deskripsi').value          = p.deskripsi_program || '';
+  document.getElementById('f_batas_minggu').value       = p.batas_minggu || '';
+  document.getElementById('f_pertemuan_minggu').value   = p.pertemuan_per_minggu || '';
+  document.getElementById('f_durasi_menit').value       = p.durasi_menit || '';
+  document.getElementById('f_kapasitas_min').value      = p.kapasitas_min || '';
+  document.getElementById('f_kapasitas_max').value      = p.kapasitas_max || '';
+  document.getElementById('f_level_kelas').value        = p.level_kelas || '';
+  document.getElementById('f_item_tidak_termasuk').value= p.item_tidak_termasuk || '';
+  document.getElementById('f_benefits').value           = p.benefits || '';
+  // Varian harga
+  _resetVarianRows();
+  const varians = varianDB.filter(v => v.id_program === p.id);
+  varians.forEach(v => addVarianRow(v));
   onModalPICChange();
   document.getElementById('modalOverlay').classList.add('show');
 }
@@ -634,25 +964,45 @@ function autoCalcHarga() {
 }
 
 function saveProgram() {
-  const id = document.getElementById('f_id').value.trim().toUpperCase();
-  if (!id || !document.getElementById('f_nama_latihan').value || !document.getElementById('f_pic').value) {
-    alert('Mohon lengkapi field wajib (ID Program, Nama Latihan, PIC).');
+  const id        = document.getElementById('f_id').value.trim().toUpperCase();
+  const ratecard  = document.getElementById('f_ratecard').checked;
+  const picVal    = document.getElementById('f_pic').value;
+  if (!id || !document.getElementById('f_nama_latihan').value) {
+    alert('Mohon lengkapi field wajib (ID Program, Nama Latihan).');
     return;
   }
+  if (!ratecard && !picVal) {
+    alert('Pilih PIC / Pelatih, atau aktifkan toggle "Pakai ratecard standar EFM".');
+    return;
+  }
+  const termsEl = document.getElementById('f_terms');
   const prog = {
     id,
-    namaLatihan:  document.getElementById('f_nama_latihan').value.trim(),
-    namaPaket:    document.getElementById('f_nama_paket').value.trim(),
-    sesi:         parseInt(document.getElementById('f_sesi').value) || 0,
-    pertemuan:    parseInt(document.getElementById('f_pertemuan').value) || 0,
-    partisipan:   parseInt(document.getElementById('f_partisipan').value) || 1,
-    masa:         document.getElementById('f_masa').value.trim(),
-    picId:        document.getElementById('f_pic').value,
-    biayaSesiPIC: parseInt(document.getElementById('f_biaya_sesi').value) || 0,
-    harga:        parseInt(document.getElementById('f_harga').value) || 0,
-    hargaPersesi: parseInt(document.getElementById('f_harga_persesi').value) || 0,
-    diskonPaket:  parseInt(document.getElementById('f_diskon_paket').value) || 0,
-    status:       document.getElementById('f_status').value,
+    namaLatihan:           document.getElementById('f_nama_latihan').value.trim(),
+    namaPaket:             document.getElementById('f_nama_paket').value.trim(),
+    sesi:                  parseInt(document.getElementById('f_sesi').value) || 0,
+    pertemuan:             parseInt(document.getElementById('f_pertemuan').value) || 0,
+    partisipan:            parseInt(document.getElementById('f_partisipan').value) || 1,
+    masa:                  document.getElementById('f_masa').value.trim(),
+    picId:                 ratecard ? '' : picVal,
+    biayaSesiPIC:          parseInt(document.getElementById('f_biaya_sesi').value) || 0,
+    harga:                 parseInt(document.getElementById('f_harga').value) || 0,
+    hargaPersesi:          parseInt(document.getElementById('f_harga_persesi').value) || 0,
+    diskonPaket:           parseInt(document.getElementById('f_diskon_paket').value) || 0,
+    status:                document.getElementById('f_status').value,
+    terms_condition:       termsEl ? termsEl.value.trim() : '',
+    // Katalog fields
+    kategori_program:      document.getElementById('f_kategori').value,
+    pakai_ratecard_efm:    ratecard,
+    deskripsi_program:     document.getElementById('f_deskripsi').value.trim(),
+    batas_minggu:          parseInt(document.getElementById('f_batas_minggu').value) || null,
+    pertemuan_per_minggu:  parseInt(document.getElementById('f_pertemuan_minggu').value) || null,
+    durasi_menit:          parseInt(document.getElementById('f_durasi_menit').value) || null,
+    kapasitas_min:         parseInt(document.getElementById('f_kapasitas_min').value) || null,
+    kapasitas_max:         parseInt(document.getElementById('f_kapasitas_max').value) || null,
+    level_kelas:           document.getElementById('f_level_kelas').value.trim(),
+    item_tidak_termasuk:   document.getElementById('f_item_tidak_termasuk').value.trim(),
+    benefits:              document.getElementById('f_benefits').value.trim(),
   };
   if (_editIdx >= 0) {
     programs[_editIdx] = prog;
@@ -661,6 +1011,11 @@ function saveProgram() {
     programs.push(prog);
   }
   saveToStorage();
+  // Save varian harga
+  const varians = _getVarianFromForm(id);
+  varianDB = varianDB.filter(v => v.id_program !== id);
+  varianDB.push(...varians);
+  saveVarianToStorage();
   applyFilters();
   closeModal();
 }
@@ -672,7 +1027,407 @@ function deleteProgram(idx) {
   applyFilters();
 }
 
-document.addEventListener('DOMContentLoaded', () => { _filtered = [...programs]; renderTable(); });
+document.addEventListener('DOMContentLoaded', () => { _filtered = [...programs]; renderTable(); _loadKategoriDropdown(); });
+
+/* ─── TAB SWITCHING ──────────────────────────────────────────────── */
+const TAB_BTN_MAP = { tabProgram:'tabBtnProgram', tabKategori:'tabBtnKategori', tabPelatih:'tabBtnPelatih' };
+const ADD_BTN_CFG = {
+  tabProgram:  { text:'Tambah Program',  fn:'openAddModal()' },
+  tabKategori: { text:'Tambah Kategori', fn:'openAddKategoriModal()' },
+  tabPelatih:  { text:'Tambah Pelatih',  fn:'openAddPelatihModal()' },
+};
+
+function switchTab(tabId) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  const btnEl = document.getElementById(TAB_BTN_MAP[tabId]);
+  if (btnEl) btnEl.classList.add('active');
+  // Update header add button
+  const cfg = ADD_BTN_CFG[tabId];
+  const mainBtn = document.getElementById('mainAddBtn');
+  if (mainBtn && cfg) {
+    mainBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> ${cfg.text}`;
+    mainBtn.setAttribute('onclick', cfg.fn);
+  }
+  if (tabId === 'tabKategori') renderKategoriTable();
+  if (tabId === 'tabPelatih')  renderPelatihTable();
+}
+
+/* ─── KATEGORI PROGRAM ────────────────────────────────────────────── */
+const DEFAULT_KATEGORI = [
+  { id_kategori:'kat-fatloss',   nama_kategori:'Fatloss & Bodyshape',   urutan_tampil:1, status:'Aktif' },
+  { id_kategori:'kat-strength',  nama_kategori:'Strength Training',      urutan_tampil:2, status:'Aktif' },
+  { id_kategori:'kat-functional',nama_kategori:'Functional Program',      urutan_tampil:3, status:'Aktif' },
+  { id_kategori:'kat-sport',     nama_kategori:'Sport Treatment',         urutan_tampil:4, status:'Aktif' },
+];
+let kategoriDB = JSON.parse(localStorage.getItem('efm_kategori_program') || 'null') || DEFAULT_KATEGORI;
+function saveKategoriToStorage() { localStorage.setItem('efm_kategori_program', JSON.stringify(kategoriDB)); }
+
+function renderKategoriTable() {
+  const tbody = document.getElementById('kategoriBody');
+  if (!tbody) return;
+  const sorted = [...kategoriDB].sort((a, b) => Number(a.urutan_tampil) - Number(b.urutan_tampil));
+  if (!sorted.length) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px 16px;color:var(--gray-text);font-size:13px">Belum ada kategori. Klik "Tambah Kategori" untuk memulai.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = sorted.map(k => {
+    const idx = kategoriDB.indexOf(k);
+    const isAktif = k.status === 'Aktif';
+    return `<tr>
+      <td class="col-kat-id"><span class="prog-id">${k.id_kategori}</span></td>
+      <td class="col-kat-nama" style="font-weight:600">${k.nama_kategori}</td>
+      <td class="col-kat-urutan" style="text-align:center">${k.urutan_tampil}</td>
+      <td class="col-status"><span class="badge ${isAktif ? 'active' : 'inactive'}">${k.status}</span></td>
+      <td class="col-aksi">
+        <div class="action-wrap">
+          <button class="action-btn" title="Edit" onclick="openEditKategoriModal(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="action-btn ${isAktif ? 'del' : 'success'}" title="${isAktif ? 'Nonaktifkan' : 'Aktifkan'}" onclick="toggleKategoriStatus(${idx})">
+            ${isAktif
+              ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'}
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+let _editKatIdx = -1;
+
+function openAddKategoriModal() {
+  _editKatIdx = -1;
+  document.getElementById('kategoriModalTitle').textContent = 'Tambah Kategori Program';
+  document.getElementById('kf_id').value      = '';
+  document.getElementById('kf_id').disabled   = false;
+  document.getElementById('kf_nama').value    = '';
+  document.getElementById('kf_urutan').value  = (kategoriDB.length + 1);
+  document.getElementById('kf_status').value  = 'Aktif';
+  document.getElementById('kategoriModalOverlay').classList.add('show');
+}
+
+function openEditKategoriModal(idx) {
+  _editKatIdx = idx;
+  const k = kategoriDB[idx];
+  document.getElementById('kategoriModalTitle').textContent = 'Edit Kategori — ' + k.id_kategori;
+  document.getElementById('kf_id').value      = k.id_kategori;
+  document.getElementById('kf_id').disabled   = true;
+  document.getElementById('kf_nama').value    = k.nama_kategori;
+  document.getElementById('kf_urutan').value  = k.urutan_tampil;
+  document.getElementById('kf_status').value  = k.status;
+  document.getElementById('kategoriModalOverlay').classList.add('show');
+}
+
+function closeKategoriModal() { document.getElementById('kategoriModalOverlay').classList.remove('show'); }
+
+function saveKategori() {
+  const id   = document.getElementById('kf_id').value.trim().toLowerCase();
+  const nama = document.getElementById('kf_nama').value.trim();
+  if (!id || !nama) { alert('ID Kategori dan Nama wajib diisi.'); return; }
+  const entry = {
+    id_kategori:   id,
+    nama_kategori: nama,
+    urutan_tampil: parseInt(document.getElementById('kf_urutan').value) || 99,
+    status:        document.getElementById('kf_status').value,
+  };
+  if (_editKatIdx >= 0) {
+    kategoriDB[_editKatIdx] = entry;
+  } else {
+    if (kategoriDB.find(k => k.id_kategori === id)) { alert('ID Kategori sudah ada.'); return; }
+    kategoriDB.push(entry);
+  }
+  saveKategoriToStorage();
+  renderKategoriTable();
+  closeKategoriModal();
+}
+
+function toggleKategoriStatus(idx) {
+  kategoriDB[idx].status = kategoriDB[idx].status === 'Aktif' ? 'Nonaktif' : 'Aktif';
+  saveKategoriToStorage();
+  renderKategoriTable();
+}
+
+function _loadKategoriDropdown(selectedId) {
+  const sel = document.getElementById('f_kategori');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Pilih Kategori —</option>';
+  kategoriDB.filter(k => k.status === 'Aktif')
+    .sort((a,b) => a.urutan_tampil - b.urutan_tampil)
+    .forEach(k => {
+      const opt = document.createElement('option');
+      opt.value = k.id_kategori;
+      opt.textContent = k.nama_kategori;
+      if (k.id_kategori === selectedId) opt.selected = true;
+      sel.appendChild(opt);
+    });
+}
+
+/* ─── PROFIL PELATIH PUBLIK ───────────────────────────────────────── */
+const DEFAULT_PELATIH = [
+  { kode_pic:'EFM-PIC-001', nama_lengkap:'Sarah Jenkins',   nama_panggilan:'Sarah',  sertifikat:'NASM-CPT\nStrength & Conditioning Specialist', foto_url:'', status:'Aktif' },
+  { kode_pic:'EFM-PIC-002', nama_lengkap:'Marcus Chen',     nama_panggilan:'Marcus', sertifikat:'ACE Personal Trainer\nFunctional Movement Specialist', foto_url:'', status:'Aktif' },
+  { kode_pic:'EFM-PIC-003', nama_lengkap:'Elena Rodriguez', nama_panggilan:'Elena',  sertifikat:'RYT-200 Yoga Alliance\nFitness & Nutrition Coach', foto_url:'', status:'Aktif' },
+  { kode_pic:'EFM-PIC-004', nama_lengkap:'David Kim',       nama_panggilan:'David',  sertifikat:'CSCS Certified\nSports Rehabilitation Specialist', foto_url:'', status:'Aktif' },
+];
+let pelatihDB = JSON.parse(localStorage.getItem('efm_profil_pelatih_public') || 'null') || DEFAULT_PELATIH;
+function savePelatihToStorage() { localStorage.setItem('efm_profil_pelatih_public', JSON.stringify(pelatihDB)); }
+
+function renderPelatihTable() {
+  const tbody = document.getElementById('pelatihBody');
+  if (!tbody) return;
+  if (!pelatihDB.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px 16px;color:var(--gray-text);font-size:13px">Belum ada profil pelatih.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = pelatihDB.map((t, idx) => {
+    const isAktif = t.status === 'Aktif';
+    const sertCount = (t.sertifikat || '').split('\n').filter(s => s.trim()).length;
+    const fotoHtml = t.foto_url
+      ? `<img src="${t.foto_url}" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.outerHTML='<span style=\\'color:var(--gray-text);font-size:11px\\'>—</span>'/>`
+      : '<span style="color:var(--gray-text);font-size:11px">—</span>';
+    return `<tr>
+      <td class="col-pel-kode"><span class="prog-id">${t.kode_pic}</span></td>
+      <td class="col-pel-nama" style="font-weight:600">${t.nama_lengkap}</td>
+      <td class="col-pel-panggilan">${t.nama_panggilan || '—'}</td>
+      <td class="col-pel-sertif" style="text-align:center">${sertCount > 0 ? `<span class="badge active">${sertCount} sertifikat</span>` : '—'}</td>
+      <td class="col-pel-foto" style="text-align:center">${fotoHtml}</td>
+      <td class="col-status"><span class="badge ${isAktif ? 'active' : 'inactive'}">${t.status}</span></td>
+      <td class="col-aksi">
+        <div class="action-wrap">
+          <button class="action-btn" title="Edit" onclick="openEditPelatihModal(${idx})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="action-btn ${isAktif ? 'del' : 'success'}" title="${isAktif ? 'Nonaktifkan' : 'Aktifkan'}" onclick="togglePelatihStatus(${idx})">
+            ${isAktif
+              ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>'
+              : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'}
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+let _editPelatihIdx = -1;
+
+function openAddPelatihModal() {
+  _editPelatihIdx = -1;
+  document.getElementById('pelatihModalTitle').textContent = 'Tambah Profil Pelatih';
+  document.getElementById('pf_kode').value         = '';
+  document.getElementById('pf_kode').disabled      = false;
+  document.getElementById('pf_nama_lengkap').value = '';
+  document.getElementById('pf_nama_panggilan').value = '';
+  document.getElementById('pf_sertifikat').value   = '';
+  document.getElementById('pf_foto_url').value     = '';
+  document.getElementById('pf_status').value       = 'Aktif';
+  document.getElementById('pelatihModalOverlay').classList.add('show');
+}
+
+function openEditPelatihModal(idx) {
+  _editPelatihIdx = idx;
+  const t = pelatihDB[idx];
+  document.getElementById('pelatihModalTitle').textContent   = 'Edit Pelatih — ' + t.kode_pic;
+  document.getElementById('pf_kode').value         = t.kode_pic;
+  document.getElementById('pf_kode').disabled      = true;
+  document.getElementById('pf_nama_lengkap').value = t.nama_lengkap;
+  document.getElementById('pf_nama_panggilan').value = t.nama_panggilan || '';
+  document.getElementById('pf_sertifikat').value   = t.sertifikat || '';
+  document.getElementById('pf_foto_url').value     = t.foto_url || '';
+  document.getElementById('pf_status').value       = t.status;
+  document.getElementById('pelatihModalOverlay').classList.add('show');
+}
+
+function closePelatihModal() { document.getElementById('pelatihModalOverlay').classList.remove('show'); }
+
+function savePelatih() {
+  const kode = document.getElementById('pf_kode').value.trim().toUpperCase();
+  const nama = document.getElementById('pf_nama_lengkap').value.trim();
+  if (!kode || !nama) { alert('Kode PIC dan Nama Lengkap wajib diisi.'); return; }
+  const entry = {
+    kode_pic:       kode,
+    nama_lengkap:   nama,
+    nama_panggilan: document.getElementById('pf_nama_panggilan').value.trim(),
+    sertifikat:     document.getElementById('pf_sertifikat').value.trim(),
+    foto_url:       document.getElementById('pf_foto_url').value.trim(),
+    status:         document.getElementById('pf_status').value,
+  };
+  if (_editPelatihIdx >= 0) {
+    pelatihDB[_editPelatihIdx] = entry;
+  } else {
+    if (pelatihDB.find(t => t.kode_pic === kode)) { alert('Kode PIC sudah ada.'); return; }
+    pelatihDB.push(entry);
+  }
+  savePelatihToStorage();
+  renderPelatihTable();
+  closePelatihModal();
+}
+
+function togglePelatihStatus(idx) {
+  pelatihDB[idx].status = pelatihDB[idx].status === 'Aktif' ? 'Nonaktif' : 'Aktif';
+  savePelatihToStorage();
+  renderPelatihTable();
+}
+
+/* ─── RATECARD TOGGLE ─────────────────────────────────────────────── */
+function onRatecardToggle() {
+  const cb = document.getElementById('f_ratecard');
+  cb.checked = !cb.checked;
+  _setRatecardUI(cb.checked);
+}
+
+function _setRatecardUI(on) {
+  const vis = document.getElementById('ratecardVis');
+  const sec = document.getElementById('picSection');
+  if (on) { vis.classList.add('on'); sec.style.display = 'none'; }
+  else    { vis.classList.remove('on'); sec.style.display = 'block'; }
+}
+
+/* ─── VARIAN HARGA ────────────────────────────────────────────────── */
+let varianDB = JSON.parse(localStorage.getItem('efm_program_varian_harga') || '[]');
+function saveVarianToStorage() { localStorage.setItem('efm_program_varian_harga', JSON.stringify(varianDB)); }
+
+let _varianCounter = 0;
+
+function _resetVarianRows() {
+  document.getElementById('varianHargaList').innerHTML = '';
+  _varianCounter = 0;
+}
+
+function addVarianRow(data) {
+  _varianCounter++;
+  const id = 'varian_' + _varianCounter;
+  const row = document.createElement('div');
+  row.className = 'varian-row';
+  row.dataset.varianId = data ? (data.id_varian || id) : id;
+  row.innerHTML = `
+    <input type="text"   name="label_varian"        placeholder="Label (contoh: 4 sesi, 2 orang)" value="${data ? (data.label_varian||'') : ''}"/>
+    <input type="number" name="harga_sebelum_diskon" placeholder="Harga awal"   value="${data ? (data.harga_sebelum_diskon||'') : ''}" min="0"/>
+    <input type="number" name="harga_akhir"          placeholder="Harga akhir"  value="${data ? (data.harga_akhir||'') : ''}" min="0"/>
+    <input type="number" name="diskon_persen"        placeholder="%" value="${data ? (data.diskon_persen||'') : ''}" min="0" max="100"/>
+    <input type="number" name="harga_per_unit"       placeholder="Per unit"     value="${data ? (data.harga_per_unit||'') : ''}" min="0"/>
+    <button type="button" class="btn-del-varian" onclick="this.closest('.varian-row').remove()" title="Hapus baris">✕</button>`;
+  document.getElementById('varianHargaList').appendChild(row);
+}
+
+function _getVarianFromForm(programId) {
+  return Array.from(document.querySelectorAll('#varianHargaList .varian-row')).map(row => ({
+    id_varian:            row.dataset.varianId,
+    id_program:           programId,
+    label_varian:         row.querySelector('[name=label_varian]').value.trim(),
+    harga_sebelum_diskon: parseInt(row.querySelector('[name=harga_sebelum_diskon]').value) || null,
+    harga_akhir:          parseInt(row.querySelector('[name=harga_akhir]').value) || null,
+    diskon_persen:        parseFloat(row.querySelector('[name=diskon_persen]').value) || null,
+    harga_per_unit:       parseInt(row.querySelector('[name=harga_per_unit]').value) || null,
+  })).filter(v => v.label_varian);
+}
+
+/* ─── GENERATE PRICELIST PDF ──────────────────────────────────────── */
+function generatePricelistPDF(idx) {
+  const p   = programs[idx];
+  if (!p) return;
+  const pic = PIC_DB[p.picId] || {};
+  const logoSrc = 'assets/white-logo-circle-pure.png';
+  const tc  = (p.terms_condition || '').trim();
+
+  const tcLines = tc
+    ? tc.split('\n').map(l => `<div style="margin-bottom:4px;line-height:1.6;color:#1E1C43">${l.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`).join('')
+    : '';
+
+  const shell = document.getElementById('pricelistPrintShell');
+  shell.innerHTML = `
+  <div style="font-family:'Poppins',sans-serif;background:white;width:794px;min-height:1123px">
+
+    <!-- Header -->
+    <div style="background:#1E1C43;padding:28px 36px 22px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <img src="${logoSrc}" style="width:62px;height:62px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'"/>
+          <div>
+            <div style="font-size:18px;font-weight:700;color:white;letter-spacing:.2px">Essential Fitness Management</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px">CV. Bugar Nusantara Jaya</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">Jl. Terogong Raya No.18, Jakarta Selatan</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">essentialfitnessmanagement@gmail.com</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px">PRICELIST PROGRAM</div>
+          <div style="font-size:12px;font-weight:700;color:#E05945;letter-spacing:.3px">${p.id}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:16px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:white;letter-spacing:.5px">${p.namaLatihan}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-top:4px;letter-spacing:.3px">${p.namaPaket}</div>
+      </div>
+    </div>
+
+    <!-- Harga Utama -->
+    <div style="background:#E05945;padding:18px 36px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:13px;font-weight:600;color:white;opacity:.85">Harga Paket</div>
+      <div style="font-size:28px;font-weight:800;color:white;letter-spacing:.5px">${fmtRp(p.harga)}</div>
+    </div>
+
+    <!-- Detail Program -->
+    <div style="padding:28px 36px">
+      <div style="font-size:10px;font-weight:700;color:#E05945;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">Detail Program</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #E2E6EA;border-radius:10px;overflow:hidden">
+        ${[
+          ['Jumlah Sesi', p.sesi + ' Sesi'],
+          ['Pertemuan / Minggu', p.pertemuan + 'x / Minggu'],
+          ['Masa Berlaku', p.masa],
+          ['Jumlah Partisipan', p.partisipan + ' Orang'],
+          ['Harga Per Sesi', fmtRp(p.hargaPersesi)],
+          ['Diskon Paket', p.diskonPaket > 0 ? '− ' + fmtRp(p.diskonPaket) : '—'],
+        ].map(([l,v],i) => `
+          <div style="padding:12px 18px;border-bottom:1px solid #E2E6EA;background:${i%2===0?'white':'#FAFAFA'}">
+            <div style="font-size:10px;font-weight:600;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${l}</div>
+            <div style="font-size:13px;font-weight:700;color:#1E1C43">${v}</div>
+          </div>`).join('')}
+      </div>
+
+      <!-- PIC -->
+      <div style="margin-top:20px;background:#EBF5FB;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#2980B9;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${(pic.nick||'—').charAt(0)}</div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#2980B9;text-transform:uppercase;letter-spacing:.5px">PIC / Pelatih</div>
+          <div style="font-size:13px;font-weight:700;color:#1E1C43;margin-top:2px">${pic.fullname||'—'}</div>
+          <div style="font-size:11px;color:#6C757D;margin-top:1px">${pic.spesialis||''}</div>
+        </div>
+      </div>
+
+      ${tc ? `
+      <!-- Terms & Conditions -->
+      <div style="margin-top:24px">
+        <div style="font-size:10px;font-weight:700;color:#E05945;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Syarat &amp; Ketentuan</div>
+        <div style="border:1.5px solid #E2E6EA;border-radius:10px;padding:16px 18px;background:#FAFAFA;font-size:12px">
+          ${tcLines}
+        </div>
+      </div>` : ''}
+
+      <!-- Footer -->
+      <div style="margin-top:28px;padding-top:16px;border-top:1px solid #E2E6EA;text-align:center;font-size:10px;color:#9CA3AF;letter-spacing:.3px">
+        Dokumen ini diterbitkan oleh <strong>Essential Fitness Management</strong> · ${p.id} · ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+      </div>
+    </div>
+  </div>`;
+
+  shell.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:9999';
+  document.body.appendChild(shell);
+
+  const filename = 'Pricelist - ' + p.namaLatihan + ' ' + p.namaPaket + '.pdf';
+  html2pdf().set({
+    margin:      [0, 0, 0, 0],
+    filename:    filename,
+    image:       { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true, logging:false, width:794,
+                   onclone(doc) {
+                     const el = doc.getElementById('pricelistPrintShell');
+                     if (el) { el.style.display='block'; el.style.width='794px'; el.style.background='white'; }
+                   }},
+    jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:   { mode:'avoid-all' },
+  }).from(shell).save().then(() => {
+    shell.style.cssText = 'display:none';
+  });
+}
 </script>
 
 <script>
@@ -684,6 +1439,7 @@ if (role === 'owner') {
   if (ol) ol.style.display = 'block';
 }
 </script>
+<div id="pricelistPrintShell" style="display:none"></div>
 <script src="assets/js/mobile.js"></script>
 </body>
 </html>

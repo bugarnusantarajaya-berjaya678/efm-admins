@@ -4,6 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Leads Management</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="assets/css/import-engine.css"/>
   <link rel="stylesheet" href="assets/css/table-standard.css"/>
@@ -163,6 +164,13 @@
     .detail-item.full { grid-column:1/-1; }
     .detail-label { font-size:11px; font-weight:600; color:var(--gray-text); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
     .detail-value { font-size:13px; font-weight:500; color:var(--text-dark); }
+
+    /* ── Kirim Penawaran button ── */
+    .btn-penawaran { padding:9px 16px; background:white; color:var(--blue); border:1.5px solid var(--blue); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+    .btn-penawaran:hover { background:#EBF5FB; }
+    .btn-penawaran:disabled { opacity:0.6; cursor:not-allowed; }
+    /* Toast notification */
+    #penawaranToast { position:fixed; bottom:28px; left:50%; transform:translateX(-50%); background:#1E1C43; color:white; padding:12px 22px; border-radius:10px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:500; z-index:9999; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.25); max-width:460px; text-align:center; line-height:1.5; white-space:normal; }
   </style>
   <link rel="stylesheet" href="assets/css/responsive.css"/>
 </head>
@@ -343,15 +351,15 @@
           <tbody id="leadsBody">
             <tr data-lead-id="L-1001" onclick="openDetailModal(this)" style="cursor:pointer">
               <td class="col-id"><span>#L-1001</span></td>
-              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#E05945">AR</div>Ahmad Ridwan</div></td>
-              <td class="col-hp">0812-3456-7890</td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+              <td class="col-hp">081234567890</td>
               <td class="col-sumber"><span class="source-tag">🌐 Website</span></td>
-              <td class="col-program">Fatloss & Bodyshape</td>
-              <td class="col-status"><span class="badge new">New</span></td>
-              <td class="col-tanggal">10 Jun 2026</td>
+              <td class="col-program">12 Sesi - Pro</td>
+              <td class="col-status"><span class="badge closed-won">Closed Won</span></td>
+              <td class="col-tanggal">20 Okt 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn success" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
                   <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
@@ -359,15 +367,15 @@
             </tr>
             <tr data-lead-id="L-1002" onclick="openDetailModal(this)" style="cursor:pointer">
               <td class="col-id"><span>#L-1002</span></td>
-              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#2980B9">SN</div>Siti Nurhaliza</div></td>
-              <td class="col-hp">0856-7890-1234</td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+              <td class="col-hp">082345678901</td>
               <td class="col-sumber"><span class="source-tag">📱 Meta Ads</span></td>
-              <td class="col-program">Yoga</td>
-              <td class="col-status"><span class="badge follow-up">Follow Up</span></td>
-              <td class="col-tanggal">9 Jun 2026</td>
+              <td class="col-program">4 Sesi - Starter</td>
+              <td class="col-status"><span class="badge closed-won">Closed Won</span></td>
+              <td class="col-tanggal">18 Okt 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
-                  <button class="action-btn" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
+                  <button class="action-btn success" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
                   <button class="action-btn" title="Detail" onclick="event.stopPropagation();openDetailModal(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                   <button class="action-btn danger" title="Hapus" onclick="event.stopPropagation();deleteRow(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg></button>
                 </div>
@@ -375,12 +383,12 @@
             </tr>
             <tr data-lead-id="L-1003" onclick="openDetailModal(this)" style="cursor:pointer">
               <td class="col-id"><span>#L-1003</span></td>
-              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#27AE60">BP</div>Budi Pratama</div></td>
-              <td class="col-hp">0811-2233-4455</td>
+              <td class="col-nama"><div class="lead-name-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
+              <td class="col-hp">085678901234</td>
               <td class="col-sumber"><span class="source-tag">🚶 Walk-in</span></td>
-              <td class="col-program">Boxing</td>
+              <td class="col-program">12 Sesi - Pro</td>
               <td class="col-status"><span class="badge closed-won">Closed Won</span></td>
-              <td class="col-tanggal">8 Jun 2026</td>
+              <td class="col-tanggal">6 Okt 2026</td>
               <td class="col-aksi">
                 <div class="action-wrap">
                   <button class="action-btn success" title="Buat Order" onclick="event.stopPropagation();buatOrder(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg></button>
@@ -491,6 +499,10 @@
     </div>
     <div class="modal-footer">
       <button class="btn-cancel" onclick="closeDetailModal()">Tutup</button>
+      <button class="btn-penawaran" id="dtPenawaranBtn" onclick="kirimPenawaran()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Kirim Penawaran
+      </button>
       <button class="btn-primary" id="dtOrderBtn" onclick="buatOrder(this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
         Buat Order
@@ -516,33 +528,33 @@ function toggleMenu(e, subId, arrowId) {
 const LEADS_DB = {
   'L-1001': {
     lead_id: 'L-1001', display_id: '#L-1001',
-    nama: 'Ahmad Ridwan',   initials: 'AR', avatar_color: '#E05945',
-    no_hp: '0812-3456-7890', email: 'ahmad.ridwan@email.com',
+    nama: 'James Wilson',   initials: 'JW', avatar_color: '#2980B9',
+    no_hp: '081234567890', email: 'james.wilson@email.com',
     sumber: 'Website', sumber_icon: '🌐',
-    program_diminati: 'Fatloss & Bodyshape',
-    status_pipeline: 'new',   // new | follow-up | closed-won | closed-lost
-    tanggal_masuk: '10 Jun 2026',
-    catatan: '',
+    program_diminati: '12 Sesi - Pro',
+    status_pipeline: 'closed-won',   // new | follow-up | closed-won | closed-lost
+    tanggal_masuk: '20 Okt 2026',
+    catatan: 'Sudah convert ke Order #PP-8042',
   },
   'L-1002': {
     lead_id: 'L-1002', display_id: '#L-1002',
-    nama: 'Siti Nurhaliza',  initials: 'SN', avatar_color: '#2980B9',
-    no_hp: '0856-7890-1234', email: 'siti.nurhaliza@email.com',
+    nama: 'Emily Chen',  initials: 'EC', avatar_color: '#27AE60',
+    no_hp: '082345678901', email: 'emily.chen@email.com',
     sumber: 'Meta Ads', sumber_icon: '📱',
-    program_diminati: 'Yoga',
-    status_pipeline: 'follow-up',
-    tanggal_masuk: '9 Jun 2026',
-    catatan: '',
+    program_diminati: '4 Sesi - Starter',
+    status_pipeline: 'closed-won',
+    tanggal_masuk: '18 Okt 2026',
+    catatan: 'Sudah convert ke Order #PP-8041',
   },
   'L-1003': {
     lead_id: 'L-1003', display_id: '#L-1003',
-    nama: 'Budi Pratama',    initials: 'BP', avatar_color: '#27AE60',
-    no_hp: '0811-2233-4455', email: 'budi.pratama@email.com',
+    nama: 'Budi Santoso',    initials: 'BS', avatar_color: '#16A085',
+    no_hp: '085678901234', email: 'budi.santoso@email.com',
     sumber: 'Walk-in', sumber_icon: '🚶',
-    program_diminati: 'Boxing',
+    program_diminati: '12 Sesi - Pro',
     status_pipeline: 'closed-won',
-    tanggal_masuk: '8 Jun 2026',
-    catatan: '',
+    tanggal_masuk: '6 Okt 2026',
+    catatan: 'Sudah convert ke Order #PP-8031',
   },
   'L-1004': {
     lead_id: 'L-1004', display_id: '#L-1004',
@@ -920,6 +932,188 @@ if (role === 'owner') {
   }
 }
 </script>
+<div id="pricelistPrintShell" style="display:none"></div>
+<div id="penawaranToast"></div>
+
+<script>
+/* ─── PROGRAM DB — synced via localStorage('efm_programs') ─── */
+const PIC_DB_LEADS = {
+  'EFM-PIC-001': { nick:'Sarah',  fullname:'Sarah Jenkins',   spesialis:'Strength & Conditioning', biayaSesi:75000 },
+  'EFM-PIC-002': { nick:'Marcus', fullname:'Marcus Chen',     spesialis:'Functional Training',      biayaSesi:75000 },
+  'EFM-PIC-003': { nick:'Elena',  fullname:'Elena Rodriguez', spesialis:'Yoga & Flexibility',       biayaSesi:70000 },
+  'EFM-PIC-004': { nick:'David',  fullname:'David Kim',       spesialis:'Sports Rehabilitation',    biayaSesi:80000 },
+};
+
+const _DEFAULT_PROGRAMS = [
+  { id:'PRG-PP-001', namaLatihan:'Private Training', namaPaket:'4 Sesi - Starter',  sesi:4,  pertemuan:2, partisipan:1, masa:'30 hari', picId:'EFM-PIC-001', harga:600000,  hargaPersesi:150000, diskonPaket:0,      status:'aktif', terms_condition:'' },
+  { id:'PRG-PP-002', namaLatihan:'Private Training', namaPaket:'8 Sesi - Base',     sesi:8,  pertemuan:2, partisipan:1, masa:'45 hari', picId:'EFM-PIC-002', harga:1100000, hargaPersesi:137500, diskonPaket:0,      status:'aktif', terms_condition:'' },
+  { id:'PRG-PP-003', namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro',     sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-001', harga:1500000, hargaPersesi:125000, diskonPaket:0,      status:'aktif', terms_condition:'' },
+  { id:'PRG-PP-004', namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite',   sesi:24, pertemuan:5, partisipan:1, masa:'90 hari', picId:'EFM-PIC-003', harga:2800000, hargaPersesi:125000, diskonPaket:200000, status:'aktif', terms_condition:'' },
+  { id:'PRG-TH-001', namaLatihan:'Yoga & Stretching', namaPaket:'8 Sesi - Basic',  sesi:8,  pertemuan:2, partisipan:2, masa:'45 hari', picId:'EFM-PIC-003', harga:900000,  hargaPersesi:112500, diskonPaket:0,      status:'aktif', terms_condition:'' },
+  { id:'PRG-TH-002', namaLatihan:'Sports Rehab',      namaPaket:'12 Sesi - Rehab', sesi:12, pertemuan:3, partisipan:1, masa:'60 hari', picId:'EFM-PIC-004', harga:1800000, hargaPersesi:150000, diskonPaket:0,      status:'aktif', terms_condition:'' },
+];
+
+function _getProgramsDB() {
+  return JSON.parse(localStorage.getItem('efm_programs') || 'null') || _DEFAULT_PROGRAMS;
+}
+
+function _findProgram(namaProgram) {
+  if (!namaProgram) return null;
+  const q = namaProgram.trim().toLowerCase();
+  const progs = _getProgramsDB();
+  return progs.find(p => p.namaPaket.trim().toLowerCase() === q)
+      || progs.find(p => p.namaLatihan.trim().toLowerCase() === q)
+      || null;
+}
+
+function _fmtRpL(n) { return 'Rp ' + Math.round(n).toLocaleString('id-ID'); }
+
+function _showToast(msg) {
+  const t = document.getElementById('penawaranToast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = 'none'; }, 5000);
+}
+
+function kirimPenawaran() {
+  const lead = _detailLeadId ? LEADS_DB[_detailLeadId] : null;
+  if (!lead) return;
+
+  const p = _findProgram(lead.program_diminati);
+  if (!p) {
+    alert(
+      'Program "' + lead.program_diminati + '" tidak ditemukan di Database Program.\n\n' +
+      'Pastikan nama program di lead sesuai dengan Nama Paket atau Nama Latihan yang terdaftar di halaman Database Program, lalu coba lagi.'
+    );
+    return;
+  }
+
+  const btn = document.getElementById('dtPenawaranBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Membuat PDF...';
+
+  _generatePenawaranPDF(p, lead, function() {
+    const phone = (lead.no_hp || '').replace(/\D/g, '');
+    const namaProgram = p.namaLatihan + ' — ' + p.namaPaket;
+    const msg = encodeURIComponent(
+      'Halo *' + lead.nama + '*,\n\n' +
+      'Terima kasih atas ketertarikan Anda pada program *' + namaProgram + '* di Essential Fitness Management! 💪\n\n' +
+      'Mohon cek file PDF (Pricelist & Syarat Ketentuan) yang sudah kami siapkan — silakan attach manual file yang baru terdownload ke chat ini.\n\n' +
+      'Jika ada pertanyaan, jangan ragu untuk menghubungi kami!'
+    );
+    setTimeout(function() {
+      window.open('https://wa.me/' + phone + '?text=' + msg, '_blank');
+      _showToast('✅ PDF berhasil didownload — silakan lampirkan manual ke chat WhatsApp yang baru terbuka.');
+      btn.disabled = false;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Kirim Penawaran';
+    }, 800);
+  });
+}
+
+function _generatePenawaranPDF(p, lead, onComplete) {
+  const pic = PIC_DB_LEADS[p.picId] || {};
+  const logoSrc = 'assets/white-logo-circle-pure.png';
+  const tc = (p.terms_condition || '').trim();
+  const tcLines = tc
+    ? tc.split('\n').map(function(l) {
+        return '<div style="margin-bottom:4px;line-height:1.6;color:#1E1C43">' + l.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+      }).join('')
+    : '';
+
+  const shell = document.getElementById('pricelistPrintShell');
+  shell.innerHTML = `
+  <div style="font-family:'Poppins',sans-serif;background:white;width:794px;min-height:1123px">
+
+    <div style="background:#1E1C43;padding:28px 36px 22px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <div style="display:flex;align-items:center;gap:16px">
+          <img src="${logoSrc}" style="width:62px;height:62px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'"/>
+          <div>
+            <div style="font-size:18px;font-weight:700;color:white;letter-spacing:.2px">Essential Fitness Management</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6);margin-top:3px">CV. Bugar Nusantara Jaya</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">Jl. Terogong Raya No.18, Jakarta Selatan</div>
+            <div style="font-size:11px;color:rgba(255,255,255,.6)">essentialfitnessmanagement@gmail.com</div>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px">PRICELIST PROGRAM</div>
+          <div style="font-size:12px;font-weight:700;color:#E05945;letter-spacing:.3px">${p.id}</div>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,.15);padding-top:16px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:white;letter-spacing:.5px">${p.namaLatihan}</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);margin-top:4px;letter-spacing:.3px">${p.namaPaket}</div>
+      </div>
+    </div>
+
+    <div style="background:#E05945;padding:18px 36px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:13px;font-weight:600;color:white;opacity:.85">Harga Paket</div>
+      <div style="font-size:28px;font-weight:800;color:white;letter-spacing:.5px">${_fmtRpL(p.harga)}</div>
+    </div>
+
+    <div style="padding:28px 36px">
+      <div style="font-size:10px;font-weight:700;color:#E05945;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px">Detail Program</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border:1.5px solid #E2E6EA;border-radius:10px;overflow:hidden">
+        ${[
+          ['Jumlah Sesi', p.sesi + ' Sesi'],
+          ['Pertemuan / Minggu', p.pertemuan + 'x / Minggu'],
+          ['Masa Berlaku', p.masa],
+          ['Jumlah Partisipan', p.partisipan + ' Orang'],
+          ['Harga Per Sesi', _fmtRpL(p.hargaPersesi)],
+          ['Diskon Paket', p.diskonPaket > 0 ? '− ' + _fmtRpL(p.diskonPaket) : '—'],
+        ].map(function([l,v],i) { return `
+          <div style="padding:12px 18px;border-bottom:1px solid #E2E6EA;background:${i%2===0?'white':'#FAFAFA'}">
+            <div style="font-size:10px;font-weight:600;color:#6C757D;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${l}</div>
+            <div style="font-size:13px;font-weight:700;color:#1E1C43">${v}</div>
+          </div>`; }).join('')}
+      </div>
+
+      <div style="margin-top:20px;background:#EBF5FB;border-radius:10px;padding:14px 18px;display:flex;align-items:center;gap:14px">
+        <div style="width:36px;height:36px;border-radius:50%;background:#2980B9;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">${(pic.nick||'—').charAt(0)}</div>
+        <div>
+          <div style="font-size:10px;font-weight:600;color:#2980B9;text-transform:uppercase;letter-spacing:.5px">PIC / Pelatih</div>
+          <div style="font-size:13px;font-weight:700;color:#1E1C43;margin-top:2px">${pic.fullname||'—'}</div>
+          <div style="font-size:11px;color:#6C757D;margin-top:1px">${pic.spesialis||''}</div>
+        </div>
+      </div>
+
+      ${tc ? `
+      <div style="margin-top:24px">
+        <div style="font-size:10px;font-weight:700;color:#E05945;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:12px">Syarat &amp; Ketentuan</div>
+        <div style="border:1.5px solid #E2E6EA;border-radius:10px;padding:16px 18px;background:#FAFAFA;font-size:12px">
+          ${tcLines}
+        </div>
+      </div>` : ''}
+
+      <div style="margin-top:28px;padding-top:16px;border-top:1px solid #E2E6EA;text-align:center;font-size:10px;color:#9CA3AF;letter-spacing:.3px">
+        Dokumen ini diterbitkan oleh <strong>Essential Fitness Management</strong> · ${p.id} · ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+      </div>
+    </div>
+  </div>`;
+
+  shell.style.cssText = 'display:block;position:absolute;left:-9999px;top:0;width:794px;background:white;z-index:9999';
+  document.body.appendChild(shell);
+
+  const filename = 'Pricelist - ' + p.namaLatihan + ' ' + p.namaPaket + ' - ' + lead.nama + '.pdf';
+  html2pdf().set({
+    margin:      [0, 0, 0, 0],
+    filename:    filename,
+    image:       { type:'jpeg', quality:0.98 },
+    html2canvas: { scale:2, useCORS:true, logging:false, width:794,
+                   onclone: function(doc) {
+                     const el = doc.getElementById('pricelistPrintShell');
+                     if (el) { el.style.display='block'; el.style.width='794px'; el.style.background='white'; }
+                   }},
+    jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
+    pagebreak:   { mode:'avoid-all' },
+  }).from(shell).save().then(function() {
+    shell.style.cssText = 'display:none';
+    onComplete();
+  });
+}
+</script>
+
 <script src="assets/js/mobile.js"></script>
 </body>
 </html>

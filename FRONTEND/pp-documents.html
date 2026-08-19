@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>EFM Portal — Agreement Klien PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
   <script src="https://cdn.jsdelivr.net/npm/signature_pad@4/dist/signature_pad.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
@@ -87,56 +88,31 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; flex-shrink:0; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
-    /* TABLE */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    table { width:100%; min-width:1320px; border-collapse:collapse; table-layout:fixed; }
-    th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; position:sticky; top:0; z-index:2; }
-    td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
-    tr:last-child td { border-bottom:none; }
-    tr:hover td { background:#FAFAFA; cursor:pointer; }
-
-    /* Column widths */
-    .col-id-berkas  { width:110px; min-width:100px; }
+    /* TABLE — base styles dari table-standard.css; di sini hanya kolom unik halaman */
+    table { min-width:1505px; }
     .col-no-receipt { width:190px; min-width:170px; white-space:normal; word-break:break-word; }
     .col-ref-invoice{ width:190px; min-width:170px; white-space:normal; word-break:break-word; }
-    .col-order-id   { width:100px; min-width:90px; }
-    .col-nama       { width:160px; min-width:140px; white-space:normal; word-break:break-word; }
+    .col-order      { width:100px; min-width:90px; white-space:nowrap; }
+    .col-latihan    { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan  { white-space:normal; line-height:1.3; }
     .col-paket      { width:140px; min-width:120px; white-space:normal; }
-    .col-pic        { width:130px; min-width:110px; white-space:normal; word-break:break-word; }
-    .col-tgl        { width:120px; min-width:110px; }
-    .col-status     { width:130px; min-width:120px; text-align:center; }
-    .col-aksi       { width:100px; min-width:90px; text-align:center; white-space:nowrap; }
+    .col-status     { width:130px; min-width:120px; }
+    td.col-status .badge { white-space:normal; max-width:100px; line-height:1.3; text-align:left; }
+    .col-tgl        { width:130px; min-width:120px; white-space:normal; }
+    th.col-tgl      { white-space:normal; line-height:1.3; }
 
-    /* Badges */
-    .badge { display:inline-flex; align-items:center; gap:5px; padding:4px 12px; border-radius:50px; font-size:11px; font-weight:600; white-space:nowrap; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; flex-shrink:0; }
+    /* Badges (base dari table-standard.css; warna status unik di sini) */
     .badge.signed   { background:#EAFAF1; color:var(--green); }
     .badge.pending  { background:#FEF9E7; color:var(--yellow); }
     .badge.expired  { background:#FDEDEC; color:var(--red); }
     .badge.waiting  { background:#EBF5FB; color:#2980B9; }
 
-    /* Avatar */
-    .client-cell { display:flex; align-items:center; gap:10px; }
-    .avatar-sm { width:35px; height:35px; border-radius:50%; color:white; font-size:12px; font-weight:700; letter-spacing:0.5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; user-select:none; }
-
     /* ID berkas */
     .doc-id { font-weight:700; color:var(--navy); font-size:13px; }
 
-    /* Action buttons */
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:6px; }
-    .action-btn { width:30px; height:30px; border-radius:6px; border:1px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
+    /* Action buttons (base dari table-standard.css; modifier unik di sini) */
     .action-btn.download { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
-    .action-btn svg { width:14px; height:14px; }
-
-    /* Pagination */
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:6px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
+    .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
 
     /* Modal */
     .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:500; display:none; align-items:center; justify-content:center; padding:20px; }
@@ -339,11 +315,12 @@
       <div class="table-wrap">
         <table id="docTable">
           <colgroup>
-            <col class="col-id-berkas"/>
+            <col class="col-id"/>
             <col class="col-no-receipt"/>
             <col class="col-ref-invoice"/>
-            <col class="col-order-id"/>
+            <col class="col-order"/>
             <col class="col-nama"/>
+            <col class="col-latihan"/>
             <col class="col-paket"/>
             <col class="col-pic"/>
             <col class="col-tgl"/>
@@ -352,12 +329,13 @@
           </colgroup>
           <thead>
             <tr>
-              <th class="col-id-berkas">ID Berkas</th>
+              <th class="col-id">ID Berkas</th>
               <th class="col-no-receipt">No. Receipt</th>
-              <th class="col-ref-invoice">Ref. Invoice</th>
-              <th class="col-order-id">Order ID</th>
+              <th class="col-ref-invoice">No. Invoice</th>
+              <th class="col-order">Order ID</th>
               <th class="col-nama">Nama Klien</th>
-              <th class="col-paket">Paket</th>
+              <th class="col-latihan">Nama Latihan/ Terapi</th>
+              <th class="col-paket">Nama Paket</th>
               <th class="col-pic">PIC</th>
               <th class="col-tgl">Tanggal Dibuat</th>
               <th class="col-status">Status TTD</th>
@@ -581,9 +559,9 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
           Approve Agreement
         </button>
-        <button id="btnDownloadPdf" onclick="downloadAgreementPDF()" style="padding:10px 18px;background:var(--navy);color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Download Agreement
+        <button id="btnDownloadPdf" onclick="kirimAgreementKeKlien()" style="padding:10px 18px;background:#27AE60;color:white;border:none;border-radius:8px;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;cursor:pointer;display:none;align-items:center;gap:7px;transition:background .2s">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Kirim Agreement ke Klien
         </button>
       </div>
     </div>
@@ -600,7 +578,7 @@ const AGREEMENT_DB = {
     no_wa: '081234567890', email: 'james.wilson@email.com',
     alamat_lengkap: 'Jl. Sudirman No. 12, Jakarta Pusat',
     detail_pesanan: '12 Sesi Private Training - Paket Pro',
-    order_id: 'PP-8042', paket: '12 Sesi - Pro',
+    order_id: 'PP-8042', paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0089', ref_invoice: 'INV/EFM/PP/2026/0089', pic: 'Sarah Jenkins',
     tgl_dibuat: '24 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '25 Okt 2026',
@@ -612,7 +590,7 @@ const AGREEMENT_DB = {
     no_wa: '082345678901', email: 'emily.chen@email.com',
     alamat_lengkap: 'Jl. Gatot Subroto No. 45, Jakarta Selatan',
     detail_pesanan: '4 Sesi Private Training - Paket Starter',
-    order_id: 'PP-8041', paket: '4 Sesi - Starter',
+    order_id: 'PP-8041', paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0087', ref_invoice: 'INV/EFM/PP/2026/0087', pic: 'Marcus Chen',
     tgl_dibuat: '22 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '22 Okt 2026',
@@ -624,8 +602,8 @@ const AGREEMENT_DB = {
     no_wa: '083456789012', email: 'robert.taylor@email.com',
     alamat_lengkap: 'Jl. Kuningan Raya No. 88, Jakarta Selatan',
     detail_pesanan: '24 Sesi Private Training - Paket Elite',
-    order_id: 'PP-8038', paket: '24 Sesi - Elite',
-    no_receipt: '—', ref_invoice: '—', pic: 'Andi Susanto',
+    order_id: 'PP-8038', paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
+    no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0088', pic: 'Elena Rodriguez',
     tgl_dibuat: '18 Okt 2026',
     status_ttd: 'waiting_approval', tgl_ttd: '20 Okt 2026',
   },
@@ -636,8 +614,8 @@ const AGREEMENT_DB = {
     no_wa: '084567890123', email: 'anita.kumar@email.com',
     alamat_lengkap: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
     detail_pesanan: '8 Sesi Private Training - Paket Base',
-    order_id: 'PP-8035', paket: '8 Sesi - Base',
-    no_receipt: '—', ref_invoice: '—', pic: 'Budi Hartono',
+    order_id: 'PP-8035', paket: '8 Sesi - Base', namaLatihan: 'Private Training',
+    no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0085', pic: 'Sarah Jenkins',
     tgl_dibuat: '15 Okt 2026',
     status_ttd: 'expired',
   },
@@ -648,7 +626,7 @@ const AGREEMENT_DB = {
     no_wa: '085678901234', email: 'budi.santoso@email.com',
     alamat_lengkap: 'Jl. Rasuna Said No. 5, Jakarta Selatan',
     detail_pesanan: '12 Sesi Private Training - Paket Pro',
-    order_id: 'PP-8031', paket: '12 Sesi - Pro',
+    order_id: 'PP-8031', paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0082', ref_invoice: 'INV/EFM/PP/2026/0082', pic: 'Marcus Chen',
     tgl_dibuat: '10 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '11 Okt 2026',
@@ -660,7 +638,7 @@ const AGREEMENT_DB = {
     no_wa: '086789012345', email: 'rina.kusuma@email.com',
     alamat_lengkap: 'Jl. Kebon Sirih No. 33, Jakarta Pusat',
     detail_pesanan: '4 Sesi Private Training - Paket Starter',
-    order_id: 'PP-8027', paket: '4 Sesi - Starter',
+    order_id: 'PP-8027', paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     no_receipt: 'RCP/EFM/PP/2026/0078', ref_invoice: 'INV/EFM/PP/2026/0078', pic: 'Elena Rodriguez',
     tgl_dibuat: '5 Okt 2026',
     status_ttd: 'signed', tgl_ttd: '5 Okt 2026',
@@ -672,8 +650,8 @@ const AGREEMENT_DB = {
     no_wa: '087890123456', email: 'hendra.wijaya@email.com',
     alamat_lengkap: 'Jl. Ampera Raya No. 7, Jakarta Selatan',
     detail_pesanan: '24 Sesi Private Training - Paket Elite',
-    order_id: 'PP-8024', paket: '24 Sesi - Elite',
-    no_receipt: '—', ref_invoice: '—', pic: 'Citra Dewi',
+    order_id: 'PP-8024', paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
+    no_receipt: '—', ref_invoice: 'INV/EFM/PP/2026/0074', pic: 'Sarah Jenkins',
     tgl_dibuat: '1 Okt 2026',
     status_ttd: 'waiting_approval', tgl_ttd: '3 Okt 2026',
   },
@@ -690,11 +668,12 @@ function buildDocRow(a) {
   const s = statusMap[a.status_ttd] || { label: a.status_ttd, cls:'pending' };
   return `
     <tr data-berkas-id="${a.berkas_id}" onclick="previewDoc('${a.berkas_id}')" style="cursor:pointer">
-      <td class="col-id-berkas"><span class="doc-id">${a.display_id}</span></td>
-      <td class="col-no-receipt">${a.no_receipt}</td>
-      <td class="col-ref-invoice">${a.ref_invoice}</td>
-      <td class="col-order-id" style="font-weight:600;color:var(--navy)">#${a.order_id}</td>
+      <td class="col-id"><span class="doc-id">${a.display_id}</span></td>
+      <td class="col-no-receipt" style="font-weight:600;color:var(--navy)">${a.no_receipt}</td>
+      <td class="col-ref-invoice" style="font-weight:600;color:var(--navy)">${a.ref_invoice}</td>
+      <td class="col-order" style="font-weight:600;color:var(--navy)">#${a.order_id}</td>
       <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:${a.avatar_color}">${a.avatar_initials}</div>${a.nama_klien}</div></td>
+      <td class="col-latihan">${a.namaLatihan || 'Private Training'}</td>
       <td class="col-paket">${a.paket}</td>
       <td class="col-pic">${a.pic}</td>
       <td class="col-tgl">${a.tgl_dibuat}</td>
@@ -702,6 +681,7 @@ function buildDocRow(a) {
       <td class="col-aksi">
         <div class="action-wrap">
           <button class="action-btn" title="Lihat Dokumen" onclick="event.stopPropagation();previewDoc('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+          <button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimAgreementWA('${a.berkas_id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button>
         </div>
       </td>
     </tr>`;
@@ -1083,8 +1063,31 @@ function approveAgreement() {
   previewDoc(id);
 }
 
+/* ─── KIRIM WA (list aksi, tanpa download) ───────────────────────── */
+function kirimAgreementWA(id) {
+  if (!AGREEMENT_DB[id]) return;
+  // Set active id lalu jalankan flow download PDF + buka WA (sama seperti tombol preview)
+  _activeAgreementId = id;
+  kirimAgreementKeKlien();
+}
+
+/* ─── KIRIM AGREEMENT KE KLIEN (download PDF lalu lanjut WA) ───────── */
+function kirimAgreementKeKlien() {
+  const id = _activeAgreementId;
+  downloadAgreementPDF(function(a) {
+    const msg =
+      `Halo ${a.nama_klien} 👋\n\n` +
+      `Dokumen *Perjanjian Layanan Private Program (Agreement)* Anda untuk paket *${a.paket}* (Order #${a.order_id}) sudah ditandatangani dan kami kirimkan dalam bentuk PDF ✅\n\n` +
+      `Mohon disimpan sebagai bukti perjanjian. Jika ada pertanyaan, jangan ragu menghubungi kami.\n\n` +
+      `Terima kasih,\nTim EFM`;
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
+  });
+}
+
 /* ─── DOWNLOAD PDF ────────────────────────────────────────────────── */
-function downloadAgreementPDF() {
+function downloadAgreementPDF(onComplete) {
   const id = _activeAgreementId;
   const a  = id ? AGREEMENT_DB[id] : null;
   if (!a) return;
@@ -1241,7 +1244,8 @@ function downloadAgreementPDF() {
     pagebreak:   { mode:'avoid-all' },
   }).from(shell).save().then(() => {
     shell.style.cssText = 'display:none';
-    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download Agreement'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Kirim Agreement ke Klien'; }
+    if (typeof onComplete === 'function') onComplete(a);
   });
 }
 </script>

@@ -6,6 +6,7 @@
   <title>EFM Portal — Invoice PP</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" media="print"/>
+  <link rel="stylesheet" href="assets/css/table-standard.css"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,27 +98,14 @@
     .btn-clear { padding:8px 12px; background:var(--navy); color:white; border:1.5px solid var(--navy); border-radius:8px; font-family:'Poppins',sans-serif; font-size:13px; font-weight:600; cursor:pointer; }
     .btn-clear:hover { background:var(--navy2); border-color:var(--navy2); }
 
-    /* Table — LIST VIEW ONLY (scoped to #listView to prevent leaking into invoice/syarat tables) */
-    .table-card { background:white; border-radius:14px; border:1.5px solid var(--gray-border); flex:1; min-height:0; display:flex; flex-direction:column; margin-bottom:0; }
-    .table-wrap { flex:1; overflow:auto; width:100%; -webkit-overflow-scrolling:touch; min-height:0; }
-    #listView table { width:100%; min-width:1050px; border-collapse:collapse; table-layout:fixed; }
-    #listView th { background:var(--gray-bg); padding:11px 12px; font-size:10.5px; font-weight:600; color:var(--gray-text); text-align:left; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; position:sticky; top:0; z-index:2; overflow:hidden; text-overflow:ellipsis; }
-    #listView td { padding:10px 12px; font-size:13px; border-bottom:1px solid var(--gray-border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    /* Column widths — total ~1050px */
-    #listView th:nth-child(1) { width:190px; } /* No. Invoice */
-    #listView th:nth-child(2) { width:105px; } /* Order ID */
-    #listView th:nth-child(3) { width:155px; } /* Nama Klien */
-    #listView th:nth-child(4) { width:130px; } /* Paket */
-    #listView th:nth-child(5) { width:135px; } /* PIC Pelatih */
-    #listView th:nth-child(6) { width:115px; } /* Tanggal */
-    #listView th:nth-child(7) { width:115px; } /* Total */
-    #listView th:nth-child(8) { width:115px; } /* Status */
-    #listView th:nth-child(9) { width:90px; text-align:center; } /* Actions */
-    #listView td:nth-child(9) { text-align:center; }
-    #listView tr:last-child td { border-bottom:none; }
-    #listView tr:hover td { background:#FAFAFA; cursor:pointer; }
-    .avatar-sm { width:32px; height:32px; border-radius:50%; color:white; font-size:11px; font-weight:700; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0; margin-right:8px; }
-    .client-cell { display:flex; align-items:center; }
+    /* Table — LIST VIEW ONLY (base styles dari table-standard.css; di sini hanya kolom unik halaman) */
+    table { min-width:1415px; }
+    .col-invoice  { width:170px; min-width:170px; white-space:nowrap; font-weight:700; color:var(--navy); }
+    .col-order    { width:110px; min-width:110px; white-space:nowrap; }
+    .col-latihan  { width:165px; min-width:155px; white-space:normal; word-break:break-word; }
+    th.col-latihan { white-space:normal; line-height:1.3; }
+    .col-paket    { width:140px; min-width:140px; white-space:normal; }
+    .col-tgl      { width:120px; min-width:120px; white-space:nowrap; }
     .invoice-id { font-weight:700; color:var(--navy); font-size:12px; }
     .order-id-link { 
       font-weight: 700; 
@@ -132,26 +120,23 @@
       text-decoration: none !important; 
     }
 
-    /* Badges */
-    .badge { display:inline-flex; align-items:center; gap:4px; padding:4px 9px; border-radius:20px; font-size:10px; font-weight:600; white-space:normal; text-align:center; line-height:1.3; max-width:110px; word-break:break-word; }
-    .badge::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
+    /* Badges (base dari table-standard.css; warna status unik di sini) */
     .badge.paid { background:#EAFAF1; color:#27AE60; }
     .badge.pending { background:#FEF9E7; color:#F39C12; }
     .badge.overdue { background:#FDEDEC; color:#E74C3C; }
     .badge.draft { background:#F2F3F4; color:#7F8C8D; }
 
-    .action-wrap { display:flex; align-items:center; justify-content:center; gap:8px; }
-    .action-btn { width:30px; height:30px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--gray-text); transition:all 0.15s; }
-    .action-btn:hover { border-color:var(--navy); color:var(--navy); }
-    .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
-    .action-btn svg { width:14px; height:14px; }
+    /* Status badge wraps "Awaiting Payment" ke 2 baris */
+    .col-status { width:140px; min-width:130px; max-width:140px; }
+    th.col-status { white-space:nowrap; }
+    td.col-status .badge {
+      white-space:normal; text-align:center; justify-content:center;
+      max-width:110px; line-height:1.35;
+    }
 
-    .pagination { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; border-top:1px solid var(--gray-border); flex-shrink:0; background:white; border-radius:0 0 14px 14px; }
-    .pagination-info { font-size:12px; color:var(--gray-text); }
-    .pagination-btns { display:flex; gap:4px; }
-    .page-btn { width:32px; height:32px; border-radius:7px; border:1.5px solid var(--gray-border); background:white; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:var(--navy); }
-    .page-btn.active { background:var(--navy); color:white; border-color:var(--navy); }
-    .page-btn svg { width:14px; height:14px; }
+    /* Action buttons (base dari table-standard.css; modifier unik di sini) */
+    .action-btn.view-btn { background:#EBF5FB; color:#2980B9; border-color:#2980B9; }
+    .action-btn.wa-btn { background:#EAFAF1; color:#27AE60; border-color:#27AE60; }
 
     /* ===== DETAIL VIEW ===== */
     .back-btn { display:inline-flex; align-items:center; gap:8px; color:var(--gray-text); font-size:13px; font-weight:500; cursor:pointer; margin-bottom:20px; padding:8px 0; border:none; background:none; font-family:'Poppins',sans-serif; transition:color 0.2s; }
@@ -737,74 +722,92 @@
       <div class="table-card">
         <div class="table-wrap">
           <table>
+            <colgroup>
+              <col class="col-invoice"/>
+              <col class="col-order"/>
+              <col class="col-nama"/>
+              <col class="col-latihan"/>
+              <col class="col-paket"/>
+              <col class="col-pic"/>
+              <col class="col-tgl"/>
+              <col class="col-nominal"/>
+              <col class="col-status"/>
+              <col class="col-aksi"/>
+            </colgroup>
             <thead>
               <tr>
-                <th>No. Invoice</th>
-                <th>Order ID</th>
-                <th>Nama Klien</th>
-                <th>Paket</th>
-                <th>PIC Pelatih</th>
-                <th>Tanggal</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Aksi</th>
+                <th class="col-invoice">No. Invoice</th>
+                <th class="col-order">Order ID</th>
+                <th class="col-nama">Nama Klien</th>
+                <th class="col-latihan">Nama Latihan/ Terapi</th>
+                <th class="col-paket">Nama Paket</th>
+                <th class="col-pic">PIC</th>
+                <th class="col-tgl">Tanggal</th>
+                <th class="col-nominal">Total</th>
+                <th class="col-status">Status</th>
+                <th class="col-aksi">Aksi</th>
               </tr>
             </thead>
             <tbody id="invoiceBody">
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')" style="cursor:pointer">
-                <td><span class="invoice-id">INV/EFM/PP/2026/0089</span></td>
-                <td><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8042</span></td>
-                <td><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">AM</div>Alex Mercer</div></td>
-                <td>12 Sesi - Pro</td>
-                <td>Sarah Jenkins</td>
-                <td>10 Jun 2026</td>
-                <td style="font-weight:600">Rp 1.500.000</td>
-                <td><span class="badge paid">Paid</span></td>
-                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0089</span></td>
+                <td class="col-order"><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8042</span></td>
+                <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#2980B9">JW</div>James Wilson</div></td>
+                <td class="col-latihan">Private Training</td>
+                <td class="col-paket">12 Sesi - Pro</td>
+                <td class="col-pic">Sarah Jenkins</td>
+                <td class="col-tgl">10 Jun 2026</td>
+                <td class="col-nominal" style="font-weight:600">Rp 1.500.000</td>
+                <td class="col-status"><span class="badge paid">Paid</span></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0089')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')" style="cursor:pointer">
-                <td><span class="invoice-id">INV/EFM/PP/2026/0088</span></td>
-                <td><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8038</span></td>
-                <td><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
-                <td>24 Sesi - Elite</td>
-                <td>Elena Rodriguez</td>
-                <td>8 Jun 2026</td>
-                <td style="font-weight:600">Rp 2.800.000</td>
-                <td><span class="badge pending">Awaiting Payment</span></td>
-                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0088</span></td>
+                <td class="col-order"><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8038</span></td>
+                <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#E05945">RT</div>Robert Taylor</div></td>
+                <td class="col-latihan">Private Training</td>
+                <td class="col-paket">24 Sesi - Elite</td>
+                <td class="col-pic">Elena Rodriguez</td>
+                <td class="col-tgl">8 Jun 2026</td>
+                <td class="col-nominal" style="font-weight:600">Rp 2.620.000</td>
+                <td class="col-status"><span class="badge pending">Awaiting Payment</span></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0088')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')" style="cursor:pointer">
-                <td><span class="invoice-id">INV/EFM/PP/2026/0087</span></td>
-                <td><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8041</span></td>
-                <td><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
-                <td>4 Sesi - Starter</td>
-                <td>Marcus Chen</td>
-                <td>5 Jun 2026</td>
-                <td style="font-weight:600">Rp 600.000</td>
-                <td><span class="badge paid">Paid</span></td>
-                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0087</span></td>
+                <td class="col-order"><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8041</span></td>
+                <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#27AE60">EC</div>Emily Chen</div></td>
+                <td class="col-latihan">Private Training</td>
+                <td class="col-paket">4 Sesi - Starter</td>
+                <td class="col-pic">Marcus Chen</td>
+                <td class="col-tgl">5 Jun 2026</td>
+                <td class="col-nominal" style="font-weight:600">Rp 600.000</td>
+                <td class="col-status"><span class="badge paid">Paid</span></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0087')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
               <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')" style="cursor:pointer">
-                <td><span class="invoice-id">INV/EFM/PP/2026/0085</span></td>
-                <td><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8035</span></td>
-                <td><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">JW</div>James Wilson</div></td>
-                <td>8 Sesi - Base</td>
-                <td>Sarah Jenkins</td>
-                <td>1 Jun 2026</td>
-                <td style="font-weight:600">Rp 1.100.000</td>
-                <td><span class="badge overdue">Overdue</span></td>
-                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+                <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0085</span></td>
+                <td class="col-order"><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8035</span></td>
+                <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#8E44AD">AK</div>Anita Kumar</div></td>
+                <td class="col-latihan">Private Training</td>
+                <td class="col-paket">8 Sesi - Base</td>
+                <td class="col-pic">Sarah Jenkins</td>
+                <td class="col-tgl">1 Jun 2026</td>
+                <td class="col-nominal" style="font-weight:600">Rp 1.175.000</td>
+                <td class="col-status"><span class="badge overdue">Overdue</span></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0085')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
-              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')" style="cursor:pointer">
-                <td><span class="invoice-id">INV/EFM/PP/2026/0084</span></td>
-                <td><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8033</span></td>
-                <td><div class="client-cell"><div class="avatar-sm" style="background:#F39C12">AK</div>Anita Kumar</div></td>
-                <td>12 Sesi - Pro</td>
-                <td>David Kim</td>
-                <td>28 Mei 2026</td>
-                <td style="font-weight:600">Rp 1.500.000</td>
-                <td><span class="badge paid">Paid</span></td>
-                <td><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0084')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td>
+              <tr onclick="_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0082')" style="cursor:pointer">
+                <td class="col-invoice"><span class="invoice-id">INV/EFM/PP/2026/0082</span></td>
+                <td class="col-order"><span class="order-id-link" onclick="event.stopPropagation();window.location.href='pp-orders.html'">#PP-8031</span></td>
+                <td class="col-nama"><div class="client-cell"><div class="avatar-sm" style="background:#16A085">BS</div>Budi Santoso</div></td>
+                <td class="col-latihan">Private Training</td>
+                <td class="col-paket">12 Sesi - Pro</td>
+                <td class="col-pic">Marcus Chen</td>
+                <td class="col-tgl">25 Mei 2026</td>
+                <td class="col-nominal" style="font-weight:600">Rp 1.500.000</td>
+                <td class="col-status"><span class="badge paid">Paid</span></td>
+                <td class="col-aksi"><div class="action-wrap"><button class="action-btn view-btn" title="Lihat Invoice" onclick="event.stopPropagation();_cameFromOrders=false;showDetail('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button><button class="action-btn wa-btn" title="Kirim WA" onclick="event.stopPropagation();kirimInvoiceWA('INV/EFM/PP/2026/0082')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></button></div></td>
               </tr>
             </tbody>
           </table>
@@ -829,12 +832,8 @@
           <p id="detailSubtitle">Private Training — Alex Mercer</p>
         </div>
         <div class="detail-actions">
-          <button class="btn-outline" onclick="downloadInvoicePDF()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Download PDF
-          </button>
-          <!-- Kirim Invoice via WA (muncul setelah lunas) -->
-          <button class="btn-wa" id="sendReceiptBtn" style="display:none" onclick="kirimInvoiceWA()">
+          <!-- Kirim Invoice ke Klien: selalu tampil, download PDF lalu buka WA -->
+          <button class="btn-wa" id="sendReceiptBtn" onclick="kirimInvoiceKeKlien()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             Kirim Invoice ke Klien
           </button>
@@ -1197,7 +1196,7 @@ const invoiceData = {
     date:'8 Jun 2026', due:'22 Jun 2026', status:'pending',
     namaLatihan:'Private Training', namaPaket:'24 Sesi - Elite', sesi:24, pertemuan:5, masa:'90 hari',
     picFull:'Elena Rodriguez', hargaPaket:2800000, hargaPersesi:125000, diskonPaket:200000,
-    biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10, total:2520000,
+    biayaLain:0, biayaLainKet:'', diskon:280000, promoKode:'PROMO10', cashback:0, pajak:0, promoType:'diskon_persen', promoVal:10, total:2620000,
   },
   'INV/EFM/PP/2026/0087': {
     client:'Emily Chen', initials:'EC', color:'#27AE60', orderId:'#PP-8041',
@@ -1207,17 +1206,17 @@ const invoiceData = {
     biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:600000,
   },
   'INV/EFM/PP/2026/0085': {
-    client:'James Wilson', initials:'JW', color:'#8E44AD', orderId:'#PP-8035',
+    client:'Anita Kumar', initials:'AK', color:'#8E44AD', orderId:'#PP-8035',
     date:'1 Jun 2026', due:'15 Jun 2026', status:'overdue',
     namaLatihan:'Private Training', namaPaket:'8 Sesi - Base', sesi:8, pertemuan:2, masa:'45 hari',
     picFull:'Sarah Jenkins', hargaPaket:1100000, hargaPersesi:137500, diskonPaket:0,
     biayaLain:75000, biayaLainKet:'Biaya Transportasi', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1175000,
   },
-  'INV/EFM/PP/2026/0084': {
-    client:'Anita Kumar', initials:'AK', color:'#F39C12', orderId:'#PP-8033',
-    date:'28 Mei 2026', due:'11 Jun 2026', status:'paid',
+  'INV/EFM/PP/2026/0082': {
+    client:'Budi Santoso', initials:'BS', color:'#16A085', orderId:'#PP-8031',
+    date:'25 Mei 2026', due:'8 Jun 2026', status:'paid',
     namaLatihan:'Private Training', namaPaket:'12 Sesi - Pro', sesi:12, pertemuan:3, masa:'60 hari',
-    picFull:'David Kim', hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0,
+    picFull:'Marcus Chen', hargaPaket:1500000, hargaPersesi:125000, diskonPaket:0,
     biayaLain:0, biayaLainKet:'', diskon:0, promoKode:'', cashback:0, pajak:0, promoType:'', promoVal:0, total:1500000,
   },
 };
@@ -1303,13 +1302,12 @@ function showDetail(invNo) {
   const markBtn        = document.getElementById('markPaidBtn');
   const sendReceiptBtn = document.getElementById('sendReceiptBtn');
   const viewReceiptBtn = document.getElementById('viewReceiptBtn');
+  sendReceiptBtn.style.display = 'inline-flex'; // selalu tampil
   if (d.status === 'paid') {
     markBtn.style.display        = 'none';
-    sendReceiptBtn.style.display = 'inline-flex';
     viewReceiptBtn.style.display = 'inline-flex';
   } else {
     markBtn.style.display        = 'inline-flex';
-    sendReceiptBtn.style.display = 'none';
     viewReceiptBtn.style.display = 'none';
   }
 
@@ -1402,14 +1400,10 @@ function confirmPaid() {
       if (badge) { badge.className = 'badge paid'; badge.textContent = 'Paid'; }
     }
   });
-
-  // Otomatis buka receipt setelah konfirmasi
-  if (d) populateReceipt(invNo, d);
-  document.getElementById('receiptOverlay').classList.add('show');
 }
 
-function kirimInvoiceWA() {
-  const invNo = document.getElementById('invNumber').textContent;
+function kirimInvoiceWA(invNo) {
+  invNo = invNo || document.getElementById('invNumber').textContent;
   const d = invoiceData[invNo];
   if (!d) return;
   const msg =
@@ -1427,9 +1421,10 @@ function kirimInvoiceWA() {
 }
 
 function showReceipt() {
-  const invNo = document.getElementById('invNumber').textContent;
+  const invNo = document.getElementById('invNumber').textContent.trim();
   const rcpNo = invNo.replace('INV/', 'RCP/');
-  window.location.href = 'pp-receipt.html?rcp=' + encodeURIComponent(rcpNo) + '&direct=1';
+  sessionStorage.setItem('openReceiptId', rcpNo);
+  window.location.href = 'pp-receipt.html';
 }
 
 function closeReceipt() {
@@ -1605,13 +1600,15 @@ function _pdfCloneFixReceipt(doc) {
   el.style.cssText += ';width:530px!important;max-width:530px!important;min-width:530px!important;position:static!important;margin:0!important;border-radius:0!important;box-shadow:none!important;';
 }
 
-function downloadInvoicePDF() {
+function downloadInvoicePDF(onComplete) {
   const orderId  = document.getElementById('invOrderId').textContent.trim();
   const client   = document.getElementById('invClientName').textContent.trim();
+  const invNo    = document.getElementById('invNumber').textContent.trim();
   const filename = 'Invoice-' + orderId + ' (' + client + ').pdf';
   const element  = document.getElementById('invoicePrintArea');
-  const btn = document.querySelector('button[onclick="downloadInvoicePDF()"]');
-  const SVG_DL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  const btn      = document.getElementById('sendReceiptBtn');
+  const SVG_WA   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
+  const SVG_DL   = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
   if (btn) { btn.disabled = true; btn.innerHTML = SVG_DL + ' Memproses...'; }
   html2pdf().set({
     margin:      [10, 10, 10, 10],
@@ -1621,7 +1618,32 @@ function downloadInvoicePDF() {
     jsPDF:       { unit:'mm', format:'a4', orientation:'portrait' },
     pagebreak:   { mode:'avoid-all' }
   }).from(element).save().then(() => {
-    if (btn) { btn.disabled = false; btn.innerHTML = SVG_DL + ' Download PDF'; }
+    if (btn) { btn.disabled = false; btn.innerHTML = SVG_WA + ' Kirim Invoice ke Klien'; }
+    if (typeof onComplete === 'function') onComplete(invNo);
+  });
+}
+
+function kirimInvoiceKeKlien() {
+  downloadInvoicePDF(function(invNo) {
+    const d = invoiceData[invNo];
+    if (!d) return;
+    const isPaid = d.status === 'paid';
+    const msg = isPaid
+      ? 'Halo *' + (d.client||'') + '*,\n\n' +
+        'Pembayaran Invoice *' + invNo + '* untuk program *' + (d.namaPaket||'—') + '* sebesar *' + fmtRp(d.total) + '* sudah kami terima dan tercatat *LUNAS* ✅\n\n' +
+        'Terlampir invoice sebagai bukti pembayaran Anda.\n\n' +
+        'Terima kasih telah bergabung bersama *Essential Fitness Management*! 💪\n_Tim EFM_'
+      : 'Halo *' + (d.client||'') + '*,\n\n' +
+        'Berikut adalah Invoice dari *Essential Fitness Management* untuk Anda:\n\n' +
+        '🧾 *No. Invoice:* ' + invNo + '\n' +
+        '📋 *Program:* ' + (d.namaPaket||'—') + '\n' +
+        '💰 *Total:* ' + fmtRp(d.total) + '\n' +
+        '📅 *Tanggal Invoice:* ' + (d.date||'—') + '\n' +
+        '⏰ *Jatuh Tempo:* ' + (d.due||'—') + '\n\n' +
+        'Mohon segera lakukan pembayaran sebelum jatuh tempo. Terima kasih 🙏\n_Tim EFM_';
+    setTimeout(() => {
+      window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank');
+    }, 800);
   });
 }
 
