@@ -1,0 +1,103 @@
+---
+name: efm-prompt-pattern
+description: Workflow discipline and execution rules for Claude Code when working on the EFM V2 (Essential Fitness Management) React admin dashboard project — covers when to split a task into multiple chunks vs a single pass, the mandatory read-before-edit and scope-confirmation workflow, pre-build/post-build verification checklist, and project conventions like clone-first pattern reuse and preserving multi-tab pages. MUST be checked FIRST, before efm-design-standards and before writing any code, for every task in this project — new features, bug fixes, refactors, or edits of any size. Always consult this skill even for tasks that seem simple or fully specified, since skipping the read-first/scope-confirmation/build-verification discipline is a recurring source of broken or incomplete results in this project.
+---
+
+# EFM V2 Prompt & Workflow Pattern
+
+Execution discipline for Claude Code on the EFM V2 project. This skill governs HOW to approach a task (chunking, reading, scoping, verifying) — for visual/styling rules, see the companion skill `efm-design-standards`.
+
+## 1. When to Split a Task Into Multiple Chunks vs Single Prompt
+
+**Split into multiple chunks** when ANY of these apply:
+- Task touches more than ~3-4 distinct sections/components within one file
+- Task requires BOTH significant new UI structure AND porting/duplicating complex logic from another file
+- Task spans multiple files that each need substantial changes (not just a one-line import)
+- The person's instructions describe more than 3 separate numbered changes/fixes in one message
+- Estimated output would exceed ~300-400 lines of new/changed code in a single response
+
+**Keep as single prompt** when:
+- Task is confined to 1-2 sections of one file
+- It's a targeted bug fix (e.g. "this button doesn't navigate correctly", "this font is too big")
+- It's a straightforward clone of an existing pattern with minor adjustments
+- Total estimated changes are under ~150 lines
+
+**How to chunk (when splitting is needed):**
+- Chunk 1 = foundational structure change (e.g. restructuring sections, adding new fields/state)
+- Later chunks build on top of Chunk 1 (e.g. calculation logic, connecting components)
+- Each chunk must end in a working, buildable state — never leave the codebase broken between chunks
+- Explicitly tell the person which chunk is next and what it covers, so they know to wait before testing
+
+**If a task arrives that should have been chunked but wasn't:** pause and recommend splitting, briefly explaining why (e.g. "this touches 5 sections and duplicates complex calculation logic — I recommend 2 passes to avoid errors"), rather than attempting the entire scope in one pass and risking an incomplete or broken result.
+
+---
+
+## 2. Standard Prompt Structure / Execution Steps
+
+Every task follows this discipline, regardless of how the prompt is phrased.
+
+**Step 1 — Always read before editing**
+- Read the full target file(s) before making any changes, even if the prompt seems detailed enough to skip this
+- If the task references another file as a pattern/template (e.g. "match the style of B2BOrderDetailPage.jsx"), read that reference file too before writing any code
+- Never assume file structure or state from memory of a previous session — always verify current content first
+
+**Step 2 — Confirm scope before writing code**
+- Identify exactly which sections/components/tabs are in-scope
+- Identify what is explicitly OUT of scope and must be preserved untouched
+- If the prompt doesn't state what to leave alone, infer conservatively: assume everything not mentioned should be preserved exactly as-is, not improved or refactored as a side effect
+
+**Step 3 — Execute with minimal blast radius**
+- Prefer targeted edits (str_replace-style) over full file rewrites whenever possible
+- Do not rename variables, reorganize imports, or "clean up" code that wasn't part of the requested change, even if it looks improvable
+- Do not delete state, functions, or dummy data that might be used elsewhere without first checking if it's referenced elsewhere
+
+**Step 4 — Flag ambiguity instead of guessing**
+- If a requirement is ambiguous (e.g. unclear which of two existing patterns to follow, unclear exact field names), ask a clarifying question rather than picking an interpretation and proceeding
+- Exception: minor implementation details (e.g. exact Tailwind spacing value) can be inferred from `efm-design-standards` without asking
+
+**Step 5 — Communicate clearly what was done**
+- After completing a task, summarize what was changed in plain language — which sections were touched, what was preserved, what to check visually
+- If something couldn't be completed as described (e.g. a referenced file/component doesn't exist), state that clearly rather than silently skipping it or improvising a workaround
+
+---
+
+## 3. Pre-Build / Post-Build Checklist
+
+**Before starting to write code:**
+- [ ] Confirm the target file(s) have been read in full
+- [ ] Confirm reference/pattern files (if mentioned) have been read
+- [ ] Confirm scope boundaries are clear (in-scope vs must-preserve)
+- [ ] If task should be chunked per Section 1, confirm chunking plan before writing code
+
+**After making changes, before reporting completion:**
+- [ ] Run `npm run build` (or `npm run dev` if build isn't applicable) to verify no errors
+- [ ] If build fails, fix the error before reporting back — never report "done" with a known broken build
+- [ ] Re-check that sections marked out-of-scope were not accidentally modified
+- [ ] Verify no unused imports or dead state were left behind from removed code
+- [ ] Verify dummy/placeholder data follows `efm-design-standards` ID formatting (if applicable)
+
+**If build fails and the fix isn't obvious:**
+- Report the exact error message to the person rather than attempting multiple blind fixes in a row
+- Only attempt up to 2 self-corrections before pausing to report the issue clearly
+
+---
+
+## 4. Common Project Conventions
+
+**Clone-first approach**
+- This project has 3 parallel modules (PP, B2B, Event) with intentionally similar structure. When building something new in one module, always check if an equivalent already exists in another module first, and clone/adapt it rather than designing from scratch
+- Example: B2B was used as the base pattern for Event and PP invoice pages, then adapted with module-specific fields
+- When cloning, preserve the structural pattern (component layout, state shape, styling approach) but adapt terminology/fields to the target module
+
+**Preserving multi-tab / multi-section pages**
+- Several pages use a tab structure (e.g. Order Detail: Tab 1 Kontrak & Keuangan, Tab 2 Dokumen Kerjasama, Tab 3 Operasional Lapangan)
+- When a task only concerns one tab, never touch code belonging to other tabs, even if in the same file and technically adjacent
+
+**Reuse vs duplicate decision**
+- Default to duplicating structure/logic across files rather than extracting shared reusable components, UNLESS explicitly instructed to refactor into a shared component
+- Reasoning: this project prioritizes shipping working UI quickly with dummy data first; component extraction is a deliberate later "polish" pass, not a default choice during feature-building
+
+**Dummy data conventions**
+- All dummy data must follow ID formats from `efm-design-standards`
+- Use realistic Indonesian names, company names, and amounts (IDR) — not placeholder text like "Test Company" or "John Doe"
+- Dates should be realistic relative to the current project timeline (2026)

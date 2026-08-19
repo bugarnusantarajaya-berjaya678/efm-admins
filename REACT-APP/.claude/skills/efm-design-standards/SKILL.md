@@ -1,0 +1,177 @@
+---
+name: efm-design-standards
+description: Design and coding standards for the EFM V2 (Essential Fitness Management) React admin dashboard project — brand colors, fonts, document/ID numbering formats (PP, B2B, Event modules), font size rules for tables/labels/KPI cards, and standard component patterns (table wrapper, filter bar, modal, status badge, KPI card). MUST be checked FIRST before writing or editing ANY UI code in this project — styling, new components, tables, KPI cards, badges, filter bars, modals, invoice/document numbering, or dummy/placeholder data. Always consult this skill even for small UI tweaks or "just fix this component" requests, since inconsistent font sizes and ad-hoc ID formats are recurring bugs in this project.
+---
+
+# EFM V2 Design Standards
+
+Reference rules + ready-to-use code patterns for the EFM V2 admin dashboard. Always check this skill before writing or editing any UI code, generating dummy data, or creating document/ID numbers in this project.
+
+## 1. Brand Colors & Fonts
+
+**Primary Colors**
+| Color | Hex | Usage | Tailwind |
+|---|---|---|---|
+| Navy (primary/dark) | `#1E1C43` | sidebar bg, headers, primary buttons, bold important values, active states | `bg-[#1E1C43]`, `text-[#1E1C43]` |
+| Accent/Orange | `#E05945` | active menu highlight, CTA buttons, alerts, price/total emphasis, left border accent (`border-l-4`) | `bg-[#E05945]`, `text-[#E05945]` |
+| Background | `#F5F5F7` | page background (outside cards) | `bg-[#F5F5F7]` |
+| Surface/Card | `#FFFFFF` | all cards, tables, modals | `bg-white` |
+
+**Status/Semantic Colors** (badges, alerts)
+| Meaning | Tailwind |
+|---|---|
+| Success / Lunas / Aktif | `bg-green-50 text-green-700 border-green-200` |
+| Warning / Pending / Draft | `bg-yellow-50 text-yellow-700 border-yellow-200` |
+| Error / Overdue / Gagal | `bg-red-50 text-red-700 border-red-200` |
+| Info / Terkirim / Proses | `bg-blue-50 text-blue-700 border-blue-200` |
+| Neutral / Inactive | `bg-gray-50 text-gray-500 border-gray-200` |
+
+Badge base pattern: `px-2 py-1 text-xs rounded-full font-medium` + color combo above.
+
+**Font**
+- Family: **Poppins** globally (body). No other font families anywhere in the project.
+
+**Font Weight Usage**
+| Weight | Where |
+|---|---|
+| `font-black` | ONLY large document titles (e.g. "INVOICE" header) |
+| `font-bold` | section titles, KPI numbers, important values |
+| `font-semibold` | table data, names, values in info cards |
+| `font-medium` | buttons, badges |
+| normal | body text, descriptions |
+
+---
+
+## 2. ID / Document Numbering Format
+
+General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
+- `YY` = 2-digit year, sequence resets to `0001` every Jan 1
+- `SEQUENCE` = 4-digit zero-padded, increments per doc type per module per year
+- **Exception:** Lead IDs are permanent — no year, never reset
+
+| Doc | PP | B2B | Event |
+|---|---|---|---|
+| Lead | `LP-0001` | `LB-0001` | `LE-0001` |
+| Screening/Survei/Konsultasi | `SCR-26-0001` | `SVY-26-0001` | `KNS-26-0001` |
+| Order | `PP-26-0001` (`#PP-26-0001`) | `B2B-26-0001` (`#B2B-26-0001`) | `EV-26-0001` (`#EV-26-0001`) |
+| Invoice | `INV-PP-26-0001` | `INV-B2B-26-0001` | `INV-EV-26-0001` |
+| Receipt | `RCP-PP-26-0001` | `RCP-B2B-26-0001` | `RCP-EV-26-0001` |
+| Agreement/LOI | `AGR-PP-26-0001` | `LOI-EFM-B2B-26-0001` | `LOI-EFM-EVENT-26-0001` |
+
+**Display rules**
+- Order IDs always shown with `#` prefix in UI headers/titles and when referenced inside other documents (e.g. "Invoice #INV-PP-26-0011")
+- Table cells: no `#` prefix in general, EXCEPT the Order ID column, which does use `#`
+- All ID values in tables: `font-medium text-[#1E1C43] whitespace-nowrap`
+
+**Dummy/placeholder data:** always follow this exact format. Never generic IDs like `ORD-001` or `INV-001` without module code and year.
+
+---
+
+## 3. Font Sizes (Tables, Labels, KPI Cards)
+
+⚠️ Recurring bug in this project: fonts too large/inconsistent. Follow exactly.
+
+**Info card fields**
+- Label: `text-xs text-gray-400 uppercase tracking-wide`
+- Value: `text-sm font-semibold text-gray-800`
+- Container: `bg-gray-50 rounded-lg p-3`
+
+**Section titles**
+- `text-base font-bold text-[#1E1C43]`, often with `border-l-4 border-[#E05945] pl-3`
+
+**Table**
+- Header: `text-xs font-semibold text-gray-400 uppercase tracking-wide`
+- Body/data: `text-sm text-gray-700`
+- Names/important data: `text-sm font-semibold text-gray-800`
+- ID columns: `text-sm font-medium text-[#1E1C43] whitespace-nowrap`
+
+**KPI cards**
+- Big number: `text-2xl font-bold text-[#1E1C43]`
+- Label: `text-xs uppercase tracking-wide text-gray-400`
+- Container: `bg-white rounded-xl border border-gray-200 p-4`
+
+**Document headers** (Invoice/Receipt titles)
+- `text-4xl font-black` — ONLY place this scale/weight is used, ever
+
+**Badges:** `text-xs font-medium`, `px-2 py-1 rounded-full`
+**Buttons:** `text-sm font-medium` (primary: `bg-[#1E1C43] text-white`; secondary: `border border-gray-300 text-gray-700`)
+
+**Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. Reserved only for section titles (`text-base font-bold`) and document headers (`text-4xl font-black`). If a component "looks too big," check that value/label pairs use `text-sm`/`text-xs`.
+
+---
+
+## 4. Component Patterns
+
+### Table Wrapper (always use this structure)
+```jsx
+<div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+  <table className="w-full" style={{ minWidth: '1000px' }}>
+    <thead>
+      <tr className="border-b border-gray-200">
+        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">
+          Column Name
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition">
+        <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+          Data
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+```
+- `minWidth` scales with column count/content, typical 1000px–1600px
+- ID columns: `whitespace-nowrap text-sm font-medium text-[#1E1C43]`
+- Name/important columns: `text-sm font-semibold text-gray-800`
+- Regular data: `text-sm text-gray-700`
+- Every clickable row: `hover:bg-gray-50 cursor-pointer transition`
+- Never omit the `overflow-x-auto` wrapper
+
+### Filter Bar
+```jsx
+<div className="bg-white rounded-xl shadow-sm p-4 mb-4">
+  <div className="flex gap-3 mb-3">
+    <select className="flex-1 ...">...</select>
+    <select className="flex-1 ...">...</select>
+    <div style={{ width: '72px' }}></div>
+  </div>
+  <div className="flex gap-3">
+    <input className="flex-1 ..." placeholder="Cari..." />
+    <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600">Reset</button>
+  </div>
+</div>
+```
+
+### Modal
+- Outer: `fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4`
+- Inner: `bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]`
+- Header: `flex-shrink-0`
+- Body: `overflow-y-auto flex-1`
+- Footer: `flex-shrink-0`
+
+### KPI Card Row
+```jsx
+<div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <div className="bg-white rounded-xl border border-gray-200 p-4">
+    <p className="text-xs uppercase tracking-wide text-gray-400">Label</p>
+    <p className="text-2xl font-bold text-[#1E1C43] mt-1">Value</p>
+  </div>
+</div>
+```
+
+### Status Badge
+```jsx
+const statusColors = {
+  draft: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  terkirim: 'bg-blue-50 text-blue-700 border-blue-200',
+  lunas: 'bg-green-50 text-green-700 border-green-200',
+  overdue: 'bg-red-50 text-red-700 border-red-200',
+}
+
+<span className={`px-2 py-1 text-xs rounded-full font-medium border ${statusColors[status]}`}>
+  {statusLabel}
+</span>
+```
