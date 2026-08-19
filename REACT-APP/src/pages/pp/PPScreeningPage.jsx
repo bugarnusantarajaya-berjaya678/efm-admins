@@ -71,11 +71,35 @@ const statusColor = {
   "Perlu Review": "bg-orange-100 text-orange-700",
 };
 
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
+function StatMini({ label, value, sub, accent }) {
+  const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
+  return (
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    </div>
+  )
+}
+
 export default function PPScreeningPage() {
   const navigate = useNavigate();
   const [screeningList, setScreeningList] = useState(dummyScreeningData);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [filterPic, setFilterPic] = useState("");
+  const [filterTujuan, setFilterTujuan] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [selectedScreening, setSelectedScreening] = useState(null);
 
@@ -91,7 +115,9 @@ export default function PPScreeningPage() {
   const filtered = screeningList.filter(s => {
     const matchSearch = s.namaKlien.toLowerCase().includes(search.toLowerCase()) || s.id.toLowerCase().includes(search.toLowerCase());
     const matchStatus = filterStatus ? s.statusScreening === filterStatus : true;
-    return matchSearch && matchStatus;
+    const matchPic = filterPic ? s.picScreening === filterPic : true;
+    const matchTujuan = filterTujuan ? s.tujuanFitness === filterTujuan : true;
+    return matchSearch && matchStatus && matchPic && matchTujuan;
   });
 
   const handleSave = () => {
@@ -115,8 +141,7 @@ export default function PPScreeningPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs text-gray-400 mb-1">Private Program &gt; Screening Klien</p>
-          <h1 className="text-2xl font-bold text-[#1E1C43]">Screening Kesehatan Klien</h1>
+          <h1 className="text-[22px] font-bold text-text-primary">Screening Kesehatan Klien</h1>
           <p className="text-sm text-gray-500 mt-0.5">Form screening opsional untuk tracking kesehatan dan kebugaran klien</p>
         </div>
         <button onClick={() => setShowForm(true)}
@@ -126,38 +151,48 @@ export default function PPScreeningPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4">
-        {[
-          { label: "TOTAL SCREENING", value: screeningList.length, sub: "Semua data" },
-          { label: "SELESAI", value: screeningList.filter(s => s.statusScreening === "Selesai").length, sub: "Hasil lengkap" },
-          { label: "DRAFT", value: screeningList.filter(s => s.statusScreening === "Draft").length, sub: "Belum selesai" },
-          { label: "TERHUBUNG ORDER", value: screeningList.filter(s => s.orderId).length, sub: "Sudah digunakan" },
-        ].map(card => (
-          <div key={card.label} className="bg-white rounded-xl border border-gray-100 px-4 py-3">
-            <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{card.label}</p>
-            <p className="text-2xl font-bold text-[#1E1C43]">{card.value}</p>
-            <p className="text-xs text-gray-400 mt-0.5">{card.sub}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <StatMini label="TOTAL SCREENING" value={screeningList.length} sub="Semua data" />
+        <StatMini label="SELESAI" value={screeningList.filter(s => s.statusScreening === "Selesai").length} sub="Hasil lengkap" accent="green" />
+        <StatMini label="DRAFT" value={screeningList.filter(s => s.statusScreening === "Draft").length} sub="Belum selesai" accent="yellow" />
+        <StatMini label="TERHUBUNG ORDER" value={screeningList.filter(s => s.orderId).length} sub="Sudah digunakan" accent="blue" />
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border border-gray-100 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Status</option>
           <option>Selesai</option>
           <option>Draft</option>
           <option>Perlu Review</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={14} className="text-gray-400 shrink-0" />
+        <select value={filterPic} onChange={e => setFilterPic(e.target.value)}
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          <option value="">Semua PIC</option>
+          <option>Sarah Jenkins</option>
+          <option>Marcus Chen</option>
+          <option>Admin EFM</option>
+        </select>
+        <select value={filterTujuan} onChange={e => setFilterTujuan(e.target.value)}
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          <option value="">Semua Tujuan</option>
+          <option>Penurunan Berat Badan</option>
+          <option>Pembentukan Tubuh</option>
+          <option>Peningkatan Stamina</option>
+          <option>Rehabilitasi &amp; Recovery</option>
+          <option>Persiapan Kompetisi</option>
+          <option>Kesehatan Umum</option>
+          <option>Lainnya</option>
+        </select>
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari nama klien atau nomor screening..."
-            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-gray-400" />
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
         </div>
-        <button onClick={() => { setSearch(""); setFilterStatus(""); }}
-          className="px-3.5 py-[7px] bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+        <button onClick={() => { setSearch(""); setFilterStatus(""); setFilterPic(""); setFilterTujuan(""); }}
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
           Reset
         </button>
       </div>
@@ -188,7 +223,13 @@ export default function PPScreeningPage() {
                   <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{s.id}</td>
                   <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">{s.tanggal}</td>
                   <td className="px-3 py-2.5">
-                    <p className="text-xs font-medium text-gray-900">{s.namaKlien}</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                        style={{ background: getAvatarColor(s.namaKlien) }}>
+                        {getInitials(s.namaKlien)}
+                      </div>
+                      <p className="text-xs font-medium text-gray-900 whitespace-nowrap">{s.namaKlien}</p>
+                    </div>
                   </td>
                   <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">{s.usia} th</td>
                   <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">{s.beratBadan}kg / {s.tinggiBadan}cm</td>

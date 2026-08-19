@@ -78,6 +78,50 @@ Setiap kali menyelesaikan sebuah task/perubahan kode:
 4. efm-admins.vercel.app (tanpa suffix branch) adalah production, 
    terhubung ke branch main - hanya update setelah PR di-merge
 
+## Pull Request Otomatis
+
+Setiap kali menyelesaikan task dan sudah push ke branch:
+
+1. Cek dulu apakah branch ini SUDAH punya PR yang masih open.
+   Kalau belum ada PR untuk branch/commit ini, BUAT PR baru
+   secara otomatis menggunakan GitHub CLI (gh pr create) -
+   jangan hanya push dan berhenti di situ.
+
+2. Kalau branch ini sebelumnya sudah pernah di-merge lewat PR
+   lain, dan sekarang ada commit baru menumpuk di branch yang
+   sama, BUAT PR BARU (branch baru kalau perlu) - jangan
+   mengandalkan PR lama yang sudah merged.
+
+3. Selalu sertakan nomor PR yang BENAR dan URL yang valid di
+   laporan akhir - verifikasi dulu PR itu benar dalam status
+   "Open" sebelum melaporkan ke pengguna, jangan asumsi atau
+   sebut nomor dari memori/sesi sebelumnya.
+
+## Konfirmasi Merge
+
+Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
+(sesuai section Pull Request Otomatis):
+
+1. JANGAN langsung merge PR secara otomatis.
+
+2. Di akhir laporan, setelah link PR dan Vercel preview,
+   tambahkan pertanyaan eksplisit: "Sudah oke untuk di-merge ke
+   main? (ya/tidak)"
+
+3. Kalau pengguna menjawab "ya" / "oke" / "lanjut" / "merge"
+   atau kalimat senada yang menyatakan setuju - jalankan merge
+   PR menggunakan gh pr merge (pilih metode merge standar/default
+   project), lalu konfirmasi hasilnya dan berikan link production
+   (efm-admins.vercel.app).
+
+4. Kalau pengguna menjawab "tidak" / minta revisi - JANGAN merge,
+   tunggu instruksi perbaikan lebih lanjut dari pengguna. PR
+   tetap terbuka menunggu.
+
+5. Pengguna juga tetap bisa merge manual sendiri lewat GitHub
+   kapan saja tanpa menunggu ditanya - alur tanya ini hanya
+   mempercepat, bukan satu-satunya cara.
+
 ## Referensi Tambahan
 
 Daftar lengkap semua halaman/file di project (untuk referensi saat 

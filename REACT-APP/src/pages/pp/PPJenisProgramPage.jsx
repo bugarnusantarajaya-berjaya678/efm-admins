@@ -182,7 +182,7 @@ export default function PPJenisProgramPage() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jenis Program</h1>
+          <h1 className="text-[22px] font-bold text-text-primary">Jenis Program</h1>
           <p className="text-sm text-gray-500 mt-1">
             Kelola jenis-jenis program yang tersedia di Database Program Private Training
           </p>

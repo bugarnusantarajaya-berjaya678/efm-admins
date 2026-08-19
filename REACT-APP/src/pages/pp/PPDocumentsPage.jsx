@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
-import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle } from 'lucide-react'
+import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search } from 'lucide-react'
 import { DOCS_INIT, STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 
 /* ── helpers ── */
@@ -20,16 +20,12 @@ function DocBadge({ status }) {
 }
 
 function StatMini({ label, value, color }) {
-  const borderMap = {
-    yellow: 'border-yellow-200',
-    green:  'border-green-200',
-    blue:   'border-blue-200',
-    navy:   'border-gray-200',
-  }
+  const bCls = { yellow:'border-warning', green:'border-success', blue:'border-blue-400', navy:'border-border' }[color] || 'border-border'
+  const vCls = { yellow:'text-warning', green:'text-success', blue:'text-blue-600', navy:'text-text-primary' }[color] || 'text-text-primary'
   return (
-    <div className={`bg-white rounded-xl border ${borderMap[color] || 'border-gray-100'} px-4 py-3`}>
-      <div className="text-2xl font-bold text-[#1E1C43] leading-none">{value}</div>
-      <div className="text-xs text-gray-400 uppercase tracking-wide mt-1">{label}</div>
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
     </div>
   )
 }
@@ -473,7 +469,7 @@ export default function PPDocumentsPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-xl font-bold text-text-primary">Agreement Klien</h1>
+            <h1 className="text-[22px] font-bold text-text-primary">Agreement Klien</h1>
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
               <CheckCircle size={11} />
               Paperless · Sign-on-Glass
@@ -484,7 +480,7 @@ export default function PPDocumentsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
         <StatMini label="Pending TTD" value={stats.pending} color="yellow" />
         <StatMini label="Sudah TTD" value={stats.signed} color="green" />
         <StatMini label="Menunggu Approval" value={stats.waiting} color="blue" />
@@ -492,20 +488,20 @@ export default function PPDocumentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border border-gray-100 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Bulan</option>
           {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map(b => <option key={b}>{b}</option>)}
         </select>
         <select value={fTahun} onChange={e => setFTahun(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tahun</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
         </select>
         <select value={fStatus} onChange={e => setFStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Status</option>
           <option value="signed">Sudah TTD</option>
           <option value="pending">Pending TTD</option>
@@ -513,23 +509,23 @@ export default function PPDocumentsPage() {
           <option value="expired">Expired</option>
         </select>
         <select value={fPaket} onChange={e => setFPaket(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-text-primary bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Paket</option>
           {PAKET_OPTS.map(p => <option key={p} value={p}>{p}</option>)}
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <svg className="text-gray-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input
             type="text"
             value={fSearch}
             onChange={e => setFSearch(e.target.value)}
             placeholder="Cari nama klien atau order ID..."
-            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-gray-400"
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
         <button
           onClick={() => { setFBulan(''); setFTahun(''); setFStatus(''); setFPaket(''); setFSearch('') }}
-          className="px-3.5 py-[7px] border border-gray-200 text-xs font-semibold text-text-muted rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
         >
           Reset
         </button>

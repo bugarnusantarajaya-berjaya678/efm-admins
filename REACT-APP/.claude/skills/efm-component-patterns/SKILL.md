@@ -1,6 +1,6 @@
 ---
 name: efm-component-patterns
-description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, and pipeline/stage progress visual. MUST be checked before building any modal, image preview, invoice page, activity/history log, or leads pipeline visual in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper"), since inconsistent reimplementation of these patterns is a recurring issue in this project.
+description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, pipeline/stage progress visual, and the official List Page Template (Header + KPI cards + Filter bar + Table with pagination). MUST be checked before building any modal, image preview, invoice page, activity/history log, leads pipeline visual, or list page in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper", "add a new list page").
 ---
 
 # EFM V2 Component Patterns
@@ -225,3 +225,320 @@ const stages = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert
 - Upcoming stages: gray outline circle with number, gray label
 - Connecting line: navy if the stage before it is completed, gray otherwise
 - "Lost" stage (if applicable) is NOT part of the linear pipeline — render separately as a red badge/indicator, since a lead can exit the pipeline at any stage rather than progressing linearly to Lost
+
+---
+
+## 6. List Page Template (Header + KPI + Filter + Table)
+
+> **⚠️ WAJIB DIIKUTI: SEMUA halaman list (Leads, Screening, Orders, Invoice, Receipt, Agreement — di modul PP, B2B, maupun Event) HARUS mengikuti struktur ini persis. Jangan improvisasi struktur baru untuk halaman list.**
+
+Sumber resmi: `PPInvoicePage.jsx` dan `PPReceiptPage.jsx` — keduanya telah dikonfirmasi sebagai standar tampilan List Page seluruh project (verified 2026-08-19).
+
+---
+
+### Struktur keseluruhan (urutan wajib)
+
+```jsx
+<div className="flex flex-col gap-4">
+  {/* 1. Page Header */}
+  {/* 2. KPI Card Row */}
+  {/* 3. Filter Bar */}
+  {/* 4. Table */}
+</div>
+```
+
+---
+
+### 1. Page Header
+
+Tanpa action button (halaman yang hanya menampilkan list):
+```jsx
+<div>
+  <h1 className="text-2xl font-bold text-text-primary">Judul Halaman</h1>
+  <p className="text-sm text-text-muted mt-1">Deskripsi singkat halaman</p>
+</div>
+```
+
+Dengan action button di kanan atas (misalnya "Tambah" atau "Buat Baru"):
+```jsx
+<div className="flex items-start justify-between">
+  <div>
+    <h1 className="text-2xl font-bold text-text-primary">Judul Halaman</h1>
+    <p className="text-sm text-text-muted mt-1">Deskripsi singkat halaman</p>
+  </div>
+  <div className="flex items-center gap-2.5 shrink-0">
+    {/* Tombol aksi utama (navy) */}
+    <button className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#1E1C43] hover:bg-[#2d2b5e] transition-colors">
+      <Plus size={15} strokeWidth={2.5} /> Tambah Data
+    </button>
+  </div>
+</div>
+```
+
+**Catatan breadcrumb:** Breadcrumb ("Private Program > Invoice") ditampilkan oleh Topbar secara otomatis — JANGAN tambahkan breadcrumb manual di dalam page content.
+
+---
+
+### 2. KPI Card Row
+
+Grid wrapper:
+```jsx
+<div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+  <StatMini label="Total Invoice"  value={invoices.length} sub="Bulan ini" />
+  <StatMini label="Belum Dibayar"  value={pendingCount}    sub="Perlu follow up"     accent="orange" />
+  <StatMini label="Paid"           value={paidCount}       sub="Terbayar"            accent="green" />
+  <StatMini label="Overdue"        value={overdueCount}    sub="Lewat jatuh tempo"   accent="red" />
+</div>
+```
+
+Komponen `StatMini` (definisikan di atas component utama, copy persis):
+```jsx
+function StatMini({ label, value, sub, accent }) {
+  const bCls = {
+    orange: 'border-accent',
+    green:  'border-success',
+    red:    'border-danger',
+    yellow: 'border-warning',
+    blue:   'border-blue-400',
+  }[accent] || 'border-border'
+  const vCls = {
+    orange: 'text-accent',
+    green:  'text-success',
+    red:    'text-danger',
+    yellow: 'text-warning',
+    blue:   'text-blue-600',
+  }[accent] || 'text-text-primary'
+  return (
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    </div>
+  )
+}
+```
+
+**Aturan KPI card:**
+- Container: `bg-bg-surface rounded-xl border-[1.5px] [border-token] px-4 py-3` — border penuh semua sisi, bukan hanya border-t
+- Label: `text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1` (di ATAS angka)
+- Angka: `text-xl font-bold [text-token]` — BUKAN `text-2xl` atau `text-[28px]`
+- Card pertama (Total/netral): tidak ada prop `accent` → border dan angka menggunakan token netral (`border-border`, `text-text-primary`)
+- Mapping warna: `orange` → accent (merah-oranye EFM), `green` → success, `red` → danger, `yellow` → warning, `blue` → `border-blue-400 text-blue-600`
+
+---
+
+### 3. Filter Bar
+
+```jsx
+<div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+  {/* Dropdown 1 — misal: Bulan */}
+  <select
+    className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
+    value={fBulan} onChange={e => { setFBulan(e.target.value); setPage(1) }}
+  >
+    <option value="">Semua Bulan</option>
+    {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map(b => <option key={b}>{b}</option>)}
+  </select>
+
+  {/* Dropdown 2 — misal: Tahun */}
+  <select
+    className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
+    value={fTahun} onChange={e => { setFTahun(e.target.value); setPage(1) }}
+  >
+    <option value="">Semua Tahun</option>
+    <option value="2025">2025</option>
+    <option value="2026">2026</option>
+  </select>
+
+  {/* Dropdown 3 — misal: Status */}
+  <select
+    className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
+    value={fStatus} onChange={e => { setFStatus(e.target.value); setPage(1) }}
+  >
+    <option value="">Semua Status</option>
+    <option value="paid">Paid</option>
+    <option value="pending">Awaiting Payment</option>
+  </select>
+
+  {/* Search — selalu paling kanan sebelum Reset, mengambil sisa lebar */}
+  <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+    <Search size={14} className="text-text-muted shrink-0" />
+    <input
+      className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
+      placeholder="Cari nama klien atau nomor dokumen..."
+      value={fSearch}
+      onChange={e => { setFSearch(e.target.value); setPage(1) }}
+    />
+  </div>
+
+  {/* Reset — NAVY SOLID, bukan abu-abu, bukan merah */}
+  <button
+    onClick={reset}
+    className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
+  >
+    Reset
+  </button>
+</div>
+```
+
+**Aturan Filter Bar:**
+- Container: `bg-bg-surface border border-border rounded-xl` — BUKAN `bg-white shadow-sm`
+- Urutan elemen: [dropdown 1] [dropdown 2] [dropdown 3 (opsional)] [search] [reset]
+- Semua dropdown: `border-[1.5px] border-border`, bukan `border border-gray-200`
+- Search container: mengambil sisa lebar dengan `flex-1`; pada fokus, border berubah ke `border-primary` dan background ke `bg-white`
+- Reset button: **WAJIB navy solid** (`bg-primary text-white`). Jangan gunakan `border border-gray-300 text-gray-600` (abu-abu) atau warna lain
+
+---
+
+### 4. Table
+
+```jsx
+<div className="bg-bg-surface border border-border rounded-xl overflow-hidden">
+  <div className="overflow-x-auto">
+    <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
+      <thead>
+        <tr className="bg-gray-50 border-b border-gray-100">
+          <th style={{minWidth:'160px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+            No. Dokumen
+          </th>
+          <th style={{minWidth:'140px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+            Nama Klien
+          </th>
+          {/* kolom lain... */}
+          <th style={{minWidth:'100px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+            Aksi
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {slice.map(item => (
+          <tr key={item.id} onClick={() => handleOpenDetail(item)}
+            className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
+
+            {/* ID column */}
+            <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
+              {item.id}
+            </td>
+
+            {/* Nama column — dengan avatar */}
+            <td className="px-3 py-2.5">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                  style={{ background: item.color }}
+                >
+                  {item.initials}
+                </div>
+                <span className="text-xs font-medium text-gray-900">{item.nama}</span>
+              </div>
+            </td>
+
+            {/* Data teks biasa */}
+            <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">
+              {item.paket}
+            </td>
+
+            {/* Data angka/amount */}
+            <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 whitespace-nowrap">
+              {formatRp(item.total)}
+            </td>
+
+            {/* Badge */}
+            <td className="px-3 py-2.5">
+              <StatusBadge status={item.status} />
+            </td>
+
+            {/* Kolom Aksi */}
+            <td className="px-3 py-2.5">
+              <div className="flex items-center gap-1.5">
+                {/* Tombol Lihat Detail (biru) */}
+                <button
+                  onClick={e => { e.stopPropagation(); handleOpenDetail(item) }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-[#2980B9] border border-[#2980B9] bg-[#EBF5FB] hover:bg-[#2980B9] hover:text-white transition-colors"
+                  title="Lihat Detail"
+                >
+                  <Eye size={13} />
+                </button>
+                {/* Tombol aksi kedua (misal kirim WA, hijau) — opsional */}
+                <button
+                  onClick={e => { e.stopPropagation(); handleSecondaryAction(item) }}
+                  className="w-7 h-7 rounded-lg flex items-center justify-center text-[#27AE60] border border-[#27AE60] bg-[#EAFAF1] hover:bg-[#27AE60] hover:text-white transition-colors"
+                  title="Aksi Kedua"
+                >
+                  <SomeIcon size={13} />
+                </button>
+              </div>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  {/* Table footer: count + pagination */}
+  <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+    <span className="text-xs text-text-muted">
+      Menampilkan {start}–{end} dari {filtered.length} data
+    </span>
+    <div className="flex items-center gap-1.5">
+      <PBtn onClick={() => setPage(p => Math.max(1, p - 1))}>‹</PBtn>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+        <PBtn key={n} active={n === page} onClick={() => setPage(n)}>{n}</PBtn>
+      ))}
+      <PBtn onClick={() => setPage(p => Math.min(totalPages, p + 1))}>›</PBtn>
+    </div>
+  </div>
+</div>
+```
+
+Komponen `PBtn` untuk pagination (definisikan bersama StatMini):
+```jsx
+function PBtn({ children, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors
+        ${active
+          ? 'bg-primary text-white border-primary'
+          : 'bg-white text-text-muted border-border hover:border-primary hover:text-primary'
+        }`}
+    >
+      {children}
+    </button>
+  )
+}
+```
+
+**Aturan Table:**
+- Outer wrapper: `bg-bg-surface border border-border rounded-xl overflow-hidden` — BUKAN `bg-white rounded-2xl shadow-sm`
+- Semua padding cell (header & body): `px-3 py-2.5` — BUKAN `px-4 py-3`
+- Header: semua `text-left`, ukuran `text-[10px] font-semibold text-gray-500 uppercase tracking-wider`
+- ID column: `font-semibold text-[#1E1C43]` — selalu menonjol dengan warna navy
+- Avatar: `w-7 h-7 rounded-full`, font `text-[10px] font-bold` — BUKAN `w-8 h-8` atau font lebih besar
+- Nama di samping avatar: `text-xs font-medium text-gray-900`
+- Data teks biasa: `text-xs font-normal text-gray-600`
+- Angka/amount: `text-xs font-semibold text-gray-600`
+- Tombol aksi: ukuran `w-7 h-7`, icon `size={13}` — bukan `size={14}` atau lebih besar
+- Selalu `e.stopPropagation()` pada tombol aksi untuk mencegah trigger klik baris
+- Footer pagination: `px-4 py-3 border-t border-border`
+
+---
+
+### Helper: avatar color dari nama
+
+```jsx
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+
+function getInitials(name) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+```
+
+Atau jika data dari data file sudah menyertakan `initials` dan `color` pre-computed, langsung pakai `item.initials` dan `item.color` tanpa helper.
+

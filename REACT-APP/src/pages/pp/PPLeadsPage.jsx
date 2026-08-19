@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Plus, RotateCcw, Search } from 'lucide-react'
+import { X, Plus, Search } from 'lucide-react'
 
 /* ═══════════════════════════════════════
    Constants
@@ -176,6 +176,16 @@ function formatFollowUp(dateStr) {
   }
 }
 
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
 const STAGE_BORDER = {
   Convert:   'border-green-400',
   Lost:      'border-red-400',
@@ -184,6 +194,21 @@ const STAGE_BORDER = {
   Screening: 'border-purple-400',
   Approach:  'border-blue-400',
   New:       'border-gray-300',
+}
+
+/* ═══════════════════════════════════════
+   StatMini
+═══════════════════════════════════════ */
+function StatMini({ label, value, sub, accent }) {
+  const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
+  return (
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    </div>
+  )
 }
 
 /* ═══════════════════════════════════════
@@ -303,6 +328,7 @@ export default function PPLeadsPage() {
   const kpiTotal     = leads.length
   const kpiHot       = leads.filter(l => l.statusPipeline === 'Screening' || l.statusPipeline === 'Invoicing').length
   const kpiConverted = leads.filter(l => l.statusPipeline === 'Convert').length
+  const kpiLost      = leads.filter(l => l.statusPipeline === 'Lost').length
 
   function fieldCls(key) {
     return `w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] ${formErrors[key] ? 'border-red-400' : 'border-gray-200'}`
@@ -310,7 +336,7 @@ export default function PPLeadsPage() {
 
   return (
     <>
-      <div className="p-6 space-y-5">
+      <div className="space-y-5">
 
         {/* Header */}
         <div className="flex items-start justify-between">
@@ -327,61 +353,43 @@ export default function PPLeadsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Leads</p>
-            <p className="text-[28px] font-bold text-text-primary leading-none">{kpiTotal}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Semua pipeline</p>
-          </div>
-          <div className="bg-white rounded-2xl border-2 border-[#E05945] px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Hot Leads</p>
-            <p className="text-[28px] font-bold text-[#E05945] leading-none">{kpiHot}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Screening &amp; Invoicing</p>
-          </div>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Converted</p>
-            <p className="text-[28px] font-bold text-green-600 leading-none">{kpiConverted}</p>
-            <p className="text-[11px] text-text-muted mt-1.5">Jadi klien aktif</p>
-          </div>
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+          <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" />
+          <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" />
+          <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" />
+          <StatMini label="Lost" value={kpiLost} sub="Tidak convert" accent="red" />
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm p-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <select value={bulan} onChange={e => setBulan(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Bulan</option>
-              {BULAN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-            <select value={tahun} onChange={e => setTahun(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Tahun</option>
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-            </select>
-            <select value={tipe} onChange={e => setTipe(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Tipe</option>
-              <option>Personal</option><option>Group</option><option>Couple</option>
-            </select>
-            <select value={stage} onChange={e => setStage(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Status</option>
-              {PIPELINE_STAGES.map(s => <option key={s}>{s}</option>)}
-            </select>
-            <div className="flex items-center gap-3 ml-auto">
-              <div className="relative">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Cari nama klien..."
-                  className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
-              </div>
-              <button onClick={handleReset}
-                className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
-                <RotateCcw size={12} /> Reset
-              </button>
-            </div>
+        <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+          <select value={bulan} onChange={e => setBulan(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Bulan</option>
+            {BULAN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+          </select>
+          <select value={tahun} onChange={e => setTahun(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tahun</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+          </select>
+          <select value={tipe} onChange={e => setTipe(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tipe</option>
+            <option>Personal</option><option>Group</option><option>Couple</option>
+          </select>
+          <select value={stage} onChange={e => setStage(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Status</option>
+            {PIPELINE_STAGES.map(s => <option key={s}>{s}</option>)}
+          </select>
+          <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+            <Search size={14} className="text-text-muted shrink-0" />
+            <input className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
+              placeholder="Cari nama klien..."
+              value={search} onChange={e => setSearch(e.target.value)} />
           </div>
+          <button onClick={handleReset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
         </div>
 
         {/* Table */}
@@ -406,7 +414,15 @@ export default function PPLeadsPage() {
                   <tr key={lead.id} onClick={() => handleOpenDetail(lead)}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{lead.id}</td>
-                    <td className="text-xs font-medium text-gray-900 px-3 py-2.5 whitespace-nowrap">{lead.nama}</td>
+                    <td className="px-3 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                          style={{ background: getAvatarColor(lead.nama) }}>
+                          {getInitials(lead.nama)}
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 whitespace-nowrap">{lead.nama}</span>
+                      </div>
+                    </td>
                     <td className="px-3 py-2.5"><TipeBadge tipe={lead.tipe} /></td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.noHp}</td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.programDiminati}</td>

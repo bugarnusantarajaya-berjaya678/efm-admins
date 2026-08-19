@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Eye, Printer, Search, RotateCcw, X, CheckCircle, Receipt } from 'lucide-react'
+import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -458,14 +458,14 @@ export default function PPOrdersPage() {
       </div>
 
       {/* Filter bar */}
-      <div className="bg-bg-surface rounded-xl border border-border px-4 py-3 flex flex-wrap items-center gap-2.5">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={filterBulan} onChange={e => { setFilterBulan(e.target.value); setPage(1) }}
-          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs font-[Poppins] text-text-primary outline-none focus:border-primary cursor-pointer hover:border-primary transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Bulan</option>
           {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map(b => <option key={b}>{b}</option>)}
         </select>
         <select value={filterTahun} onChange={e => { setFilterTahun(e.target.value); setPage(1) }}
-          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs font-[Poppins] text-text-primary outline-none focus:border-primary cursor-pointer hover:border-primary transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tahun</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
@@ -477,22 +477,20 @@ export default function PPOrdersPage() {
           { value: filterPaket,  set: (v) => { setFilterPaket(v);  setPage(1) }, opts: [['','Semua Paket'],  ...PAKET_OPTS.map((p) => [p,p])] },
         ].map((f, i) => (
           <select key={i} value={f.value} onChange={(e) => f.set(e.target.value)}
-            className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs font-[Poppins] text-text-primary outline-none focus:border-primary cursor-pointer hover:border-primary transition-colors">
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             {f.opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         ))}
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
           <input
             type="text" value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
             placeholder="Cari nama klien atau order ID..."
-            className="flex-1 bg-transparent outline-none text-xs text-text-primary font-[Poppins] placeholder:text-[#BFC5CC]"
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={resetFilter} className="flex items-center gap-1.5 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-primary-2 transition-colors">
-          <RotateCcw size={13} /> Reset
-        </button>
+        <button onClick={resetFilter} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
       </div>
 
       {/* Highlight banner */}
