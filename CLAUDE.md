@@ -58,6 +58,26 @@ di atas terlebih dahulu.
 
 - Jangan push ke GitHub kecuali diminta eksplisit oleh pengguna.
 
+## Live Preview Workflow
+
+Setiap kali menyelesaikan sebuah task/perubahan kode:
+
+1. Pastikan perubahan sudah di-push ke branch kerja (bukan main)
+
+2. Selalu sertakan di akhir laporan: link PR DAN link Vercel 
+   branch preview URL (format: 
+   https://efm-admins-git-[nama-branch]-bugar-nusantara-jaya.vercel.app) 
+   supaya pengguna bisa langsung buka dan lihat hasilnya secara 
+   live di browser, tanpa perlu screenshot manual
+
+3. Jangan gunakan URL immutable deployment (yang formatnya 
+   efm-admins-[hash acak]-bugar-nusantara-jaya.vercel.app) sebagai 
+   link yang dibagikan ke pengguna - itu snapshot statis, tidak 
+   update otomatis
+
+4. efm-admins.vercel.app (tanpa suffix branch) adalah production, 
+   terhubung ke branch main - hanya update setelah PR di-merge
+
 ## Referensi Tambahan
 
 Daftar lengkap semua halaman/file di project (untuk referensi saat 
