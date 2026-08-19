@@ -20,16 +20,16 @@ function DocBadge({ status }) {
 }
 
 function StatMini({ label, value, color }) {
-  const borderMap = {
-    yellow: 'border-yellow-200',
-    green:  'border-green-200',
-    blue:   'border-blue-200',
-    navy:   'border-gray-200',
+  const topBorderMap = {
+    yellow: 'border-t-yellow-400',
+    green:  'border-t-green-400',
+    blue:   'border-t-blue-400',
+    navy:   'border-t-gray-400',
   }
   return (
-    <div className={`bg-white rounded-xl border ${borderMap[color] || 'border-gray-100'} px-4 py-3`}>
+    <div className={`bg-white rounded-xl border border-gray-100 border-t-2 ${topBorderMap[color] || 'border-t-gray-200'} px-4 py-3`}>
+      <div className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</div>
       <div className="text-2xl font-bold text-[#1E1C43] leading-none">{value}</div>
-      <div className="text-xs text-gray-400 uppercase tracking-wide mt-1">{label}</div>
     </div>
   )
 }

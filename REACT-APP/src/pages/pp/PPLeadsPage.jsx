@@ -176,6 +176,16 @@ function formatFollowUp(dateStr) {
   }
 }
 
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) {
+  return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
 const STAGE_BORDER = {
   Convert:   'border-green-400',
   Lost:      'border-red-400',
@@ -303,6 +313,7 @@ export default function PPLeadsPage() {
   const kpiTotal     = leads.length
   const kpiHot       = leads.filter(l => l.statusPipeline === 'Screening' || l.statusPipeline === 'Invoicing').length
   const kpiConverted = leads.filter(l => l.statusPipeline === 'Convert').length
+  const kpiLost      = leads.filter(l => l.statusPipeline === 'Lost').length
 
   function fieldCls(key) {
     return `w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] ${formErrors[key] ? 'border-red-400' : 'border-gray-200'}`
@@ -327,7 +338,7 @@ export default function PPLeadsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Leads</p>
             <p className="text-[28px] font-bold text-text-primary leading-none">{kpiTotal}</p>
@@ -338,10 +349,15 @@ export default function PPLeadsPage() {
             <p className="text-[28px] font-bold text-[#E05945] leading-none">{kpiHot}</p>
             <p className="text-[11px] text-text-muted mt-1.5">Screening &amp; Invoicing</p>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+          <div className="bg-white rounded-2xl border border-gray-100 border-t-2 border-t-green-400 shadow-sm px-5 py-4">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Converted</p>
             <p className="text-[28px] font-bold text-green-600 leading-none">{kpiConverted}</p>
             <p className="text-[11px] text-text-muted mt-1.5">Jadi klien aktif</p>
+          </div>
+          <div className="bg-white rounded-2xl border border-gray-100 border-t-2 border-t-red-400 shadow-sm px-5 py-4">
+            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Lost</p>
+            <p className="text-[28px] font-bold text-red-500 leading-none">{kpiLost}</p>
+            <p className="text-[11px] text-text-muted mt-1.5">Tidak convert</p>
           </div>
         </div>
 
@@ -406,7 +422,15 @@ export default function PPLeadsPage() {
                   <tr key={lead.id} onClick={() => handleOpenDetail(lead)}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{lead.id}</td>
-                    <td className="text-xs font-medium text-gray-900 px-3 py-2.5 whitespace-nowrap">{lead.nama}</td>
+                    <td className="px-3 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
+                          style={{ background: getAvatarColor(lead.nama) }}>
+                          {getInitials(lead.nama)}
+                        </div>
+                        <span className="text-xs font-medium text-gray-900 whitespace-nowrap">{lead.nama}</span>
+                      </div>
+                    </td>
                     <td className="px-3 py-2.5"><TipeBadge tipe={lead.tipe} /></td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.noHp}</td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.programDiminati}</td>
