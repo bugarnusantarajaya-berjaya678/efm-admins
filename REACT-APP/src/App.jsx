@@ -16,7 +16,9 @@ import PPProgramDBPage from './pages/pp/PPProgramDBPage'
 import PPJenisProgramPage from './pages/pp/PPJenisProgramPage'
 import PPDocumentsPage from './pages/pp/PPDocumentsPage'
 import PPInvoicePage from './pages/pp/PPInvoicePage'
+import PPInvoiceDetailPage from './pages/pp/PPInvoiceDetailPage'
 import PPReceiptPage from './pages/pp/PPReceiptPage'
+import PPReceiptDetailPage from './pages/pp/PPReceiptDetailPage'
 import PPOrderDetailPage from './pages/pp/PPOrderDetailPage'
 import PPOrderNewPage from './pages/pp/PPOrderNewPage'
 import PPScreeningPage from './pages/pp/PPScreeningPage'
@@ -96,7 +98,9 @@ function AppRoutes() {
       <Route path="/pp/program-db/jenis-program" element={<AppShell><PPJenisProgramPage /></AppShell>} />
       <Route path="/pp/documents" element={<AppShell><PPDocumentsPage /></AppShell>} />
       <Route path="/pp/invoice" element={<AppShell><PPInvoicePage /></AppShell>} />
+      <Route path="/pp/invoice/:id" element={<AppShell><PPInvoiceDetailPage /></AppShell>} />
       <Route path="/pp/receipt" element={<AppShell><PPReceiptPage /></AppShell>} />
+      <Route path="/pp/receipt/:id" element={<AppShell><PPReceiptDetailPage /></AppShell>} />
 
       {/* B2B Routes */}
       <Route path="/b2b/dashboard" element={<AppShell><B2BDashboardPage /></AppShell>} />
