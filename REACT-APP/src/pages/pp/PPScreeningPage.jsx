@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Plus, Search, Eye, ChevronRight, X, ClipboardList } from 'lucide-react';
 
 const dummyScreeningData = [
@@ -95,6 +95,7 @@ function StatMini({ label, value, sub, accent }) {
 
 export default function PPScreeningPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [screeningList, setScreeningList] = useState(dummyScreeningData);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -102,6 +103,14 @@ export default function PPScreeningPage() {
   const [filterTujuan, setFilterTujuan] = useState("");
   const [showForm, setShowForm] = useState(false);
   const [selectedScreening, setSelectedScreening] = useState(null);
+
+  useEffect(() => {
+    const openId = location.state?.openScreeningId;
+    if (openId) {
+      const scr = dummyScreeningData.find(s => s.id === openId);
+      if (scr) setSelectedScreening(scr);
+    }
+  }, []);
 
   const [form, setForm] = useState({
     namaKlien: "", usia: "", jenisKelamin: "Laki-laki",

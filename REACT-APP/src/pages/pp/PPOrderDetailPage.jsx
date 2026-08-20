@@ -1181,7 +1181,7 @@ export default function PPOrderDetailPage() {
                 <option>Lunas</option>
                 <option>Overdue</option>
               </select>
-              <button onClick={() => navigate('/pp/invoice')}
+              <button onClick={() => navigate('/pp/invoice', { state: { filterSearch: invoicePP.nomorInvoice } })}
                 className="flex-1 border border-[#1E1C43] text-[#1E1C43] rounded-xl py-2 text-xs font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-1.5">
                 <Eye size={13} /> Preview Invoice
               </button>
@@ -1491,7 +1491,7 @@ export default function PPOrderDetailPage() {
                         </select>
                         {selectedScreeningId && (
                           <button
-                            onClick={() => navigate('/pp/screening')}
+                            onClick={() => navigate('/pp/screening', { state: { openScreeningId: selectedScreeningId } })}
                             className="px-3 py-2.5 bg-[#1E1C43] text-white rounded-xl text-xs font-semibold hover:bg-[#2d2b5e] transition flex items-center gap-1.5 flex-shrink-0">
                             <ExternalLink size={13} /> Lihat File Lengkap
                           </button>

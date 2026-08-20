@@ -48,11 +48,12 @@ const LEADS_INIT = [
     emailUmum: 'james.wilson@email.com',
     catatanAwal: 'Tertarik program fatloss, sudah follow up 2x',
     statusPipeline: 'Convert',
+    orderId: 'PP-26-0013',
     tanggalMasuk: '20 Okt 2026',
     tanggalFollowUp: null,
-    catatan: 'Sudah convert ke Order PP-26-0001',
+    catatan: 'Sudah convert ke Order PP-26-0013',
     logAktivitas: [
-      { status: 'Convert',   oleh: 'Sarah Jenkins', tanggal: '20 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0001' },
+      { status: 'Convert',   oleh: 'Sarah Jenkins', tanggal: '20 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0013' },
       { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '18 Okt 2026', catatan: 'Klien setuju paket 12 sesi' },
       { status: 'Invoicing', oleh: 'Sarah Jenkins', tanggal: '16 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
       { status: 'Screening', oleh: 'Sarah Jenkins', tanggal: '14 Okt 2026', catatan: 'Screening kesehatan selesai, BMI normal' },
@@ -640,6 +641,16 @@ export default function PPLeadsPage() {
                       <div className="col-span-2">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
                         <p className="text-sm text-gray-700">{selectedLead.catatan}</p>
+                      </div>
+                    )}
+                    {selectedLead.statusPipeline === 'Convert' && selectedLead.orderId && (
+                      <div className="col-span-2">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Order Terkait</p>
+                        <button
+                          onClick={() => { setShowLeadModal(false); navigate('/pp/orders/' + selectedLead.orderId) }}
+                          className="text-sm font-semibold text-[#1E1C43] hover:underline flex items-center gap-1.5">
+                          #{selectedLead.orderId} →
+                        </button>
                       </div>
                     )}
                   </div>
