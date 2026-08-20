@@ -207,7 +207,7 @@ export default function PPOrderDetailPage() {
     ? {
         id: 'BARU',
         namaKlien: fromState?.namaKlien || '',
-        paket: '',
+        paket: fromState?.paket || '',
         tanggalMulai: '',
         picSalesEFM: '',
         picOpsEFM: '',
@@ -1477,7 +1477,7 @@ export default function PPOrderDetailPage() {
                   const linkedScreening = dummyScreenings.find(s => s.id === selectedScreeningId)
                   return (
                     <div>
-                      <div className="flex gap-3 mb-3">
+                      <div className="flex gap-3 mb-2">
                         <select
                           value={selectedScreeningId}
                           onChange={e => setSelectedScreeningId(e.target.value)}
@@ -1497,6 +1497,11 @@ export default function PPOrderDetailPage() {
                           </button>
                         )}
                       </div>
+                      <button
+                        onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: order?.namaKlien || infoDeal.namaKlien, prefillOrderId: order?.id } })}
+                        className="text-xs text-[#E05945] font-semibold hover:underline flex items-center gap-1 mb-3">
+                        <Plus size={12} /> Buat Screening Baru untuk klien ini
+                      </button>
                       {linkedScreening && (
                         <div className="bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl p-3">
                           <div className="flex items-center justify-between">

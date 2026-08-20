@@ -109,5 +109,9 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Setiap task dikerjakan di branch terpisah, hasil akhir berupa PR
 - Jangan kerjakan banyak task besar secara paralel di branch berbeda tanpa sepengetahuan pengguna - selesaikan dan minta merge 1 task dulu sebelum mulai task besar berikutnya, supaya tidak ada branch menumpuk yang belum di-review
 - Task kecil/independen (bug fix satu file, ubah teks) boleh langsung jalan tanpa menunggu PR sebelumnya di-merge
-- Selalu akhiri laporan dengan link PR dan link Vercel branch preview (sesuai CLAUDE.md section Live Preview Workflow)
 - Setelah build sukses tapi SEBELUM melapor selesai, jalankan pengecekan skill (lihat skill efm-skill-maintenance)
+
+**Mendapatkan link Vercel Preview yang benar:**
+- JANGAN konstruksi URL preview secara manual dari nama branch. Formula `efm-admins-git-[nama-branch]-bugar-nusantara-jaya.vercel.app` hanya benar kalau nama branch pendek (< 40 karakter termasuk prefix `efm-admins-git-` dan suffix `-bugar-nusantara-jaya`). Branch dengan nama panjang akan di-truncate oleh Vercel dan ditambah hash acak — URL yang dikonstruksi manual TIDAK BISA dibuka.
+- Setelah PR dibuat, selalu panggil `mcp__github__pull_request_read` dengan method `get_comments` untuk membaca komentar Vercel bot di PR tersebut. Komentar Vercel bot berisi field `previewUrl` yang merupakan URL yang benar dan bisa dibuka.
+- Ambil URL preview dari komentar itu (bukan dari formula), lalu sertakan di laporan akhir ke pengguna.
