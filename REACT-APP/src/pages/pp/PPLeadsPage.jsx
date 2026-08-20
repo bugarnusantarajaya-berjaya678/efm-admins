@@ -810,7 +810,7 @@ export default function PPLeadsPage() {
                 </button>
                 {selectedLead.statusPipeline !== 'Lost' && (
                   <button
-                    onClick={() => { handleCloseModal(); navigate('/pp/orders/new?leadId=' + selectedLead.id) }}
+                    onClick={() => { handleCloseModal(); navigate('/pp/orders/new', { state: { namaKlien: selectedLead.nama, paket: selectedLead.programDiminati, leadId: selectedLead.id } }) }}
                     className="inline-flex items-center gap-2 bg-[#E05945] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#c94a38] transition-colors"
                   >
                     Buat Order →

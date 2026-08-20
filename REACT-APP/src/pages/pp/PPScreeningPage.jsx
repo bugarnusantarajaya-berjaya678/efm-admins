@@ -104,22 +104,28 @@ export default function PPScreeningPage() {
   const [showForm, setShowForm] = useState(false);
   const [selectedScreening, setSelectedScreening] = useState(null);
 
-  useEffect(() => {
-    const openId = location.state?.openScreeningId;
-    if (openId) {
-      const scr = dummyScreeningData.find(s => s.id === openId);
-      if (scr) setSelectedScreening(scr);
-    }
-  }, []);
-
-  const [form, setForm] = useState({
+  const emptyForm = {
     namaKlien: "", usia: "", jenisKelamin: "Laki-laki",
     beratBadan: "", tinggiBadan: "",
     tujuanFitness: "", levelAktivitas: "Sedang",
     riwayatPenyakit: "", alergi: "", obatRutin: "",
     catatanKesehatan: "", hasilRekomendasi: "",
     picScreening: "", statusScreening: "Draft",
-  });
+  };
+
+  const [form, setForm] = useState(emptyForm);
+
+  useEffect(() => {
+    const openId = location.state?.openScreeningId;
+    if (openId) {
+      const scr = dummyScreeningData.find(s => s.id === openId);
+      if (scr) setSelectedScreening(scr);
+    }
+    if (location.state?.openNewForm) {
+      setForm(prev => ({ ...prev, namaKlien: location.state.prefillNamaKlien || '' }));
+      setShowForm(true);
+    }
+  }, []);
 
   const filtered = screeningList.filter(s => {
     const matchSearch = s.namaKlien.toLowerCase().includes(search.toLowerCase()) || s.id.toLowerCase().includes(search.toLowerCase());
@@ -142,7 +148,7 @@ export default function PPScreeningPage() {
       orderId: null,
     }]);
     setShowForm(false);
-    setForm({ namaKlien:"", usia:"", jenisKelamin:"Laki-laki", beratBadan:"", tinggiBadan:"", tujuanFitness:"", levelAktivitas:"Sedang", riwayatPenyakit:"", alergi:"", obatRutin:"", catatanKesehatan:"", hasilRekomendasi:"", picScreening:"", statusScreening:"Draft" });
+    setForm(emptyForm);
   };
 
   return (
