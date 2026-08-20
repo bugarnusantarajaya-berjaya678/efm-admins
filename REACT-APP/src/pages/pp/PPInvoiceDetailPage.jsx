@@ -1,0 +1,437 @@
+import { useState } from 'react'
+import { useParams, useLocation, useNavigate } from 'react-router-dom'
+import { ArrowLeft, CheckCircle, Pencil, Trash2, Plus, Download } from 'lucide-react'
+import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
+
+const validKodeDiskon = {
+  HEMAT10:   { label: 'Voucher Hemat 10%',    tipe: 'persen',  nilai: 10    },
+  HARBOLNAS: { label: 'Hari Belanja Nasional', tipe: 'persen',  nilai: 15    },
+  FLAT50K:   { label: 'Flat Diskon Spesial',  tipe: 'nominal', nilai: 50000 },
+}
+
+const DEFAULT_SYARAT = [
+  'Pembayaran dilakukan sesuai dengan jadwal yang telah disepakati.',
+  'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
+  'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
+  'Essential Fitness Management berhak mengganti trainer jika diperlukan.',
+]
+
+function MarkPaidModal({ inv, onConfirm, onClose }) {
+  const [paidDate,  setPaidDate]  = useState('')
+  const [payMethod, setPayMethod] = useState('Transfer Bank (BCA)')
+
+  function handleConfirm() {
+    if (!paidDate) { alert('Pilih tanggal pembayaran.'); return }
+    onConfirm({ paidDate, payMethod })
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-5">
+      <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
+        <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-border">
+          <h3 className="text-base font-bold text-text-primary">Konfirmasi Pembayaran</h3>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-text-muted hover:bg-bg-page">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div className="px-7 py-6 space-y-4">
+          <div className="bg-[#EAFAF1] rounded-xl px-4 py-3.5 border-l-[3px] border-[#27AE60]">
+            <div className="text-xs font-bold text-[#27AE60] mb-1 uppercase tracking-wide">Konfirmasi Pembayaran</div>
+            <div className="text-sm text-text-primary">{inv.invNo} — {inv.client}</div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-text-primary mb-1.5">Tanggal Pembayaran</label>
+            <input type="date" value={paidDate} onChange={e => setPaidDate(e.target.value)}
+              className="w-full px-3 py-2.5 border-[1.5px] border-border rounded-lg text-sm text-text-primary outline-none focus:border-primary" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-text-primary mb-1.5">Metode Pembayaran</label>
+            <select value={payMethod} onChange={e => setPayMethod(e.target.value)}
+              className="w-full px-3 py-2.5 border-[1.5px] border-border rounded-lg text-sm text-text-primary bg-white outline-none focus:border-primary">
+              <option>Transfer Bank (BCA)</option>
+              <option>Transfer Bank (Mandiri)</option>
+              <option>Cash</option>
+              <option>QRIS</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-text-primary mb-1.5">Upload Bukti Transfer <span className="text-accent">*</span></label>
+            <div className="border-2 border-dashed border-border rounded-xl p-5 text-center cursor-pointer hover:border-primary hover:bg-bg-page transition-colors">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-7 h-7 mx-auto text-text-muted mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+              <div className="text-sm font-semibold text-text-primary mb-0.5">Klik untuk upload bukti</div>
+              <div className="text-[11px] text-text-muted">JPG, PNG, atau PDF (Maks. 5MB)</div>
+            </div>
+          </div>
+        </div>
+        <div className="px-7 pb-6 flex justify-end gap-2.5 border-t border-border pt-4">
+          <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-text-muted border border-border rounded-lg hover:bg-bg-page">Batal</button>
+          <button onClick={handleConfirm} className="px-4 py-2 text-sm font-semibold text-white bg-[#27AE60] hover:bg-[#1E8449] rounded-lg flex items-center gap-1.5">
+            <CheckCircle size={14} /> Konfirmasi Paid
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function PPInvoiceDetailPage() {
+  const { id }    = useParams()
+  const { state } = useLocation()
+  const navigate  = useNavigate()
+
+  const [invoice,         setInvoice]        = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
+  const [editMode,        setEditMode]        = useState(false)
+  const [editData,        setEditData]        = useState({ tanggalInvoice: '', jatuhTempo: '', catatan: '' })
+  const [pajakAktif,      setPajakAktif]      = useState(false)
+  const [persenPajak,     setPersenPajak]     = useState(11)
+  const [kodeDiskonInput, setKodeDiskonInput] = useState('')
+  const [diskonApplied,   setDiskonApplied]   = useState(null)
+  const [diskonError,     setDiskonError]     = useState(false)
+  const [syaratList,      setSyaratList]      = useState(DEFAULT_SYARAT)
+  const [modal,           setModal]           = useState(null)
+
+  if (!invoice) {
+    return (
+      <div className="flex flex-col gap-4">
+        <button onClick={() => navigate('/pp/invoice')}
+          className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
+          <ArrowLeft size={16} /> Kembali ke Invoice
+        </button>
+        <div className="text-center py-20 text-text-muted">Invoice tidak ditemukan.</div>
+      </div>
+    )
+  }
+
+  const subtotalBase  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (invoice.biayaLain || 0)
+  const diskonNominal = diskonApplied
+    ? diskonApplied.tipe === 'persen' ? Math.round(subtotalBase * diskonApplied.nilai / 100) : diskonApplied.nilai
+    : 0
+  const pajakNominal  = pajakAktif ? Math.round((subtotalBase - diskonNominal) * persenPajak / 100) : 0
+  const totalTagihan  = subtotalBase - diskonNominal + pajakNominal
+  const minJatuhTempo = editData.tanggalInvoice
+    ? new Date(new Date(editData.tanggalInvoice).getTime() + 2 * 86400000).toISOString().split('T')[0]
+    : ''
+  const jatuhTempoError = !!(editData.jatuhTempo && minJatuhTempo && editData.jatuhTempo < minJatuhTempo)
+  const statusBadgeCls  = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
+
+  function handleMarkPaid({ paidDate, payMethod }) {
+    setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
+    setModal(null)
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+
+      <button
+        onClick={() => navigate('/pp/invoice')}
+        className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
+        <ArrowLeft size={16} /> Kembali ke Invoice
+      </button>
+
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-text-primary">Invoice #{invoice.invNo}</h1>
+          <p className="text-sm text-text-muted mt-1">Private Training — {invoice.client}</p>
+        </div>
+        <div className="flex items-center gap-2.5 shrink-0">
+          {editMode ? (
+            <>
+              <button
+                onClick={() => { setEditMode(false); setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: '' }) }}
+                className="flex items-center gap-1.5 px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition">
+                Batal
+              </button>
+              <button
+                onClick={() => setEditMode(false)}
+                className="flex items-center gap-1.5 px-4 py-2 bg-[#1E1C43] text-white text-sm font-medium rounded-lg hover:bg-[#2d2b5e] transition">
+                Simpan
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => { setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: invoice.catatan || '' }); setEditMode(true) }}
+              className="flex items-center gap-2 border border-[#1E1C43] text-[#1E1C43] rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#1E1C43] hover:text-white transition">
+              <Pencil size={14} /> Edit Invoice
+            </button>
+          )}
+          <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
+            <Download size={14} /> Download PDF
+          </button>
+          {invoice.status === 'paid' && (
+            <button
+              onClick={() => navigate('/pp/receipt', { state: { filterSearch: invoice.invNo } })}
+              className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Lihat Receipt
+            </button>
+          )}
+          {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+            <button
+              onClick={() => setModal('markPaid')}
+              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#27AE60] hover:bg-[#1E8449] text-white text-sm font-semibold rounded-lg transition-colors">
+              <CheckCircle size={14} /> Konfirmasi Pembayaran
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── Template Invoice ── */}
+      <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
+
+        {/* Header Navy */}
+        <div className="bg-[#1E1C43] rounded-t-2xl p-8 flex justify-between items-start">
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" className="w-16 h-16 rounded-full object-cover shrink-0" alt="EFM Logo" />
+            <div>
+              <div className="text-white font-bold text-sm leading-snug">Essential Fitness Management</div>
+              <div className="text-white/60 text-[10.5px] mt-1 leading-relaxed">
+                CV. Bugar Nusantara Jaya<br/>
+                Jl. Terogong Raya No.18, Jakarta Selatan<br/>
+                essentialfitnessmanagement@gmail.com
+              </div>
+            </div>
+          </div>
+
+          <div className="text-right">
+            <div className="text-4xl font-black text-white tracking-widest uppercase">INVOICE</div>
+            <div className="text-sm text-gray-300 mt-1">No: {invoice.invNo}</div>
+            <div className="border-t border-white/20 my-2" />
+
+            <div className="flex justify-end items-center gap-2 mb-1">
+              <span className="text-xs text-gray-400">Tanggal:</span>
+              {editMode ? (
+                <input type="date" value={editData.tanggalInvoice}
+                  onChange={e => setEditData(d => ({ ...d, tanggalInvoice: e.target.value }))}
+                  className="bg-white/10 border border-white/30 rounded px-2 py-1 text-white text-sm focus:outline-none" />
+              ) : (
+                <span className="text-white font-semibold text-sm">{invoice.tanggal}</span>
+              )}
+            </div>
+
+            <div className="flex justify-end items-start gap-2 mb-1">
+              <span className="text-xs text-gray-400 mt-1">Jatuh Tempo:</span>
+              <div>
+                {editMode ? (
+                  <>
+                    <input type="date" value={editData.jatuhTempo}
+                      min={minJatuhTempo}
+                      onChange={e => setEditData(d => ({ ...d, jatuhTempo: e.target.value }))}
+                      className="bg-white/10 border border-white/30 rounded px-2 py-1 text-white text-sm focus:outline-none" />
+                    {jatuhTempoError && <p className="text-red-300 text-xs mt-1">Minimal H+2 dari tanggal invoice</p>}
+                  </>
+                ) : (
+                  <span className="text-white font-semibold text-sm">{invoice.due}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end items-center gap-2">
+              <span className="text-xs text-gray-400">Order ID:</span>
+              <button
+                onClick={() => navigate('/pp/orders/' + invoice.orderId)}
+                className="text-white font-semibold text-sm hover:underline">
+                #{invoice.orderId}
+              </button>
+            </div>
+
+            <div className="border-t border-white/20 my-2" />
+
+            <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-1 ${statusBadgeCls}`}>
+              {STATUS_LABEL[invoice.status]}
+            </span>
+          </div>
+        </div>
+
+        {/* Tagihan Kepada */}
+        <div className="px-8 py-6 border-b border-gray-100">
+          <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2.5">Tagihan Kepada</div>
+          <div className="text-[18px] font-bold text-text-primary mb-1.5">{invoice.client}</div>
+          <div className="text-[12px] text-text-muted leading-[1.8]">
+            Order ID: #{invoice.orderId}<br/>
+            Private Training Program
+          </div>
+        </div>
+
+        {/* Tabel Rincian Layanan */}
+        <div className="px-8 pt-6 pb-2">
+          <table className="w-full text-xs" style={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr className="bg-[#f8fafc]">
+                {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
+                  <th key={h}
+                    className="px-2.5 py-3 text-[10px] font-semibold text-text-primary uppercase tracking-wide border-b border-border"
+                    style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-2.5 py-3 border-b border-border">
+                  <div className="font-semibold text-text-primary">{invoice.paket} Package</div>
+                  <div className="text-[11px] text-text-muted">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
+                </td>
+                <td className="px-2.5 py-3 border-b border-border text-right">{formatRp(invoice.hargaPersesi)}</td>
+                <td className="px-2.5 py-3 border-b border-border text-center">{invoice.sesi}</td>
+                <td className="px-2.5 py-3 border-b border-border text-right">{formatRp(invoice.hargaPaket)}</td>
+                <td className="px-2.5 py-3 border-b border-border text-right text-[#27AE60]">
+                  {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
+                </td>
+                <td className="px-2.5 py-3 border-b border-border text-right font-semibold">
+                  {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
+                </td>
+              </tr>
+              {invoice.biayaLain > 0 && (
+                <tr>
+                  <td className="px-2.5 py-3 border-b border-border">
+                    <div className="font-semibold text-text-primary">Biaya Lain</div>
+                    <div className="text-[11px] text-text-muted">{invoice.biayaLainKet}</div>
+                  </td>
+                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
+                  <td className="px-2.5 py-3 border-b border-border text-center">—</td>
+                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
+                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
+                  <td className="px-2.5 py-3 border-b border-border text-right font-semibold">{formatRp(invoice.biayaLain)}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Kalkulasi */}
+        <div className="px-8 py-6 border-t border-gray-100">
+          <div className="flex justify-between items-center py-1.5 text-sm">
+            <span className="text-gray-600">Subtotal</span>
+            <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
+          </div>
+
+          {editMode && (
+            <div className="my-3 bg-gray-50 rounded-xl p-4 space-y-3">
+              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Kode Diskon</p>
+              {diskonApplied ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  <span className="text-xs font-semibold text-green-700">{diskonApplied.label}</span>
+                  <button onClick={() => { setDiskonApplied(null); setDiskonError(false) }}
+                    className="text-gray-400 hover:text-red-500 transition ml-3">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input type="text" value={kodeDiskonInput}
+                    onChange={e => { setKodeDiskonInput(e.target.value.toUpperCase()); setDiskonError(false) }}
+                    placeholder="Masukkan kode diskon..."
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
+                  <button
+                    onClick={() => {
+                      const v = validKodeDiskon[kodeDiskonInput]
+                      if (v) { setDiskonApplied(v); setKodeDiskonInput(''); setDiskonError(false) }
+                      else setDiskonError(true)
+                    }}
+                    className="px-4 py-2 bg-[#1E1C43] text-white text-sm font-semibold rounded-lg hover:bg-[#2d2b5e] transition">
+                    Terapkan
+                  </button>
+                </div>
+              )}
+              {diskonError && <p className="text-[11px] text-red-500">Kode diskon tidak ditemukan</p>}
+
+              <div className="pt-2 border-t border-gray-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-700">Aktifkan PPN</span>
+                  <button onClick={() => setPajakAktif(v => !v)}
+                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full transition-colors ${pajakAktif ? 'bg-[#1E1C43]' : 'bg-gray-300'}`}>
+                    <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform mt-0.5 ${pajakAktif ? 'translate-x-4' : 'translate-x-0.5'}`} />
+                  </button>
+                </div>
+                {pajakAktif && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">Persentase:</span>
+                    <input type="number" value={persenPajak} min={0} max={100}
+                      onChange={e => setPersenPajak(Number(e.target.value))}
+                      className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    <span className="text-sm text-gray-600">%</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {diskonApplied && (
+            <div className="flex justify-between items-center py-1.5 text-sm">
+              <span className="text-green-600">Diskon: {diskonApplied.label}</span>
+              <span className="text-green-600 font-medium">- {formatRp(diskonNominal)}</span>
+            </div>
+          )}
+
+          {pajakAktif && (
+            <div className="flex justify-between items-center py-1.5 text-sm">
+              <span className="text-gray-600">PPN {persenPajak}%</span>
+              <span className="font-medium text-gray-800">+ {formatRp(pajakNominal)}</span>
+            </div>
+          )}
+
+          <div className="mt-4 bg-[#1E1C43] rounded-xl px-6 py-4 flex justify-between items-center">
+            <span className="text-white font-bold text-lg">Total Tagihan</span>
+            <span className="text-white font-bold text-lg">{formatRp(totalTagihan)}</span>
+          </div>
+        </div>
+
+        {/* Catatan Invoice */}
+        <div className="px-8 py-4 border-t border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
+          {editMode ? (
+            <textarea rows={3} value={editData.catatan}
+              onChange={e => setEditData(d => ({ ...d, catatan: e.target.value }))}
+              placeholder="Tambahkan catatan untuk klien..."
+              className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
+          ) : editData.catatan || invoice.catatan ? (
+            <p className="text-sm text-gray-600">{editData.catatan || invoice.catatan}</p>
+          ) : (
+            <p className="text-sm text-gray-400 italic">Tidak ada catatan</p>
+          )}
+        </div>
+
+        {/* Syarat & Ketentuan */}
+        <div className="px-8 py-6 border-t border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
+          {editMode ? (
+            <div className="space-y-2">
+              {syaratList.map((item, idx) => (
+                <div key={idx} className="flex items-center gap-2">
+                  <input type="text" value={item}
+                    onChange={e => setSyaratList(prev => prev.map((s, i) => i === idx ? e.target.value : s))}
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  <button onClick={() => setSyaratList(prev => prev.filter((_, i) => i !== idx))}
+                    className="text-red-400 hover:text-red-600 p-1 transition">
+                    <Trash2 size={14} />
+                  </button>
+                </div>
+              ))}
+              <button onClick={() => setSyaratList(prev => [...prev, ''])}
+                className="flex items-center gap-1.5 text-sm text-[#E05945] hover:text-[#c44a38] mt-3 font-medium">
+                <Plus size={14} /> Tambah Baris
+              </button>
+            </div>
+          ) : (
+            <ol className="list-decimal list-inside space-y-2">
+              {syaratList.map((item, idx) => (
+                <li key={idx} className="text-sm text-gray-600">{item}</li>
+              ))}
+            </ol>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="px-8 py-5 border-t border-gray-100 text-center">
+          <p className="text-xs text-gray-400">Dokumen ini digenerate oleh sistem EFM V2</p>
+        </div>
+      </div>
+
+      {modal === 'markPaid' && (
+        <MarkPaidModal inv={invoice} onConfirm={handleMarkPaid} onClose={() => setModal(null)} />
+      )}
+
+    </div>
+  )
+}
