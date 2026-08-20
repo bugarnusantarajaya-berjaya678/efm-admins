@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search, Users, Clock, AlertCircle, CheckCircle } from 'lucide-react'
 import { picList, picStats } from '../../data/opsData'
 
@@ -169,14 +169,17 @@ function PICCard({ pic }) {
 
       <div className="flex gap-2 px-5 pb-5 pt-1">
         <button
-          onClick={() => navigate(`/pic/${pic.id}`)}
+          onClick={() => navigate(`/ops/pelatih/${pic.id}`)}
           className="flex-1 py-2 text-[12px] font-semibold text-text-primary border-[1.5px] border-gray-200 rounded-lg hover:border-text-primary hover:bg-gray-50 transition-colors"
         >
           Detail
         </button>
-        <Link to="/contract" className="flex-1 py-2 text-center text-[12px] font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
-          Lihat Kontrak
-        </Link>
+        <button
+          onClick={() => navigate(`/ops/pelatih/${pic.id}?tab=kontrak`)}
+          className="flex-1 py-2 text-center text-[12px] font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors"
+        >
+          Lihat PKS
+        </button>
       </div>
     </div>
   )

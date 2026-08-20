@@ -56,9 +56,6 @@ import OPSAssetsPage from './pages/assignment/OPSAssetsPage'
 import PaymentPage from './pages/payment/PaymentPage'
 import AttendancePage from './pages/attendance/AttendancePage'
 
-// Contract
-import ContractPage from './pages/contract/ContractPage'
-
 // Laporan
 import LaporanRevenuePage   from './pages/laporan/LaporanRevenuePage'
 import LaporanPenjualanPage from './pages/laporan/LaporanPenjualanPage'
@@ -81,8 +78,10 @@ function AppRoutes() {
       <Route path="/owner-dashboard" element={<AppShell><DashboardOwnerPage /></AppShell>} />
 
       {/* OPS — database pages */}
-      <Route path="/pic"     element={<AppShell><OPSPICPage /></AppShell>} />
-      <Route path="/pic/:id" element={<AppShell><PICDetail  /></AppShell>} />
+      <Route path="/ops/pelatih"     element={<AppShell><OPSPICPage /></AppShell>} />
+      <Route path="/ops/pelatih/:id" element={<AppShell><PICDetail  /></AppShell>} />
+      <Route path="/pic"     element={<Navigate to="/ops/pelatih" replace />} />
+      <Route path="/pic/:id" element={<Navigate to="/ops/pelatih" replace />} />
       <Route path="/ops/mitra" element={<AppShell><OPSMitraPage /></AppShell>} />
       <Route path="/ops/assets" element={<AppShell><OPSAssetsPage /></AppShell>} />
 
@@ -132,9 +131,6 @@ function AppRoutes() {
       {/* OPS */}
       <Route path="/attendance" element={<AppShell><AttendancePage /></AppShell>} />
       <Route path="/payment" element={<AppShell><PaymentPage /></AppShell>} />
-
-      {/* Contract */}
-      <Route path="/contract" element={<AppShell><ContractPage /></AppShell>} />
 
       {/* Laporan & Keuangan */}
       <Route path="/laporan/revenue"   element={<AppShell><LaporanRevenuePage /></AppShell>} />
