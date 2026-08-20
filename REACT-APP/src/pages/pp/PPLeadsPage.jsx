@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search } from 'lucide-react'
 
+
 /* ═══════════════════════════════════════
    Constants
 ═══════════════════════════════════════ */
@@ -168,15 +169,6 @@ function Toast({ message, onClose }) {
   )
 }
 
-function formatFollowUp(dateStr) {
-  if (!dateStr) return 'Tidak ada jadwal'
-  try {
-    return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-  } catch {
-    return dateStr
-  }
-}
-
 const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
 function getInitials(name) {
   return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
@@ -185,16 +177,6 @@ function getAvatarColor(name) {
   let hash = 0
   for (const c of name) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
   return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
-}
-
-const STAGE_BORDER = {
-  Convert:   'border-green-400',
-  Lost:      'border-red-400',
-  Closing:   'border-orange-400',
-  Invoicing: 'border-yellow-400',
-  Screening: 'border-purple-400',
-  Approach:  'border-blue-400',
-  New:       'border-gray-300',
 }
 
 /* ═══════════════════════════════════════
@@ -218,79 +200,20 @@ function StatMini({ label, value, sub, accent }) {
 export default function PPLeadsPage() {
   const navigate = useNavigate()
 
-  const [leads,           setLeads]           = useState(LEADS_INIT)
-  const [showAddLead,     setShowAddLead]     = useState(false)
-  const [leadForm,        setLeadForm]        = useState({ ...emptyLeadForm })
-  const [formErrors,      setFormErrors]      = useState({})
-  const [selectedLead,    setSelectedLead]    = useState(null)
-  const [showLeadModal,   setShowLeadModal]   = useState(false)
-  const [editingPipeline, setEditingPipeline] = useState(false)
-  const [newStage,        setNewStage]        = useState('')
-  const [newStageTanggal, setNewStageTanggal] = useState('')
-  const [newStageCatatan, setNewStageCatatan] = useState('')
-  const [bulan,           setBulan]           = useState('')
-  const [tahun,           setTahun]           = useState('')
-  const [tipe,            setTipe]            = useState('')
-  const [stage,           setStage]           = useState('')
-  const [search,          setSearch]          = useState('')
-  const [toast,           setToast]           = useState(null)
-  const [isEditMode,      setIsEditMode]      = useState(false)
-  const [editForm,        setEditForm]        = useState({})
+  const [leads,       setLeads]       = useState(LEADS_INIT)
+  const [showAddLead, setShowAddLead] = useState(false)
+  const [leadForm,    setLeadForm]    = useState({ ...emptyLeadForm })
+  const [formErrors,  setFormErrors]  = useState({})
+  const [bulan,       setBulan]       = useState('')
+  const [tahun,       setTahun]       = useState('')
+  const [tipe,        setTipe]        = useState('')
+  const [stage,       setStage]       = useState('')
+  const [search,      setSearch]      = useState('')
+  const [toast,       setToast]       = useState(null)
 
   function showToastMsg(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
   function handleReset() { setBulan(''); setTahun(''); setTipe(''); setStage(''); setSearch('') }
-
-  function handleOpenDetail(lead) {
-    setSelectedLead(lead)
-    setShowLeadModal(true)
-    setEditingPipeline(false)
-    setIsEditMode(false)
-    setEditForm({})
-    setNewStage(lead.statusPipeline)
-    setNewStageTanggal(new Date().toISOString().split('T')[0])
-    setNewStageCatatan('')
-  }
-
-  function handleCloseModal() {
-    setShowLeadModal(false)
-    setEditingPipeline(false)
-    setIsEditMode(false)
-    setEditForm({})
-  }
-
-  function handleStartEdit(lead) { setEditForm({ ...lead }); setIsEditMode(true) }
-  function handleCancelEdit()    { setIsEditMode(false); setEditForm({}) }
-  function handleEditChange(field, value) { setEditForm(prev => ({ ...prev, [field]: value })) }
-
-  function handleSaveEdit() {
-    if (!editForm.nama || !editForm.tipe || !editForm.noHp) {
-      alert('Nama, tipe, dan no HP wajib diisi.')
-      return
-    }
-    setLeads(prev => prev.map(l => l.id === editForm.id ? { ...editForm } : l))
-    setSelectedLead({ ...editForm })
-    setIsEditMode(false)
-    setEditForm({})
-    showToastMsg('✓ Data lead berhasil diperbarui')
-  }
-
-  function handleUpdatePipeline() {
-    if (!newStageTanggal) { alert('Tanggal wajib diisi'); return }
-    const updatedLead = {
-      ...selectedLead,
-      statusPipeline: newStage,
-      logAktivitas: [
-        ...(selectedLead.logAktivitas || []),
-        { tanggal: newStageTanggal, status: newStage, catatan: newStageCatatan || 'Status diperbarui', oleh: selectedLead.picEfm || '' },
-      ],
-    }
-    setLeads(prev => prev.map(l => l.id === selectedLead.id ? updatedLead : l))
-    setSelectedLead(updatedLead)
-    setEditingPipeline(false)
-    setNewStage(''); setNewStageTanggal(''); setNewStageCatatan('')
-    showToastMsg('✓ Status pipeline diperbarui')
-  }
 
   function handleSaveLead() {
     const errors = {}
@@ -412,7 +335,7 @@ export default function PPLeadsPage() {
                 {filtered.length === 0 ? (
                   <tr><td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
                 ) : filtered.map(lead => (
-                  <tr key={lead.id} onClick={() => handleOpenDetail(lead)}
+                  <tr key={lead.id} onClick={() => navigate('/pp/leads/' + lead.id, { state: { lead } })}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{lead.id}</td>
                     <td className="px-3 py-2.5">
@@ -432,7 +355,7 @@ export default function PPLeadsPage() {
                     <td className="px-3 py-2.5"><StageBadge stage={lead.statusPipeline} /></td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.tanggalMasuk}</td>
                     <td className="px-3 py-2.5">
-                      <button onClick={e => { e.stopPropagation(); handleOpenDetail(lead) }}
+                      <button onClick={e => { e.stopPropagation(); navigate('/pp/leads/' + lead.id, { state: { lead } }) }}
                         className="text-xs text-[#1E1C43] font-medium hover:underline whitespace-nowrap">
                         Detail →
                       </button>
@@ -551,287 +474,6 @@ export default function PPLeadsPage() {
               <button onClick={handleSaveLead}
                 className="bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">Simpan Lead</button>
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* ═══════════════════════════════════════
-          MODAL: DETAIL / EDIT LEAD
-      ═══════════════════════════════════════ */}
-      {showLeadModal && selectedLead && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto"
-          onClick={e => { if (e.target === e.currentTarget) handleCloseModal() }}
-        >
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8" onClick={e => e.stopPropagation()}>
-
-            {/* Header */}
-            <div className="flex items-start justify-between px-6 py-4 border-b border-gray-100">
-              <div>
-                <p className="text-[10px] text-gray-400 mb-0.5">{selectedLead.id}</p>
-                <h2 className="text-base font-bold text-[#1E1C43]">{selectedLead.nama}</h2>
-                <div className="flex items-center gap-2 mt-1.5">
-                  <TipeBadge tipe={selectedLead.tipe} />
-                  <StageBadge stage={selectedLead.statusPipeline} />
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {!isEditMode ? (
-                  <button onClick={() => handleStartEdit(selectedLead)}
-                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium border border-[#1E1C43] text-[#1E1C43] rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors">
-                    ✏️ Edit Data
-                  </button>
-                ) : (
-                  <span className="text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-1 rounded-lg">
-                    ✏️ Mode Edit
-                  </span>
-                )}
-                <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 p-1"><X size={18} /></button>
-              </div>
-            </div>
-
-            {/* Body */}
-            <div className="px-6 py-5 max-h-[65vh] overflow-y-auto">
-
-              {/* ── VIEW MODE ── */}
-              {!isEditMode && (
-                <div className="space-y-5">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No HP / WhatsApp</p>
-                      <a href={`https://wa.me/62${selectedLead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
-                        className="text-sm text-[#1E1C43] hover:underline">{selectedLead.noHp}</a>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sumber Lead</p>
-                      <p className="text-sm text-gray-800">{selectedLead.sumberLead || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Program Diminati</p>
-                      <p className="text-sm text-gray-800">{selectedLead.programDiminati || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC EFM</p>
-                      <p className="text-sm text-gray-800">{selectedLead.picEfm || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email Umum</p>
-                      {selectedLead.emailUmum
-                        ? <a href={`mailto:${selectedLead.emailUmum}`} className="text-sm text-[#1E1C43] hover:underline">{selectedLead.emailUmum}</a>
-                        : <p className="text-sm text-gray-400 italic">—</p>}
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Masuk</p>
-                      <p className="text-sm text-gray-800">{selectedLead.tanggalMasuk || '-'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Follow Up Berikutnya</p>
-                      <p className={`text-sm ${selectedLead.tanggalFollowUp ? 'text-gray-800' : 'text-gray-400 italic'}`}>
-                        {formatFollowUp(selectedLead.tanggalFollowUp)}
-                      </p>
-                    </div>
-                    <div />
-                    {selectedLead.catatanAwal && (
-                      <div className="col-span-2">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
-                        <p className="text-sm text-gray-700">{selectedLead.catatanAwal}</p>
-                      </div>
-                    )}
-                    {selectedLead.catatan && (
-                      <div className="col-span-2">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
-                        <p className="text-sm text-gray-700">{selectedLead.catatan}</p>
-                      </div>
-                    )}
-                    {selectedLead.statusPipeline === 'Convert' && selectedLead.orderId && (
-                      <div className="col-span-2">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Order Terkait</p>
-                        <button
-                          onClick={() => { setShowLeadModal(false); navigate('/pp/orders/' + selectedLead.orderId) }}
-                          className="text-sm font-semibold text-[#1E1C43] hover:underline flex items-center gap-1.5">
-                          #{selectedLead.orderId} →
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <hr className="border-gray-100" />
-
-                  {/* Status Pipeline */}
-                  <div>
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Status Pipeline</p>
-                      <button
-                        onClick={() => {
-                          const next = !editingPipeline
-                          setEditingPipeline(next)
-                          if (next) {
-                            setNewStage(selectedLead.statusPipeline)
-                            setNewStageTanggal(new Date().toISOString().split('T')[0])
-                            setNewStageCatatan('')
-                          }
-                        }}
-                        className="text-xs text-[#1E1C43] hover:underline font-medium"
-                      >
-                        {editingPipeline ? 'Batal' : '✏️ Update Status'}
-                      </button>
-                    </div>
-                    <div className="flex items-center gap-2 mb-3">
-                      <StageBadge stage={selectedLead.statusPipeline} />
-                      <span className="text-xs text-gray-400">sejak {selectedLead.tanggalMasuk}</span>
-                    </div>
-                    {editingPipeline && (
-                      <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                        <div>
-                          <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Status Baru</label>
-                          <select value={newStage} onChange={e => setNewStage(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43]">
-                            {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Tanggal</label>
-                          <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43]" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1">Catatan</label>
-                          <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
-                            placeholder="Catatan perubahan status..."
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43]" />
-                        </div>
-                        <button onClick={handleUpdatePipeline}
-                          className="w-full bg-[#1E1C43] text-white text-sm font-medium py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                          ✓ Simpan Perubahan Status
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  <hr className="border-gray-100" />
-
-                  {/* Log Aktivitas */}
-                  <div>
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Log Aktivitas</p>
-                    <div className="space-y-0">
-                      {[...(selectedLead.logAktivitas || [])].reverse().map((log, i, arr) => (
-                        <div key={i} className={`pl-4 pb-4 border-l-2 ${STAGE_BORDER[log.status] ?? 'border-gray-300'} ${i === arr.length - 1 ? 'border-transparent' : ''}`}>
-                          <div className="flex items-center justify-between mb-0.5">
-                            <div className="flex items-center gap-2">
-                              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                                {log.status}
-                              </span>
-                              {log.oleh && <span className="text-[10px] text-gray-400">— {log.oleh}</span>}
-                            </div>
-                            <span className="text-[10px] text-gray-400">{log.tanggal}</span>
-                          </div>
-                          <p className="text-xs text-gray-600">{log.catatan}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* ── EDIT MODE ── */}
-              {isEditMode && (
-                <div className="space-y-4">
-                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3">Data Klien</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="col-span-2">
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                        Nama Klien <span className="text-red-500">*</span>
-                      </label>
-                      <input className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.nama || ''} onChange={e => handleEditChange('nama', e.target.value)} placeholder="Nama lengkap klien" />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.tipe || ''} onChange={e => handleEditChange('tipe', e.target.value)}>
-                        <option>Personal</option><option>Group</option><option>Couple</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
-                      <input className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.noHp || ''} onChange={e => handleEditChange('noHp', e.target.value)} placeholder="08xx-xxxx-xxxx" />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email Umum</label>
-                      <input type="email" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.emailUmum || ''} onChange={e => handleEditChange('emailUmum', e.target.value)} placeholder="email@example.com" />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.sumberLead || ''} onChange={e => handleEditChange('sumberLead', e.target.value)}>
-                        <option value="">Pilih Sumber...</option>
-                        {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.programDiminati || ''} onChange={e => handleEditChange('programDiminati', e.target.value)}>
-                        <option value="">Pilih Program...</option>
-                        {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
-                      <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.picEfm || ''} onChange={e => handleEditChange('picEfm', e.target.value)}>
-                        {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
-                      <input type="date" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.tanggalFollowUp || ''} onChange={e => handleEditChange('tanggalFollowUp', e.target.value || null)} />
-                    </div>
-                    <div className="col-span-2">
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
-                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                        value={editForm.catatanAwal || ''} onChange={e => handleEditChange('catatanAwal', e.target.value)}
-                        placeholder="Catatan awal tentang lead..." />
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Footer VIEW mode */}
-            {!isEditMode && (
-              <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-                <button onClick={handleCloseModal}
-                  className="border border-gray-200 text-gray-600 text-sm px-4 py-2 rounded-lg hover:bg-gray-50">
-                  Tutup
-                </button>
-                {selectedLead.statusPipeline !== 'Lost' && (
-                  <button
-                    onClick={() => { handleCloseModal(); navigate('/pp/orders/new', { state: { namaKlien: selectedLead.nama, paket: selectedLead.programDiminati, leadId: selectedLead.id } }) }}
-                    className="inline-flex items-center gap-2 bg-[#E05945] text-white text-sm font-medium px-4 py-2 rounded-lg hover:bg-[#c94a38] transition-colors"
-                  >
-                    Buat Order →
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Footer EDIT mode */}
-            {isEditMode && (
-              <div className="flex justify-between items-center px-6 py-4 border-t border-gray-100">
-                <button onClick={handleCancelEdit}
-                  className="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                  ✕ Batal
-                </button>
-                <button onClick={handleSaveEdit}
-                  className="px-5 py-2 text-sm font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                  💾 Simpan Perubahan
-                </button>
-              </div>
-            )}
           </div>
         </div>
       )}
