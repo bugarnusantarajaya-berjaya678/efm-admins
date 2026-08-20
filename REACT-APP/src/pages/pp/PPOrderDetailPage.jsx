@@ -1185,11 +1185,25 @@ export default function PPOrderDetailPage() {
                 className="flex-1 border border-[#1E1C43] text-[#1E1C43] rounded-xl py-2 text-xs font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-1.5">
                 <Eye size={13} /> Preview Invoice
               </button>
-              <button
+              <button onClick={() => window.print()}
                 className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2 text-xs font-semibold hover:bg-[#2d2b5e] transition flex items-center justify-center gap-1.5">
                 <FileText size={13} /> Download PDF
               </button>
             </div>
+            {invoicePP.statusInvoice === 'Lunas' && (
+              <button
+                onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: {
+                  orderId: order?.id,
+                  invNo: invoicePP.nomorInvoice,
+                  client: infoDeal.namaKlien || order?.namaKlien,
+                  paket: infoDeal.paket || order?.paket,
+                  total: totalInvoiceNew,
+                  pic: infoDeal.pic || order?.picSalesEFM,
+                }}})}
+                className="w-full mt-2 bg-[#27AE60] text-white rounded-xl py-2 text-xs font-semibold hover:bg-[#1E8449] transition flex items-center justify-center gap-1.5">
+                <CheckCircle size={13} /> Buat Receipt Pembayaran
+              </button>
+            )}
           </div>
 
           {/* ── Section 3: Catatan Program ────────────────────────────────── */}
@@ -1440,7 +1454,7 @@ export default function PPOrderDetailPage() {
                     {/* Tombol Lihat Agreement */}
                     {!isEditing && doc.uploadedFile && (
                       <div className="pt-2 border-t border-gray-100">
-                        <button className="inline-flex items-center gap-2 text-xs text-[#1E1C43] font-semibold hover:underline">
+                        <button onClick={() => window.print()} className="inline-flex items-center gap-2 text-xs text-[#1E1C43] font-semibold hover:underline">
                           <Download size={13} /> Lihat Agreement
                         </button>
                       </div>

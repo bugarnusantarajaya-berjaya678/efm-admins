@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, Download, ArrowLeft, MessageCircle } from 'lucide-react'
+import { Search, Eye, Download, ArrowLeft, MessageCircle, CheckCircle, X } from 'lucide-react'
 import { RECEIPTS_INIT, WA_LABEL, formatRp, sesiCount } from '../../data/ppReceiptData'
 
 /* ─── WA status badge ─── */
@@ -157,18 +157,47 @@ const ROWS = 10
 export default function PPReceiptPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [receipts,    setReceipts]   = useState(RECEIPTS_INIT)
-  const [selectedNo,  setSelectedNo] = useState(null)
-  const [fBulan,      setFBulan]     = useState('')
-  const [fTahun,      setFTahun]     = useState('')
-  const [fWA,         setFWA]        = useState('')
-  const [fSearch,     setFSearch]    = useState('')
-  const [page,        setPage]       = useState(1)
+  const [receipts,       setReceipts]      = useState(RECEIPTS_INIT)
+  const [selectedNo,     setSelectedNo]    = useState(null)
+  const [fBulan,         setFBulan]        = useState('')
+  const [fTahun,         setFTahun]        = useState('')
+  const [fWA,            setFWA]           = useState('')
+  const [fSearch,        setFSearch]       = useState('')
+  const [page,           setPage]          = useState(1)
+  const [showCreateForm, setShowCreateForm] = useState(false)
+  const [createPrefill,  setCreatePrefill]  = useState(null)
+  const [createForm,     setCreateForm]     = useState({ tglBayar: '', metode: 'Transfer Bank (BCA)' })
 
   useEffect(() => {
     const q = location.state?.filterSearch
     if (q) setFSearch(q)
+    if (location.state?.createNew) {
+      setCreatePrefill(location.state.prefill || {})
+      setShowCreateForm(true)
+    }
   }, [])
+
+  function handleCreateReceipt() {
+    if (!createForm.tglBayar) { alert('Pilih tanggal pembayaran.'); return }
+    const prefill = createPrefill || {}
+    const COLORS = ['#2980B9', '#27AE60', '#16A085', '#D35400', '#8E44AD']
+    const newRcpNo = 'RCP-PP-26-' + String(receipts.length + 5).padStart(4, '0')
+    const getInits = n => (n || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
+    const tglFormatted = new Date(createForm.tglBayar).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    const newReceipt = {
+      rcpNo: newRcpNo, invNo: prefill.invNo || '', orderId: prefill.orderId || '',
+      client: prefill.client || '', initials: getInits(prefill.client || ''),
+      color: COLORS[receipts.length % COLORS.length],
+      paket: prefill.paket || '', pic: prefill.pic || '',
+      tglBayar: tglFormatted, metode: createForm.metode,
+      total: prefill.total || 0, waStatus: 'not-sent', waTgl: null,
+    }
+    setReceipts(prev => [newReceipt, ...prev])
+    setShowCreateForm(false)
+    setCreatePrefill(null)
+    setCreateForm({ tglBayar: '', metode: 'Transfer Bank (BCA)' })
+    setSelectedNo(newRcpNo)
+  }
 
   const selected = receipts.find(r => r.rcpNo === selectedNo) || null
 
@@ -225,7 +254,7 @@ export default function PPReceiptPage() {
             >
               <MessageCircle size={14} /> Resend WA
             </button>
-            <button className="flex items-center gap-1.5 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-lg transition-colors">
+            <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-lg transition-colors">
               <Download size={14} /> Download PDF
             </button>
           </div>
@@ -366,6 +395,49 @@ export default function PPReceiptPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal Buat Receipt */}
+      {showCreateForm && createPrefill && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-5" onClick={() => setShowCreateForm(false)}>
+          <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-border">
+              <h3 className="text-base font-bold text-text-primary">Buat Receipt Pembayaran</h3>
+              <button onClick={() => setShowCreateForm(false)} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-text-muted hover:bg-bg-page">
+                <X size={16} />
+              </button>
+            </div>
+            <div className="px-7 py-6 space-y-4">
+              <div className="bg-[#EAFAF1] rounded-xl px-4 py-3.5 border-l-[3px] border-[#27AE60]">
+                <div className="text-xs font-bold text-[#27AE60] mb-1 uppercase tracking-wide">Data Pembayaran</div>
+                <div className="text-sm font-semibold text-text-primary">{createPrefill.client}</div>
+                <div className="text-xs text-text-muted">{createPrefill.invNo} · {createPrefill.paket}</div>
+                <div className="text-sm font-bold text-text-primary mt-1">{formatRp(createPrefill.total || 0)}</div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-text-primary mb-1.5">Tanggal Pembayaran</label>
+                <input type="date" value={createForm.tglBayar} onChange={e => setCreateForm(f => ({ ...f, tglBayar: e.target.value }))}
+                  className="w-full px-3 py-2.5 border-[1.5px] border-border rounded-lg text-sm outline-none focus:border-primary" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-text-primary mb-1.5">Metode Pembayaran</label>
+                <select value={createForm.metode} onChange={e => setCreateForm(f => ({ ...f, metode: e.target.value }))}
+                  className="w-full px-3 py-2.5 border-[1.5px] border-border rounded-lg text-sm bg-white outline-none focus:border-primary">
+                  <option>Transfer Bank (BCA)</option>
+                  <option>Transfer Bank (Mandiri)</option>
+                  <option>Cash</option>
+                  <option>QRIS</option>
+                </select>
+              </div>
+            </div>
+            <div className="px-7 pb-6 flex justify-end gap-2.5 border-t border-border pt-4">
+              <button onClick={() => setShowCreateForm(false)} className="px-4 py-2 text-sm font-semibold text-text-muted border border-border rounded-lg hover:bg-bg-page">Batal</button>
+              <button onClick={handleCreateReceipt} className="px-4 py-2 text-sm font-semibold text-white bg-[#27AE60] hover:bg-[#1E8449] rounded-lg flex items-center gap-1.5">
+                <CheckCircle size={14} /> Simpan Receipt
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
