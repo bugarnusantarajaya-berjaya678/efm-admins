@@ -53,11 +53,11 @@ const LAPORAN_SUB = [
 ]
 
 const OPS_SUB = [
-  { label: 'Pelatih',    path: '/ops/pelatih' },
-  { label: 'Mitra',      path: '/ops/mitra'   },
-  { label: 'Aset',       path: '/ops/assets'  },
-  { label: 'Absensi',    path: '/attendance'  },
-  { label: 'Pembayaran', path: '/payment'     },
+  { label: 'Pelatih',    path: '/ops/pelatih'           },
+  { label: 'Mitra',      path: '/ops/mitra'             },
+  { label: 'Aset',       path: '/ops/assets'            },
+  { label: 'Absensi',    path: '/ops/pelatih/absensi'   },
+  { label: 'Honorarium', path: '/ops/pelatih/honorarium' },
 ]
 
 const menuGroups = [
