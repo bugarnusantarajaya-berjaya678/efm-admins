@@ -53,11 +53,11 @@ const LAPORAN_SUB = [
 ]
 
 const OPS_SUB = [
-  { label: 'PIC Management', path: '/pic'         },
-  { label: 'Mitra',          path: '/ops/mitra'   },
-  { label: 'Aset',           path: '/ops/assets'  },
-  { label: 'Absensi',        path: '/attendance'  },
-  { label: 'Pembayaran',     path: '/payment'     },
+  { label: 'Pelatih',    path: '/ops/pelatih' },
+  { label: 'Mitra',      path: '/ops/mitra'   },
+  { label: 'Aset',       path: '/ops/assets'  },
+  { label: 'Absensi',    path: '/attendance'  },
+  { label: 'Pembayaran', path: '/payment'     },
 ]
 
 const menuGroups = [
@@ -78,7 +78,7 @@ const menuGroups = [
   {
     label: 'OPERASIONAL',
     items: [
-      { label: 'Operasional', path: '/pic', icon: Users, menuKey: 'ops', sub: OPS_SUB },
+      { label: 'Operasional', path: '/ops/pelatih', icon: Users, menuKey: 'ops', sub: OPS_SUB },
     ],
   },
   {
@@ -102,7 +102,7 @@ export default function Sidebar() {
   const isPPRoute      = location.pathname.startsWith('/pp')
   const isB2BRoute     = location.pathname.startsWith('/b2b')
   const isEventRoute   = location.pathname.startsWith('/event')
-  const isOpsRoute     = ['/pic', '/ops/', '/attendance', '/payment'].some(p => location.pathname.startsWith(p))
+  const isOpsRoute     = ['/ops/', '/attendance', '/payment'].some(p => location.pathname.startsWith(p))
   const isLaporanRoute = location.pathname.startsWith('/laporan')
   const [openMenu, setOpenMenu] = useState(
     isPPRoute ? 'pp' : isB2BRoute ? 'b2b' : isEventRoute ? 'event' : isOpsRoute ? 'ops' : isLaporanRoute ? 'laporan' : null
