@@ -129,8 +129,10 @@ function AppRoutes() {
       <Route path="/event/receipt"      element={<AppShell><EventReceiptPage   /></AppShell>} />
 
       {/* OPS */}
-      <Route path="/attendance" element={<AppShell><AttendancePage /></AppShell>} />
-      <Route path="/payment" element={<AppShell><PaymentPage /></AppShell>} />
+      <Route path="/ops/pelatih/absensi"   element={<AppShell><AttendancePage /></AppShell>} />
+      <Route path="/ops/pelatih/honorarium" element={<AppShell><PaymentPage /></AppShell>} />
+      <Route path="/attendance" element={<Navigate to="/ops/pelatih/absensi" replace />} />
+      <Route path="/payment"    element={<Navigate to="/ops/pelatih/honorarium" replace />} />
 
       {/* Laporan & Keuangan */}
       <Route path="/laporan/revenue"   element={<AppShell><LaporanRevenuePage /></AppShell>} />

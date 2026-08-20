@@ -977,7 +977,7 @@ function TabAbsensi({ picId, navigate }) {
                   </td>
                   <td className="px-3 py-2.5">
                     <button
-                      onClick={() => navigate(`/attendance?pic=EFM-${picId}&periode=${r.periode.replace(' ', '-')}`)}
+                      onClick={() => navigate(`/ops/pelatih/absensi?pic=EFM-${picId}&periode=${r.periode.replace(' ', '-')}`)}
                       className="text-xs font-medium border border-[#1E1C43] text-[#1E1C43] px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap"
                     >
                       Lihat
@@ -1066,7 +1066,7 @@ function TabPembayaran({ picId, navigate }) {
         <div className="border-t border-gray-100 px-5 py-3.5 flex items-center justify-between">
           <p className="text-xs text-gray-400">Menampilkan {filtered.length} dari {rows.length} data</p>
           <button
-            onClick={() => navigate(`/payment?pic=EFM-${picId}`)}
+            onClick={() => navigate(`/ops/pelatih/honorarium?pic=EFM-${picId}`)}
             className="text-sm font-semibold text-[#E05945] hover:underline"
           >
             Lihat Semua di Halaman Pembayaran →
