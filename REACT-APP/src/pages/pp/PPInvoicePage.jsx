@@ -323,7 +323,7 @@ export default function PPInvoicePage() {
                 <Pencil size={14} /> Edit Invoice
               </button>
             )}
-            <button className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
+            <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
               <Download size={14} /> Download PDF
             </button>
             {selected.status === 'paid' && (
