@@ -1,0 +1,649 @@
+import { useState } from 'react'
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
+import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight } from 'lucide-react'
+
+/* ═══════════════════════════════════════
+   Constants
+═══════════════════════════════════════ */
+const TIPE_CLS = {
+  Personal: 'bg-blue-100 text-blue-700',
+  Group:    'bg-purple-100 text-purple-700',
+  Couple:   'bg-pink-100 text-pink-700',
+}
+
+const STAGE_CLS = {
+  New:       'bg-gray-100 text-gray-600',
+  Approach:  'bg-blue-100 text-blue-600',
+  Screening: 'bg-purple-100 text-purple-600',
+  Invoicing: 'bg-yellow-100 text-yellow-700',
+  Closing:   'bg-orange-100 text-orange-600',
+  Convert:   'bg-green-100 text-green-700',
+  Lost:      'bg-red-100 text-red-600',
+}
+
+const STAGE_BORDER = {
+  Convert:   'border-green-400',
+  Lost:      'border-red-400',
+  Closing:   'border-orange-400',
+  Invoicing: 'border-yellow-400',
+  Screening: 'border-purple-400',
+  Approach:  'border-blue-400',
+  New:       'border-gray-300',
+}
+
+const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert', 'Lost']
+const PIPELINE_LINEAR  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert']
+const SUMBER_OPTS      = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
+const PIC_OPTS         = ['Sarah Jenkins','Marcus Chen','Admin EFM']
+const PROGRAM_OPTS     = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
+
+/* ── Fallback static data (for direct URL access) ── */
+const LEADS_FALLBACK = [
+  {
+    id: 'LP-0001', nama: 'James Wilson', tipe: 'Personal',
+    noHp: '081234567890', sumberLead: 'Website', picEfm: 'Sarah Jenkins',
+    programDiminati: '12 Sesi - Pro', emailUmum: 'james.wilson@email.com',
+    catatanAwal: 'Tertarik program fatloss, sudah follow up 2x',
+    statusPipeline: 'Convert', orderId: 'PP-26-0013',
+    tanggalMasuk: '20 Okt 2026', tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0013',
+    logAktivitas: [
+      { status: 'Convert',   oleh: 'Sarah Jenkins', tanggal: '20 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0013' },
+      { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '18 Okt 2026', catatan: 'Klien setuju paket 12 sesi' },
+      { status: 'Invoicing', oleh: 'Sarah Jenkins', tanggal: '16 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Screening', oleh: 'Sarah Jenkins', tanggal: '14 Okt 2026', catatan: 'Screening kesehatan selesai, BMI normal' },
+      { status: 'Approach',  oleh: 'Sarah Jenkins', tanggal: '12 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
+      { status: 'New',       oleh: 'Sarah Jenkins', tanggal: '10 Okt 2026', catatan: 'Lead masuk dari form website' },
+    ],
+  },
+  {
+    id: 'LP-0002', nama: 'Dewi Ayu', tipe: 'Personal',
+    noHp: '087766554433', sumberLead: 'Referral', picEfm: 'Marcus Chen',
+    programDiminati: 'Tennis', emailUmum: 'dewi.ayu@email.com',
+    catatanAwal: 'Direferensikan oleh klien lama',
+    statusPipeline: 'Approach', tanggalMasuk: '7 Jun 2026',
+    tanggalFollowUp: '2026-07-03', catatan: 'Belum respon follow up terakhir',
+    logAktivitas: [
+      { status: 'Approach', oleh: 'Marcus Chen', tanggal: '1 Jul 2026', catatan: 'Follow up kedua, belum ada respon' },
+      { status: 'New',      oleh: 'Marcus Chen', tanggal: '7 Jun 2026', catatan: 'Lead masuk dari referral' },
+    ],
+  },
+  {
+    id: 'LP-0003', nama: 'Budi & Rina Santoso', tipe: 'Couple',
+    noHp: '085678901234', sumberLead: 'Walk-in', picEfm: 'Sarah Jenkins',
+    programDiminati: '12 Sesi - Pro', emailUmum: 'budi.santoso@email.com',
+    catatanAwal: 'Datang langsung ke lokasi, tertarik program couple',
+    statusPipeline: 'Screening', tanggalMasuk: '6 Okt 2026',
+    tanggalFollowUp: '2026-07-05', catatan: 'Menunggu jadwal screening kesehatan',
+    logAktivitas: [
+      { status: 'Screening', oleh: 'Sarah Jenkins', tanggal: '6 Okt 2026', catatan: 'Dijadwalkan screening minggu depan' },
+      { status: 'New',       oleh: 'Sarah Jenkins', tanggal: '6 Okt 2026', catatan: 'Walk-in langsung ke lokasi' },
+    ],
+  },
+  {
+    id: 'LP-0004', nama: 'Rian Maulana (Group Tennis)', tipe: 'Group',
+    noHp: '087712345678', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
+    programDiminati: 'Tennis Group', emailUmum: 'rian.maulana@email.com',
+    catatanAwal: 'Mau daftar grup 4 orang untuk tennis',
+    statusPipeline: 'New', tanggalMasuk: '15 Jun 2026',
+    tanggalFollowUp: '2026-07-02', catatan: 'Baru masuk, belum dihubungi',
+    logAktivitas: [
+      { status: 'New', oleh: 'Sarah Jenkins', tanggal: '15 Jun 2026', catatan: 'Lead masuk dari iklan Meta Ads' },
+    ],
+  },
+  {
+    id: 'LP-0005', nama: 'Anita Kumar', tipe: 'Personal',
+    noHp: '081298765432', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
+    programDiminati: 'Fatloss & Bodyshape', emailUmum: 'anita.kumar@email.com',
+    catatanAwal: 'Tertarik program fatloss',
+    statusPipeline: 'Lost', tanggalMasuk: '15 Jun 2026',
+    tanggalFollowUp: null, catatan: 'Tidak melanjutkan karena budget',
+    logAktivitas: [
+      { status: 'Lost',     oleh: 'Sarah Jenkins', tanggal: '20 Jun 2026', catatan: 'Klien menyatakan budget tidak sesuai' },
+      { status: 'Approach', oleh: 'Sarah Jenkins', tanggal: '16 Jun 2026', catatan: 'Sudah follow up, masih pertimbangan' },
+      { status: 'New',      oleh: 'Sarah Jenkins', tanggal: '15 Jun 2026', catatan: 'Lead masuk dari iklan' },
+    ],
+  },
+]
+
+/* ── Screening summary per klien ── */
+const SCREENING_SUMMARY = [
+  { id: 'SCR-26-0001', tanggal: '15 Okt 2026', namaKlien: 'James Wilson',           statusScreening: 'Selesai', orderId: 'PP-26-0013', picScreening: 'Sarah Jenkins' },
+  { id: 'SCR-26-0002', tanggal: '18 Okt 2026', namaKlien: 'Emily Chen',             statusScreening: 'Selesai', orderId: 'PP-26-0012', picScreening: 'Marcus Chen'  },
+  { id: 'SCR-26-0003', tanggal: '20 Okt 2026', namaKlien: 'Rian Maulana',           statusScreening: 'Draft',   orderId: null,          picScreening: 'Ahmad Pratama' },
+  { id: 'SCR-26-0004', tanggal: '6 Okt 2026',  namaKlien: 'Budi & Rina Santoso',   statusScreening: 'Draft',   orderId: null,          picScreening: 'Sarah Jenkins' },
+]
+
+/* ═══════════════════════════════════════
+   Helpers
+═══════════════════════════════════════ */
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) { return (name || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() }
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of (name || '')) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+function formatFollowUp(dateStr) {
+  if (!dateStr) return null
+  try { return new Date(dateStr).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) }
+  catch { return dateStr }
+}
+
+/* ═══════════════════════════════════════
+   Sub-components
+═══════════════════════════════════════ */
+function TipeBadge({ tipe }) {
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${TIPE_CLS[tipe] ?? 'bg-gray-100 text-gray-600'}`}>
+      {tipe}
+    </span>
+  )
+}
+
+function StageBadge({ stage }) {
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${STAGE_CLS[stage] ?? 'bg-gray-100 text-gray-600'}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+      {stage}
+    </span>
+  )
+}
+
+function ScrBadge({ status }) {
+  const cls = status === 'Selesai'
+    ? 'bg-green-50 text-green-700'
+    : status === 'Draft'
+    ? 'bg-gray-100 text-gray-500'
+    : 'bg-yellow-50 text-yellow-700'
+  return <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${cls}`}>{status}</span>
+}
+
+function InfoField({ label, children }) {
+  return (
+    <div className="bg-gray-50 rounded-lg p-3">
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+      <div className="text-sm font-semibold text-gray-800">{children}</div>
+    </div>
+  )
+}
+
+function Toast({ message, onClose }) {
+  return (
+    <div className="fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg bg-green-600 text-white text-[13px] font-medium">
+      {message}
+      <button onClick={onClose} className="ml-1 text-white/70 hover:text-white"><X size={13} /></button>
+    </div>
+  )
+}
+
+/* ── Pipeline Stepper ── */
+function PipelineStepper({ currentStage }) {
+  const isLost = currentStage === 'Lost'
+  const currentIdx = PIPELINE_LINEAR.indexOf(currentStage)
+
+  return (
+    <div className="mb-6">
+      {/* Stepper */}
+      <div className="flex items-start">
+        {PIPELINE_LINEAR.map((stage, idx) => {
+          const isCompleted = !isLost && idx < currentIdx
+          const isCurrent   = !isLost && idx === currentIdx
+          return (
+            <div key={stage} className="flex items-center flex-1">
+              <div className="flex flex-col items-center flex-1">
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                  ${isCompleted ? 'bg-[#1E1C43] text-white' : isCurrent ? 'bg-[#E05945] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                  {isCompleted ? '✓' : idx + 1}
+                </div>
+                <p className={`text-[10px] mt-1 text-center leading-tight
+                  ${isCurrent ? 'font-bold text-[#E05945]' : isCompleted ? 'font-medium text-[#1E1C43]' : 'text-gray-400'}`}>
+                  {stage}
+                </p>
+              </div>
+              {idx < PIPELINE_LINEAR.length - 1 && (
+                <div className={`h-0.5 flex-1 -mt-4 ${isCompleted ? 'bg-[#1E1C43]' : 'bg-gray-200'}`} />
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {/* Lost badge */}
+      {isLost && (
+        <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 border border-red-200">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-500 shrink-0" />
+          <span className="text-xs font-semibold text-red-600">Lead ditandai Lost — keluar dari pipeline</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
+   Main Page
+═══════════════════════════════════════ */
+export default function PPLeadDetailPage() {
+  const { id }         = useParams()
+  const navigate       = useNavigate()
+  const { state }      = useLocation()
+
+  const [lead, setLead]             = useState(state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null)
+  const [activeTab, setActiveTab]   = useState('info')
+  const [isEditMode, setIsEditMode] = useState(false)
+  const [editForm, setEditForm]     = useState({})
+  const [editingPipeline, setEditingPipeline] = useState(false)
+  const [newStage, setNewStage]     = useState(lead?.statusPipeline || '')
+  const [newStageTanggal, setNewStageTanggal] = useState(new Date().toISOString().split('T')[0])
+  const [newStageCatatan, setNewStageCatatan] = useState('')
+  const [toast, setToast]           = useState(null)
+
+  function showToast(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
+
+  if (!lead) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh] gap-4">
+        <p className="text-gray-500 text-sm">Lead tidak ditemukan.</p>
+        <button onClick={() => navigate('/pp/leads')}
+          className="flex items-center gap-2 text-sm font-medium text-[#1E1C43] hover:underline">
+          <ArrowLeft size={14} /> Kembali ke Leads
+        </button>
+      </div>
+    )
+  }
+
+  const screenings = SCREENING_SUMMARY.filter(s => s.namaKlien === lead.nama)
+
+  /* ── Edit info handlers ── */
+  function handleStartEdit() { setEditForm({ ...lead }); setIsEditMode(true) }
+  function handleCancelEdit() { setIsEditMode(false); setEditForm({}) }
+  function handleSaveEdit() {
+    if (!editForm.nama || !editForm.tipe || !editForm.noHp) {
+      alert('Nama, tipe, dan no HP wajib diisi.'); return
+    }
+    setLead({ ...editForm })
+    setIsEditMode(false); setEditForm({})
+    showToast('✓ Data lead berhasil diperbarui')
+  }
+
+  /* ── Pipeline update ── */
+  function handleUpdatePipeline() {
+    if (!newStageTanggal) { alert('Tanggal wajib diisi'); return }
+    const updated = {
+      ...lead,
+      statusPipeline: newStage,
+      logAktivitas: [
+        ...(lead.logAktivitas || []),
+        { tanggal: newStageTanggal, status: newStage, catatan: newStageCatatan || 'Status diperbarui', oleh: lead.picEfm || '' },
+      ],
+    }
+    setLead(updated)
+    setEditingPipeline(false)
+    setNewStage(updated.statusPipeline)
+    setNewStageTanggal(new Date().toISOString().split('T')[0])
+    setNewStageCatatan('')
+    showToast('✓ Status pipeline diperbarui')
+  }
+
+  const TABS = [
+    { key: 'info',      label: 'Info Klien'  },
+    { key: 'pipeline',  label: 'Pipeline'    },
+    { key: 'screening', label: 'Screening'   },
+  ]
+
+  return (
+    <>
+      <div className="space-y-5">
+
+        {/* ── Breadcrumb ── */}
+        <div className="flex items-center gap-1.5 text-xs text-gray-400">
+          <Link to="/pp/leads" className="hover:text-[#1E1C43] transition-colors">Leads PP</Link>
+          <ChevronRight size={12} />
+          <span className="text-gray-600 font-medium">{lead.nama}</span>
+        </div>
+
+        {/* ── Header ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <button onClick={() => navigate('/pp/leads')}
+                className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors shrink-0">
+                <ArrowLeft size={15} />
+              </button>
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+                style={{ background: getAvatarColor(lead.nama) }}>
+                {getInitials(lead.nama)}
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{lead.id}</p>
+                <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{lead.nama}</h1>
+                <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                  <TipeBadge tipe={lead.tipe} />
+                  <StageBadge stage={lead.statusPipeline} />
+                  <span className="text-[10px] text-gray-400">Masuk {lead.tanggalMasuk}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {lead.statusPipeline !== 'Lost' && (
+                <button
+                  onClick={() => navigate('/pp/orders/new', {
+                    state: { namaKlien: lead.nama, paket: lead.programDiminati, leadId: lead.id },
+                  })}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                  Buat Order →
+                </button>
+              )}
+              {lead.statusPipeline === 'Convert' && lead.orderId && (
+                <button onClick={() => navigate('/pp/orders/' + lead.orderId)}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
+                  Lihat Order #{lead.orderId}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Tabs ── */}
+        <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 w-fit">
+          {TABS.map(t => (
+            <button key={t.key} onClick={() => setActiveTab(t.key)}
+              className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                activeTab === t.key
+                  ? 'bg-[#1E1C43] text-white'
+                  : 'text-gray-500 hover:text-[#1E1C43]'
+              }`}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ════════════════════════════════
+            TAB 1: INFO KLIEN
+        ════════════════════════════════ */}
+        {activeTab === 'info' && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
+              {!isEditMode ? (
+                <button onClick={handleStartEdit}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors">
+                  <Edit2 size={12} /> Edit
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button onClick={handleSaveEdit}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                    <Save size={12} /> Simpan
+                  </button>
+                  <button onClick={handleCancelEdit}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                    <X size={12} /> Batal
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="p-5">
+              {!isEditMode ? (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <InfoField label="No HP / WhatsApp">
+                    <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
+                      className="text-[#1E1C43] hover:underline">
+                      {lead.noHp}
+                    </a>
+                  </InfoField>
+                  <InfoField label="Email">
+                    {lead.emailUmum
+                      ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
+                      : <span className="text-gray-400 italic">—</span>}
+                  </InfoField>
+                  <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
+                  <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
+                  <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
+                  <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
+                  <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
+                  <InfoField label="Follow Up Berikutnya">
+                    {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
+                  </InfoField>
+                  {lead.catatanAwal && (
+                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
+                      <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
+                    </div>
+                  )}
+                  {lead.catatan && (
+                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
+                      <p className="text-sm text-gray-700">{lead.catatan}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Edit form */
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="col-span-2">
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                      Nama Klien <span className="text-red-500">*</span>
+                    </label>
+                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
+                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
+                      <option>Personal</option><option>Group</option><option>Couple</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
+                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                    <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
+                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.sumberLead || ''} onChange={e => setEditForm(p => ({ ...p, sumberLead: e.target.value }))}>
+                      <option value="">Pilih Sumber...</option>
+                      {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
+                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
+                      <option value="">Pilih Program...</option>
+                      {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
+                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.picEfm || ''} onChange={e => setEditForm(p => ({ ...p, picEfm: e.target.value }))}>
+                      {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
+                    <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
+                    <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                      value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 2: PIPELINE
+        ════════════════════════════════ */}
+        {activeTab === 'pipeline' && (
+          <div className="space-y-4">
+
+            {/* Stepper card */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">Status Pipeline</h3>
+              <PipelineStepper currentStage={lead.statusPipeline} />
+
+              {/* Update stage form toggle */}
+              <div className="border-t border-gray-100 pt-4">
+                {!editingPipeline ? (
+                  <button
+                    onClick={() => { setEditingPipeline(true); setNewStage(lead.statusPipeline) }}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[#1E1C43] hover:text-[#E05945] transition-colors">
+                    ✏️ Update Status Pipeline
+                  </button>
+                ) : (
+                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
+                        <select value={newStage} onChange={e => setNewStage(e.target.value)}
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                          {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+                        <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                      <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
+                        placeholder="Catatan perubahan status..."
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={handleUpdatePipeline}
+                        className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
+                        ✓ Simpan Perubahan
+                      </button>
+                      <button onClick={() => setEditingPipeline(false)}
+                        className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        Batal
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Log Aktivitas card */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Log Aktivitas</h3>
+              {(lead.logAktivitas || []).length === 0 ? (
+                <p className="text-sm text-gray-400 italic">Belum ada aktivitas.</p>
+              ) : (
+                <div className="space-y-0">
+                  {[...(lead.logAktivitas || [])].reverse().map((log, i, arr) => (
+                    <div key={i} className={`pl-4 pb-4 border-l-2 ${STAGE_BORDER[log.status] ?? 'border-gray-300'} ${i === arr.length - 1 ? 'border-transparent' : ''}`}>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                            {log.status}
+                          </span>
+                          {log.oleh && <span className="text-[10px] text-gray-400">— {log.oleh}</span>}
+                        </div>
+                        <span className="text-[10px] text-gray-400">{log.tanggal}</span>
+                      </div>
+                      <p className="text-xs text-gray-600">{log.catatan}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 3: SCREENING
+        ════════════════════════════════ */}
+        {activeTab === 'screening' && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Screening</h3>
+              <button
+                onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: lead.nama } })}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                <Plus size={13} /> Buat Screening
+              </button>
+            </div>
+
+            <div className="p-5">
+              {screenings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                    <ClipboardList size={22} className="text-gray-400" />
+                  </div>
+                  <p className="text-sm text-gray-500 font-medium">Belum ada data screening untuk klien ini</p>
+                  <p className="text-xs text-gray-400">Screening diperlukan sebelum program dimulai</p>
+                  <button
+                    onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: lead.nama } })}
+                    className="flex items-center gap-1.5 mt-1 px-4 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Plus size={13} /> Buat Screening Sekarang
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                    <p className="text-xs text-blue-700 font-medium">
+                      {screenings.length} data screening ditemukan untuk klien ini.
+                    </p>
+                  </div>
+                  {screenings.map(scr => (
+                    <button
+                      key={scr.id}
+                      onClick={() => navigate('/pp/screening', { state: { openScreeningId: scr.id } })}
+                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
+                          <ClipboardList size={16} className="text-gray-500" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-semibold text-[#1E1C43]">{scr.id}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-xs text-gray-500">{scr.tanggal}</span>
+                            <span className="text-gray-300">·</span>
+                            <span className="text-xs text-gray-500">{scr.picScreening}</span>
+                            {scr.orderId && (
+                              <>
+                                <span className="text-gray-300">·</span>
+                                <span className="text-xs text-gray-500">Order #{scr.orderId}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <ScrBadge status={scr.statusScreening} />
+                        <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+      </div>
+
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+    </>
+  )
+}
