@@ -64,11 +64,13 @@ Setiap kali menyelesaikan sebuah task/perubahan kode:
 
 1. Pastikan perubahan sudah di-push ke branch kerja (bukan main)
 
-2. Selalu sertakan di akhir laporan: link PR DAN link Vercel 
-   branch preview URL (format: 
-   https://efm-admins-git-[nama-branch]-bugar-nusantara-jaya.vercel.app) 
-   supaya pengguna bisa langsung buka dan lihat hasilnya secara 
-   live di browser, tanpa perlu screenshot manual
+2. Selalu sertakan di akhir laporan: link PR DAN link Vercel
+   branch preview URL. JANGAN konstruksi URL preview secara manual
+   dari nama branch — branch panjang di-truncate Vercel dan URL
+   yang dikonstruksi tidak bisa dibuka. Selalu ambil URL preview
+   yang benar dengan memanggil mcp__github__pull_request_read
+   (method: get_comments) setelah PR dibuat, lalu baca field
+   previewUrl dari komentar Vercel bot di PR tersebut.
 
 3. Jangan gunakan URL immutable deployment (yang formatnya 
    efm-admins-[hash acak]-bugar-nusantara-jaya.vercel.app) sebagai 
