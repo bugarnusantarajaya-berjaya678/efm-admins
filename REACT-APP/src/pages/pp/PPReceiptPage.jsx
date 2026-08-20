@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Eye, Download, ArrowLeft, MessageCircle } from 'lucide-react'
 import { RECEIPTS_INIT, WA_LABEL, formatRp, sesiCount } from '../../data/ppReceiptData'
 
@@ -68,7 +69,7 @@ function QRPlaceholder({ label }) {
 }
 
 /* ─── Receipt Card ─── */
-function ReceiptCard({ rcp }) {
+function ReceiptCard({ rcp, onGoToOrder, onGoToInvoice }) {
   const sesi = sesiCount(rcp.paket)
   return (
     <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[560px] w-full">
@@ -76,7 +77,11 @@ function ReceiptCard({ rcp }) {
       <div className="bg-primary px-7 py-6 flex items-center justify-between">
         <div>
           <div className="text-white font-extrabold text-sm tracking-wide">Essential Fitness Management</div>
-          <div className="text-white/55 text-[11px] mt-1">Order ID: #{rcp.orderId}</div>
+          <button
+            onClick={() => onGoToOrder(rcp.orderId)}
+            className="text-white/55 text-[11px] mt-1 hover:text-white hover:underline block">
+            Order ID: #{rcp.orderId}
+          </button>
         </div>
         <span className="bg-[#27AE60] text-white text-[11px] font-bold px-3.5 py-1 rounded-full tracking-wide">LUNAS</span>
       </div>
@@ -95,7 +100,10 @@ function ReceiptCard({ rcp }) {
           ].map(([l, v]) => (
             <div key={l}>
               <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-0.5">{l}</div>
-              <div className="text-[13px] font-semibold text-text-primary break-all">{v}</div>
+              {l === 'Ref. Invoice'
+                ? <button onClick={() => onGoToInvoice(v)} className="text-[13px] font-semibold text-[#1E1C43] hover:underline">{v}</button>
+                : <div className="text-[13px] font-semibold text-text-primary break-all">{v}</div>
+              }
             </div>
           ))}
         </div>
@@ -147,6 +155,8 @@ function ReceiptCard({ rcp }) {
 const ROWS = 10
 
 export default function PPReceiptPage() {
+  const location = useLocation()
+  const navigate = useNavigate()
   const [receipts,    setReceipts]   = useState(RECEIPTS_INIT)
   const [selectedNo,  setSelectedNo] = useState(null)
   const [fBulan,      setFBulan]     = useState('')
@@ -154,6 +164,11 @@ export default function PPReceiptPage() {
   const [fWA,         setFWA]        = useState('')
   const [fSearch,     setFSearch]    = useState('')
   const [page,        setPage]       = useState(1)
+
+  useEffect(() => {
+    const q = location.state?.filterSearch
+    if (q) setFSearch(q)
+  }, [])
 
   const selected = receipts.find(r => r.rcpNo === selectedNo) || null
 
@@ -216,7 +231,11 @@ export default function PPReceiptPage() {
           </div>
         </div>
 
-        <ReceiptCard rcp={selected} />
+        <ReceiptCard
+          rcp={selected}
+          onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
+          onGoToInvoice={invNo => navigate('/pp/invoice', { state: { filterSearch: invNo } })}
+        />
       </div>
     )
   }

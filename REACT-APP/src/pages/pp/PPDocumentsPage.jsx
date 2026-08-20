@@ -1,4 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search } from 'lucide-react'
 import { DOCS_INIT, STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 
@@ -399,6 +400,7 @@ function PreviewModal({ doc, onClose, onApprove, onSubmitSign }) {
 const ROWS_PER_PAGE = 8
 
 export default function PPDocumentsPage() {
+  const navigate = useNavigate()
   const [docs, setDocs] = useState(DOCS_INIT)
   const [previewId, setPreviewId] = useState(null)
   const [fBulan, setFBulan] = useState('')
@@ -563,7 +565,9 @@ export default function PPDocumentsPage() {
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.displayId}</td>
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.noReceipt}</td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{d.refInvoice}</td>
-                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">#{d.orderId}</td>
+                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
+                    <button onClick={e => { e.stopPropagation(); navigate('/pp/orders/' + d.orderId) }} className="hover:underline">#{d.orderId}</button>
+                  </td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-center gap-2">
                       <AvatarSm initials={d.initials} color={d.color} />

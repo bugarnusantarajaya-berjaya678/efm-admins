@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Eye, Download, ArrowLeft, CheckCircle, Pencil, Trash2, Plus } from 'lucide-react'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 
@@ -222,6 +222,7 @@ const validKodeDiskon = {
 
 export default function PPInvoicePage() {
   const location = useLocation()
+  const navigate = useNavigate()
   const [invoices,        setInvoices]        = useState(INVOICES_INIT)
   const [selectedNo,      setSelectedNo]      = useState(null)
   const [fStatus,         setFStatus]         = useState('')
@@ -327,7 +328,7 @@ export default function PPInvoicePage() {
             </button>
             {selected.status === 'paid' && (
               <button
-                onClick={() => setModal('receipt')}
+                onClick={() => navigate('/pp/receipt', { state: { filterSearch: selected.invNo } })}
                 className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
                 Lihat Receipt
@@ -400,7 +401,11 @@ export default function PPInvoicePage() {
               {/* Order ID */}
               <div className="flex justify-end items-center gap-2">
                 <span className="text-xs text-gray-400">Order ID:</span>
-                <span className="text-white font-semibold text-sm">#{selected.orderId}</span>
+                <button
+                  onClick={() => navigate('/pp/orders/' + selected.orderId)}
+                  className="text-white font-semibold text-sm hover:underline">
+                  #{selected.orderId}
+                </button>
               </div>
 
               <div className="border-t border-white/20 my-2" />
@@ -606,9 +611,7 @@ export default function PPInvoicePage() {
         {modal === 'markPaid' && (
           <MarkPaidModal inv={selected} onConfirm={handleMarkPaid} onClose={() => setModal(null)} />
         )}
-        {modal === 'receipt' && (
-          <ReceiptModal inv={selected} onClose={() => setModal(null)} />
-        )}
+
       </div>
     )
   }
