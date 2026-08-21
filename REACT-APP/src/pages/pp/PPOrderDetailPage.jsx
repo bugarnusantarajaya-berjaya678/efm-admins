@@ -236,10 +236,26 @@ export default function PPOrderDetailPage() {
 
   /* Section 1 — Info Deal */
   const initInfo = order
-    ? { namaKlien: order.namaKlien, paket: order.paket,
-        tanggalMulai: order.tanggalMulai, tanggalSelesai: order.tanggalSelesai || '',
-        pic: order.picSalesEFM, picOps: order.picOpsEFM,
-        catatan: order.catatanOrder || '' }
+    ? {
+        namaKlien:         order.namaKlien         || '',
+        paket:             order.paket             || '',
+        tanggalMulai:      order.tanggalMulai      || '',
+        tanggalSelesai:    order.tanggalSelesai    || '',
+        pic:               order.picSalesEFM       || '',
+        picOps:            order.picOpsEFM         || '',
+        catatan:           order.catatanOrder      || '',
+        noHP:              order.noHP              || '',
+        email:             order.email             || '',
+        hubunganKlien:     order.hubunganKlien     || 'Diri Sendiri',
+        namaKlienLatihan:  order.namaKlienLatihan  || order.namaKlien || '',
+        noHPKlien:         order.noHPKlien         || order.noHP || '',
+        usiaKlien:         order.usiaKlien         || '',
+        jenisKelaminKlien: order.jenisKelaminKlien || '',
+        hariLatihan:       order.hariLatihan       || [],
+        jamLatihan:        order.jamLatihan        || '',
+        lokasiLatihan:     order.lokasiLatihan     || '',
+        leadId:            order.leadId            || fromState?.leadId || '',
+      }
     : {}
   const [infoDeal, setInfoDeal] = useState(initInfo)
   const [infoDraft, setInfoDraft] = useState(initInfo)
@@ -580,8 +596,10 @@ export default function PPOrderDetailPage() {
   }
 
   function handleSimpanOrderBaru() {
-    const newId = 'PP-' + (dummyPPOrders.length + 1)
-    navigate('/pp/orders/' + newId)
+    const newId = 'PP-26-' + String(dummyPPOrders.length + 1).padStart(4, '0')
+    navigate('/pp/orders/' + newId, {
+      state: infoDraft.leadId ? { fromLeadId: infoDraft.leadId } : undefined,
+    })
   }
 
   /* ── LOI data ────────────────────────────────────────────────────────────── */
@@ -719,7 +737,7 @@ export default function PPOrderDetailPage() {
               {getInitials(order.namaKlien)}
             </div>
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{order.id}</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'PP-DRAFT' : order.id}</p>
               <h1 className="text-xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
               <div className="flex flex-wrap items-center gap-2 mt-1.5">
                 <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
@@ -781,17 +799,20 @@ export default function PPOrderDetailPage() {
       {/* Tab Bar */}
       <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 w-fit">
         {[
-          { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
-          { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
-          { key: 'operasional', label: 'Operasional Lapangan'  },
+          { key: 'keuangan',    label: 'Kontrak & Keuangan',  locked: false },
+          { key: 'dokumen',     label: 'Dokumen Kerjasama',   locked: isNew },
+          { key: 'operasional', label: 'Operasional Lapangan', locked: isNew },
         ].map(tab => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => !tab.locked && setActiveTab(tab.key)}
+            title={tab.locked ? 'Simpan order terlebih dahulu' : undefined}
             className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
-              activeTab === tab.key
-                ? 'bg-[#1E1C43] text-white'
-                : 'text-gray-500 hover:text-[#1E1C43]'
+              tab.locked
+                ? 'text-gray-300 cursor-not-allowed'
+                : activeTab === tab.key
+                  ? 'bg-[#1E1C43] text-white'
+                  : 'text-gray-500 hover:text-[#1E1C43]'
             }`}
           >
             {tab.label}
@@ -812,12 +833,16 @@ export default function PPOrderDetailPage() {
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
               {editingSection === 'infoDeal' ? (
                 <div className="flex gap-2">
-                  <button onClick={saveInfoDeal} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                    <Save size={12} /> Simpan
+                  <button
+                    onClick={isNew ? handleSimpanOrderBaru : saveInfoDeal}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                    <Save size={12} /> {isNew ? 'Buat Order' : 'Simpan'}
                   </button>
-                  <button onClick={cancelEdit} className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                    <X size={12} /> Batal
-                  </button>
+                  {!isNew && (
+                    <button onClick={cancelEdit} className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <X size={12} /> Batal
+                    </button>
+                  )}
                 </div>
               ) : (
                 <button onClick={() => startEdit('infoDeal')} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
@@ -832,16 +857,32 @@ export default function PPOrderDetailPage() {
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Pendaftar</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  ["Nama Pendaftar", order.namaKlien],
-                  ["No. HP", order.noHP || "081234567890"],
-                  ["Email", order.email || "james@email.com"],
-                  ["Hubungan dengan Klien", order.hubunganKlien || "Diri Sendiri"],
-                ].map(([label, val]) => (
+                  { label: 'Nama Pendaftar',          field: 'namaKlien',     type: 'text' },
+                  { label: 'No. HP',                  field: 'noHP',          type: 'tel'  },
+                  { label: 'Email',                   field: 'email',         type: 'email'},
+                ].map(({ label, field, type }) => (
                   <div key={label} className="bg-gray-50 rounded-lg p-3">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
+                    {editingSection === 'infoDeal' ? (
+                      <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
+                        onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
+                    )}
                   </div>
                 ))}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hubungan dengan Klien</p>
+                  {editingSection === 'infoDeal' ? (
+                    <select value={infoDraft.hubunganKlien || 'Diri Sendiri'} onChange={e => setInfoDraft(p => ({...p, hubunganKlien: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                      {['Diri Sendiri','Pasangan','Anak','Orang Tua','Keluarga Lain','Lainnya'].map(o => <option key={o}>{o}</option>)}
+                    </select>
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.hubunganKlien || '—'}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -850,16 +891,46 @@ export default function PPOrderDetailPage() {
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien Latihan</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  ["Nama Klien Latihan", order.namaKlienLatihan || order.namaKlien],
-                  ["No. HP Klien", order.noHPKlien || order.noHP || "081234567890"],
-                  ["Usia", (order.usiaKlien || "32") + " tahun"],
-                  ["Jenis Kelamin", order.jenisKelaminKlien || "Laki-laki"],
-                ].map(([label, val]) => (
+                  { label: 'Nama Klien Latihan', field: 'namaKlienLatihan', type: 'text' },
+                  { label: 'No. HP Klien',       field: 'noHPKlien',        type: 'tel'  },
+                ].map(({ label, field, type }) => (
                   <div key={label} className="bg-gray-50 rounded-lg p-3">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
+                    {editingSection === 'infoDeal' ? (
+                      <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
+                        onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
+                    )}
                   </div>
                 ))}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
+                  {editingSection === 'infoDeal' ? (
+                    <div className="flex items-center gap-1.5">
+                      <input type="number" min="1" max="99" value={infoDraft.usiaKlien || ''} placeholder="0"
+                        onChange={e => setInfoDraft(p => ({...p, usiaKlien: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      <span className="text-xs text-gray-400 whitespace-nowrap">tahun</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                  )}
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
+                  {editingSection === 'infoDeal' ? (
+                    <select value={infoDraft.jenisKelaminKlien || ''} onChange={e => setInfoDraft(p => ({...p, jenisKelaminKlien: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                      <option value="">-- Pilih --</option>
+                      <option value="Laki-laki">Laki-laki</option>
+                      <option value="Perempuan">Perempuan</option>
+                    </select>
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -907,19 +978,53 @@ export default function PPOrderDetailPage() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Hari Latihan</p>
-                  <div className="flex flex-wrap gap-1">
-                    {(order.hariLatihan || ["Senin","Rabu","Jumat"]).map(h => (
-                      <span key={h} className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full">{h}</span>
-                    ))}
-                  </div>
+                  {editingSection === 'infoDeal' ? (
+                    <div className="flex flex-wrap gap-1">
+                      {["Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"].map(h => {
+                        const selected = (infoDraft.hariLatihan || []).includes(h)
+                        return (
+                          <button key={h} type="button"
+                            onClick={() => setInfoDraft(p => ({
+                              ...p,
+                              hariLatihan: selected
+                                ? (p.hariLatihan || []).filter(x => x !== h)
+                                : [...(p.hariLatihan || []), h]
+                            }))}
+                            className={`text-xs px-2 py-0.5 rounded-full border transition-colors ${
+                              selected ? 'bg-[#1E1C43] text-white border-[#1E1C43]' : 'bg-white text-gray-500 border-gray-300 hover:border-[#1E1C43]'
+                            }`}>
+                            {h}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-1">
+                      {(infoDeal.hariLatihan?.length ? infoDeal.hariLatihan : order.hariLatihan || []).map(h => (
+                        <span key={h} className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full">{h}</span>
+                      ))}
+                      {!(infoDeal.hariLatihan?.length || order.hariLatihan?.length) && <span className="text-sm font-semibold text-gray-800">—</span>}
+                    </div>
+                  )}
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
-                  <p className="text-sm font-semibold text-gray-800">{order.jamLatihan || "07:00"} WIB</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="time" value={infoDraft.jamLatihan || ''} onChange={e => setInfoDraft(p => ({...p, jamLatihan: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.jamLatihan || order.jamLatihan || '—'}{(infoDeal.jamLatihan || order.jamLatihan) ? ' WIB' : ''}</p>
+                  )}
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3 col-span-2">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Latihan</p>
-                  <p className="text-sm font-semibold text-gray-800">{order.lokasiLatihan || "Hampton's Park Tower A, Cilandak Barat"}</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="text" value={infoDraft.lokasiLatihan || ''} placeholder="Nama gedung / area"
+                      onChange={e => setInfoDraft(p => ({...p, lokasiLatihan: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.lokasiLatihan || order.lokasiLatihan || '—'}</p>
+                  )}
                 </div>
               </div>
             </div>
