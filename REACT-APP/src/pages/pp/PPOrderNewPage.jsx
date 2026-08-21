@@ -226,7 +226,7 @@ export default function PPOrderNewPage() {
   const formatRp = (val) => 'Rp ' + (val || 0).toLocaleString('id-ID');
 
   const handleSimpanOrder = () => {
-    navigate('/pp/orders/PP-8042');
+    navigate('/pp/orders/PP-26-0013');
   };
 
   const filteredLeads = pendaftarSearch
@@ -721,10 +721,6 @@ export default function PPOrderNewPage() {
             <button onClick={() => navigate('/pp/orders')}
               className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
               <ArrowLeft size={15} /> Batal
-            </button>
-            <button
-              className="px-4 py-2.5 border border-[#1E1C43] text-[#1E1C43] rounded-xl text-sm font-semibold hover:bg-gray-50 transition flex items-center gap-2">
-              Simpan Draft
             </button>
             <button onClick={handleSimpanOrder}
               disabled={!pendaftar.nama || !klienLatihan.nama || !selectedPaket}
