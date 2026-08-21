@@ -240,14 +240,17 @@ export default function PPLeadsPage() {
     showToastMsg('✓ Lead baru berhasil ditambahkan')
   }
 
-  const filtered = useMemo(() => leads.filter(l => {
-    if (bulan  && !(l.tanggalMasuk || '').includes(bulan))  return false
-    if (tahun  && !(l.tanggalMasuk || '').includes(tahun))  return false
-    if (tipe   && l.tipe           !== tipe)                 return false
-    if (stage  && l.statusPipeline !== stage)                return false
-    if (search && !l.nama.toLowerCase().includes(search.toLowerCase())) return false
-    return true
-  }), [leads, bulan, tahun, tipe, stage, search])
+  const filtered = useMemo(() => leads
+    .filter(l => {
+      if (bulan  && !(l.tanggalMasuk || '').includes(bulan))  return false
+      if (tahun  && !(l.tanggalMasuk || '').includes(tahun))  return false
+      if (tipe   && l.tipe           !== tipe)                 return false
+      if (stage  && l.statusPipeline !== stage)                return false
+      if (search && !l.nama.toLowerCase().includes(search.toLowerCase())) return false
+      return true
+    })
+    .sort((a, b) => parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]))
+  , [leads, bulan, tahun, tipe, stage, search])
 
   const kpiTotal     = leads.length
   const kpiHot       = leads.filter(l => l.statusPipeline === 'Screening' || l.statusPipeline === 'Invoicing').length
@@ -268,12 +271,20 @@ export default function PPLeadsPage() {
             <h1 className="text-[22px] font-bold text-text-primary">Leads Private Program</h1>
             <p className="text-sm text-text-muted mt-1">Kelola prospek klien Private Program</p>
           </div>
-          <button
-            onClick={() => { setLeadForm({ ...emptyLeadForm }); setFormErrors({}); setShowAddLead(true) }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
-          >
-            <Plus size={15} strokeWidth={2.5} /> Tambah Lead
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/pp/screening')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-[#1E1C43] bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+            >
+              <Search size={14} strokeWidth={2} /> Screening
+            </button>
+            <button
+              onClick={() => { setLeadForm({ ...emptyLeadForm }); setFormErrors({}); setShowAddLead(true) }}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
+            >
+              <Plus size={15} strokeWidth={2.5} /> Tambah Lead
+            </button>
+          </div>
         </div>
 
         {/* KPI Cards */}
