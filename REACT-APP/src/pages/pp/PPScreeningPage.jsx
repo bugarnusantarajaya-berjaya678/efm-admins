@@ -167,7 +167,7 @@ export default function PPScreeningPage() {
           <h1 className="text-[22px] font-bold text-text-primary">Screening Kesehatan Klien</h1>
           <p className="text-sm text-gray-500 mt-0.5">Form screening opsional untuk tracking kesehatan dan kebugaran klien</p>
         </div>
-        <button onClick={() => setShowForm(true)}
+        <button onClick={() => navigate('/pp/screening/new')}
           className="bg-[#E05945] text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-[#c94a38] transition">
           <Plus size={16} /> Tambah Screening
         </button>
@@ -241,7 +241,7 @@ export default function PPScreeningPage() {
             </thead>
             <tbody>
               {filtered.map(s => (
-                <tr key={s.id} onClick={() => setSelectedScreening(s)}
+                <tr key={s.id} onClick={() => navigate('/pp/screening/' + s.id)}
                   className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition">
                   <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{s.id}</td>
                   <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">{s.tanggal}</td>
@@ -282,7 +282,7 @@ export default function PPScreeningPage() {
                     )}
                   </td>
                   <td className="px-3 py-2.5">
-                    <button onClick={e => { e.stopPropagation(); setSelectedScreening(s); }}
+                    <button onClick={e => { e.stopPropagation(); navigate('/pp/screening/' + s.id); }}
                       className="text-gray-400 hover:text-[#1E1C43] transition p-1">
                       <Eye size={16} />
                     </button>
