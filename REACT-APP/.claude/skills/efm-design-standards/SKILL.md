@@ -61,7 +61,7 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 **Display rules**
 - Order IDs always shown with `#` prefix in UI headers/titles and when referenced inside other documents (e.g. "Invoice #INV-PP-26-0011")
 - Table cells: no `#` prefix in general, EXCEPT the Order ID column, which does use `#`
-- All ID values in tables: `font-medium text-[#1E1C43] whitespace-nowrap`
+- All ID values in tables: `font-semibold text-[#1E1C43] whitespace-nowrap` — JANGAN `font-medium` atau `font-normal`, selalu semibold navy
 
 **Dummy/placeholder data:** always follow this exact format. Never generic IDs like `ORD-001` or `INV-001` without module code and year.
 
@@ -81,9 +81,10 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 **Table**
 - Header: `text-xs font-semibold text-gray-400 uppercase tracking-wide`
-- Body/data: `text-sm text-gray-700`
-- Names/important data: `text-sm font-semibold text-gray-800`
-- ID columns: `text-sm font-medium text-[#1E1C43] whitespace-nowrap`
+- Body/data: `text-xs text-gray-600` (list pages pakai `text-xs`, bukan `text-sm`)
+- Names/important data: `text-xs font-medium text-gray-900`
+- ID columns: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap` — WAJIB semibold navy, berlaku untuk SEMUA kolom ID: No. Invoice, No. Receipt, No. Agreement, Order ID, Lead ID, dsb.
+- Amount/angka: `text-xs font-semibold text-gray-600`
 
 **KPI cards**
 - Big number: `text-2xl font-bold text-[#1E1C43]`
@@ -96,7 +97,46 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 **Badges:** `text-xs font-medium`, `px-2 py-1 rounded-full`
 **Buttons:** `text-sm font-medium` (primary: `bg-[#1E1C43] text-white`; secondary: `border border-gray-300 text-gray-700`)
 
-**Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. Reserved only for section titles (`text-base font-bold`) and document headers (`text-4xl font-black`). If a component "looks too big," check that value/label pairs use `text-sm`/`text-xs`.
+**Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. Never use `text-sm` for table body cells in list pages — use `text-xs` consistently.
+
+---
+
+## 3a. Standard Column Minimum Widths (Table)
+
+Gunakan nilai ini sebagai acuan `style={{minWidth:'Xpx'}}` per `<th>` di semua halaman list.
+Ini mencegah kolom "Nama Klien" di Invoice berbeda lebar dengan "Nama Klien" di Orders, yang menyebabkan wrap berbeda.
+
+| Tipe Kolom | minWidth |
+|---|---|
+| No. Invoice / No. Receipt / No. Agreement | 160–175px |
+| Lead ID | 110px |
+| Order ID | 130px |
+| Nama Klien / Nama Perusahaan | 160px |
+| Paket / Program / Layanan / Nama Event | 160px |
+| PIC EFM / Pelatih / Koordinator | 130px |
+| Tanggal / Tgl Bayar / Jatuh Tempo / Tgl Event | 120px |
+| Kota / Tipe / Jenis | 110px |
+| Stage / Tahapan | 120px |
+| Status | 120px |
+| No. HP / No. WA | 130px |
+| Nilai Kontrak / Total | 130px |
+| Aksi | 100px |
+
+**Cara terapkan di `<th>`:**
+```jsx
+<th style={{minWidth:'160px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+  Nama Klien
+</th>
+```
+
+**Cara terapkan dengan loop `[h, mw]` (dipakai di halaman dengan banyak kolom):**
+```jsx
+{[['No Invoice',165],['Order ID',130],['Nama Klien',160],['Status',120],['Aksi',100]].map(([h, mw]) => (
+  <th key={h} style={{minWidth:mw}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+    {h}
+  </th>
+))}
+``` Reserved only for section titles (`text-base font-bold`) and document headers (`text-4xl font-black`). If a component "looks too big," check that value/label pairs use `text-sm`/`text-xs`.
 
 ---
 

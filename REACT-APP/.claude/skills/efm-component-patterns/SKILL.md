@@ -513,7 +513,7 @@ function PBtn({ children, active, onClick }) {
 - Outer wrapper: `bg-bg-surface border border-border rounded-xl overflow-hidden` — BUKAN `bg-white rounded-2xl shadow-sm`
 - Semua padding cell (header & body): `px-3 py-2.5` — BUKAN `px-4 py-3`
 - Header: semua `text-left`, ukuran `text-[10px] font-semibold text-gray-500 uppercase tracking-wider`
-- ID column: `font-semibold text-[#1E1C43]` — selalu menonjol dengan warna navy
+- ID column: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap` — SEMUA kolom ID wajib semibold navy (No. Invoice, No. Receipt, No. Agreement, Order ID, Lead ID, dll). Jangan `font-normal` atau `font-medium`
 - Avatar: `w-7 h-7 rounded-full`, font `text-[10px] font-bold` — BUKAN `w-8 h-8` atau font lebih besar
 - Nama di samping avatar: `text-xs font-medium text-gray-900`
 - Data teks biasa: `text-xs font-normal text-gray-600`
@@ -521,6 +521,46 @@ function PBtn({ children, active, onClick }) {
 - Tombol aksi: ukuran `w-7 h-7`, icon `size={13}` — bukan `size={14}` atau lebih besar
 - Selalu `e.stopPropagation()` pada tombol aksi untuk mencegah trigger klik baris
 - Footer pagination: `px-4 py-3 border-t border-border`
+- Lebar kolom minimum: lihat tabel standar di `efm-design-standards` Section 3a — wajib ikuti nilai yang sudah ditetapkan supaya lebar Nama Klien/Tanggal/PIC konsisten antar halaman
+
+---
+
+### Sort Newest-First (Wajib di semua halaman list)
+
+Semua halaman list harus menampilkan data **terbaru di atas** (ID terbesar = paling baru). Terapkan `.sort()` di dalam `useMemo`, dirantai setelah `.filter()`:
+
+```js
+const filtered = useMemo(() => {
+  return data
+    .filter(item => { /* filter logic */ })
+    .sort((a, b) => parseInt(b.id.split('-')[N]) - parseInt(a.id.split('-')[N]))
+}, [data, ...deps])
+```
+
+**Index `N` sesuai format ID:**
+
+| Format ID | Contoh | Split index N |
+|---|---|---|
+| `LP-0001` (Lead PP) | `LP-0001` | `[1]` |
+| `LB-0001` (Lead B2B) | `LB-0001` | `[1]` |
+| `LE-0001` (Lead Event) | `LE-0001` | `[1]` |
+| `SCR-26-0001` (Screening) | `SCR-26-0001` | `[2]` |
+| `SVY-26-0001` (Survey B2B) | `SVY-26-0001` | `[2]` |
+| `KNS-26-0001` (Konsultasi Event) | `KNS-26-0001` | `[2]` |
+| `PP-26-0001` (Order PP) | `PP-26-0001` | `[2]` |
+| `B2B-26-0001` (Order B2B) | `B2B-26-0001` | `[2]` |
+| `EV-26-0001` (Order Event) | `EV-26-0001` | `[2]` |
+| `INV-PP-26-0001` (Invoice PP) | `INV-PP-26-0001` | `[3]` |
+| `INV-B2B-26-0001` (Invoice B2B) | `INV-B2B-26-0001` | `[3]` |
+| `INV-EV-26-0001` (Invoice Event) | `INV-EV-26-0001` | `[3]` |
+| `RCP-PP-26-0001` (Receipt PP) | `RCP-PP-26-0001` | `[3]` |
+| `AGR-PP-26-0001` (Agreement PP) | `AGR-PP-26-0001` | `[3]` |
+| Variasi lain (segment terakhir) | `PRG-PP-001` | `.pop()` |
+
+**Untuk format non-standar**, gunakan `.split('-').pop()` sebagai fallback aman:
+```js
+.sort((a, b) => parseInt(b.id.split('-').pop()) - parseInt(a.id.split('-').pop()))
+```
 
 ---
 
