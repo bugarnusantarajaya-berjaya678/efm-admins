@@ -312,9 +312,6 @@ export default function PPOrderDetailPage() {
   const [quotationDraft, setQuotationDraft] = useState(null)
 
 
-  /* Section 3 — Catatan Program (menggantikan Profit Sharing) */
-  const [catatanProgram, setCatatanProgram] = useState(order?.catatanOrder || '')
-
   /* Section — Profit Sharing (unused, kept to avoid errors) */
   const [hasPS, setHasPS] = useState(false)
   const initPS = [
@@ -1128,18 +1125,16 @@ export default function PPOrderDetailPage() {
             </div>
 
             {/* Catatan Order */}
-            {(order.catatanOrder || editingSection === 'infoDeal') && (
-              <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
-                <p className="text-xs font-semibold text-gray-500 mb-1">Catatan / Target Klien</p>
-                {editingSection === 'infoDeal' ? (
-                  <textarea value={infoDraft.catatan || ''} onChange={e => setInfoDraft(p => ({...p, catatan: e.target.value}))}
-                    rows={2} placeholder="Catatan atau target klien..."
-                    className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
-                ) : (
-                  <p className="text-sm text-gray-700">{order.catatanOrder}</p>
-                )}
-              </div>
-            )}
+            <div className="bg-gray-50 rounded-lg p-3">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan / Target Klien</p>
+              {editingSection === 'infoDeal' ? (
+                <textarea value={infoDraft.catatan || ''} onChange={e => setInfoDraft(p => ({...p, catatan: e.target.value}))}
+                  rows={3} placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
+                  className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
+              ) : (
+                <p className="text-sm font-semibold text-gray-800">{order.catatanOrder || '—'}</p>
+              )}
+            </div>
             </div>
           </div>
 
@@ -1294,29 +1289,6 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section 3: Catatan Program ────────────────────────────────── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
-            <div className="px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Program</h3>
-            </div>
-            <div className="p-5 space-y-3">
-              <textarea
-                value={catatanProgram}
-                onChange={e => setCatatanProgram(e.target.value)}
-                rows={4}
-                placeholder="Catatan tambahan admin untuk program ini..."
-                className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] resize-none"
-              />
-              <div className="flex justify-end">
-                <button
-                  onClick={() => {}}
-                  className="h-8 px-4 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity"
-                >
-                  Simpan Catatan
-                </button>
-              </div>
-            </div>
-          </div>
 
 
         </>
