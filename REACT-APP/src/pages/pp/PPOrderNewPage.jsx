@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, X, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 
 const dummyPPLeads = [
   { id: "L-1001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
@@ -77,10 +77,9 @@ function getPicInitials(nama) {
 export default function PPOrderNewPage() {
   const navigate = useNavigate();
 
-  // Lead linkage
-  const [searchLead, setSearchLead] = useState('');
-  const [showLeadDropdown, setShowLeadDropdown] = useState(false);
-  const [linkedLead, setLinkedLead] = useState(null);
+  // Data Pendaftar — combobox search dari leads
+  const [pendaftarSearch, setPendaftarSearch] = useState('');
+  const [pendaftarDropdownOpen, setPendaftarDropdownOpen] = useState(false);
 
   // Section 1: Data Pendaftar
   const [pendaftar, setPendaftar] = useState({
@@ -119,7 +118,6 @@ export default function PPOrderNewPage() {
 
   // ── Handlers ──────────────────────────────────────
   const handleSelectLead = (lead) => {
-    setLinkedLead(lead);
     setPendaftar({
       nama: lead.namaPendaftar || lead.nama,
       noHP: lead.hpPendaftar || lead.noHP,
@@ -127,8 +125,6 @@ export default function PPOrderNewPage() {
       hubunganDenganKlien: 'Diri Sendiri'
     });
     setKlienLatihan(prev => ({ ...prev, nama: lead.nama, noHP: lead.noHP }));
-    setSearchLead('');
-    setShowLeadDropdown(false);
   };
 
   const handleSelectPaket = (paket) => {
@@ -233,10 +229,13 @@ export default function PPOrderNewPage() {
     navigate('/pp/orders/PP-8042');
   };
 
-  const filteredLeads = dummyPPLeads.filter(l =>
-    l.nama.toLowerCase().includes(searchLead.toLowerCase()) ||
-    l.noHP.includes(searchLead)
-  );
+  const filteredLeads = pendaftarSearch
+    ? dummyPPLeads.filter(l =>
+        l.nama.toLowerCase().includes(pendaftarSearch.toLowerCase()) ||
+        l.noHP.includes(pendaftarSearch) ||
+        l.id.toLowerCase().includes(pendaftarSearch.toLowerCase())
+      )
+    : dummyPPLeads;
 
   const tanggalBerakhir = calcTanggalBerakhir();
 
@@ -273,49 +272,6 @@ export default function PPOrderNewPage() {
 
       <div className="space-y-4">
 
-        {/* ── Kaitkan dengan Lead ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Kaitkan dengan Lead</h3>
-            <span className="text-xs text-gray-400 font-normal">— opsional, untuk tracking pipeline</span>
-          </div>
-          {linkedLead ? (
-            <div className="flex items-center justify-between bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl p-3">
-              <div>
-                <p className="text-sm font-semibold text-[#1E1C43]">{linkedLead.nama}</p>
-                <p className="text-xs text-gray-500">{linkedLead.id} · {linkedLead.noHP} · {linkedLead.statusPipeline}</p>
-              </div>
-              <button
-                onClick={() => { setLinkedLead(null); setPendaftar({ nama: '', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' }); }}
-                className="text-gray-400 hover:text-red-500 transition p-1">
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <div className="relative">
-              <input
-                value={searchLead}
-                onChange={e => { setSearchLead(e.target.value); setShowLeadDropdown(true); }}
-                onFocus={() => setShowLeadDropdown(true)}
-                placeholder="Cari nama klien atau no HP dari leads..."
-                className="w-full pl-4 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#1E1C43]"
-              />
-              {showLeadDropdown && filteredLeads.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-48 overflow-y-auto">
-                  {filteredLeads.map(lead => (
-                    <button key={lead.id} onClick={() => handleSelectLead(lead)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
-                      <p className="text-sm font-semibold text-gray-800">{lead.nama}</p>
-                      <p className="text-xs text-gray-400">{lead.id} · {lead.noHP} · {lead.programDiminati}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
         {/* ── SECTION 1: Data Pendaftar ── */}
         <div className="bg-white rounded-xl shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
@@ -327,26 +283,77 @@ export default function PPOrderNewPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Nama Pendaftar *</label>
-                <input type="text" value={pendaftar.nama}
-                  onChange={e => setPendaftar({ ...pendaftar, nama: e.target.value })}
-                  placeholder="Nama lengkap pendaftar"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={pendaftarDropdownOpen ? pendaftarSearch : pendaftar.nama}
+                    onChange={e => {
+                      setPendaftarSearch(e.target.value)
+                      setPendaftar({ ...pendaftar, nama: e.target.value })
+                      setPendaftarDropdownOpen(true)
+                    }}
+                    onFocus={() => { setPendaftarSearch(''); setPendaftarDropdownOpen(true) }}
+                    onBlur={() => setTimeout(() => {
+                      setPendaftarDropdownOpen(false)
+                      setPendaftarSearch('')
+                    }, 150)}
+                    placeholder="Cari dari leads, atau ketik nama manual..."
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
+                  />
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  {pendaftarDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30 max-h-52 overflow-y-auto">
+                      {filteredLeads.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center py-4">Tidak ada leads ditemukan</p>
+                      ) : (
+                        filteredLeads.map(lead => (
+                          <button
+                            key={lead.id}
+                            type="button"
+                            onMouseDown={() => {
+                              handleSelectLead(lead)
+                              setPendaftarSearch(lead.namaPendaftar || lead.nama)
+                              setPendaftarDropdownOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                          >
+                            <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded shrink-0">{lead.id}</span>
+                            <span className="text-sm font-medium text-gray-800 flex-1">{lead.nama}</span>
+                            <span className="text-xs text-gray-400 shrink-0">{lead.noHP}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {lead.statusPipeline}
+                            </span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Pilih dari data leads untuk auto-isi, atau ketik nama baru</p>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">No. HP / WhatsApp *</label>
-                <input type="text" value={pendaftar.noHP}
-                  onChange={e => setPendaftar({ ...pendaftar, noHP: e.target.value })}
-                  placeholder="08xxxxxxxxxx"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <input
+                  type="text"
+                  value={pendaftar.noHP}
+                  readOnly
+                  placeholder="— pilih leads terlebih dahulu"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
+                />
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Email</label>
-                <input type="email" value={pendaftar.email}
-                  onChange={e => setPendaftar({ ...pendaftar, email: e.target.value })}
-                  placeholder="email@example.com"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <input
+                  type="email"
+                  value={pendaftar.email}
+                  readOnly
+                  placeholder="— pilih leads terlebih dahulu"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
+                />
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Hubungan dengan Klien</label>
@@ -436,7 +443,7 @@ export default function PPOrderNewPage() {
         <div className="bg-white rounded-xl shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Program & Paket</h3>
+            <h3 className="text-sm font-bold text-gray-800">Program & Rincian Biaya</h3>
           </div>
 
           {selectedPaket === null ? (
@@ -483,53 +490,95 @@ export default function PPOrderNewPage() {
               <p className="text-xs text-gray-400 mt-1.5">Klik kolom di atas untuk melihat semua paket, atau ketik untuk menyaring</p>
             </div>
           ) : (
-            <div className="border border-gray-200 rounded-xl p-4 relative">
-              {/* Tombol Ganti Paket */}
-              <button
-                onClick={() => { setSelectedPaket(null); setItems([]); }}
-                className="absolute top-4 right-4 text-xs border border-gray-200 text-gray-500 rounded-lg px-3 py-1 hover:bg-gray-50 transition">
-                Ganti Paket
-              </button>
-
-              {/* Row 1: Identitas paket */}
-              <div className="mb-3 pr-24">
-                <p className="text-xs text-gray-400 font-mono mb-0.5">{selectedPaket.id}</p>
-                <p className="text-base font-bold text-[#1E1C43]">{selectedPaket.namaProgram}</p>
-                <p className="text-sm text-gray-600">{selectedPaket.namaPaket}</p>
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-mono mb-0.5">{selectedPaket.id}</p>
+                  <p className="text-sm font-bold text-[#1E1C43]">
+                    {selectedPaket.namaProgram}
+                    <span className="font-normal text-gray-500"> · {selectedPaket.namaPaket}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <p className="text-base font-bold text-[#1E1C43]">{formatRp(selectedPaket.hargaPaket)}</p>
+                  <button
+                    onClick={() => { setSelectedPaket(null); setItems([]); }}
+                    className="text-xs border border-gray-200 text-gray-500 bg-white rounded-lg px-3 py-1 hover:bg-gray-100 transition whitespace-nowrap">
+                    Ganti Paket
+                  </button>
+                </div>
               </div>
-
-              {/* Row 2: Grid 4 kolom detail paket */}
-              <div className="grid grid-cols-4 gap-2 mb-3">
-                {[
-                  ["Total Sesi", selectedPaket.totalSesi + " sesi"],
-                  ["Frekuensi", selectedPaket.frekuensi],
-                  ["Masa Berlaku", selectedPaket.masaBerlaku],
-                  ["Harga Paket", formatRp(selectedPaket.hargaPaket)],
-                ].map(([label, value]) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{value}</p>
-                  </div>
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {[selectedPaket.totalSesi + ' sesi', selectedPaket.frekuensi, selectedPaket.masaBerlaku].map(v => (
+                  <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
                 ))}
               </div>
-
-              {/* Row 3: PIC Pelatih */}
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100 mt-2 mb-3">
-                <div className="w-9 h-9 rounded-full bg-[#1E1C43] text-white text-sm font-semibold flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
                   {getPicInitials(selectedPaket.pic.nama)}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800 leading-tight">{selectedPaket.pic.nama}</p>
-                  <p className="text-xs text-gray-500">{selectedPaket.pic.spesialisasi}</p>
-                </div>
+                <p className="text-xs text-gray-600 flex-1">{selectedPaket.pic.nama} · {selectedPaket.pic.spesialisasi}</p>
                 <p className="text-xs text-[#E05945] font-medium shrink-0">{selectedPaket.pic.rate}</p>
-                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full shrink-0">
-                  Auto-assign dari paket
-                </span>
               </div>
+              {selectedPaket.keterangan && (
+                <p className="text-xs text-gray-400 italic mt-2">{selectedPaket.keterangan}</p>
+              )}
+            </div>
+          )}
 
-              {/* Row 4: Keterangan */}
-              <p className="text-xs text-gray-500 italic">{selectedPaket.keterangan}</p>
+          {items.filter(i => !i.isFromProgram).length > 0 && (
+            <div className="mt-3 space-y-2">
+              {items.filter(i => !i.isFromProgram).map((item) => (
+                <div key={item.id} className="border border-gray-200 rounded-xl p-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
+                    <button onClick={() => handleRemoveItem(item.id)}
+                      className="ml-auto text-gray-300 hover:text-red-500 transition">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="col-span-2">
+                      <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
+                      <input type="text" value={item.namaItem}
+                        onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
+                      <input type="number" value={item.jumlah}
+                        onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
+                      <input type="number" value={item.harga}
+                        onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                    </div>
+                  </div>
+                  <div className="mt-2 text-right">
+                    <span className="text-xs text-gray-400">Subtotal: </span>
+                    <span className="text-sm font-bold text-[#1E1C43]">{formatRp(item.total)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {selectedPaket && (
+            <button onClick={handleAddItem}
+              className="w-full mt-3 border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
+              <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
+            </button>
+          )}
+
+          {selectedPaket && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
+                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalNilai)}</span>
+              </div>
             </div>
           )}
         </div>
@@ -653,83 +702,6 @@ export default function PPOrderNewPage() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* ── SECTION 6: Rincian Layanan / Invoice Items ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-sm font-bold text-gray-800">Rincian Layanan</h3>
-              <span className="text-xs text-gray-400">— akan jadi dasar invoice</span>
-            </div>
-          </div>
-
-          {items.length > 0 ? (
-            <div className="space-y-2 mb-3">
-              {items.map((item) => (
-                <div key={item.id} className={`border rounded-xl p-3 ${item.isFromProgram ? 'border-[#1E1C43]/20 bg-[#1E1C43]/5' : 'border-gray-200'}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {item.isFromProgram && (
-                      <span className="text-xs bg-[#1E1C43] text-white px-2 py-0.5 rounded-full">Dari Program</span>
-                    )}
-                    {!item.isFromProgram && (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
-                    )}
-                    <button onClick={() => handleRemoveItem(item.id)}
-                      className="ml-auto text-gray-300 hover:text-red-500 transition">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="col-span-2">
-                      <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
-                      <input type="text" value={item.namaItem}
-                        onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-500" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
-                      <input type="number" value={item.jumlah}
-                        onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
-                      <input type="number" value={item.harga}
-                        onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
-                    </div>
-                  </div>
-                  <div className="mt-2 text-right">
-                    <span className="text-xs text-gray-400">Total: </span>
-                    <span className="text-sm font-bold text-[#1E1C43]">{formatRp(item.total)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-xl p-4 text-center mb-3">
-              <p className="text-sm text-gray-400">Pilih program terlebih dahulu atau tambah item manual</p>
-            </div>
-          )}
-
-          <button onClick={handleAddItem}
-            className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
-            <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
-          </button>
-
-          {items.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
-                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalNilai)}</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ── SECTION 7: Catatan Order ── */}
