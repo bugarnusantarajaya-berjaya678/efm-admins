@@ -104,6 +104,21 @@ const LEADS_FALLBACK = [
       { status: 'New',      oleh: 'Sarah Jenkins', tanggal: '15 Jun 2026', catatan: 'Lead masuk dari iklan' },
     ],
   },
+  {
+    id: 'LP-0006', nama: 'Emily Chen', tipe: 'Personal',
+    noHp: '082345678901', sumberLead: 'Instagram', picEfm: 'Marcus Chen',
+    programDiminati: '4 Sesi - Starter', emailUmum: 'emily@email.com',
+    catatanAwal: 'Tertarik program starter, fokus kebugaran umum',
+    statusPipeline: 'Convert', orderId: 'PP-26-0012',
+    tanggalMasuk: '15 Okt 2026', tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0012',
+    logAktivitas: [
+      { status: 'Convert',   oleh: 'Marcus Chen', tanggal: '18 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0012' },
+      { status: 'Invoicing', oleh: 'Marcus Chen', tanggal: '16 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Approach',  oleh: 'Marcus Chen', tanggal: '15 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
+      { status: 'New',       oleh: 'Marcus Chen', tanggal: '15 Okt 2026', catatan: 'Lead masuk dari Instagram' },
+    ],
+  },
 ]
 
 /* ── Screening summary per klien ── */
@@ -320,16 +335,28 @@ export default function PPLeadDetailPage() {
 
         {/* ── Breadcrumb ── */}
         <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          <Link to="/pp/leads" className="hover:text-[#1E1C43] transition-colors">Leads PP</Link>
-          <ChevronRight size={12} />
-          <span className="text-gray-600 font-medium">{lead.nama}</span>
+          {state?.fromOrderId ? (
+            <>
+              <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+              <ChevronRight size={12} />
+              <button onClick={() => navigate('/pp/orders/' + state.fromOrderId)} className="hover:text-[#1E1C43] transition-colors">#{state.fromOrderId}</button>
+              <ChevronRight size={12} />
+              <span className="text-gray-600 font-medium">{lead.nama} (Lead)</span>
+            </>
+          ) : (
+            <>
+              <Link to="/pp/leads" className="hover:text-[#1E1C43] transition-colors">Leads PP</Link>
+              <ChevronRight size={12} />
+              <span className="text-gray-600 font-medium">{lead.nama}</span>
+            </>
+          )}
         </div>
 
         {/* ── Header ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              <button onClick={() => navigate('/pp/leads')}
+              <button onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
                 className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors shrink-0">
                 <ArrowLeft size={15} />
               </button>
@@ -360,7 +387,7 @@ export default function PPLeadDetailPage() {
                 </button>
               )}
               {lead.statusPipeline === 'Convert' && lead.orderId && (
-                <button onClick={() => navigate('/pp/orders/' + lead.orderId)}
+                <button onClick={() => navigate('/pp/orders/' + lead.orderId, { state: { fromLeadId: lead.id } })}
                   className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
                   Lihat Order #{lead.orderId}
                 </button>

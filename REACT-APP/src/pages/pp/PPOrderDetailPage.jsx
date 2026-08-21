@@ -37,7 +37,7 @@ function fmtDate(str) {
    Master data PP Orders
 ═══════════════════════════════════════ */
 const dummyPPOrders = [
-  { id: "PP-26-0013", leadId: "LP-0013", programId: "PRG-PP-003", namaKlien: "James Wilson",
+  { id: "PP-26-0013", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson",
     paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-10-24", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -52,7 +52,7 @@ const dummyPPOrders = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0013", tanggal:"2026-10-20", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0012", leadId: "LP-0012", programId: "PRG-PP-001", namaKlien: "Emily Chen",
+  { id: "PP-26-0012", leadId: "LP-0006", programId: "PRG-PP-001", namaKlien: "Emily Chen",
     paket: "4 Sesi - Starter", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-10-22", nilaiKontrak: 600000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -683,18 +683,39 @@ export default function PPOrderDetailPage() {
         {/* Baris 1: Breadcrumb + Kembali */}
         <div className="flex items-center justify-between mb-5">
           <nav className="flex items-center gap-1 text-xs text-gray-400">
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-            <ChevronRight size={12} className="text-gray-300" />
+            {fromState?.fromLeadId ? (
+              <>
+                <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition-colors">Leads PP</button>
+                <ChevronRight size={12} className="text-gray-300" />
+                <button onClick={() => navigate('/pp/leads/' + fromState.fromLeadId)} className="hover:text-[#1E1C43] transition-colors">{order.namaKlien} (Lead)</button>
+                <ChevronRight size={12} className="text-gray-300" />
+              </>
+            ) : (
+              <>
+                <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
+                <ChevronRight size={12} className="text-gray-300" />
+                <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+                <ChevronRight size={12} className="text-gray-300" />
+              </>
+            )}
             <span className="text-[#1E1C43] font-medium">{isNew ? 'Order Baru' : order.namaKlien}</span>
           </nav>
-          <button
-            onClick={() => navigate('/pp/orders')}
-            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <ArrowLeft size={12} /> Kembali
-          </button>
+          <div className="flex items-center gap-2">
+            {!isNew && order.leadId && (
+              <button
+                onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
+                className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors"
+              >
+                Lihat Lead →
+              </button>
+            )}
+            <button
+              onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali
+            </button>
+          </div>
         </div>
 
         {/* Baris 2: Info + Total */}
@@ -748,7 +769,7 @@ export default function PPOrderDetailPage() {
       </div>
 
       {/* Tab Bar */}
-      <div className="flex border-b border-gray-200 mb-5">
+      <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 w-fit">
         {[
           { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
           { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
@@ -757,10 +778,10 @@ export default function PPOrderDetailPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            className={`px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === tab.key
-                ? 'border-[#1E1C43] text-[#1E1C43]'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
+                ? 'bg-[#1E1C43] text-white'
+                : 'text-gray-500 hover:text-[#1E1C43]'
             }`}
           >
             {tab.label}
@@ -1488,7 +1509,7 @@ export default function PPOrderDetailPage() {
                       <p className="text-xs text-blue-600 mt-0.5">Lihat tab Kesehatan di halaman Lead untuk riwayat screening & Fitness Assessment.</p>
                     </div>
                     <button
-                      onClick={() => navigate('/pp/leads/' + order.leadId, { state: { defaultTab: 'kesehatan' } })}
+                      onClick={() => navigate('/pp/leads/' + order.leadId, { state: { defaultTab: 'kesehatan', fromOrderId: order.id } })}
                       className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
                       Lihat →
                     </button>
