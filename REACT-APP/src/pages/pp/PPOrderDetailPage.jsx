@@ -150,9 +150,9 @@ function getAvatarColor(name) {
 
 function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-[#1E1C43]">{title}</h3>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{title}</h3>
         <div className="flex gap-2">
           {editing ? (
             <>
@@ -173,7 +173,7 @@ function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
             onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-medium hover:bg-[#c94a38] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors"
               >
                 <Edit2 size={12} /> Edit
               </button>
@@ -807,28 +807,27 @@ export default function PPOrderDetailPage() {
 
 
           {/* Section 1 — Info Deal */}
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
-              </div>
-              <button className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
+              <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
                 <Edit2 size={12} /> Edit
               </button>
             </div>
+            <div className="p-5">
 
             {/* Data Pendaftar */}
             <div className="mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Data Pendaftar</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Pendaftar</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
                   ["Nama Pendaftar", order.namaKlien],
                   ["No. HP", order.noHP || "081234567890"],
                   ["Email", order.email || "james@email.com"],
                   ["Hubungan dengan Klien", order.hubunganKlien || "Diri Sendiri"],
                 ].map(([label, val]) => (
-                  <div key={label} className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                  <div key={label} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
                     <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
                   </div>
                 ))}
@@ -837,16 +836,16 @@ export default function PPOrderDetailPage() {
 
             {/* Data Klien Latihan */}
             <div className="mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Data Klien Latihan</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien Latihan</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
                   ["Nama Klien Latihan", order.namaKlienLatihan || order.namaKlien],
                   ["No. HP Klien", order.noHPKlien || order.noHP || "081234567890"],
                   ["Usia", (order.usiaKlien || "32") + " tahun"],
                   ["Jenis Kelamin", order.jenisKelaminKlien || "Laki-laki"],
                 ].map(([label, val]) => (
-                  <div key={label} className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                  <div key={label} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
                     <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
                   </div>
                 ))}
@@ -855,16 +854,16 @@ export default function PPOrderDetailPage() {
 
             {/* Detail Program */}
             <div className="mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Detail Program</p>
-              <div className="grid grid-cols-2 gap-3">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Detail Program</p>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {[
                   ["Paket Program", order.paket],
                   ["PIC Pelatih", order.picOpsEFM],
                   ["Tanggal Mulai", order.tanggalMulai],
                   ["Status Order", order.statusOrder],
                 ].map(([label, val]) => (
-                  <div key={label} className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                  <div key={label} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
                     <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
                   </div>
                 ))}
@@ -873,22 +872,22 @@ export default function PPOrderDetailPage() {
 
             {/* Jadwal Latihan */}
             <div className="mb-4">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Jadwal Latihan</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Jadwal Latihan</p>
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">Hari Latihan</p>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Hari Latihan</p>
                   <div className="flex flex-wrap gap-1">
                     {(order.hariLatihan || ["Senin","Rabu","Jumat"]).map(h => (
                       <span key={h} className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full">{h}</span>
                     ))}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3">
-                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Jam Latihan</p>
-                  <p className="text-sm font-bold text-[#1E1C43]">{order.jamLatihan || "07:00"} WIB</p>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
+                  <p className="text-sm font-semibold text-gray-800">{order.jamLatihan || "07:00"} WIB</p>
                 </div>
-                <div className="bg-gray-50 rounded-xl p-3 col-span-2">
-                  <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">Lokasi Latihan</p>
+                <div className="bg-gray-50 rounded-lg p-3 col-span-2">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Latihan</p>
                   <p className="text-sm font-semibold text-gray-800">{order.lokasiLatihan || "Hampton's Park Tower A, Cilandak Barat"}</p>
                 </div>
               </div>
@@ -896,25 +895,25 @@ export default function PPOrderDetailPage() {
 
             {/* Catatan Order */}
             {order.catatanOrder && (
-              <div className="bg-yellow-50 border border-yellow-100 rounded-xl p-3">
-                <p className="text-xs font-bold text-yellow-700 mb-1">Catatan / Target Klien</p>
+              <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                <p className="text-xs font-semibold text-gray-500 mb-1">Catatan / Target Klien</p>
                 <p className="text-sm text-gray-700">{order.catatanOrder}</p>
               </div>
             )}
+            </div>
           </div>
 
           {/* ── Section: Rincian Layanan (Editable) ── */}
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Rincian Layanan</h3>
-              </div>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Rincian Layanan</h3>
               <button
                 onClick={() => setEditRincian(!editRincian)}
-                className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
                 <Edit2 size={12} /> {editRincian ? 'Selesai Edit' : 'Edit'}
               </button>
             </div>
+            <div className="p-5">
 
             {editRincian ? (
               <div className="space-y-2 mb-3">
@@ -992,13 +991,14 @@ export default function PPOrderDetailPage() {
               <span className="text-sm text-gray-600">Subtotal</span>
               <span className="text-lg font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</span>
             </div>
+            </div>
           </div>
 
           {/* ── Section: Invoice PP ── */}
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
                   invoicePP.statusInvoice === 'Lunas'    ? 'bg-green-100 text-green-700' :
                   invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
@@ -1006,10 +1006,11 @@ export default function PPOrderDetailPage() {
                 }`}>{invoicePP.statusInvoice}</span>
               </div>
               <button onClick={() => setEditInvoice(!editInvoice)}
-                className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
                 <Edit2 size={12} /> {editInvoice ? 'Selesai Edit' : 'Edit Invoice'}
               </button>
             </div>
+            <div className="p-5">
 
             {/* Info grid 4 kolom */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg mb-4">
@@ -1020,7 +1021,7 @@ export default function PPOrderDetailPage() {
                 ['Order ID',     '#' + (order?.id || '—')],
               ].map(([label, val]) => (
                 <div key={label}>
-                  <p className="text-xs text-gray-400 uppercase tracking-wide">{label}</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
                   <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
                 </div>
               ))}
@@ -1232,12 +1233,13 @@ export default function PPOrderDetailPage() {
                 <CheckCircle size={13} /> Buat Receipt Pembayaran
               </button>
             )}
+            </div>
           </div>
 
           {/* ── Section 3: Catatan Program ────────────────────────────────── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-            <div className="px-5 py-3.5 border-b border-gray-100">
-              <h3 className="text-base font-bold text-[#1E1C43]">Catatan Program</h3>
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+            <div className="px-5 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Program</h3>
             </div>
             <div className="p-5 space-y-3">
               <textarea
