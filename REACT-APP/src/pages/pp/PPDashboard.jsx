@@ -44,13 +44,15 @@ const PIC_SUMMARY = [
 
 const PIC_COLORS = ['#1E1C43', '#2980B9', '#27AE60', '#E05945']
 
-const PIPELINE_DATA = [
-  { stage: 'Closing',   color: '#F97316', jumlah: 1 },
-  { stage: 'Invoicing', color: '#EAB308', jumlah: 1 },
-  { stage: 'Screening', color: '#8B5CF6', jumlah: 1 },
-  { stage: 'Approach',  color: '#3B82F6', jumlah: 1 },
+// Funnel aktif: New → Closing (tanpa Convert/Lost — itu outcome terpisah di footer)
+const PIPELINE_ACTIVE = [
   { stage: 'New',       color: '#9CA3AF', jumlah: 1 },
+  { stage: 'Approach',  color: '#3B82F6', jumlah: 1 },
+  { stage: 'Screening', color: '#8B5CF6', jumlah: 1 },
+  { stage: 'Invoicing', color: '#EAB308', jumlah: 1 },
+  { stage: 'Closing',   color: '#F97316', jumlah: 1 },
 ]
+const PIPELINE_OUTCOME = { converted: 1, lost: 0 }
 
 const KLIEN_MENDEKATI_HABIS = [
   { nama: 'Robert Taylor', orderId: 'PP-26-0011', paket: '24 Sesi - Elite',   sesiTerpakai: 22, totalSesi: 24, sisaSesi: 2, pic: 'Elena Rodriguez', urgency: 'high'   },
@@ -94,7 +96,7 @@ function StatusBadge({ val, clsMap, lblMap }) {
 ═══════════════════════════════════════ */
 export default function PPDashboard() {
   const navigate = useNavigate()
-  const totalPipeline = PIPELINE_DATA.reduce((s, d) => s + d.jumlah, 0)
+  const totalPipeline = PIPELINE_ACTIVE.reduce((s, d) => s + d.jumlah, 0)
 
   return (
     <div className="p-6 space-y-4">
@@ -108,7 +110,7 @@ export default function PPDashboard() {
         <button
           type="button"
           onClick={() => navigate('/pp/orders/new')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#1E1C43] hover:bg-[#2d2b5e] transition-colors"
         >
           + Order Baru
         </button>
@@ -122,7 +124,7 @@ export default function PPDashboard() {
         {/* Leads/Klien Aktif */}
         <div
           onClick={() => navigate('/pp/leads')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
+          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -137,7 +139,7 @@ export default function PPDashboard() {
         {/* Order Bulan Ini */}
         <div
           onClick={() => navigate('/pp/orders')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
+          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -152,7 +154,7 @@ export default function PPDashboard() {
         {/* Invoice Pending */}
         <div
           onClick={() => navigate('/pp/invoice')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
+          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -169,7 +171,7 @@ export default function PPDashboard() {
         {/* Hotlist Leads */}
         <div
           onClick={() => navigate('/pp/leads')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
+          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
         >
           <div className="flex items-start justify-between">
             <div>
@@ -189,9 +191,9 @@ export default function PPDashboard() {
       {/* ══════════════════════════════════
           SECTION 2: Perlu Tindakan
       ══════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl border border-gray-100 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#1E1C43] flex items-center gap-2">
+          <h3 className="text-[13px] font-bold text-[#1E1C43] flex items-center gap-2">
             ⚠️ Perlu Tindakan
           </h3>
           <span className="bg-[#E05945] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -247,7 +249,7 @@ export default function PPDashboard() {
               <tbody>
                 {recentOrders.map((o, i) => (
                   <tr key={o.id} className={`hover:bg-gray-50 ${i < recentOrders.length - 1 ? 'border-b border-gray-100' : ''}`}>
-                    <td className="px-4 py-3 text-[12px] font-semibold text-gray-400 whitespace-nowrap">{o.id}</td>
+                    <td className="px-4 py-3 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{o.id}</td>
                     <td className="px-4 py-3 text-[13px] font-semibold text-[#1E1C43] whitespace-nowrap">{o.klien}</td>
                     <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.paket}</td>
                     <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.pic}</td>
@@ -301,15 +303,15 @@ export default function PPDashboard() {
       <div className="grid grid-cols-3 gap-4">
 
         {/* PIC Ringkasan Beban & Pembayaran */}
-        <div className="col-span-2 bg-white rounded-xl shadow-sm p-5">
+        <div className="col-span-2 bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#1E1C43]">PIC — Ringkasan Beban & Pembayaran</h3>
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">PIC — Ringkasan Beban & Pembayaran</h3>
             <button
               type="button"
-              onClick={() => navigate('/payment')}
+              onClick={() => navigate('/pp/orders')}
               className="text-xs text-[#E05945] font-medium hover:underline"
             >
-              Lihat Pembayaran PIC →
+              Lihat Orders →
             </button>
           </div>
           <table className="w-full">
@@ -356,9 +358,9 @@ export default function PPDashboard() {
         </div>
 
         {/* Leads Pipeline */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
+        <div className="bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#1E1C43]">Leads Pipeline</h3>
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">Leads Pipeline</h3>
             <button
               type="button"
               onClick={() => navigate('/pp/leads')}
@@ -368,7 +370,7 @@ export default function PPDashboard() {
             </button>
           </div>
           <div>
-            {PIPELINE_DATA.map(item => (
+            {PIPELINE_ACTIVE.map(item => (
               <div
                 key={item.stage}
                 onClick={() => navigate('/pp/leads')}
@@ -388,14 +390,18 @@ export default function PPDashboard() {
               </div>
             ))}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
+          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-3 gap-2">
             <div className="text-center">
-              <p className="text-lg font-bold text-[#1E1C43]">5</p>
-              <p className="text-[10px] text-gray-400">Total Leads</p>
+              <p className="text-lg font-bold text-[#1E1C43]">{totalPipeline}</p>
+              <p className="text-[10px] text-gray-400">Aktif</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-bold text-green-600">1</p>
+              <p className="text-lg font-bold text-green-600">{PIPELINE_OUTCOME.converted}</p>
               <p className="text-[10px] text-gray-400">Converted</p>
+            </div>
+            <div className="text-center">
+              <p className={`text-lg font-bold ${PIPELINE_OUTCOME.lost > 0 ? 'text-red-500' : 'text-gray-400'}`}>{PIPELINE_OUTCOME.lost}</p>
+              <p className="text-[10px] text-gray-400">Lost</p>
             </div>
           </div>
         </div>
@@ -404,9 +410,9 @@ export default function PPDashboard() {
       {/* ══════════════════════════════════
           SECTION 6: Klien Mendekati Habis Paket
       ══════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl border border-gray-100 p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#1E1C43]">Klien Mendekati Habis Paket</h3>
+          <h3 className="text-[13px] font-bold text-[#1E1C43]">Klien Mendekati Habis Paket</h3>
           <button
             type="button"
             onClick={() => navigate('/pp/orders')}
