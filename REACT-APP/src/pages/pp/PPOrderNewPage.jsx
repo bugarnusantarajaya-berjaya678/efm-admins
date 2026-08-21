@@ -482,76 +482,48 @@ export default function PPOrderNewPage() {
               <p className="text-xs text-gray-400 mt-1.5">Klik kolom di atas untuk melihat semua paket, atau ketik untuk menyaring</p>
             </div>
           ) : (
-            <div className="border border-gray-200 rounded-xl p-4 relative">
-              {/* Tombol Ganti Paket */}
-              <button
-                onClick={() => { setSelectedPaket(null); setItems([]); }}
-                className="absolute top-4 right-4 text-xs border border-gray-200 text-gray-500 rounded-lg px-3 py-1 hover:bg-gray-50 transition">
-                Ganti Paket
-              </button>
-
-              {/* Row 1: Identitas paket */}
-              <div className="mb-3 pr-24">
-                <p className="text-xs text-gray-400 font-mono mb-0.5">{selectedPaket.id}</p>
-                <p className="text-base font-bold text-[#1E1C43]">{selectedPaket.namaProgram}</p>
-                <p className="text-sm text-gray-600">{selectedPaket.namaPaket}</p>
+            <div className="bg-gray-50 rounded-xl p-4">
+              <div className="flex items-start justify-between gap-3 mb-2.5">
+                <div className="min-w-0">
+                  <p className="text-[10px] text-gray-400 font-mono mb-0.5">{selectedPaket.id}</p>
+                  <p className="text-sm font-bold text-[#1E1C43]">
+                    {selectedPaket.namaProgram}
+                    <span className="font-normal text-gray-500"> · {selectedPaket.namaPaket}</span>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <p className="text-base font-bold text-[#1E1C43]">{formatRp(selectedPaket.hargaPaket)}</p>
+                  <button
+                    onClick={() => { setSelectedPaket(null); setItems([]); }}
+                    className="text-xs border border-gray-200 text-gray-500 bg-white rounded-lg px-3 py-1 hover:bg-gray-100 transition whitespace-nowrap">
+                    Ganti Paket
+                  </button>
+                </div>
               </div>
-
-              {/* Row 2: Grid 4 kolom detail paket */}
-              <div className="grid grid-cols-4 gap-2 mb-3">
-                {[
-                  ["Total Sesi", selectedPaket.totalSesi + " sesi"],
-                  ["Frekuensi", selectedPaket.frekuensi],
-                  ["Masa Berlaku", selectedPaket.masaBerlaku],
-                  ["Harga Paket", formatRp(selectedPaket.hargaPaket)],
-                ].map(([label, value]) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-400 mb-0.5">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{value}</p>
-                  </div>
+              <div className="flex flex-wrap gap-1.5 mb-2.5">
+                {[selectedPaket.totalSesi + ' sesi', selectedPaket.frekuensi, selectedPaket.masaBerlaku].map(v => (
+                  <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
                 ))}
               </div>
-
-              {/* Row 3: PIC Pelatih */}
-              <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-100 mt-2 mb-3">
-                <div className="w-9 h-9 rounded-full bg-[#1E1C43] text-white text-sm font-semibold flex items-center justify-center shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
                   {getPicInitials(selectedPaket.pic.nama)}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800 leading-tight">{selectedPaket.pic.nama}</p>
-                  <p className="text-xs text-gray-500">{selectedPaket.pic.spesialisasi}</p>
-                </div>
+                <p className="text-xs text-gray-600 flex-1">{selectedPaket.pic.nama} · {selectedPaket.pic.spesialisasi}</p>
                 <p className="text-xs text-[#E05945] font-medium shrink-0">{selectedPaket.pic.rate}</p>
-                <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full shrink-0">
-                  Auto-assign dari paket
-                </span>
               </div>
-
-              {/* Row 4: Keterangan */}
-              <p className="text-xs text-gray-500 italic">{selectedPaket.keterangan}</p>
+              {selectedPaket.keterangan && (
+                <p className="text-xs text-gray-400 italic mt-2">{selectedPaket.keterangan}</p>
+              )}
             </div>
           )}
 
-          {/* Divider */}
-          <div className="my-5 border-t border-gray-100" />
-
-          {/* Rincian Layanan */}
-          <div className="flex items-center gap-2 mb-3">
-            <h4 className="text-sm font-semibold text-gray-700">Rincian Layanan</h4>
-            <span className="text-xs text-gray-400">— akan jadi dasar invoice</span>
-          </div>
-
-          {items.length > 0 ? (
-            <div className="space-y-2 mb-3">
-              {items.map((item) => (
-                <div key={item.id} className={`border rounded-xl p-3 ${item.isFromProgram ? 'border-[#1E1C43]/20 bg-[#1E1C43]/5' : 'border-gray-200'}`}>
+          {items.filter(i => !i.isFromProgram).length > 0 && (
+            <div className="mt-3 space-y-2">
+              {items.filter(i => !i.isFromProgram).map((item) => (
+                <div key={item.id} className="border border-gray-200 rounded-xl p-3">
                   <div className="flex items-center gap-2 mb-2">
-                    {item.isFromProgram && (
-                      <span className="text-xs bg-[#1E1C43] text-white px-2 py-0.5 rounded-full">Dari Program</span>
-                    )}
-                    {!item.isFromProgram && (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
-                    )}
+                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
                     <button onClick={() => handleRemoveItem(item.id)}
                       className="ml-auto text-gray-300 hover:text-red-500 transition">
                       <Trash2 size={14} />
@@ -562,43 +534,38 @@ export default function PPOrderNewPage() {
                       <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
                       <input type="text" value={item.namaItem}
                         onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-500" />
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
                     <div>
                       <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
                       <input type="number" value={item.jumlah}
                         onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
                     <div>
                       <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
                       <input type="number" value={item.harga}
                         onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
                   </div>
                   <div className="mt-2 text-right">
-                    <span className="text-xs text-gray-400">Total: </span>
+                    <span className="text-xs text-gray-400">Subtotal: </span>
                     <span className="text-sm font-bold text-[#1E1C43]">{formatRp(item.total)}</span>
                   </div>
                 </div>
               ))}
             </div>
-          ) : (
-            <div className="bg-gray-50 rounded-xl p-4 text-center mb-3">
-              <p className="text-sm text-gray-400">Pilih program terlebih dahulu atau tambah item manual</p>
-            </div>
           )}
 
-          <button onClick={handleAddItem}
-            className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
-            <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
-          </button>
+          {selectedPaket && (
+            <button onClick={handleAddItem}
+              className="w-full mt-3 border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
+              <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
+            </button>
+          )}
 
-          {items.length > 0 && (
+          {selectedPaket && (
             <div className="mt-4 pt-4 border-t border-gray-100">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
