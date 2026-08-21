@@ -613,7 +613,7 @@ Used for: tombol aksi utama (Tambah, Buat, Edit, Update) di dalam tab atau card 
 )}
 ```
 
-**Contoh implementasi nyata:** Tab Screening dan tab Pipeline di `PPLeadDetailPage.jsx`
+**Contoh implementasi nyata:** Tab Kesehatan dan tab Pipeline di `PPLeadDetailPage.jsx`
 
 ---
 
@@ -639,8 +639,9 @@ navigate('/pp/screening/new', {
   }
 })
 
-// Klik item existing:
-navigate('/pp/screening/' + scr.id)
+// Klik item existing — WAJIB pass leadId dalam state supaya handleBack di sub-page
+// bisa kembali ke tab yang benar, bukan ke list umum:
+navigate('/pp/screening/' + scr.id, { state: { leadId: lead.id } })
 ```
 
 ### Sub-page: baca context dari state
@@ -678,7 +679,7 @@ Bungkus seluruh konten form (antara header dan footer) dengan wrapper yang disab
 ```jsx
 const handleBack = () => {
   if (leadId) {
-    navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'screening' } })
+    navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
   } else {
     navigate('/pp/screening')  // fallback jika dibuka langsung dari URL
   }
@@ -702,7 +703,7 @@ const handleSave = () => {
     }
     if (leadId) {
       navigate(`/pp/leads/${leadId}`, {
-        state: { defaultTab: 'screening', newScreening: newRecord }
+        state: { defaultTab: 'kesehatan', newScreening: newRecord }
       })
     } else {
       navigate('/pp/screening')
@@ -735,6 +736,35 @@ const screenings = [
 ```
 
 **Catatan:** Pola ini cocok untuk prototype UI-only. Ketika backend sudah terhubung, ganti dengan API call dan invalidate cache — struktur navigasi dan state tetap sama.
+
+### Context Reference Banner (Info Banner di Sub-page)
+
+Gunakan ketika sub-page butuh mengingatkan user bahwa ada data terkait di parent page yang bisa dijadikan referensi saat mengisi form. Tampilkan hanya kalau `leadId` (atau parent context) tersedia.
+
+```jsx
+{leadId && (
+  <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-5">
+    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+      <span className="text-[10px] font-bold text-blue-600">i</span>
+    </div>
+    <div className="flex-1">
+      <p className="text-xs font-semibold text-blue-700">Judul info (misal: Informasi Kesehatan Awal sudah direkam di Lead)</p>
+      <p className="text-xs text-blue-600 mt-0.5">Gunakan sebagai referensi saat mengisi form ini.</p>
+    </div>
+    <button
+      onClick={() => navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })}
+      className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
+      Lihat →
+    </button>
+  </div>
+)}
+```
+
+**Aturan:**
+- Hanya tampil kalau `leadId` ada (dibuka dari context parent, bukan langsung dari URL)
+- Posisi: langsung di atas section pertama form yang relevan (sebelum "Data Klien & Program", bukan di header page)
+- Tombol "Lihat →" buka parent page di tab yang relevan — pakai `{ state: { defaultTab: 'namatab' } }`
+- Implementasi nyata: `PPFitnessAssessmentPage.jsx` banner di atas section Data Klien & Program
 
 ---
 
