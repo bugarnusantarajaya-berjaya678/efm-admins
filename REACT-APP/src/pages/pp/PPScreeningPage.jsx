@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Search, Eye, ChevronRight, X, ClipboardList } from 'lucide-react';
+import { Plus, Search, Eye, ChevronLeft, ChevronRight, X, ClipboardList } from 'lucide-react';
 
 const dummyScreeningData = [
   {
@@ -158,6 +158,12 @@ export default function PPScreeningPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
+          <button
+            onClick={() => navigate('/pp/leads')}
+            className="flex items-center gap-1 text-xs text-gray-400 hover:text-[#1E1C43] mb-2 transition-colors"
+          >
+            <ChevronLeft size={13} /> Kembali ke Leads
+          </button>
           <h1 className="text-[22px] font-bold text-text-primary">Screening Kesehatan Klien</h1>
           <p className="text-sm text-gray-500 mt-0.5">Form screening opsional untuk tracking kesehatan dan kebugaran klien</p>
         </div>
