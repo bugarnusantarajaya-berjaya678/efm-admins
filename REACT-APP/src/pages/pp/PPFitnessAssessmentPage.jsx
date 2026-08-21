@@ -510,7 +510,7 @@ export default function PPFitnessAssessmentPage() {
 
   const handleBack = () => {
     if (leadId) {
-      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'screening' } })
+      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
     } else {
       navigate('/pp/screening')
     }
@@ -532,7 +532,7 @@ export default function PPFitnessAssessmentPage() {
             statusScreening: 'Draft',
             picScreening: namaFC || '',
           },
-          defaultTab: 'screening',
+          defaultTab: 'kesehatan',
         },
       } : undefined)
       return
