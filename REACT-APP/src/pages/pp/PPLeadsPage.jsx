@@ -274,9 +274,9 @@ export default function PPLeadsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/pp/screening')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-[#1E1C43] bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
             >
-              <Search size={14} strokeWidth={2} /> Screening
+              <Search size={14} strokeWidth={2} /> Cari Data Screening
             </button>
             <button
               onClick={() => { setLeadForm({ ...emptyLeadForm }); setFormErrors({}); setShowAddLead(true) }}
