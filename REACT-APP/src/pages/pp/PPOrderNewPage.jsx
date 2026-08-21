@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, X, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 
 const dummyPPLeads = [
   { id: "L-1001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
@@ -77,10 +77,9 @@ function getPicInitials(nama) {
 export default function PPOrderNewPage() {
   const navigate = useNavigate();
 
-  // Lead linkage
-  const [searchLead, setSearchLead] = useState('');
-  const [showLeadDropdown, setShowLeadDropdown] = useState(false);
-  const [linkedLead, setLinkedLead] = useState(null);
+  // Data Pendaftar — combobox search dari leads
+  const [pendaftarSearch, setPendaftarSearch] = useState('');
+  const [pendaftarDropdownOpen, setPendaftarDropdownOpen] = useState(false);
 
   // Section 1: Data Pendaftar
   const [pendaftar, setPendaftar] = useState({
@@ -119,7 +118,6 @@ export default function PPOrderNewPage() {
 
   // ── Handlers ──────────────────────────────────────
   const handleSelectLead = (lead) => {
-    setLinkedLead(lead);
     setPendaftar({
       nama: lead.namaPendaftar || lead.nama,
       noHP: lead.hpPendaftar || lead.noHP,
@@ -127,8 +125,6 @@ export default function PPOrderNewPage() {
       hubunganDenganKlien: 'Diri Sendiri'
     });
     setKlienLatihan(prev => ({ ...prev, nama: lead.nama, noHP: lead.noHP }));
-    setSearchLead('');
-    setShowLeadDropdown(false);
   };
 
   const handleSelectPaket = (paket) => {
@@ -233,10 +229,13 @@ export default function PPOrderNewPage() {
     navigate('/pp/orders/PP-8042');
   };
 
-  const filteredLeads = dummyPPLeads.filter(l =>
-    l.nama.toLowerCase().includes(searchLead.toLowerCase()) ||
-    l.noHP.includes(searchLead)
-  );
+  const filteredLeads = pendaftarSearch
+    ? dummyPPLeads.filter(l =>
+        l.nama.toLowerCase().includes(pendaftarSearch.toLowerCase()) ||
+        l.noHP.includes(pendaftarSearch) ||
+        l.id.toLowerCase().includes(pendaftarSearch.toLowerCase())
+      )
+    : dummyPPLeads;
 
   const tanggalBerakhir = calcTanggalBerakhir();
 
@@ -273,49 +272,6 @@ export default function PPOrderNewPage() {
 
       <div className="space-y-4">
 
-        {/* ── Kaitkan dengan Lead ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Kaitkan dengan Lead</h3>
-            <span className="text-xs text-gray-400 font-normal">— opsional, untuk tracking pipeline</span>
-          </div>
-          {linkedLead ? (
-            <div className="flex items-center justify-between bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl p-3">
-              <div>
-                <p className="text-sm font-semibold text-[#1E1C43]">{linkedLead.nama}</p>
-                <p className="text-xs text-gray-500">{linkedLead.id} · {linkedLead.noHP} · {linkedLead.statusPipeline}</p>
-              </div>
-              <button
-                onClick={() => { setLinkedLead(null); setPendaftar({ nama: '', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' }); }}
-                className="text-gray-400 hover:text-red-500 transition p-1">
-                <X size={16} />
-              </button>
-            </div>
-          ) : (
-            <div className="relative">
-              <input
-                value={searchLead}
-                onChange={e => { setSearchLead(e.target.value); setShowLeadDropdown(true); }}
-                onFocus={() => setShowLeadDropdown(true)}
-                placeholder="Cari nama klien atau no HP dari leads..."
-                className="w-full pl-4 pr-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-[#1E1C43]"
-              />
-              {showLeadDropdown && filteredLeads.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-48 overflow-y-auto">
-                  {filteredLeads.map(lead => (
-                    <button key={lead.id} onClick={() => handleSelectLead(lead)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
-                      <p className="text-sm font-semibold text-gray-800">{lead.nama}</p>
-                      <p className="text-xs text-gray-400">{lead.id} · {lead.noHP} · {lead.programDiminati}</p>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-
         {/* ── SECTION 1: Data Pendaftar ── */}
         <div className="bg-white rounded-xl shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
@@ -327,10 +283,53 @@ export default function PPOrderNewPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Nama Pendaftar *</label>
-                <input type="text" value={pendaftar.nama}
-                  onChange={e => setPendaftar({ ...pendaftar, nama: e.target.value })}
-                  placeholder="Nama lengkap pendaftar"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={pendaftarDropdownOpen ? pendaftarSearch : pendaftar.nama}
+                    onChange={e => {
+                      setPendaftarSearch(e.target.value)
+                      setPendaftar({ ...pendaftar, nama: e.target.value })
+                      setPendaftarDropdownOpen(true)
+                    }}
+                    onFocus={() => { setPendaftarSearch(''); setPendaftarDropdownOpen(true) }}
+                    onBlur={() => setTimeout(() => {
+                      setPendaftarDropdownOpen(false)
+                      setPendaftarSearch('')
+                    }, 150)}
+                    placeholder="Cari dari leads, atau ketik nama manual..."
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
+                  />
+                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  {pendaftarDropdownOpen && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30 max-h-52 overflow-y-auto">
+                      {filteredLeads.length === 0 ? (
+                        <p className="text-sm text-gray-400 text-center py-4">Tidak ada leads ditemukan</p>
+                      ) : (
+                        filteredLeads.map(lead => (
+                          <button
+                            key={lead.id}
+                            type="button"
+                            onMouseDown={() => {
+                              handleSelectLead(lead)
+                              setPendaftarSearch(lead.namaPendaftar || lead.nama)
+                              setPendaftarDropdownOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                          >
+                            <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded shrink-0">{lead.id}</span>
+                            <span className="text-sm font-medium text-gray-800 flex-1">{lead.nama}</span>
+                            <span className="text-xs text-gray-400 shrink-0">{lead.noHP}</span>
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                              {lead.statusPipeline}
+                            </span>
+                          </button>
+                        ))
+                      )}
+                    </div>
+                  )}
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Pilih dari data leads untuk auto-isi, atau ketik nama baru</p>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">No. HP / WhatsApp *</label>
