@@ -37,7 +37,7 @@ function fmtDate(str) {
    Master data PP Orders
 ═══════════════════════════════════════ */
 const dummyPPOrders = [
-  { id: "PP-26-0013", programId: "PRG-PP-003", namaKlien: "James Wilson",
+  { id: "PP-26-0013", leadId: "LP-0013", programId: "PRG-PP-003", namaKlien: "James Wilson",
     paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-10-24", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -52,7 +52,7 @@ const dummyPPOrders = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0013", tanggal:"2026-10-20", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0012", programId: "PRG-PP-001", namaKlien: "Emily Chen",
+  { id: "PP-26-0012", leadId: "LP-0012", programId: "PRG-PP-001", namaKlien: "Emily Chen",
     paket: "4 Sesi - Starter", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-10-22", nilaiKontrak: 600000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -165,7 +165,7 @@ function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
             onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-medium hover:bg-[#c94a38] transition-colors"
               >
                 <Edit2 size={12} /> Edit
               </button>
@@ -779,10 +779,9 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-                <h3 className="text-base font-bold text-[#1E1C43]">Info Deal & Detail Program</h3>
+                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
               </div>
-              <button className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition">
+              <button className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
                 <Edit2 size={12} /> Edit
               </button>
             </div>
@@ -877,12 +876,11 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-                <h3 className="text-base font-bold text-[#1E1C43]">Rincian Layanan</h3>
+                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Rincian Layanan</h3>
               </div>
               <button
                 onClick={() => setEditRincian(!editRincian)}
-                className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition">
+                className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
                 <Edit2 size={12} /> {editRincian ? 'Selesai Edit' : 'Edit'}
               </button>
             </div>
@@ -969,8 +967,7 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-                <h3 className="text-base font-bold text-[#1E1C43]">Invoice</h3>
+                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
                   invoicePP.statusInvoice === 'Lunas'    ? 'bg-green-100 text-green-700' :
                   invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
@@ -978,7 +975,7 @@ export default function PPOrderDetailPage() {
                 }`}>{invoicePP.statusInvoice}</span>
               </div>
               <button onClick={() => setEditInvoice(!editInvoice)}
-                className="flex items-center gap-1 text-xs text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition">
+                className="flex items-center gap-1 text-xs bg-[#E05945] text-white rounded-lg px-3 py-1.5 hover:bg-[#c94a38] transition">
                 <Edit2 size={12} /> {editInvoice ? 'Selesai Edit' : 'Edit Invoice'}
               </button>
             </div>
@@ -1472,23 +1469,38 @@ export default function PPOrderDetailPage() {
           {/* ── Section 2: Dokumen Tambahan & Screening ──────────────────────── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
             <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-100">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-sm font-semibold text-[#1E1C43]">Dokumen Tambahan</h3>
+              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Dokumen Tambahan</h3>
             </div>
             <div className="p-5 space-y-5">
 
-              {/* Link Screening */}
+              {/* Riwayat Fitness Assessment */}
               <div>
                 <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">
-                  Hasil Screening Kesehatan
+                  Riwayat Fitness Assessment
                 </p>
+                {order.leadId && (
+                  <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-3">
+                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <span className="text-[10px] font-bold text-blue-600">i</span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-blue-700">Data kesehatan awal klien tersimpan di Lead</p>
+                      <p className="text-xs text-blue-600 mt-0.5">Lihat tab Kesehatan di halaman Lead untuk riwayat screening & Fitness Assessment.</p>
+                    </div>
+                    <button
+                      onClick={() => navigate('/pp/leads/' + order.leadId, { state: { defaultTab: 'kesehatan' } })}
+                      className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
+                      Lihat →
+                    </button>
+                  </div>
+                )}
                 {(() => {
-                  const dummyScreenings = [
-                    { id: "SCR-26-0001", namaKlien: "James Wilson", tanggal: "2026-10-15", statusScreening: "Selesai" },
-                    { id: "SCR-26-0002", namaKlien: "Emily Chen", tanggal: "2026-10-18", statusScreening: "Selesai" },
-                    { id: "SCR-26-0003", namaKlien: "Rian Maulana", tanggal: "2026-10-20", statusScreening: "Draft" },
+                  const dummyFARecords = [
+                    { id: "SCR-26-0001", namaKlien: "James Wilson", tanggal: "2026-10-15", statusFA: "Selesai" },
+                    { id: "SCR-26-0002", namaKlien: "Emily Chen", tanggal: "2026-10-18", statusFA: "Selesai" },
+                    { id: "SCR-26-0003", namaKlien: "Rian Maulana", tanggal: "2026-10-20", statusFA: "Draft" },
                   ]
-                  const linkedScreening = dummyScreenings.find(s => s.id === selectedScreeningId)
+                  const linkedFA = dummyFARecords.find(s => s.id === selectedScreeningId)
                   return (
                     <div>
                       <div className="flex gap-3 mb-2">
@@ -1496,8 +1508,8 @@ export default function PPOrderDetailPage() {
                           value={selectedScreeningId}
                           onChange={e => setSelectedScreeningId(e.target.value)}
                           className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
-                          <option value="">— Pilih nomor screening —</option>
-                          {dummyScreenings.map(s => (
+                          <option value="">— Pilih nomor Fitness Assessment —</option>
+                          {dummyFARecords.map(s => (
                             <option key={s.id} value={s.id}>
                               {s.id} · {s.namaKlien} · {s.tanggal}
                             </option>
@@ -1505,31 +1517,31 @@ export default function PPOrderDetailPage() {
                         </select>
                         {selectedScreeningId && (
                           <button
-                            onClick={() => navigate('/pp/screening', { state: { openScreeningId: selectedScreeningId } })}
+                            onClick={() => navigate('/pp/screening/' + selectedScreeningId, { state: { leadId: order.leadId, orderId: order.id } })}
                             className="px-3 py-2.5 bg-[#1E1C43] text-white rounded-xl text-xs font-semibold hover:bg-[#2d2b5e] transition flex items-center gap-1.5 flex-shrink-0">
-                            <ExternalLink size={13} /> Lihat File Lengkap
+                            <ExternalLink size={13} /> Lihat Detail
                           </button>
                         )}
                       </div>
                       <button
-                        onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: order?.namaKlien || infoDeal.namaKlien, prefillOrderId: order?.id } })}
+                        onClick={() => navigate('/pp/screening/new', { state: { namaKlien: order?.namaKlien || infoDeal.namaKlien, leadId: order?.leadId, orderId: order?.id } })}
                         className="text-xs text-[#E05945] font-semibold hover:underline flex items-center gap-1 mb-3">
-                        <Plus size={12} /> Buat Screening Baru untuk klien ini
+                        <Plus size={12} /> Buat Fitness Assessment untuk klien ini
                       </button>
-                      {linkedScreening && (
+                      {linkedFA && (
                         <div className="bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl p-3">
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-xs font-mono text-[#1E1C43] mb-0.5">{linkedScreening.id}</p>
-                              <p className="text-sm font-semibold text-gray-800">{linkedScreening.namaKlien}</p>
-                              <p className="text-xs text-gray-400">{linkedScreening.tanggal}</p>
+                              <p className="text-xs font-mono text-[#1E1C43] mb-0.5">{linkedFA.id}</p>
+                              <p className="text-sm font-semibold text-gray-800">{linkedFA.namaKlien}</p>
+                              <p className="text-xs text-gray-400">{linkedFA.tanggal}</p>
                             </div>
                             <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              linkedScreening.statusScreening === "Selesai"
+                              linkedFA.statusFA === "Selesai"
                                 ? "bg-green-100 text-green-700"
                                 : "bg-yellow-100 text-yellow-700"
                             }`}>
-                              {linkedScreening.statusScreening}
+                              {linkedFA.statusFA}
                             </span>
                           </div>
                         </div>
@@ -1649,8 +1661,7 @@ export default function PPOrderDetailPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-                    <h3 className="text-base font-bold text-[#1E1C43]">Referensi Program</h3>
+                    <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Referensi Program</h3>
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${prog ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-500'}`}>
                       {prog ? 'Terhubung' : 'Belum Ada'}
                     </span>
@@ -1694,8 +1705,7 @@ export default function PPOrderDetailPage() {
           {/* ── Section 2: Jadwal Sesi ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-base font-bold text-[#1E1C43]">Jadwal Sesi</h3>
+              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Jadwal Sesi</h3>
               <span className="bg-[#1E1C43] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {jadwalSesi.length}
               </span>
@@ -1749,8 +1759,7 @@ export default function PPOrderDetailPage() {
           {/* ── Section 3: Absensi Sesi ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-base font-bold text-[#1E1C43]">Absensi Sesi</h3>
+              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Absensi Sesi</h3>
               <span className="bg-[#1E1C43] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
                 {absensiSesi.length}
               </span>
@@ -1827,8 +1836,7 @@ export default function PPOrderDetailPage() {
           {/* ── Section 4: Catatan Progres Klien ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-base font-bold text-[#1E1C43]">Catatan Progres Klien</h3>
+              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Klien</h3>
             </div>
             <p className="text-xs text-gray-400 mb-4 ml-3">Rekam perkembangan klien per sesi atau per periode</p>
 
