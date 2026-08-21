@@ -333,19 +333,27 @@ export default function PPOrderNewPage() {
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">No. HP / WhatsApp *</label>
-                <input type="text" value={pendaftar.noHP}
-                  onChange={e => setPendaftar({ ...pendaftar, noHP: e.target.value })}
-                  placeholder="08xxxxxxxxxx"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <input
+                  type="text"
+                  value={pendaftar.noHP}
+                  readOnly
+                  placeholder="— pilih leads terlebih dahulu"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
+                />
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Email</label>
-                <input type="email" value={pendaftar.email}
-                  onChange={e => setPendaftar({ ...pendaftar, email: e.target.value })}
-                  placeholder="email@example.com"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                <input
+                  type="email"
+                  value={pendaftar.email}
+                  readOnly
+                  placeholder="— pilih leads terlebih dahulu"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
+                />
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Hubungan dengan Klien</label>
