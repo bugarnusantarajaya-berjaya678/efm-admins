@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2 } from 'lucide-react'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -441,6 +441,7 @@ export default function PPFitnessAssessmentPage() {
   const navigate = useNavigate()
   const location = useLocation()
   const isNew = id === 'new'
+  const leadId = location.state?.leadId || null
 
   const prefill = location.state || {}
   const existing = !isNew ? (DUMMY_ASSESSMENTS[id] || null) : null
@@ -498,6 +499,7 @@ export default function PPFitnessAssessmentPage() {
   const [enduranceCatatanAkhir, setEnduranceCatatanAkhir] = useState(existing?.endurance_catatan_akhir || '')
 
   const [saved, setSaved] = useState(false)
+  const [isEditing, setIsEditing] = useState(isNew)
 
   const statusColors = {
     'Pre-Test Selesai': 'bg-blue-50 text-blue-700 border-blue-200',
@@ -507,7 +509,28 @@ export default function PPFitnessAssessmentPage() {
   const statusLabel = existing?.statusAssessment || 'Draft'
 
   const handleSave = () => {
+    if (isNew) {
+      const newScrId = `SCR-26-${String(Math.floor(Math.random() * 9000) + 1000)}`
+      const tanggalLabel = tanggalPreTest
+        ? new Date(tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+        : new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+      const targetPath = leadId ? `/pp/leads/${leadId}` : '/pp/screening'
+      navigate(targetPath, leadId ? {
+        state: {
+          newScreening: {
+            id: newScrId,
+            tanggal: tanggalLabel,
+            namaKlien,
+            statusScreening: 'Draft',
+            picScreening: namaFC || '',
+          },
+          defaultTab: 'screening',
+        },
+      } : undefined)
+      return
+    }
     setSaved(true)
+    setIsEditing(false)
     setTimeout(() => setSaved(false), 2000)
   }
 
@@ -551,17 +574,38 @@ export default function PPFitnessAssessmentPage() {
           </div>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={handleSave}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-              saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
-            }`}
-          >
-            {saved ? <CheckCircle size={15} /> : <Save size={15} />}
-            {saved ? 'Tersimpan' : 'Simpan'}
-          </button>
+          {!isNew && !isEditing && (
+            <button
+              onClick={() => setIsEditing(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E1C43] text-[#1E1C43] hover:bg-gray-50 transition"
+            >
+              <Edit2 size={15} /> Edit
+            </button>
+          )}
+          {!isNew && isEditing && (
+            <button
+              onClick={() => setIsEditing(false)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+            >
+              Batalkan
+            </button>
+          )}
+          {isEditing && (
+            <button
+              onClick={handleSave}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
+              }`}
+            >
+              {saved ? <CheckCircle size={15} /> : <Save size={15} />}
+              {saved ? 'Tersimpan' : isNew ? 'Simpan' : 'Simpan Perubahan'}
+            </button>
+          )}
         </div>
       </div>
+
+      {/* Content wrapper — non-interactive when not editing */}
+      <div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
 
       {/* Section Toggle Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
@@ -854,6 +898,8 @@ export default function PPFitnessAssessmentPage() {
         </div>
       </div>
 
+      </div>{/* end content wrapper */}
+
       {/* Footer Save */}
       <div className="flex justify-end gap-3 pb-8">
         <button
@@ -862,15 +908,17 @@ export default function PPFitnessAssessmentPage() {
         >
           Kembali
         </button>
-        <button
-          onClick={handleSave}
-          className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition ${
-            saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
-          }`}
-        >
-          {saved ? <CheckCircle size={15} /> : <Save size={15} />}
-          {saved ? 'Tersimpan' : 'Simpan Assessment'}
-        </button>
+        {isEditing && (
+          <button
+            onClick={handleSave}
+            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition ${
+              saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
+            }`}
+          >
+            {saved ? <CheckCircle size={15} /> : <Save size={15} />}
+            {saved ? 'Tersimpan' : 'Simpan Assessment'}
+          </button>
+        )}
       </div>
     </div>
   )
