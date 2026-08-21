@@ -810,9 +810,20 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
-              <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
-                <Edit2 size={12} /> Edit
-              </button>
+              {editingSection === 'infoDeal' ? (
+                <div className="flex gap-2">
+                  <button onClick={saveInfoDeal} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                    <Save size={12} /> Simpan
+                  </button>
+                  <button onClick={cancelEdit} className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                    <X size={12} /> Batal
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => startEdit('infoDeal')} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
+                  <Edit2 size={12} /> Edit
+                </button>
+              )}
             </div>
             <div className="p-5">
 
@@ -856,17 +867,37 @@ export default function PPOrderDetailPage() {
             <div className="mb-4">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Detail Program</p>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  ["Paket Program", order.paket],
-                  ["PIC Pelatih", order.picOpsEFM],
-                  ["Tanggal Mulai", order.tanggalMulai],
-                  ["Status Order", order.statusOrder],
-                ].map(([label, val]) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{val || "—"}</p>
-                  </div>
-                ))}
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Paket Program</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="text" value={infoDraft.paket || ''} onChange={e => setInfoDraft(p => ({...p, paket: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{order.paket || "—"}</p>
+                  )}
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC Pelatih</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="text" value={infoDraft.picOps || ''} onChange={e => setInfoDraft(p => ({...p, picOps: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{order.picOpsEFM || "—"}</p>
+                  )}
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="date" value={infoDraft.tanggalMulai || ''} onChange={e => setInfoDraft(p => ({...p, tanggalMulai: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                  ) : (
+                    <p className="text-sm font-semibold text-gray-800">{order.tanggalMulai || "—"}</p>
+                  )}
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Status Order</p>
+                  <p className="text-sm font-semibold text-gray-800">{order.statusOrder || "—"}</p>
+                </div>
               </div>
             </div>
 
@@ -894,10 +925,16 @@ export default function PPOrderDetailPage() {
             </div>
 
             {/* Catatan Order */}
-            {order.catatanOrder && (
+            {(order.catatanOrder || editingSection === 'infoDeal') && (
               <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
                 <p className="text-xs font-semibold text-gray-500 mb-1">Catatan / Target Klien</p>
-                <p className="text-sm text-gray-700">{order.catatanOrder}</p>
+                {editingSection === 'infoDeal' ? (
+                  <textarea value={infoDraft.catatan || ''} onChange={e => setInfoDraft(p => ({...p, catatan: e.target.value}))}
+                    rows={2} placeholder="Catatan atau target klien..."
+                    className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
+                ) : (
+                  <p className="text-sm text-gray-700">{order.catatanOrder}</p>
+                )}
               </div>
             )}
             </div>
