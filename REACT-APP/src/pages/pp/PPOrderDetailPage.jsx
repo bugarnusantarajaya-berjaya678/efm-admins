@@ -664,8 +664,8 @@ export default function PPOrderDetailPage() {
   /* ── Render ──────────────────────────────────────────────────────────────── */
 
   return (
-    <div className="bg-[#F5F5F7] min-h-screen">
-      <div className="px-6 py-6">
+    <>
+      <div className="space-y-5">
 
       {/* Banner: new order from survei */}
       {isNew && fromState?.fromProgram && (
@@ -698,7 +698,7 @@ export default function PPOrderDetailPage() {
       </nav>
 
       {/* Header Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
 
         {/* Baris 1: Action buttons */}
         <div className="flex items-center justify-end gap-2 mb-5">
@@ -2219,7 +2219,7 @@ export default function PPOrderDetailPage() {
 
 
       </div>
-    </div>
+    </>
   )
 }
 
