@@ -95,7 +95,20 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - `text-4xl font-black` — ONLY place this scale/weight is used, ever
 
 **Badges:** `text-xs font-medium`, `px-2 py-1 rounded-full`
-**Buttons:** `text-sm font-medium` (primary: `bg-[#1E1C43] text-white`; secondary: `border border-gray-300 text-gray-700`)
+
+**Buttons** — 3 tipe, pilih sesuai konteks:
+
+| Tipe | Konteks | Kelas Tailwind |
+|---|---|---|
+| Page-level primary | Tombol utama di page header (Tambah Data, Buat Order baru) | `bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-bold px-4 py-2.5 rounded-lg` |
+| Card/tab action | Tombol di kanan atas header tab/card (Buat Screening, Update Pipeline, Edit) | `h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold` |
+| Secondary / Batal | Tombol pendamping (Batal, Reset, Lihat Detail) | `h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50` |
+
+**Aturan card/tab action button (orange):**
+- Selalu gunakan orange (`#E05945`) untuk tombol primary di dalam header card/tab — BUKAN gray border, BUKAN navy
+- Tombol ini harus selalu ada di header kanan atas, BUKAN hanya di empty state container
+- Saat form editing aktif, sembunyikan tombol ini dan tampilkan Simpan + Batal sebagai gantinya
+- Lihat detail pola di `efm-component-patterns` Section 7
 
 **Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. Never use `text-sm` for table body cells in list pages — use `text-xs` consistently.
 
