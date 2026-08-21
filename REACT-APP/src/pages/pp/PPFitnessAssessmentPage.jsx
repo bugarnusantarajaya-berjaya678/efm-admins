@@ -508,6 +508,14 @@ export default function PPFitnessAssessmentPage() {
   }
   const statusLabel = existing?.statusAssessment || 'Draft'
 
+  const handleBack = () => {
+    if (leadId) {
+      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'screening' } })
+    } else {
+      navigate('/pp/screening')
+    }
+  }
+
   const handleSave = () => {
     if (isNew) {
       const newScrId = `SCR-26-${String(Math.floor(Math.random() * 9000) + 1000)}`
@@ -543,7 +551,7 @@ export default function PPFitnessAssessmentPage() {
       <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
         <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition">PP</button>
         <span>/</span>
-        <button onClick={() => navigate('/pp/screening')} className="hover:text-[#1E1C43] transition">Screening</button>
+        <button onClick={() => handleBack()} className="hover:text-[#1E1C43] transition">Screening</button>
         <span>/</span>
         <span className="text-[#1E1C43] font-medium">{isNew ? 'Baru' : id}</span>
       </div>
@@ -552,7 +560,7 @@ export default function PPFitnessAssessmentPage() {
       <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/pp/screening')}
+            onClick={() => handleBack()}
             className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
           >
             <ArrowLeft size={16} className="text-gray-600" />
@@ -903,7 +911,7 @@ export default function PPFitnessAssessmentPage() {
       {/* Footer Save */}
       <div className="flex justify-end gap-3 pb-8">
         <button
-          onClick={() => navigate('/pp/screening')}
+          onClick={() => handleBack()}
           className="px-5 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
         >
           Kembali
