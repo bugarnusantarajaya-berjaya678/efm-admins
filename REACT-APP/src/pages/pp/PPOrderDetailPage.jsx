@@ -507,37 +507,10 @@ export default function PPOrderDetailPage() {
     catatanInvoice: '',
     statusInvoice: 'Draft',
   })
-  const [editInvoice, setEditInvoice] = useState(false)
   const [editRincian, setEditRincian] = useState(false)
   const [rincianDraft, setRincianDraft] = useState(order?.rincianLayanan || [])
 
-  const [pajakAktif,      setPajakAktif]      = useState(false)
-  const [persenPajak,     setPersenPajak]     = useState(11)
-  const [kodeDiskonInput, setKodeDiskonInput] = useState('')
-  const [diskonApplied,   setDiskonApplied]   = useState(null)
-  const [diskonError,     setDiskonError]     = useState('')
-  const [syaratList,      setSyaratList]      = useState([
-    'Pembayaran dilakukan sebelum sesi pertama dimulai.',
-    'Paket yang telah dibeli tidak dapat dikembalikan.',
-    'Reschedule sesi wajib dikonfirmasi minimal H-1.',
-    'Absensi dihitung setelah pelatih melakukan check-in.',
-  ])
-
-  const validKodeDiskon = {
-    HEMAT10:   { tipe: 'persen',  nilai: 10,    label: 'Diskon 10%' },
-    HARBOLNAS: { tipe: 'persen',  nilai: 15,    label: 'Diskon 15%' },
-    FLAT50K:   { tipe: 'nominal', nilai: 50000, label: 'Hemat Rp 50.000' },
-  }
-
-  const subtotalPP          = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
-  const diskonNominal       = diskonApplied
-    ? diskonApplied.tipe === 'persen'
-      ? Math.round(subtotalPP * diskonApplied.nilai / 100)
-      : diskonApplied.nilai
-    : 0
-  const subtotalSetelahDiskon = subtotalPP - diskonNominal
-  const ppnNominal          = pajakAktif ? Math.round(subtotalSetelahDiskon * persenPajak / 100) : 0
-  const totalInvoiceNew     = subtotalSetelahDiskon + ppnNominal
+  const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
   const formatRpPP = (val) => 'Rp ' + Math.round(val || 0).toLocaleString('id-ID')
 
   const fotoLaporanBaruRef = useRef(null)
@@ -1290,245 +1263,34 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section: Invoice PP ── */}
+          {/* ── Section: Invoice (compact link card) ── */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
-                <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                  invoicePP.statusInvoice === 'Lunas'    ? 'bg-green-100 text-green-700' :
-                  invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
-                  'bg-gray-100 text-gray-600'
-                }`}>{invoicePP.statusInvoice}</span>
-              </div>
-              <button onClick={() => setEditInvoice(!editInvoice)}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
-                <Edit2 size={12} /> {editInvoice ? 'Selesai Edit' : 'Edit Invoice'}
-              </button>
+            <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
+              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                invoicePP.statusInvoice === 'Lunas'    ? 'bg-green-100 text-green-700' :
+                invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
+                'bg-gray-100 text-gray-600'
+              }`}>{invoicePP.statusInvoice}</span>
             </div>
             <div className="p-5">
-
-            {/* Info grid 4 kolom */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-gray-200 rounded-lg mb-4">
-              {[
-                ['No. Invoice',  invoicePP.nomorInvoice],
-                ['Tanggal',      fmtDate(invoicePP.tanggal)],
-                ['Jatuh Tempo',  fmtDate(invoicePP.jatuhTempo)],
-                ['Order ID',     '#' + (order?.id || '—')],
-              ].map(([label, val]) => (
-                <div key={label}>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
-                  <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Rincian table */}
-            <div className="overflow-x-auto mb-4">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-100">
-                  <tr>
-                    {['No','Item Layanan','Satuan','Jumlah','Total'].map(h => (
-                      <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 whitespace-nowrap">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {rincianDraft.map((item, idx) => (
-                    <tr key={item.id || idx} className="border-b border-gray-50">
-                      <td className="px-4 py-3 text-xs text-gray-400">{idx + 1}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-800">{item.namaItem}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{item.satuan}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{item.jumlah}</td>
-                      <td className="px-4 py-3 text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Kalkulasi */}
-            <div className="border border-gray-100 rounded-xl p-4 mb-4 space-y-3">
-              {/* Subtotal */}
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Subtotal</span>
-                <span className="font-semibold text-gray-800">{formatRpPP(subtotalPP)}</span>
-              </div>
-
-              {/* Kode Diskon */}
-              <div className="border-t border-gray-50 pt-3">
-                <p className="text-xs font-semibold text-gray-500 mb-2">Kode Diskon</p>
-                {editInvoice ? (
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={kodeDiskonInput}
-                      onChange={e => { setKodeDiskonInput(e.target.value.toUpperCase()); setDiskonError('') }}
-                      placeholder="Contoh: HEMAT10"
-                      className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#1E1C43]"
-                    />
-                    <button
-                      onClick={() => {
-                        const kode = kodeDiskonInput.trim().toUpperCase()
-                        if (!kode) { setDiskonApplied(null); setDiskonError(''); return }
-                        if (validKodeDiskon[kode]) {
-                          setDiskonApplied({ kode, ...validKodeDiskon[kode] })
-                          setDiskonError('')
-                        } else {
-                          setDiskonError('Kode tidak valid')
-                          setDiskonApplied(null)
-                        }
-                      }}
-                      className="px-3 py-2 bg-[#1E1C43] text-white rounded-lg text-xs font-semibold hover:opacity-90 transition"
-                    >
-                      Terapkan
-                    </button>
-                    {diskonApplied && (
-                      <button
-                        onClick={() => { setDiskonApplied(null); setKodeDiskonInput(''); setDiskonError('') }}
-                        className="px-2 py-2 border border-red-200 text-red-500 rounded-lg text-xs hover:bg-red-50 transition"
-                      >
-                        <X size={12} />
-                      </button>
-                    )}
-                  </div>
-                ) : null}
-                {diskonError && <p className="text-xs text-red-500 mt-1">{diskonError}</p>}
-                {diskonApplied ? (
-                  <div className="flex justify-between items-center mt-2">
-                    <span className="text-xs text-green-700 bg-green-50 px-2 py-1 rounded font-medium">
-                      ✓ {diskonApplied.kode} — {diskonApplied.label}
-                    </span>
-                    <span className="text-sm text-red-500 font-semibold">− {formatRpPP(diskonNominal)}</span>
-                  </div>
-                ) : !editInvoice && (
-                  <p className="text-xs text-gray-400">—</p>
-                )}
-              </div>
-
-              {/* PPN */}
-              <div className="border-t border-gray-50 pt-3">
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={pajakAktif}
-                      onChange={e => setPajakAktif(e.target.checked)}
-                      className="w-3.5 h-3.5 accent-[#1E1C43]"
-                      disabled={!editInvoice}
-                    />
-                    <span className="text-sm text-gray-600">PPN {persenPajak}%</span>
-                  </label>
-                  <span className="text-sm text-gray-700">{pajakAktif ? formatRpPP(ppnNominal) : '—'}</span>
-                </div>
-                {editInvoice && pajakAktif && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="text-xs text-gray-400">Persentase:</span>
-                    <input
-                      type="number"
-                      value={persenPajak}
-                      onChange={e => setPersenPajak(parseFloat(e.target.value) || 0)}
-                      className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]"
-                    />
-                    <span className="text-xs text-gray-400">%</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Total */}
-              <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
-                <span className="text-sm font-bold text-white">TOTAL</span>
-                <span className="text-xl font-bold text-white">{formatRpPP(totalInvoiceNew)}</span>
-              </div>
-            </div>
-
-            {/* Catatan */}
-            <div className="mb-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Catatan</p>
-              {editInvoice ? (
-                <textarea
-                  value={invoicePP.catatanInvoice}
-                  onChange={e => setInvoicePP({...invoicePP, catatanInvoice: e.target.value})}
-                  placeholder="Catatan tambahan untuk klien..."
-                  rows={2}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                />
-              ) : (
-                <p className="text-sm text-gray-700">{invoicePP.catatanInvoice || '—'}</p>
-              )}
-            </div>
-
-            {/* Syarat & Ketentuan */}
-            <div className="mb-4">
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Syarat & Ketentuan</p>
-              <div className="space-y-2">
-                {syaratList.map((s, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <span className="text-xs text-gray-400 mt-0.5 shrink-0">{i + 1}.</span>
-                    {editInvoice ? (
-                      <>
-                        <input
-                          type="text"
-                          value={s}
-                          onChange={e => setSyaratList(syaratList.map((x, j) => j === i ? e.target.value : x))}
-                          className="flex-1 border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#1E1C43]"
-                        />
-                        <button
-                          onClick={() => setSyaratList(syaratList.filter((_, j) => j !== i))}
-                          className="text-red-400 hover:text-red-600 transition p-1"
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </>
-                    ) : (
-                      <p className="text-xs text-gray-600">{s}</p>
-                    )}
+              <div className="grid grid-cols-3 gap-3 mb-4">
+                {[
+                  ['No. Invoice',   invoicePP.nomorInvoice],
+                  ['Jatuh Tempo',   fmtDate(invoicePP.jatuhTempo)],
+                  ['Total Tagihan', formatRpPP(subtotalPP)],
+                ].map(([label, val]) => (
+                  <div key={label} className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                    <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
                   </div>
                 ))}
-                {editInvoice && (
-                  <button
-                    onClick={() => setSyaratList([...syaratList, ''])}
-                    className="text-xs text-[#1E1C43] hover:underline flex items-center gap-1 mt-1"
-                  >
-                    <Plus size={12} /> Tambah Syarat
-                  </button>
-                )}
               </div>
-            </div>
-
-            {/* Tombol Footer Invoice */}
-            <div className="flex gap-3 pt-3 border-t border-gray-100">
-              <select value={invoicePP.statusInvoice}
-                onChange={e => setInvoicePP({...invoicePP, statusInvoice: e.target.value})}
-                className="border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                <option>Draft</option>
-                <option>Terkirim</option>
-                <option>Lunas</option>
-                <option>Overdue</option>
-              </select>
-              <button onClick={() => navigate('/pp/invoice', { state: { filterSearch: invoicePP.nomorInvoice } })}
-                className="flex-1 border border-[#1E1C43] text-[#1E1C43] rounded-xl py-2 text-xs font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-1.5">
-                <Eye size={13} /> Preview Invoice
-              </button>
-              <button onClick={() => window.print()}
-                className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2 text-xs font-semibold hover:bg-[#2d2b5e] transition flex items-center justify-center gap-1.5">
-                <FileText size={13} /> Download PDF
-              </button>
-            </div>
-            {invoicePP.statusInvoice === 'Lunas' && (
               <button
-                onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: {
-                  orderId: order?.id,
-                  invNo: invoicePP.nomorInvoice,
-                  client: infoDeal.namaKlien || order?.namaKlien,
-                  paket: infoDeal.paket || order?.paket,
-                  total: totalInvoiceNew,
-                  pic: infoDeal.pic || order?.picSalesEFM,
-                }}})}
-                className="w-full mt-2 bg-[#27AE60] text-white rounded-xl py-2 text-xs font-semibold hover:bg-[#1E8449] transition flex items-center justify-center gap-1.5">
-                <CheckCircle size={13} /> Buat Receipt Pembayaran
+                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1E1C43] text-white rounded-xl text-xs font-semibold hover:bg-[#2d2b5e] transition">
+                <Eye size={13} /> Buka Invoice
               </button>
-            )}
             </div>
           </div>
 
