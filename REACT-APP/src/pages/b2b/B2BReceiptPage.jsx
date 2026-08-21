@@ -474,7 +474,7 @@ export default function B2BReceiptPage() {
                 ) : filtered.map(r => (
                   <tr key={r.noReceipt} onClick={() => setPreview(r)} className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                     <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{r.noReceipt}</td>
-                    <td className="px-3 py-2.5 text-xs font-normal text-gray-600">{r.orderId}</td>
+                    <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{r.orderId}</td>
                     <td className="px-3 py-2.5 text-xs font-medium text-gray-900 whitespace-nowrap">{r.namaKlien}</td>
                     <td className="px-3 py-2.5 text-xs font-normal text-gray-600">{r.periode}</td>
                     <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{formatRp(r.total)}</td>

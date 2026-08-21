@@ -674,7 +674,7 @@ export default function B2BInvoicePage() {
                 <tr key={inv.id} onClick={() => setSelectedId(inv.id)}
                   className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{inv.id}</td>
-                  <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{inv.orderId}</td>
+                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{inv.orderId}</td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-center gap-2">
                       <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0" style={{ background: inv.color }}>
