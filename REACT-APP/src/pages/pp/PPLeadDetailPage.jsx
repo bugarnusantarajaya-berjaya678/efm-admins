@@ -740,7 +740,7 @@ export default function PPLeadDetailPage() {
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
                 <button
-                  onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
+                  onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id, orderId: lead.orderId || '' } })}
                   className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
                   <Plus size={13} /> Buat Fitness Assessment
                 </button>
