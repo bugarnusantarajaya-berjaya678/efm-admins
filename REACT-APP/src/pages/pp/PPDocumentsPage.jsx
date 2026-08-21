@@ -413,14 +413,16 @@ export default function PPDocumentsPage() {
   const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
   const filtered = useMemo(() => {
     const q = fSearch.toLowerCase()
-    return docs.filter(d => {
-      const matchBulan  = !fBulan  || (d.tglDibuat ?? '').includes(BSHORT[fBulan] ?? fBulan)
-      const matchTahun  = !fTahun  || (d.tglDibuat ?? '').includes(fTahun)
-      const matchStatus = !fStatus || d.statusTtd === fStatus
-      const matchPaket  = !fPaket  || d.paket === fPaket
-      const matchSearch = !q || d.namaKlien.toLowerCase().includes(q) || d.orderId.toLowerCase().includes(q)
-      return matchBulan && matchTahun && matchStatus && matchPaket && matchSearch
-    })
+    return docs
+      .filter(d => {
+        const matchBulan  = !fBulan  || (d.tglDibuat ?? '').includes(BSHORT[fBulan] ?? fBulan)
+        const matchTahun  = !fTahun  || (d.tglDibuat ?? '').includes(fTahun)
+        const matchStatus = !fStatus || d.statusTtd === fStatus
+        const matchPaket  = !fPaket  || d.paket === fPaket
+        const matchSearch = !q || d.namaKlien.toLowerCase().includes(q) || d.orderId.toLowerCase().includes(q)
+        return matchBulan && matchTahun && matchStatus && matchPaket && matchSearch
+      })
+      .sort((a, b) => parseInt(b.id.split('-')[3]) - parseInt(a.id.split('-')[3]))
   }, [docs, fBulan, fTahun, fStatus, fPaket, fSearch])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE))

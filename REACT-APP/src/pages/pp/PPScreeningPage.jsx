@@ -127,13 +127,15 @@ export default function PPScreeningPage() {
     }
   }, []);
 
-  const filtered = screeningList.filter(s => {
-    const matchSearch = s.namaKlien.toLowerCase().includes(search.toLowerCase()) || s.id.toLowerCase().includes(search.toLowerCase());
-    const matchStatus = filterStatus ? s.statusScreening === filterStatus : true;
-    const matchPic = filterPic ? s.picScreening === filterPic : true;
-    const matchTujuan = filterTujuan ? s.tujuanFitness === filterTujuan : true;
-    return matchSearch && matchStatus && matchPic && matchTujuan;
-  });
+  const filtered = screeningList
+    .filter(s => {
+      const matchSearch = s.namaKlien.toLowerCase().includes(search.toLowerCase()) || s.id.toLowerCase().includes(search.toLowerCase());
+      const matchStatus = filterStatus ? s.statusScreening === filterStatus : true;
+      const matchPic = filterPic ? s.picScreening === filterPic : true;
+      const matchTujuan = filterTujuan ? s.tujuanFitness === filterTujuan : true;
+      return matchSearch && matchStatus && matchPic && matchTujuan;
+    })
+    .sort((a, b) => parseInt(b.id.split('-')[2]) - parseInt(a.id.split('-')[2]));
 
   const handleSave = () => {
     const bmi = form.tinggiBadan && form.beratBadan

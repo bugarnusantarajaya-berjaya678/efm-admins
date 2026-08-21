@@ -11,7 +11,6 @@ import {
 const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
   { label: 'Leads',      path: '/pp/leads'      },
-  { label: 'Screening',  path: '/pp/screening'  },
   { label: 'Orders',     path: '/pp/orders'     },
   { label: 'Invoice',    path: '/pp/invoice'    },
   { label: 'Receipt',    path: '/pp/receipt'    },

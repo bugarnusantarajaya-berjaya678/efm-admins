@@ -267,16 +267,18 @@ export default function PPProgramDBPage() {
 
   const filtered = useMemo(() => {
     const q = fSearch.trim().toLowerCase()
-    return programs.filter(p => {
-      if (fStatus && p.status !== fStatus) return false
-      if (fJenis  && p.namaLatihan !== fJenis) return false
-      if (fPIC    && p.picId !== fPIC) return false
-      if (q) {
-        const hay = [p.id, p.namaLatihan, p.namaPaket, (PIC_DB[p.picId]?.fullname || '')].join(' ').toLowerCase()
-        if (!hay.includes(q)) return false
-      }
-      return true
-    })
+    return programs
+      .filter(p => {
+        if (fStatus && p.status !== fStatus) return false
+        if (fJenis  && p.namaLatihan !== fJenis) return false
+        if (fPIC    && p.picId !== fPIC) return false
+        if (q) {
+          const hay = [p.id, p.namaLatihan, p.namaPaket, (PIC_DB[p.picId]?.fullname || '')].join(' ').toLowerCase()
+          if (!hay.includes(q)) return false
+        }
+        return true
+      })
+      .sort((a, b) => parseInt(b.id.split('-').pop()) - parseInt(a.id.split('-').pop()))
   }, [programs, fStatus, fJenis, fPIC, fSearch])
 
   useEffect(() => { setPage(1) }, [fStatus, fJenis, fPIC, fSearch])
