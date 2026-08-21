@@ -765,7 +765,7 @@ export default function PPLeadDetailPage() {
                     {screenings.map(scr => (
                       <button
                         key={scr.id}
-                        onClick={() => navigate('/pp/screening/' + scr.id)}
+                        onClick={() => navigate('/pp/screening/' + scr.id, { state: { leadId: lead.id } })}
                         className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
                         <div className="flex items-center gap-3">
                           <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
