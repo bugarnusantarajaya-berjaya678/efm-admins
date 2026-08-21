@@ -70,12 +70,36 @@ const dummyPPOrders = [
 ]
 
 const dummyPPPrograms = [
-  { id:"PRG-PP-003", namaLatihan:"Private Training", namaPaket:"12 Sesi - Pro",
-    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
-    pic:"Sarah Jenkins", biayaPerSesi:200000, hargaPaket:2400000 },
   { id:"PRG-PP-001", namaLatihan:"Private Training", namaPaket:"4 Sesi - Starter",
     sesi:4, pertemuan:"2x seminggu", masaBerlaku:"30 hari",
     pic:"Marcus Chen", biayaPerSesi:150000, hargaPaket:600000 },
+  { id:"PRG-PP-002", namaLatihan:"Private Training", namaPaket:"8 Sesi - Basic",
+    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
+    pic:"Marcus Chen", biayaPerSesi:175000, hargaPaket:1400000 },
+  { id:"PRG-PP-003", namaLatihan:"Private Training", namaPaket:"12 Sesi - Pro",
+    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
+    pic:"Sarah Jenkins", biayaPerSesi:200000, hargaPaket:2400000 },
+  { id:"PRG-PP-004", namaLatihan:"Private Training", namaPaket:"20 Sesi - Premium",
+    sesi:20, pertemuan:"3x seminggu", masaBerlaku:"90 hari",
+    pic:"Sarah Jenkins", biayaPerSesi:190000, hargaPaket:3800000 },
+  { id:"PRG-PP-005", namaLatihan:"Yoga Private", namaPaket:"8 Sesi Yoga - Basic",
+    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
+    pic:"Sari Dewi", biayaPerSesi:160000, hargaPaket:1280000 },
+  { id:"PRG-PP-006", namaLatihan:"Yoga Private", namaPaket:"12 Sesi Yoga - Pro",
+    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
+    pic:"Sari Dewi", biayaPerSesi:180000, hargaPaket:2160000 },
+  { id:"PRG-PP-007", namaLatihan:"Pilates Private", namaPaket:"8 Sesi Pilates - Basic",
+    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
+    pic:"Nia Rahayu", biayaPerSesi:170000, hargaPaket:1360000 },
+  { id:"PRG-PP-008", namaLatihan:"Pilates Private", namaPaket:"12 Sesi Pilates - Pro",
+    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
+    pic:"Nia Rahayu", biayaPerSesi:185000, hargaPaket:2220000 },
+  { id:"PRG-PP-009", namaLatihan:"Zumba Private", namaPaket:"8 Sesi Zumba - Basic",
+    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
+    pic:"Bima Prakoso", biayaPerSesi:155000, hargaPaket:1240000 },
+  { id:"PRG-PP-010", namaLatihan:"Functional Training", namaPaket:"12 Sesi FT - Pro",
+    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
+    pic:"Doni Kusuma", biayaPerSesi:195000, hargaPaket:2340000 },
 ]
 
 /* ── Per-order line items ─────────────────────────────────────────────────── */
@@ -254,11 +278,18 @@ export default function PPOrderDetailPage() {
         hariLatihan:       order.hariLatihan       || [],
         jamLatihan:        order.jamLatihan        || '',
         lokasiLatihan:     order.lokasiLatihan     || '',
-        leadId:            order.leadId            || fromState?.leadId || '',
+        leadId:            order.leadId            || fromState?.leadId    || '',
+        programId:         order.programId         || fromState?.programId || '',
       }
     : {}
   const [infoDeal, setInfoDeal] = useState(initInfo)
   const [infoDraft, setInfoDraft] = useState(initInfo)
+
+  const initProgram = dummyPPPrograms.find(p => p.id === (order?.programId || ''))
+  const [programSearch, setProgramSearch] = useState(
+    initProgram ? `${initProgram.id} — ${initProgram.namaPaket}` : ''
+  )
+  const [programDropdownOpen, setProgramDropdownOpen] = useState(false)
 
   const initItems = order ? defaultLineItems(order) : []
   const [lineItems, setLineItems] = useState(initItems)
@@ -542,6 +573,13 @@ export default function PPOrderDetailPage() {
     (ins) => (ins.severity === "Critical" || ins.severity === "High") && ins.status !== "Resolved"
   )
   const programTerkait = order ? dummyPPPrograms.find((s) => s.id === order.programId) : null
+  const filteredPrograms = programSearch
+    ? dummyPPPrograms.filter(p =>
+        p.id.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.namaPaket.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.namaLatihan.toLowerCase().includes(programSearch.toLowerCase())
+      )
+    : dummyPPPrograms
 
   /* ── Edit handlers ───────────────────────────────────────────────────────── */
   function startEdit(section) {
@@ -550,6 +588,8 @@ export default function PPOrderDetailPage() {
     if (section === 'infoDeal') {
       setInfoDraft({ ...infoDeal })
       setItemsDraft(lineItems.map(li => ({ ...li })))
+      const prog = dummyPPPrograms.find(p => p.id === infoDeal.programId)
+      setProgramSearch(prog ? `${prog.id} — ${prog.namaPaket}` : '')
     }
     if (section === 'quotation') {
       setQuotationDraft({
@@ -937,15 +977,65 @@ export default function PPOrderDetailPage() {
             {/* Detail Program */}
             <div className="mb-4">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Detail Program</p>
+
+              {/* Combobox — only in edit mode */}
+              {editingSection === 'infoDeal' && (
+                <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Pilih Program & Paket</p>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={programSearch}
+                      onChange={e => { setProgramSearch(e.target.value); setProgramDropdownOpen(true) }}
+                      onFocus={() => { setProgramSearch(''); setProgramDropdownOpen(true) }}
+                      onBlur={() => setTimeout(() => {
+                        setProgramDropdownOpen(false)
+                        const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
+                        if (prog) setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
+                      }, 150)}
+                      placeholder="Ketik ID program atau nama paket..."
+                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#1E1C43] bg-white pr-8"
+                    />
+                    <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    {programDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-52 overflow-y-auto">
+                        {filteredPrograms.length === 0 ? (
+                          <p className="text-xs text-gray-400 text-center py-3">Tidak ada paket ditemukan</p>
+                        ) : (
+                          filteredPrograms.map(prog => (
+                            <button
+                              key={prog.id}
+                              type="button"
+                              onMouseDown={() => {
+                                setInfoDraft(p => ({ ...p, programId: prog.id, paket: prog.namaPaket }))
+                                setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
+                                setProgramDropdownOpen(false)
+                              }}
+                              className={`w-full text-left px-3 py-2.5 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2 ${
+                                infoDraft.programId === prog.id ? 'bg-blue-50' : ''
+                              }`}
+                            >
+                              <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded">{prog.id}</span>
+                              <span className="text-xs text-gray-500">{prog.namaLatihan}</span>
+                              <span className="text-gray-300">·</span>
+                              <span className="text-xs font-medium text-gray-700 flex-1">{prog.namaPaket}</span>
+                              <span className="text-xs font-semibold text-[#E05945] shrink-0">{fmtRp(prog.hargaPaket)}</span>
+                            </button>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  {infoDraft.programId && (
+                    <p className="text-[10px] text-gray-400 mt-1">ID terpilih: <span className="font-semibold text-[#1E1C43]">{infoDraft.programId}</span></p>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Paket Program</p>
-                  {editingSection === 'infoDeal' ? (
-                    <input type="text" value={infoDraft.paket || ''} onChange={e => setInfoDraft(p => ({...p, paket: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{order.paket || "—"}</p>
-                  )}
+                  <p className="text-sm font-semibold text-gray-800">{infoDeal.paket || order.paket || "—"}</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC Pelatih</p>
@@ -953,7 +1043,7 @@ export default function PPOrderDetailPage() {
                     <input type="text" value={infoDraft.picOps || ''} onChange={e => setInfoDraft(p => ({...p, picOps: e.target.value}))}
                       className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
                   ) : (
-                    <p className="text-sm font-semibold text-gray-800">{order.picOpsEFM || "—"}</p>
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.picOps || order.picOpsEFM || "—"}</p>
                   )}
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
@@ -962,7 +1052,7 @@ export default function PPOrderDetailPage() {
                     <input type="date" value={infoDraft.tanggalMulai || ''} onChange={e => setInfoDraft(p => ({...p, tanggalMulai: e.target.value}))}
                       className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
                   ) : (
-                    <p className="text-sm font-semibold text-gray-800">{order.tanggalMulai || "—"}</p>
+                    <p className="text-sm font-semibold text-gray-800">{infoDeal.tanggalMulai || order.tanggalMulai || "—"}</p>
                   )}
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
@@ -970,6 +1060,41 @@ export default function PPOrderDetailPage() {
                   <p className="text-sm font-semibold text-gray-800">{order.statusOrder || "—"}</p>
                 </div>
               </div>
+
+              {/* Detail paket preview — shown when a program is selected */}
+              {(() => {
+                const prog = editingSection === 'infoDeal'
+                  ? dummyPPPrograms.find(p => p.id === infoDraft.programId)
+                  : programTerkait
+                if (!prog) return null
+                return (
+                  <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
+                    <p className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
+                      Detail Paket Terpilih
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
+                      {[
+                        ['ID Program',     prog.id],
+                        ['Jenis Latihan',  prog.namaLatihan],
+                        ['Jumlah Sesi',    prog.sesi + ' sesi'],
+                        ['Pertemuan',      prog.pertemuan],
+                        ['Masa Berlaku',   prog.masaBerlaku],
+                        ['Biaya per Sesi', fmtRp(prog.biayaPerSesi)],
+                      ].map(([label, val]) => (
+                        <div key={label}>
+                          <p className="text-[10px] text-blue-400 font-semibold uppercase tracking-wider mb-0.5">{label}</p>
+                          <p className="text-xs font-semibold text-[#1E1C43]">{val}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="border-t border-blue-100 pt-2.5 flex justify-between items-center">
+                      <span className="text-xs text-blue-500 font-medium">Harga Paket</span>
+                      <span className="text-base font-bold text-[#1E1C43]">{fmtRp(prog.hargaPaket)}</span>
+                    </div>
+                  </div>
+                )
+              })()}
             </div>
 
             {/* Jadwal Latihan */}
