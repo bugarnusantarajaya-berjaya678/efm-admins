@@ -1128,8 +1128,8 @@ export default function EventOrdersPage() {
           <table className="w-full text-[13px]" style={{ minWidth: '1100px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['Order ID', 'Nama Klien', 'Jenis Klien', 'Nama Event', 'Jenis Event', 'Nilai Event', 'Tgl Event', 'Tahapan', 'Status', 'PIC'].map(h => (
-                  <th key={h} className={`text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap${h === 'Order ID' ? ' w-[100px] min-w-[100px]' : ''}`}>
+                {[['Order ID',130],['Nama Klien',160],['Jenis Klien',110],['Nama Event',160],['Jenis Event',110],['Nilai Event',130],['Tgl Event',120],['Tahapan',120],['Status',120],['PIC',130]].map(([h, mw]) => (
+                  <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
                 ))}

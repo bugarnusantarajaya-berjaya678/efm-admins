@@ -228,7 +228,7 @@ export default function PPScreeningPage() {
               <tr>
                 <th style={{minWidth:'155px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Screening</th>
                 <th style={{minWidth:'120px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Tanggal</th>
-                <th style={{minWidth:'150px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Nama Klien</th>
+                <th style={{minWidth:'160px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Nama Klien</th>
                 <th style={{minWidth:'70px'}}  className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Usia</th>
                 <th style={{minWidth:'110px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">BB/TB</th>
                 <th style={{minWidth:'70px'}}  className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">BMI</th>

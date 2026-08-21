@@ -463,7 +463,7 @@ export default function B2BReceiptPage() {
             <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  {[['No. Receipt',170],['Order ID',130],['Nama Klien',170],['Periode',110],['Total',130],['Tanggal Bayar',110],['Metode',120],['Aksi',100]].map(([h,mw]) => (
+                  {[['No. Receipt',175],['Order ID',130],['Nama Klien',160],['Periode',120],['Total',130],['Tanggal Bayar',120],['Metode',110],['Aksi',100]].map(([h,mw]) => (
                     <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>

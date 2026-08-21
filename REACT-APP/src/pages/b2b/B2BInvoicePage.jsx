@@ -662,7 +662,7 @@ export default function B2BInvoicePage() {
           <table className="w-full text-sm" style={{ minWidth: '1300px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {[['No. Invoice',165],['Order ID',130],['Perusahaan',170],['Program',170],['Tgl Invoice',110],['Jatuh Tempo',110],['Total',130],['Status',120],['Aksi',100]].map(([h,mw]) => (
+                {[['No. Invoice',165],['Order ID',130],['Perusahaan',170],['Program',160],['Tgl Invoice',120],['Jatuh Tempo',120],['Total',130],['Status',120],['Aksi',100]].map(([h,mw]) => (
                   <th key={h} style={{minWidth:mw}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>

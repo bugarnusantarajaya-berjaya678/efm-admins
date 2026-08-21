@@ -1195,8 +1195,8 @@ export default function EventInvoicePage() {
             <table className="w-full text-[13px]" style={{ minWidth: '1000px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  {['No Invoice', 'Order ID', 'Nama Klien', 'Nama Event', 'Periode', 'Total', 'Status', 'Tanggal', 'Aksi'].map(h => (
-                    <th key={h} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  {[['No Invoice',165],['Order ID',130],['Nama Klien',160],['Nama Event',160],['Periode',120],['Total',130],['Status',120],['Tanggal',120],['Aksi',100]].map(([h, mw]) => (
+                    <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>

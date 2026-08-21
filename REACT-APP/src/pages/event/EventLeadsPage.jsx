@@ -412,8 +412,8 @@ export default function EventLeadsPage() {
             <table className="w-full" style={{ minWidth: '1200px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
-                  {['ID', 'Nama Klien', 'Tipe', 'Nama Event', 'Kota', 'Sumber', 'PIC EFM', 'Stage', 'Koordinator', 'No. WA', 'Tanggal', 'Aksi'].map(h => (
-                    <th key={h} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  {[['ID',110],['Nama Klien',160],['Tipe',110],['Nama Event',160],['Kota',110],['Sumber',120],['PIC EFM',130],['Stage',120],['Koordinator',140],['No. WA',130],['Tanggal',120],['Aksi',100]].map(([h, mw]) => (
+                    <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
                 </tr>
               </thead>
