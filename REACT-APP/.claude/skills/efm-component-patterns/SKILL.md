@@ -564,6 +564,180 @@ const filtered = useMemo(() => {
 
 ---
 
+## 7. Tab / Card Header Action Button Pattern
+
+Used for: tombol aksi utama (Tambah, Buat, Edit, Update) di dalam tab atau card — berlaku di semua halaman detail (Lead Detail, Order Detail, dll.)
+
+### Aturan posisi
+
+**Tombol aksi utama selalu di header kanan atas** tab/card, bukan di dalam body atau hanya di empty state. Ini memastikan tombol selalu terlihat terlepas dari kondisi list (kosong maupun sudah ada data).
+
+```jsx
+{/* Header dengan action button */}
+<div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Judul Section</h3>
+  {!isEditingState && (
+    <button
+      onClick={handleAction}
+      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+      <Plus size={13} /> Label Tombol
+    </button>
+  )}
+</div>
+```
+
+### Style wajib untuk tombol aksi di header
+
+| Tipe | Kelas Tailwind |
+|---|---|
+| Primary action (Buat, Tambah, Update) | `h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors` |
+| Edit mode (Simpan) | `h-8 px-3 rounded-lg bg-[#1E1C43] hover:opacity-90 text-white text-xs font-semibold transition-opacity` |
+| Edit mode (Batal) | `h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors` |
+
+### Aturan conditional
+
+- Saat `editingState` aktif → **sembunyikan** tombol primary; tampilkan Simpan + Batal sebagai gantinya
+- Empty state (list kosong) → **jangan** taruh tombol di dalam empty state container jika tombol sudah ada di header; cukup tampilkan teks informatif saja
+- Saat state berubah (misal selesai save) → sembunyikan form inline dan kembalikan tombol primary di header
+
+```jsx
+{/* Empty state — tanpa tombol jika tombol sudah di header */}
+{items.length === 0 && (
+  <div className="flex flex-col items-center justify-center py-10 gap-3">
+    <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+      <ClipboardList size={22} className="text-gray-400" />
+    </div>
+    <p className="text-sm text-gray-500 font-medium">Belum ada data</p>
+    <p className="text-xs text-gray-400">Klik tombol di atas untuk menambahkan</p>
+  </div>
+)}
+```
+
+**Contoh implementasi nyata:** Tab Screening dan tab Pipeline di `PPLeadDetailPage.jsx`
+
+---
+
+## 8. Sub-page Navigation dengan State Passing
+
+Used for: halaman form panjang/kompleks yang dibuka dari parent detail page (contoh: Fitness Assessment dari Lead Detail, Order Detail dari list). Pola ini menggantikan modal ketika konten terlalu panjang untuk popup.
+
+### Kapan pakai sub-page (bukan modal)
+
+- Form memiliki lebih dari ~3 section besar ATAU estimasi output >2 scroll panjang
+- Ada TES AWAL / TES AKHIR columns, tabel, atau konten yang butuh banyak ruang horizontal
+- User perlu melihat semua bagian form sekaligus tanpa scroll di dalam modal
+
+### Navigasi ke sub-page (dari parent)
+
+```jsx
+// Parent (misal PPLeadDetailPage.jsx)
+navigate('/pp/screening/new', {
+  state: {
+    leadId: lead.id,
+    namaKlien: lead.nama,
+    picEfm: lead.picEfm,
+  }
+})
+
+// Klik item existing:
+navigate('/pp/screening/' + scr.id)
+```
+
+### Sub-page: baca context dari state
+
+```jsx
+// Sub-page (misal PPFitnessAssessmentPage.jsx)
+const { id } = useParams()
+const { state } = useLocation()
+
+const isNew    = id === 'new'
+const leadId   = state?.leadId || null
+const namaKlien = state?.namaKlien || ''
+
+const [isEditing, setIsEditing] = useState(isNew)
+// isNew → langsung edit mode; existing record → read-only dulu
+```
+
+### Read-only mode (existing records)
+
+Bungkus seluruh konten form (antara header dan footer) dengan wrapper yang disable semua interaksi saat tidak dalam mode edit:
+
+```jsx
+<div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
+  {/* semua field form di sini */}
+</div>
+```
+
+- `pointer-events-none` → semua click/focus diabaikan
+- `select-none` → teks tidak bisa di-highlight
+- `opacity-80` → visual cue bahwa ini read-only mode
+- Jangan tambahkan `disabled` satu per satu ke tiap field — gunakan wrapper ini sebagai gantinya
+
+### handleBack — navigasi balik dengan konteks
+
+```jsx
+const handleBack = () => {
+  if (leadId) {
+    navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'screening' } })
+  } else {
+    navigate('/pp/screening')  // fallback jika dibuka langsung dari URL
+  }
+}
+```
+
+Gunakan `handleBack` di: tombol arrow back di header, tombol "Kembali" di footer.
+
+### handleSave — simpan dan kirim data balik ke parent
+
+```jsx
+const handleSave = () => {
+  if (isNew) {
+    const newRecord = {
+      id: 'SCR-26-' + String(Date.now()).slice(-4), // atau ID yang dihasilkan
+      tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+      namaKlien,
+      statusScreening: 'Draft',
+      picScreening: picEfm,
+      orderId: null,
+    }
+    if (leadId) {
+      navigate(`/pp/leads/${leadId}`, {
+        state: { defaultTab: 'screening', newScreening: newRecord }
+      })
+    } else {
+      navigate('/pp/screening')
+    }
+  } else {
+    // existing: simpan perubahan lokal, keluar dari edit mode
+    setIsEditing(false)
+  }
+}
+```
+
+### Parent: terima data baru dari sub-page
+
+```jsx
+// Parent (PPLeadDetailPage.jsx)
+const { state } = useLocation()
+const [extraScreenings, setExtraScreenings] = useState([])
+
+useEffect(() => {
+  if (state?.newScreening) {
+    setExtraScreenings(prev => [state.newScreening, ...prev])
+  }
+}, []) // hanya jalankan sekali saat mount
+
+// Gabungkan data dummy + data baru dari navigasi:
+const screenings = [
+  ...SCREENING_SUMMARY.filter(s => s.namaKlien === lead.nama),
+  ...extraScreenings,
+]
+```
+
+**Catatan:** Pola ini cocok untuk prototype UI-only. Ketika backend sudah terhubung, ganti dengan API call dan invalidate cache — struktur navigasi dan state tetap sama.
+
+---
+
 ### Helper: avatar color dari nama
 
 ```jsx

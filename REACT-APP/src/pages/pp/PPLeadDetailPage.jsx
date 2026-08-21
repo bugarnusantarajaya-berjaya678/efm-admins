@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload } from 'lucide-react'
 
 /* ═══════════════════════════════════════
    Constants
@@ -237,6 +237,23 @@ export default function PPLeadDetailPage() {
   const [newStageTanggal, setNewStageTanggal] = useState(new Date().toISOString().split('T')[0])
   const [newStageCatatan, setNewStageCatatan] = useState('')
   const [toast, setToast]           = useState(null)
+  const [infoKesehatan, setInfoKesehatan] = useState({
+    kondisiSaatIni: id === 'LP-0001' ? 'Mengeluhkan lemak berlebih di area perut dan pinggul, tidak ada nyeri sendi' :
+                    id === 'LP-0003' ? 'Budi: nyeri bahu kanan. Rina: kondisi prima, ingin lebih bugar' : '',
+    riwayatCedera: id === 'LP-0001' ? 'Tidak ada riwayat cedera serius' :
+                   id === 'LP-0003' ? 'Budi: pernah dislokasi bahu kanan (2024), sudah pulih. Rina: tidak ada' : '',
+    tujuanProgram: id === 'LP-0001' ? 'Fatloss 8–10 kg, perbaiki postur, tingkatkan stamina kardio' :
+                   id === 'LP-0003' ? 'Program couple, keduanya ingin lebih aktif dan sehat bersama' : '',
+    obatanRutin: id === 'LP-0001' || id === 'LP-0003' ? '-' : '',
+    catatanCs: id === 'LP-0001' ? 'Klien aktif, follow up responsif, siap mulai kapan saja' :
+               id === 'LP-0003' ? 'Couple program, jadwal weekend lebih fleksibel' : '',
+    sudahDiisi: id === 'LP-0001' || id === 'LP-0003',
+  })
+  const [editingInfoKesehatan, setEditingInfoKesehatan] = useState(false)
+  const [editInfoForm, setEditInfoForm]   = useState({})
+  const [dokumenKesehatan, setDokumenKesehatan] = useState(
+    id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
+  )
 
   useEffect(() => {
     if (state?.newScreening) {
@@ -294,7 +311,7 @@ export default function PPLeadDetailPage() {
   const TABS = [
     { key: 'info',      label: 'Info Klien'  },
     { key: 'pipeline',  label: 'Pipeline'    },
-    { key: 'screening', label: 'Screening'   },
+    { key: 'kesehatan', label: 'Kesehatan'   },
   ]
 
   return (
@@ -583,68 +600,203 @@ export default function PPLeadDetailPage() {
         )}
 
         {/* ════════════════════════════════
-            TAB 3: SCREENING
+            TAB 3: KESEHATAN
         ════════════════════════════════ */}
-        {activeTab === 'screening' && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Screening</h3>
-              <button
-                onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                <Plus size={13} /> Buat Screening
-              </button>
+        {activeTab === 'kesehatan' && (
+          <div className="space-y-4">
+
+            {/* ── Section 1: Informasi Kesehatan Awal ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Informasi Kesehatan Awal</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Dikumpulkan via WA sebelum pembayaran</p>
+                </div>
+                {!editingInfoKesehatan ? (
+                  <button
+                    onClick={() => { setEditInfoForm({ ...infoKesehatan }); setEditingInfoKesehatan(true) }}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Edit2 size={12} /> Edit
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        setInfoKesehatan({ ...editInfoForm, sudahDiisi: true })
+                        setEditingInfoKesehatan(false)
+                        showToast('✓ Informasi kesehatan berhasil disimpan')
+                      }}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Save size={12} /> Simpan
+                    </button>
+                    <button
+                      onClick={() => { setEditingInfoKesehatan(false); setEditInfoForm({}) }}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <X size={12} /> Batal
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5">
+                {!infoKesehatan.sudahDiisi && !editingInfoKesehatan && (
+                  <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
+                    <p className="text-xs text-yellow-700 font-medium">Informasi kesehatan awal belum diisi. Klik Edit untuk mengisi data hasil screening via WhatsApp.</p>
+                  </div>
+                )}
+
+                {!editingInfoKesehatan ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Kondisi & Keluhan Saat Ini</p>
+                      <p className="text-sm text-gray-700">{infoKesehatan.kondisiSaatIni || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Riwayat Cedera / Penyakit</p>
+                      <p className="text-sm text-gray-700">{infoKesehatan.riwayatCedera || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan / Goals Program</p>
+                      <p className="text-sm text-gray-700">{infoKesehatan.tujuanProgram || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Obat-obatan Rutin</p>
+                      <p className="text-sm text-gray-700">{infoKesehatan.obatanRutin || <span className="text-gray-400 italic">Tidak ada</span>}</p>
+                    </div>
+                    {infoKesehatan.catatanCs && (
+                      <div className="col-span-1 md:col-span-2 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan CS / Admin</p>
+                        <p className="text-sm text-gray-700">{infoKesehatan.catatanCs}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Kondisi & Keluhan Saat Ini</label>
+                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        value={editInfoForm.kondisiSaatIni || ''} onChange={e => setEditInfoForm(p => ({ ...p, kondisiSaatIni: e.target.value }))}
+                        placeholder="Deskripsikan kondisi dan keluhan klien..." />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Riwayat Cedera / Penyakit</label>
+                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        value={editInfoForm.riwayatCedera || ''} onChange={e => setEditInfoForm(p => ({ ...p, riwayatCedera: e.target.value }))}
+                        placeholder="Riwayat cedera atau penyakit sebelumnya..." />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tujuan / Goals Program</label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editInfoForm.tujuanProgram || ''} onChange={e => setEditInfoForm(p => ({ ...p, tujuanProgram: e.target.value }))}
+                        placeholder="Tujuan mengikuti program..." />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Obat-obatan Rutin</label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editInfoForm.obatanRutin || ''} onChange={e => setEditInfoForm(p => ({ ...p, obatanRutin: e.target.value }))}
+                        placeholder="Tidak ada / nama obat..." />
+                    </div>
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan CS / Admin</label>
+                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        value={editInfoForm.catatanCs || ''} onChange={e => setEditInfoForm(p => ({ ...p, catatanCs: e.target.value }))}
+                        placeholder="Catatan tambahan dari CS..." />
+                    </div>
+                  </div>
+                )}
+
+                {/* Dokumen Kesehatan */}
+                <div className="mt-5 pt-4 border-t border-gray-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Dokumen Kesehatan</p>
+                    <button
+                      onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
+                      className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <Upload size={11} /> Upload Dokumen
+                    </button>
+                  </div>
+                  {dokumenKesehatan.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
+                  ) : (
+                    <div className="space-y-1.5">
+                      {dokumenKesehatan.map(dok => (
+                        <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                          <FileText size={14} className="text-gray-400 shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
+                            <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
+                          </div>
+                          <button className="text-[10px] text-[#1E1C43] font-semibold hover:underline shrink-0">Lihat</button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
 
-            <div className="p-5">
-              {screenings.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 gap-3">
-                  <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
-                    <ClipboardList size={22} className="text-gray-400" />
+            {/* ── Section 2: Riwayat Fitness Assessment ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
+                <button
+                  onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id, orderId: lead.orderId || '' } })}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                  <Plus size={13} /> Buat Fitness Assessment
+                </button>
+              </div>
+
+              <div className="p-5">
+                {screenings.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 gap-2">
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                      <ClipboardList size={18} className="text-gray-400" />
+                    </div>
+                    <p className="text-sm text-gray-500 font-medium">Belum ada fitness assessment</p>
+                    <p className="text-xs text-gray-400 text-center">Assessment lengkap dilakukan oleh FC pada sesi pertama setelah pembayaran</p>
                   </div>
-                  <p className="text-sm text-gray-500 font-medium">Belum ada data screening untuk klien ini</p>
-                  <p className="text-xs text-gray-400">Screening diperlukan sebelum program dimulai</p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                    <p className="text-xs text-blue-700 font-medium">
-                      {screenings.length} data screening ditemukan untuk klien ini.
-                    </p>
-                  </div>
-                  {screenings.map(scr => (
-                    <button
-                      key={scr.id}
-                      onClick={() => navigate('/pp/screening/' + scr.id)}
-                      className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
-                          <ClipboardList size={16} className="text-gray-500" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-semibold text-[#1E1C43]">{scr.id}</p>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-xs text-gray-500">{scr.tanggal}</span>
-                            <span className="text-gray-300">·</span>
-                            <span className="text-xs text-gray-500">{scr.picScreening}</span>
-                            {scr.orderId && (
-                              <>
-                                <span className="text-gray-300">·</span>
-                                <span className="text-xs text-gray-500">Order #{scr.orderId}</span>
-                              </>
-                            )}
+                ) : (
+                  <div className="space-y-2">
+                    <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
+                      <p className="text-xs text-blue-700 font-medium">
+                        {screenings.length} fitness assessment ditemukan untuk klien ini.
+                      </p>
+                    </div>
+                    {screenings.map(scr => (
+                      <button
+                        key={scr.id}
+                        onClick={() => navigate('/pp/screening/' + scr.id, { state: { leadId: lead.id } })}
+                        className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
+                            <ClipboardList size={16} className="text-gray-500" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-semibold text-[#1E1C43]">{scr.id}</p>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-xs text-gray-500">{scr.tanggal}</span>
+                              <span className="text-gray-300">·</span>
+                              <span className="text-xs text-gray-500">{scr.picScreening}</span>
+                              {scr.orderId && (
+                                <>
+                                  <span className="text-gray-300">·</span>
+                                  <span className="text-xs text-gray-500">Order #{scr.orderId}</span>
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <ScrBadge status={scr.statusScreening} />
-                        <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              )}
+                        <div className="flex items-center gap-2">
+                          <ScrBadge status={scr.statusScreening} />
+                          <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
           </div>
         )}
 

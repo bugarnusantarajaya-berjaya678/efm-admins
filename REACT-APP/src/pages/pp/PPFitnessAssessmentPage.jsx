@@ -447,7 +447,7 @@ export default function PPFitnessAssessmentPage() {
   const existing = !isNew ? (DUMMY_ASSESSMENTS[id] || null) : null
 
   // Personal Detail
-  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || '')
+  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || prefill.orderId || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
@@ -510,7 +510,7 @@ export default function PPFitnessAssessmentPage() {
 
   const handleBack = () => {
     if (leadId) {
-      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'screening' } })
+      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
     } else {
       navigate('/pp/screening')
     }
@@ -532,7 +532,7 @@ export default function PPFitnessAssessmentPage() {
             statusScreening: 'Draft',
             picScreening: namaFC || '',
           },
-          defaultTab: 'screening',
+          defaultTab: 'kesehatan',
         },
       } : undefined)
       return
@@ -551,7 +551,7 @@ export default function PPFitnessAssessmentPage() {
       <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
         <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition">PP</button>
         <span>/</span>
-        <button onClick={() => handleBack()} className="hover:text-[#1E1C43] transition">Screening</button>
+        <button onClick={() => handleBack()} className="hover:text-[#1E1C43] transition">Kesehatan</button>
         <span>/</span>
         <span className="text-[#1E1C43] font-medium">{isNew ? 'Baru' : id}</span>
       </div>
@@ -585,7 +585,7 @@ export default function PPFitnessAssessmentPage() {
           {!isNew && !isEditing && (
             <button
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-[#1E1C43] text-[#1E1C43] hover:bg-gray-50 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] hover:bg-[#c94a38] text-white transition"
             >
               <Edit2 size={15} /> Edit
             </button>
@@ -593,7 +593,7 @@ export default function PPFitnessAssessmentPage() {
           {!isNew && isEditing && (
             <button
               onClick={() => setIsEditing(false)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-300 text-gray-600 hover:bg-gray-50 transition"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
             >
               Batalkan
             </button>
@@ -625,7 +625,7 @@ export default function PPFitnessAssessmentPage() {
         />
         <SectionToggleCard
           title="Health Screening"
-          description="PAR-Q, Postural Alignment & Vital Signs"
+          description="Verifikasi formal PAR-Q, Postural Alignment & Vital Signs"
           checked={toggles.healthScreening}
           onChange={v => setToggles(p => ({ ...p, healthScreening: v }))}
         />
@@ -636,6 +636,24 @@ export default function PPFitnessAssessmentPage() {
           onChange={v => setToggles(p => ({ ...p, fitnessTest: v }))}
         />
       </div>
+
+      {/* ── REFERENSI STAGE 1 ── */}
+      {leadId && (
+        <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-5">
+          <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+            <span className="text-[10px] font-bold text-blue-600">i</span>
+          </div>
+          <div className="flex-1">
+            <p className="text-xs font-semibold text-blue-700">Informasi Kesehatan Awal sudah direkam di Lead</p>
+            <p className="text-xs text-blue-600 mt-0.5">Gunakan sebagai referensi saat mengisi PAR-Q, Goals, dan Riwayat Cedera di bawah.</p>
+          </div>
+          <button
+            onClick={() => navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })}
+            className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
+            Lihat →
+          </button>
+        </div>
+      )}
 
       {/* ── PERSONAL DETAIL (always shown) ── */}
       <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
