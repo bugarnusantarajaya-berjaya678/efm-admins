@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, X, ChevronRight, Plus, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowLeft, X, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
 
 const dummyPPLeads = [
   { id: "L-1001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
@@ -95,6 +95,8 @@ export default function PPOrderNewPage() {
 
   // Section 3: Program & Paket
   const [selectedPaket, setSelectedPaket] = useState(null);
+  const [programSearch, setProgramSearch] = useState('');
+  const [programDropdownOpen, setProgramDropdownOpen] = useState(false);
 
   // Section 4: Jadwal Latihan
   const [jadwal, setJadwal] = useState({
@@ -237,6 +239,14 @@ export default function PPOrderNewPage() {
   );
 
   const tanggalBerakhir = calcTanggalBerakhir();
+
+  const filteredPaket = programSearch
+    ? dummyPaketDB.filter(p =>
+        p.id.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.namaPaket.toLowerCase().includes(programSearch.toLowerCase()) ||
+        p.namaProgram.toLowerCase().includes(programSearch.toLowerCase())
+      )
+    : dummyPaketDB;
 
   // ── Render ──────────────────────────────────────
   return (
@@ -432,20 +442,45 @@ export default function PPOrderNewPage() {
           {selectedPaket === null ? (
             <div>
               <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Pilih Program & Paket</label>
-              <select
-                defaultValue=""
-                onChange={e => {
-                  const paket = dummyPaketDB.find(p => p.id === e.target.value);
-                  if (paket) handleSelectPaket(paket);
-                }}
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] text-gray-700">
-                <option value="" disabled>— Pilih paket dari daftar program —</option>
-                {dummyPaketDB.map(p => (
-                  <option key={p.id} value={p.id}>
-                    {p.namaProgram} — {p.namaPaket} ({formatRp(p.hargaPaket)})
-                  </option>
-                ))}
-              </select>
+              <div className="relative">
+                <input
+                  type="text"
+                  value={programSearch}
+                  onChange={e => { setProgramSearch(e.target.value); setProgramDropdownOpen(true) }}
+                  onFocus={() => { setProgramSearch(''); setProgramDropdownOpen(true) }}
+                  onBlur={() => setTimeout(() => setProgramDropdownOpen(false), 150)}
+                  placeholder="Ketik ID program, nama paket, atau jenis latihan..."
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
+                />
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                {programDropdownOpen && (
+                  <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 max-h-56 overflow-y-auto">
+                    {filteredPaket.length === 0 ? (
+                      <p className="text-sm text-gray-400 text-center py-4">Tidak ada paket ditemukan</p>
+                    ) : (
+                      filteredPaket.map(p => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onMouseDown={() => {
+                            handleSelectPaket(p)
+                            setProgramDropdownOpen(false)
+                            setProgramSearch('')
+                          }}
+                          className="w-full text-left px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                        >
+                          <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded shrink-0">{p.id}</span>
+                          <span className="text-sm text-gray-500 shrink-0">{p.namaProgram}</span>
+                          <span className="text-gray-300 shrink-0">—</span>
+                          <span className="text-sm font-medium text-gray-700 flex-1">{p.namaPaket}</span>
+                          <span className="text-sm font-semibold text-[#E05945] shrink-0">{formatRp(p.hargaPaket)}</span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-400 mt-1.5">Klik kolom di atas untuk melihat semua paket, atau ketik untuk menyaring</p>
             </div>
           ) : (
             <div className="border border-gray-200 rounded-xl p-4 relative">
