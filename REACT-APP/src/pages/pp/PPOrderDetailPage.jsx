@@ -1031,11 +1031,9 @@ export default function PPOrderDetailPage() {
                 </div>
               </div>
 
-              {/* Detail paket preview — shown when a program is selected */}
-              {(() => {
-                const prog = editingSection === 'infoDeal'
-                  ? dummyPPPrograms.find(p => p.id === infoDraft.programId)
-                  : programTerkait
+              {/* Detail paket preview — only shown in edit mode as program-selector preview */}
+              {editingSection === 'infoDeal' && (() => {
+                const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
                 if (!prog) return null
                 return (
                   <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
