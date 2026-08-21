@@ -334,9 +334,9 @@ export default function PPLeadsPage() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   {[
-                    ['Leads ID',100],['Nama',160],['Tipe',100],['No HP',140],
+                    ['Leads ID',110],['Nama',160],['Tipe',110],['No HP',130],
                     ['Program Diminati',160],['Sumber',120],['PIC EFM',130],
-                    ['Status Pipeline',130],['Tanggal Masuk',120],['Aksi',110],
+                    ['Status Pipeline',120],['Tanggal Masuk',120],['Aksi',100],
                   ].map(([h, mw]) => (
                     <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}

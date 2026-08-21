@@ -1102,7 +1102,7 @@ export default function B2BOrdersPage() {
           <table className="w-full text-[13px]" style={{ minWidth: '1220px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {[['Order ID',130],['Nama Klien',170],['Jenis',100],['Program/Layanan',170],['Nilai Kontrak',130],['Periode',160],['Tahapan',140],['Status',120],['PIC Sales',100]].map(([h,mw]) => (
+                {[['Order ID',130],['Nama Klien',160],['Jenis',110],['Program/Layanan',160],['Nilai Kontrak',130],['Periode',120],['Tahapan',130],['Status',120],['PIC Sales',130]].map(([h,mw]) => (
                   <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
                     {h}
                   </th>
