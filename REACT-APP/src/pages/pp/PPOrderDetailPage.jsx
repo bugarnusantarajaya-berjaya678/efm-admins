@@ -140,6 +140,14 @@ function Badge({ children, cls }) {
   )
 }
 
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) { return (name || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() }
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of (name || '')) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length]
+}
+
 function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
@@ -705,7 +713,7 @@ export default function PPOrderDetailPage() {
           {!isNew && order.leadId && (
             <button
               onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
-              className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
+              className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
             >
               Lihat Lead →
             </button>
@@ -718,49 +726,55 @@ export default function PPOrderDetailPage() {
           </button>
         </div>
 
-        {/* Baris 2: Info + Total */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-[11px] font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
-                {order.id}
-              </span>
-              <Badge cls="bg-[#1E1C43] text-white">{order.paket || '—'}</Badge>
-              <Badge cls={STATUS_CLS[order.statusOrder] ?? 'bg-gray-100 text-gray-600'}>
-                ● {order.statusOrder}
-              </Badge>
-              <Badge cls="bg-gray-100 text-gray-600">{order.tahapan}</Badge>
-              <Badge cls="bg-orange-100 text-orange-700">
-                📅 Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}
-              </Badge>
+        {/* Baris 2: Avatar + Info + Total */}
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4 flex-1">
+            {/* Avatar circle — same pattern as Lead Detail */}
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+              style={{ background: getAvatarColor(order.namaKlien) }}
+            >
+              {getInitials(order.namaKlien)}
             </div>
-            <h1 className="text-2xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {order.paket} &nbsp;·&nbsp; {order.picOpsEFM}
-            </p>
-            {/* Horizontal stepper */}
-            <div className="flex items-center gap-1 mt-3 flex-wrap">
-              {TAHAPAN_STEPS.map((step, i) => {
-                const orderIdx   = TAHAPAN_ORDER[order.tahapan] ?? 0
-                const stepIdx    = TAHAPAN_ORDER[step] ?? i
-                const isActive   = stepIdx === orderIdx
-                const isDone     = stepIdx < orderIdx
-                return (
-                  <div key={step} className="flex items-center gap-1">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                      isActive ? 'bg-[#E05945] text-white' : isDone ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {step}
-                    </span>
-                    {i < TAHAPAN_STEPS.length - 1 && <div className="w-4 h-px bg-gray-300" />}
-                  </div>
-                )
-              })}
+            <div>
+              {/* Order ID — plain label above name */}
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{order.id}</p>
+              {/* Name */}
+              <h1 className="text-xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
+              {/* Badges row below name */}
+              <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
+                <Badge cls={STATUS_CLS[order.statusOrder] ?? 'bg-gray-100 text-gray-600'}>
+                  ● {order.statusOrder}
+                </Badge>
+                <Badge cls="bg-gray-100 text-gray-600">{order.tahapan}</Badge>
+                <span className="text-[10px] text-gray-400">Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</span>
+              </div>
+              {/* Horizontal stepper */}
+              <div className="flex items-center gap-1 mt-3 flex-wrap">
+                {TAHAPAN_STEPS.map((step, i) => {
+                  const orderIdx = TAHAPAN_ORDER[order.tahapan] ?? 0
+                  const stepIdx  = TAHAPAN_ORDER[step] ?? i
+                  const isActive = stepIdx === orderIdx
+                  const isDone   = stepIdx < orderIdx
+                  return (
+                    <div key={step} className="flex items-center gap-1">
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                        isActive ? 'bg-[#E05945] text-white' : isDone ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {step}
+                      </span>
+                      {i < TAHAPAN_STEPS.length - 1 && <div className="w-4 h-px bg-gray-300" />}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
           </div>
+          {/* Nilai Kontrak — smaller, right-aligned */}
           <div className="text-right shrink-0">
             <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-            <p className="text-2xl font-bold text-[#1E1C43]">
+            <p className="text-xl font-bold text-[#1E1C43]">
               {fmtRp(order.nilaiKontrak || subtotal)}
             </p>
             <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.picOpsEFM}</p>
