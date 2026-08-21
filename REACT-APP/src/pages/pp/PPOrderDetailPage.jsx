@@ -1170,10 +1170,10 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section: Rincian Layanan (Editable) ── */}
+          {/* ── Section: Program & Rincian Biaya ── */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Rincian Layanan</h3>
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Program & Rincian Biaya</h3>
               <button
                 onClick={() => setEditRincian(!editRincian)}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
@@ -1182,80 +1182,109 @@ export default function PPOrderDetailPage() {
             </div>
             <div className="p-5">
 
+            {/* Compact paket strip — always read-only */}
+            {programTerkait ? (
+              <div className="bg-gray-50 rounded-xl p-4 mb-4">
+                <div className="flex items-start justify-between gap-3 mb-2.5">
+                  <div className="min-w-0">
+                    <p className="text-[10px] text-gray-400 font-mono mb-0.5">{programTerkait.id}</p>
+                    <p className="text-sm font-bold text-[#1E1C43]">
+                      {programTerkait.namaLatihan}
+                      <span className="font-normal text-gray-500"> · {programTerkait.namaPaket}</span>
+                    </p>
+                  </div>
+                  <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(programTerkait.hargaPaket)}</p>
+                </div>
+                <div className="flex flex-wrap gap-1.5 mb-2.5">
+                  {[programTerkait.sesi + ' sesi', programTerkait.pertemuan, programTerkait.masaBerlaku].map(v => (
+                    <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
+                    {programTerkait.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                  </div>
+                  <p className="text-xs text-gray-600 flex-1">{programTerkait.pic}</p>
+                  <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(programTerkait.biayaPerSesi)}/sesi</p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-gray-50 rounded-xl p-4 mb-4 text-center text-xs text-gray-400 italic">
+                Data program tidak ditemukan
+              </div>
+            )}
+
+            {/* Biaya tambahan */}
             {editRincian ? (
-              <div className="space-y-2 mb-3">
-                {rincianDraft.map((item, idx) => (
+              <div className="space-y-2 mb-4">
+                {rincianDraft.slice(1).map((item, idx) => (
                   <div key={item.id || idx} className="border border-gray-200 rounded-xl p-3">
                     <div className="grid grid-cols-4 gap-2 mb-1">
                       <div className="col-span-2">
-                        <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Nama Item</label>
                         <input type="text" value={item.namaItem}
-                          onChange={e => setRincianDraft(rincianDraft.map((r,i) => i===idx
-                            ? {...r, namaItem: e.target.value} : r))}
+                          onChange={e => setRincianDraft(prev => {
+                            const updated = [...prev]
+                            updated[idx + 1] = { ...updated[idx + 1], namaItem: e.target.value }
+                            return updated
+                          })}
                           className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Jumlah</label>
                         <input type="number" value={item.jumlah}
-                          onChange={e => setRincianDraft(rincianDraft.map((r,i) => i===idx
-                            ? {...r, jumlah: parseFloat(e.target.value)||0,
-                               total: (parseFloat(e.target.value)||0) * (r.harga || (r.jumlah ? Math.round(r.total/r.jumlah) : 0))} : r))}
+                          onChange={e => setRincianDraft(prev => {
+                            const updated = [...prev]
+                            const jumlah = parseFloat(e.target.value) || 0
+                            const harga = updated[idx+1].harga || (updated[idx+1].jumlah ? Math.round(updated[idx+1].total / updated[idx+1].jumlah) : 0)
+                            updated[idx + 1] = { ...updated[idx + 1], jumlah, total: jumlah * harga }
+                            return updated
+                          })}
                           className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                       </div>
                       <div>
-                        <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
-                        <input type="number" value={item.harga || (item.jumlah ? Math.round(item.total/item.jumlah) : item.total)}
-                          onChange={e => setRincianDraft(rincianDraft.map((r,i) => i===idx
-                            ? {...r, harga: parseFloat(e.target.value)||0,
-                               total: r.jumlah * (parseFloat(e.target.value)||0)} : r))}
+                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
+                        <input type="number" value={item.harga || (item.jumlah ? Math.round(item.total / item.jumlah) : item.total)}
+                          onChange={e => setRincianDraft(prev => {
+                            const updated = [...prev]
+                            const harga = parseFloat(e.target.value) || 0
+                            updated[idx + 1] = { ...updated[idx + 1], harga, total: updated[idx+1].jumlah * harga }
+                            return updated
+                          })}
                           className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                       </div>
                     </div>
                     <div className="flex justify-between items-center mt-1">
-                      <button onClick={() => setRincianDraft(rincianDraft.filter((_,i) => i !== idx))}
+                      <button onClick={() => setRincianDraft(prev => prev.filter((_, i) => i !== idx + 1))}
                         className="text-xs text-red-400 hover:text-red-600 transition flex items-center gap-1">
                         <Trash2 size={11} /> Hapus
                       </button>
-                      <span className="text-xs font-bold text-[#1E1C43]">
-                        Total: {formatRpPP(item.total)}
-                      </span>
+                      <span className="text-xs font-bold text-[#1E1C43]">Total: {formatRpPP(item.total)}</span>
                     </div>
                   </div>
                 ))}
                 <button
-                  onClick={() => setRincianDraft([...rincianDraft,
-                    { id: Date.now(), namaItem: '', satuan: 'Paket', jumlah: 1, harga: 0, total: 0 }])}
+                  onClick={() => setRincianDraft(prev => [...prev,
+                    { id: Date.now(), namaItem: '', satuan: 'Item', jumlah: 1, harga: 0, total: 0 }])}
                   className="w-full border-2 border-dashed border-gray-200 rounded-xl py-2.5 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-1.5">
-                  <Plus size={13} /> Tambah Item
+                  <Plus size={13} /> Tambah Biaya Lain
                 </button>
               </div>
             ) : (
-              <div className="overflow-x-auto mb-3">
-                <table className="w-full min-w-[500px]">
-                  <thead className="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                      {["No","Item Layanan","Satuan","Jumlah","Total"].map(h => (
-                        <th key={h} className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wide px-4 py-3 whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rincianDraft.map((item, idx) => (
-                      <tr key={item.id || idx} className="border-b border-gray-50">
-                        <td className="px-4 py-3 text-xs text-gray-400">{idx+1}</td>
-                        <td className="px-4 py-3 text-sm font-medium text-gray-800">{item.namaItem}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{item.satuan}</td>
-                        <td className="px-4 py-3 text-sm text-gray-600">{item.jumlah}</td>
-                        <td className="px-4 py-3 text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              rincianDraft.slice(1).length > 0 && (
+                <div className="space-y-1.5 mb-4">
+                  {rincianDraft.slice(1).map((item, idx) => (
+                    <div key={item.id || idx} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-700">{item.namaItem || '—'}</p>
+                      <p className="text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</p>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
 
             <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
-              <span className="text-sm text-gray-600">Subtotal</span>
+              <span className="text-sm text-gray-600">Total Nilai Order</span>
               <span className="text-lg font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</span>
             </div>
             </div>
