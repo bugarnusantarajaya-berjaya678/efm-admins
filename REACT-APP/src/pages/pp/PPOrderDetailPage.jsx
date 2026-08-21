@@ -708,28 +708,10 @@ export default function PPOrderDetailPage() {
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
 
-        {/* Baris 1: Action buttons */}
-        <div className="flex items-center justify-end gap-2 mb-5">
-          {!isNew && order.leadId && (
-            <button
-              onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
-              className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
-            >
-              Lihat Lead →
-            </button>
-          )}
-          <button
-            onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-            className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
-          >
-            <ArrowLeft size={12} /> Kembali
-          </button>
-        </div>
-
-        {/* Baris 2: Avatar + Info + Total */}
+        {/* Single row: Avatar+Info LEFT, Buttons+NilaiKontrak RIGHT — matches Lead Detail pattern */}
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4 flex-1">
-            {/* Avatar circle — same pattern as Lead Detail */}
+            {/* Avatar circle */}
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaKlien) }}
@@ -737,11 +719,8 @@ export default function PPOrderDetailPage() {
               {getInitials(order.namaKlien)}
             </div>
             <div>
-              {/* Order ID — plain label above name */}
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{order.id}</p>
-              {/* Name */}
               <h1 className="text-xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
-              {/* Badges row below name */}
               <div className="flex flex-wrap items-center gap-2 mt-1.5">
                 <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
                 <Badge cls={STATUS_CLS[order.statusOrder] ?? 'bg-gray-100 text-gray-600'}>
@@ -750,7 +729,6 @@ export default function PPOrderDetailPage() {
                 <Badge cls="bg-gray-100 text-gray-600">{order.tahapan}</Badge>
                 <span className="text-[10px] text-gray-400">Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</span>
               </div>
-              {/* Horizontal stepper */}
               <div className="flex items-center gap-1 mt-3 flex-wrap">
                 {TAHAPAN_STEPS.map((step, i) => {
                   const orderIdx = TAHAPAN_ORDER[order.tahapan] ?? 0
@@ -771,13 +749,31 @@ export default function PPOrderDetailPage() {
               </div>
             </div>
           </div>
-          {/* Nilai Kontrak — smaller, right-aligned */}
-          <div className="text-right shrink-0">
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-            <p className="text-xl font-bold text-[#1E1C43]">
-              {fmtRp(order.nilaiKontrak || subtotal)}
-            </p>
-            <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.picOpsEFM}</p>
+          {/* Right: action buttons atas, Nilai Kontrak bawah */}
+          <div className="flex flex-col items-end gap-3 shrink-0">
+            <div className="flex items-center gap-2">
+              {!isNew && order.leadId && (
+                <button
+                  onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
+                  className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
+                >
+                  Lihat Lead →
+                </button>
+              )}
+              <button
+                onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+                className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
+              >
+                <ArrowLeft size={12} /> Kembali
+              </button>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
+              <p className="text-xl font-bold text-[#1E1C43]">
+                {fmtRp(order.nilaiKontrak || subtotal)}
+              </p>
+              <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.picOpsEFM}</p>
+            </div>
           </div>
         </div>
       </div>
