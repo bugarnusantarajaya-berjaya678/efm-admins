@@ -504,7 +504,6 @@ export default function PPOrderDetailPage() {
     catatanInvoice: '',
     statusInvoice: 'Draft',
   })
-  const [editRincian, setEditRincian] = useState(false)
   const [rincianDraft, setRincianDraft] = useState(order?.rincianLayanan || [])
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
@@ -944,18 +943,16 @@ export default function PPOrderDetailPage() {
               </div>
             </div>
 
-            {/* Detail Program */}
+            {/* Program & Rincian Biaya */}
             <div className="mb-4">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Detail Program</p>
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Program & Rincian Biaya</p>
 
-              {/* Combobox — only in edit mode */}
+              {/* Program combobox — only in edit mode */}
               {editingSection === 'infoDeal' && (
                 <div className="bg-gray-50 rounded-lg p-3 mb-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Pilih Program & Paket</p>
                   <div className="relative">
-                    <input
-                      type="text"
-                      value={programSearch}
+                    <input type="text" value={programSearch}
                       onChange={e => { setProgramSearch(e.target.value); setProgramDropdownOpen(true) }}
                       onFocus={() => { setProgramSearch(''); setProgramDropdownOpen(true) }}
                       onBlur={() => setTimeout(() => {
@@ -964,35 +961,29 @@ export default function PPOrderDetailPage() {
                         if (prog) setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
                       }, 150)}
                       placeholder="Ketik ID program atau nama paket..."
-                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#1E1C43] bg-white pr-8"
-                    />
+                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#1E1C43] bg-white pr-8" />
                     <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     {programDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-52 overflow-y-auto">
                         {filteredPrograms.length === 0 ? (
                           <p className="text-xs text-gray-400 text-center py-3">Tidak ada paket ditemukan</p>
-                        ) : (
-                          filteredPrograms.map(prog => (
-                            <button
-                              key={prog.id}
-                              type="button"
-                              onMouseDown={() => {
-                                setInfoDraft(p => ({ ...p, programId: prog.id, paket: prog.namaPaket }))
-                                setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
-                                setProgramDropdownOpen(false)
-                              }}
-                              className={`w-full text-left px-3 py-2.5 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2 ${
-                                infoDraft.programId === prog.id ? 'bg-blue-50' : ''
-                              }`}
-                            >
-                              <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded">{prog.id}</span>
-                              <span className="text-xs text-gray-500">{prog.namaLatihan}</span>
-                              <span className="text-gray-300">·</span>
-                              <span className="text-xs font-medium text-gray-700 flex-1">{prog.namaPaket}</span>
-                              <span className="text-xs font-semibold text-[#E05945] shrink-0">{fmtRp(prog.hargaPaket)}</span>
-                            </button>
-                          ))
-                        )}
+                        ) : filteredPrograms.map(prog => (
+                          <button key={prog.id} type="button"
+                            onMouseDown={() => {
+                              setInfoDraft(p => ({ ...p, programId: prog.id, paket: prog.namaPaket }))
+                              setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
+                              setProgramDropdownOpen(false)
+                            }}
+                            className={`w-full text-left px-3 py-2.5 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2 ${
+                              infoDraft.programId === prog.id ? 'bg-blue-50' : ''
+                            }`}>
+                            <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded">{prog.id}</span>
+                            <span className="text-xs text-gray-500">{prog.namaLatihan}</span>
+                            <span className="text-gray-300">·</span>
+                            <span className="text-xs font-medium text-gray-700 flex-1">{prog.namaPaket}</span>
+                            <span className="text-xs font-semibold text-[#E05945] shrink-0">{fmtRp(prog.hargaPaket)}</span>
+                          </button>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -1002,73 +993,60 @@ export default function PPOrderDetailPage() {
                 </div>
               )}
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Paket Program</p>
-                  <p className="text-sm font-semibold text-gray-800">{infoDeal.paket || order.paket || "—"}</p>
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC Pelatih</p>
-                  {editingSection === 'infoDeal' ? (
-                    <input type="text" value={infoDraft.picOps || ''} onChange={e => setInfoDraft(p => ({...p, picOps: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.picOps || order.picOpsEFM || "—"}</p>
-                  )}
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
-                  {editingSection === 'infoDeal' ? (
-                    <input type="date" value={infoDraft.tanggalMulai || ''} onChange={e => setInfoDraft(p => ({...p, tanggalMulai: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.tanggalMulai || order.tanggalMulai || "—"}</p>
-                  )}
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Status Order</p>
-                  <p className="text-sm font-semibold text-gray-800">{order.statusOrder || "—"}</p>
-                </div>
-              </div>
-
-              {/* Detail paket preview — only shown in edit mode as program-selector preview */}
-              {editingSection === 'infoDeal' && (() => {
-                const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
-                if (!prog) return null
-                return (
-                  <div className="mt-3 bg-blue-50 border border-blue-100 rounded-xl p-4">
-                    <p className="text-[10px] font-semibold text-blue-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-400 inline-block" />
-                      Detail Paket Terpilih
-                    </p>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">
-                      {[
-                        ['ID Program',     prog.id],
-                        ['Jenis Latihan',  prog.namaLatihan],
-                        ['Jumlah Sesi',    prog.sesi + ' sesi'],
-                        ['Pertemuan',      prog.pertemuan],
-                        ['Masa Berlaku',   prog.masaBerlaku],
-                        ['Biaya per Sesi', fmtRp(prog.biayaPerSesi)],
-                      ].map(([label, val]) => (
-                        <div key={label}>
-                          <p className="text-[10px] text-blue-400 font-semibold uppercase tracking-wider mb-0.5">{label}</p>
-                          <p className="text-xs font-semibold text-[#1E1C43]">{val}</p>
-                        </div>
-                      ))}
+              {/* Compact paket strip — read-only display */}
+              {programTerkait ? (
+                <div className="bg-gray-50 rounded-xl p-4 mb-3">
+                  <div className="flex items-start justify-between gap-3 mb-2.5">
+                    <div className="min-w-0">
+                      <p className="text-[10px] text-gray-400 font-mono mb-0.5">{programTerkait.id}</p>
+                      <p className="text-sm font-bold text-[#1E1C43]">
+                        {programTerkait.namaLatihan}
+                        <span className="font-normal text-gray-500"> · {programTerkait.namaPaket}</span>
+                      </p>
                     </div>
-                    <div className="border-t border-blue-100 pt-2.5 flex justify-between items-center">
-                      <span className="text-xs text-blue-500 font-medium">Harga Paket</span>
-                      <span className="text-base font-bold text-[#1E1C43]">{fmtRp(prog.hargaPaket)}</span>
-                    </div>
+                    <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(programTerkait.hargaPaket)}</p>
                   </div>
-                )
-              })()}
+                  <div className="flex flex-wrap gap-1.5 mb-2.5">
+                    {[programTerkait.sesi + ' sesi', programTerkait.pertemuan, programTerkait.masaBerlaku].map(v => (
+                      <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
+                      {programTerkait.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                    </div>
+                    <p className="text-xs text-gray-600 flex-1">{programTerkait.pic}</p>
+                    <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(programTerkait.biayaPerSesi)}/sesi</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-gray-50 rounded-xl p-4 mb-3 text-center text-xs text-gray-400 italic">
+                  Data program tidak ditemukan
+                </div>
+              )}
+
+              {/* Biaya tambahan — view-only */}
+              {rincianDraft.slice(1).length > 0 && (
+                <div className="space-y-1.5 mb-3">
+                  {rincianDraft.slice(1).map((item, idx) => (
+                    <div key={item.id || idx} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                      <p className="text-sm text-gray-700">{item.namaItem || '—'}</p>
+                      <p className="text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
+                <span className="text-sm text-gray-600">Total Nilai Order</span>
+                <span className="text-base font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</span>
+              </div>
             </div>
 
             {/* Jadwal Latihan */}
             <div className="mb-4">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Jadwal Latihan</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Hari Latihan</p>
                   {editingSection === 'infoDeal' ? (
@@ -1100,23 +1078,58 @@ export default function PPOrderDetailPage() {
                     </div>
                   )}
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
-                  {editingSection === 'infoDeal' ? (
-                    <input type="time" value={infoDraft.jamLatihan || ''} onChange={e => setInfoDraft(p => ({...p, jamLatihan: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.jamLatihan || order.jamLatihan || '—'}{(infoDeal.jamLatihan || order.jamLatihan) ? ' WIB' : ''}</p>
-                  )}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
+                    {editingSection === 'infoDeal' ? (
+                      <input type="time" value={infoDraft.jamLatihan || ''} onChange={e => setInfoDraft(p => ({...p, jamLatihan: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.jamLatihan || order.jamLatihan || '—'}{(infoDeal.jamLatihan || order.jamLatihan) ? ' WIB' : ''}</p>
+                    )}
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
+                    {editingSection === 'infoDeal' ? (
+                      <input type="date" value={infoDraft.tanggalMulai || ''} onChange={e => setInfoDraft(p => ({...p, tanggalMulai: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.tanggalMulai || order.tanggalMulai || '—'}</p>
+                    )}
+                  </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3 col-span-2">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Latihan</p>
+              </div>
+            </div>
+
+            {/* Lokasi Latihan */}
+            <div className="mb-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Lokasi Latihan</p>
+              <div className="space-y-2">
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama / Alamat Lokasi</p>
                   {editingSection === 'infoDeal' ? (
-                    <input type="text" value={infoDraft.lokasiLatihan || ''} placeholder="Nama gedung / area"
+                    <input type="text" value={infoDraft.lokasiLatihan || ''} placeholder="cth. Hampton's Park Tower A, Lt. 3 — Gym Area"
                       onChange={e => setInfoDraft(p => ({...p, lokasiLatihan: e.target.value}))}
                       className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
                   ) : (
                     <p className="text-sm font-semibold text-gray-800">{infoDeal.lokasiLatihan || order.lokasiLatihan || '—'}</p>
+                  )}
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Link Google Maps</p>
+                  {editingSection === 'infoDeal' ? (
+                    <input type="text" value={infoDraft.linkMaps || ''} placeholder="https://maps.google.com/..."
+                      onChange={e => setInfoDraft(p => ({...p, linkMaps: e.target.value}))}
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                  ) : (
+                    infoDeal.linkMaps || order.linkMaps ? (
+                      <a href={infoDeal.linkMaps || order.linkMaps} target="_blank" rel="noopener noreferrer"
+                        className="text-sm font-semibold text-blue-600 hover:underline truncate block">
+                        {infoDeal.linkMaps || order.linkMaps}
+                      </a>
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">—</p>
+                    )
                   )}
                 </div>
               </div>
@@ -1132,126 +1145,6 @@ export default function PPOrderDetailPage() {
               ) : (
                 <p className="text-sm font-semibold text-gray-800">{order.catatanOrder || '—'}</p>
               )}
-            </div>
-            </div>
-          </div>
-
-          {/* ── Section: Program & Rincian Biaya ── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Program & Rincian Biaya</h3>
-              <button
-                onClick={() => setEditRincian(!editRincian)}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
-                <Edit2 size={12} /> {editRincian ? 'Selesai Edit' : 'Edit'}
-              </button>
-            </div>
-            <div className="p-5">
-
-            {/* Compact paket strip — always read-only */}
-            {programTerkait ? (
-              <div className="bg-gray-50 rounded-xl p-4 mb-4">
-                <div className="flex items-start justify-between gap-3 mb-2.5">
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-gray-400 font-mono mb-0.5">{programTerkait.id}</p>
-                    <p className="text-sm font-bold text-[#1E1C43]">
-                      {programTerkait.namaLatihan}
-                      <span className="font-normal text-gray-500"> · {programTerkait.namaPaket}</span>
-                    </p>
-                  </div>
-                  <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(programTerkait.hargaPaket)}</p>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mb-2.5">
-                  {[programTerkait.sesi + ' sesi', programTerkait.pertemuan, programTerkait.masaBerlaku].map(v => (
-                    <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
-                    {programTerkait.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
-                  </div>
-                  <p className="text-xs text-gray-600 flex-1">{programTerkait.pic}</p>
-                  <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(programTerkait.biayaPerSesi)}/sesi</p>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-gray-50 rounded-xl p-4 mb-4 text-center text-xs text-gray-400 italic">
-                Data program tidak ditemukan
-              </div>
-            )}
-
-            {/* Biaya tambahan */}
-            {editRincian ? (
-              <div className="space-y-2 mb-4">
-                {rincianDraft.slice(1).map((item, idx) => (
-                  <div key={item.id || idx} className="border border-gray-200 rounded-xl p-3">
-                    <div className="grid grid-cols-4 gap-2 mb-1">
-                      <div className="col-span-2">
-                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Nama Item</label>
-                        <input type="text" value={item.namaItem}
-                          onChange={e => setRincianDraft(prev => {
-                            const updated = [...prev]
-                            updated[idx + 1] = { ...updated[idx + 1], namaItem: e.target.value }
-                            return updated
-                          })}
-                          className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Jumlah</label>
-                        <input type="number" value={item.jumlah}
-                          onChange={e => setRincianDraft(prev => {
-                            const updated = [...prev]
-                            const jumlah = parseFloat(e.target.value) || 0
-                            const harga = updated[idx+1].harga || (updated[idx+1].jumlah ? Math.round(updated[idx+1].total / updated[idx+1].jumlah) : 0)
-                            updated[idx + 1] = { ...updated[idx + 1], jumlah, total: jumlah * harga }
-                            return updated
-                          })}
-                          className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                      </div>
-                      <div>
-                        <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
-                        <input type="number" value={item.harga || (item.jumlah ? Math.round(item.total / item.jumlah) : item.total)}
-                          onChange={e => setRincianDraft(prev => {
-                            const updated = [...prev]
-                            const harga = parseFloat(e.target.value) || 0
-                            updated[idx + 1] = { ...updated[idx + 1], harga, total: updated[idx+1].jumlah * harga }
-                            return updated
-                          })}
-                          className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <button onClick={() => setRincianDraft(prev => prev.filter((_, i) => i !== idx + 1))}
-                        className="text-xs text-red-400 hover:text-red-600 transition flex items-center gap-1">
-                        <Trash2 size={11} /> Hapus
-                      </button>
-                      <span className="text-xs font-bold text-[#1E1C43]">Total: {formatRpPP(item.total)}</span>
-                    </div>
-                  </div>
-                ))}
-                <button
-                  onClick={() => setRincianDraft(prev => [...prev,
-                    { id: Date.now(), namaItem: '', satuan: 'Item', jumlah: 1, harga: 0, total: 0 }])}
-                  className="w-full border-2 border-dashed border-gray-200 rounded-xl py-2.5 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-1.5">
-                  <Plus size={13} /> Tambah Biaya Lain
-                </button>
-              </div>
-            ) : (
-              rincianDraft.slice(1).length > 0 && (
-                <div className="space-y-1.5 mb-4">
-                  {rincianDraft.slice(1).map((item, idx) => (
-                    <div key={item.id || idx} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700">{item.namaItem || '—'}</p>
-                      <p className="text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</p>
-                    </div>
-                  ))}
-                </div>
-              )
-            )}
-
-            <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
-              <span className="text-sm text-gray-600">Total Nilai Order</span>
-              <span className="text-lg font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</span>
             </div>
             </div>
           </div>
