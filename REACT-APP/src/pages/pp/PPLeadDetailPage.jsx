@@ -375,7 +375,7 @@ export default function PPLeadDetailPage() {
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
               {!isEditMode ? (
                 <button onClick={handleStartEdit}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors">
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
                   <Edit2 size={12} /> Edit
                 </button>
               ) : (
@@ -500,19 +500,23 @@ export default function PPLeadDetailPage() {
           <div className="space-y-4">
 
             {/* Stepper card */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">Status Pipeline</h3>
-              <PipelineStepper currentStage={lead.statusPipeline} />
-
-              {/* Update stage form toggle */}
-              <div className="border-t border-gray-100 pt-4">
-                {!editingPipeline ? (
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 pt-5 pb-0 mb-5">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Status Pipeline</h3>
+                {!editingPipeline && (
                   <button
                     onClick={() => { setEditingPipeline(true); setNewStage(lead.statusPipeline) }}
-                    className="flex items-center gap-1.5 text-xs font-semibold text-[#1E1C43] hover:text-[#E05945] transition-colors">
-                    ✏️ Update Status Pipeline
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Edit2 size={12} /> Update Pipeline
                   </button>
-                ) : (
+                )}
+              </div>
+              <div className="px-5 pb-5">
+              <PipelineStepper currentStage={lead.statusPipeline} />
+
+              {/* Update stage form */}
+              <div className="border-t border-gray-100 pt-4">
+                {editingPipeline && (
                   <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                     <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
                     <div className="grid grid-cols-2 gap-3">
@@ -547,6 +551,7 @@ export default function PPLeadDetailPage() {
                     </div>
                   </div>
                 )}
+              </div>
               </div>
             </div>
 
@@ -586,7 +591,7 @@ export default function PPLeadDetailPage() {
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Screening</h3>
               <button
                 onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
                 <Plus size={13} /> Buat Screening
               </button>
             </div>
@@ -599,11 +604,6 @@ export default function PPLeadDetailPage() {
                   </div>
                   <p className="text-sm text-gray-500 font-medium">Belum ada data screening untuk klien ini</p>
                   <p className="text-xs text-gray-400">Screening diperlukan sebelum program dimulai</p>
-                  <button
-                    onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
-                    className="flex items-center gap-1.5 mt-1 px-4 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                    <Plus size={13} /> Buat Screening Sekarang
-                  </button>
                 </div>
               ) : (
                 <div className="space-y-2">
