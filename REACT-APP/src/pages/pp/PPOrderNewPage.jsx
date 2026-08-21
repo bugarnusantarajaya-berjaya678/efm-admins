@@ -273,16 +273,15 @@ export default function PPOrderNewPage() {
       <div className="space-y-4">
 
         {/* ── SECTION 1: Data Pendaftar ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Data Pendaftar</h3>
+            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Pendaftar</h3>
             <span className="text-xs text-gray-400">— orang yang mendaftar / membayar</span>
           </div>
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Nama Pendaftar *</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Pendaftar *</label>
                 <div className="relative">
                   <input
                     type="text"
@@ -298,7 +297,7 @@ export default function PPOrderNewPage() {
                       setPendaftarSearch('')
                     }, 150)}
                     placeholder="Cari dari leads, atau ketik nama manual..."
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
                   />
                   <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   {pendaftarDropdownOpen && (
@@ -332,34 +331,32 @@ export default function PPOrderNewPage() {
                 <p className="text-xs text-gray-400 mt-1">Pilih dari data leads untuk auto-isi, atau ketik nama baru</p>
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">No. HP / WhatsApp *</label>
-                <input
-                  type="text"
-                  value={pendaftar.noHP}
-                  readOnly
-                  placeholder="— pilih leads terlebih dahulu"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
-                />
-                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No. HP / WhatsApp</p>
+                  {pendaftar.noHP
+                    ? <p className="text-sm font-semibold text-gray-800">{pendaftar.noHP}</p>
+                    : <p className="text-sm text-gray-400 italic">— pilih leads terlebih dahulu</p>
+                  }
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Email</label>
-                <input
-                  type="email"
-                  value={pendaftar.email}
-                  readOnly
-                  placeholder="— pilih leads terlebih dahulu"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-default select-none"
-                />
-                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads, tidak dapat diedit di sini</p>
+                <div className="bg-gray-50 rounded-lg p-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
+                  {pendaftar.email
+                    ? <p className="text-sm font-semibold text-gray-800">{pendaftar.email}</p>
+                    : <p className="text-sm text-gray-400 italic">— pilih leads terlebih dahulu</p>
+                  }
+                </div>
+                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Hubungan dengan Klien</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Hubungan dengan Klien</label>
                 <select value={pendaftar.hubunganDenganKlien}
                   onChange={e => setPendaftar({ ...pendaftar, hubunganDenganKlien: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
                   <option>Diri Sendiri</option>
                   <option>Orang Tua</option>
                   <option>Pasangan</option>
@@ -373,11 +370,10 @@ export default function PPOrderNewPage() {
         </div>
 
         {/* ── SECTION 2: Data Klien Latihan ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-sm font-bold text-gray-800">Data Klien Latihan</h3>
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien Latihan</h3>
               <span className="text-xs text-gray-400">— orang yang actual latihan</span>
             </div>
             <label className="flex items-center gap-2 cursor-pointer">
@@ -399,38 +395,38 @@ export default function PPOrderNewPage() {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Nama Klien Latihan *</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
                 <input type="text" value={klienLatihan.nama}
                   onChange={e => setKlienLatihan({ ...klienLatihan, nama: e.target.value })}
                   disabled={samadenganPendaftar}
                   placeholder="Nama lengkap klien yang latihan"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">No. HP Klien</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP Klien</label>
                 <input type="text" value={klienLatihan.noHP}
                   onChange={e => setKlienLatihan({ ...klienLatihan, noHP: e.target.value })}
                   disabled={samadenganPendaftar}
                   placeholder="08xxxxxxxxxx"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Usia</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
                 <div className="relative">
                   <input type="number" value={klienLatihan.usia}
                     onChange={e => setKlienLatihan({ ...klienLatihan, usia: e.target.value })}
                     placeholder="0"
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16" />
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16" />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">tahun</span>
                 </div>
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Jenis Kelamin</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
                 <select value={klienLatihan.jenisKelamin}
                   onChange={e => setKlienLatihan({ ...klienLatihan, jenisKelamin: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
                   <option>Laki-laki</option>
                   <option>Perempuan</option>
                 </select>
@@ -440,15 +436,12 @@ export default function PPOrderNewPage() {
         </div>
 
         {/* ── SECTION 3: Program & Paket ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Program & Rincian Biaya</h3>
-          </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Program & Rincian Biaya</h3>
 
           {selectedPaket === null ? (
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Pilih Program & Paket</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Pilih Program & Paket</label>
               <div className="relative">
                 <input
                   type="text"
@@ -457,7 +450,7 @@ export default function PPOrderNewPage() {
                   onFocus={() => { setProgramSearch(''); setProgramDropdownOpen(true) }}
                   onBlur={() => setTimeout(() => setProgramDropdownOpen(false), 150)}
                   placeholder="Ketik ID program, nama paket, atau jenis latihan..."
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
                 />
                 <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                 {programDropdownOpen && (
@@ -539,19 +532,19 @@ export default function PPOrderNewPage() {
                   </div>
                   <div className="grid grid-cols-4 gap-2">
                     <div className="col-span-2">
-                      <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Item</label>
                       <input type="text" value={item.namaItem}
                         onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
                         className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
                       <input type="number" value={item.jumlah}
                         onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
                         className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
                       <input type="number" value={item.harga}
                         onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
                         className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
@@ -584,14 +577,11 @@ export default function PPOrderNewPage() {
         </div>
 
         {/* ── SECTION 4: Jadwal Latihan ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Jadwal Latihan</h3>
-          </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Jadwal Latihan</h3>
           <div className="space-y-4">
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-2 block">Hari Latihan</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2 block">Hari Latihan</label>
               <div className="flex flex-wrap gap-2">
                 {hariOptions.map(hari => (
                   <button key={hari} type="button"
@@ -608,31 +598,31 @@ export default function PPOrderNewPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Jam Latihan</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jam Latihan</label>
                 <input type="time" value={jadwal.jamLatihan}
                   onChange={e => setJadwal({ ...jadwal, jamLatihan: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
               </div>
               <div>
-                <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Tanggal Mulai</label>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tanggal Mulai</label>
                 <input type="date" value={jadwal.tanggalMulai}
                   onChange={e => setJadwal({ ...jadwal, tanggalMulai: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
               </div>
             </div>
 
             {/* Tanggal Berakhir (auto-kalkulasi) */}
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Estimasi Tanggal Berakhir</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Estimasi Tanggal Berakhir</label>
               {tanggalBerakhir ? (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
                   <p className="text-sm font-semibold text-[#1E1C43]">{tanggalBerakhir}</p>
                   <p className="text-xs text-gray-400 mt-0.5">
                     Tanggal Mulai + {selectedPaket?.masaBerlaku}
                   </p>
                 </div>
               ) : (
-                <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5">
+                <div className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2.5">
                   <p className="text-sm text-gray-400">— Pilih paket dan tanggal mulai terlebih dahulu</p>
                 </div>
               )}
@@ -641,25 +631,22 @@ export default function PPOrderNewPage() {
         </div>
 
         {/* ── SECTION 5: Lokasi Latihan ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Lokasi Latihan</h3>
-          </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Lokasi Latihan</h3>
           <div className="space-y-3">
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Nama / Alamat Lokasi</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama / Alamat Lokasi</label>
               <input type="text" value={lokasiLatihan}
                 onChange={e => setLokasiLatihan(e.target.value)}
                 placeholder="cth. Hampton's Park Tower A, Lt. 3 — Gym Area"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
             </div>
             <div>
-              <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Link Google Maps</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Link Google Maps</label>
               <input type="text" value={mapsLink}
                 onChange={e => { setMapsLink(e.target.value); setKoordinat(null); setValidasiError(null); }}
                 placeholder="Paste link dari Google Maps (klik Share > Copy Link)"
-                className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
             </div>
 
             {/* Tombol Validasi */}
@@ -705,17 +692,14 @@ export default function PPOrderNewPage() {
         </div>
 
         {/* ── SECTION 7: Catatan Order ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Catatan Order</h3>
-          </div>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Catatan Order</h3>
           <div>
-            <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Catatan Order / Target Klien</label>
+            <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Order / Target Klien</label>
             <textarea value={catatanOrder} onChange={e => setCatatanOrder(e.target.value)}
               placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
               rows={3}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
           </div>
         </div>
 
