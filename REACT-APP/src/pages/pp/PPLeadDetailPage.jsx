@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight } from 'lucide-react'
 
@@ -228,7 +228,8 @@ export default function PPLeadDetailPage() {
   const { state }      = useLocation()
 
   const [lead, setLead]             = useState(state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null)
-  const [activeTab, setActiveTab]   = useState('info')
+  const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'info')
+  const [extraScreenings, setExtraScreenings] = useState([])
   const [isEditMode, setIsEditMode] = useState(false)
   const [editForm, setEditForm]     = useState({})
   const [editingPipeline, setEditingPipeline] = useState(false)
@@ -236,6 +237,12 @@ export default function PPLeadDetailPage() {
   const [newStageTanggal, setNewStageTanggal] = useState(new Date().toISOString().split('T')[0])
   const [newStageCatatan, setNewStageCatatan] = useState('')
   const [toast, setToast]           = useState(null)
+
+  useEffect(() => {
+    if (state?.newScreening) {
+      setExtraScreenings(prev => [state.newScreening, ...prev])
+    }
+  }, [])
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
@@ -251,7 +258,7 @@ export default function PPLeadDetailPage() {
     )
   }
 
-  const screenings = SCREENING_SUMMARY.filter(s => s.namaKlien === lead.nama)
+  const screenings = [...SCREENING_SUMMARY.filter(s => s.namaKlien === lead.nama), ...extraScreenings]
 
   /* ── Edit info handlers ── */
   function handleStartEdit() { setEditForm({ ...lead }); setIsEditMode(true) }
@@ -578,7 +585,7 @@ export default function PPLeadDetailPage() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Screening</h3>
               <button
-                onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: lead.nama } })}
+                onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
                 <Plus size={13} /> Buat Screening
               </button>
@@ -593,7 +600,7 @@ export default function PPLeadDetailPage() {
                   <p className="text-sm text-gray-500 font-medium">Belum ada data screening untuk klien ini</p>
                   <p className="text-xs text-gray-400">Screening diperlukan sebelum program dimulai</p>
                   <button
-                    onClick={() => navigate('/pp/screening', { state: { openNewForm: true, prefillNamaKlien: lead.nama } })}
+                    onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
                     className="flex items-center gap-1.5 mt-1 px-4 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
                     <Plus size={13} /> Buat Screening Sekarang
                   </button>
@@ -608,7 +615,7 @@ export default function PPLeadDetailPage() {
                   {screenings.map(scr => (
                     <button
                       key={scr.id}
-                      onClick={() => navigate('/pp/screening', { state: { openScreeningId: scr.id } })}
+                      onClick={() => navigate('/pp/screening/' + scr.id)}
                       className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
