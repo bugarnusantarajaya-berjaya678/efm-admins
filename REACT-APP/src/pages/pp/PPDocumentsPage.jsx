@@ -566,7 +566,7 @@ export default function PPDocumentsPage() {
                 >
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.displayId}</td>
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.noReceipt}</td>
-                  <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{d.refInvoice}</td>
+                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.refInvoice}</td>
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
                     <button onClick={e => { e.stopPropagation(); navigate('/pp/orders/' + d.orderId) }} className="hover:underline">#{d.orderId}</button>
                   </td>
