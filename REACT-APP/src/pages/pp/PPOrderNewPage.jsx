@@ -436,7 +436,7 @@ export default function PPOrderNewPage() {
         <div className="bg-white rounded-xl shadow-sm p-5">
           <div className="flex items-center gap-2 mb-4">
             <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-            <h3 className="text-sm font-bold text-gray-800">Program & Paket</h3>
+            <h3 className="text-sm font-bold text-gray-800">Program & Rincian Biaya</h3>
           </div>
 
           {selectedPaket === null ? (
@@ -530,6 +530,81 @@ export default function PPOrderNewPage() {
 
               {/* Row 4: Keterangan */}
               <p className="text-xs text-gray-500 italic">{selectedPaket.keterangan}</p>
+            </div>
+          )}
+
+          {/* Divider */}
+          <div className="my-5 border-t border-gray-100" />
+
+          {/* Rincian Layanan */}
+          <div className="flex items-center gap-2 mb-3">
+            <h4 className="text-sm font-semibold text-gray-700">Rincian Layanan</h4>
+            <span className="text-xs text-gray-400">— akan jadi dasar invoice</span>
+          </div>
+
+          {items.length > 0 ? (
+            <div className="space-y-2 mb-3">
+              {items.map((item) => (
+                <div key={item.id} className={`border rounded-xl p-3 ${item.isFromProgram ? 'border-[#1E1C43]/20 bg-[#1E1C43]/5' : 'border-gray-200'}`}>
+                  <div className="flex items-center gap-2 mb-2">
+                    {item.isFromProgram && (
+                      <span className="text-xs bg-[#1E1C43] text-white px-2 py-0.5 rounded-full">Dari Program</span>
+                    )}
+                    {!item.isFromProgram && (
+                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
+                    )}
+                    <button onClick={() => handleRemoveItem(item.id)}
+                      className="ml-auto text-gray-300 hover:text-red-500 transition">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="col-span-2">
+                      <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
+                      <input type="text" value={item.namaItem}
+                        onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
+                        disabled={item.isFromProgram}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-500" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
+                      <input type="number" value={item.jumlah}
+                        onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
+                        disabled={item.isFromProgram}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
+                      <input type="number" value={item.harga}
+                        onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
+                        disabled={item.isFromProgram}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
+                    </div>
+                  </div>
+                  <div className="mt-2 text-right">
+                    <span className="text-xs text-gray-400">Total: </span>
+                    <span className="text-sm font-bold text-[#1E1C43]">{formatRp(item.total)}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="bg-gray-50 rounded-xl p-4 text-center mb-3">
+              <p className="text-sm text-gray-400">Pilih program terlebih dahulu atau tambah item manual</p>
+            </div>
+          )}
+
+          <button onClick={handleAddItem}
+            className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
+            <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
+          </button>
+
+          {items.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
+                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalNilai)}</span>
+              </div>
             </div>
           )}
         </div>
@@ -653,83 +728,6 @@ export default function PPOrderNewPage() {
               </div>
             )}
           </div>
-        </div>
-
-        {/* ── SECTION 6: Rincian Layanan / Invoice Items ── */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-5 bg-[#E05945] rounded-full" />
-              <h3 className="text-sm font-bold text-gray-800">Rincian Layanan</h3>
-              <span className="text-xs text-gray-400">— akan jadi dasar invoice</span>
-            </div>
-          </div>
-
-          {items.length > 0 ? (
-            <div className="space-y-2 mb-3">
-              {items.map((item) => (
-                <div key={item.id} className={`border rounded-xl p-3 ${item.isFromProgram ? 'border-[#1E1C43]/20 bg-[#1E1C43]/5' : 'border-gray-200'}`}>
-                  <div className="flex items-center gap-2 mb-2">
-                    {item.isFromProgram && (
-                      <span className="text-xs bg-[#1E1C43] text-white px-2 py-0.5 rounded-full">Dari Program</span>
-                    )}
-                    {!item.isFromProgram && (
-                      <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
-                    )}
-                    <button onClick={() => handleRemoveItem(item.id)}
-                      className="ml-auto text-gray-300 hover:text-red-500 transition">
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="col-span-2">
-                      <label className="text-xs text-gray-400 mb-1 block">Nama Item</label>
-                      <input type="text" value={item.namaItem}
-                        onChange={e => handleUpdateItem(item.id, 'namaItem', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-500" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Jumlah</label>
-                      <input type="number" value={item.jumlah}
-                        onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
-                    </div>
-                    <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Harga (Rp)</label>
-                      <input type="number" value={item.harga}
-                        onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
-                        disabled={item.isFromProgram}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50" />
-                    </div>
-                  </div>
-                  <div className="mt-2 text-right">
-                    <span className="text-xs text-gray-400">Total: </span>
-                    <span className="text-sm font-bold text-[#1E1C43]">{formatRp(item.total)}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="bg-gray-50 rounded-xl p-4 text-center mb-3">
-              <p className="text-sm text-gray-400">Pilih program terlebih dahulu atau tambah item manual</p>
-            </div>
-          )}
-
-          <button onClick={handleAddItem}
-            className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
-            <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
-          </button>
-
-          {items.length > 0 && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
-                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalNilai)}</span>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* ── SECTION 7: Catatan Order ── */}
