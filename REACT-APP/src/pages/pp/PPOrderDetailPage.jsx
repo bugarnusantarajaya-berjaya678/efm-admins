@@ -677,45 +677,45 @@ export default function PPOrderDetailPage() {
         </div>
       )}
 
+      {/* Breadcrumb — outside card */}
+      <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
+        {fromState?.fromLeadId ? (
+          <>
+            <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition-colors">Leads PP</button>
+            <ChevronRight size={12} className="text-gray-300" />
+            <button onClick={() => navigate('/pp/leads/' + fromState.fromLeadId)} className="hover:text-[#1E1C43] transition-colors">{order.namaKlien} (Lead)</button>
+            <ChevronRight size={12} className="text-gray-300" />
+          </>
+        ) : (
+          <>
+            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
+            <ChevronRight size={12} className="text-gray-300" />
+            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+            <ChevronRight size={12} className="text-gray-300" />
+          </>
+        )}
+        <span className="text-[#1E1C43] font-medium">{isNew ? 'Order Baru' : order.namaKlien}</span>
+      </nav>
+
       {/* Header Card */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-5">
 
-        {/* Baris 1: Breadcrumb + Kembali */}
-        <div className="flex items-center justify-between mb-5">
-          <nav className="flex items-center gap-1 text-xs text-gray-400">
-            {fromState?.fromLeadId ? (
-              <>
-                <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition-colors">Leads PP</button>
-                <ChevronRight size={12} className="text-gray-300" />
-                <button onClick={() => navigate('/pp/leads/' + fromState.fromLeadId)} className="hover:text-[#1E1C43] transition-colors">{order.namaKlien} (Lead)</button>
-                <ChevronRight size={12} className="text-gray-300" />
-              </>
-            ) : (
-              <>
-                <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
-                <ChevronRight size={12} className="text-gray-300" />
-                <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-                <ChevronRight size={12} className="text-gray-300" />
-              </>
-            )}
-            <span className="text-[#1E1C43] font-medium">{isNew ? 'Order Baru' : order.namaKlien}</span>
-          </nav>
-          <div className="flex items-center gap-2">
-            {!isNew && order.leadId && (
-              <button
-                onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
-                className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors"
-              >
-                Lihat Lead →
-              </button>
-            )}
+        {/* Baris 1: Action buttons */}
+        <div className="flex items-center justify-end gap-2 mb-5">
+          {!isNew && order.leadId && (
             <button
-              onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
+              className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
             >
-              <ArrowLeft size={12} /> Kembali
+              Lihat Lead →
             </button>
-          </div>
+          )}
+          <button
+            onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+            className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
+          >
+            <ArrowLeft size={12} /> Kembali
+          </button>
         </div>
 
         {/* Baris 2: Info + Total */}

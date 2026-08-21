@@ -356,10 +356,6 @@ export default function PPLeadDetailPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              <button onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
-                className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors shrink-0">
-                <ArrowLeft size={15} />
-              </button>
               <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
                 style={{ background: getAvatarColor(lead.nama) }}>
                 {getInitials(lead.nama)}
@@ -392,6 +388,11 @@ export default function PPLeadDetailPage() {
                   Lihat Order #{lead.orderId}
                 </button>
               )}
+              <button
+                onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                <ArrowLeft size={12} /> Kembali
+              </button>
             </div>
           </div>
         </div>
