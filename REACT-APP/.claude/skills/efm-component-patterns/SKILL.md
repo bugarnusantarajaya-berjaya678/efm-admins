@@ -786,3 +786,107 @@ function getAvatarColor(name) {
 
 Atau jika data dari data file sudah menyertakan `initials` dan `color` pre-computed, langsung pakai `item.initials` dan `item.color` tanpa helper.
 
+---
+
+## 9. Bidirectional Navigation (Order ↔ Lead Detail)
+
+Used for: navigasi bolak-balik antara halaman detail yang saling terkait (Order Detail ↔ Lead Detail, atau halaman sub-detail lainnya).
+
+**Prinsip:** Setiap navigate ke halaman terkait harus menyertakan state yang memungkinkan halaman tujuan mengetahui dari mana user datang, agar tombol back/breadcrumb bisa kembali ke halaman asal — bukan selalu ke list.
+
+### State convention
+
+| Navigasi dari | State yang di-pass | Dideteksi di |
+|---|---|---|
+| Order Detail → Lead Detail | `{ fromOrderId: order.id }` | PPLeadDetailPage: `state?.fromOrderId` |
+| Lead Detail → Order Detail | `{ fromLeadId: lead.id }` | PPOrderDetailPage: `fromState?.fromLeadId` |
+| Order Detail → FA page (via Context Banner) | `{ defaultTab: 'kesehatan', fromOrderId: order.id }` | PPLeadDetailPage |
+
+### Tombol di Order Detail header
+
+```jsx
+{/* "Lihat Lead" button — muncul kalau order.leadId ada */}
+{!isNew && order.leadId && (
+  <button
+    onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
+    className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors"
+  >
+    Lihat Lead →
+  </button>
+)}
+
+{/* Kembali — balik ke Lead jika datang dari Lead, ke Orders jika tidak */}
+<button
+  onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+  className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+>
+  <ArrowLeft size={12} /> Kembali
+</button>
+```
+
+### Breadcrumb di Order Detail (context-aware)
+
+```jsx
+{fromState?.fromLeadId ? (
+  <>
+    <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition-colors">Leads PP</button>
+    <ChevronRight size={12} className="text-gray-300" />
+    <button onClick={() => navigate('/pp/leads/' + fromState.fromLeadId)} className="hover:text-[#1E1C43] transition-colors">{order.namaKlien} (Lead)</button>
+    <ChevronRight size={12} className="text-gray-300" />
+  </>
+) : (
+  <>
+    <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
+    <ChevronRight size={12} className="text-gray-300" />
+    <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+    <ChevronRight size={12} className="text-gray-300" />
+  </>
+)}
+<span className="text-[#1E1C43] font-medium">{order.namaKlien}</span>
+```
+
+### Breadcrumb + back button di Lead Detail (context-aware)
+
+```jsx
+{/* Breadcrumb */}
+{state?.fromOrderId ? (
+  <>
+    <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+    <ChevronRight size={12} />
+    <button onClick={() => navigate('/pp/orders/' + state.fromOrderId)} className="hover:text-[#1E1C43] transition-colors">#{state.fromOrderId}</button>
+    <ChevronRight size={12} />
+    <span className="text-gray-600 font-medium">{lead.nama} (Lead)</span>
+  </>
+) : (
+  <>
+    <Link to="/pp/leads" className="hover:text-[#1E1C43] transition-colors">Leads PP</Link>
+    <ChevronRight size={12} />
+    <span className="text-gray-600 font-medium">{lead.nama}</span>
+  </>
+)}
+
+{/* Back button (ArrowLeft icon) */}
+<button
+  onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
+  className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors shrink-0">
+  <ArrowLeft size={15} />
+</button>
+```
+
+### "Lihat Order" button di Lead Detail
+
+```jsx
+{lead.statusPipeline === 'Convert' && lead.orderId && (
+  <button
+    onClick={() => navigate('/pp/orders/' + lead.orderId, { state: { fromLeadId: lead.id } })}
+    className="...">
+    Lihat Order #{lead.orderId}
+  </button>
+)}
+```
+
+**Rules**
+- Selalu pass `fromOrderId` / `fromLeadId` di navigate state — jangan pakai `navigate(-1)` karena tidak reliable di semua entry path
+- Dummy data orders WAJIB punya field `leadId` yang merujuk ke ID yang benar-benar ada di `LEADS_FALLBACK` — mismatch menyebabkan "Lead tidak ditemukan"
+- Pola ini perlu diterapkan konsisten di B2B dan Event ketika module tersebut punya halaman Order Detail dan Lead Detail yang setara
+
