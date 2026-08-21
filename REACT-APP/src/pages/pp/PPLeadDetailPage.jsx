@@ -582,13 +582,8 @@ export default function PPLeadDetailPage() {
         ════════════════════════════════ */}
         {activeTab === 'screening' && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <div className="px-5 py-4 border-b border-gray-100">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Screening</h3>
-              <button
-                onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id } })}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                <Plus size={13} /> Buat Screening
-              </button>
             </div>
 
             <div className="p-5">
