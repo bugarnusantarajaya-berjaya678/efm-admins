@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
@@ -343,19 +343,10 @@ export default function PPOrderDetailPage() {
   const [adaMOU,    setAdaMOU]    = useState(false)
   const [editingDoc, setEditingDoc] = useState(null) // null|'quotation'|'mou'|'contract'
 
-  /* ── Agreement / PKS doc ─────────────────────────────────────────────────── */
-  const [adaAgreement, setAdaAgreement] = useState(true)
-  const [selectedScreeningId, setSelectedScreeningId] = useState(
-    order?.id === 'PP-26-0013' ? 'SCR-26-0001' : order?.id === 'PP-26-0012' ? 'SCR-26-0002' : ''
-  )
-  const [agreementDoc, setAgreementDoc] = useState({
-    status: 'Sudah TTD',
-    tglTTD: '2026-10-21',
-    gdocsUrl: '',
-    uploadedFile: { nama: 'agreement-james-wilson.pdf', tanggal: '21 Okt 2026' },
-    riwayat: [{ id: 1, nama: 'agreement-james-wilson.pdf', tanggal: '21 Okt 2026', status: 'Sudah TTD' }]
-  })
-  const [agreementDraft, setAgreementDraft] = useState(null)
+  /* ── Agreement Klien ─────────────────────────────────────────────────────── */
+  const [agreementFlowStatus,    setAgreementFlowStatus]    = useState('pengajuan_masuk')
+  const [agreementCatatanTolak,  setAgreementCatatanTolak]  = useState('')
+  const [showAgreementTolakForm, setShowAgreementTolakForm] = useState(false)
   const [dokumenTambahan, setDokumenTambahan] = useState([
     { id: 1, nama: 'form-fisik-awal-james-wilson.pdf', tgl: '24 Okt 2026', keterangan: 'Hasil tes kebugaran awal' }
   ])
@@ -1374,166 +1365,224 @@ export default function PPOrderDetailPage() {
       {activeTab === 'operasional' && (
         <div className="space-y-4">
 
-          {/* ── Section: Agreement / PKS Klien ── */}
+          {/* ── Section: Agreement Klien ── */}
           {(() => {
-            const AGR_STATUS_OPTS = ['Belum TTD', 'Menunggu Approval', 'Sudah TTD']
-            const AGR_STATUS_CLS = {
-              'Belum TTD':         'bg-gray-100 text-gray-500',
-              'Menunggu Approval': 'bg-yellow-100 text-yellow-700',
-              'Sudah TTD':         'bg-green-100 text-green-700',
+            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const masaBerlakuDays = prog ? parseInt(prog.masaBerlaku.replace(/[^0-9]/g, ''), 10) : 0
+            const tglBerakhir = prog && order.tanggalMulai
+              ? new Date(new Date(order.tanggalMulai).getTime() + masaBerlakuDays * 24 * 60 * 60 * 1000)
+                  .toISOString().split('T')[0]
+              : ''
+            const FLOW_STATUS_CLS = {
+              menunggu_ttd:    'bg-gray-100 text-gray-600',
+              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
+              disetujui:       'bg-green-50 text-green-700 border border-green-200',
+              ditolak:         'bg-red-50 text-red-700 border border-red-200',
             }
-            const isEditing = editingDoc === 'agreement'
-            const doc = isEditing ? (agreementDraft || agreementDoc) : agreementDoc
+            const FLOW_STATUS_LABEL = {
+              menunggu_ttd:    'Menunggu TTD',
+              pengajuan_masuk: 'Pengajuan Masuk',
+              disetujui:       'Disetujui',
+              ditolak:         'Ditolak',
+            }
+            const clientFileSlug = order.namaKlien.toLowerCase().replace(/\s+/g, '-')
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Agreement / PKS Klien</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">Ada Agreement?</span>
-                      <ToggleSwitch checked={adaAgreement} onChange={setAdaAgreement} />
-                    </div>
-                    {adaAgreement && (
-                      <Badge cls={AGR_STATUS_CLS[agreementDoc.status] ?? 'bg-gray-100 text-gray-500'}>
-                        {agreementDoc.status}
-                      </Badge>
-                    )}
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Agreement Klien</h3>
+                    <span className={`px-2 py-1 text-xs rounded-full font-medium ${FLOW_STATUS_CLS[agreementFlowStatus]}`}>
+                      {FLOW_STATUS_LABEL[agreementFlowStatus]}
+                    </span>
                   </div>
-                  {adaAgreement && (
-                    isEditing ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => { setAgreementDoc({ ...agreementDraft }); setEditingDoc(null); setAgreementDraft(null) }}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90"
-                        >
-                          <Save size={12} /> Simpan
-                        </button>
-                        <button
-                          onClick={() => { setEditingDoc(null); setAgreementDraft(null) }}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50"
-                        >
-                          <X size={12} /> Batal
-                        </button>
-                      </div>
-                    ) : (
+                  {/* Dev state switcher */}
+                  <div className="flex gap-1">
+                    {Object.entries(FLOW_STATUS_LABEL).map(([k, v]) => (
                       <button
-                        onClick={() => { setAgreementDraft({ ...agreementDoc }); setEditingDoc('agreement') }}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+                        key={k}
+                        onClick={() => { setAgreementFlowStatus(k); setShowAgreementTolakForm(false) }}
+                        className={`text-[10px] px-2 py-1 rounded transition ${agreementFlowStatus === k ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
                       >
-                        <Edit2 size={12} /> Edit
+                        {v}
                       </button>
-                    )
-                  )}
+                    ))}
+                  </div>
                 </div>
 
-                {adaAgreement ? (
-                  <div className="p-5 space-y-4">
-                    {/* Status + Tanggal TTD grid */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</p>
-                        {isEditing ? (
-                          <select
-                            value={doc.status}
-                            onChange={e => setAgreementDraft(p => ({ ...p, status: e.target.value }))}
-                            className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] w-full"
-                          >
-                            {AGR_STATUS_OPTS.map(s => <option key={s}>{s}</option>)}
-                          </select>
-                        ) : (
-                          <Badge cls={AGR_STATUS_CLS[doc.status] ?? 'bg-gray-100 text-gray-500'}>{doc.status}</Badge>
-                        )}
+                <div className="p-5 space-y-4">
+                  {/* Info: absensi tidak diblokir */}
+                  <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+                    <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
+                    <p className="text-xs text-blue-700">
+                      Absensi dapat tetap berjalan selama proses persetujuan agreement berlangsung.
+                    </p>
+                  </div>
+
+                  {/* Template Agreement Global */}
+                  <div>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Template Agreement Global</p>
+                    <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-sm font-semibold text-[#1E1C43]">Agreement Private Training EFM</p>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1E1C43] text-white font-medium">Template Global</span>
                       </div>
-                      {(isEditing || doc.status === 'Sudah TTD') && (
+                      <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200">
                         <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Tanggal TTD</p>
-                          {isEditing && doc.status === 'Sudah TTD' ? (
-                            <input
-                              type="date"
-                              value={doc.tglTTD || ''}
-                              onChange={e => setAgreementDraft(p => ({ ...p, tglTTD: e.target.value }))}
-                              className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] w-full"
-                            />
-                          ) : (
-                            <span className="text-sm text-gray-700">{doc.tglTTD ? fmtDate(doc.tglTTD) : '—'}</span>
-                          )}
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama Klien</p>
+                          <p className="text-sm font-semibold text-gray-800">{order.namaKlien}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Paket</p>
+                          <p className="text-sm font-semibold text-gray-800">{prog?.namaPaket || '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC Pelatih</p>
+                          <p className="text-sm font-semibold text-gray-800">{prog?.pic?.nama || '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Spesialisasi</p>
+                          <p className="text-sm font-semibold text-gray-800">{prog?.pic?.spesialisasi || '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
+                          <p className="text-sm font-semibold text-gray-800">{order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Berakhir</p>
+                          <p className="text-sm font-semibold text-gray-800">{tglBerakhir ? fmtDate(tglBerakhir) : '—'}</p>
+                        </div>
+                      </div>
+                      <div className="pt-2 border-t border-gray-200">
+                        <button className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1E1C43] hover:underline">
+                          <ExternalLink size={12} /> Buka Template Online
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* State: menunggu_ttd */}
+                  {agreementFlowStatus === 'menunggu_ttd' && (
+                    <div className="bg-gray-50 rounded-xl border border-gray-200 px-4 py-6 text-center">
+                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <FileText size={18} className="text-gray-400" />
+                      </div>
+                      <p className="text-sm font-semibold text-gray-600 mb-1">Menunggu Penandatanganan</p>
+                      <p className="text-xs text-gray-400">Pelatih akan meminta klien menandatangani agreement melalui aplikasi pelatih sebelum sesi pertama dimulai.</p>
+                    </div>
+                  )}
+
+                  {/* State: pengajuan_masuk */}
+                  {agreementFlowStatus === 'pengajuan_masuk' && (
+                    <div className="space-y-3">
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div>
+                            <p className="text-sm font-semibold text-yellow-800 mb-0.5">Pengajuan Agreement Masuk</p>
+                            <p className="text-xs text-yellow-700">Pelatih telah mengirim agreement yang sudah ditandatangani klien. Tinjau dan berikan persetujuan.</p>
+                          </div>
+                          <span className="px-2 py-1 text-[10px] rounded-full font-semibold bg-yellow-100 text-yellow-700 border border-yellow-300 whitespace-nowrap ml-2 shrink-0">
+                            ✓ Sudah TTD
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 bg-white border border-yellow-200 rounded-lg px-3 py-2">
+                          <FileText size={13} className="text-yellow-600 shrink-0" />
+                          <span className="text-xs text-gray-700 font-medium flex-1">agreement-{clientFileSlug}.pdf</span>
+                          <span className="text-[10px] text-gray-400">21 Okt 2026</span>
+                          <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43]">
+                            <Download size={11} />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => { setAgreementFlowStatus('disetujui'); setShowAgreementTolakForm(false) }}
+                          className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
+                        >
+                          <CheckCircle size={13} /> Setujui Agreement
+                        </button>
+                        <button
+                          onClick={() => setShowAgreementTolakForm(true)}
+                          className="flex-1 h-9 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
+                        >
+                          <X size={13} /> Tolak
+                        </button>
+                      </div>
+                      {showAgreementTolakForm && (
+                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
+                          <p className="text-xs font-semibold text-red-700">Catatan Penolakan</p>
+                          <textarea
+                            value={agreementCatatanTolak}
+                            onChange={e => setAgreementCatatanTolak(e.target.value)}
+                            placeholder="Jelaskan alasan penolakan atau perbaikan yang diperlukan..."
+                            rows={3}
+                            className="w-full text-xs rounded-lg border border-red-200 px-3 py-2 outline-none focus:border-red-400 bg-white resize-none"
+                          />
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => { setAgreementFlowStatus('ditolak'); setShowAgreementTolakForm(false) }}
+                              className="flex-1 h-8 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
+                            >
+                              Konfirmasi Tolak
+                            </button>
+                            <button
+                              onClick={() => setShowAgreementTolakForm(false)}
+                              className="h-8 px-4 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50"
+                            >
+                              Batal
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>
+                  )}
 
-                    {/* Upload file */}
-                    {isEditing && (
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Upload File Agreement</label>
-                        <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
-                          <label className="cursor-pointer flex items-center gap-3">
-                            <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                              <span className="text-lg">📎</span>
-                            </div>
-                            <div className="flex-1">
-                              <input
-                                type="file"
-                                accept=".pdf,.jpg,.jpeg,.png"
-                                className="hidden"
-                                onChange={e => {
-                                  const file = e.target.files[0]
-                                  if (file) {
-                                    setAgreementDraft(p => ({
-                                      ...p,
-                                      uploadedFile: { nama: file.name, tanggal: new Date().toLocaleDateString('id-ID') }
-                                    }))
-                                  }
-                                }}
-                              />
-                              <span className="text-xs text-[#1E1C43] font-semibold hover:underline">
-                                Pilih file PDF atau gambar
-                              </span>
-                              <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
-                            </div>
-                          </label>
-                          {doc.uploadedFile && (
-                            <div className="mt-2 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                              <CheckCircle size={13} className="text-green-600 shrink-0" />
-                              <span className="text-xs text-green-700 font-medium">{doc.uploadedFile.nama}</span>
-                            </div>
-                          )}
-                        </div>
+                  {/* State: disetujui */}
+                  {agreementFlowStatus === 'disetujui' && (
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                      <div className="flex items-center gap-2 mb-3">
+                        <CheckCircle size={16} className="text-green-600 shrink-0" />
+                        <p className="text-sm font-semibold text-green-800">Agreement Disetujui</p>
                       </div>
-                    )}
-
-                    {/* Riwayat file */}
-                    {doc.riwayat && doc.riwayat.length > 0 && (
-                      <div>
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Riwayat File</p>
-                        <div className="space-y-1.5">
-                          {doc.riwayat.map(r => (
-                            <div key={r.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2">
-                              <span className="text-xs font-medium text-gray-700 flex-1">{r.nama}</span>
-                              <span className="text-[10px] text-gray-400">{r.tanggal}</span>
-                              <Badge cls={AGR_STATUS_CLS[r.status] ?? 'bg-gray-100 text-gray-500'}>{r.status}</Badge>
-                              <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43] transition-colors">
-                                <Download size={11} />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Tombol Lihat Agreement */}
-                    {!isEditing && doc.uploadedFile && (
-                      <div className="pt-2 border-t border-gray-100">
-                        <button onClick={() => window.print()} className="inline-flex items-center gap-2 text-xs text-[#1E1C43] font-semibold hover:underline">
-                          <Download size={13} /> Lihat Agreement
+                      <p className="text-xs text-green-700 mb-3">
+                        Agreement klien telah disetujui dan berlaku efektif mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}.
+                      </p>
+                      <div className="flex items-center gap-2 bg-white border border-green-200 rounded-lg px-3 py-2">
+                        <FileText size={13} className="text-green-600 shrink-0" />
+                        <span className="text-xs text-gray-700 font-medium flex-1">agreement-{clientFileSlug}.pdf</span>
+                        <span className="text-[10px] text-gray-400">Disetujui 21 Okt 2026</span>
+                        <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43]">
+                          <Download size={11} />
                         </button>
                       </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="px-5 py-4">
-                    <p className="text-sm text-gray-400 italic">Klien ini tidak memiliki Agreement / PKS.</p>
-                  </div>
-                )}
+                    </div>
+                  )}
+
+                  {/* State: ditolak */}
+                  {agreementFlowStatus === 'ditolak' && (
+                    <div className="space-y-3">
+                      <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+                        <div className="flex items-center gap-2 mb-2">
+                          <XCircle size={16} className="text-red-600 shrink-0" />
+                          <p className="text-sm font-semibold text-red-800">Agreement Ditolak</p>
+                        </div>
+                        <p className="text-xs text-red-700 mb-2">Pelatih perlu meminta klien menandatangani ulang agreement.</p>
+                        {agreementCatatanTolak && (
+                          <div className="bg-white border border-red-200 rounded-lg px-3 py-2">
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Penolakan</p>
+                            <p className="text-xs text-gray-700">{agreementCatatanTolak}</p>
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => { setAgreementFlowStatus('menunggu_ttd'); setAgreementCatatanTolak('') }}
+                        className="w-full h-9 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition flex items-center justify-center gap-1.5"
+                      >
+                        <RotateCcw size={13} /> Kirim Ulang untuk TTD
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             )
           })()}
