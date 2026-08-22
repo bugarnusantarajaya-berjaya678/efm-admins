@@ -70,36 +70,46 @@ const dummyPPOrders = [
 ]
 
 const dummyPPPrograms = [
-  { id:"PRG-PP-001", namaLatihan:"Private Training", namaPaket:"4 Sesi - Starter",
-    sesi:4, pertemuan:"2x seminggu", masaBerlaku:"30 hari",
-    pic:"Marcus Chen", biayaPerSesi:150000, hargaPaket:600000 },
-  { id:"PRG-PP-002", namaLatihan:"Private Training", namaPaket:"8 Sesi - Basic",
-    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
-    pic:"Marcus Chen", biayaPerSesi:175000, hargaPaket:1400000 },
-  { id:"PRG-PP-003", namaLatihan:"Private Training", namaPaket:"12 Sesi - Pro",
-    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
-    pic:"Sarah Jenkins", biayaPerSesi:200000, hargaPaket:2400000 },
-  { id:"PRG-PP-004", namaLatihan:"Private Training", namaPaket:"20 Sesi - Premium",
-    sesi:20, pertemuan:"3x seminggu", masaBerlaku:"90 hari",
-    pic:"Sarah Jenkins", biayaPerSesi:190000, hargaPaket:3800000 },
-  { id:"PRG-PP-005", namaLatihan:"Yoga Private", namaPaket:"8 Sesi Yoga - Basic",
-    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
-    pic:"Sari Dewi", biayaPerSesi:160000, hargaPaket:1280000 },
-  { id:"PRG-PP-006", namaLatihan:"Yoga Private", namaPaket:"12 Sesi Yoga - Pro",
-    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
-    pic:"Sari Dewi", biayaPerSesi:180000, hargaPaket:2160000 },
-  { id:"PRG-PP-007", namaLatihan:"Pilates Private", namaPaket:"8 Sesi Pilates - Basic",
-    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
-    pic:"Nia Rahayu", biayaPerSesi:170000, hargaPaket:1360000 },
-  { id:"PRG-PP-008", namaLatihan:"Pilates Private", namaPaket:"12 Sesi Pilates - Pro",
-    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
-    pic:"Nia Rahayu", biayaPerSesi:185000, hargaPaket:2220000 },
-  { id:"PRG-PP-009", namaLatihan:"Zumba Private", namaPaket:"8 Sesi Zumba - Basic",
-    sesi:8, pertemuan:"2x seminggu", masaBerlaku:"45 hari",
-    pic:"Bima Prakoso", biayaPerSesi:155000, hargaPaket:1240000 },
-  { id:"PRG-PP-010", namaLatihan:"Functional Training", namaPaket:"12 Sesi FT - Pro",
-    sesi:12, pertemuan:"3x seminggu", masaBerlaku:"60 hari",
-    pic:"Doni Kusuma", biayaPerSesi:195000, hargaPaket:2340000 },
+  { id:"PRG-PP-001", namaProgram:"Private Training", namaPaket:"4 Sesi - Starter",
+    totalSesi:4, frekuensi:"2x seminggu", masaBerlaku:"30 hari", hargaPaket:600000,
+    pic:{ nama:"Marcus Chen", spesialisasi:"Personal Trainer", rate:"Rp 150.000/sesi" },
+    keterangan:"Cocok untuk pemula yang baru memulai latihan" },
+  { id:"PRG-PP-002", namaProgram:"Private Training", namaPaket:"8 Sesi - Basic",
+    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1400000,
+    pic:{ nama:"Marcus Chen", spesialisasi:"Personal Trainer", rate:"Rp 175.000/sesi" },
+    keterangan:"Include evaluasi fisik di sesi pertama" },
+  { id:"PRG-PP-003", namaProgram:"Private Training", namaPaket:"12 Sesi - Pro",
+    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2400000,
+    pic:{ nama:"Sarah Jenkins", spesialisasi:"Personal Trainer", rate:"Rp 200.000/sesi" },
+    keterangan:"Include program latihan harian dan evaluasi mingguan" },
+  { id:"PRG-PP-004", namaProgram:"Private Training", namaPaket:"20 Sesi - Premium",
+    totalSesi:20, frekuensi:"3x seminggu", masaBerlaku:"90 hari", hargaPaket:3800000,
+    pic:{ nama:"Sarah Jenkins", spesialisasi:"Personal Trainer", rate:"Rp 190.000/sesi" },
+    keterangan:"Include video analisis gerakan dan meal plan" },
+  { id:"PRG-PP-005", namaProgram:"Yoga Private", namaPaket:"8 Sesi Yoga - Basic",
+    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1280000,
+    pic:{ nama:"Sari Dewi", spesialisasi:"Yoga Instructor", rate:"Rp 160.000/sesi" },
+    keterangan:"Include matras yoga premium" },
+  { id:"PRG-PP-006", namaProgram:"Yoga Private", namaPaket:"12 Sesi Yoga - Pro",
+    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2160000,
+    pic:{ nama:"Sari Dewi", spesialisasi:"Yoga Instructor", rate:"Rp 180.000/sesi" },
+    keterangan:"Include sesi meditasi dan breathing exercise" },
+  { id:"PRG-PP-007", namaProgram:"Pilates Private", namaPaket:"8 Sesi Pilates - Basic",
+    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1360000,
+    pic:{ nama:"Nia Rahayu", spesialisasi:"Pilates Instructor", rate:"Rp 170.000/sesi" },
+    keterangan:"Include assessment postur di sesi pertama" },
+  { id:"PRG-PP-008", namaProgram:"Pilates Private", namaPaket:"12 Sesi Pilates - Pro",
+    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2220000,
+    pic:{ nama:"Nia Rahayu", spesialisasi:"Pilates Instructor", rate:"Rp 185.000/sesi" },
+    keterangan:"Include program rehabilitasi khusus" },
+  { id:"PRG-PP-009", namaProgram:"Zumba Private", namaPaket:"8 Sesi Zumba - Basic",
+    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1240000,
+    pic:{ nama:"Bima Prakoso", spesialisasi:"Zumba Instructor", rate:"Rp 155.000/sesi" },
+    keterangan:"Include akses playlist Zumba eksklusif" },
+  { id:"PRG-PP-010", namaProgram:"Functional Training", namaPaket:"12 Sesi FT - Pro",
+    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2340000,
+    pic:{ nama:"Doni Kusuma", spesialisasi:"Functional Trainer", rate:"Rp 195.000/sesi" },
+    keterangan:"Include functional movement screening" },
 ]
 
 /* ── Per-order line items ─────────────────────────────────────────────────── */
@@ -290,6 +300,7 @@ export default function PPOrderDetailPage() {
     initProgram ? `${initProgram.id} — ${initProgram.namaPaket}` : ''
   )
   const [programDropdownOpen, setProgramDropdownOpen] = useState(false)
+  const [showGantiPaket, setShowGantiPaket] = useState(false)
 
   const initItems = order ? defaultLineItems(order) : []
   const [lineItems, setLineItems] = useState(initItems)
@@ -546,7 +557,7 @@ export default function PPOrderDetailPage() {
     ? dummyPPPrograms.filter(p =>
         p.id.toLowerCase().includes(programSearch.toLowerCase()) ||
         p.namaPaket.toLowerCase().includes(programSearch.toLowerCase()) ||
-        p.namaLatihan.toLowerCase().includes(programSearch.toLowerCase())
+        p.namaProgram.toLowerCase().includes(programSearch.toLowerCase())
       )
     : dummyPPPrograms
 
@@ -559,6 +570,7 @@ export default function PPOrderDetailPage() {
       setItemsDraft(lineItems.map(li => ({ ...li })))
       const prog = dummyPPPrograms.find(p => p.id === infoDeal.programId)
       setProgramSearch(prog ? `${prog.id} — ${prog.namaPaket}` : '')
+      setShowGantiPaket(false)
     }
     if (section === 'quotation') {
       setQuotationDraft({
@@ -574,7 +586,7 @@ export default function PPOrderDetailPage() {
     }
   }
 
-  function cancelEdit() { setEditingSection(null); setQuotationDraft(null) }
+  function cancelEdit() { setEditingSection(null); setQuotationDraft(null); setShowGantiPaket(false) }
 
   function saveInfoDeal() {
     setInfoDeal({ ...infoDraft })
@@ -947,10 +959,14 @@ export default function PPOrderDetailPage() {
             <div className="mb-4">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Program & Rincian Biaya</p>
 
-              {/* Program combobox — only in edit mode */}
-              {editingSection === 'infoDeal' && (
+              {/* Combobox — shown only when Ganti Paket is triggered in edit mode */}
+              {editingSection === 'infoDeal' && showGantiPaket && (
                 <div className="bg-gray-50 rounded-lg p-3 mb-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Pilih Program & Paket</p>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Pilih Program & Paket</p>
+                    <button onClick={() => setShowGantiPaket(false)}
+                      className="text-xs text-gray-400 hover:text-gray-600 transition">Batal</button>
+                  </div>
                   <div className="relative">
                     <input type="text" value={programSearch}
                       onChange={e => { setProgramSearch(e.target.value); setProgramDropdownOpen(true) }}
@@ -973,28 +989,26 @@ export default function PPOrderDetailPage() {
                               setInfoDraft(p => ({ ...p, programId: prog.id, paket: prog.namaPaket }))
                               setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
                               setProgramDropdownOpen(false)
+                              setShowGantiPaket(false)
                             }}
                             className={`w-full text-left px-3 py-2.5 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2 ${
                               infoDraft.programId === prog.id ? 'bg-blue-50' : ''
                             }`}>
                             <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded">{prog.id}</span>
-                            <span className="text-xs text-gray-500">{prog.namaLatihan}</span>
+                            <span className="text-xs text-gray-500">{prog.namaProgram}</span>
                             <span className="text-gray-300">·</span>
                             <span className="text-xs font-medium text-gray-700 flex-1">{prog.namaPaket}</span>
-                            <span className="text-xs font-semibold text-[#E05945] shrink-0">{fmtRp(prog.hargaPaket)}</span>
+                            <span className="text-xs font-semibold text-[#E05945] shrink-0">{formatRpPP(prog.hargaPaket)}</span>
                           </button>
                         ))}
                       </div>
                     )}
                   </div>
-                  {infoDraft.programId && (
-                    <p className="text-[10px] text-gray-400 mt-1">ID terpilih: <span className="font-semibold text-[#1E1C43]">{infoDraft.programId}</span></p>
-                  )}
                 </div>
               )}
 
-              {/* Compact paket strip — live-previews the combobox selection in edit mode */}
-              {(() => {
+              {/* Compact paket strip — shown always (unless ganti paket combobox is active) */}
+              {!(editingSection === 'infoDeal' && showGantiPaket) && (() => {
                 const stripProg = editingSection === 'infoDeal'
                   ? (dummyPPPrograms.find(p => p.id === infoDraft.programId) || programTerkait)
                   : programTerkait
@@ -1004,24 +1018,35 @@ export default function PPOrderDetailPage() {
                       <div className="min-w-0">
                         <p className="text-[10px] text-gray-400 font-mono mb-0.5">{stripProg.id}</p>
                         <p className="text-sm font-bold text-[#1E1C43]">
-                          {stripProg.namaLatihan}
+                          {stripProg.namaProgram}
                           <span className="font-normal text-gray-500"> · {stripProg.namaPaket}</span>
                         </p>
                       </div>
-                      <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(stripProg.hargaPaket)}</p>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <p className="text-base font-bold text-[#1E1C43]">{formatRpPP(stripProg.hargaPaket)}</p>
+                        {editingSection === 'infoDeal' && (
+                          <button onClick={() => setShowGantiPaket(true)}
+                            className="text-xs border border-gray-200 text-gray-500 bg-white rounded-lg px-3 py-1 hover:bg-gray-100 transition whitespace-nowrap">
+                            Ganti Paket
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <div className="flex flex-wrap gap-1.5 mb-2.5">
-                      {[stripProg.sesi + ' sesi', stripProg.pertemuan, stripProg.masaBerlaku].map(v => (
+                      {[stripProg.totalSesi + ' sesi', stripProg.frekuensi, stripProg.masaBerlaku].map(v => (
                         <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
                       ))}
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
-                        {stripProg.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                        {getInitials(stripProg.pic.nama)}
                       </div>
-                      <p className="text-xs text-gray-600 flex-1">{stripProg.pic}</p>
-                      <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(stripProg.biayaPerSesi)}/sesi</p>
+                      <p className="text-xs text-gray-600 flex-1">{stripProg.pic.nama} · {stripProg.pic.spesialisasi}</p>
+                      <p className="text-xs text-[#E05945] font-medium shrink-0">{stripProg.pic.rate}</p>
                     </div>
+                    {stripProg.keterangan && (
+                      <p className="text-xs text-gray-400 italic mt-2">{stripProg.keterangan}</p>
+                    )}
                   </div>
                 ) : (
                   <div className="bg-gray-50 rounded-xl p-4 mb-3 text-center text-xs text-gray-400 italic">
@@ -1030,16 +1055,73 @@ export default function PPOrderDetailPage() {
                 )
               })()}
 
-              {/* Biaya tambahan — view-only */}
-              {rincianDraft.slice(1).length > 0 && (
-                <div className="space-y-1.5 mb-3">
+              {/* Biaya tambahan */}
+              {editingSection === 'infoDeal' ? (
+                <div className="space-y-2 mb-3">
                   {rincianDraft.slice(1).map((item, idx) => (
-                    <div key={item.id || idx} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
-                      <p className="text-sm text-gray-700">{item.namaItem || '—'}</p>
-                      <p className="text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</p>
+                    <div key={item.id || idx} className="border border-gray-200 rounded-xl p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
+                        <button
+                          onClick={() => setRincianDraft(prev => prev.filter((_, i) => i !== idx + 1))}
+                          className="ml-auto text-gray-300 hover:text-red-500 transition">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-4 gap-2">
+                        <div className="col-span-2">
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Item</label>
+                          <input type="text" value={item.namaItem || ''}
+                            onChange={e => setRincianDraft(prev => prev.map((it, i) =>
+                              i === idx + 1 ? { ...it, namaItem: e.target.value } : it
+                            ))}
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
+                          <input type="number" value={item.jumlah ?? 1} min="1"
+                            onChange={e => setRincianDraft(prev => prev.map((it, i) => {
+                              if (i !== idx + 1) return it
+                              const jml = Number(e.target.value)
+                              const harga = it.harga ?? (it.total / Math.max(1, it.jumlah || 1))
+                              return { ...it, jumlah: jml, total: jml * harga }
+                            }))}
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
+                          <input type="number" value={item.harga ?? (item.total / Math.max(1, item.jumlah || 1))} min="0"
+                            onChange={e => setRincianDraft(prev => prev.map((it, i) => {
+                              if (i !== idx + 1) return it
+                              const harga = Number(e.target.value)
+                              return { ...it, harga, total: (it.jumlah ?? 1) * harga }
+                            }))}
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-right">
+                        <span className="text-xs text-gray-400">Subtotal: </span>
+                        <span className="text-sm font-bold text-[#1E1C43]">{formatRpPP(item.total)}</span>
+                      </div>
                     </div>
                   ))}
+                  <button
+                    onClick={() => setRincianDraft(prev => [...prev, { id: Date.now(), namaItem: '', jumlah: 1, harga: 0, total: 0 }])}
+                    className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
+                    <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
+                  </button>
                 </div>
+              ) : (
+                rincianDraft.slice(1).length > 0 && (
+                  <div className="space-y-1.5 mb-3">
+                    {rincianDraft.slice(1).map((item, idx) => (
+                      <div key={item.id || idx} className="flex justify-between items-center py-2 px-3 bg-gray-50 rounded-lg">
+                        <p className="text-sm text-gray-700">{item.namaItem || '—'}</p>
+                        <p className="text-sm font-semibold text-gray-800">{formatRpPP(item.total)}</p>
+                      </div>
+                    ))}
+                  </div>
+                )
               )}
 
               <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
