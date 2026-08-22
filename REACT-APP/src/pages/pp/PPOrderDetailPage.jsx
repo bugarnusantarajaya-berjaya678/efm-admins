@@ -1477,14 +1477,14 @@ export default function PPOrderDetailPage() {
                 {prog ? (
                   <div className="grid grid-cols-2 gap-3">
                     {[
-                      ['Nama Latihan',       prog.namaLatihan],
+                      ['Nama Program',       prog.namaProgram],
                       ['Nama Paket',         prog.namaPaket],
-                      ['Total Sesi',         prog.sesi + ' sesi'],
-                      ['Frekuensi',          prog.pertemuan],
+                      ['Total Sesi',         prog.totalSesi + ' sesi'],
+                      ['Frekuensi',          prog.frekuensi],
                       ['Masa Berlaku',       prog.masaBerlaku],
-                      ['PIC Pelatih',        prog.pic],
-                      ['Biaya / Sesi',       'Rp ' + prog.biayaPerSesi.toLocaleString('id-ID')],
-                      ['Harga Paket',        'Rp ' + prog.hargaPaket.toLocaleString('id-ID')],
+                      ['PIC Pelatih',        prog.pic?.nama || '—'],
+                      ['Biaya / Sesi',       prog.pic?.rate || '—'],
+                      ['Harga Paket',        'Rp ' + (prog.hargaPaket || 0).toLocaleString('id-ID')],
                     ].map(([label, val]) => (
                       <div key={label} className="bg-gray-50 rounded-xl p-3">
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
