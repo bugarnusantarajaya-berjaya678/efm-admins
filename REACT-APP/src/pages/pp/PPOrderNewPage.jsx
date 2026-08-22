@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
 
 const dummyPPLeads = [
@@ -76,6 +77,12 @@ function getPicInitials(nama) {
 
 export default function PPOrderNewPage() {
   const navigate = useNavigate();
+  const { setCrumbs } = useBreadcrumb();
+
+  useEffect(() => {
+    setCrumbs(['Private Program', 'Orders', 'Order Baru'])
+    return () => setCrumbs(null)
+  }, [])
 
   // Data Pendaftar — combobox search dari leads
   const [pendaftarSearch, setPendaftarSearch] = useState('');
@@ -251,14 +258,6 @@ export default function PPOrderNewPage() {
   return (
     <div className="p-6 bg-[#F5F5F7] min-h-screen pb-24">
 
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
-        <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
-        <ChevronRight size={12} />
-        <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-        <ChevronRight size={12} />
-        <span className="text-gray-600 font-medium">Order Baru</span>
-      </div>
 
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">

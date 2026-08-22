@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
    Constants
@@ -241,6 +242,7 @@ export default function PPLeadDetailPage() {
   const { id }         = useParams()
   const navigate       = useNavigate()
   const { state }      = useLocation()
+  const { setCrumbs }  = useBreadcrumb()
 
   const [lead, setLead]             = useState(state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null)
   const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'info')
@@ -275,6 +277,11 @@ export default function PPLeadDetailPage() {
       setExtraScreenings(prev => [state.newScreening, ...prev])
     }
   }, [])
+
+  useEffect(() => {
+    if (lead) setCrumbs(['Private Program', 'Leads', lead.nama])
+    return () => setCrumbs(null)
+  }, [lead?.nama])
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
@@ -333,24 +340,6 @@ export default function PPLeadDetailPage() {
     <>
       <div className="space-y-5">
 
-        {/* ── Breadcrumb ── */}
-        <div className="flex items-center gap-1.5 text-xs text-gray-400">
-          {state?.fromOrderId ? (
-            <>
-              <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-              <ChevronRight size={12} />
-              <button onClick={() => navigate('/pp/orders/' + state.fromOrderId)} className="hover:text-[#1E1C43] transition-colors">#{state.fromOrderId}</button>
-              <ChevronRight size={12} />
-              <span className="text-gray-600 font-medium">{lead.nama} (Lead)</span>
-            </>
-          ) : (
-            <>
-              <Link to="/pp/leads" className="hover:text-[#1E1C43] transition-colors">Leads PP</Link>
-              <ChevronRight size={12} />
-              <span className="text-gray-600 font-medium">{lead.nama}</span>
-            </>
-          )}
-        </div>
 
         {/* ── Header ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">

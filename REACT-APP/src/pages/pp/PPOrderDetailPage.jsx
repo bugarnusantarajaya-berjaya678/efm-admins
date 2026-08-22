@@ -1,7 +1,8 @@
-﻿import React, { useState, useRef } from 'react'
+﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
    Constants
@@ -244,6 +245,7 @@ export default function PPOrderDetailPage() {
   const settings = getCompanySettings()
   const isNew = !id || id === 'new'
   const fromState = location.state || {}
+  const { setCrumbs } = useBreadcrumb()
 
   const order = isNew
     ? {
@@ -525,6 +527,12 @@ export default function PPOrderDetailPage() {
   const fotoInsidenRef     = useRef(null)
   const fotoInputRef       = useRef(null)
 
+  useEffect(() => {
+    const label = isNew ? 'Order Baru' : (order?.namaKlien || id)
+    setCrumbs(['Private Program', 'Orders', label])
+    return () => setCrumbs(null)
+  }, [isNew, order?.namaKlien, id])
+
   /* ── 404 ─────────────────────────────────────────────────────────────────── */
   if (!order) {
     return (
@@ -724,25 +732,6 @@ export default function PPOrderDetailPage() {
         </div>
       )}
 
-      {/* Breadcrumb — outside card */}
-      <nav className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
-        {fromState?.fromLeadId ? (
-          <>
-            <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition-colors">Leads PP</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <button onClick={() => navigate('/pp/leads/' + fromState.fromLeadId)} className="hover:text-[#1E1C43] transition-colors">{order.namaKlien} (Lead)</button>
-            <ChevronRight size={12} className="text-gray-300" />
-          </>
-        ) : (
-          <>
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-            <ChevronRight size={12} className="text-gray-300" />
-          </>
-        )}
-        <span className="text-[#1E1C43] font-medium">{isNew ? 'Order Baru' : order.namaKlien}</span>
-      </nav>
 
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
