@@ -519,6 +519,11 @@ export default function PPOrderDetailPage() {
   const [rekapStatus,           setRekapStatus]           = useState('pengajuan_masuk')
   const [rekapCatatanTolak,     setRekapCatatanTolak]     = useState('')
   const [showTolakModal,        setShowTolakModal]        = useState(false)
+  const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
+  const [honorariumBuktiBayar,   setHonorariumBuktiBayar]   = useState(null)
+  const [invoicePayStatus,        setInvoicePayStatus]        = useState('belum_bayar')
+  const [showKonfirmasiPayModal,  setShowKonfirmasiPayModal]  = useState(false)
+  const [konfirmasiPayForm,       setKonfirmasiPayForm]       = useState({ tglBayar: '', metode: 'Transfer Bank', namaBukti: '' })
 
   const [invoicePP, setInvoicePP] = useState({
     nomorInvoice: 'INV-PP-26-0013',
@@ -1261,36 +1266,100 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section: Invoice (compact link card) ── */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
-            <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice</h3>
-              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                invoicePP.statusInvoice === 'Lunas'    ? 'bg-green-100 text-green-700' :
-                invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
-                'bg-gray-100 text-gray-600'
-              }`}>{invoicePP.statusInvoice}</span>
-              <button
-                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
-                className="ml-auto flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
-                <Eye size={12} /> Buka Invoice
-              </button>
-            </div>
-            <div className="p-5">
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  ['No. Invoice',   invoicePP.nomorInvoice],
-                  ['Jatuh Tempo',   fmtDate(invoicePP.jatuhTempo)],
-                  ['Total Tagihan', formatRpPP(subtotalPP)],
-                ].map(([label, val]) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+          {/* ── Section: Invoice & Pembayaran Klien ── */}
+          {(() => {
+            const isOverdue = invoicePP.jatuhTempo && new Date(invoicePP.jatuhTempo) < new Date() && invoicePayStatus !== 'sudah_bayar'
+            const daysLeft = invoicePP.jatuhTempo ? Math.ceil((new Date(invoicePP.jatuhTempo) - new Date()) / (1000*60*60*24)) : null
+            const receiptId = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
+            return (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2 flex-wrap">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice & Pembayaran Klien</h3>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                    invoicePayStatus === 'sudah_bayar' ? 'bg-green-100 text-green-700' :
+                    isOverdue ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                  }`}>
+                    {invoicePayStatus === 'sudah_bayar' ? '✓ Lunas' : isOverdue ? '⚠ Overdue' : 'Belum Bayar'}
+                  </span>
+                  <div className="ml-auto flex items-center gap-2">
+                    <button
+                      onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                      <Eye size={12} /> Buka Invoice
+                    </button>
+                    {invoicePayStatus !== 'sudah_bayar' && (
+                      <button
+                        onClick={() => setShowKonfirmasiPayModal(true)}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-colors">
+                        <CheckCircle size={12} /> Konfirmasi Pembayaran
+                      </button>
+                    )}
                   </div>
-                ))}
+                </div>
+                <div className="p-5 space-y-4">
+                  {/* Info grid */}
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      ['No. Invoice',   invoicePP.nomorInvoice],
+                      ['Jatuh Tempo',   fmtDate(invoicePP.jatuhTempo)],
+                      ['Total Tagihan', formatRpPP(subtotalPP)],
+                    ].map(([label, val]) => (
+                      <div key={label} className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Overdue warning */}
+                  {isOverdue && (
+                    <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+                      <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
+                      <p className="text-xs text-red-700 font-medium">
+                        Invoice telah melewati jatuh tempo ({fmtDate(invoicePP.jatuhTempo)}) — segera hubungi klien untuk konfirmasi pembayaran.
+                      </p>
+                    </div>
+                  )}
+                  {!isOverdue && daysLeft !== null && daysLeft <= 3 && invoicePayStatus !== 'sudah_bayar' && (
+                    <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+                      <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+                      <p className="text-xs text-yellow-700 font-medium">Jatuh tempo dalam {daysLeft} hari ({fmtDate(invoicePP.jatuhTempo)})</p>
+                    </div>
+                  )}
+
+                  {/* Lunas state: bukti + receipt */}
+                  {invoicePayStatus === 'sudah_bayar' && (
+                    <div className="space-y-3">
+                      <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                        <CheckCircle size={15} className="text-green-600 shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-green-800">Pembayaran Terkonfirmasi</p>
+                          {konfirmasiPayForm.namaBukti && (
+                            <p className="text-xs text-green-700 mt-0.5">{konfirmasiPayForm.namaBukti} · {konfirmasiPayForm.tglBayar ? fmtDate(konfirmasiPayForm.tglBayar) : ''} · {konfirmasiPayForm.metode}</p>
+                          )}
+                        </div>
+                        <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
+                          <Download size={12} /> Bukti
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Receipt</p>
+                          <p className="text-sm font-semibold text-[#1E1C43]">{receiptId}</p>
+                        </div>
+                        <button
+                          onClick={() => navigate(`/pp/receipt/${receiptId}`, { state: { fromOrderId: order.id } })}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors"
+                        >
+                          <FileText size={12} /> Buka Receipt
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
+            )
+          })()}
 
 
 
@@ -1809,6 +1878,117 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
+          {/* ── Section 5: Honorarium Pelatih ── */}
+          {(() => {
+            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
+            const totalHonorariumDue = absensiSesi.length * ratePerSesi
+            const isUnlocked = rekapStatus === 'dikonfirmasi'
+            return (
+              <div className={`bg-white rounded-xl shadow-sm border ${isUnlocked ? 'border-gray-100' : 'border-gray-100 opacity-60'}`}>
+                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Honorarium Pelatih</h3>
+                    {isUnlocked && (
+                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                        honorariumBayarStatus === 'sudah_bayar' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {honorariumBayarStatus === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
+                      </span>
+                    )}
+                    {!isUnlocked && (
+                      <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400">Terkunci</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="p-5">
+                  {!isUnlocked ? (
+                    <div className="text-center py-6">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                        <ClipboardList size={18} className="text-gray-400" />
+                      </div>
+                      <p className="text-sm text-gray-500 font-medium">Rekap belum dikonfirmasi</p>
+                      <p className="text-xs text-gray-400 mt-1">Proses honorarium tersedia setelah rekap absensi disetujui admin.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {/* Kalkulasi otomatis */}
+                      <div className="grid grid-cols-3 gap-3">
+                        {[
+                          ['Sesi Terkonfirmasi',  `${absensiSesi.length} sesi`],
+                          ['Rate / Sesi',         'Rp ' + ratePerSesi.toLocaleString('id-ID')],
+                          ['Total Honorarium',    'Rp ' + totalHonorariumDue.toLocaleString('id-ID')],
+                        ].map(([label, val]) => (
+                          <div key={label} className="bg-gray-50 rounded-xl p-3">
+                            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                            <p className={`text-sm font-semibold ${label === 'Total Honorarium' ? 'text-[#1E1C43]' : 'text-gray-800'}`}>{val}</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {honorariumBayarStatus === 'menunggu_bayar' ? (
+                        <div className="space-y-3">
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
+                            <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+                            <p className="text-xs text-yellow-700">Rekap telah dikonfirmasi. Transfer honorarium ke rekening pelatih, lalu upload bukti pembayaran.</p>
+                          </div>
+                          {/* Upload bukti bayar */}
+                          <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
+                            <label className="cursor-pointer flex items-center gap-3">
+                              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                                <span className="text-lg">📎</span>
+                              </div>
+                              <div className="flex-1">
+                                <input
+                                  type="file"
+                                  accept=".pdf,.jpg,.jpeg,.png"
+                                  className="hidden"
+                                  onChange={e => {
+                                    const file = e.target.files[0]
+                                    if (!file) return
+                                    setHonorariumBuktiBayar({ nama: file.name, tanggal: new Date().toLocaleDateString('id-ID') })
+                                    setHonorariumBayarStatus('sudah_bayar')
+                                    setLogTab3PP(prev => [...prev, {
+                                      id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                                      kategori: 'honorarium', nomorLaporan: order.id,
+                                      teks: `Honorarium Rp ${totalHonorariumDue.toLocaleString('id-ID')} sudah dibayar — bukti: ${file.name}`
+                                    }])
+                                  }}
+                                />
+                                <span className="text-xs text-[#1E1C43] font-semibold hover:underline">Upload Bukti Pembayaran Honorarium</span>
+                                <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                            <CheckCircle size={15} className="text-green-600 shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
+                              {honorariumBuktiBayar && (
+                                <p className="text-xs text-green-700 mt-0.5">{honorariumBuktiBayar.nama} · {honorariumBuktiBayar.tanggal}</p>
+                              )}
+                            </div>
+                            <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
+                              <Download size={12} /> Lihat Bukti
+                            </button>
+                          </div>
+                          <div className="flex justify-between items-center bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl px-4 py-3">
+                            <p className="text-sm font-bold text-[#1E1C43]">Total Dibayarkan</p>
+                            <p className="text-base font-bold text-[#E05945]">Rp {totalHonorariumDue.toLocaleString('id-ID')}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
+
           {/* ── Section 4: Catatan Progres Klien ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center gap-2 mb-1">
@@ -1885,7 +2065,7 @@ export default function PPOrderDetailPage() {
                 <h3 className="text-base font-bold text-[#1E1C43]">Log Aktivitas Operasional</h3>
               </div>
               <div className="flex gap-1">
-                {['semua', 'jadwal', 'absensi', 'catatan'].map(k => (
+                {['semua', 'jadwal', 'absensi', 'catatan', 'honorarium'].map(k => (
                   <button
                     key={k}
                     onClick={() => setLogFilter3PP(k)}
@@ -1915,9 +2095,10 @@ export default function PPOrderDetailPage() {
                       </span>
                     )}
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                      l.kategori === 'absensi' ? 'bg-blue-50 text-blue-600'   :
-                      l.kategori === 'jadwal'  ? 'bg-green-50 text-green-600' :
-                      l.kategori === 'catatan' ? 'bg-purple-50 text-purple-600' :
+                      l.kategori === 'absensi'    ? 'bg-blue-50 text-blue-600'     :
+                      l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
+                      l.kategori === 'catatan'    ? 'bg-purple-50 text-purple-600' :
+                      l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
                       'bg-gray-50 text-gray-500'
                     }`}>{l.kategori}</span>
                   </div>
@@ -2103,6 +2284,107 @@ export default function PPOrderDetailPage() {
                 className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-50"
               >
                 Simpan Jadwal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Modal Konfirmasi Pembayaran Klien ────────────────────────────────── */}
+      {showKonfirmasiPayModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowKonfirmasiPayModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 flex-shrink-0">
+              <div>
+                <h3 className="text-sm font-bold text-[#1E1C43]">Konfirmasi Pembayaran Klien</h3>
+                <p className="text-xs text-gray-400 mt-0.5">Upload bukti transfer / struk pembayaran dari klien</p>
+              </div>
+              <button onClick={() => setShowKonfirmasiPayModal(false)} className="text-gray-400 hover:text-gray-600 transition">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-5 space-y-4 overflow-y-auto flex-1">
+              <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">
+                <p className="text-xs text-gray-500">Total Tagihan</p>
+                <p className="text-base font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</p>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tanggal Bayar *</label>
+                  <input
+                    type="date"
+                    value={konfirmasiPayForm.tglBayar}
+                    onChange={e => setKonfirmasiPayForm(p => ({ ...p, tglBayar: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Metode Pembayaran</label>
+                  <select
+                    value={konfirmasiPayForm.metode}
+                    onChange={e => setKonfirmasiPayForm(p => ({ ...p, metode: e.target.value }))}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
+                  >
+                    {['Transfer Bank', 'Cash', 'QRIS', 'Kartu Debit', 'Kartu Kredit'].map(m => (
+                      <option key={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Upload Bukti Pembayaran</label>
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
+                  <label className="cursor-pointer flex items-center gap-3">
+                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                      <span className="text-lg">📎</span>
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        className="hidden"
+                        onChange={e => {
+                          const file = e.target.files[0]
+                          if (file) setKonfirmasiPayForm(p => ({ ...p, namaBukti: file.name }))
+                        }}
+                      />
+                      <span className="text-xs text-[#1E1C43] font-semibold hover:underline">
+                        {konfirmasiPayForm.namaBukti || 'Pilih file PDF atau gambar'}
+                      </span>
+                      <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
+                    </div>
+                  </label>
+                  {konfirmasiPayForm.namaBukti && (
+                    <div className="mt-2 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                      <CheckCircle size={13} className="text-green-600 shrink-0" />
+                      <span className="text-xs text-green-700 font-medium">{konfirmasiPayForm.namaBukti}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-3 p-5 border-t border-gray-100 flex-shrink-0">
+              <button
+                onClick={() => setShowKonfirmasiPayModal(false)}
+                className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-gray-50 transition"
+              >
+                Batal
+              </button>
+              <button
+                disabled={!konfirmasiPayForm.tglBayar}
+                onClick={() => {
+                  setInvoicePayStatus('sudah_bayar')
+                  setInvoicePP(p => ({ ...p, statusInvoice: 'Lunas' }))
+                  setShowKonfirmasiPayModal(false)
+                  setLogTab3PP(prev => [...prev, {
+                    id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                    kategori: 'honorarium', nomorLaporan: invoicePP.nomorInvoice,
+                    teks: `Pembayaran klien ${invoicePP.nomorInvoice} dikonfirmasi Lunas — ${konfirmasiPayForm.metode} · ${fmtDate(konfirmasiPayForm.tglBayar)}`
+                  }])
+                }}
+                className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-40"
+              >
+                Konfirmasi Lunas
               </button>
             </div>
           </div>
