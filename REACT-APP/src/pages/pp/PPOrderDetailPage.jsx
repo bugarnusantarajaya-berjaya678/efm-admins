@@ -809,8 +809,7 @@ export default function PPOrderDetailPage() {
       {/* Tab Bar */}
       <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 w-fit">
         {[
-          { key: 'keuangan',    label: 'Kontrak & Keuangan',  locked: false },
-          { key: 'dokumen',     label: 'Dokumen Kerjasama',   locked: isNew },
+          { key: 'keuangan',    label: 'Kontrak & Keuangan',   locked: false },
           { key: 'operasional', label: 'Operasional Lapangan', locked: isNew },
         ].map(tab => (
           <button
@@ -1261,58 +1260,15 @@ export default function PPOrderDetailPage() {
         </>
       )}
 
+
+
       {/* ══════════════════════════════════════════════════════════════════════
-          TAB 2 — Dokumen Kerjasama
+          TAB 3 — Operasional Sesi (PP)
       ══════════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'dokumen' && (() => {
-        const DOK_LEVEL = { 'Quotation': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
-        const getDokStepStatus = (stepLevel) => {
-          const cur = DOK_LEVEL[order?.tahapan] ?? 0
-          if (cur > stepLevel) return 'completed'
-          if (cur === stepLevel) return 'current'
-          return 'pending'
-        }
-        return (
+      {activeTab === 'operasional' && (
         <div className="space-y-4">
 
-          {/* ── Stepper: Pipeline Dokumen ──────────────────────────────────── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-4">Progress Dokumen Kerjasama</p>
-            <div className="flex items-center">
-              {[
-                { level: 0, label: 'Quotation',       icon: '📋' },
-                { level: 1, label: 'Agreement / PKS', icon: '📝' },
-                { level: 2, label: 'Program Berjalan',icon: '🏃' },
-                { level: 3, label: 'Program Selesai', icon: '✅' },
-              ].map((step, idx, arr) => {
-                const s = getDokStepStatus(step.level)
-                return (
-                  <div key={step.level} className="flex items-center flex-1">
-                    <div className="flex flex-col items-center">
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold border-2 ${
-                        s === 'completed' ? 'bg-green-500 border-green-500 text-white'
-                          : s === 'current' ? 'bg-[#1E1C43] border-[#1E1C43] text-white'
-                          : 'bg-white border-gray-200 text-gray-400'
-                      }`}>
-                        {s === 'completed' ? '✓' : step.icon}
-                      </div>
-                      <p className={`text-[10px] mt-1 font-semibold ${
-                        s === 'completed' ? 'text-green-600'
-                          : s === 'current' ? 'text-[#1E1C43]'
-                          : 'text-gray-400'
-                      }`}>{step.label}</p>
-                    </div>
-                    {idx < arr.length - 1 && (
-                      <div className={`flex-1 h-0.5 mx-1 mb-4 ${s === 'completed' ? 'bg-green-400' : 'bg-gray-200'}`} />
-                    )}
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-
-
-          {/* ── Section 1: Agreement / PKS Klien ─────────────────────────── */}
+          {/* ── Section: Agreement / PKS Klien ── */}
           {(() => {
             const AGR_STATUS_OPTS = ['Belum TTD', 'Menunggu Approval', 'Sudah TTD']
             const AGR_STATUS_CLS = {
@@ -1323,10 +1279,10 @@ export default function PPOrderDetailPage() {
             const isEditing = editingDoc === 'agreement'
             const doc = isEditing ? (agreementDraft || agreementDoc) : agreementDoc
             return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
                   <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-semibold text-[#1E1C43]">Agreement / PKS Klien</h3>
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Agreement / PKS Klien</h3>
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500">Ada Agreement?</span>
                       <ToggleSwitch checked={adaAgreement} onChange={setAdaAgreement} />
@@ -1366,6 +1322,17 @@ export default function PPOrderDetailPage() {
 
                 {adaAgreement ? (
                   <div className="p-5 space-y-4">
+                    {/* Info: online integration */}
+                    <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
+                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+                        <span className="text-[10px] font-bold text-blue-600">i</span>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-blue-700">Agreement dibuat secara online via sistem EFM</p>
+                        <p className="text-xs text-blue-600 mt-0.5">Dokumen agreement terintegrasi dengan sistem absensi digital. Klien menandatangani secara digital melalui link yang dikirim via WhatsApp.</p>
+                      </div>
+                    </div>
+
                     {/* Status */}
                     <div className="flex items-center gap-3">
                       <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider w-32 shrink-0">Status</span>
@@ -1495,194 +1462,6 @@ export default function PPOrderDetailPage() {
               </div>
             )
           })()}
-
-          {/* ── Section 2: Dokumen Tambahan & Screening ──────────────────────── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-            <div className="flex items-center gap-2 px-5 py-3.5 border-b border-gray-100">
-              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Dokumen Tambahan</h3>
-            </div>
-            <div className="p-5 space-y-5">
-
-              {/* Riwayat Fitness Assessment */}
-              <div>
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">
-                  Riwayat Fitness Assessment
-                </p>
-                {order.leadId && (
-                  <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-3">
-                    <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                      <span className="text-[10px] font-bold text-blue-600">i</span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-semibold text-blue-700">Data kesehatan awal klien tersimpan di Lead</p>
-                      <p className="text-xs text-blue-600 mt-0.5">Lihat tab Kesehatan di halaman Lead untuk riwayat screening & Fitness Assessment.</p>
-                    </div>
-                    <button
-                      onClick={() => navigate('/pp/leads/' + order.leadId, { state: { defaultTab: 'kesehatan', fromOrderId: order.id } })}
-                      className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
-                      Lihat →
-                    </button>
-                  </div>
-                )}
-                {(() => {
-                  const dummyFARecords = [
-                    { id: "SCR-26-0001", namaKlien: "James Wilson", tanggal: "2026-10-15", statusFA: "Selesai" },
-                    { id: "SCR-26-0002", namaKlien: "Emily Chen", tanggal: "2026-10-18", statusFA: "Selesai" },
-                    { id: "SCR-26-0003", namaKlien: "Rian Maulana", tanggal: "2026-10-20", statusFA: "Draft" },
-                  ]
-                  const linkedFA = dummyFARecords.find(s => s.id === selectedScreeningId)
-                  return (
-                    <div>
-                      <div className="flex gap-3 mb-2">
-                        <select
-                          value={selectedScreeningId}
-                          onChange={e => setSelectedScreeningId(e.target.value)}
-                          className="flex-1 border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
-                          <option value="">— Pilih nomor Fitness Assessment —</option>
-                          {dummyFARecords.map(s => (
-                            <option key={s.id} value={s.id}>
-                              {s.id} · {s.namaKlien} · {s.tanggal}
-                            </option>
-                          ))}
-                        </select>
-                        {selectedScreeningId && (
-                          <button
-                            onClick={() => navigate('/pp/screening/' + selectedScreeningId, { state: { leadId: order.leadId, orderId: order.id } })}
-                            className="px-3 py-2.5 bg-[#1E1C43] text-white rounded-xl text-xs font-semibold hover:bg-[#2d2b5e] transition flex items-center gap-1.5 flex-shrink-0">
-                            <ExternalLink size={13} /> Lihat Detail
-                          </button>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => navigate('/pp/screening/new', { state: { namaKlien: order?.namaKlien || infoDeal.namaKlien, leadId: order?.leadId, orderId: order?.id } })}
-                        className="text-xs text-[#E05945] font-semibold hover:underline flex items-center gap-1 mb-3">
-                        <Plus size={12} /> Buat Fitness Assessment untuk klien ini
-                      </button>
-                      {linkedFA && (
-                        <div className="bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl p-3">
-                          <div className="flex items-center justify-between">
-                            <div>
-                              <p className="text-xs font-mono text-[#1E1C43] mb-0.5">{linkedFA.id}</p>
-                              <p className="text-sm font-semibold text-gray-800">{linkedFA.namaKlien}</p>
-                              <p className="text-xs text-gray-400">{linkedFA.tanggal}</p>
-                            </div>
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              linkedFA.statusFA === "Selesai"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-yellow-100 text-yellow-700"
-                            }`}>
-                              {linkedFA.statusFA}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )
-                })()}
-              </div>
-
-              {/* Upload Dokumen Tambahan */}
-              <div>
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">
-                  Upload Dokumen Lain
-                </p>
-                <p className="text-xs text-gray-400 mb-3">
-                  Dokumen pendukung lainnya (surat dokter, hasil lab, foto progress, dll)
-                </p>
-
-                {/* Upload area */}
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors mb-3">
-                  <label className="cursor-pointer flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                      <FileText size={16} className="text-gray-400" />
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                        multiple
-                        className="hidden"
-                        onChange={e => {
-                          const files = Array.from(e.target.files)
-                          const newDocs = files.map((f, i) => ({
-                            id: Date.now() + i,
-                            nama: f.name,
-                            tgl: new Date().toLocaleDateString('id-ID'),
-                            keterangan: ''
-                          }))
-                          setDokumenTambahan(prev => [...prev, ...newDocs])
-                        }}
-                      />
-                      <span className="text-xs text-[#1E1C43] font-semibold hover:underline">
-                        Pilih file (multiple)
-                      </span>
-                      <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG, DOCX · Maks 10MB/file</p>
-                    </div>
-                  </label>
-                </div>
-
-                {/* List dokumen */}
-                {dokumenTambahan.length > 0 ? (
-                  <div className="space-y-2">
-                    {dokumenTambahan.map(dok => (
-                      <div key={dok.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2.5">
-                        <span className="text-sm">📄</span>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
-                          <p className="text-[10px] text-gray-400">{dok.tgl} · {dok.keterangan || 'Dokumen pendukung'}</p>
-                        </div>
-                        <div className="flex items-center gap-2 shrink-0">
-                          <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43] transition-colors">
-                            <Download size={11} />
-                          </button>
-                          <button
-                            onClick={() => setDokumenTambahan(prev => prev.filter(d => d.id !== dok.id))}
-                            className="h-6 w-6 flex items-center justify-center rounded text-gray-300 hover:text-red-500 transition-colors"
-                          >
-                            <Trash2 size={11} />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 italic text-center py-2">Belum ada dokumen tambahan diupload.</p>
-                )}
-              </div>
-
-            </div>
-          </div>
-
-          {/* ── Log Aktivitas ─────────────────────────────────────────────── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-            <div className="px-5 py-3.5 border-b border-gray-100">
-              <h3 className="text-sm font-semibold text-[#1E1C43]">Log Aktivitas</h3>
-            </div>
-            <div className="p-5">
-              <div className="space-y-3">
-                {LOG_DATA.map((l, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: l.dot }} />
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-700">{l.teks}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">{l.waktu}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-        </div>
-        )
-      })()}
-
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          TAB 3 — Operasional Sesi (PP)
-      ══════════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'operasional' && (
-        <div className="space-y-4">
 
           {/* ── Section 1: Referensi Program ── */}
           {(() => {
