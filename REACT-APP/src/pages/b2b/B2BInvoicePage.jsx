@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Eye, Download, ArrowLeft, CheckCircle, Pencil, Trash2, Plus } from 'lucide-react'
 
 /* ─── Helpers ─── */
@@ -231,8 +232,14 @@ function MarkPaidModal({ inv, onConfirm, onClose }) {
 const ROWS = 10
 
 export default function B2BInvoicePage() {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const incomingState = location.state || {}
+
   const [invoices,      setInvoices]      = useState(INVOICES_INIT)
-  const [selectedId,    setSelectedId]    = useState(null)
+  const [selectedId,    setSelectedId]    = useState(
+    incomingState.invoiceId || (incomingState.action === 'view' ? incomingState.invoiceId : null) || null
+  )
   const [fStatus,       setFStatus]       = useState('')
   const [fSearch,       setFSearch]       = useState('')
   const [page,          setPage]          = useState(1)
@@ -301,11 +308,20 @@ export default function B2BInvoicePage() {
       <div className="flex flex-col gap-4">
 
         {/* Toolbar */}
-        <button
-          onClick={() => { setSelectedId(null); setEditMode(false); setMgmtFeeAktif(false); setPajakList([{ id: 1, nama: 'PPN', persen: 11, aktif: false, tipe: 'tambah' }]) }}
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-gray-700 transition-colors font-medium w-fit">
-          <ArrowLeft size={16} /> Kembali ke Invoice B2B
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          {incomingState.orderId && (
+            <button
+              onClick={() => navigate(`/b2b/orders/${incomingState.orderId}`)}
+              className="inline-flex items-center gap-1.5 text-sm text-[#1E1C43] hover:underline font-medium w-fit">
+              <ArrowLeft size={16} /> Kembali ke Order #{incomingState.orderId}
+            </button>
+          )}
+          <button
+            onClick={() => { setSelectedId(null); setEditMode(false); setMgmtFeeAktif(false); setPajakList([{ id: 1, nama: 'PPN', persen: 11, aktif: false, tipe: 'tambah' }]) }}
+            className={`inline-flex items-center gap-2 text-sm transition-colors font-medium w-fit ${incomingState.orderId ? 'text-gray-400 hover:text-gray-600' : 'text-gray-400 hover:text-gray-700'}`}>
+            <ArrowLeft size={16} /> Kembali ke Invoice B2B
+          </button>
+        </div>
 
         <div className="flex items-start justify-between">
           <div>

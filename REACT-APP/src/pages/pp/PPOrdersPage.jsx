@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt } from 'lucide-react'
+import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -441,12 +441,26 @@ export default function PPOrdersPage() {
           <h1 className="text-[22px] font-bold text-text-primary">Private Training Orders</h1>
           <p className="text-sm text-text-muted mt-1">Kelola semua order klien private training</p>
         </div>
-        <button
-          onClick={() => navigate('/pp/orders/new')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
-        >
-          <Plus size={15} strokeWidth={2.5} /> New Order
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => navigate('/pp/invoice')}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            <FileText size={14} /> Cari Invoice
+          </button>
+          <button
+            onClick={() => navigate('/pp/receipt')}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            <Receipt size={14} /> Cari Receipt
+          </button>
+          <button
+            onClick={() => navigate('/pp/orders/new')}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
+          >
+            <Plus size={15} strokeWidth={2.5} /> New Order
+          </button>
+        </div>
       </div>
 
       {/* Stats */}

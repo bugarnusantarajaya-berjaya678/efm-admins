@@ -12,8 +12,6 @@ const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
   { label: 'Leads',      path: '/pp/leads'      },
   { label: 'Orders',     path: '/pp/orders'     },
-  { label: 'Invoice',    path: '/pp/invoice'    },
-  { label: 'Receipt',    path: '/pp/receipt'    },
   { label: 'Agreement',  path: '/pp/documents'  },
   {
     label: 'Program DB', path: '/pp/program-db',
@@ -30,8 +28,6 @@ const B2B_SUB = [
   { label: 'Survei',    path: '/b2b/survei'    },
   { label: 'Orders',    path: '/b2b/orders'    },
   { label: 'Kalender',  path: '/b2b/kalender'  },
-  { label: 'Invoice',   path: '/b2b/invoice'   },
-  { label: 'Receipt',   path: '/b2b/receipt'   },
 ]
 
 const EVENT_SUB = [
@@ -40,8 +36,6 @@ const EVENT_SUB = [
   { label: 'Konsultasi', path: '/event/konsultasi' },
   { label: 'Orders',     path: '/event/orders'     },
   { label: 'Kalender',   path: '/event/kalender'   },
-  { label: 'Invoice',    path: '/event/invoice'    },
-  { label: 'Receipt',    path: '/event/receipt'    },
 ]
 
 const LAPORAN_SUB = [
