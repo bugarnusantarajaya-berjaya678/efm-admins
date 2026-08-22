@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Eye, X, Plus, RotateCcw, Search, ExternalLink, Download, Trash2 } from 'lucide-react'
+import { Eye, X, Plus, RotateCcw, Search, ExternalLink, Download, Trash2, FileText, Receipt } from 'lucide-react'
 
 /* ═══════════════════════════════════════
    Constants
@@ -996,12 +996,26 @@ export default function B2BOrdersPage() {
             <h1 className="text-[22px] font-bold text-text-primary">Orders B2B</h1>
             <p className="text-sm text-text-muted mt-1">Kelola deal &amp; kontrak klien B2B aktif</p>
           </div>
-          <button
-            onClick={() => navigate('/b2b/orders/new')}
-            className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
-          >
-            + Tambah Order
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/b2b/invoice')}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <FileText size={14} /> Cari Invoice
+            </button>
+            <button
+              onClick={() => navigate('/b2b/receipt')}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <Receipt size={14} /> Cari Receipt
+            </button>
+            <button
+              onClick={() => navigate('/b2b/orders/new')}
+              className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
+            >
+              + Tambah Order
+            </button>
+          </div>
         </div>
 
         {/* KPI Cards */}

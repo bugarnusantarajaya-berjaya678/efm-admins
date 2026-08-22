@@ -1246,7 +1246,7 @@ export default function PPOrderDetailPage() {
                 'bg-gray-100 text-gray-600'
               }`}>{invoicePP.statusInvoice}</span>
               <button
-                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`)}
+                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
                 className="ml-auto flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
                 <Eye size={12} /> Buka Invoice
               </button>

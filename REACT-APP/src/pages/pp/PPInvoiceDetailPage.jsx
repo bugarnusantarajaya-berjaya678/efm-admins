@@ -93,9 +93,9 @@ export default function PPInvoiceDetailPage() {
   if (!invoice) {
     return (
       <div className="flex flex-col gap-4">
-        <button onClick={() => navigate('/pp/invoice')}
+        <button onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
           className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-          <ArrowLeft size={16} /> Kembali ke Invoice
+          <ArrowLeft size={16} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
         </button>
         <div className="text-center py-20 text-text-muted">Invoice tidak ditemukan.</div>
       </div>
@@ -123,9 +123,9 @@ export default function PPInvoiceDetailPage() {
     <div className="flex flex-col gap-4">
 
       <button
-        onClick={() => navigate('/pp/invoice')}
+        onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
         className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-        <ArrowLeft size={16} /> Kembali ke Invoice
+        <ArrowLeft size={16} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
       </button>
 
       <div className="flex items-start justify-between">
