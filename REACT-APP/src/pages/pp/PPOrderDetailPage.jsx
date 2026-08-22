@@ -1245,9 +1245,14 @@ export default function PPOrderDetailPage() {
                 invoicePP.statusInvoice === 'Terkirim' ? 'bg-blue-100 text-blue-700'  :
                 'bg-gray-100 text-gray-600'
               }`}>{invoicePP.statusInvoice}</span>
+              <button
+                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`)}
+                className="ml-auto flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
+                <Eye size={12} /> Buka Invoice
+              </button>
             </div>
             <div className="p-5">
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-3 gap-3">
                 {[
                   ['No. Invoice',   invoicePP.nomorInvoice],
                   ['Jatuh Tempo',   fmtDate(invoicePP.jatuhTempo)],
@@ -1259,11 +1264,6 @@ export default function PPOrderDetailPage() {
                   </div>
                 ))}
               </div>
-              <button
-                onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#1E1C43] text-white rounded-xl text-xs font-semibold hover:bg-[#2d2b5e] transition">
-                <Eye size={13} /> Buka Invoice
-              </button>
             </div>
           </div>
 
