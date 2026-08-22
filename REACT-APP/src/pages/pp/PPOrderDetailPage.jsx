@@ -993,37 +993,42 @@ export default function PPOrderDetailPage() {
                 </div>
               )}
 
-              {/* Compact paket strip — read-only display */}
-              {programTerkait ? (
-                <div className="bg-gray-50 rounded-xl p-4 mb-3">
-                  <div className="flex items-start justify-between gap-3 mb-2.5">
-                    <div className="min-w-0">
-                      <p className="text-[10px] text-gray-400 font-mono mb-0.5">{programTerkait.id}</p>
-                      <p className="text-sm font-bold text-[#1E1C43]">
-                        {programTerkait.namaLatihan}
-                        <span className="font-normal text-gray-500"> · {programTerkait.namaPaket}</span>
-                      </p>
+              {/* Compact paket strip — live-previews the combobox selection in edit mode */}
+              {(() => {
+                const stripProg = editingSection === 'infoDeal'
+                  ? (dummyPPPrograms.find(p => p.id === infoDraft.programId) || programTerkait)
+                  : programTerkait
+                return stripProg ? (
+                  <div className="bg-gray-50 rounded-xl p-4 mb-3">
+                    <div className="flex items-start justify-between gap-3 mb-2.5">
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-gray-400 font-mono mb-0.5">{stripProg.id}</p>
+                        <p className="text-sm font-bold text-[#1E1C43]">
+                          {stripProg.namaLatihan}
+                          <span className="font-normal text-gray-500"> · {stripProg.namaPaket}</span>
+                        </p>
+                      </div>
+                      <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(stripProg.hargaPaket)}</p>
                     </div>
-                    <p className="text-base font-bold text-[#1E1C43] shrink-0">{formatRpPP(programTerkait.hargaPaket)}</p>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 mb-2.5">
-                    {[programTerkait.sesi + ' sesi', programTerkait.pertemuan, programTerkait.masaBerlaku].map(v => (
-                      <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
-                      {programTerkait.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                    <div className="flex flex-wrap gap-1.5 mb-2.5">
+                      {[stripProg.sesi + ' sesi', stripProg.pertemuan, stripProg.masaBerlaku].map(v => (
+                        <span key={v} className="text-xs bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-full">{v}</span>
+                      ))}
                     </div>
-                    <p className="text-xs text-gray-600 flex-1">{programTerkait.pic}</p>
-                    <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(programTerkait.biayaPerSesi)}/sesi</p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-[#1E1C43] text-white text-[10px] font-semibold flex items-center justify-center shrink-0">
+                        {stripProg.pic.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()}
+                      </div>
+                      <p className="text-xs text-gray-600 flex-1">{stripProg.pic}</p>
+                      <p className="text-xs text-[#E05945] font-medium shrink-0">{formatRpPP(stripProg.biayaPerSesi)}/sesi</p>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="bg-gray-50 rounded-xl p-4 mb-3 text-center text-xs text-gray-400 italic">
-                  Data program tidak ditemukan
-                </div>
-              )}
+                ) : (
+                  <div className="bg-gray-50 rounded-xl p-4 mb-3 text-center text-xs text-gray-400 italic">
+                    Data program tidak ditemukan
+                  </div>
+                )
+              })()}
 
               {/* Biaya tambahan — view-only */}
               {rincianDraft.slice(1).length > 0 && (
@@ -1143,7 +1148,7 @@ export default function PPOrderDetailPage() {
                   rows={3} placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
                   className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
               ) : (
-                <p className="text-sm font-semibold text-gray-800">{order.catatanOrder || '—'}</p>
+                <p className="text-sm font-semibold text-gray-800">{infoDeal.catatan || order.catatanOrder || '—'}</p>
               )}
             </div>
             </div>
