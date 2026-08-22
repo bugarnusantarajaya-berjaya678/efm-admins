@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Pencil, Trash2, Plus, Download } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 
 const validKodeDiskon = {
@@ -79,6 +80,7 @@ export default function PPInvoiceDetailPage() {
   const { state } = useLocation()
   const navigate  = useNavigate()
 
+  const { setCrumbs } = useBreadcrumb()
   const [invoice,         setInvoice]        = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
   const [editMode,        setEditMode]        = useState(false)
   const [editData,        setEditData]        = useState({ tanggalInvoice: '', jatuhTempo: '', catatan: '' })
@@ -89,6 +91,11 @@ export default function PPInvoiceDetailPage() {
   const [diskonError,     setDiskonError]     = useState(false)
   const [syaratList,      setSyaratList]      = useState(DEFAULT_SYARAT)
   const [modal,           setModal]           = useState(null)
+
+  useEffect(() => {
+    setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
+    return () => setCrumbs(null)
+  }, [invoice?.invNo, id])
 
   if (!invoice) {
     return (

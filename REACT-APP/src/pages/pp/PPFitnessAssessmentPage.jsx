@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2 } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -442,6 +443,7 @@ export default function PPFitnessAssessmentPage() {
   const location = useLocation()
   const isNew = id === 'new'
   const leadId = location.state?.leadId || null
+  const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
   const existing = !isNew ? (DUMMY_ASSESSMENTS[id] || null) : null
@@ -545,16 +547,13 @@ export default function PPFitnessAssessmentPage() {
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
 
+  useEffect(() => {
+    setCrumbs(['Private Program', 'Kesehatan', isNew ? 'Baru' : id])
+    return () => setCrumbs(null)
+  }, [isNew, id])
+
   return (
     <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
-        <button onClick={() => navigate('/pp/leads')} className="hover:text-[#1E1C43] transition">PP</button>
-        <span>/</span>
-        <button onClick={() => handleBack()} className="hover:text-[#1E1C43] transition">Kesehatan</button>
-        <span>/</span>
-        <span className="text-[#1E1C43] font-medium">{isNew ? 'Baru' : id}</span>
-      </div>
 
       {/* Header Card */}
       <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">

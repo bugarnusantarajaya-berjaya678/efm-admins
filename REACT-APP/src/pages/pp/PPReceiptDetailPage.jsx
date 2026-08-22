@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, MessageCircle, Download } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { RECEIPTS_INIT, formatRp, sesiCount } from '../../data/ppReceiptData'
 
 function QRPlaceholder({ label }) {
@@ -101,7 +102,13 @@ export default function PPReceiptDetailPage() {
   const { state } = useLocation()
   const navigate  = useNavigate()
 
+  const { setCrumbs } = useBreadcrumb()
   const [receipt, setReceipt] = useState(state?.receipt || RECEIPTS_INIT.find(r => r.rcpNo === id) || null)
+
+  useEffect(() => {
+    setCrumbs(['Private Program', 'Receipt', receipt ? '#' + receipt.rcpNo : id])
+    return () => setCrumbs(null)
+  }, [receipt?.rcpNo, id])
 
   if (!receipt) {
     return (

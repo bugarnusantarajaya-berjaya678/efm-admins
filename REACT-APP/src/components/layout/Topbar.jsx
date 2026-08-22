@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Bell, ChevronRight, User, Settings, LogOut } from 'lucide-react'
+import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ── Route breadcrumb labels ─────────────────────────────────────────────── */
 const routeLabels = {
@@ -57,7 +58,8 @@ const NOTIF_INIT = [
 export default function Topbar() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const crumbs = routeLabels[pathname] ?? ['Dashboard']
+  const { crumbs: contextCrumbs } = useBreadcrumb()
+  const crumbs = contextCrumbs ?? routeLabels[pathname] ?? ['Dashboard']
 
   const [notifOpen, setNotifOpen] = useState(false)
   const [userOpen,  setUserOpen]  = useState(false)
