@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
 
 const dummyPPLeads = [
   { id: "L-1001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
@@ -251,23 +251,33 @@ export default function PPOrderNewPage() {
   return (
     <div className="p-6 bg-[#F5F5F7] min-h-screen pb-24">
 
-      {/* Breadcrumb & Header */}
-      <div className="flex items-start justify-between mb-6">
-        <div>
-          <div className="flex items-center gap-2 text-xs text-gray-400 mb-2">
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition">Private Program</button>
-            <ChevronRight size={12} />
-            <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition">Orders</button>
-            <ChevronRight size={12} />
-            <span className="text-gray-600 font-medium">Order Baru</span>
+      {/* Breadcrumb */}
+      <div className="flex items-center gap-1.5 text-xs text-gray-400 mb-4">
+        <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Private Program</button>
+        <ChevronRight size={12} />
+        <button onClick={() => navigate('/pp/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+        <ChevronRight size={12} />
+        <span className="text-gray-600 font-medium">Order Baru</span>
+      </div>
+
+      {/* Header Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ClipboardList size={22} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Private Program</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Order Baru</h1>
+              <p className="text-xs text-gray-400 mt-1">Buat order Private Program baru</p>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E1C43]">Order Baru</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Buat order Private Program baru</p>
+          <button onClick={() => navigate('/pp/orders')}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+            <ArrowLeft size={12} /> Kembali
+          </button>
         </div>
-        <button onClick={() => navigate('/pp/orders')}
-          className="flex items-center gap-2 text-sm text-gray-600 border border-gray-200 rounded-xl px-4 py-2 hover:bg-gray-50 transition">
-          <ArrowLeft size={15} /> Kembali ke Orders
-        </button>
       </div>
 
       <div className="space-y-4">
