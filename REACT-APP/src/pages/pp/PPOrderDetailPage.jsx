@@ -483,13 +483,16 @@ export default function PPOrderDetailPage() {
   const [jadwalSesi, setJadwalSesi] = useState([
     { id:"JS-001", tanggal:"2026-10-27", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
     { id:"JS-002", tanggal:"2026-10-29", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
-    { id:"JS-003", tanggal:"2026-10-31", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Terjadwal" },
+    { id:"JS-003", tanggal:"2026-10-31", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
+    { id:"JS-004", tanggal:"2026-11-03", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
+    { id:"JS-005", tanggal:"2026-11-05", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Terjadwal" },
+    { id:"JS-006", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Terjadwal" },
   ])
   const [absensiSesi, setAbsensiSesi] = useState([
-    { id:"ABS-001", tanggal:"2026-10-27", jam:"07:03", foto:null, catatanKoreksi:"" },
-    { id:"ABS-002", tanggal:"2026-10-29", jam:"07:01", foto:null, catatanKoreksi:"" },
-    { id:"ABS-003", tanggal:"2026-10-31", jam:"06:58", foto:null, catatanKoreksi:"" },
-    { id:"ABS-004", tanggal:"2026-11-03", jam:"07:05", foto:null, catatanKoreksi:"" },
+    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-27", jam:"07:03", foto:null, catatanKoreksi:"" },
+    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-29", jam:"07:01", foto:null, catatanKoreksi:"" },
+    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-31", jam:"06:58", foto:null, catatanKoreksi:"" },
+    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", foto:null, catatanKoreksi:"" },
   ])
   const [catatanProgres, setCatatanProgres] = useState([
     { id:"CP-001", tanggal:"2026-10-29", catatan:"Klien menunjukkan peningkatan stamina. Push-up dari 8 rep ke 12 rep. Squat sudah lebih dalam.", pic:"Sarah Jenkins" },
@@ -509,6 +512,8 @@ export default function PPOrderDetailPage() {
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
   const [newJadwalSesi,         setNewJadwalSesi]         = useState({ tanggal:"", jam:"", lokasi:"", pic:"", status:"Terjadwal" })
   const [editingJadwalSesi,     setEditingJadwalSesi]     = useState(null)
+  const [honorariumStatus,      setHonorariumStatus]      = useState('belum_diajukan')
+  const [honorariumDiajukanTgl, setHonorariumDiajukanTgl] = useState(null)
 
   const [invoicePP, setInvoicePP] = useState({
     nomorInvoice: 'INV-PP-26-0013',
@@ -543,6 +548,32 @@ export default function PPOrderDetailPage() {
         </Link>
       </div>
     )
+  }
+
+  /* ── Operasional handlers ────────────────────────────────────────────────── */
+  function handleJadwalStatusChange(jadwalItem, newStatus) {
+    setJadwalSesi(prev => prev.map(j => j.id === jadwalItem.id ? { ...j, status: newStatus } : j))
+    if (newStatus === 'Selesai') {
+      const exists = absensiSesi.some(a => a.jadwalId === jadwalItem.id)
+      if (!exists) {
+        const newAbsId = 'ABS-' + String(absensiSesi.length + 1).padStart(3, '0')
+        setAbsensiSesi(prev => [...prev, {
+          id: newAbsId, jadwalId: jadwalItem.id,
+          tanggal: jadwalItem.tanggal, jam: jadwalItem.jam,
+          foto: null, catatanKoreksi: ''
+        }])
+        setLogTab3PP(prev => [...prev, {
+          id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+          kategori: 'absensi', nomorLaporan: newAbsId,
+          teks: `Sesi ${jadwalItem.id} selesai — absensi ${newAbsId} otomatis dibuat (${jadwalItem.jam})`
+        }])
+      }
+    }
+    setLogTab3PP(prev => [...prev, {
+      id: Date.now() + 1, waktu: new Date().toLocaleString('id-ID'),
+      kategori: 'jadwal', nomorLaporan: jadwalItem.id,
+      teks: `Status jadwal ${jadwalItem.id} diubah ke ${newStatus}`
+    }])
   }
 
   /* ── Computed values ─────────────────────────────────────────────────────── */
@@ -1314,67 +1345,36 @@ export default function PPOrderDetailPage() {
 
                 {adaAgreement ? (
                   <div className="p-5 space-y-4">
-                    {/* Info: online integration */}
-                    <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
-                      <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-                        <span className="text-[10px] font-bold text-blue-600">i</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-xs font-semibold text-blue-700">Agreement dibuat secara online via sistem EFM</p>
-                        <p className="text-xs text-blue-600 mt-0.5">Dokumen agreement terintegrasi dengan sistem absensi digital. Klien menandatangani secara digital melalui link yang dikirim via WhatsApp.</p>
-                      </div>
-                    </div>
-
-                    {/* Status */}
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider w-32 shrink-0">Status</span>
-                      {isEditing ? (
-                        <select
-                          value={doc.status}
-                          onChange={e => setAgreementDraft(p => ({ ...p, status: e.target.value }))}
-                          className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]"
-                        >
-                          {AGR_STATUS_OPTS.map(s => <option key={s}>{s}</option>)}
-                        </select>
-                      ) : (
-                        <Badge cls={AGR_STATUS_CLS[doc.status] ?? 'bg-gray-100 text-gray-500'}>{doc.status}</Badge>
-                      )}
-                    </div>
-
-                    {/* Tanggal TTD */}
-                    {(isEditing || doc.status === 'Sudah TTD') && (
-                      <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider w-32 shrink-0">Tanggal TTD</span>
-                        {isEditing && doc.status === 'Sudah TTD' ? (
-                          <input
-                            type="date"
-                            value={doc.tglTTD || ''}
-                            onChange={e => setAgreementDraft(p => ({ ...p, tglTTD: e.target.value }))}
-                            className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]"
-                          />
+                    {/* Status + Tanggal TTD grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Status</p>
+                        {isEditing ? (
+                          <select
+                            value={doc.status}
+                            onChange={e => setAgreementDraft(p => ({ ...p, status: e.target.value }))}
+                            className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] w-full"
+                          >
+                            {AGR_STATUS_OPTS.map(s => <option key={s}>{s}</option>)}
+                          </select>
                         ) : (
-                          <span className="text-sm text-gray-700">{doc.tglTTD ? fmtDate(doc.tglTTD) : '—'}</span>
+                          <Badge cls={AGR_STATUS_CLS[doc.status] ?? 'bg-gray-100 text-gray-500'}>{doc.status}</Badge>
                         )}
                       </div>
-                    )}
-
-                    {/* URL Google Docs */}
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider w-32 shrink-0">Google Docs</span>
-                      {isEditing ? (
-                        <input
-                          type="url"
-                          value={doc.gdocsUrl || ''}
-                          onChange={e => setAgreementDraft(p => ({ ...p, gdocsUrl: e.target.value }))}
-                          placeholder="https://docs.google.com/..."
-                          className="flex-1 h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]"
-                        />
-                      ) : doc.gdocsUrl ? (
-                        <a href={doc.gdocsUrl} target="_blank" rel="noreferrer" className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                          Buka Google Docs <ExternalLink size={11} />
-                        </a>
-                      ) : (
-                        <span className="text-xs text-gray-400">—</span>
+                      {(isEditing || doc.status === 'Sudah TTD') && (
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5">Tanggal TTD</p>
+                          {isEditing && doc.status === 'Sudah TTD' ? (
+                            <input
+                              type="date"
+                              value={doc.tglTTD || ''}
+                              onChange={e => setAgreementDraft(p => ({ ...p, tglTTD: e.target.value }))}
+                              className="h-8 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] w-full"
+                            />
+                          ) : (
+                            <span className="text-sm text-gray-700">{doc.tglTTD ? fmtDate(doc.tglTTD) : '—'}</span>
+                          )}
+                        </div>
                       )}
                     </div>
 
@@ -1458,6 +1458,10 @@ export default function PPOrderDetailPage() {
           {/* ── Section 1: Referensi Program ── */}
           {(() => {
             const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const totalSesiSelesai = absensiSesi.length
+            const sesiTersisa = prog ? Math.max(0, prog.totalSesi - totalSesiSelesai) : 0
+            const pctTerpakai = prog ? Math.min(100, Math.round((totalSesiSelesai / prog.totalSesi) * 100)) : 0
+            const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <div className="flex items-center justify-between mb-4">
@@ -1475,23 +1479,55 @@ export default function PPOrderDetailPage() {
                   </button>
                 </div>
                 {prog ? (
-                  <div className="grid grid-cols-2 gap-3">
-                    {[
-                      ['Nama Program',       prog.namaProgram],
-                      ['Nama Paket',         prog.namaPaket],
-                      ['Total Sesi',         prog.totalSesi + ' sesi'],
-                      ['Frekuensi',          prog.frekuensi],
-                      ['Masa Berlaku',       prog.masaBerlaku],
-                      ['PIC Pelatih',        prog.pic?.nama || '—'],
-                      ['Biaya / Sesi',       prog.pic?.rate || '—'],
-                      ['Harga Paket',        'Rp ' + (prog.hargaPaket || 0).toLocaleString('id-ID')],
-                    ].map(([label, val]) => (
-                      <div key={label} className="bg-gray-50 rounded-xl p-3">
-                        <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                        <p className="text-sm font-semibold text-gray-800">{val}</p>
+                  <>
+                    {/* Live usage stats */}
+                    <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
+                      <div className="grid grid-cols-3 gap-3 mb-3">
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-[#1E1C43]">{totalSesiSelesai}</p>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Sesi Selesai</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-[#E05945]">{sesiTersisa}</p>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Sesi Tersisa</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-2xl font-bold text-[#1E1C43]">{prog.totalSesi}</p>
+                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Total Paket</p>
+                        </div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex justify-between items-center mb-1.5">
+                        <span className="text-xs text-gray-500">Progres pemakaian</span>
+                        <span className="text-xs font-semibold text-gray-700">{pctTerpakai}%</span>
+                      </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all ${pctTerpakai >= 80 ? 'bg-[#E05945]' : 'bg-[#1E1C43]'}`}
+                          style={{ width: pctTerpakai + '%' }}
+                        />
+                      </div>
+                      {pctTerpakai >= 80 && (
+                        <p className="text-[10px] text-[#E05945] font-semibold mt-1.5">Paket hampir habis — pertimbangkan renewal</p>
+                      )}
+                    </div>
+
+                    {/* Info grid */}
+                    <div className="grid grid-cols-2 gap-3">
+                      {[
+                        ['Nama Program',   prog.namaProgram],
+                        ['Nama Paket',     prog.namaPaket],
+                        ['PIC Pelatih',    prog.pic?.nama || '—'],
+                        ['Spesialisasi',   prog.pic?.spesialisasi || '—'],
+                        ['Rate / Sesi',    'Rp ' + ratePerSesi.toLocaleString('id-ID')],
+                        ['Harga Paket',    'Rp ' + (prog.hargaPaket || 0).toLocaleString('id-ID')],
+                      ].map(([label, val]) => (
+                        <div key={label} className="bg-gray-50 rounded-xl p-3">
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                          <p className="text-sm font-semibold text-gray-800">{val}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 ) : (
                   <div className="text-center py-8 text-gray-400">
                     <ClipboardList size={28} className="mx-auto mb-2 opacity-40" />
@@ -1503,135 +1539,107 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 2: Jadwal Sesi ── */}
+          {/* ── Section 2+3 (merged): Jadwal & Absensi Sesi ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Jadwal Sesi</h3>
-              <span className="bg-[#1E1C43] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                {jadwalSesi.length}
-              </span>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Jadwal & Absensi Sesi</h3>
+              </div>
+              {/* Mini KPI chips */}
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  <CheckCircle size={11} /> {absensiSesi.length} Hadir
+                </span>
+                <span className="flex items-center gap-1 bg-yellow-50 text-yellow-700 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  {jadwalSesi.filter(j => j.status === 'Terjadwal').length} Terjadwal
+                </span>
+                <span className="flex items-center gap-1 bg-gray-100 text-gray-500 text-xs font-semibold px-2.5 py-1 rounded-full">
+                  {jadwalSesi.length} Total
+                </span>
+              </div>
             </div>
+
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[600px]">
+              <table className="w-full" style={{ minWidth: '860px' }}>
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
-                    {['No', 'Tanggal', 'Jam', 'Lokasi', 'PIC Pelatih', 'Status', 'Aksi'].map(h => (
+                    {['No', 'Tanggal', 'Jam', 'Lokasi', 'PIC Pelatih', 'Status', 'Absensi', 'Aksi'].map(h => (
                       <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {jadwalSesi.map((j, i) => (
-                    <tr key={j.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 text-xs text-gray-400">{i + 1}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{j.tanggal}</td>
-                      <td className="px-4 py-3 text-sm text-blue-600 font-mono">{j.jam}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600">{j.lokasi}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{j.pic}</td>
-                      <td className="px-4 py-3">
-                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                          j.status === 'Selesai'     ? 'bg-green-50 text-green-700' :
-                          j.status === 'Berlangsung' ? 'bg-blue-50 text-blue-700'  :
-                          j.status === 'Dibatalkan'  ? 'bg-red-50 text-red-600'    :
-                          'bg-yellow-50 text-yellow-700'
-                        }`}>{j.status}</span>
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => setEditingJadwalSesi({ ...j })}
-                          className="text-gray-400 hover:text-[#1E1C43] transition p-1"
-                        >
-                          <Edit2 size={14} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <button
-              onClick={() => setShowTambahJadwalSesi(true)}
-              className="mt-4 w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-sm text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2"
-            >
-              <Plus size={16} /> Tambah Jadwal Sesi
-            </button>
-          </div>
-
-          {/* ── Section 3: Absensi Sesi ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Absensi Sesi</h3>
-              <span className="bg-[#1E1C43] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                {absensiSesi.length}
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 mb-4 ml-3">Riwayat kehadiran berdasarkan scan barcode pelatih</p>
-
-            {/* Progress bar */}
-            {(() => {
-              const prog = dummyPPPrograms.find(p => p.id === order.programId)
-              const total = prog?.sesi || jadwalSesi.length || 12
-              const hadir = absensiSesi.length
-              const pct = Math.min(100, Math.round((hadir / total) * 100))
-              return (
-                <div className="mb-4 bg-gray-50 rounded-xl p-3">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-semibold text-gray-700">{hadir}/{total} sesi selesai</span>
-                    <span className="text-xs text-gray-400">{pct}%</span>
-                  </div>
-                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all ${pct >= 50 ? 'bg-green-500' : 'bg-orange-400'}`}
-                      style={{ width: pct + '%' }}
-                    />
-                  </div>
-                </div>
-              )
-            })()}
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[500px]">
-                <thead className="bg-gray-50 border-b border-gray-100">
-                  <tr>
-                    {['No', 'Tanggal', 'Jam', 'Foto Bukti', 'Aksi'].map(h => (
-                      <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {absensiSesi.map((a, i) => (
-                    <tr key={a.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
-                      <td className="px-4 py-3 text-xs text-gray-400 font-mono">{a.id}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{a.tanggal}</td>
-                      <td className="px-4 py-3 text-sm text-blue-600 font-mono">{a.jam}</td>
-                      <td className="px-4 py-3">
-                        {a.foto ? (
-                          <button className="text-xs text-blue-600 hover:underline flex items-center gap-1">
-                            <ImageIcon size={12} /> Lihat Foto
+                  {jadwalSesi.map((j, i) => {
+                    const abs = absensiSesi.find(a => a.jadwalId === j.id)
+                    return (
+                      <tr key={j.id} className="border-b border-gray-50 hover:bg-gray-50 transition">
+                        <td className="px-4 py-3 text-xs text-gray-400">{i + 1}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{j.tanggal}</td>
+                        <td className="px-4 py-3 text-sm text-blue-600 font-mono whitespace-nowrap">{j.jam}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{j.lokasi}</td>
+                        <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{j.pic}</td>
+                        <td className="px-4 py-3">
+                          <select
+                            value={j.status}
+                            onChange={e => handleJadwalStatusChange(j, e.target.value)}
+                            className={`text-xs font-medium px-2 py-1 rounded-full border-0 outline-none cursor-pointer ${
+                              j.status === 'Selesai'     ? 'bg-green-50 text-green-700' :
+                              j.status === 'Berlangsung' ? 'bg-blue-50 text-blue-700'  :
+                              j.status === 'Dibatalkan'  ? 'bg-red-50 text-red-600'    :
+                              'bg-yellow-50 text-yellow-700'
+                            }`}
+                          >
+                            {['Terjadwal', 'Berlangsung', 'Selesai', 'Dibatalkan'].map(s => (
+                              <option key={s} value={s}>{s}</option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-4 py-3">
+                          {abs ? (
+                            <div className="flex items-center gap-1.5">
+                              <CheckCircle size={13} className="text-green-600 shrink-0" />
+                              <span className="text-xs text-green-700 font-mono">{abs.jam}</span>
+                              {!abs.jadwalId && (
+                                <span className="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded font-medium">manual</span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-xs text-gray-300">—</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => setEditingAbsensi(
+                              abs
+                                ? { ...abs }
+                                : { id: null, jadwalId: j.id, tanggal: j.tanggal, jam: j.jam, foto: null, catatanKoreksi: '' }
+                            )}
+                            className="text-gray-400 hover:text-[#1E1C43] transition p-1 flex items-center gap-1 text-xs whitespace-nowrap"
+                          >
+                            <Edit2 size={12} /> {abs ? 'Edit' : 'Absensi'}
                           </button>
-                        ) : (
-                          <span className="text-xs text-gray-300">—</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <button
-                          onClick={() => setEditingAbsensi({ ...a })}
-                          className="text-gray-400 hover:text-[#1E1C43] transition p-1 flex items-center gap-1 text-xs"
-                        >
-                          <Edit2 size={12} /> Edit
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
-            <button
-              onClick={() => setShowTambahAbsensiManual(true)}
-              className="mt-4 w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-sm text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2"
-            >
-              <Plus size={16} /> Tambah Entry Absensi Manual
-            </button>
+
+            <div className="mt-4 flex gap-3">
+              <button
+                onClick={() => setShowTambahJadwalSesi(true)}
+                className="flex-1 border-2 border-dashed border-gray-200 rounded-xl py-3 text-sm text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2"
+              >
+                <Plus size={16} /> Tambah Jadwal Sesi
+              </button>
+              <button
+                onClick={() => setEditingAbsensi({ id: null, jadwalId: null, tanggal: new Date().toISOString().split('T')[0], jam: '', foto: null, catatanKoreksi: '' })}
+                className="flex-1 border-2 border-dashed border-gray-200 rounded-xl py-3 text-sm text-gray-400 hover:border-[#E05945] hover:text-[#E05945] transition flex items-center justify-center gap-2"
+              >
+                <Plus size={16} /> Entry Absensi Manual
+              </button>
+            </div>
           </div>
 
           {/* ── Section 4: Catatan Progres Klien ── */}
@@ -1814,7 +1822,20 @@ export default function PPOrderDetailPage() {
               </button>
               <button
                 onClick={() => {
-                  setAbsensiSesi(prev => prev.map(x => x.id === editingAbsensi.id ? { ...editingAbsensi } : x))
+                  if (!editingAbsensi.id) {
+                    const newAbsId = 'ABS-' + String(absensiSesi.length + 1).padStart(3, '0')
+                    setAbsensiSesi(prev => [...prev, { ...editingAbsensi, id: newAbsId }])
+                    if (editingAbsensi.jadwalId) {
+                      setJadwalSesi(prev => prev.map(j => j.id === editingAbsensi.jadwalId ? { ...j, status: 'Selesai' } : j))
+                    }
+                    setLogTab3PP(prev => [...prev, {
+                      id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                      kategori: 'absensi', nomorLaporan: newAbsId,
+                      teks: `Absensi ${newAbsId} ditambahkan manual: ${editingAbsensi.tanggal}`
+                    }])
+                  } else {
+                    setAbsensiSesi(prev => prev.map(x => x.id === editingAbsensi.id ? { ...editingAbsensi } : x))
+                  }
                   setEditingAbsensi(null)
                 }}
                 className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition"
