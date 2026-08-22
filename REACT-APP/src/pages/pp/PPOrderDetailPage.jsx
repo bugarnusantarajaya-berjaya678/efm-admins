@@ -707,14 +707,6 @@ export default function PPOrderDetailPage() {
     return "bg-gray-100 text-gray-600"
   }
 
-  const [logTab3, setLogTab3] = useState([
-    { id: 1, waktu: "2025-02-08 14:30", kategori: "insiden",   nomorLaporan: "INS-001", teks: "Insiden INS-001 dilaporkan: Kerusakan Treadmill unit 3" },
-    { id: 2, waktu: "2025-02-08 16:00", kategori: "insiden",   nomorLaporan: "INS-001", teks: "Insiden INS-001 di-resolve oleh Rudi Hartono" },
-    { id: 3, waktu: "2025-02-05 11:00", kategori: "kunjungan", nomorLaporan: "LK-001",  teks: "Laporan kunjungan LK-001 dibuat oleh Rudi Hartono — Kondisi: Baik" },
-    { id: 4, waktu: "2025-02-03 06:45", kategori: "jadwal",    nomorLaporan: null,      teks: "Sesi Yoga Pagi JDW-001 selesai dilaksanakan" },
-    { id: 5, waktu: "2025-01-20 09:00", kategori: "tim",       nomorLaporan: null,      teks: "Rudi Hartono ditambahkan sebagai Head Trainer" },
-    { id: 6, waktu: "2025-01-20 09:05", kategori: "tim",       nomorLaporan: null,      teks: "PT. Gym Equipment Indonesia ditambahkan sebagai Vendor" },
-  ])
 
   /* ── Render ──────────────────────────────────────────────────────────────── */
 
