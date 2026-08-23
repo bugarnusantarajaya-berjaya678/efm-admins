@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { PP_ASSESSMENTS } from '../../data/ppAssessmentsData'
+import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -102,142 +102,6 @@ const ENDURANCE_ITEMS = [
   { key: 'proneDSLR', label: 'Prone Double Straight Leg Raise', unit: 'detik' },
   { key: 'backUp', label: 'Back Up', unit: 'kali' },
 ]
-
-// ─── Dummy data moved to src/data/ppAssessmentsData.js ───────────────────────
-// PP_ASSESSMENTS is imported at the top of this file.
-
-const _REMOVE_ME = {
-  'SCR-26-0001': {
-    noIdProgram: 'PP-26-0013',
-    cabangWilayah: 'Jakarta Selatan',
-    namaFC: 'Sarah Jenkins',
-    namaPelatih: 'Ahmad Pratama',
-    namaKlien: 'James Wilson',
-    usia: '32',
-    jenisKelamin: 'Laki-laki',
-    tipeBadan: 'Ektomorf',
-    detailGoals: 'Penurunan berat badan, target -10kg dalam 3 bulan',
-    programLatihan: '12 Sesi - Pro (Fatloss)',
-    tanggalPreTest: '2026-10-15',
-    tanggalPostTest: '',
-    toggles: { bodyMeasurement: true, healthScreening: true, fitnessTest: true },
-    statusAssessment: 'Pre-Test Selesai',
-    tanita: {
-      tinggiBadan_awal: '170', tinggiBadan_awalKet: '',
-      totalBodyWeight_awal: '78', totalBodyWeight_awalKet: '',
-      totalBodyFat_awal: '24.5', totalBodyFat_awalKet: '',
-      water_awal: '53', water_awalKet: '',
-      muscleMas_awal: '56', muscleMas_awalKet: '',
-      physiqueRating_awal: '4', physiqueRating_awalKet: '',
-      basalMetabolicRate_awal: '1820', basalMetabolicRate_awalKet: '',
-      metabolicAge_awal: '35', metabolicAge_awalKet: '',
-      boneMass_awal: '3.2', boneMass_awalKet: '',
-      visceralFat_awal: '9', visceralFat_awalKet: '',
-      bodyMassIndex_awal: '27.0', bodyMassIndex_awalKet: '',
-    },
-    girths: {
-      waist_awal: '88', waist_awalKet: '',
-      hips_awal: '102', hips_awalKet: '',
-      dada_awal: '98', dada_awalKet: '',
-    },
-    parq: {
-      masalahJantung_awalYa: false, masalahJantung_awalTidak: true, masalahJantung_awalKet: '',
-      sakitLutut_awalYa: true, sakitLutut_awalTidak: false, sakitLutut_awalKet: 'Pernah cedera lutut kiri 2022',
-      tekananDarahTinggi_awalYa: false, tekananDarahTinggi_awalTidak: true, tekananDarahTinggi_awalKet: '',
-    },
-    alignment: {},
-    vitalSigns: {
-      pulseRate_awal: '72', pulseRate_awalKet: '',
-      bodyTemperature_awal: '36.5', bodyTemperature_awalKet: '',
-      respirationRate_awal: '16', respirationRate_awalKet: '',
-      bloodPressure_awal: '120/80', bloodPressure_awalKet: '',
-    },
-    fms: {
-      overheadSquat_awal: '2', overheadSquat_awalKet: '',
-      inLineLunge_awal: '2', inLineLunge_awalKet: '',
-      toeTouch_awal: '1', toeTouch_awalKet: 'Fleksibilitas hamstring kurang',
-    },
-    cardio: {},
-    strength: {},
-    endurance: {},
-    tanita_catatan_awal: 'Data TANITA diambil sebelum sesi pertama. Klien dalam kondisi perut kosong.',
-    tanita_catatan_akhir: '',
-    girths_catatan_awal: 'Pengukuran dilakukan pagi hari sebelum makan.',
-    girths_catatan_akhir: '',
-    parq_catatan_awal: 'Lutut kiri pernah cedera 2022, saat ini tidak ada masalah aktif.',
-    parq_catatan_akhir: '',
-    align_catatan_awal: '',
-    align_catatan_akhir: '',
-    vital_catatan_awal: 'Pengukuran dalam kondisi istirahat.',
-    vital_catatan_akhir: '',
-    fms_catatan_awal: 'Perlu fokus mobilitas hip dan ankle.',
-    fms_catatan_akhir: '',
-    cardio_catatan_awal: '',
-    cardio_catatan_akhir: '',
-    strength_catatan_awal: '',
-    strength_catatan_akhir: '',
-    endurance_catatan_awal: '',
-    endurance_catatan_akhir: '',
-  },
-  'SCR-26-0002': {
-    noIdProgram: 'PP-26-0021',
-    cabangWilayah: 'Jakarta Pusat',
-    namaFC: 'Dian Kartika',
-    namaPelatih: 'Rizky Firmansyah',
-    namaKlien: 'Sari Dewi Lestari',
-    usia: '28',
-    jenisKelamin: 'Perempuan',
-    tipeBadan: 'Mesomorf',
-    detailGoals: 'Pembentukan otot dan peningkatan kebugaran umum',
-    programLatihan: '8 Sesi - Basic (Muscle Toning)',
-    tanggalPreTest: '2026-11-02',
-    tanggalPostTest: '',
-    toggles: { bodyMeasurement: true, healthScreening: true, fitnessTest: false },
-    statusAssessment: 'Pre-Test Selesai',
-    tanita: {
-      tinggiBadan_awal: '162', tinggiBadan_awalKet: '',
-      totalBodyWeight_awal: '55', totalBodyWeight_awalKet: '',
-      totalBodyFat_awal: '22.1', totalBodyFat_awalKet: '',
-      water_awal: '58', water_awalKet: '',
-      muscleMas_awal: '40', muscleMas_awalKet: '',
-      bodyMassIndex_awal: '20.9', bodyMassIndex_awalKet: '',
-    },
-    girths: {
-      waist_awal: '72', waist_awalKet: '',
-      hips_awal: '90', hips_awalKet: '',
-    },
-    parq: {
-      masalahJantung_awalYa: false, masalahJantung_awalTidak: true, masalahJantung_awalKet: '',
-    },
-    alignment: {},
-    vitalSigns: {
-      pulseRate_awal: '68', pulseRate_awalKet: '',
-      bloodPressure_awal: '110/70', bloodPressure_awalKet: '',
-    },
-    fms: {},
-    cardio: {},
-    strength: {},
-    endurance: {},
-    tanita_catatan_awal: '',
-    tanita_catatan_akhir: '',
-    girths_catatan_awal: '',
-    girths_catatan_akhir: '',
-    parq_catatan_awal: '',
-    parq_catatan_akhir: '',
-    align_catatan_awal: '',
-    align_catatan_akhir: '',
-    vital_catatan_awal: '',
-    vital_catatan_akhir: '',
-    fms_catatan_awal: '',
-    fms_catatan_akhir: '',
-    cardio_catatan_awal: '',
-    cardio_catatan_akhir: '',
-    strength_catatan_awal: '',
-    strength_catatan_akhir: '',
-    endurance_catatan_awal: '',
-    endurance_catatan_akhir: '',
-  },
-}
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
@@ -450,6 +314,17 @@ function CatatanPair({ labelAwal, labelAkhir, awal, akhir, onChangeAwal, onChang
   )
 }
 
+// Copies _akhir fields from a section data object into corresponding _awal fields
+function adoptAkhirAsAwal(sectionData) {
+  const result = {}
+  for (const [key, value] of Object.entries(sectionData || {})) {
+    if (key.includes('_akhir')) {
+      result[key.replace('_akhir', '_awal')] = value
+    }
+  }
+  return result
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function PPFitnessAssessmentPage() {
@@ -462,10 +337,30 @@ export default function PPFitnessAssessmentPage() {
   const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
-  const existing = !isNew ? (PP_ASSESSMENTS[id] || null) : null
+  const _allAssessments = getAllAssessments()
+  const existing = !isNew ? (_allAssessments[id] || null) : null
+
+  // prevSource: the previous completed assessment whose _akhir values are adopted as _awal for this one.
+  // For existing renewals: stored via prevAssessmentId
+  // For NEW assessments navigated from an order whose lead has a completed assessment: look it up by leadId
+  const prevSource = (() => {
+    if (!isNew && existing?.prevAssessmentId) {
+      const src = _allAssessments[existing.prevAssessmentId]
+      return src ? { id: existing.prevAssessmentId, ...src } : null
+    }
+    if (isNew && leadId) {
+      const entries = Object.entries(_allAssessments)
+        .filter(([, a]) => a.leadId === leadId && a.statusAssessment === 'Post-Test Selesai')
+      if (!entries.length) return null
+      entries.sort((a, b) => (b[1].tanggalPostTest || '').localeCompare(a[1].tanggalPostTest || ''))
+      const [key, data] = entries[0]
+      return { id: key, ...data }
+    }
+    return null
+  })()
 
   // Personal Detail
-  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || prefill.orderId || '')
+  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || fromOrderId || prefill.orderId || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
@@ -483,18 +378,26 @@ export default function PPFitnessAssessmentPage() {
     existing?.toggles || { bodyMeasurement: true, healthScreening: true, fitnessTest: false }
   )
 
+  // For new renewal assessments, adopt _akhir from prevSource as _awal baseline
+  const adoptedTanita = isNew && prevSource ? adoptAkhirAsAwal(prevSource.tanita) : {}
+  const adoptedGirths = isNew && prevSource ? adoptAkhirAsAwal(prevSource.girths) : {}
+  const adoptedParq = isNew && prevSource ? adoptAkhirAsAwal(prevSource.parq) : {}
+  const adoptedAlignment = isNew && prevSource ? adoptAkhirAsAwal(prevSource.alignment) : {}
+  const adoptedVitalSigns = isNew && prevSource ? adoptAkhirAsAwal(prevSource.vitalSigns) : {}
+  const adoptedFms = isNew && prevSource ? adoptAkhirAsAwal(prevSource.fms) : {}
+
   // Body Measurement state
-  const [tanita, setTanita] = useState(existing?.tanita || {})
-  const [girths, setGirths] = useState(existing?.girths || {})
+  const [tanita, setTanita] = useState(existing?.tanita || adoptedTanita)
+  const [girths, setGirths] = useState(existing?.girths || adoptedGirths)
   const [tanitaCatatanAwal, setTanitaCatatanAwal] = useState(existing?.tanita_catatan_awal || '')
   const [tanitaCatatanAkhir, setTanitaCatatanAkhir] = useState(existing?.tanita_catatan_akhir || '')
   const [girthsCatatanAwal, setGirthsCatatanAwal] = useState(existing?.girths_catatan_awal || '')
   const [girthsCatatanAkhir, setGirthsCatatanAkhir] = useState(existing?.girths_catatan_akhir || '')
 
   // Health Screening state
-  const [parq, setParq] = useState(existing?.parq || {})
-  const [alignment, setAlignment] = useState(existing?.alignment || {})
-  const [vitalSigns, setVitalSigns] = useState(existing?.vitalSigns || {})
+  const [parq, setParq] = useState(existing?.parq || adoptedParq)
+  const [alignment, setAlignment] = useState(existing?.alignment || adoptedAlignment)
+  const [vitalSigns, setVitalSigns] = useState(existing?.vitalSigns || adoptedVitalSigns)
   const [parqCatatanAwal, setParqCatatanAwal] = useState(existing?.parq_catatan_awal || '')
   const [parqCatatanAkhir, setParqCatatanAkhir] = useState(existing?.parq_catatan_akhir || '')
   const [alignCatatanAwal, setAlignCatatanAwal] = useState(existing?.align_catatan_awal || '')
@@ -503,7 +406,7 @@ export default function PPFitnessAssessmentPage() {
   const [vitalCatatanAkhir, setVitalCatatanAkhir] = useState(existing?.vital_catatan_akhir || '')
 
   // Fitness Test state
-  const [fms, setFms] = useState(existing?.fms || {})
+  const [fms, setFms] = useState(existing?.fms || adoptedFms)
   const [cardio, setCardio] = useState(existing?.cardio || {})
   const [strength, setStrength] = useState(existing?.strength || {})
   const [endurance, setEndurance] = useState(existing?.endurance || {})
@@ -527,7 +430,7 @@ export default function PPFitnessAssessmentPage() {
 
   const statusColors = {
     'Pre-Test Selesai': 'bg-blue-50 text-blue-700 border-blue-200',
-    'Selesai': 'bg-green-50 text-green-700 border-green-200',
+    'Post-Test Selesai': 'bg-green-50 text-green-700 border-green-200',
     'Draft': 'bg-yellow-50 text-yellow-700 border-yellow-200',
   }
   const statusLabel = existing?.statusAssessment || 'Draft'
@@ -543,32 +446,50 @@ export default function PPFitnessAssessmentPage() {
   }
 
   const handleSave = () => {
-    if (isNew) {
-      const newScrId = `SCR-26-${String(Math.floor(Math.random() * 9000) + 1000)}`
-      const tanggalLabel = tanggalPreTest
-        ? new Date(tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-        : new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-      const targetPath = leadId ? `/pp/leads/${leadId}` : '/pp/screening'
-      navigate(targetPath, leadId ? {
-        state: {
-          newScreening: {
-            id: newScrId,
-            tanggal: tanggalLabel,
-            namaKlien,
-            statusScreening: 'Draft',
-            picScreening: namaFC || '',
-          },
-          defaultTab: 'kesehatan',
-        },
-      } : undefined)
-      return
+    const newStatus = tanggalPostTest
+      ? 'Post-Test Selesai'
+      : tanggalPreTest
+      ? 'Pre-Test Selesai'
+      : 'Draft'
+
+    const payload = {
+      leadId: leadId || existing?.leadId || null,
+      orderId: noIdProgram || fromOrderId || existing?.orderId || null,
+      prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
+      noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien, usia, jenisKelamin, tipeBadan,
+      detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
+      statusAssessment: newStatus,
+      ringkasan: { kondisiFisik, riwayatCedera, obatanRutin, catatanScreening },
+      tanita, tanita_catatan_awal: tanitaCatatanAwal, tanita_catatan_akhir: tanitaCatatanAkhir,
+      girths, girths_catatan_awal: girthsCatatanAwal, girths_catatan_akhir: girthsCatatanAkhir,
+      parq, parq_catatan_awal: parqCatatanAwal, parq_catatan_akhir: parqCatatanAkhir,
+      alignment, align_catatan_awal: alignCatatanAwal, align_catatan_akhir: alignCatatanAkhir,
+      vitalSigns, vital_catatan_awal: vitalCatatanAwal, vital_catatan_akhir: vitalCatatanAkhir,
+      fms, fms_catatan_awal: fmsCatatanAwal, fms_catatan_akhir: fmsCatatanAkhir,
+      cardio, cardio_catatan_awal: cardioCatatanAwal, cardio_catatan_akhir: cardioCatatanAkhir,
+      strength, strength_catatan_awal: strengthCatatanAwal, strength_catatan_akhir: strengthCatatanAkhir,
+      endurance, endurance_catatan_awal: enduranceCatatanAwal, endurance_catatan_akhir: enduranceCatatanAkhir,
     }
-    setSaved(true)
-    setIsEditing(false)
-    setTimeout(() => setSaved(false), 2000)
+
+    if (isNew) {
+      const newId = getNextAssessmentId()
+      addAssessment(newId, payload)
+      if (fromOrderId) {
+        navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
+      } else if (leadId) {
+        navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
+      } else {
+        navigate('/pp/screening')
+      }
+    } else {
+      updateAssessment(id, payload)
+      setSaved(true)
+      setIsEditing(false)
+      setTimeout(() => setSaved(false), 2000)
+    }
   }
 
-  const isRenewal = !isNew && !!existing?.prevAssessmentId
+  const isRenewal = !!prevSource
 
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
@@ -637,24 +558,23 @@ export default function PPFitnessAssessmentPage() {
         </div>
       </div>
 
-      {/* Renewal Banner — shown when pre-test was auto-adopted from a previous order's post-test */}
-      {!isNew && existing?.prevAssessmentId && (() => {
-        const src = PP_ASSESSMENTS[existing.prevAssessmentId]
-        return (
-          <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
-            <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
-            <div>
-              <p className="text-sm font-semibold text-purple-800">Renewal — Data Pre-Test Diadopsi Otomatis</p>
-              <p className="text-xs text-purple-600 mt-0.5">
-                Semua nilai <span className="font-semibold">Tes Awal</span> di bawah diadopsi dari Post-Test assessment{' '}
-                <span className="font-semibold">#{existing.prevAssessmentId}</span>
-                {src ? ` · ${src.namaKlien} · Order #${src.orderId}` : ''}.
-                {' '}Nilai ini menjadi baseline awal untuk program baru ini.
-              </p>
-            </div>
+      {/* Renewal Banner */}
+      {prevSource && (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
+          <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
+          <div>
+            <p className="text-sm font-semibold text-purple-800">
+              Renewal dari #{prevSource.id}
+            </p>
+            <p className="text-xs text-purple-600 mt-0.5">
+              {isNew
+                ? <>Semua nilai <span className="font-semibold">Tes Awal</span> diadopsi otomatis dari Post-Test assessment <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien} · Order #{prevSource.orderId}. Nilai ini menjadi baseline awal untuk program baru ini.</>
+                : <>Assessment ini merupakan renewal dari <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien} · Order #{prevSource.orderId}.</>
+              }
+            </p>
           </div>
-        )
-      })()}
+        </div>
+      )}
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
@@ -764,10 +684,12 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Tanggal Pre-Test</label>
             <input type="date" className={inputCls} value={tanggalPreTest} onChange={e => setTanggalPreTest(e.target.value)} />
           </div>
-          <div>
-            <label className={labelCls}>Tanggal Post-Test</label>
-            <input type="date" className={inputCls} value={tanggalPostTest} onChange={e => setTanggalPostTest(e.target.value)} />
-          </div>
+          {!isNew && (
+            <div>
+              <label className={labelCls}>Tanggal Post-Test</label>
+              <input type="date" className={inputCls} value={tanggalPostTest} onChange={e => setTanggalPostTest(e.target.value)} />
+            </div>
+          )}
         </div>
       </div>
 
@@ -778,9 +700,8 @@ export default function PPFitnessAssessmentPage() {
         </h2>
 
         {/* Progress Order Sebelumnya — hanya untuk renewal */}
-        {isRenewal && (() => {
-          const src = PP_ASSESSMENTS[existing.prevAssessmentId]
-          if (!src) return null
+        {isRenewal && prevSource && (() => {
+          const src = prevSource
           const t = src.tanita || {}
           const g = src.girths || {}
           const metrics = [
@@ -796,7 +717,7 @@ export default function PPFitnessAssessmentPage() {
               <div className="flex items-center gap-2 mb-3">
                 <p className="text-sm font-semibold text-purple-700">Progress Order Sebelumnya</p>
                 <span className="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-600 rounded-full">
-                  #{existing.prevAssessmentId} · {src.noIdProgram}
+                  #{prevSource.id} · {src.noIdProgram}
                 </span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
