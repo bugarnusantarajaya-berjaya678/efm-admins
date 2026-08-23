@@ -132,17 +132,6 @@ const SCREENING_SUMMARY = [
   { id: 'SCR-26-0004', tanggal: '6 Okt 2026',  namaKlien: 'Budi & Rina Santoso',   statusScreening: 'Draft',   orderId: null,          picScreening: 'Sarah Jenkins' },
 ]
 
-/* ── Catatan progres pelatih (read-only, dari backend pelatih) ── */
-const PROGRES_PELATIH_DUMMY = {
-  'LP-0001': [
-    { tanggal: '20 Agu 2026', pelatih: 'Dimas Raharjo', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
-    { tanggal: '5 Agu 2026',  pelatih: 'Dimas Raharjo', catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
-    { tanggal: '25 Jul 2026', pelatih: 'Dimas Raharjo', catatan: 'Sesi perdana berjalan lancar. Klien antusias dan kooperatif. Program fatloss 3 hari/minggu dirancang sesuai kondisi awal.' },
-  ],
-  'LP-0006': [
-    { tanggal: '18 Agu 2026', pelatih: 'Marcus Chen', catatan: 'Klien progres baik untuk program starter. Kebugaran umum meningkat signifikan — tes VO2 informal membaik dibanding sesi pertama.' },
-  ],
-}
 
 /* ── Riwayat order per lead ── */
 const RIWAYAT_ORDERS_DUMMY = {
@@ -798,94 +787,6 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
-            {/* ── Section 2: Catatan Progres Pelatih ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <div>
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Pelatih</h3>
-                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Data dari laporan pelatih — read only</p>
-                </div>
-              </div>
-              <div className="p-5">
-                {(PROGRES_PELATIH_DUMMY[id] || []).length === 0 ? (
-                  <p className="text-sm text-gray-400 italic">Belum ada catatan progres dari pelatih.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {(PROGRES_PELATIH_DUMMY[id] || []).map((item, i) => (
-                      <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-xs font-semibold text-[#1E1C43]">{item.pelatih}</span>
-                          <span className="text-[10px] text-gray-400">{item.tanggal}</span>
-                        </div>
-                        <p className="text-sm text-gray-700 leading-relaxed">{item.catatan}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* ── Section 3: Riwayat Fitness Assessment ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
-                <button
-                  onClick={() => navigate('/pp/screening/new', { state: { namaKlien: lead.nama, picEfm: lead.picEfm, leadId: lead.id, orderId: lead.orderId || '' } })}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                  <Plus size={13} /> Buat Fitness Assessment
-                </button>
-              </div>
-
-              <div className="p-5">
-                {screenings.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center py-8 gap-2">
-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                      <ClipboardList size={18} className="text-gray-400" />
-                    </div>
-                    <p className="text-sm text-gray-500 font-medium">Belum ada fitness assessment</p>
-                    <p className="text-xs text-gray-400 text-center">Assessment lengkap dilakukan oleh FC pada sesi pertama setelah pembayaran</p>
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="mb-3 p-3 bg-blue-50 rounded-lg border border-blue-100">
-                      <p className="text-xs text-blue-700 font-medium">
-                        {screenings.length} fitness assessment ditemukan untuk klien ini.
-                      </p>
-                    </div>
-                    {screenings.map(scr => (
-                      <button
-                        key={scr.id}
-                        onClick={() => navigate('/pp/screening/' + scr.id, { state: { leadId: lead.id } })}
-                        className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-lg bg-gray-100 flex items-center justify-center group-hover:bg-[#1E1C43]/10 transition-colors">
-                            <ClipboardList size={16} className="text-gray-500" />
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-[#1E1C43]">{scr.id}</p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-xs text-gray-500">{scr.tanggal}</span>
-                              <span className="text-gray-300">·</span>
-                              <span className="text-xs text-gray-500">{scr.picScreening}</span>
-                              {scr.orderId && (
-                                <>
-                                  <span className="text-gray-300">·</span>
-                                  <span className="text-xs text-gray-500">Order #{scr.orderId}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <ScrBadge status={scr.statusScreening} />
-                          <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
 
           </div>
         )}
