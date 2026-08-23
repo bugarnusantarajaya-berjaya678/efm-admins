@@ -401,16 +401,6 @@ export default function PPOrderDetailPage() {
   ])
   const [iForm, setIForm] = useState({ tgl:'', jam:'', kategori:'Kerusakan Alat', lokasi:'', dilaporkan:'', statusAwal:'Baru', deskripsi:'', tindakan:'', foto:[] })
 
-  /* ── Tab 2: Log Aktivitas ────────────────────────────────────────────────── */
-  const LOG_DATA = [
-    { dot:'#10B981', teks:'Pembayaran PP-26-0013 dikonfirmasi Lunas — Okt 2026',              waktu:'24 Okt 2026 09:00' },
-    { dot:'#F97316', teks:'Invoice INV-PP-26-0013 dikirim ke James Wilson',                   waktu:'24 Okt 2026 08:00' },
-    { dot:'#10B981', teks:'Agreement ditandatangani klien James Wilson',                       waktu:'21 Okt 2026 14:00' },
-    { dot:'#3B82F6', teks:'Status Agreement diubah ke Sudah TTD',                             waktu:'21 Okt 2026 13:30' },
-    { dot:'#3B82F6', teks:'Quotation QUO/EFM/PP/2026/0013 disetujui',                         waktu:'20 Okt 2026 10:00' },
-    { dot:'#10B981', teks:'Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM',        waktu:'20 Okt 2026 07:30' },
-  ]
-
   /* ── Tab 3: Operasional Lapangan ─────────────────────────────────────────── */
   const dummyPICs = [
     { id: "PIC-001", nama: "Rudi Hartono",  spesialisasi: "Personal Trainer",     wa: "081234567891", status: "Aktif" },
@@ -488,9 +478,17 @@ export default function PPOrderDetailPage() {
     { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",          foto:false, catatanKoreksi:"" },
   ])
   const [logTab3PP, setLogTab3PP] = useState([
-    { id:1, waktu:"2026-10-31 07:00", kategori:"jadwal",  nomorLaporan:"JS-003",  teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
-    { id:2, waktu:"2026-10-29 07:01", kategori:"absensi", nomorLaporan:"ABS-002", teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
-    { id:3, waktu:"2026-10-27 07:03", kategori:"absensi", nomorLaporan:"ABS-001", teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
+    { id:1,  waktu:"2026-11-03 07:05", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
+    { id:2,  waktu:"2026-11-03 07:00", kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
+    { id:3,  waktu:"2026-10-31 07:00", kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
+    { id:4,  waktu:"2026-10-29 07:01", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
+    { id:5,  waktu:"2026-10-27 07:03", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
+    { id:6,  waktu:"2026-10-24 09:00", kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
+    { id:7,  waktu:"2026-10-24 08:00", kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
+    { id:8,  waktu:"2026-10-21 14:00", kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
+    { id:9,  waktu:"2026-10-21 13:30", kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
+    { id:10, waktu:"2026-10-20 10:00", kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
+    { id:11, waktu:"2026-10-20 07:30", kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
   ])
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
@@ -848,6 +846,7 @@ export default function PPOrderDetailPage() {
           { key: 'keuangan',    label: 'Kontrak & Keuangan',   locked: false },
           { key: 'agreement',   label: 'Agreement Klien',       locked: isNew },
           { key: 'operasional', label: 'Operasional Lapangan', locked: isNew },
+          { key: 'log',         label: 'Log & Histori',         locked: isNew },
         ].map(tab => (
           <button
             key={tab.key}
@@ -1516,7 +1515,12 @@ export default function PPOrderDetailPage() {
                     {previewTarget === 'signed' && agreementFlowStatus === 'pengajuan_masuk' && (
                       <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 flex gap-2">
                         <button
-                          onClick={() => { setAgreementFlowStatus('disetujui'); setShowAgreementPreview(false); setShowAgreementTolakForm(false) }}
+                          onClick={() => {
+                            setAgreementFlowStatus('disetujui')
+                            setShowAgreementPreview(false)
+                            setShowAgreementTolakForm(false)
+                            setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
+                          }}
                           className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
                         >
                           <CheckCircle size={13} /> Setujui Agreement
@@ -1697,7 +1701,11 @@ export default function PPOrderDetailPage() {
                       </div>
                       <div className="flex gap-2">
                         <button
-                          onClick={() => { setAgreementFlowStatus('disetujui'); setShowAgreementTolakForm(false) }}
+                          onClick={() => {
+                            setAgreementFlowStatus('disetujui')
+                            setShowAgreementTolakForm(false)
+                            setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
+                          }}
                           className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
                         >
                           <CheckCircle size={13} /> Setujui Agreement
@@ -1721,7 +1729,11 @@ export default function PPOrderDetailPage() {
                           />
                           <div className="flex gap-2">
                             <button
-                              onClick={() => { setAgreementFlowStatus('ditolak'); setShowAgreementTolakForm(false) }}
+                              onClick={() => {
+                                setAgreementFlowStatus('ditolak')
+                                setShowAgreementTolakForm(false)
+                                setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: `Agreement ditolak — ${agreementCatatanTolak || 'tanpa catatan'}` }])
+                              }}
                               className="flex-1 h-8 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
                             >
                               Konfirmasi Tolak
@@ -2199,61 +2211,66 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 4: Log Aktivitas ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <Activity size={15} className="text-[#1E1C43]" />
-                <h3 className="text-base font-bold text-[#1E1C43]">Log Aktivitas</h3>
-              </div>
-              <div className="flex gap-1">
-                {['semua', 'jadwal', 'absensi', 'honorarium', 'agreement'].map(k => (
-                  <button
-                    key={k}
-                    onClick={() => setLogFilter3PP(k)}
-                    className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
-                      logFilter3PP === k ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'
-                    }`}
-                  >
-                    {k.charAt(0).toUpperCase() + k.slice(1)}
-                  </button>
-                ))}
-              </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB 4 — Log & Histori
+      ══════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'log' && (
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Activity size={15} className="text-[#1E1C43]" />
+              <h3 className="text-base font-bold text-[#1E1C43]">Log & Histori</h3>
+              <span className="text-xs text-gray-400">({logTab3PP.length} aktivitas)</span>
             </div>
-            <div className="space-y-3 pl-4 relative">
-              {logTab3PP
-                .filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP)
-                .map((l, idx, arr) => (
-                <div key={l.id} className="relative mb-3 last:mb-0">
-                  <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#1E1C43]" />
-                  {idx < arr.length - 1 && (
-                    <div className="absolute -left-[13px] top-3 w-px bottom-[-12px] bg-gray-200" />
-                  )}
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <p className="text-[10px] text-gray-400">{l.waktu}</p>
-                    {l.nomorLaporan && (
-                      <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
-                        {l.nomorLaporan}
-                      </span>
-                    )}
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${
-                      l.kategori === 'absensi'    ? 'bg-blue-50 text-blue-600'     :
-                      l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
-                      l.kategori === 'catatan'    ? 'bg-purple-50 text-purple-600' :
-                      l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
-                      l.kategori === 'agreement'  ? 'bg-indigo-50 text-indigo-600' :
-                      'bg-gray-50 text-gray-500'
-                    }`}>{l.kategori}</span>
-                  </div>
-                  <p className="text-xs text-gray-700">{l.teks}</p>
-                </div>
+            <div className="flex flex-wrap gap-1">
+              {['semua', 'keuangan', 'agreement', 'jadwal', 'absensi', 'honorarium'].map(k => (
+                <button
+                  key={k}
+                  onClick={() => setLogFilter3PP(k)}
+                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                    logFilter3PP === k ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'
+                  }`}
+                >
+                  {k.charAt(0).toUpperCase() + k.slice(1)}
+                </button>
               ))}
-              {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length === 0 && (
-                <p className="text-xs text-gray-400 italic pl-1">Belum ada log untuk filter ini.</p>
-              )}
             </div>
           </div>
-
+          <div className="space-y-3 pl-4 relative">
+            {logTab3PP
+              .filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP)
+              .map((l, idx, arr) => (
+              <div key={l.id} className="relative mb-3 last:mb-0">
+                <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#1E1C43]" />
+                {idx < arr.length - 1 && (
+                  <div className="absolute -left-[13px] top-3 w-px bottom-[-12px] bg-gray-200" />
+                )}
+                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <p className="text-[10px] text-gray-400">{l.waktu}</p>
+                  {l.nomorLaporan && (
+                    <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
+                      {l.nomorLaporan}
+                    </span>
+                  )}
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                    l.kategori === 'absensi'    ? 'bg-blue-50 text-blue-600'     :
+                    l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
+                    l.kategori === 'keuangan'   ? 'bg-teal-50 text-teal-600'     :
+                    l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
+                    l.kategori === 'agreement'  ? 'bg-indigo-50 text-indigo-600' :
+                    'bg-gray-50 text-gray-500'
+                  }`}>{l.kategori}</span>
+                </div>
+                <p className="text-xs text-gray-700">{l.teks}</p>
+              </div>
+            ))}
+            {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length === 0 && (
+              <p className="text-xs text-gray-400 italic pl-1">Belum ada log untuk filter ini.</p>
+            )}
+          </div>
         </div>
       )}
 
@@ -2521,7 +2538,7 @@ export default function PPOrderDetailPage() {
                   setShowKonfirmasiPayModal(false)
                   setLogTab3PP(prev => [...prev, {
                     id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
-                    kategori: 'honorarium', nomorLaporan: invoicePP.nomorInvoice,
+                    kategori: 'keuangan', nomorLaporan: invoicePP.nomorInvoice,
                     teks: `Pembayaran klien ${invoicePP.nomorInvoice} dikonfirmasi Lunas — ${konfirmasiPayForm.metode} · ${fmtDate(konfirmasiPayForm.tglBayar)}`
                   }])
                 }}
