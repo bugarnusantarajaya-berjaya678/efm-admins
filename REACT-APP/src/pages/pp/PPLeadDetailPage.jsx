@@ -13,23 +13,25 @@ const TIPE_CLS = {
 }
 
 const STAGE_CLS = {
-  New:       'bg-gray-100 text-gray-600',
-  Approach:  'bg-blue-100 text-blue-600',
-  Screening: 'bg-purple-100 text-purple-600',
-  Invoicing: 'bg-yellow-100 text-yellow-700',
-  Closing:   'bg-orange-100 text-orange-600',
-  Convert:   'bg-green-100 text-green-700',
-  Lost:      'bg-red-100 text-red-600',
+  New:         'bg-gray-100 text-gray-600',
+  Approach:    'bg-blue-100 text-blue-600',
+  Screening:   'bg-purple-100 text-purple-600',
+  Invoicing:   'bg-yellow-100 text-yellow-700',
+  Closing:     'bg-orange-100 text-orange-600',
+  Convert:     'bg-green-100 text-green-700',
+  Lost:        'bg-red-100 text-red-600',
+  'Edit Data': 'bg-indigo-50 text-indigo-600',
 }
 
 const STAGE_BORDER = {
-  Convert:   'border-green-400',
-  Lost:      'border-red-400',
-  Closing:   'border-orange-400',
-  Invoicing: 'border-yellow-400',
-  Screening: 'border-purple-400',
-  Approach:  'border-blue-400',
-  New:       'border-gray-300',
+  Convert:     'border-green-400',
+  Lost:        'border-red-400',
+  Closing:     'border-orange-400',
+  Invoicing:   'border-yellow-400',
+  Screening:   'border-purple-400',
+  Approach:    'border-blue-400',
+  New:         'border-gray-300',
+  'Edit Data': 'border-indigo-300',
 }
 
 const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert', 'Lost']
@@ -306,7 +308,22 @@ export default function PPLeadDetailPage() {
     if (!editForm.nama || !editForm.tipe || !editForm.noHp) {
       alert('Nama, tipe, dan no HP wajib diisi.'); return
     }
-    setLead({ ...editForm })
+    const fieldLabels = {
+      nama: 'Nama Klien', noHp: 'No HP / WhatsApp', emailUmum: 'Email',
+      tipe: 'Tipe Klien', programDiminati: 'Program Diminati',
+      sumberLead: 'Sumber Lead', picEfm: 'PIC EFM',
+      tanggalFollowUp: 'Tanggal Follow Up', catatanAwal: 'Catatan Awal',
+    }
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    const newLogEntries = Object.entries(fieldLabels)
+      .filter(([key]) => (editForm[key] || '') !== (lead[key] || ''))
+      .map(([key, label]) => ({
+        status: 'Edit Data',
+        tanggal: today,
+        oleh: lead.picEfm || 'Admin EFM',
+        catatan: `${label} diubah menjadi "${editForm[key] || '—'}"`,
+      }))
+    setLead({ ...editForm, logAktivitas: [...(lead.logAktivitas || []), ...newLogEntries] })
     setIsEditMode(false); setEditForm({})
     showToast('✓ Data lead berhasil diperbarui')
   }
@@ -331,9 +348,8 @@ export default function PPLeadDetailPage() {
   }
 
   const TABS = [
-    { key: 'info',      label: 'Info Klien'  },
-    { key: 'pipeline',  label: 'Pipeline'    },
-    { key: 'kesehatan', label: 'Kesehatan'   },
+    { key: 'info',      label: 'Info Klien' },
+    { key: 'kesehatan', label: 'Kesehatan'  },
   ]
 
   return (
@@ -401,139 +417,12 @@ export default function PPLeadDetailPage() {
         </div>
 
         {/* ════════════════════════════════
-            TAB 1: INFO KLIEN
+            TAB 1: INFO KLIEN (+ Pipeline)
         ════════════════════════════════ */}
         {activeTab === 'info' && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
-              {!isEditMode ? (
-                <button onClick={handleStartEdit}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                  <Edit2 size={12} /> Edit
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <button onClick={handleSaveEdit}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                    <Save size={12} /> Simpan
-                  </button>
-                  <button onClick={handleCancelEdit}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                    <X size={12} /> Batal
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="p-5">
-              {!isEditMode ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <InfoField label="No HP / WhatsApp">
-                    <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
-                      className="text-[#1E1C43] hover:underline">
-                      {lead.noHp}
-                    </a>
-                  </InfoField>
-                  <InfoField label="Email">
-                    {lead.emailUmum
-                      ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
-                      : <span className="text-gray-400 italic">—</span>}
-                  </InfoField>
-                  <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
-                  <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
-                  <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
-                  <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
-                  <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
-                  <InfoField label="Follow Up Berikutnya">
-                    {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
-                  </InfoField>
-                  {lead.catatanAwal && (
-                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
-                      <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
-                    </div>
-                  )}
-                  {lead.catatan && (
-                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
-                      <p className="text-sm text-gray-700">{lead.catatan}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* Edit form */
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                      Nama Klien <span className="text-red-500">*</span>
-                    </label>
-                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
-                      <option>Personal</option><option>Group</option><option>Couple</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
-                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
-                    <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.sumberLead || ''} onChange={e => setEditForm(p => ({ ...p, sumberLead: e.target.value }))}>
-                      <option value="">Pilih Sumber...</option>
-                      {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
-                      <option value="">Pilih Program...</option>
-                      {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.picEfm || ''} onChange={e => setEditForm(p => ({ ...p, picEfm: e.target.value }))}>
-                      {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
-                    <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
-                    <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                      value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ════════════════════════════════
-            TAB 2: PIPELINE
-        ════════════════════════════════ */}
-        {activeTab === 'pipeline' && (
           <div className="space-y-4">
 
-            {/* Stepper card */}
+            {/* Status Pipeline */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 pt-5 pb-0 mb-5">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Status Pipeline</h3>
@@ -546,50 +435,171 @@ export default function PPLeadDetailPage() {
                 )}
               </div>
               <div className="px-5 pb-5">
-              <PipelineStepper currentStage={lead.statusPipeline} />
-
-              {/* Update stage form */}
-              <div className="border-t border-gray-100 pt-4">
-                {editingPipeline && (
-                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
-                        <select value={newStage} onChange={e => setNewStage(e.target.value)}
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                          {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                <PipelineStepper currentStage={lead.statusPipeline} />
+                <div className="border-t border-gray-100 pt-4">
+                  {editingPipeline && (
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                      <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
+                          <select value={newStage} onChange={e => setNewStage(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                            {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+                          <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                        </div>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
-                        <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                        <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
+                          placeholder="Catatan perubahan status..."
                           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
                       </div>
+                      <div className="flex gap-2">
+                        <button onClick={handleUpdatePipeline}
+                          className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
+                          ✓ Simpan Perubahan
+                        </button>
+                        <button onClick={() => setEditingPipeline(false)}
+                          className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                          Batal
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Info Klien */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
+                {!isEditMode ? (
+                  <button onClick={handleStartEdit}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Edit2 size={12} /> Edit
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={handleSaveEdit}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Save size={12} /> Simpan
+                    </button>
+                    <button onClick={handleCancelEdit}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <X size={12} /> Batal
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5">
+                {!isEditMode ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <InfoField label="No HP / WhatsApp">
+                      <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
+                        className="text-[#1E1C43] hover:underline">
+                        {lead.noHp}
+                      </a>
+                    </InfoField>
+                    <InfoField label="Email">
+                      {lead.emailUmum
+                        ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
+                        : <span className="text-gray-400 italic">—</span>}
+                    </InfoField>
+                    <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
+                    <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
+                    <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
+                    <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
+                    <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
+                    <InfoField label="Follow Up Berikutnya">
+                      {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
+                    </InfoField>
+                    {lead.catatanAwal && (
+                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
+                        <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
+                      </div>
+                    )}
+                    {lead.catatan && (
+                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
+                        <p className="text-sm text-gray-700">{lead.catatan}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Edit form */
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Nama Klien <span className="text-red-500">*</span>
+                      </label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
-                      <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
-                        placeholder="Catatan perubahan status..."
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
+                        <option>Personal</option><option>Group</option><option>Couple</option>
+                      </select>
                     </div>
-                    <div className="flex gap-2">
-                      <button onClick={handleUpdatePipeline}
-                        className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                        ✓ Simpan Perubahan
-                      </button>
-                      <button onClick={() => setEditingPipeline(false)}
-                        className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                        Batal
-                      </button>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                      <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.sumberLead || ''} onChange={e => setEditForm(p => ({ ...p, sumberLead: e.target.value }))}>
+                        <option value="">Pilih Sumber...</option>
+                        {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
+                        <option value="">Pilih Program...</option>
+                        {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.picEfm || ''} onChange={e => setEditForm(p => ({ ...p, picEfm: e.target.value }))}>
+                        {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
+                      <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
+                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
                     </div>
                   </div>
                 )}
               </div>
-              </div>
             </div>
 
-            {/* Log Aktivitas card */}
+            {/* Log Aktivitas */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Log Aktivitas</h3>
               {(lead.logAktivitas || []).length === 0 ? (
@@ -613,11 +623,12 @@ export default function PPLeadDetailPage() {
                 </div>
               )}
             </div>
+
           </div>
         )}
 
         {/* ════════════════════════════════
-            TAB 3: KESEHATAN
+            TAB 2: KESEHATAN
         ════════════════════════════════ */}
         {activeTab === 'kesehatan' && (
           <div className="space-y-4">
