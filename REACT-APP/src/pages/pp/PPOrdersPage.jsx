@@ -455,6 +455,12 @@ export default function PPOrdersPage() {
             <Receipt size={14} /> Cari Receipt
           </button>
           <button
+            onClick={() => navigate('/pp/documents')}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            <FileText size={14} /> Cari Agreement
+          </button>
+          <button
             onClick={() => navigate('/pp/orders/new')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
           >
