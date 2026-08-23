@@ -132,6 +132,37 @@ const SCREENING_SUMMARY = [
   { id: 'SCR-26-0004', tanggal: '6 Okt 2026',  namaKlien: 'Budi & Rina Santoso',   statusScreening: 'Draft',   orderId: null,          picScreening: 'Sarah Jenkins' },
 ]
 
+/* ── Catatan progres pelatih (read-only, dari backend pelatih) ── */
+const PROGRES_PELATIH_DUMMY = {
+  'LP-0001': [
+    { tanggal: '20 Agu 2026', pelatih: 'Dimas Raharjo', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
+    { tanggal: '5 Agu 2026',  pelatih: 'Dimas Raharjo', catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
+    { tanggal: '25 Jul 2026', pelatih: 'Dimas Raharjo', catatan: 'Sesi perdana berjalan lancar. Klien antusias dan kooperatif. Program fatloss 3 hari/minggu dirancang sesuai kondisi awal.' },
+  ],
+  'LP-0006': [
+    { tanggal: '18 Agu 2026', pelatih: 'Marcus Chen', catatan: 'Klien progres baik untuk program starter. Kebugaran umum meningkat signifikan — tes VO2 informal membaik dibanding sesi pertama.' },
+  ],
+}
+
+/* ── Riwayat order per lead ── */
+const RIWAYAT_ORDERS_DUMMY = {
+  'LP-0001': [
+    { orderId: 'PP-26-0013', status: 'Aktif', paket: '12 Sesi - Pro', tanggalMulai: '22 Okt 2026', nilaiKontrak: 14400000, sesiSelesai: 6, totalSesi: 12 },
+  ],
+  'LP-0006': [
+    { orderId: 'PP-26-0012', status: 'Selesai', paket: '4 Sesi - Starter', tanggalMulai: '20 Okt 2026', nilaiKontrak: 4800000, sesiSelesai: 4, totalSesi: 4 },
+  ],
+}
+
+/* ── Catatan internal admin/FC per lead ── */
+const CATATAN_FC_DUMMY = {
+  'LP-0001': [
+    { id: 'CFC-001', tanggal: '18 Agu 2026', oleh: 'Sarah Jenkins', orderId: 'PP-26-0013', catatan: 'Klien request ganti jadwal sesi ke-8 ke hari Rabu jam 10. Sudah dikonfirmasi dengan pelatih Dimas.' },
+    { id: 'CFC-002', tanggal: '5 Agu 2026',  oleh: 'Sarah Jenkins', orderId: 'PP-26-0013', catatan: 'Pembayaran sesi lanjutan sudah lunas. Klien menyampaikan puas dengan program sejauh ini.' },
+  ],
+  'LP-0006': [],
+}
+
 /* ═══════════════════════════════════════
    Helpers
 ═══════════════════════════════════════ */
@@ -273,6 +304,9 @@ export default function PPLeadDetailPage() {
   const [dokumenKesehatan, setDokumenKesehatan] = useState(
     id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
   )
+  const [catatanInternalFC, setCatatanInternalFC] = useState(CATATAN_FC_DUMMY[id] || [])
+  const [newCatatanFC, setNewCatatanFC]           = useState('')
+  const [newCatatanFCOrder, setNewCatatanFCOrder] = useState('')
 
   useEffect(() => {
     if (state?.newScreening) {
@@ -348,8 +382,9 @@ export default function PPLeadDetailPage() {
   }
 
   const TABS = [
-    { key: 'info',      label: 'Info Klien' },
-    { key: 'kesehatan', label: 'Kesehatan'  },
+    { key: 'info',      label: 'Info Klien'         },
+    { key: 'kesehatan', label: 'Progres & Kesehatan' },
+    { key: 'riwayat',   label: 'Riwayat'            },
   ]
 
   return (
@@ -763,7 +798,34 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
-            {/* ── Section 2: Riwayat Fitness Assessment ── */}
+            {/* ── Section 2: Catatan Progres Pelatih ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Pelatih</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Data dari laporan pelatih — read only</p>
+                </div>
+              </div>
+              <div className="p-5">
+                {(PROGRES_PELATIH_DUMMY[id] || []).length === 0 ? (
+                  <p className="text-sm text-gray-400 italic">Belum ada catatan progres dari pelatih.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {(PROGRES_PELATIH_DUMMY[id] || []).map((item, i) => (
+                      <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-semibold text-[#1E1C43]">{item.pelatih}</span>
+                          <span className="text-[10px] text-gray-400">{item.tanggal}</span>
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed">{item.catatan}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ── Section 3: Riwayat Fitness Assessment ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
@@ -819,6 +881,138 @@ export default function PPLeadDetailPage() {
                           <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
                         </div>
                       </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 3: RIWAYAT
+        ════════════════════════════════ */}
+        {activeTab === 'riwayat' && (
+          <div className="space-y-4">
+
+            {/* Riwayat Order */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
+              </div>
+              <div className="p-5">
+                {(RIWAYAT_ORDERS_DUMMY[id] || []).length === 0 ? (
+                  <div className="flex flex-col items-center py-8 gap-2">
+                    <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
+                    <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {(RIWAYAT_ORDERS_DUMMY[id] || []).map(order => {
+                      const statusCls = order.status === 'Aktif'    ? 'bg-green-50 text-green-700 border-green-200' :
+                                        order.status === 'Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                                        'bg-gray-50 text-gray-500 border-gray-200'
+                      return (
+                        <button
+                          key={order.orderId}
+                          onClick={() => navigate('/pp/orders/' + order.orderId, { state: { fromLeadId: lead.id } })}
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-sm font-bold text-[#1E1C43]">#{order.orderId}</span>
+                              <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{order.status}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">{order.paket} · Mulai {order.tanggalMulai}</p>
+                            <div className="flex items-center gap-4 mt-1.5">
+                              <span className="text-xs text-gray-600">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></span>
+                              <span className="text-xs text-gray-400">{order.sesiSelesai}/{order.totalSesi} sesi</span>
+                            </div>
+                          </div>
+                          <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Catatan Internal Admin/FC */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Internal Admin / FC</h3>
+                <p className="text-xs text-gray-400 pl-4 mt-0.5">Catatan lintas order — tidak terlihat oleh klien</p>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Add form */}
+                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Tambah Catatan</p>
+                  <textarea
+                    rows={2}
+                    value={newCatatanFC}
+                    onChange={e => setNewCatatanFC(e.target.value)}
+                    placeholder="Tulis catatan internal..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                  />
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Referensi Order (opsional)</label>
+                      <select
+                        value={newCatatanFCOrder}
+                        onChange={e => setNewCatatanFCOrder(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                        <option value="">— Tanpa referensi —</option>
+                        {(RIWAYAT_ORDERS_DUMMY[id] || []).map(o => (
+                          <option key={o.orderId} value={o.orderId}>#{o.orderId}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-end" style={{ minWidth: '120px' }}>
+                      <button
+                        onClick={() => {
+                          if (!newCatatanFC.trim()) return
+                          const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                          setCatatanInternalFC(prev => [{
+                            id: 'CFC-' + String(prev.length + 1).padStart(3, '0'),
+                            tanggal: today,
+                            oleh: lead.picEfm || 'Admin EFM',
+                            orderId: newCatatanFCOrder || null,
+                            catatan: newCatatanFC.trim(),
+                          }, ...prev])
+                          setNewCatatanFC('')
+                          setNewCatatanFCOrder('')
+                          showToast('✓ Catatan berhasil ditambahkan')
+                        }}
+                        className="w-full bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Catatan list */}
+                {catatanInternalFC.length === 0 ? (
+                  <p className="text-sm text-gray-400 italic">Belum ada catatan internal.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {catatanInternalFC.map(c => (
+                      <div key={c.id} className="p-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-semibold text-[#1E1C43]">{c.oleh}</span>
+                            {c.orderId && (
+                              <button
+                                onClick={() => navigate('/pp/orders/' + c.orderId, { state: { fromLeadId: lead.id } })}
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#1E1C43]/10 text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43]/20 transition-colors">
+                                #{c.orderId}
+                              </button>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-gray-400 shrink-0">{c.tanggal}</span>
+                        </div>
+                        <p className="text-sm text-gray-700">{c.catatan}</p>
+                      </div>
                     ))}
                   </div>
                 )}
