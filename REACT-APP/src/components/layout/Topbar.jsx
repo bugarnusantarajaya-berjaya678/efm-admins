@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Bell, ChevronRight, User, Settings, LogOut } from 'lucide-react'
+import { Bell, ChevronRight, User, Settings, LogOut, Menu } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ── Route breadcrumb labels ─────────────────────────────────────────────── */
@@ -55,7 +55,7 @@ const NOTIF_INIT = [
 ]
 
 /* ── Topbar ──────────────────────────────────────────────────────────────── */
-export default function Topbar() {
+export default function Topbar({ onMenuToggle }) {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const { crumbs: contextCrumbs } = useBreadcrumb()
@@ -101,19 +101,30 @@ export default function Topbar() {
   }
 
   return (
-    <header className="h-14 bg-bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 relative z-40">
+    <header className="h-14 bg-bg-surface border-b border-border flex items-center justify-between px-4 md:px-6 shrink-0 relative z-40">
+
+      {/* Left: hamburger (mobile) + breadcrumb */}
+      <div className="flex items-center gap-2 min-w-0 flex-1">
+        {/* Hamburger — mobile only */}
+        <button
+          onClick={onMenuToggle}
+          className="md:hidden w-9 h-9 rounded-lg hover:bg-bg-page flex items-center justify-center transition-colors shrink-0"
+        >
+          <Menu size={20} className="text-text-muted" />
+        </button>
 
       {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm">
+      <nav className="flex items-center gap-1 md:gap-1.5 text-sm min-w-0 overflow-hidden">
         {crumbs.map((crumb, i) => (
-          <span key={i} className="flex items-center gap-1.5">
-            {i > 0 && <ChevronRight size={14} className="text-text-muted" />}
-            <span className={i === crumbs.length - 1 ? 'font-semibold text-text-primary' : 'text-text-muted'}>
+          <span key={i} className="flex items-center gap-1 md:gap-1.5 shrink-0 last:shrink last:min-w-0">
+            {i > 0 && <ChevronRight size={13} className="text-text-muted shrink-0" />}
+            <span className={`truncate ${i === crumbs.length - 1 ? 'font-semibold text-text-primary' : 'text-text-muted hidden sm:inline'}`}>
               {crumb}
             </span>
           </span>
         ))}
       </nav>
+      </div>
 
       {/* Right section */}
       <div className="flex items-center gap-3">
@@ -134,7 +145,7 @@ export default function Topbar() {
 
           {/* Notification dropdown */}
           {notifOpen && (
-            <div className="absolute right-0 top-11 w-[370px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+            <div className="absolute right-0 top-11 w-[min(370px,calc(100vw-1rem))] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
                 <div className="flex items-center gap-2">
