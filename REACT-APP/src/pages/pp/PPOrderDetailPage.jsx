@@ -1490,84 +1490,142 @@ export default function PPOrderDetailPage() {
                       </div>
                     </div>
 
-                    {/* Modal Body — Mock PDF Viewer */}
+                    {/* Modal Body — Full Agreement Document */}
                     <div className="overflow-y-auto flex-1 p-6 bg-gray-100">
-                      <div className="bg-white rounded-lg shadow mx-auto max-w-lg p-8 min-h-[520px]">
-                        {/* Document Header */}
-                        <div className="text-center mb-6 pb-4 border-b border-gray-200">
-                          <div className="w-10 h-10 bg-[#1E1C43] rounded-lg flex items-center justify-center mx-auto mb-2">
-                            <span className="text-white text-xs font-black">EFM</span>
+                      <div className="bg-white rounded-lg shadow mx-auto max-w-lg overflow-hidden" style={{ fontFamily: "'Poppins', sans-serif" }}>
+
+                        {/* Navy header */}
+                        <div style={{ background: '#1E1C43', padding: '22px 28px 20px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                              <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#E8781A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                                <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>Essential Fitness Management</div>
+                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>CV. Bugar Nusantara Jaya</div>
+                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>Jl. Terogong Raya No.18, Jakarta Selatan</div>
+                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>essentialfitnessmanagement@gmail.com</div>
+                              </div>
+                            </div>
+                            <div style={{ textAlign: 'right' }}>
+                              <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
+                              <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>
+                                {previewTarget === 'template' ? 'AGR-PP-26-[AUTO]' : 'AGR-PP-26-0013'}
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-xs font-black text-[#1E1C43] tracking-widest uppercase">Essential Fitness Management</p>
-                          <p className="text-[10px] text-gray-400 mt-0.5">CV. Bugar Nusantara Jaya</p>
+                          <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
+                            <div style={{ fontSize: 15, fontWeight: 700, color: 'white', letterSpacing: 1.5, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+                            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — Essential Fitness Management</div>
+                          </div>
                         </div>
-                        <h2 className="text-base font-black text-[#1E1C43] text-center mb-1 tracking-wide uppercase">
-                          Agreement Private Training
-                        </h2>
-                        <p className="text-[10px] text-center text-gray-400 mb-6">
-                          {previewTarget === 'template' ? 'Nomor: AGR-PP-26-[AUTO]' : `Nomor: AGR-PP-26-0013`}
-                        </p>
 
-                        {/* Mock Content */}
-                        <div className="space-y-4 text-xs text-gray-700 leading-relaxed">
-                          <div>
-                            <p className="font-semibold text-[#1E1C43] mb-2">DATA PIHAK</p>
-                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 bg-gray-50 rounded-lg p-3">
-                              <span className="text-gray-400">Nama Klien</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Klien]' : order.namaKlien}</span>
-                              <span className="text-gray-400">Paket</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Paket]' : (prog?.namaPaket || '—')}</span>
-                              <span className="text-gray-400">PIC Pelatih</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Pelatih]' : (prog?.pic?.nama || '—')}</span>
-                              <span className="text-gray-400">Total Sesi</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Jumlah Sesi]' : `${prog?.totalSesi || '—'} sesi`}</span>
-                              <span className="text-gray-400">Tanggal Mulai</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Tanggal Mulai]' : fmtDate(order.tanggalMulai)}</span>
-                              <span className="text-gray-400">Nilai Kontrak</span>
-                              <span className="font-medium">{previewTarget === 'template' ? '[Nilai Kontrak]' : fmtRp(order.nilaiKontrak)}</span>
-                            </div>
-                          </div>
-                          <div>
-                            <p className="font-semibold text-[#1E1C43] mb-2">KETENTUAN LAYANAN</p>
-                            {['1. Layanan berlaku sesuai paket yang telah disepakati dan tidak dapat dipindahtangankan.',
-                              '2. Sesi yang dibatalkan kurang dari 24 jam sebelumnya dihitung sebagai sesi terpakai.',
-                              '3. Pembayaran dilakukan di muka sebelum program dimulai.',
-                              '4. EFM berhak mengganti pelatih dengan pemberitahuan sebelumnya.',
-                              '5. Klien wajib mengikuti arahan pelatih untuk keselamatan bersama.',
-                            ].map((t, i) => <p key={i} className="text-gray-600 mb-1">{t}</p>)}
+                        {/* Body */}
+                        <div className="p-6">
+                          {/* Detail grid */}
+                          <div className="grid grid-cols-2 gap-2.5 mb-6">
+                            {[
+                              ['Nama Klien',     previewTarget === 'template' ? '[Nama Klien]'     : order.namaKlien],
+                              ['Nama Panggilan', previewTarget === 'template' ? '[Nama Panggilan]' : order.namaKlien.split(' ')[0]],
+                              ['No. WhatsApp',   previewTarget === 'template' ? '[Nomor WA]'       : order.noHP],
+                              ['Email',          previewTarget === 'template' ? '[Email Klien]'    : order.email],
+                              ['Alamat',         previewTarget === 'template' ? '[Alamat Klien]'   : order.lokasiLatihan],
+                              ['Order ID',       previewTarget === 'template' ? '[Order ID]'       : '#' + order.id],
+                              ['Paket Dipilih',  previewTarget === 'template' ? '[Nama Paket]'     : (prog?.namaPaket || order.paket || '—')],
+                              ['Tanggal Dibuat', previewTarget === 'template' ? '[Tanggal Dibuat]' : fmtDate(order.tanggalMulai)],
+                            ].map(([lbl, val]) => (
+                              <div key={lbl} className="bg-gray-50 rounded-xl px-3.5 py-2.5">
+                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{lbl}</div>
+                                <div className="text-[13px] font-bold text-[#1E1C43]">{val}</div>
+                              </div>
+                            ))}
                           </div>
 
-                          {/* Signature Area */}
-                          <div className="pt-4 border-t border-gray-200">
-                            <p className="font-semibold text-[#1E1C43] mb-3">TANDA TANGAN</p>
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="text-center">
-                                <p className="text-[10px] text-gray-400 mb-6">EFM / Pelatih</p>
-                                {previewTarget === 'signed' ? (
-                                  <div className="border-t border-gray-800 pt-1">
-                                    <p className="text-xs font-semibold italic text-[#1E1C43]">{prog?.pic?.nama || 'Pelatih'}</p>
-                                    <p className="text-[9px] text-gray-400">21 Okt 2026</p>
-                                  </div>
-                                ) : (
-                                  <div className="border-t border-dashed border-gray-300 pt-1">
-                                    <p className="text-[10px] text-gray-300">______________</p>
-                                  </div>
-                                )}
+                          {/* Syarat & Ketentuan */}
+                          <div className="mb-6">
+                            <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200">Syarat dan Ketentuan Layanan</div>
+                            {[
+                              ['Pasal 1 — Ruang Lingkup Layanan', [
+                                'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
+                                'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
+                              ]],
+                              ['Pasal 2 — Masa Berlaku Paket (Validity Period)', [
+                                'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
+                                'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
+                              ]],
+                              ['Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang', [
+                                'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
+                                'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
+                                'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
+                                'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
+                              ]],
+                              ['Pasal 4 — Pembayaran dan Validasi Order', [
+                                'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
+                                'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
+                              ]],
+                              ['Pasal 5 — Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', [
+                                'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
+                                'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
+                                'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
+                              ]],
+                              ['Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis', [
+                                'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
+                                'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+                              ]],
+                              ['Pasal 7 — Pernyataan Kesadaran dan Persetujuan', [
+                                'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
+                                'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
+                                'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
+                              ]],
+                            ].map(([judul, poin]) => (
+                              <div key={judul} className="mb-3.5">
+                                <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide mb-1.5">{judul}</div>
+                                <ol className="pl-4 space-y-1">
+                                  {poin.map((p, i) => (
+                                    <li key={i} className="text-[11px] leading-relaxed text-gray-700" style={{ listStyleType: 'decimal' }}>{p}</li>
+                                  ))}
+                                </ol>
                               </div>
-                              <div className="text-center">
-                                <p className="text-[10px] text-gray-400 mb-6">Klien</p>
-                                {previewTarget === 'signed' ? (
-                                  <div className="border-t border-gray-800 pt-1">
-                                    <p className="text-xs font-semibold italic text-[#1E1C43]">{order.namaKlien}</p>
-                                    <p className="text-[9px] text-gray-400">21 Okt 2026</p>
-                                  </div>
-                                ) : (
-                                  <div className="border-t border-dashed border-gray-300 pt-1">
-                                    <p className="text-[10px] text-gray-300">______________</p>
-                                  </div>
-                                )}
+                            ))}
+                          </div>
+
+                          {/* Tanda Tangan */}
+                          <div className="border-t border-gray-200 pt-5">
+                            <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5">Tanda Tangan Para Pihak</div>
+                            <div className="grid grid-cols-2 gap-5">
+                              <div>
+                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pihak Pertama — EFM</div>
+                                <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
+                                  <span className="text-xs italic text-[#1E1C43] font-semibold opacity-60">EFM Digital Signature</span>
+                                </div>
+                                <div className="text-[11px] text-[#1E1C43] font-semibold">Manajemen EFM</div>
+                                <div className="text-[10px] text-gray-400">Ditandatangani secara digital</div>
+                              </div>
+                              <div>
+                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pihak Kedua — Klien</div>
+                                <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
+                                  {previewTarget === 'signed'
+                                    ? <span className="text-xs italic text-[#1E1C43] font-semibold">{order.namaKlien}</span>
+                                    : <span className="text-[10px] text-gray-300 italic">Menunggu TTD Klien</span>
+                                  }
+                                </div>
+                                <div className="text-[11px] text-[#1E1C43] font-semibold">
+                                  {previewTarget === 'template' ? '[Nama Klien]' : order.namaKlien}
+                                </div>
+                                <div className="mt-0.5">
+                                  {previewTarget === 'signed'
+                                    ? <span className="text-[10px]" style={{ color: '#27AE60' }}>✓ Ditandatangani secara digital — 21 Okt 2026</span>
+                                    : <span className="text-[10px]" style={{ color: '#B7770D' }}>Status: Menunggu TTD</span>
+                                  }
+                                </div>
                               </div>
                             </div>
+                          </div>
+
+                          {/* Document footer */}
+                          <div className="mt-6 pt-4 border-t border-gray-100 text-center">
+                            <p className="text-[9px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
                           </div>
                         </div>
                       </div>
