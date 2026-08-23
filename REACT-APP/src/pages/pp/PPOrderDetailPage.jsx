@@ -266,7 +266,7 @@ export default function PPOrderDetailPage() {
     : dummyPPOrders.find(o => o.id === id)
 
   /* ── Section state ───────────────────────────────────────────────────────── */
-  const [activeTab, setActiveTab] = useState('keuangan')
+  const [activeTab, setActiveTab] = useState(fromState?.defaultTab || 'keuangan')
   const [editingSection, setEditingSection] = useState(isNew ? 'infoDeal' : null)
   // null | 'infoDeal' | 'quotation' | 'paymentTerms' | 'profitSharing'
 
