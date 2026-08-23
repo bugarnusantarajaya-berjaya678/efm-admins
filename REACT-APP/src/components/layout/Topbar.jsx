@@ -8,7 +8,7 @@ const routeLabels = {
   '/dashboard':         ['Dashboard'],
   '/dashboard/owner':   ['Dashboard', 'Owner'],
   '/pic':               ['Operasional', 'PIC Management'],
-  '/contract':          ['Operasional', 'Kontrak'],
+  '/ops/pelatih/kontrak': ['Operasional', 'Kontrak PKS'],
   '/ops/mitra':         ['Operasional', 'Mitra'],
   '/ops/assets':        ['Operasional', 'Aset'],
   '/pp/dashboard':      ['Private Program', 'Dashboard'],

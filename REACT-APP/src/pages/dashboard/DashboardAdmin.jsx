@@ -36,7 +36,7 @@ const STATUS_CLS = {
 
 /* ── Alert & Perlu Tindakan ─────────────────────────────────────────────────── */
 const ALERTS = [
-  { judul: 'Kontrak PIC habis 3 hari lagi',     detail: 'Budi Santoso — PKS berakhir 25 Jun 2026', border: '#EF4444', bg: '#FEF2F2', link: '/contract'     },
+  { judul: 'Kontrak PIC habis 3 hari lagi',     detail: 'Budi Santoso — PKS berakhir 25 Jun 2026', border: '#EF4444', bg: '#FEF2F2', link: '/ops/pelatih/kontrak' },
   { judul: 'Kontrak B2B habis HARI INI',        detail: 'CV. Teknologi Prima — 22 Jun 2026',        border: '#EF4444', bg: '#FEF2F2', link: '/b2b/orders'   },
   { judul: '3 pengajuan absensi menunggu',      detail: 'Klik untuk review & approve',              border: '#F97316', bg: '#FFF7ED', link: '/attendance'   },
   { judul: 'Contract belum Signed',             detail: 'PT. Global Tech — #BO-007',                border: '#F97316', bg: '#FFF7ED', link: '/b2b/orders'   },

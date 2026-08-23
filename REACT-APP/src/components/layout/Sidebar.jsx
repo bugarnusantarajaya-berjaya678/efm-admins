@@ -51,6 +51,7 @@ const OPS_SUB = [
   { label: 'Aset',       path: '/ops/assets'            },
   { label: 'Absensi',    path: '/ops/pelatih/absensi'   },
   { label: 'Honorarium', path: '/ops/pelatih/honorarium' },
+  { label: 'Kontrak PKS', path: '/ops/pelatih/kontrak'  },
 ]
 
 const menuGroups = [
