@@ -149,6 +149,14 @@ function ClientSig({ status, tglTtd, namaKlien }) {
   )
 }
 
+const MONTH_ROMAN = { Jan:'I', Feb:'II', Mar:'III', Apr:'IV', Mei:'V', Jun:'VI', Jul:'VII', Agu:'VIII', Sep:'IX', Okt:'X', Nov:'XI', Des:'XII' }
+function docNomor(displayId, tglDibuat) {
+  const parts = (tglDibuat || '').split(' ')
+  const roman = MONTH_ROMAN[parts[1]] || parts[1] || '—'
+  const year  = parts[2] || '—'
+  return `${displayId}/EFM/${roman}/${year}`
+}
+
 /* ── Agreement Document ── */
 function AgreementDoc({ doc }) {
   const detailCells = [
@@ -192,7 +200,7 @@ function AgreementDoc({ doc }) {
           </div>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{doc.displayId}/EFM/PP/{doc.tglDibuat.split(' ').pop()}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
