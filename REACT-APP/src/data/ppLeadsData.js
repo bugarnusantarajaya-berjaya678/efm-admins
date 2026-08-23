@@ -11,6 +11,11 @@ export const LEADS_INIT = [
   { id: 'LP-0010', nama: 'Linda Wijaya',    noHp: '081344556677',   sumber: 'Website',    sumberIcon: '🌐', program: '4 Sesi - Starter',       status: 'new',         tanggal: '19 Jun 2026', email: 'linda.w@email.com',        catatan: '' },
   { id: 'LP-0011', nama: 'Doni Kusuma',     noHp: '082233445566',   sumber: 'Youtube Ads',sumberIcon: '▶️', program: 'Fatloss & Bodyshape',   status: 'follow-up',   tanggal: '14 Jun 2026', email: 'doni.k@email.com',         catatan: 'Minta proposal tertulis' },
   { id: 'LP-0012', nama: 'Fiona Santika',   noHp: '087711223344',   sumber: 'Meta Ads',   sumberIcon: '📱', program: 'Yoga',                   status: 'closed-won',  tanggal: '10 Jun 2026', email: 'fiona.s@email.com',        catatan: 'Sudah bayar DP' },
+  { id: 'LP-0013', nama: 'Robert Taylor',   noHp: '083456789012',   sumber: 'Referral',   sumberIcon: '👥', program: '24 Sesi - Elite',        status: 'closed-won',  tanggal: '15 Okt 2026', email: 'robert.taylor@email.com',  catatan: 'Sudah convert ke Order PP-26-0011' },
+  { id: 'LP-0014', nama: 'Anita Kumar',     noHp: '084567890123',   sumber: 'Meta Ads',   sumberIcon: '📱', program: '8 Sesi - Base',          status: 'closed-won',  tanggal: '12 Okt 2026', email: 'anita.kumar@email.com',    catatan: 'Sudah convert ke Order PP-26-0010' },
+  { id: 'LP-0015', nama: 'Rina Kusuma',     noHp: '086789012345',   sumber: 'Walk-in',    sumberIcon: '🚶', program: '4 Sesi - Starter',       status: 'closed-won',  tanggal: '3 Okt 2026',  email: 'rina.kusuma@email.com',    catatan: 'Sudah convert ke Order PP-26-0007' },
+  { id: 'LP-0016', nama: 'Hendra Wijaya',   noHp: '087890123456',   sumber: 'Website',    sumberIcon: '🌐', program: '24 Sesi - Elite',        status: 'closed-won',  tanggal: '28 Sep 2026', email: 'hendra.wijaya@email.com',  catatan: 'Sudah convert ke Order PP-26-0006' },
+  { id: 'LP-0017', nama: 'Dewi Rahayu',     noHp: '088901234567',   sumber: 'Referral',   sumberIcon: '👥', program: '8 Sesi - Base',          status: 'closed-won',  tanggal: '22 Sep 2026', email: 'dewi.rahayu@email.com',    catatan: 'Sudah convert ke Order PP-26-0005' },
 ]
 
 export const STATUS_LABEL = {
