@@ -2323,6 +2323,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section 6: Fitness Assessment Awal ── */}
           {(() => {
+            const prog = dummyPPPrograms.find(p => p.id === order.programId)
             const skrining = {
               id: 'SCR-26-0001',
               tanggal: '15 Okt 2026',
@@ -2389,6 +2390,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section 7: Catatan Progres Pelatih ── */}
           {(() => {
+            const prog = dummyPPPrograms.find(p => p.id === order.programId)
             const catatanProgres = [
               { tanggal: '20 Nov 2026', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
               { tanggal: '5 Nov 2026',  catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
