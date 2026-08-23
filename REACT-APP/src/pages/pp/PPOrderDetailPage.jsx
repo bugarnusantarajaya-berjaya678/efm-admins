@@ -347,6 +347,8 @@ export default function PPOrderDetailPage() {
   const [agreementFlowStatus,    setAgreementFlowStatus]    = useState('pengajuan_masuk')
   const [agreementCatatanTolak,  setAgreementCatatanTolak]  = useState('')
   const [showAgreementTolakForm, setShowAgreementTolakForm] = useState(false)
+  const [showAgreementPreview,   setShowAgreementPreview]   = useState(false)
+  const [previewTarget,          setPreviewTarget]          = useState('template') // 'template' | 'signed'
   const [dokumenTambahan, setDokumenTambahan] = useState([
     { id: 1, nama: 'form-fisik-awal-james-wilson.pdf', tgl: '24 Okt 2026', keterangan: 'Hasil tes kebugaran awal' }
   ])
@@ -1425,7 +1427,149 @@ export default function PPOrderDetailPage() {
               ditolak:         'Ditolak',
             }
             const clientFileSlug = order.namaKlien.toLowerCase().replace(/\s+/g, '-')
+            const hasSignedFile = agreementFlowStatus === 'pengajuan_masuk' || agreementFlowStatus === 'disetujui' || agreementFlowStatus === 'ditolak'
+
             return (
+              <>
+              {/* Preview Modal */}
+              {showAgreementPreview && (
+                <div
+                  className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+                  onClick={() => setShowAgreementPreview(false)}
+                >
+                  <div
+                    className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    {/* Modal Header */}
+                    <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200">
+                      <div className="flex items-center gap-3">
+                        <FileText size={16} className="text-[#1E1C43]" />
+                        <div>
+                          <p className="text-sm font-bold text-[#1E1C43]">
+                            {previewTarget === 'template' ? 'Template Agreement' : `File TTD — ${order.namaKlien}`}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {previewTarget === 'template'
+                              ? 'Agreement Private Training EFM · Template Global'
+                              : `agreement-${clientFileSlug}.pdf · Dikirim 21 Okt 2026`}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button className="h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 flex items-center gap-1.5 transition">
+                          <Download size={12} /> Download
+                        </button>
+                        <button onClick={() => setShowAgreementPreview(false)} className="text-gray-400 hover:text-gray-700 transition">
+                          <X size={20} />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Modal Body — Mock PDF Viewer */}
+                    <div className="overflow-y-auto flex-1 p-6 bg-gray-100">
+                      <div className="bg-white rounded-lg shadow mx-auto max-w-lg p-8 min-h-[520px]">
+                        {/* Document Header */}
+                        <div className="text-center mb-6 pb-4 border-b border-gray-200">
+                          <div className="w-10 h-10 bg-[#1E1C43] rounded-lg flex items-center justify-center mx-auto mb-2">
+                            <span className="text-white text-xs font-black">EFM</span>
+                          </div>
+                          <p className="text-xs font-black text-[#1E1C43] tracking-widest uppercase">Essential Fitness Management</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5">CV. Bugar Nusantara Jaya</p>
+                        </div>
+                        <h2 className="text-base font-black text-[#1E1C43] text-center mb-1 tracking-wide uppercase">
+                          Agreement Private Training
+                        </h2>
+                        <p className="text-[10px] text-center text-gray-400 mb-6">
+                          {previewTarget === 'template' ? 'Nomor: AGR-PP-26-[AUTO]' : `Nomor: AGR-PP-26-0013`}
+                        </p>
+
+                        {/* Mock Content */}
+                        <div className="space-y-4 text-xs text-gray-700 leading-relaxed">
+                          <div>
+                            <p className="font-semibold text-[#1E1C43] mb-2">DATA PIHAK</p>
+                            <div className="grid grid-cols-2 gap-x-4 gap-y-1.5 bg-gray-50 rounded-lg p-3">
+                              <span className="text-gray-400">Nama Klien</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Klien]' : order.namaKlien}</span>
+                              <span className="text-gray-400">Paket</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Paket]' : (prog?.namaPaket || '—')}</span>
+                              <span className="text-gray-400">PIC Pelatih</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Nama Pelatih]' : (prog?.pic?.nama || '—')}</span>
+                              <span className="text-gray-400">Total Sesi</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Jumlah Sesi]' : `${prog?.totalSesi || '—'} sesi`}</span>
+                              <span className="text-gray-400">Tanggal Mulai</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Tanggal Mulai]' : fmtDate(order.tanggalMulai)}</span>
+                              <span className="text-gray-400">Nilai Kontrak</span>
+                              <span className="font-medium">{previewTarget === 'template' ? '[Nilai Kontrak]' : fmtRp(order.nilaiKontrak)}</span>
+                            </div>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-[#1E1C43] mb-2">KETENTUAN LAYANAN</p>
+                            {['1. Layanan berlaku sesuai paket yang telah disepakati dan tidak dapat dipindahtangankan.',
+                              '2. Sesi yang dibatalkan kurang dari 24 jam sebelumnya dihitung sebagai sesi terpakai.',
+                              '3. Pembayaran dilakukan di muka sebelum program dimulai.',
+                              '4. EFM berhak mengganti pelatih dengan pemberitahuan sebelumnya.',
+                              '5. Klien wajib mengikuti arahan pelatih untuk keselamatan bersama.',
+                            ].map((t, i) => <p key={i} className="text-gray-600 mb-1">{t}</p>)}
+                          </div>
+
+                          {/* Signature Area */}
+                          <div className="pt-4 border-t border-gray-200">
+                            <p className="font-semibold text-[#1E1C43] mb-3">TANDA TANGAN</p>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="text-center">
+                                <p className="text-[10px] text-gray-400 mb-6">EFM / Pelatih</p>
+                                {previewTarget === 'signed' ? (
+                                  <div className="border-t border-gray-800 pt-1">
+                                    <p className="text-xs font-semibold italic text-[#1E1C43]">{prog?.pic?.nama || 'Pelatih'}</p>
+                                    <p className="text-[9px] text-gray-400">21 Okt 2026</p>
+                                  </div>
+                                ) : (
+                                  <div className="border-t border-dashed border-gray-300 pt-1">
+                                    <p className="text-[10px] text-gray-300">______________</p>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-center">
+                                <p className="text-[10px] text-gray-400 mb-6">Klien</p>
+                                {previewTarget === 'signed' ? (
+                                  <div className="border-t border-gray-800 pt-1">
+                                    <p className="text-xs font-semibold italic text-[#1E1C43]">{order.namaKlien}</p>
+                                    <p className="text-[9px] text-gray-400">21 Okt 2026</p>
+                                  </div>
+                                ) : (
+                                  <div className="border-t border-dashed border-gray-300 pt-1">
+                                    <p className="text-[10px] text-gray-300">______________</p>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Modal Footer — approval actions only when pengajuan_masuk */}
+                    {previewTarget === 'signed' && agreementFlowStatus === 'pengajuan_masuk' && (
+                      <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 flex gap-2">
+                        <button
+                          onClick={() => { setAgreementFlowStatus('disetujui'); setShowAgreementPreview(false); setShowAgreementTolakForm(false) }}
+                          className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
+                        >
+                          <CheckCircle size={13} /> Setujui Agreement
+                        </button>
+                        <button
+                          onClick={() => { setShowAgreementPreview(false); setShowAgreementTolakForm(true) }}
+                          className="flex-1 h-9 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
+                        >
+                          <X size={13} /> Tolak
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
@@ -1450,7 +1594,7 @@ export default function PPOrderDetailPage() {
                 </div>
 
                 <div className="p-5 space-y-4">
-                  {/* Info: absensi tidak diblokir */}
+                  {/* Info banner */}
                   <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
                     <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
                     <p className="text-xs text-blue-700">
@@ -1458,79 +1602,134 @@ export default function PPOrderDetailPage() {
                     </p>
                   </div>
 
-                  {/* Template Agreement Global */}
-                  <div>
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Template Agreement Global</p>
-                    <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <p className="text-sm font-semibold text-[#1E1C43]">Agreement Private Training EFM</p>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#1E1C43] text-white font-medium">Template Global</span>
+                  {/* Two-column: Template | File TTD */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* ── Kolom kiri: Template Agreement ── */}
+                    <div className="flex flex-col">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Template Agreement</p>
+                      <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+                        {/* Mock thumbnail */}
+                        <div className="bg-gray-50 flex-1 flex flex-col items-center justify-center py-5 px-4 cursor-pointer hover:bg-gray-100 transition group"
+                          onClick={() => { setPreviewTarget('template'); setShowAgreementPreview(true) }}>
+                          <div className="w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center mb-2 group-hover:shadow-md transition">
+                            <div className="w-8 h-1.5 bg-[#1E1C43]/20 rounded mb-1" />
+                            <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
+                            <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
+                            <div className="w-7 h-1 bg-gray-200 rounded mb-1.5" />
+                            <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
+                            <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
+                            <div className="w-8 h-1 bg-gray-100 rounded" />
+                          </div>
+                          <p className="text-[10px] text-gray-500 font-medium">Klik untuk preview</p>
+                        </div>
+                        <div className="px-3 py-2.5 border-t border-gray-200 bg-white">
+                          <p className="text-xs font-semibold text-[#1E1C43] leading-tight mb-0.5">Agreement Private Training EFM</p>
+                          <p className="text-[10px] text-gray-400 mb-2">Template Global · Versi terbaru</p>
+                          <div className="flex gap-1.5">
+                            <button
+                              onClick={() => { setPreviewTarget('template'); setShowAgreementPreview(true) }}
+                              className="flex-1 h-7 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition flex items-center justify-center gap-1"
+                            >
+                              <Eye size={10} /> Preview
+                            </button>
+                            <button className="h-7 w-7 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition flex items-center justify-center">
+                              <ExternalLink size={10} />
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 pt-2 border-t border-gray-200">
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama Klien</p>
-                          <p className="text-sm font-semibold text-gray-800">{order.namaKlien}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Paket</p>
-                          <p className="text-sm font-semibold text-gray-800">{prog?.namaPaket || '—'}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC Pelatih</p>
-                          <p className="text-sm font-semibold text-gray-800">{prog?.pic?.nama || '—'}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Spesialisasi</p>
-                          <p className="text-sm font-semibold text-gray-800">{prog?.pic?.spesialisasi || '—'}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
-                          <p className="text-sm font-semibold text-gray-800">{order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Berakhir</p>
-                          <p className="text-sm font-semibold text-gray-800">{tglBerakhir ? fmtDate(tglBerakhir) : '—'}</p>
-                        </div>
-                      </div>
-                      <div className="pt-2 border-t border-gray-200">
-                        <button className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1E1C43] hover:underline">
-                          <ExternalLink size={12} /> Buka Template Online
-                        </button>
+                    </div>
+
+                    {/* ── Kolom kanan: File TTD Klien ── */}
+                    <div className="flex flex-col">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">File TTD Klien</p>
+                      <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+                        {!hasSignedFile ? (
+                          /* Menunggu TTD — empty state */
+                          <div className="flex-1 flex flex-col items-center justify-center py-8 px-4 bg-gray-50 text-center">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mb-3">
+                              <FileText size={18} className="text-gray-300" />
+                            </div>
+                            <p className="text-xs font-semibold text-gray-500 mb-1">Belum Ada File</p>
+                            <p className="text-[10px] text-gray-400 leading-relaxed">Pelatih akan mengunggah file agreement yang telah ditandatangani klien</p>
+                          </div>
+                        ) : (
+                          /* Has signed file */
+                          <>
+                            <div
+                              className={`bg-gray-50 flex-1 flex flex-col items-center justify-center py-5 px-4 cursor-pointer hover:bg-gray-100 transition group relative ${
+                                agreementFlowStatus === 'disetujui' ? 'hover:bg-green-50' :
+                                agreementFlowStatus === 'ditolak'   ? 'hover:bg-red-50'   : ''
+                              }`}
+                              onClick={() => { setPreviewTarget('signed'); setShowAgreementPreview(true) }}
+                            >
+                              {/* Status badge overlay */}
+                              {agreementFlowStatus === 'disetujui' && (
+                                <span className="absolute top-2 right-2 text-[9px] font-semibold bg-green-100 text-green-700 border border-green-200 px-1.5 py-0.5 rounded-full">✓ Disetujui</span>
+                              )}
+                              {agreementFlowStatus === 'ditolak' && (
+                                <span className="absolute top-2 right-2 text-[9px] font-semibold bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 rounded-full">✗ Ditolak</span>
+                              )}
+                              {agreementFlowStatus === 'pengajuan_masuk' && (
+                                <span className="absolute top-2 right-2 text-[9px] font-semibold bg-yellow-100 text-yellow-700 border border-yellow-200 px-1.5 py-0.5 rounded-full">✓ Sudah TTD</span>
+                              )}
+                              <div className={`w-16 h-20 bg-white border rounded shadow-sm flex flex-col items-center justify-center mb-2 group-hover:shadow-md transition relative ${
+                                agreementFlowStatus === 'disetujui' ? 'border-green-300' :
+                                agreementFlowStatus === 'ditolak'   ? 'border-red-300'   :
+                                'border-yellow-300'
+                              }`}>
+                                <div className="w-8 h-1.5 bg-[#1E1C43]/20 rounded mb-1" />
+                                <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
+                                <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
+                                <div className="w-7 h-1 bg-gray-200 rounded mb-1.5" />
+                                <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
+                                <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
+                                <div className="w-8 h-1 bg-gray-100 rounded" />
+                                {/* Signature indicator */}
+                                <div className="absolute bottom-1.5 left-1 right-1 flex gap-1">
+                                  <div className={`flex-1 border-t ${agreementFlowStatus === 'ditolak' ? 'border-red-300' : 'border-gray-400'}`} />
+                                  <div className={`flex-1 border-t ${agreementFlowStatus === 'ditolak' ? 'border-red-300' : 'border-gray-400'}`} />
+                                </div>
+                              </div>
+                              <p className="text-[10px] text-gray-500 font-medium">Klik untuk preview</p>
+                            </div>
+                            <div className="px-3 py-2.5 border-t border-gray-200 bg-white">
+                              <p className="text-xs font-semibold text-gray-800 leading-tight mb-0.5 truncate">agreement-{clientFileSlug}.pdf</p>
+                              <p className="text-[10px] text-gray-400 mb-2">
+                                {agreementFlowStatus === 'disetujui' ? 'Disetujui 21 Okt 2026' :
+                                 agreementFlowStatus === 'ditolak'   ? 'Ditolak · perlu TTD ulang' :
+                                 'Dikirim 21 Okt 2026 · Menunggu review'}
+                              </p>
+                              <div className="flex gap-1.5">
+                                <button
+                                  onClick={() => { setPreviewTarget('signed'); setShowAgreementPreview(true) }}
+                                  className={`flex-1 h-7 rounded-lg text-white text-[10px] font-semibold transition flex items-center justify-center gap-1 ${
+                                    agreementFlowStatus === 'disetujui' ? 'bg-green-600 hover:bg-green-700' :
+                                    agreementFlowStatus === 'ditolak'   ? 'bg-red-500 hover:bg-red-600' :
+                                    'bg-yellow-500 hover:bg-yellow-600'
+                                  }`}
+                                >
+                                  <Eye size={10} /> Preview
+                                </button>
+                                <button className="h-7 w-7 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition flex items-center justify-center">
+                                  <Download size={10} />
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
 
-                  {/* State: menunggu_ttd */}
-                  {agreementFlowStatus === 'menunggu_ttd' && (
-                    <div className="bg-gray-50 rounded-xl border border-gray-200 px-4 py-6 text-center">
-                      <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <FileText size={18} className="text-gray-400" />
-                      </div>
-                      <p className="text-sm font-semibold text-gray-600 mb-1">Menunggu Penandatanganan</p>
-                      <p className="text-xs text-gray-400">Pelatih akan meminta klien menandatangani agreement melalui aplikasi pelatih sebelum sesi pertama dimulai.</p>
-                    </div>
-                  )}
-
-                  {/* State: pengajuan_masuk */}
+                  {/* ── Aksi Review (pengajuan_masuk only) ── */}
                   {agreementFlowStatus === 'pengajuan_masuk' && (
                     <div className="space-y-3">
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div>
-                            <p className="text-sm font-semibold text-yellow-800 mb-0.5">Pengajuan Agreement Masuk</p>
-                            <p className="text-xs text-yellow-700">Pelatih telah mengirim agreement yang sudah ditandatangani klien. Tinjau dan berikan persetujuan.</p>
-                          </div>
-                          <span className="px-2 py-1 text-[10px] rounded-full font-semibold bg-yellow-100 text-yellow-700 border border-yellow-300 whitespace-nowrap ml-2 shrink-0">
-                            ✓ Sudah TTD
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 bg-white border border-yellow-200 rounded-lg px-3 py-2">
-                          <FileText size={13} className="text-yellow-600 shrink-0" />
-                          <span className="text-xs text-gray-700 font-medium flex-1">agreement-{clientFileSlug}.pdf</span>
-                          <span className="text-[10px] text-gray-400">21 Okt 2026</span>
-                          <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43]">
-                            <Download size={11} />
-                          </button>
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-2.5">
+                        <AlertTriangle size={14} className="text-yellow-600 mt-0.5 shrink-0" />
+                        <div>
+                          <p className="text-xs font-semibold text-yellow-800 mb-0.5">Perlu Keputusan</p>
+                          <p className="text-xs text-yellow-700">Tinjau file TTD klien di atas, lalu setujui atau tolak agreement.</p>
                         </div>
                       </div>
                       <div className="flex gap-2">
@@ -1541,7 +1740,7 @@ export default function PPOrderDetailPage() {
                           <CheckCircle size={13} /> Setujui Agreement
                         </button>
                         <button
-                          onClick={() => setShowAgreementTolakForm(true)}
+                          onClick={() => setShowAgreementTolakForm(v => !v)}
                           className="flex-1 h-9 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
                         >
                           <X size={13} /> Tolak
@@ -1576,38 +1775,27 @@ export default function PPOrderDetailPage() {
                     </div>
                   )}
 
-                  {/* State: disetujui */}
+                  {/* ── Status Result: disetujui ── */}
                   {agreementFlowStatus === 'disetujui' && (
-                    <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <CheckCircle size={16} className="text-green-600 shrink-0" />
-                        <p className="text-sm font-semibold text-green-800">Agreement Disetujui</p>
-                      </div>
-                      <p className="text-xs text-green-700 mb-3">
-                        Agreement klien telah disetujui dan berlaku efektif mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}.
-                      </p>
-                      <div className="flex items-center gap-2 bg-white border border-green-200 rounded-lg px-3 py-2">
-                        <FileText size={13} className="text-green-600 shrink-0" />
-                        <span className="text-xs text-gray-700 font-medium flex-1">agreement-{clientFileSlug}.pdf</span>
-                        <span className="text-[10px] text-gray-400">Disetujui 21 Okt 2026</span>
-                        <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43]">
-                          <Download size={11} />
-                        </button>
+                    <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3">
+                      <CheckCircle size={16} className="text-green-600 shrink-0" />
+                      <div>
+                        <p className="text-xs font-semibold text-green-800">Agreement Disetujui</p>
+                        <p className="text-xs text-green-700">Berlaku efektif mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}.</p>
                       </div>
                     </div>
                   )}
 
-                  {/* State: ditolak */}
+                  {/* ── Status Result: ditolak ── */}
                   {agreementFlowStatus === 'ditolak' && (
                     <div className="space-y-3">
                       <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                         <div className="flex items-center gap-2 mb-2">
                           <XCircle size={16} className="text-red-600 shrink-0" />
-                          <p className="text-sm font-semibold text-red-800">Agreement Ditolak</p>
+                          <p className="text-xs font-semibold text-red-800">Agreement Ditolak — Perlu TTD Ulang</p>
                         </div>
-                        <p className="text-xs text-red-700 mb-2">Pelatih perlu meminta klien menandatangani ulang agreement.</p>
                         {agreementCatatanTolak && (
-                          <div className="bg-white border border-red-200 rounded-lg px-3 py-2">
+                          <div className="bg-white border border-red-100 rounded-lg px-3 py-2 mt-2">
                             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Penolakan</p>
                             <p className="text-xs text-gray-700">{agreementCatatanTolak}</p>
                           </div>
@@ -1623,6 +1811,7 @@ export default function PPOrderDetailPage() {
                   )}
                 </div>
               </div>
+              </>
             )
           })()}
 
