@@ -1587,90 +1587,6 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 1: Referensi Program ── */}
-          {(() => {
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
-            const totalSesiSelesai = absensiSesi.length
-            const sesiTersisa = prog ? Math.max(0, prog.totalSesi - totalSesiSelesai) : 0
-            const pctTerpakai = prog ? Math.min(100, Math.round((totalSesiSelesai / prog.totalSesi) * 100)) : 0
-            const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
-            return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Referensi Program</h3>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${prog ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-500'}`}>
-                      {prog ? 'Terhubung' : 'Belum Ada'}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => navigate('/pp/program-db')}
-                    className="text-xs text-[#1E1C43] hover:underline flex items-center gap-1 font-medium"
-                  >
-                    Lihat Program DB <ChevronRight size={12} />
-                  </button>
-                </div>
-                {prog ? (
-                  <>
-                    {/* Live usage stats */}
-                    <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
-                      <div className="grid grid-cols-3 gap-3 mb-3">
-                        <div className="text-center">
-                          <p className="text-2xl font-bold text-[#1E1C43]">{totalSesiSelesai}</p>
-                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Sesi Selesai</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-2xl font-bold text-[#E05945]">{sesiTersisa}</p>
-                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Sesi Tersisa</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-2xl font-bold text-[#1E1C43]">{prog.totalSesi}</p>
-                          <p className="text-[10px] uppercase tracking-wide text-gray-400 mt-0.5">Total Paket</p>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <span className="text-xs text-gray-500">Progres pemakaian</span>
-                        <span className="text-xs font-semibold text-gray-700">{pctTerpakai}%</span>
-                      </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${pctTerpakai >= 80 ? 'bg-[#E05945]' : 'bg-[#1E1C43]'}`}
-                          style={{ width: pctTerpakai + '%' }}
-                        />
-                      </div>
-                      {pctTerpakai >= 80 && (
-                        <p className="text-[10px] text-[#E05945] font-semibold mt-1.5">Paket hampir habis — pertimbangkan renewal</p>
-                      )}
-                    </div>
-
-                    {/* Info grid */}
-                    <div className="grid grid-cols-2 gap-3">
-                      {[
-                        ['Nama Program',   prog.namaProgram],
-                        ['Nama Paket',     prog.namaPaket],
-                        ['PIC Pelatih',    prog.pic?.nama || '—'],
-                        ['Spesialisasi',   prog.pic?.spesialisasi || '—'],
-                        ['Rate / Sesi',    'Rp ' + ratePerSesi.toLocaleString('id-ID')],
-                        ['Harga Paket',    'Rp ' + (prog.hargaPaket || 0).toLocaleString('id-ID')],
-                      ].map(([label, val]) => (
-                        <div key={label} className="bg-gray-50 rounded-xl p-3">
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                          <p className="text-sm font-semibold text-gray-800">{val}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <div className="text-center py-8 text-gray-400">
-                    <ClipboardList size={28} className="mx-auto mb-2 opacity-40" />
-                    <p className="text-sm">Belum ada referensi program terhubung</p>
-                    <p className="text-xs mt-1">Hubungkan program dari halaman Program DB</p>
-                  </div>
-                )}
-              </div>
-            )
-          })()}
-
           {/* ── Section 3: Monitoring Sesi (read-only, dari backend) ── */}
           {(() => {
             const prog = dummyPPPrograms.find(p => p.id === order.programId)
@@ -2106,15 +2022,15 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section 5: Log Aktivitas Operasional ── */}
+          {/* ── Section 5: Log Aktivitas ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Activity size={15} className="text-[#1E1C43]" />
-                <h3 className="text-base font-bold text-[#1E1C43]">Log Aktivitas Operasional</h3>
+                <h3 className="text-base font-bold text-[#1E1C43]">Log Aktivitas</h3>
               </div>
               <div className="flex gap-1">
-                {['semua', 'jadwal', 'absensi', 'catatan', 'honorarium'].map(k => (
+                {['semua', 'absensi', 'catatan', 'honorarium', 'agreement'].map(k => (
                   <button
                     key={k}
                     onClick={() => setLogFilter3PP(k)}
@@ -2148,6 +2064,7 @@ export default function PPOrderDetailPage() {
                       l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
                       l.kategori === 'catatan'    ? 'bg-purple-50 text-purple-600' :
                       l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
+                      l.kategori === 'agreement'  ? 'bg-indigo-50 text-indigo-600' :
                       'bg-gray-50 text-gray-500'
                     }`}>{l.kategori}</span>
                   </div>

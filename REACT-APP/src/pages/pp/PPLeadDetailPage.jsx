@@ -13,23 +13,25 @@ const TIPE_CLS = {
 }
 
 const STAGE_CLS = {
-  New:       'bg-gray-100 text-gray-600',
-  Approach:  'bg-blue-100 text-blue-600',
-  Screening: 'bg-purple-100 text-purple-600',
-  Invoicing: 'bg-yellow-100 text-yellow-700',
-  Closing:   'bg-orange-100 text-orange-600',
-  Convert:   'bg-green-100 text-green-700',
-  Lost:      'bg-red-100 text-red-600',
+  New:         'bg-gray-100 text-gray-600',
+  Approach:    'bg-blue-100 text-blue-600',
+  Screening:   'bg-purple-100 text-purple-600',
+  Invoicing:   'bg-yellow-100 text-yellow-700',
+  Closing:     'bg-orange-100 text-orange-600',
+  Convert:     'bg-green-100 text-green-700',
+  Lost:        'bg-red-100 text-red-600',
+  'Edit Data': 'bg-indigo-50 text-indigo-600',
 }
 
 const STAGE_BORDER = {
-  Convert:   'border-green-400',
-  Lost:      'border-red-400',
-  Closing:   'border-orange-400',
-  Invoicing: 'border-yellow-400',
-  Screening: 'border-purple-400',
-  Approach:  'border-blue-400',
-  New:       'border-gray-300',
+  Convert:     'border-green-400',
+  Lost:        'border-red-400',
+  Closing:     'border-orange-400',
+  Invoicing:   'border-yellow-400',
+  Screening:   'border-purple-400',
+  Approach:    'border-blue-400',
+  New:         'border-gray-300',
+  'Edit Data': 'border-indigo-300',
 }
 
 const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert', 'Lost']
@@ -129,6 +131,37 @@ const SCREENING_SUMMARY = [
   { id: 'SCR-26-0003', tanggal: '20 Okt 2026', namaKlien: 'Rian Maulana',           statusScreening: 'Draft',   orderId: null,          picScreening: 'Ahmad Pratama' },
   { id: 'SCR-26-0004', tanggal: '6 Okt 2026',  namaKlien: 'Budi & Rina Santoso',   statusScreening: 'Draft',   orderId: null,          picScreening: 'Sarah Jenkins' },
 ]
+
+/* ── Catatan progres pelatih (read-only, dari backend pelatih) ── */
+const PROGRES_PELATIH_DUMMY = {
+  'LP-0001': [
+    { tanggal: '20 Agu 2026', pelatih: 'Dimas Raharjo', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
+    { tanggal: '5 Agu 2026',  pelatih: 'Dimas Raharjo', catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
+    { tanggal: '25 Jul 2026', pelatih: 'Dimas Raharjo', catatan: 'Sesi perdana berjalan lancar. Klien antusias dan kooperatif. Program fatloss 3 hari/minggu dirancang sesuai kondisi awal.' },
+  ],
+  'LP-0006': [
+    { tanggal: '18 Agu 2026', pelatih: 'Marcus Chen', catatan: 'Klien progres baik untuk program starter. Kebugaran umum meningkat signifikan — tes VO2 informal membaik dibanding sesi pertama.' },
+  ],
+}
+
+/* ── Riwayat order per lead ── */
+const RIWAYAT_ORDERS_DUMMY = {
+  'LP-0001': [
+    { orderId: 'PP-26-0013', status: 'Aktif', paket: '12 Sesi - Pro', tanggalMulai: '22 Okt 2026', nilaiKontrak: 14400000, sesiSelesai: 6, totalSesi: 12 },
+  ],
+  'LP-0006': [
+    { orderId: 'PP-26-0012', status: 'Selesai', paket: '4 Sesi - Starter', tanggalMulai: '20 Okt 2026', nilaiKontrak: 4800000, sesiSelesai: 4, totalSesi: 4 },
+  ],
+}
+
+/* ── Catatan internal admin/FC per lead ── */
+const CATATAN_FC_DUMMY = {
+  'LP-0001': [
+    { id: 'CFC-001', tanggal: '18 Agu 2026', oleh: 'Sarah Jenkins', orderId: 'PP-26-0013', catatan: 'Klien request ganti jadwal sesi ke-8 ke hari Rabu jam 10. Sudah dikonfirmasi dengan pelatih Dimas.' },
+    { id: 'CFC-002', tanggal: '5 Agu 2026',  oleh: 'Sarah Jenkins', orderId: 'PP-26-0013', catatan: 'Pembayaran sesi lanjutan sudah lunas. Klien menyampaikan puas dengan program sejauh ini.' },
+  ],
+  'LP-0006': [],
+}
 
 /* ═══════════════════════════════════════
    Helpers
@@ -271,6 +304,9 @@ export default function PPLeadDetailPage() {
   const [dokumenKesehatan, setDokumenKesehatan] = useState(
     id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
   )
+  const [catatanInternalFC, setCatatanInternalFC] = useState(CATATAN_FC_DUMMY[id] || [])
+  const [newCatatanFC, setNewCatatanFC]           = useState('')
+  const [newCatatanFCOrder, setNewCatatanFCOrder] = useState('')
 
   useEffect(() => {
     if (state?.newScreening) {
@@ -306,7 +342,22 @@ export default function PPLeadDetailPage() {
     if (!editForm.nama || !editForm.tipe || !editForm.noHp) {
       alert('Nama, tipe, dan no HP wajib diisi.'); return
     }
-    setLead({ ...editForm })
+    const fieldLabels = {
+      nama: 'Nama Klien', noHp: 'No HP / WhatsApp', emailUmum: 'Email',
+      tipe: 'Tipe Klien', programDiminati: 'Program Diminati',
+      sumberLead: 'Sumber Lead', picEfm: 'PIC EFM',
+      tanggalFollowUp: 'Tanggal Follow Up', catatanAwal: 'Catatan Awal',
+    }
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    const newLogEntries = Object.entries(fieldLabels)
+      .filter(([key]) => (editForm[key] || '') !== (lead[key] || ''))
+      .map(([key, label]) => ({
+        status: 'Edit Data',
+        tanggal: today,
+        oleh: lead.picEfm || 'Admin EFM',
+        catatan: `${label} diubah menjadi "${editForm[key] || '—'}"`,
+      }))
+    setLead({ ...editForm, logAktivitas: [...(lead.logAktivitas || []), ...newLogEntries] })
     setIsEditMode(false); setEditForm({})
     showToast('✓ Data lead berhasil diperbarui')
   }
@@ -331,9 +382,9 @@ export default function PPLeadDetailPage() {
   }
 
   const TABS = [
-    { key: 'info',      label: 'Info Klien'  },
-    { key: 'pipeline',  label: 'Pipeline'    },
-    { key: 'kesehatan', label: 'Kesehatan'   },
+    { key: 'info',      label: 'Info Klien'         },
+    { key: 'kesehatan', label: 'Progres & Kesehatan' },
+    { key: 'riwayat',   label: 'Riwayat'            },
   ]
 
   return (
@@ -401,139 +452,12 @@ export default function PPLeadDetailPage() {
         </div>
 
         {/* ════════════════════════════════
-            TAB 1: INFO KLIEN
+            TAB 1: INFO KLIEN (+ Pipeline)
         ════════════════════════════════ */}
         {activeTab === 'info' && (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
-              {!isEditMode ? (
-                <button onClick={handleStartEdit}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                  <Edit2 size={12} /> Edit
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <button onClick={handleSaveEdit}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                    <Save size={12} /> Simpan
-                  </button>
-                  <button onClick={handleCancelEdit}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                    <X size={12} /> Batal
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="p-5">
-              {!isEditMode ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                  <InfoField label="No HP / WhatsApp">
-                    <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
-                      className="text-[#1E1C43] hover:underline">
-                      {lead.noHp}
-                    </a>
-                  </InfoField>
-                  <InfoField label="Email">
-                    {lead.emailUmum
-                      ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
-                      : <span className="text-gray-400 italic">—</span>}
-                  </InfoField>
-                  <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
-                  <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
-                  <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
-                  <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
-                  <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
-                  <InfoField label="Follow Up Berikutnya">
-                    {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
-                  </InfoField>
-                  {lead.catatanAwal && (
-                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
-                      <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
-                    </div>
-                  )}
-                  {lead.catatan && (
-                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
-                      <p className="text-sm text-gray-700">{lead.catatan}</p>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                /* Edit form */
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                      Nama Klien <span className="text-red-500">*</span>
-                    </label>
-                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
-                      <option>Personal</option><option>Group</option><option>Couple</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
-                    <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
-                    <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.sumberLead || ''} onChange={e => setEditForm(p => ({ ...p, sumberLead: e.target.value }))}>
-                      <option value="">Pilih Sumber...</option>
-                      {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
-                      <option value="">Pilih Program...</option>
-                      {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
-                    <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.picEfm || ''} onChange={e => setEditForm(p => ({ ...p, picEfm: e.target.value }))}>
-                      {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
-                    <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                      value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
-                    <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                      value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* ════════════════════════════════
-            TAB 2: PIPELINE
-        ════════════════════════════════ */}
-        {activeTab === 'pipeline' && (
           <div className="space-y-4">
 
-            {/* Stepper card */}
+            {/* Status Pipeline */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 pt-5 pb-0 mb-5">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Status Pipeline</h3>
@@ -546,50 +470,171 @@ export default function PPLeadDetailPage() {
                 )}
               </div>
               <div className="px-5 pb-5">
-              <PipelineStepper currentStage={lead.statusPipeline} />
-
-              {/* Update stage form */}
-              <div className="border-t border-gray-100 pt-4">
-                {editingPipeline && (
-                  <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
-                        <select value={newStage} onChange={e => setNewStage(e.target.value)}
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                          {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
-                        </select>
+                <PipelineStepper currentStage={lead.statusPipeline} />
+                <div className="border-t border-gray-100 pt-4">
+                  {editingPipeline && (
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                      <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
+                          <select value={newStage} onChange={e => setNewStage(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                            {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+                          <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                        </div>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
-                        <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                        <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
+                          placeholder="Catatan perubahan status..."
                           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
                       </div>
+                      <div className="flex gap-2">
+                        <button onClick={handleUpdatePipeline}
+                          className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
+                          ✓ Simpan Perubahan
+                        </button>
+                        <button onClick={() => setEditingPipeline(false)}
+                          className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                          Batal
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Info Klien */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
+                {!isEditMode ? (
+                  <button onClick={handleStartEdit}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Edit2 size={12} /> Edit
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button onClick={handleSaveEdit}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Save size={12} /> Simpan
+                    </button>
+                    <button onClick={handleCancelEdit}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <X size={12} /> Batal
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-5">
+                {!isEditMode ? (
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <InfoField label="No HP / WhatsApp">
+                      <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
+                        className="text-[#1E1C43] hover:underline">
+                        {lead.noHp}
+                      </a>
+                    </InfoField>
+                    <InfoField label="Email">
+                      {lead.emailUmum
+                        ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
+                        : <span className="text-gray-400 italic">—</span>}
+                    </InfoField>
+                    <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
+                    <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
+                    <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
+                    <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
+                    <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
+                    <InfoField label="Follow Up Berikutnya">
+                      {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
+                    </InfoField>
+                    {lead.catatanAwal && (
+                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
+                        <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
+                      </div>
+                    )}
+                    {lead.catatan && (
+                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
+                        <p className="text-sm text-gray-700">{lead.catatan}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* Edit form */
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Nama Klien <span className="text-red-500">*</span>
+                      </label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
-                      <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
-                        placeholder="Catatan perubahan status..."
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
+                        <option>Personal</option><option>Group</option><option>Couple</option>
+                      </select>
                     </div>
-                    <div className="flex gap-2">
-                      <button onClick={handleUpdatePipeline}
-                        className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                        ✓ Simpan Perubahan
-                      </button>
-                      <button onClick={() => setEditingPipeline(false)}
-                        className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                        Batal
-                      </button>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                      <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.sumberLead || ''} onChange={e => setEditForm(p => ({ ...p, sumberLead: e.target.value }))}>
+                        <option value="">Pilih Sumber...</option>
+                        {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Diminati</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
+                        <option value="">Pilih Program...</option>
+                        {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">PIC EFM</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.picEfm || ''} onChange={e => setEditForm(p => ({ ...p, picEfm: e.target.value }))}>
+                        {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
+                      <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
+                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
                     </div>
                   </div>
                 )}
               </div>
-              </div>
             </div>
 
-            {/* Log Aktivitas card */}
+            {/* Log Aktivitas */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Log Aktivitas</h3>
               {(lead.logAktivitas || []).length === 0 ? (
@@ -613,11 +658,12 @@ export default function PPLeadDetailPage() {
                 </div>
               )}
             </div>
+
           </div>
         )}
 
         {/* ════════════════════════════════
-            TAB 3: KESEHATAN
+            TAB 2: KESEHATAN
         ════════════════════════════════ */}
         {activeTab === 'kesehatan' && (
           <div className="space-y-4">
@@ -752,7 +798,34 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
-            {/* ── Section 2: Riwayat Fitness Assessment ── */}
+            {/* ── Section 2: Catatan Progres Pelatih ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Pelatih</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Data dari laporan pelatih — read only</p>
+                </div>
+              </div>
+              <div className="p-5">
+                {(PROGRES_PELATIH_DUMMY[id] || []).length === 0 ? (
+                  <p className="text-sm text-gray-400 italic">Belum ada catatan progres dari pelatih.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {(PROGRES_PELATIH_DUMMY[id] || []).map((item, i) => (
+                      <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs font-semibold text-[#1E1C43]">{item.pelatih}</span>
+                          <span className="text-[10px] text-gray-400">{item.tanggal}</span>
+                        </div>
+                        <p className="text-sm text-gray-700 leading-relaxed">{item.catatan}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ── Section 3: Riwayat Fitness Assessment ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
@@ -808,6 +881,138 @@ export default function PPLeadDetailPage() {
                           <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors" />
                         </div>
                       </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 3: RIWAYAT
+        ════════════════════════════════ */}
+        {activeTab === 'riwayat' && (
+          <div className="space-y-4">
+
+            {/* Riwayat Order */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
+              </div>
+              <div className="p-5">
+                {(RIWAYAT_ORDERS_DUMMY[id] || []).length === 0 ? (
+                  <div className="flex flex-col items-center py-8 gap-2">
+                    <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
+                    <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {(RIWAYAT_ORDERS_DUMMY[id] || []).map(order => {
+                      const statusCls = order.status === 'Aktif'    ? 'bg-green-50 text-green-700 border-green-200' :
+                                        order.status === 'Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                                        'bg-gray-50 text-gray-500 border-gray-200'
+                      return (
+                        <button
+                          key={order.orderId}
+                          onClick={() => navigate('/pp/orders/' + order.orderId, { state: { fromLeadId: lead.id } })}
+                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-sm font-bold text-[#1E1C43]">#{order.orderId}</span>
+                              <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{order.status}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">{order.paket} · Mulai {order.tanggalMulai}</p>
+                            <div className="flex items-center gap-4 mt-1.5">
+                              <span className="text-xs text-gray-600">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></span>
+                              <span className="text-xs text-gray-400">{order.sesiSelesai}/{order.totalSesi} sesi</span>
+                            </div>
+                          </div>
+                          <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Catatan Internal Admin/FC */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Internal Admin / FC</h3>
+                <p className="text-xs text-gray-400 pl-4 mt-0.5">Catatan lintas order — tidak terlihat oleh klien</p>
+              </div>
+              <div className="p-5 space-y-4">
+                {/* Add form */}
+                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Tambah Catatan</p>
+                  <textarea
+                    rows={2}
+                    value={newCatatanFC}
+                    onChange={e => setNewCatatanFC(e.target.value)}
+                    placeholder="Tulis catatan internal..."
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                  />
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Referensi Order (opsional)</label>
+                      <select
+                        value={newCatatanFCOrder}
+                        onChange={e => setNewCatatanFCOrder(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                        <option value="">— Tanpa referensi —</option>
+                        {(RIWAYAT_ORDERS_DUMMY[id] || []).map(o => (
+                          <option key={o.orderId} value={o.orderId}>#{o.orderId}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex items-end" style={{ minWidth: '120px' }}>
+                      <button
+                        onClick={() => {
+                          if (!newCatatanFC.trim()) return
+                          const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                          setCatatanInternalFC(prev => [{
+                            id: 'CFC-' + String(prev.length + 1).padStart(3, '0'),
+                            tanggal: today,
+                            oleh: lead.picEfm || 'Admin EFM',
+                            orderId: newCatatanFCOrder || null,
+                            catatan: newCatatanFC.trim(),
+                          }, ...prev])
+                          setNewCatatanFC('')
+                          setNewCatatanFCOrder('')
+                          showToast('✓ Catatan berhasil ditambahkan')
+                        }}
+                        className="w-full bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
+                        Simpan
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Catatan list */}
+                {catatanInternalFC.length === 0 ? (
+                  <p className="text-sm text-gray-400 italic">Belum ada catatan internal.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {catatanInternalFC.map(c => (
+                      <div key={c.id} className="p-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start justify-between gap-2 mb-1">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-xs font-semibold text-[#1E1C43]">{c.oleh}</span>
+                            {c.orderId && (
+                              <button
+                                onClick={() => navigate('/pp/orders/' + c.orderId, { state: { fromLeadId: lead.id } })}
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#1E1C43]/10 text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43]/20 transition-colors">
+                                #{c.orderId}
+                              </button>
+                            )}
+                          </div>
+                          <span className="text-[10px] text-gray-400 shrink-0">{c.tanggal}</span>
+                        </div>
+                        <p className="text-sm text-gray-700">{c.catatan}</p>
+                      </div>
                     ))}
                   </div>
                 )}
