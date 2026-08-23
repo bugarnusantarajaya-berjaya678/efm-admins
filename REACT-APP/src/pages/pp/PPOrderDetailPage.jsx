@@ -803,22 +803,6 @@ export default function PPOrderDetailPage() {
           {/* Right: action buttons atas, Nilai Kontrak bawah */}
           <div className="flex flex-col items-end gap-3 shrink-0">
             <div className="flex items-center gap-2">
-              {!isNew && order.leadId && (
-                <button
-                  onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
-                  className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
-                >
-                  Lihat Lead →
-                </button>
-              )}
-              {!isNew && (
-                <button
-                  onClick={() => setActiveTab('agreement')}
-                  className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
-                >
-                  Lihat Agreement →
-                </button>
-              )}
               <button
                 onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
                 className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
