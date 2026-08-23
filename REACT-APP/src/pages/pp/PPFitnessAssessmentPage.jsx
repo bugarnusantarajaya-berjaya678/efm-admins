@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
+import { PP_ASSESSMENTS } from '../../data/ppAssessmentsData'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -102,9 +103,10 @@ const ENDURANCE_ITEMS = [
   { key: 'backUp', label: 'Back Up', unit: 'kali' },
 ]
 
-// ─── Dummy Data ──────────────────────────────────────────────────────────────
+// ─── Dummy data moved to src/data/ppAssessmentsData.js ───────────────────────
+// PP_ASSESSMENTS is imported at the top of this file.
 
-const DUMMY_ASSESSMENTS = {
+const _REMOVE_ME = {
   'SCR-26-0001': {
     noIdProgram: 'PP-26-0013',
     cabangWilayah: 'Jakarta Selatan',
@@ -447,7 +449,7 @@ export default function PPFitnessAssessmentPage() {
   const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
-  const existing = !isNew ? (DUMMY_ASSESSMENTS[id] || null) : null
+  const existing = !isNew ? (PP_ASSESSMENTS[id] || null) : null
 
   // Personal Detail
   const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || prefill.orderId || '')
