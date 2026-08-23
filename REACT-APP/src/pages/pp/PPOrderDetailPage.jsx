@@ -803,22 +803,6 @@ export default function PPOrderDetailPage() {
           {/* Right: action buttons atas, Nilai Kontrak bawah */}
           <div className="flex flex-col items-end gap-3 shrink-0">
             <div className="flex items-center gap-2">
-              {!isNew && order.leadId && (
-                <button
-                  onClick={() => navigate('/pp/leads/' + order.leadId, { state: { fromOrderId: order.id } })}
-                  className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
-                >
-                  Lihat Lead →
-                </button>
-              )}
-              {!isNew && (
-                <button
-                  onClick={() => setActiveTab('agreement')}
-                  className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs px-3 py-1.5 rounded-lg hover:bg-[#1E1C43] hover:text-white transition-colors font-medium"
-                >
-                  Lihat Agreement →
-                </button>
-              )}
               <button
                 onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
                 className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
@@ -1916,52 +1900,6 @@ export default function PPOrderDetailPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'operasional' && (
         <div className="space-y-4">
-
-          {/* ── Progress Summary KPI ── */}
-          {(() => {
-            const sesiSelesai  = jadwalSesi.filter(j => j.status === 'Selesai').length
-            const sesiTotal    = jadwalSesi.length
-            const absensiCount = absensiSesi.length
-            const nextSesi     = jadwalSesi.find(j => j.status === 'Terjadwal')
-            const prog         = dummyPPPrograms.find(p => p.id === order.programId)
-            const maxSesi      = prog?.totalSesi || sesiTotal
-            const pctDone      = maxSesi > 0 ? Math.round((sesiSelesai / maxSesi) * 100) : 0
-            return (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Selesai</p>
-                    <p className="text-2xl font-bold text-[#1E1C43]">{sesiSelesai}<span className="text-sm font-normal text-gray-400">/{maxSesi}</span></p>
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Absensi Tercatat</p>
-                    <p className="text-2xl font-bold text-[#1E1C43]">{absensiCount}</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Progress Program</p>
-                    <p className="text-2xl font-bold text-[#E05945]">{pctDone}%</p>
-                  </div>
-                  <div className="bg-gray-50 rounded-xl p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Berikutnya</p>
-                    {nextSesi ? (
-                      <p className="text-sm font-semibold text-[#1E1C43] leading-tight mt-1">
-                        {new Date(nextSesi.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} · {nextSesi.jam}
-                      </p>
-                    ) : (
-                      <p className="text-sm text-gray-400 italic mt-1">—</p>
-                    )}
-                  </div>
-                </div>
-                <div className="w-full bg-gray-100 rounded-full h-2">
-                  <div
-                    className="bg-[#E05945] h-2 rounded-full transition-all"
-                    style={{ width: `${pctDone}%` }}
-                  />
-                </div>
-                <p className="text-[10px] text-gray-400 mt-1.5">{sesiSelesai} dari {maxSesi} sesi selesai</p>
-              </div>
-            )
-          })()}
 
           {/* ── Section 3: Monitoring Sesi (read-only, dari backend) ── */}
           {(() => {
