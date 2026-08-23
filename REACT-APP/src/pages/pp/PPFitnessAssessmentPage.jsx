@@ -275,7 +275,7 @@ function SectionToggleCard({ title, description, icon, checked, onChange }) {
   )
 }
 
-function MeasTable({ title, fields, data, onChange, readOnly }) {
+function MeasTable({ title, fields, data, onChange, readOnly, isRenewal }) {
   return (
     <div>
       <p className="text-sm font-bold text-[#1E1C43] mb-2">{title}</p>
@@ -284,13 +284,18 @@ function MeasTable({ title, fields, data, onChange, readOnly }) {
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide w-48">Item Tes</th>
-              <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={2}>Tes Awal</th>
+              <th
+                className={`text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-400'}`}
+                colSpan={2}
+              >
+                Tes Awal{isRenewal && <span className="ml-1 text-[10px] font-medium normal-case text-purple-400">(diadopsi)</span>}
+              </th>
               <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={2}>Tes Akhir</th>
             </tr>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="px-3 py-1"></th>
-              <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Hasil</th>
-              <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
+              <th className={`text-center px-3 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Hasil</th>
+              <th className={`text-center px-3 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Keterangan</th>
               <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Hasil</th>
               <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
             </tr>
@@ -301,30 +306,33 @@ function MeasTable({ title, fields, data, onChange, readOnly }) {
                 <td className="px-3 py-2 text-xs font-medium text-gray-700 whitespace-nowrap">
                   {f.label}{f.unit ? <span className="text-gray-400 ml-1">({f.unit})</span> : null}
                 </td>
-                {['awal', 'akhir'].map(phase => (
-                  <>
-                    <td key={`${phase}-hasil`} className="px-2 py-1.5">
-                      <input
-                        type="text"
-                        value={data[`${f.key}_${phase}`] || ''}
-                        onChange={e => onChange(prev => ({ ...prev, [`${f.key}_${phase}`]: e.target.value }))}
-                        disabled={readOnly}
-                        placeholder="—"
-                        className="w-full text-xs text-center border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] disabled:bg-transparent disabled:border-transparent"
-                      />
-                    </td>
-                    <td key={`${phase}-ket`} className="px-2 py-1.5">
-                      <input
-                        type="text"
-                        value={data[`${f.key}_${phase}Ket`] || ''}
-                        onChange={e => onChange(prev => ({ ...prev, [`${f.key}_${phase}Ket`]: e.target.value }))}
-                        disabled={readOnly}
-                        placeholder="—"
-                        className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] disabled:bg-transparent disabled:border-transparent"
-                      />
-                    </td>
-                  </>
-                ))}
+                {['awal', 'akhir'].map(phase => {
+                  const adopted = isRenewal && phase === 'awal' && !!data[`${f.key}_${phase}`]
+                  return (
+                    <>
+                      <td key={`${phase}-hasil`} className={`px-2 py-1.5${adopted ? ' bg-purple-50/60' : ''}`}>
+                        <input
+                          type="text"
+                          value={data[`${f.key}_${phase}`] || ''}
+                          onChange={e => onChange(prev => ({ ...prev, [`${f.key}_${phase}`]: e.target.value }))}
+                          disabled={readOnly}
+                          placeholder="—"
+                          className={`w-full text-xs text-center border rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] disabled:bg-transparent disabled:border-transparent ${adopted ? 'border-purple-200 text-purple-700 font-semibold' : 'border-gray-200'}`}
+                        />
+                      </td>
+                      <td key={`${phase}-ket`} className={`px-2 py-1.5${adopted ? ' bg-purple-50/60' : ''}`}>
+                        <input
+                          type="text"
+                          value={data[`${f.key}_${phase}Ket`] || ''}
+                          onChange={e => onChange(prev => ({ ...prev, [`${f.key}_${phase}Ket`]: e.target.value }))}
+                          disabled={readOnly}
+                          placeholder="—"
+                          className={`w-full text-xs border rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] disabled:bg-transparent disabled:border-transparent ${adopted ? 'border-purple-200' : 'border-gray-200'}`}
+                        />
+                      </td>
+                    </>
+                  )
+                })}
               </tr>
             ))}
           </tbody>
@@ -334,21 +342,26 @@ function MeasTable({ title, fields, data, onChange, readOnly }) {
   )
 }
 
-function ParqTable({ items, data, onChange, readOnly }) {
+function ParqTable({ items, data, onChange, readOnly, isRenewal }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
       <table className="w-full" style={{ minWidth: '800px' }}>
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50">
             <th className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Pertanyaan</th>
-            <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={3}>Tes Awal</th>
+            <th
+              className={`text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-400'}`}
+              colSpan={3}
+            >
+              Tes Awal{isRenewal && <span className="ml-1 text-[10px] font-medium normal-case text-purple-400">(diadopsi)</span>}
+            </th>
             <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={3}>Tes Akhir</th>
           </tr>
           <tr className="border-b border-gray-200 bg-gray-50">
             <th className="px-3 py-1"></th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Ya</th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Tidak</th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
+            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Ya</th>
+            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Tidak</th>
+            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Keterangan</th>
             <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Ya</th>
             <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Tidak</th>
             <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
@@ -549,6 +562,8 @@ export default function PPFitnessAssessmentPage() {
     setTimeout(() => setSaved(false), 2000)
   }
 
+  const isRenewal = !isNew && !!existing?.prevAssessmentId
+
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
 
@@ -615,6 +630,25 @@ export default function PPFitnessAssessmentPage() {
           )}
         </div>
       </div>
+
+      {/* Renewal Banner — shown when pre-test was auto-adopted from a previous order's post-test */}
+      {!isNew && existing?.prevAssessmentId && (() => {
+        const src = PP_ASSESSMENTS[existing.prevAssessmentId]
+        return (
+          <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
+            <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
+            <div>
+              <p className="text-sm font-semibold text-purple-800">Renewal — Data Pre-Test Diadopsi Otomatis</p>
+              <p className="text-xs text-purple-600 mt-0.5">
+                Semua nilai <span className="font-semibold">Tes Awal</span> di bawah diadopsi dari Post-Test assessment{' '}
+                <span className="font-semibold">#{existing.prevAssessmentId}</span>
+                {src ? ` · ${src.namaKlien} · Order #${src.orderId}` : ''}.
+                {' '}Nilai ini menjadi baseline awal untuk program baru ini.
+              </p>
+            </div>
+          </div>
+        )
+      })()}
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
@@ -746,6 +780,7 @@ export default function PPFitnessAssessmentPage() {
               data={tanita}
               onChange={setTanita}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={tanitaCatatanAwal}
@@ -763,6 +798,7 @@ export default function PPFitnessAssessmentPage() {
               data={girths}
               onChange={setGirths}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={girthsCatatanAwal}
@@ -784,7 +820,7 @@ export default function PPFitnessAssessmentPage() {
           {/* PAR-Q */}
           <div className="mb-5">
             <p className="text-sm font-bold text-[#1E1C43] mb-2">PAR-Q (Physical Activity Readiness Questionnaire)</p>
-            <ParqTable items={PARQ_ITEMS} data={parq} onChange={setParq} readOnly={false} />
+            <ParqTable items={PARQ_ITEMS} data={parq} onChange={setParq} readOnly={false} isRenewal={isRenewal} />
             <CatatanPair
               awal={parqCatatanAwal}
               akhir={parqCatatanAkhir}
@@ -801,6 +837,7 @@ export default function PPFitnessAssessmentPage() {
               data={alignment}
               onChange={setAlignment}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={alignCatatanAwal}
@@ -818,6 +855,7 @@ export default function PPFitnessAssessmentPage() {
               data={vitalSigns}
               onChange={setVitalSigns}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={vitalCatatanAwal}
@@ -844,6 +882,7 @@ export default function PPFitnessAssessmentPage() {
               data={fms}
               onChange={setFms}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={fmsCatatanAwal}
@@ -861,6 +900,7 @@ export default function PPFitnessAssessmentPage() {
               data={cardio}
               onChange={setCardio}
               readOnly={false}
+              isRenewal={isRenewal}
             />
             <CatatanPair
               awal={cardioCatatanAwal}
@@ -879,6 +919,7 @@ export default function PPFitnessAssessmentPage() {
                 data={strength}
                 onChange={setStrength}
                 readOnly={false}
+                isRenewal={isRenewal}
               />
               <CatatanPair
                 awal={strengthCatatanAwal}
@@ -894,6 +935,7 @@ export default function PPFitnessAssessmentPage() {
                 data={endurance}
                 onChange={setEndurance}
                 readOnly={false}
+                isRenewal={isRenewal}
               />
               <CatatanPair
                 awal={enduranceCatatanAwal}
