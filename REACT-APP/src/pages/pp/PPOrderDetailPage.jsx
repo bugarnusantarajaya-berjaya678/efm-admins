@@ -349,9 +349,6 @@ export default function PPOrderDetailPage() {
   const [showAgreementTolakForm, setShowAgreementTolakForm] = useState(false)
   const [showAgreementPreview,   setShowAgreementPreview]   = useState(false)
   const [previewTarget,          setPreviewTarget]          = useState('template') // 'template' | 'signed'
-  const [dokumenTambahan, setDokumenTambahan] = useState([
-    { id: 1, nama: 'form-fisik-awal-james-wilson.pdf', tgl: '24 Okt 2026', keterangan: 'Hasil tes kebugaran awal' }
-  ])
   const [qDoc, setQDoc] = useState({ status: 'Terkirim', signedFile: null, riwayat: [{ id:1, nama:'LOI-pt-maju-bersama.pdf', tanggal:'8 Jun 2026', status:'Terkirim' }] })
   const [mouDoc, setMouDoc] = useState({ status: 'Drafting', gdocsUrl: '', riwayat: [] })
   const [cDoc, setCDoc] = useState({ status: 'Signed', gdocsUrl: 'https://docs.google.com/document/d/xyz789', riwayat: [{ id:1, nama:'contract-pt-maju-final.pdf', tgl:'1 Jun 2026', status:'Signed' }] })
@@ -1908,64 +1905,6 @@ export default function PPOrderDetailPage() {
                 </div>
               </div>
 
-              {/* ── Dokumen Tambahan ── */}
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <Paperclip size={14} className="text-[#1E1C43]" />
-                    <h3 className="text-sm font-bold text-[#1E1C43]">Dokumen Tambahan</h3>
-                    <span className="text-xs text-gray-400">({dokumenTambahan.length})</span>
-                  </div>
-                  <label className="h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition flex items-center gap-1.5 cursor-pointer">
-                    <Plus size={12} /> Tambah Dokumen
-                    <input
-                      type="file"
-                      className="hidden"
-                      onChange={e => {
-                        const file = e.target.files?.[0]
-                        if (!file) return
-                        setDokumenTambahan(prev => [...prev, {
-                          id: Date.now(),
-                          nama: file.name,
-                          tgl: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-                          keterangan: '',
-                        }])
-                        e.target.value = ''
-                      }}
-                    />
-                  </label>
-                </div>
-                <div className="p-5">
-                  {dokumenTambahan.length === 0 ? (
-                    <p className="text-xs text-gray-400 italic text-center py-4">Belum ada dokumen tambahan.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      {dokumenTambahan.map(dok => (
-                        <div key={dok.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
-                          <div className="w-8 h-8 bg-[#1E1C43]/10 rounded-lg flex items-center justify-center shrink-0">
-                            <FileText size={14} className="text-[#1E1C43]" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-semibold text-gray-800 truncate">{dok.nama}</p>
-                            <p className="text-[10px] text-gray-400">{dok.tgl}{dok.keterangan ? ` · ${dok.keterangan}` : ''}</p>
-                          </div>
-                          <div className="flex gap-1 shrink-0">
-                            <button className="h-7 w-7 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition flex items-center justify-center">
-                              <Download size={11} />
-                            </button>
-                            <button
-                              onClick={() => setDokumenTambahan(prev => prev.filter(d => d.id !== dok.id))}
-                              className="h-7 w-7 rounded-lg border border-red-200 text-red-400 hover:bg-red-50 transition flex items-center justify-center"
-                            >
-                              <Trash2 size={11} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
               </>
             )
           })()}
@@ -2375,6 +2314,107 @@ export default function PPOrderDetailPage() {
                           </div>
                         </div>
                       )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* ── Section 6: Fitness Assessment Awal ── */}
+          {(() => {
+            const skrining = {
+              id: 'SCR-26-0001',
+              tanggal: '15 Okt 2026',
+              picScreening: prog?.pic?.nama || 'Sarah Jenkins',
+              statusScreening: 'Selesai',
+              tinggi: 178, berat: 85, bmi: '26.8',
+              targetProgram: 'Penurunan berat badan 5 kg dalam 2 bulan',
+              kondisiFisik: 'Normal, sedikit kelebihan berat badan',
+              riwayatCedera: 'Pernah cedera lutut kanan (2023), sudah sembuh',
+              obatanRutin: 'Tidak ada',
+              catatanScreening: 'Klien aktif dan kooperatif. Disarankan program fatloss dengan fokus kardio 3x/minggu dan diet terkontrol.',
+            }
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Fitness Assessment Awal</h3>
+                    <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-green-100 text-green-700">{skrining.statusScreening}</span>
+                  </div>
+                  <button
+                    onClick={() => navigate('/pp/screening/' + skrining.id, { state: { fromOrderId: order.id } })}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition"
+                  >
+                    <Eye size={12} /> Lihat Detail
+                  </button>
+                </div>
+                <div className="p-5">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-4">
+                    {[
+                      ['ID Screening', skrining.id],
+                      ['Tanggal', skrining.tanggal],
+                      ['FC / Screener', skrining.picScreening],
+                      ['Tinggi Badan', skrining.tinggi + ' cm'],
+                      ['Berat Badan', skrining.berat + ' kg'],
+                      ['BMI', skrining.bmi],
+                    ].map(([lbl, val]) => (
+                      <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{lbl}</p>
+                        <p className="text-sm font-semibold text-[#1E1C43]">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-0">
+                    {[
+                      ['Target Program', skrining.targetProgram],
+                      ['Kondisi Fisik Awal', skrining.kondisiFisik],
+                      ['Riwayat Cedera', skrining.riwayatCedera],
+                      ['Obat-obatan Rutin', skrining.obatanRutin],
+                    ].map(([lbl, val]) => (
+                      <div key={lbl} className="flex gap-3 py-2.5 border-b border-gray-100 last:border-0">
+                        <p className="text-xs text-gray-400 w-36 shrink-0">{lbl}</p>
+                        <p className="text-xs font-medium text-gray-700">{val}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mb-1">Catatan Screening</p>
+                    <p className="text-xs text-blue-800 leading-relaxed">{skrining.catatanScreening}</p>
+                  </div>
+                </div>
+              </div>
+            )
+          })()}
+
+          {/* ── Section 7: Catatan Progres Pelatih ── */}
+          {(() => {
+            const catatanProgres = [
+              { tanggal: '20 Nov 2026', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
+              { tanggal: '5 Nov 2026',  catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
+              { tanggal: '27 Okt 2026', catatan: 'Sesi perdana berjalan lancar. Klien antusias dan kooperatif. Program fatloss 3 hari/minggu dirancang sesuai kondisi awal.' },
+            ]
+            const pelatihNama = prog?.pic?.nama || 'Pelatih'
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div className="px-5 py-3.5 border-b border-gray-100">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Pelatih</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Diisi oleh {pelatihNama} — read only, sumber dari sistem pelatih</p>
+                </div>
+                <div className="p-5">
+                  {catatanProgres.length === 0 ? (
+                    <p className="text-sm text-gray-400 italic text-center py-4">Belum ada catatan progres dari pelatih.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {catatanProgres.map((item, i) => (
+                        <div key={i} className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          <div className="flex items-center justify-between mb-1.5">
+                            <span className="text-xs font-semibold text-[#1E1C43]">{pelatihNama}</span>
+                            <span className="text-[10px] text-gray-400">{item.tanggal}</span>
+                          </div>
+                          <p className="text-sm text-gray-700 leading-relaxed">{item.catatan}</p>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
