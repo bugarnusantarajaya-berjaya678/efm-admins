@@ -179,6 +179,7 @@ function ReceiptModal({ rec, onClose }) {
 
             {/* Tabel ringkas */}
             <div className="rounded-xl overflow-hidden border border-gray-100 mb-5">
+              <div className="overflow-x-auto">
               <table className="w-full text-[13px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
@@ -207,6 +208,7 @@ function ReceiptModal({ rec, onClose }) {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Stamp LUNAS */}
@@ -336,7 +338,7 @@ export default function EventReceiptPage() {
         </div>
 
         {/* KPI mini */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Receipt</p>
             <p className="text-[28px] font-bold text-[#1E1C43] leading-none">{RECEIPT_INIT.length}</p>

@@ -89,10 +89,10 @@ export default function DashboardOwnerPage() {
   const pending = approvals.filter(a => !a.done).length
 
   return (
-    <div className="p-7">
+    <div>
 
       {/* Welcome bar */}
-      <div className="bg-text-primary rounded-2xl px-7 py-6 mb-6 flex items-center justify-between">
+      <div className="bg-text-primary rounded-2xl px-7 py-6 mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-[20px] font-bold text-white mb-1">Selamat datang, Bagoes! 👑</h2>
           <p className="text-[13px] text-white/60">Owner Dashboard — Semua kendali ada di tangan kamu</p>
@@ -114,7 +114,7 @@ export default function DashboardOwnerPage() {
             <span className="px-2 py-0.5 bg-accent text-white text-[11px] font-bold rounded-full">{pending}</span>
           )}
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {approvals.map(item => (
             <ApprovalCard
               key={item.id}
@@ -125,7 +125,7 @@ export default function DashboardOwnerPage() {
             />
           ))}
           {approvals.every(a => a.done) && (
-            <div className="col-span-2 bg-white rounded-2xl border-[1.5px] border-gray-200 px-6 py-10 text-center text-[13px] text-green-600 font-semibold">
+            <div className="col-span-1 sm:col-span-2 bg-white rounded-2xl border-[1.5px] border-gray-200 px-6 py-10 text-center text-[13px] text-green-600 font-semibold">
               ✓ Semua approval sudah selesai
             </div>
           )}
@@ -133,7 +133,7 @@ export default function DashboardOwnerPage() {
       </div>
 
       {/* Revenue stats */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
         {STATS.map(s => (
           <div key={s.label} className="bg-white rounded-2xl border-[1.5px] border-gray-200 p-5">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">{s.label}</p>
@@ -144,7 +144,7 @@ export default function DashboardOwnerPage() {
       </div>
 
       {/* Chart + Invoice table */}
-      <div className="grid grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
         {/* Bar chart */}
         <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 overflow-hidden">

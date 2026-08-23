@@ -779,7 +779,7 @@ export default function EventKonsultasiDetailPage() {
         {/* Peran EFM — 4 card selector */}
         <div>
           <FieldLabel required>Peran EFM dalam Event</FieldLabel>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {PERAN_EFM_OPTS.map(opt => {
               const active = detailEvent.peranEFM === opt
               const desc = {

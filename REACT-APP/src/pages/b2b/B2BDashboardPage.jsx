@@ -115,10 +115,10 @@ export default function B2BDashboardPage() {
   const navigate = useNavigate()
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="space-y-4">
 
       {/* Page Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-[#1E1C43]">B2B Management</h1>
           <p className="text-sm text-gray-500 mt-1">Overview operasional & pipeline — Corporate & Apartment</p>
@@ -135,7 +135,7 @@ export default function B2BDashboardPage() {
       {/* ══════════════════════════════════
           SECTION 1: KPI Cards
       ══════════════════════════════════ */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
         {/* Klien Aktif */}
         <div
@@ -240,10 +240,10 @@ export default function B2BDashboardPage() {
       {/* ══════════════════════════════════
           SECTION 3: Orders Aktif + Pipeline
       ══════════════════════════════════ */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Kiri: Orders Aktif */}
-        <div className="col-span-2 bg-white rounded-xl shadow-sm p-5">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm font-semibold text-[#1E1C43]">Orders Aktif</h3>
             <button

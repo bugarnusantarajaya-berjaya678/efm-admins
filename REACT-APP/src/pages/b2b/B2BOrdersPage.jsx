@@ -1019,7 +1019,7 @@ export default function B2BOrdersPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Orders Aktif</p>
             <p className="text-[28px] font-bold text-text-primary leading-none">{kpiAktif}</p>
@@ -1045,7 +1045,7 @@ export default function B2BOrdersPage() {
         {/* Filter Bar */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
           {/* Baris 1: Dropdowns */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <select value={bulan} onChange={e => setBulan(e.target.value)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
               <option value="">Semua Bulan</option>

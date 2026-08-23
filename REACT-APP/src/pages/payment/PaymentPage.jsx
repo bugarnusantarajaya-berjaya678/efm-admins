@@ -218,9 +218,9 @@ export default function PaymentPage() {
   })
 
   return (
-    <div className="p-7">
+    <div>
       {/* Page header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Rekap Pembayaran PIC</h1>
           <p className="text-[13px] text-text-muted mt-1">Kelola pembayaran honorarium trainer &amp; therapist</p>
@@ -299,7 +299,7 @@ export default function PaymentPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 p-5 flex items-center gap-3.5">
           <div className="w-10 h-10 rounded-xl bg-red-50 text-red-500 flex items-center justify-center shrink-0">
             <Clock size={18} />

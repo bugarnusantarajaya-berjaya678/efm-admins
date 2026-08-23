@@ -487,7 +487,7 @@ function TabKontrak({ pic, showToast }) {
   return (
     <div className="space-y-4">
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className={`bg-white border rounded-xl p-4 flex items-center gap-3 ${kpiAktif > 0 ? 'border-green-200' : 'border-red-200'}`}>
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpiAktif > 0 ? 'bg-green-50' : 'bg-red-50'}`}>
             <CheckCircle size={16} className={kpiAktif > 0 ? 'text-green-600' : 'text-red-500'} />
@@ -526,7 +526,7 @@ function TabKontrak({ pic, showToast }) {
                 <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">No PKS Aktif</p>
                 <p className="text-base font-semibold text-[#1E1C43]">{active.no}</p>
               </div>
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 {[['Tanggal Mulai', active.mulai], ['Tanggal Selesai', active.selesai]].map(([l, v]) => (
                   <div key={l}>
                     <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
@@ -832,7 +832,7 @@ function TabAssignment({ picId, navigate }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: 'Assignment Aktif',   val: aktif.length,               cls: 'text-[#1E1C43]' },
           { label: 'Total Sesi Selesai', val: `${totalSesiSelesai} sesi`, cls: 'text-green-600'  },
@@ -1010,7 +1010,7 @@ function TabPembayaran({ picId, navigate }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: 'Total Dibayar', val: fmt(totalAll),   cls: 'text-[#1E1C43]' },
           { label: 'Bulan Ini',     val: fmt(totalBulan), cls: 'text-green-600'  },
@@ -1152,7 +1152,7 @@ export default function PICDetail() {
   const extra     = extraData[pic.id] ?? {}
 
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
 
       {/* Toast notifications */}
       <div className="fixed bottom-4 right-4 flex flex-col gap-2 z-50 pointer-events-none">

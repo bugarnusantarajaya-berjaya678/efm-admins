@@ -201,7 +201,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
           <input className={inputCls} value={form.namaPaket} onChange={e => set('namaPaket', e.target.value)} placeholder="Contoh: 12 Sesi - Pro" />
         </FField>
       </div>
-      <div className="grid grid-cols-3 gap-3.5 mb-3.5">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3.5 mb-3.5">
         <FField label="Jumlah Sesi" required>
           <input type="number" className={inputCls} value={form.sesi} onChange={e => set('sesi', e.target.value)} placeholder="12" min="1" />
         </FField>
@@ -230,7 +230,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
       </div>
       {picInfo && (
         <div className="bg-bg-page rounded-xl p-3 mb-3.5 border-l-[3px] border-accent">
-          <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
             <div><span className="text-text-muted">Spesialisasi:</span><br/><strong>{picInfo.spesialis}</strong></div>
             <div><span className="text-text-muted">No. HP:</span><br/><strong>{picInfo.hp}</strong></div>
             <div><span className="text-text-muted">Default Biaya/Sesi:</span><br/><strong>{formatRp(picInfo.biayaSesi)}</strong></div>

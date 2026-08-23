@@ -309,9 +309,9 @@ export default function B2BDocumentsPage() {
   }
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Pemberkasan B2B</h1>
           <p className="text-sm text-text-muted mt-1">Kelola Kontrak, MOU, dan LOI klien B2B</p>
@@ -325,7 +325,7 @@ export default function B2BDocumentsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Proses / Draft',  value: draftingCount, bg: 'bg-blue-50',                   iconCls: 'text-[#2980B9]',   icon: FileText    },
           { label: 'Sudah Signed',    value: signedCount,   bg: 'bg-[#EAFAF1]',                 iconCls: 'text-[#1E8449]',   icon: CheckCircle },
