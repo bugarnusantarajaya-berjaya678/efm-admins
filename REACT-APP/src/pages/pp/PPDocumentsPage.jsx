@@ -419,7 +419,7 @@ export default function PPDocumentsPage() {
         const matchTahun  = !fTahun  || (d.tglDibuat ?? '').includes(fTahun)
         const matchStatus = !fStatus || d.statusTtd === fStatus
         const matchPaket  = !fPaket  || d.paket === fPaket
-        const matchSearch = !q || d.namaKlien.toLowerCase().includes(q) || d.orderId.toLowerCase().includes(q)
+        const matchSearch = !q || d.namaKlien.toLowerCase().includes(q) || d.orderId.toLowerCase().includes(q) || (d.leadId || '').toLowerCase().includes(q)
         return matchBulan && matchTahun && matchStatus && matchPaket && matchSearch
       })
       .sort((a, b) => parseInt(b.id.split('-')[3]) - parseInt(a.id.split('-')[3]))
@@ -523,7 +523,7 @@ export default function PPDocumentsPage() {
             type="text"
             value={fSearch}
             onChange={e => setFSearch(e.target.value)}
-            placeholder="Cari nama klien atau order ID..."
+            placeholder="Cari nama klien, order ID, atau lead ID..."
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
@@ -538,13 +538,14 @@ export default function PPDocumentsPage() {
       {/* Table */}
       <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-[13px]" style={{ minWidth: '1400px' }}>
+          <table className="w-full text-[13px]" style={{ minWidth: '1540px' }}>
             <thead>
               <tr className="border-b border-gray-100 bg-gray-50">
                 <th style={{minWidth:'160px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Agreement</th>
                 <th style={{minWidth:'170px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Receipt</th>
                 <th style={{minWidth:'160px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Invoice</th>
                 <th style={{minWidth:'130px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Order ID</th>
+                <th style={{minWidth:'110px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Lead ID</th>
                 <th style={{minWidth:'150px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Nama Klien</th>
                 <th style={{minWidth:'140px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Paket</th>
                 <th style={{minWidth:'130px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">PIC</th>
@@ -556,7 +557,7 @@ export default function PPDocumentsPage() {
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="text-center py-12 text-text-muted text-[13px]">Tidak ada data yang sesuai filter.</td>
+                  <td colSpan={11} className="text-center py-12 text-text-muted text-[13px]">Tidak ada data yang sesuai filter.</td>
                 </tr>
               ) : pageRows.map((d, idx) => (
                 <tr
@@ -569,6 +570,12 @@ export default function PPDocumentsPage() {
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.refInvoice}</td>
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
                     <button onClick={e => { e.stopPropagation(); navigate('/pp/orders/' + d.orderId) }} className="hover:underline">#{d.orderId}</button>
+                  </td>
+                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
+                    {d.leadId
+                      ? <button onClick={e => { e.stopPropagation(); navigate('/pp/leads/' + d.leadId) }} className="hover:underline">{d.leadId}</button>
+                      : <span className="text-gray-400">—</span>
+                    }
                   </td>
                   <td className="px-3 py-2.5">
                     <div className="flex items-center gap-2">

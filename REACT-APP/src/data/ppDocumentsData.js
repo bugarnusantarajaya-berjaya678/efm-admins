@@ -1,6 +1,7 @@
 export const DOCS_INIT = [
   {
     id: 'AGR-PP-26-0001', displayId: 'AGR-PP-26-0001',
+    leadId: 'LP-0001',
     namaKlien: 'James Wilson', initials: 'JW', color: '#2980B9',
     namaPanggilan: 'James', noWa: '081234567890', email: 'james.wilson@email.com',
     alamat: 'Jl. Sudirman No. 12, Jakarta Pusat',
@@ -11,6 +12,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0002', displayId: 'AGR-PP-26-0002',
+    leadId: 'LP-0002',
     namaKlien: 'Emily Chen', initials: 'EC', color: '#27AE60',
     namaPanggilan: 'Emily', noWa: '082345678901', email: 'emily.chen@email.com',
     alamat: 'Jl. Gatot Subroto No. 45, Jakarta Selatan',
@@ -21,6 +23,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0003', displayId: 'AGR-PP-26-0003',
+    leadId: 'LP-0013',
     namaKlien: 'Robert Taylor', initials: 'RT', color: '#E05945',
     namaPanggilan: 'Rob', noWa: '083456789012', email: 'robert.taylor@email.com',
     alamat: 'Jl. Kuningan Raya No. 88, Jakarta Selatan',
@@ -31,6 +34,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0004', displayId: 'AGR-PP-26-0004',
+    leadId: 'LP-0014',
     namaKlien: 'Anita Kumar', initials: 'AK', color: '#8E44AD',
     namaPanggilan: 'Anita', noWa: '084567890123', email: 'anita.kumar@email.com',
     alamat: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
@@ -41,6 +45,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0005', displayId: 'AGR-PP-26-0005',
+    leadId: 'LP-0003',
     namaKlien: 'Budi Santoso', initials: 'BS', color: '#16A085',
     namaPanggilan: 'Budi', noWa: '085678901234', email: 'budi.santoso@email.com',
     alamat: 'Jl. Rasuna Said No. 5, Jakarta Selatan',
@@ -51,6 +56,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0006', displayId: 'AGR-PP-26-0006',
+    leadId: 'LP-0015',
     namaKlien: 'Rina Kusuma', initials: 'RK', color: '#D35400',
     namaPanggilan: 'Rina', noWa: '086789012345', email: 'rina.kusuma@email.com',
     alamat: 'Jl. Kebon Sirih No. 33, Jakarta Pusat',
@@ -61,6 +67,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0007', displayId: 'AGR-PP-26-0007',
+    leadId: 'LP-0016',
     namaKlien: 'Hendra Wijaya', initials: 'HW', color: '#2C3E50',
     namaPanggilan: 'Hendra', noWa: '087890123456', email: 'hendra.wijaya@email.com',
     alamat: 'Jl. Ampera Raya No. 7, Jakarta Selatan',
@@ -71,6 +78,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0008', displayId: 'AGR-PP-26-0008',
+    leadId: 'LP-0017',
     namaKlien: 'Dewi Rahayu', initials: 'DR', color: '#C0392B',
     namaPanggilan: 'Dewi', noWa: '088901234567', email: 'dewi.rahayu@email.com',
     alamat: 'Jl. Fatmawati No. 55, Jakarta Selatan',
