@@ -443,6 +443,7 @@ export default function PPFitnessAssessmentPage() {
   const location = useLocation()
   const isNew = id === 'new'
   const leadId = location.state?.leadId || null
+  const fromOrderId = location.state?.fromOrderId || null
   const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
@@ -511,7 +512,9 @@ export default function PPFitnessAssessmentPage() {
   const statusLabel = existing?.statusAssessment || 'Draft'
 
   const handleBack = () => {
-    if (leadId) {
+    if (fromOrderId) {
+      navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
+    } else if (leadId) {
       navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
     } else {
       navigate('/pp/screening')
