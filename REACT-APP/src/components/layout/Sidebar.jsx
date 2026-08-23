@@ -11,8 +11,13 @@ import {
 const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
   { label: 'Leads',      path: '/pp/leads'      },
-  { label: 'Orders',     path: '/pp/orders'     },
-  { label: 'Agreement',  path: '/pp/documents'  },
+  {
+    label: 'Orders', path: '/pp/orders',
+    subKey: 'pp-orders',
+    sub: [
+      { label: 'Agreement', path: '/pp/documents' },
+    ],
+  },
   {
     label: 'Program DB', path: '/pp/program-db',
     subKey: 'pp-program-db',
@@ -102,7 +107,8 @@ export default function Sidebar({ isOpen, onClose }) {
     isPPRoute ? 'pp' : isB2BRoute ? 'b2b' : isEventRoute ? 'event' : isOpsRoute ? 'ops' : isLaporanRoute ? 'laporan' : null
   )
   const [openSubMenu, setOpenSubMenu] = useState(
-    location.pathname.startsWith('/pp/program-db') ? 'pp-program-db' : null
+    location.pathname.startsWith('/pp/program-db') ? 'pp-program-db' :
+    location.pathname.startsWith('/pp/documents')  ? 'pp-orders'     : null
   )
 
   /* Close sidebar on route change (mobile) */
