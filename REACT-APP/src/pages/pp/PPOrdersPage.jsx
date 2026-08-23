@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText } from 'lucide-react'
+import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -459,6 +459,12 @@ export default function PPOrdersPage() {
             className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
           >
             <FileText size={14} /> Cari Agreement
+          </button>
+          <button
+            onClick={() => navigate('/pp/screening')}
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+          >
+            <ClipboardList size={14} /> Cari Assessment
           </button>
           <button
             onClick={() => navigate('/pp/orders/new')}

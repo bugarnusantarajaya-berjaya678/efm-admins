@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
+import { PP_ASSESSMENTS } from '../../data/ppAssessmentsData';
 
 const dummyPPLeads = [
-  { id: "L-1001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
-  { id: "L-1002", nama: "Emily Chen", noHP: "082345678901", email: "emily@email.com", sumber: "Meta Ads", programDiminati: "4 Sesi - Starter", statusPipeline: "Closed Won", namaPendaftar: "Emily Chen", hpPendaftar: "082345678901", emailPendaftar: "emily@email.com" },
-  { id: "L-1003", nama: "Budi Santoso", noHP: "085678901234", email: "budi@email.com", sumber: "Walk-in", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "Budi Santoso", hpPendaftar: "085678901234", emailPendaftar: "budi@email.com" },
-  { id: "L-1005", nama: "Rian Maulana", noHP: "081298765432", email: "rian@email.com", sumber: "Meta Ads", programDiminati: "Fatloss & Bodyshape", statusPipeline: "Follow Up", namaPendaftar: "Rian Maulana", hpPendaftar: "081298765432", emailPendaftar: "rian@email.com" },
-  { id: "L-1006", nama: "Siti Rahayu", noHP: "082211334455", email: "siti@email.com", sumber: "WhatsApp", programDiminati: "Yoga", statusPipeline: "New", namaPendaftar: "Siti Rahayu", hpPendaftar: "082211334455", emailPendaftar: "siti@email.com" },
+  { id: "LP-0001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
+  { id: "LP-0002", nama: "Emily Chen", noHP: "082345678901", email: "emily@email.com", sumber: "Meta Ads", programDiminati: "4 Sesi - Starter", statusPipeline: "Closed Won", namaPendaftar: "Emily Chen", hpPendaftar: "082345678901", emailPendaftar: "emily@email.com" },
+  { id: "LP-0003", nama: "Budi Santoso", noHP: "085678901234", email: "budi@email.com", sumber: "Walk-in", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "Budi Santoso", hpPendaftar: "085678901234", emailPendaftar: "budi@email.com" },
+  { id: "LP-0004", nama: "Rian Maulana", noHP: "081298765432", email: "rian@email.com", sumber: "Meta Ads", programDiminati: "Fatloss & Bodyshape", statusPipeline: "Follow Up", namaPendaftar: "Rian Maulana", hpPendaftar: "081298765432", emailPendaftar: "rian@email.com" },
+  { id: "LP-0005", nama: "Siti Rahayu", noHP: "082211334455", email: "siti@email.com", sumber: "WhatsApp", programDiminati: "Yoga", statusPipeline: "New", namaPendaftar: "Siti Rahayu", hpPendaftar: "082211334455", emailPendaftar: "siti@email.com" },
 ];
 
 const dummyPaketDB = [
@@ -87,6 +88,7 @@ export default function PPOrderNewPage() {
   // Data Pendaftar — combobox search dari leads
   const [pendaftarSearch, setPendaftarSearch] = useState('');
   const [pendaftarDropdownOpen, setPendaftarDropdownOpen] = useState(false);
+  const [selectedLeadId, setSelectedLeadId] = useState(null);
 
   // Section 1: Data Pendaftar
   const [pendaftar, setPendaftar] = useState({
@@ -132,6 +134,7 @@ export default function PPOrderNewPage() {
       hubunganDenganKlien: 'Diri Sendiri'
     });
     setKlienLatihan(prev => ({ ...prev, nama: lead.nama, noHP: lead.noHP }));
+    setSelectedLeadId(lead.id);
   };
 
   const handleSelectPaket = (paket) => {
@@ -375,6 +378,41 @@ export default function PPOrderNewPage() {
                 </select>
               </div>
             </div>
+
+            {/* Info assessment untuk lead yang dipilih */}
+            {selectedLeadId && (() => {
+              const leadAssessments = Object.entries(PP_ASSESSMENTS)
+                .filter(([, a]) => a.leadId === selectedLeadId)
+                .map(([id, a]) => ({ id, ...a }));
+              if (leadAssessments.length > 0) {
+                return (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
+                    <ClipboardList size={14} className="text-blue-600 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-blue-700 mb-1">
+                        Lead ini sudah memiliki {leadAssessments.length} fitness assessment:
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {leadAssessments.map(a => (
+                          <span key={a.id} className="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
+                            #{a.id} ({a.statusAssessment})
+                          </span>
+                        ))}
+                      </div>
+                      <p className="text-[11px] text-blue-500 mt-1">Order baru akan otomatis ditandai sebagai renewal jika assessment terakhir sudah Post-Test Selesai.</p>
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center gap-2">
+                  <ClipboardList size={14} className="text-gray-400 shrink-0" />
+                  <p className="text-xs text-gray-500">
+                    Lead ini belum memiliki fitness assessment. Assessment dapat dibuat setelah order tersimpan.
+                  </p>
+                </div>
+              );
+            })()}
           </div>
         </div>
 
