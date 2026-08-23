@@ -48,7 +48,7 @@ export default function LaporanPenjualanPage() {
   const total = filtered.reduce((s, r) => s + r.nilai, 0)
 
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
       <div>
         <h1 className="text-[22px] font-bold text-text-primary">Laporan Penjualan</h1>
         <p className="text-[13px] text-text-muted mt-1">Rekap transaksi penjualan semua divisi</p>

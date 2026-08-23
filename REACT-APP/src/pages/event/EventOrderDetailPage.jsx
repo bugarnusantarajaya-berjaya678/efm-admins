@@ -1009,7 +1009,7 @@ export default function EventOrderDetailPage() {
                 </div>
                 <div className="p-5">
                   {/* Info baris */}
-                  <div className="grid grid-cols-3 gap-4 mb-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4">
                     {[
                       ['No. Quotation', qd.nomorQuotation],
                       ['Tanggal', isEditing

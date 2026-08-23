@@ -99,10 +99,10 @@ export default function PPDashboard() {
   const totalPipeline = PIPELINE_ACTIVE.reduce((s, d) => s + d.jumlah, 0)
 
   return (
-    <div className="p-6 space-y-4">
+    <div className="space-y-4">
 
       {/* ── Header ─────────────────────────────────── */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-[#1E1C43]">Dashboard Private Program</h1>
           <p className="text-sm text-gray-500 mt-1">Ringkasan performa program latihan personal EFM</p>
@@ -119,7 +119,7 @@ export default function PPDashboard() {
       {/* ══════════════════════════════════
           SECTION 1: KPI Cards
       ══════════════════════════════════ */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
         {/* Leads/Klien Aktif */}
         <div
@@ -300,10 +300,10 @@ export default function PPDashboard() {
       {/* ══════════════════════════════════
           SECTION 4+5: PIC Summary + Pipeline
       ══════════════════════════════════ */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* PIC Ringkasan Beban & Pembayaran */}
-        <div className="col-span-2 bg-white rounded-xl border border-gray-100 p-5">
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-[13px] font-bold text-[#1E1C43]">PIC — Ringkasan Beban & Pembayaran</h3>
             <button

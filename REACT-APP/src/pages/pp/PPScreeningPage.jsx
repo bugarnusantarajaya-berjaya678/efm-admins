@@ -325,7 +325,7 @@ export default function PPScreeningPage() {
               {/* Data Fisik */}
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-3">Data Fisik</p>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {[
                     ["Usia", selectedScreening.usia + " tahun"],
                     ["Jenis Kelamin", selectedScreening.jenisKelamin],
@@ -450,7 +450,7 @@ export default function PPScreeningPage() {
                       placeholder="Nama klien yang di-screening"
                       className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]" />
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-gray-600 mb-1.5 block">Usia</label>
                       <input type="number" value={form.usia} onChange={e => setForm({...form, usia: e.target.value})}

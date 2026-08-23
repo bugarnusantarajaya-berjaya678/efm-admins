@@ -59,10 +59,10 @@ export default function DashboardAdmin() {
   const nama = localStorage.getItem('efm_nama') ?? 'Bagoes'
 
   return (
-    <div className="p-6">
+    <div>
 
       {/* Welcome Banner */}
-      <div className="bg-[#1E1C43] rounded-xl px-6 py-4 mb-5 flex items-center justify-between">
+      <div className="bg-[#1E1C43] rounded-xl px-6 py-4 mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-white text-lg font-semibold">Selamat datang, {nama}! 👋</h1>
           <p className="text-white/60 text-xs mt-0.5">
@@ -73,7 +73,7 @@ export default function DashboardAdmin() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
         {KPI.map(k => {
           const Icon = k.icon
           return (
@@ -99,10 +99,10 @@ export default function DashboardAdmin() {
       </div>
 
       {/* Main 3-col layout */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Left — col-span-2 */}
-        <div className="col-span-2 space-y-4">
+        <div className="lg:col-span-2 space-y-4">
 
           {/* Sesi Aktif Hari Ini */}
           <div className="bg-white rounded-xl shadow-sm p-4">
@@ -115,6 +115,7 @@ export default function DashboardAdmin() {
                 Lihat Semua →
               </Link>
             </div>
+            <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
@@ -145,10 +146,11 @@ export default function DashboardAdmin() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
 
           {/* Ringkasan Operasional — 3 mini cards */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="bg-white rounded-xl shadow-sm p-4 border border-gray-100">
               <div className="flex items-center gap-1.5 mb-2">
                 <Users size={13} className="text-[#1E1C43]" />

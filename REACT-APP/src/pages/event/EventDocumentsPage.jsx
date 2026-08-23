@@ -318,7 +318,7 @@ export default function EventDocumentsPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Proses / Draft', value: draftCount,  bg: 'bg-blue-50',               iconCls: 'text-[#2980B9]',    icon: FileText    },
           { label: 'Sudah Signed',   value: signedCount, bg: 'bg-[#EAFAF1]',             iconCls: 'text-[#1E8449]',    icon: CheckCircle },

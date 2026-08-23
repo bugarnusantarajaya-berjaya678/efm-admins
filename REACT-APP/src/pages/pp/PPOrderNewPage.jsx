@@ -539,7 +539,7 @@ export default function PPOrderNewPage() {
                       <Trash2 size={14} />
                     </button>
                   </div>
-                  <div className="grid grid-cols-4 gap-2">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     <div className="col-span-2">
                       <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Item</label>
                       <input type="text" value={item.namaItem}

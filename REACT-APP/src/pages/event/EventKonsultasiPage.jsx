@@ -107,7 +107,7 @@ export default function EventKonsultasiPage() {
     <div className="p-7 space-y-5">
 
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Konsultasi Event</h1>
           <p className="text-[13px] text-text-muted mt-1">Riwayat konsultasi & penawaran event klien</p>
@@ -121,7 +121,7 @@ export default function EventKonsultasiPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Konsultasi',       val: totalKonsultasi, bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary', icon: ClipboardList },
           { label: 'Menunggu Tindak Lanjut', val: menunggu,        bg: 'bg-yellow-50',             iconCls: 'text-yellow-600',   icon: Clock         },

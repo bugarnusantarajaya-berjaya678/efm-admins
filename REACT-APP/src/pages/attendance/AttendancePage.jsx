@@ -172,7 +172,7 @@ export default function AttendancePage() {
   }
 
   return (
-    <div className="p-7">
+    <div>
       {/* Page header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#1E1C43]">Absensi &amp; Rekap PIC</h1>

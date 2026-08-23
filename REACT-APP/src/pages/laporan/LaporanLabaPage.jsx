@@ -20,14 +20,14 @@ const maxLaba = Math.max(...DATA.map(d => d.laba))
 
 export default function LaporanLabaPage() {
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
       <div>
         <h1 className="text-[22px] font-bold text-text-primary">Laba &amp; Biaya</h1>
         <p className="text-[13px] text-text-muted mt-1">Selisih revenue klien vs honorarium PIC</p>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Total Revenue', val: totalRev,  icon: TrendingUp,   bg: 'bg-green-50',               iconCls: 'text-green-600'    },
           { label: 'Total Honorarium', val: totalHon,  icon: TrendingDown, bg: 'bg-red-50',                 iconCls: 'text-[#C0392B]'    },

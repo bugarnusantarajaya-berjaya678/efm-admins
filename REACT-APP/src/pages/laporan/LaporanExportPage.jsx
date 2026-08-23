@@ -274,7 +274,7 @@ export default function LaporanExportPage() {
     }`
 
   return (
-    <div className="p-7 max-w-[860px]">
+    <div className="max-w-[860px]">
 
       {/* Header */}
       <div className="mb-7">

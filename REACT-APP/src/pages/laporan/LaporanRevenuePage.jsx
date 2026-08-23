@@ -38,8 +38,8 @@ export default function LaporanRevenuePage() {
   const chartRows = CHART_DATA.slice(-Number(periode || 6))
 
   return (
-    <div className="p-7 space-y-5">
-      <div className="flex items-center justify-between">
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Ringkasan Revenue</h1>
           <p className="text-[13px] text-text-muted mt-1">Laporan pendapatan semua divisi EFM</p>
@@ -60,7 +60,7 @@ export default function LaporanRevenuePage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Revenue', val: totalAll,   icon: TrendingUp,  bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary' },
           { label: 'Revenue PP',    val: totalPP,    icon: DollarSign,  bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary' },

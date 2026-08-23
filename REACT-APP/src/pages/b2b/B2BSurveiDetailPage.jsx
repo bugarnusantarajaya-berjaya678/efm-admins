@@ -686,7 +686,7 @@ export default function B2BSurveiDetailPage() {
         <SectionHeader num="2" title="Area & Fasilitas" subtitle="Pilih area yang tersedia, lalu isi kondisi masing-masing" />
 
         {/* Grid toggle 4 kolom */}
-        <div className="grid grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
           {AREA_LIST.map(area => {
             const IconComp = ICON_MAP[area.icon] || CircleDot
             const active = areas[area.key]
@@ -729,7 +729,7 @@ export default function B2BSurveiDetailPage() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
                 <div>
                   <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-1">Jenis Bangunan</label>
                   <select className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43]">
@@ -752,7 +752,7 @@ export default function B2BSurveiDetailPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-4 gap-3 mb-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 {['Luas (m²)', 'Panjang (m)', 'Lebar (m)', 'Tinggi (m)'].map(lbl => (
                   <div key={lbl}>
                     <label className="text-[10px] font-semibold text-gray-400 uppercase block mb-1">{lbl}</label>

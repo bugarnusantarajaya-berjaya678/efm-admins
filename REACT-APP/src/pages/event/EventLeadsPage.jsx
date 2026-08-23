@@ -328,7 +328,7 @@ export default function EventLeadsPage() {
       <div className="p-6 space-y-5">
 
         {/* Header */}
-        <div className="flex items-start justify-between">
+        <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h1 className="text-[22px] font-bold text-text-primary">Leads Event</h1>
             <p className="text-sm text-text-muted mt-1">Kelola prospek klien Event — Corporate, Foundation, Government &amp; lainnya</p>
@@ -342,7 +342,7 @@ export default function EventLeadsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
             <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1.5">Total Leads</p>
             <p className="text-[28px] font-bold text-text-primary leading-none">{kpiTotal}</p>

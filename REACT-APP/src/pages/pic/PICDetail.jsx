@@ -487,7 +487,7 @@ function TabKontrak({ pic, showToast }) {
   return (
     <div className="space-y-4">
       {/* KPI Cards */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         <div className={`bg-white border rounded-xl p-4 flex items-center gap-3 ${kpiAktif > 0 ? 'border-green-200' : 'border-red-200'}`}>
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${kpiAktif > 0 ? 'bg-green-50' : 'bg-red-50'}`}>
             <CheckCircle size={16} className={kpiAktif > 0 ? 'text-green-600' : 'text-red-500'} />
@@ -832,7 +832,7 @@ function TabAssignment({ picId, navigate }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: 'Assignment Aktif',   val: aktif.length,               cls: 'text-[#1E1C43]' },
           { label: 'Total Sesi Selesai', val: `${totalSesiSelesai} sesi`, cls: 'text-green-600'  },
@@ -1010,7 +1010,7 @@ function TabPembayaran({ picId, navigate }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {[
           { label: 'Total Dibayar', val: fmt(totalAll),   cls: 'text-[#1E1C43]' },
           { label: 'Bulan Ini',     val: fmt(totalBulan), cls: 'text-green-600'  },

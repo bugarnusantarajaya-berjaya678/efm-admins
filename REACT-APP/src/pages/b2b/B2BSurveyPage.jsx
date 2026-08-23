@@ -112,7 +112,7 @@ export default function B2BSurveyPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {[
           { label: 'Total Survei',           val: totalSurvei,    bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary', icon: ClipboardList },
           { label: 'Menunggu Tindak Lanjut', val: menunggu,       bg: 'bg-yellow-50',             iconCls: 'text-yellow-600',   icon: Clock         },
