@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
@@ -872,10 +872,65 @@ export default function PPOrderDetailPage() {
         <>
 
 
-          {/* Section 1 — Info Deal */}
+          {/* ── Card: Data Klien (read-only, sourced from leads — existing orders only) ── */}
+          {!isNew && (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien</h3>
+                <span className="flex items-center gap-1.5 text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-lg">
+                  <Lock size={11} /> Bersumber dari Leads
+                </span>
+              </div>
+              <div className="p-5">
+                <div className="mb-4">
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendaftar</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { label: 'Nama Pendaftar',   val: infoDeal.namaKlien     },
+                      { label: 'No. HP',            val: infoDeal.noHP          },
+                      { label: 'Email',             val: infoDeal.email         },
+                      { label: 'Hub. dengan Klien', val: infoDeal.hubunganKlien },
+                    ].map(({ label, val }) => (
+                      <div key={label} className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Klien Latihan</p>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama Klien</p>
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.namaKlienLatihan || '—'}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No. HP Klien</p>
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.noHPKlien || '—'}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 flex items-start gap-1.5 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
+                  <Info size={11} className="text-amber-500 mt-0.5 shrink-0" />
+                  <p className="text-xs text-amber-700">Data klien bersumber dari Leads dan tidak dapat diubah di sini. Untuk mengganti klien, hapus order ini dan buat order baru dengan memilih leads yang sesuai.</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── Section: Detail Program & Operasional ── */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Deal & Detail Program</h3>
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{isNew ? 'Info Deal & Detail Program' : 'Detail Program & Operasional'}</h3>
               {editingSection === 'infoDeal' ? (
                 <div className="flex gap-2">
                   <button
@@ -897,87 +952,90 @@ export default function PPOrderDetailPage() {
             </div>
             <div className="p-5">
 
-            {/* Data Pendaftar */}
-            <div className="mb-4">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Pendaftar</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  { label: 'Nama Pendaftar',          field: 'namaKlien',     type: 'text' },
-                  { label: 'No. HP',                  field: 'noHP',          type: 'tel'  },
-                  { label: 'Email',                   field: 'email',         type: 'email'},
-                ].map(({ label, field, type }) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    {editingSection === 'infoDeal' ? (
-                      <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
-                        onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
-                    ) : (
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
-                    )}
-                  </div>
-                ))}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hubungan dengan Klien</p>
-                  {editingSection === 'infoDeal' ? (
-                    <select value={infoDraft.hubunganKlien || 'Diri Sendiri'} onChange={e => setInfoDraft(p => ({...p, hubunganKlien: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
-                      {['Diri Sendiri','Pasangan','Anak','Orang Tua','Keluarga Lain','Lainnya'].map(o => <option key={o}>{o}</option>)}
-                    </select>
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.hubunganKlien || '—'}</p>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Data Klien Latihan */}
-            <div className="mb-4">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien Latihan</p>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                {[
-                  { label: 'Nama Klien Latihan', field: 'namaKlienLatihan', type: 'text' },
-                  { label: 'No. HP Klien',       field: 'noHPKlien',        type: 'tel'  },
-                ].map(({ label, field, type }) => (
-                  <div key={label} className="bg-gray-50 rounded-lg p-3">
-                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                    {editingSection === 'infoDeal' ? (
-                      <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
-                        onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
-                    ) : (
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
-                    )}
-                  </div>
-                ))}
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
-                  {editingSection === 'infoDeal' ? (
-                    <div className="flex items-center gap-1.5">
-                      <input type="number" min="1" max="99" value={infoDraft.usiaKlien || ''} placeholder="0"
-                        onChange={e => setInfoDraft(p => ({...p, usiaKlien: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
-                      <span className="text-xs text-gray-400 whitespace-nowrap">tahun</span>
+            {/* Data Pendaftar + Data Klien Latihan — only shown on new order form */}
+            {isNew && (
+              <>
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Pendaftar</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {[
+                    { label: 'Nama Pendaftar',          field: 'namaKlien',     type: 'text' },
+                    { label: 'No. HP',                  field: 'noHP',          type: 'tel'  },
+                    { label: 'Email',                   field: 'email',         type: 'email'},
+                  ].map(({ label, field, type }) => (
+                    <div key={label} className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                      {editingSection === 'infoDeal' ? (
+                        <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
+                          onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
+                      )}
                     </div>
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
-                  )}
-                </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
-                  {editingSection === 'infoDeal' ? (
-                    <select value={infoDraft.jenisKelaminKlien || ''} onChange={e => setInfoDraft(p => ({...p, jenisKelaminKlien: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
-                      <option value="">-- Pilih --</option>
-                      <option value="Laki-laki">Laki-laki</option>
-                      <option value="Perempuan">Perempuan</option>
-                    </select>
-                  ) : (
-                    <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
-                  )}
+                  ))}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hubungan dengan Klien</p>
+                    {editingSection === 'infoDeal' ? (
+                      <select value={infoDraft.hubunganKlien || 'Diri Sendiri'} onChange={e => setInfoDraft(p => ({...p, hubunganKlien: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                        {['Diri Sendiri','Pasangan','Anak','Orang Tua','Keluarga Lain','Lainnya'].map(o => <option key={o}>{o}</option>)}
+                      </select>
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.hubunganKlien || '—'}</p>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <div className="mb-4">
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien Latihan</p>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {[
+                    { label: 'Nama Klien Latihan', field: 'namaKlienLatihan', type: 'text' },
+                    { label: 'No. HP Klien',       field: 'noHPKlien',        type: 'tel'  },
+                  ].map(({ label, field, type }) => (
+                    <div key={label} className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                      {editingSection === 'infoDeal' ? (
+                        <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
+                          onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
+                      )}
+                    </div>
+                  ))}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
+                    {editingSection === 'infoDeal' ? (
+                      <div className="flex items-center gap-1.5">
+                        <input type="number" min="1" max="99" value={infoDraft.usiaKlien || ''} placeholder="0"
+                          onChange={e => setInfoDraft(p => ({...p, usiaKlien: e.target.value}))}
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                        <span className="text-xs text-gray-400 whitespace-nowrap">tahun</span>
+                      </div>
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                    )}
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
+                    {editingSection === 'infoDeal' ? (
+                      <select value={infoDraft.jenisKelaminKlien || ''} onChange={e => setInfoDraft(p => ({...p, jenisKelaminKlien: e.target.value}))}
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                        <option value="">-- Pilih --</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                      </select>
+                    ) : (
+                      <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+              </>
+            )}
 
             {/* Program & Rincian Biaya */}
             <div className="mb-4">
@@ -1148,11 +1206,13 @@ export default function PPOrderDetailPage() {
                 )
               )}
 
-              <div className="border-t border-gray-100 pt-3 flex justify-between items-center">
-                <span className="text-sm text-gray-600">Total Nilai Order</span>
-                <span className="text-base font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</span>
+              <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
+                <span className="text-sm font-medium text-white/80">Total Nilai Order</span>
+                <span className="text-base font-bold text-white">{formatRpPP(subtotalPP)}</span>
               </div>
             </div>
+
+            <div className="border-t border-gray-100 my-5" />
 
             {/* Jadwal Latihan */}
             <div className="mb-4">
@@ -1211,6 +1271,8 @@ export default function PPOrderDetailPage() {
                 </div>
               </div>
             </div>
+
+            <div className="border-t border-gray-100 my-5" />
 
             {/* Lokasi Latihan */}
             <div className="mb-4">
