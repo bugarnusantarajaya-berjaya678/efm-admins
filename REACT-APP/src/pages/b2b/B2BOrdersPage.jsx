@@ -1045,7 +1045,7 @@ export default function B2BOrdersPage() {
         {/* Filter Bar */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
           {/* Baris 1: Dropdowns */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <select value={bulan} onChange={e => setBulan(e.target.value)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
               <option value="">Semua Bulan</option>

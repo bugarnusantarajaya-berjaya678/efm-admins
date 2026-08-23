@@ -78,6 +78,7 @@ export default function LaporanLabaPage() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-[14px] font-bold text-text-primary">Rincian Per Bulan</h3>
         </div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr>
@@ -108,6 +109,7 @@ export default function LaporanLabaPage() {
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )

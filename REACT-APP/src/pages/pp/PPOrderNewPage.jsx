@@ -256,7 +256,7 @@ export default function PPOrderNewPage() {
 
   // ── Render ──────────────────────────────────────
   return (
-    <div className="p-6 bg-[#F5F5F7] min-h-screen pb-24">
+    <div className="bg-[#F5F5F7] min-h-screen pb-24">
 
 
       {/* Header Card */}

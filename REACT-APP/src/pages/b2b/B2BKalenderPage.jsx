@@ -266,7 +266,7 @@ export default function B2BKalenderPage() {
   const today = new Date()
 
   return (
-    <div className="p-6 space-y-5">
+    <div className="space-y-5">
 
       {/* Header */}
       <div>

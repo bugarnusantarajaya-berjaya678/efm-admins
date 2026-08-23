@@ -95,7 +95,7 @@ export default function B2BSurveyPage() {
   const sudahPenawaran = list.filter(s => s.hasil === 'lanjut').length
 
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
 
       {/* Header */}
       <div className="flex items-start justify-between">

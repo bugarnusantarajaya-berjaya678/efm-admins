@@ -737,7 +737,7 @@ export default function EventOrderDetailPage() {
       </div>
 
       {/* Tab Bar */}
-      <div className="flex border-b border-gray-200 mb-5">
+      <div className="flex overflow-x-auto border-b border-gray-200 mb-5">
         {[
           { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
           { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
@@ -746,7 +746,7 @@ export default function EventOrderDetailPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            className={`shrink-0 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
               activeTab === tab.key
                 ? 'border-[#1E1C43] text-[#1E1C43]'
                 : 'border-transparent text-gray-400 hover:text-gray-600'

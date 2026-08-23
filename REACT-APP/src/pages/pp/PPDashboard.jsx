@@ -390,7 +390,7 @@ export default function PPDashboard() {
               </div>
             ))}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-3 gap-2">
+          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 sm:grid-cols-3 gap-2">
             <div className="text-center">
               <p className="text-lg font-bold text-[#1E1C43]">{totalPipeline}</p>
               <p className="text-[10px] text-gray-400">Aktif</p>

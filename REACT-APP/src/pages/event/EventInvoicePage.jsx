@@ -492,6 +492,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                     <span className="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">Read-only · dari Order</span>
                   </div>
                   <div className="border border-gray-200 rounded-xl overflow-hidden">
+                    <div className="overflow-x-auto">
                     <table className="w-full text-[13px]">
                       <thead>
                         <tr className="bg-gray-50 border-b border-gray-200">
@@ -523,6 +524,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                         )}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
 
@@ -739,6 +741,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                 )}
               </div>
               <div className="rounded-xl border border-gray-100 overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="w-full text-[13px]">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-100">
@@ -771,6 +774,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                     })}
                   </tbody>
                 </table>
+                </div>
               </div>
             </div>
 

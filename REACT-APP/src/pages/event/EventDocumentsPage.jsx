@@ -305,9 +305,9 @@ export default function EventDocumentsPage() {
   }
 
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Pemberkasan Event</h1>
           <p className="text-sm text-text-muted mt-1">Kelola dokumen kontrak, MOU, dan LOI event</p>

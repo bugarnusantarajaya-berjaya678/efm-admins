@@ -160,9 +160,9 @@ export default function OPSAssetsPage() {
   })
 
   return (
-    <div className="p-7">
+    <div>
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Barang & Aset</h1>
           <p className="text-[13px] text-text-muted mt-1">Inventaris peralatan fitness dan aset operasional EFM</p>

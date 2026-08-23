@@ -398,6 +398,7 @@ export default function EventDashboardPage() {
             Lihat Semua →
           </button>
         </div>
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="bg-gray-50">
@@ -452,6 +453,7 @@ export default function EventDashboardPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
     </div>

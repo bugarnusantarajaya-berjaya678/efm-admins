@@ -179,6 +179,7 @@ function ReceiptModal({ rec, onClose }) {
 
             {/* Tabel ringkas */}
             <div className="rounded-xl overflow-hidden border border-gray-100 mb-5">
+              <div className="overflow-x-auto">
               <table className="w-full text-[13px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
@@ -207,6 +208,7 @@ function ReceiptModal({ rec, onClose }) {
                   </tr>
                 </tbody>
               </table>
+              </div>
             </div>
 
             {/* Stamp LUNAS */}

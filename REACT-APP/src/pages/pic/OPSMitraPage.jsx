@@ -209,7 +209,7 @@ export default function OPSMitraPage() {
   })
 
   return (
-    <div className="p-7">
+    <div>
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>

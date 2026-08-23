@@ -104,7 +104,7 @@ export default function EventKonsultasiPage() {
   const tidakLanjut     = list.filter(s => s.hasil === 'tidak_lanjut').length
 
   return (
-    <div className="p-7 space-y-5">
+    <div className="space-y-5">
 
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">

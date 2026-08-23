@@ -477,6 +477,7 @@ function OrderEditModal({ order, onClose }) {
                 <p className="text-[11px] text-gray-400 mt-0.5">Item ini menjadi template invoice untuk setiap periode tagihan</p>
               </div>
               <div className="rounded-xl border border-gray-100 overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="w-full text-[12px]">
                   <thead>
                     <tr className="bg-gray-50 border-b border-gray-100">
@@ -554,6 +555,7 @@ function OrderEditModal({ order, onClose }) {
                     </tr>
                   </tbody>
                 </table>
+                </div>
               </div>
               <button
                 onClick={addLineItem}
@@ -580,6 +582,7 @@ function OrderEditModal({ order, onClose }) {
 
             {/* Payment rows table */}
             <div className="rounded-xl border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
               <table className="w-full text-[12px]">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
@@ -664,6 +667,7 @@ function OrderEditModal({ order, onClose }) {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
           </section>
 
@@ -699,6 +703,7 @@ function OrderEditModal({ order, onClose }) {
                 <div>
                   <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Riwayat Realisasi</p>
                   <div className="rounded-xl border border-gray-100 overflow-hidden mb-3">
+                    <div className="overflow-x-auto">
                     <table className="w-full text-[12px]">
                       <thead>
                         <tr className="bg-gray-50 border-b border-gray-100">
@@ -746,6 +751,7 @@ function OrderEditModal({ order, onClose }) {
                         ))}
                       </tbody>
                     </table>
+                    </div>
                   </div>
                   <button
                     onClick={addPsRow}
@@ -1066,7 +1072,7 @@ export default function EventOrdersPage() {
         {/* Filter Bar */}
         <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
           {/* Baris 1: Dropdowns */}
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
             <select value={bulan} onChange={e => setBulan(e.target.value)}
               className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
               <option value="">Semua Bulan</option>

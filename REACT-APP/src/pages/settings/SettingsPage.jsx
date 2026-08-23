@@ -56,7 +56,7 @@ function Toggle({ on, onChange }) {
 function Card({ header, subHeader, action, children }) {
   return (
     <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 overflow-hidden mb-5">
-      <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-6 py-5 border-b border-gray-100 flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-[15px] font-bold text-text-primary">{header}</h3>
           {subHeader && <p className="text-[12px] text-text-muted mt-0.5">{subHeader}</p>}
@@ -134,7 +134,7 @@ function PanelUsers() {
           </button>
         }
       >
-        <div className="-mx-6 -mb-6">
+        <div className="-mx-6 -mb-6 overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
               <tr>{TABLE_H.map(h => <th key={h} className="bg-gray-50 px-5 py-3 text-[11px] font-semibold text-text-muted text-left uppercase tracking-wide">{h}</th>)}</tr>
@@ -183,6 +183,7 @@ function PanelAccess() {
   return (
     <Card header="Matrix Hak Akses" subHeader="Pengaturan akses fitur per role">
       <Alert type="info">Toggle di bawah mengatur apa yang bisa dilakukan Admin. Owner selalu punya akses penuh.</Alert>
+      <div className="overflow-x-auto">
       <table className="w-full border-collapse">
         <thead>
           <tr>
@@ -213,6 +214,7 @@ function PanelAccess() {
           ))}
         </tbody>
       </table>
+      </div>
       <div className="flex justify-end mt-5">
         <button className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white text-[13px] font-semibold rounded-lg transition-colors">
           Simpan Pengaturan
@@ -587,7 +589,7 @@ export default function SettingsPage() {
   const ActivePanel = PANELS[activeKey]
 
   return (
-    <div className="p-7">
+    <div>
       {/* Header */}
       <div className="mb-7">
         <h1 className="text-[22px] font-bold text-text-primary">Settings</h1>

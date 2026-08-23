@@ -44,7 +44,7 @@ export default function LaporanRevenuePage() {
           <h1 className="text-[22px] font-bold text-text-primary">Ringkasan Revenue</h1>
           <p className="text-[13px] text-text-muted mt-1">Laporan pendapatan semua divisi EFM</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <select value={periode} onChange={e => setPeriode(e.target.value)} className="px-3 py-2 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none bg-white">
             <option value="3">3 Bulan Terakhir</option>
             <option value="6">6 Bulan Terakhir</option>
@@ -119,6 +119,7 @@ export default function LaporanRevenuePage() {
         <div className="px-5 py-4 border-b border-gray-100">
           <h3 className="text-[14px] font-bold text-text-primary">Breakdown Per Divisi Per Bulan</h3>
         </div>
+        <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr>
@@ -146,6 +147,7 @@ export default function LaporanRevenuePage() {
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   )
