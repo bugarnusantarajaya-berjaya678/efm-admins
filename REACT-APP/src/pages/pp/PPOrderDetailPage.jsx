@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
@@ -1546,28 +1546,18 @@ export default function PPOrderDetailPage() {
                       {FLOW_STATUS_LABEL[agreementFlowStatus]}
                     </span>
                   </div>
-                  {/* Dev state switcher */}
-                  <div className="flex gap-1">
-                    {Object.entries(FLOW_STATUS_LABEL).map(([k, v]) => (
-                      <button
-                        key={k}
-                        onClick={() => { setAgreementFlowStatus(k); setShowAgreementTolakForm(false) }}
-                        className={`text-[10px] px-2 py-1 rounded transition ${agreementFlowStatus === k ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}
-                      >
-                        {v}
-                      </button>
-                    ))}
-                  </div>
                 </div>
 
                 <div className="p-5 space-y-4">
-                  {/* Info banner */}
-                  <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
-                    <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
-                    <p className="text-xs text-blue-700">
-                      Absensi dapat tetap berjalan selama proses persetujuan agreement berlangsung.
-                    </p>
-                  </div>
+                  {/* Info banner — hanya saat proses berlangsung */}
+                  {(agreementFlowStatus === 'menunggu_ttd' || agreementFlowStatus === 'pengajuan_masuk') && (
+                    <div className="flex items-start gap-2.5 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+                      <Info size={14} className="text-blue-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-blue-700">
+                        Absensi dapat tetap berjalan selama proses persetujuan agreement berlangsung.
+                      </p>
+                    </div>
+                  )}
 
                   {/* Two-column: Template | File TTD */}
                   <div className="grid grid-cols-2 gap-4">
@@ -1613,12 +1603,21 @@ export default function PPOrderDetailPage() {
                       <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
                         {!hasSignedFile ? (
                           /* Menunggu TTD — empty state */
-                          <div className="flex-1 flex flex-col items-center justify-center py-8 px-4 bg-gray-50 text-center">
+                          <div className="flex-1 flex flex-col items-center justify-center py-6 px-4 bg-gray-50 text-center">
                             <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center mb-3">
                               <FileText size={18} className="text-gray-300" />
                             </div>
                             <p className="text-xs font-semibold text-gray-500 mb-1">Belum Ada File</p>
-                            <p className="text-[10px] text-gray-400 leading-relaxed">Pelatih akan mengunggah file agreement yang telah ditandatangani klien</p>
+                            <p className="text-[10px] text-gray-400 leading-relaxed mb-4">Pelatih akan mengunggah file agreement yang telah ditandatangani klien</p>
+                            <button
+                              onClick={() => {
+                                setAgreementFlowStatus('pengajuan_masuk')
+                                setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'File TTD klien diunggah — pengajuan masuk untuk review' }])
+                              }}
+                              className="h-7 px-3 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition flex items-center gap-1.5"
+                            >
+                              <Upload size={10} /> Tandai File TTD Diterima
+                            </button>
                           </div>
                         ) : (
                           /* Has signed file */
@@ -1782,6 +1781,65 @@ export default function PPOrderDetailPage() {
                       >
                         <RotateCcw size={13} /> Kirim Ulang untuk TTD
                       </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* ── Dokumen Tambahan ── */}
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <Paperclip size={14} className="text-[#1E1C43]" />
+                    <h3 className="text-sm font-bold text-[#1E1C43]">Dokumen Tambahan</h3>
+                    <span className="text-xs text-gray-400">({dokumenTambahan.length})</span>
+                  </div>
+                  <label className="h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition flex items-center gap-1.5 cursor-pointer">
+                    <Plus size={12} /> Tambah Dokumen
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={e => {
+                        const file = e.target.files?.[0]
+                        if (!file) return
+                        setDokumenTambahan(prev => [...prev, {
+                          id: Date.now(),
+                          nama: file.name,
+                          tgl: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+                          keterangan: '',
+                        }])
+                        e.target.value = ''
+                      }}
+                    />
+                  </label>
+                </div>
+                <div className="p-5">
+                  {dokumenTambahan.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic text-center py-4">Belum ada dokumen tambahan.</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {dokumenTambahan.map(dok => (
+                        <div key={dok.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                          <div className="w-8 h-8 bg-[#1E1C43]/10 rounded-lg flex items-center justify-center shrink-0">
+                            <FileText size={14} className="text-[#1E1C43]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-semibold text-gray-800 truncate">{dok.nama}</p>
+                            <p className="text-[10px] text-gray-400">{dok.tgl}{dok.keterangan ? ` · ${dok.keterangan}` : ''}</p>
+                          </div>
+                          <div className="flex gap-1 shrink-0">
+                            <button className="h-7 w-7 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-100 transition flex items-center justify-center">
+                              <Download size={11} />
+                            </button>
+                            <button
+                              onClick={() => setDokumenTambahan(prev => prev.filter(d => d.id !== dok.id))}
+                              className="h-7 w-7 rounded-lg border border-red-200 text-red-400 hover:bg-red-50 transition flex items-center justify-center"
+                            >
+                              <Trash2 size={11} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
