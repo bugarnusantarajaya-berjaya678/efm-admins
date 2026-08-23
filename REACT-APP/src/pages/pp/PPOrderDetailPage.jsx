@@ -1575,7 +1575,13 @@ export default function PPOrderDetailPage() {
 
                     {/* Modal Footer — approval actions only when pengajuan_masuk */}
                     {previewTarget === 'signed' && agreementFlowStatus === 'pengajuan_masuk' && (
-                      <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 flex gap-2">
+                      <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 flex justify-end gap-2">
+                        <button
+                          onClick={() => { setShowAgreementPreview(false); setShowAgreementTolakForm(true) }}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition"
+                        >
+                          <X size={12} /> Tolak
+                        </button>
                         <button
                           onClick={() => {
                             setAgreementFlowStatus('disetujui')
@@ -1583,15 +1589,9 @@ export default function PPOrderDetailPage() {
                             setShowAgreementTolakForm(false)
                             setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
                           }}
-                          className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
                         >
-                          <CheckCircle size={13} /> Setujui Agreement
-                        </button>
-                        <button
-                          onClick={() => { setShowAgreementPreview(false); setShowAgreementTolakForm(true) }}
-                          className="flex-1 h-9 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
-                        >
-                          <X size={13} /> Tolak
+                          <CheckCircle size={12} /> Setujui Agreement
                         </button>
                       </div>
                     )}
@@ -1608,6 +1608,26 @@ export default function PPOrderDetailPage() {
                       {FLOW_STATUS_LABEL[agreementFlowStatus]}
                     </span>
                   </div>
+                  {agreementFlowStatus === 'pengajuan_masuk' && (
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setShowAgreementTolakForm(v => !v)}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition"
+                      >
+                        <X size={12} /> Tolak
+                      </button>
+                      <button
+                        onClick={() => {
+                          setAgreementFlowStatus('disetujui')
+                          setShowAgreementTolakForm(false)
+                          setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
+                        }}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
+                      >
+                        <CheckCircle size={12} /> Setujui Agreement
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="p-5 space-y-4">
@@ -1760,24 +1780,6 @@ export default function PPOrderDetailPage() {
                           <p className="text-xs text-yellow-700">Tinjau file TTD klien di atas, lalu setujui atau tolak agreement.</p>
                         </div>
                       </div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => {
-                            setAgreementFlowStatus('disetujui')
-                            setShowAgreementTolakForm(false)
-                            setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
-                          }}
-                          className="flex-1 h-9 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition flex items-center justify-center gap-1.5"
-                        >
-                          <CheckCircle size={13} /> Setujui Agreement
-                        </button>
-                        <button
-                          onClick={() => setShowAgreementTolakForm(v => !v)}
-                          className="flex-1 h-9 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition flex items-center justify-center gap-1.5"
-                        >
-                          <X size={13} /> Tolak
-                        </button>
-                      </div>
                       {showAgreementTolakForm && (
                         <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
                           <p className="text-xs font-semibold text-red-700">Catatan Penolakan</p>
@@ -1788,22 +1790,22 @@ export default function PPOrderDetailPage() {
                             rows={3}
                             className="w-full text-xs rounded-lg border border-red-200 px-3 py-2 outline-none focus:border-red-400 bg-white resize-none"
                           />
-                          <div className="flex gap-2">
+                          <div className="flex justify-end gap-2">
+                            <button
+                              onClick={() => setShowAgreementTolakForm(false)}
+                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 font-semibold hover:bg-gray-50 transition"
+                            >
+                              Batal
+                            </button>
                             <button
                               onClick={() => {
                                 setAgreementFlowStatus('ditolak')
                                 setShowAgreementTolakForm(false)
                                 setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: `Agreement ditolak — ${agreementCatatanTolak || 'tanpa catatan'}` }])
                               }}
-                              className="flex-1 h-8 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
+                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
                             >
                               Konfirmasi Tolak
-                            </button>
-                            <button
-                              onClick={() => setShowAgreementTolakForm(false)}
-                              className="h-8 px-4 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50"
-                            >
-                              Batal
                             </button>
                           </div>
                         </div>
@@ -2122,10 +2124,10 @@ export default function PPOrderDetailPage() {
                       </div>
 
                       {!showTolakModal && (
-                        <div className="flex gap-3 pt-1">
+                        <div className="flex justify-end gap-2 pt-1">
                           <button
                             onClick={() => setShowTolakModal(true)}
-                            className="flex-1 border border-red-200 text-red-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-red-50 transition"
+                            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition"
                           >
                             Tolak
                           </button>
@@ -2138,7 +2140,7 @@ export default function PPOrderDetailPage() {
                                 teks: `Rekap absensi dikonfirmasi — ${absensiSesi.length} sesi · Rp ${(absensiSesi.length * ratePerSesi).toLocaleString('id-ID')}`
                               }])
                             }}
-                            className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition"
+                            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
                           >
                             Konfirmasi Rekap
                           </button>
@@ -2155,16 +2157,16 @@ export default function PPOrderDetailPage() {
                             rows={3}
                             className="w-full border border-red-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:border-red-400 resize-none"
                           />
-                          <div className="flex gap-2">
+                          <div className="flex justify-end gap-2">
                             <button
                               onClick={() => setShowTolakModal(false)}
-                              className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2 text-xs font-semibold hover:bg-gray-50"
+                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition"
                             >
                               Batal
                             </button>
                             <button
                               onClick={() => { setRekapStatus('ditolak'); setShowTolakModal(false) }}
-                              className="flex-1 bg-red-600 text-white rounded-xl py-2 text-xs font-semibold hover:bg-red-700"
+                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
                             >
                               Kirim Penolakan
                             </button>
