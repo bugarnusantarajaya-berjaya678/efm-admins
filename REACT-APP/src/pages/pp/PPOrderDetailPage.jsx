@@ -1361,6 +1361,52 @@ export default function PPOrderDetailPage() {
       {activeTab === 'agreement' && (
         <div className="space-y-4">
 
+          {/* ── Progress Summary KPI ── */}
+          {(() => {
+            const sesiSelesai  = jadwalSesi.filter(j => j.status === 'Selesai').length
+            const sesiTotal    = jadwalSesi.length
+            const absensiCount = absensiSesi.length
+            const nextSesi     = jadwalSesi.find(j => j.status === 'Terjadwal')
+            const prog         = dummyPPPrograms.find(p => p.id === order.programId)
+            const maxSesi      = prog?.totalSesi || sesiTotal
+            const pctDone      = maxSesi > 0 ? Math.round((sesiSelesai / maxSesi) * 100) : 0
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Selesai</p>
+                    <p className="text-2xl font-bold text-[#1E1C43]">{sesiSelesai}<span className="text-sm font-normal text-gray-400">/{maxSesi}</span></p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Absensi Tercatat</p>
+                    <p className="text-2xl font-bold text-[#1E1C43]">{absensiCount}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Progress Program</p>
+                    <p className="text-2xl font-bold text-[#E05945]">{pctDone}%</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Berikutnya</p>
+                    {nextSesi ? (
+                      <p className="text-sm font-semibold text-[#1E1C43] leading-tight mt-1">
+                        {new Date(nextSesi.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} · {nextSesi.jam}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic mt-1">—</p>
+                    )}
+                  </div>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-[#E05945] h-2 rounded-full transition-all"
+                    style={{ width: `${pctDone}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1.5">{sesiSelesai} dari {maxSesi} sesi selesai</p>
+              </div>
+            )
+          })()}
+
           {/* ── Section: Agreement Klien ── */}
           {(() => {
             const prog = dummyPPPrograms.find(p => p.id === order.programId)
