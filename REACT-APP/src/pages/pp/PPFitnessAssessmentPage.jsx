@@ -450,6 +450,17 @@ function CatatanPair({ labelAwal, labelAkhir, awal, akhir, onChangeAwal, onChang
   )
 }
 
+// Copies _akhir fields from a section data object into corresponding _awal fields
+function adoptAkhirAsAwal(sectionData) {
+  const result = {}
+  for (const [key, value] of Object.entries(sectionData || {})) {
+    if (key.includes('_akhir')) {
+      result[key.replace('_akhir', '_awal')] = value
+    }
+  }
+  return result
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function PPFitnessAssessmentPage() {
@@ -464,8 +475,27 @@ export default function PPFitnessAssessmentPage() {
   const prefill = location.state || {}
   const existing = !isNew ? (PP_ASSESSMENTS[id] || null) : null
 
+  // prevSource: the previous completed assessment whose _akhir values are adopted as _awal for this one.
+  // For existing renewals: already stored in PP_ASSESSMENTS[existing.prevAssessmentId]
+  // For NEW assessments navigated from an order whose lead has a completed assessment: look it up by leadId
+  const prevSource = (() => {
+    if (!isNew && existing?.prevAssessmentId) {
+      const src = PP_ASSESSMENTS[existing.prevAssessmentId]
+      return src ? { id: existing.prevAssessmentId, ...src } : null
+    }
+    if (isNew && leadId) {
+      const entries = Object.entries(PP_ASSESSMENTS)
+        .filter(([, a]) => a.leadId === leadId && a.statusAssessment === 'Post-Test Selesai')
+      if (!entries.length) return null
+      entries.sort((a, b) => (b[1].tanggalPostTest || '').localeCompare(a[1].tanggalPostTest || ''))
+      const [key, data] = entries[0]
+      return { id: key, ...data }
+    }
+    return null
+  })()
+
   // Personal Detail
-  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || prefill.orderId || '')
+  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || fromOrderId || prefill.orderId || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
@@ -483,18 +513,26 @@ export default function PPFitnessAssessmentPage() {
     existing?.toggles || { bodyMeasurement: true, healthScreening: true, fitnessTest: false }
   )
 
+  // For new renewal assessments, adopt _akhir from prevSource as _awal baseline
+  const adoptedTanita = isNew && prevSource ? adoptAkhirAsAwal(prevSource.tanita) : {}
+  const adoptedGirths = isNew && prevSource ? adoptAkhirAsAwal(prevSource.girths) : {}
+  const adoptedParq = isNew && prevSource ? adoptAkhirAsAwal(prevSource.parq) : {}
+  const adoptedAlignment = isNew && prevSource ? adoptAkhirAsAwal(prevSource.alignment) : {}
+  const adoptedVitalSigns = isNew && prevSource ? adoptAkhirAsAwal(prevSource.vitalSigns) : {}
+  const adoptedFms = isNew && prevSource ? adoptAkhirAsAwal(prevSource.fms) : {}
+
   // Body Measurement state
-  const [tanita, setTanita] = useState(existing?.tanita || {})
-  const [girths, setGirths] = useState(existing?.girths || {})
+  const [tanita, setTanita] = useState(existing?.tanita || adoptedTanita)
+  const [girths, setGirths] = useState(existing?.girths || adoptedGirths)
   const [tanitaCatatanAwal, setTanitaCatatanAwal] = useState(existing?.tanita_catatan_awal || '')
   const [tanitaCatatanAkhir, setTanitaCatatanAkhir] = useState(existing?.tanita_catatan_akhir || '')
   const [girthsCatatanAwal, setGirthsCatatanAwal] = useState(existing?.girths_catatan_awal || '')
   const [girthsCatatanAkhir, setGirthsCatatanAkhir] = useState(existing?.girths_catatan_akhir || '')
 
   // Health Screening state
-  const [parq, setParq] = useState(existing?.parq || {})
-  const [alignment, setAlignment] = useState(existing?.alignment || {})
-  const [vitalSigns, setVitalSigns] = useState(existing?.vitalSigns || {})
+  const [parq, setParq] = useState(existing?.parq || adoptedParq)
+  const [alignment, setAlignment] = useState(existing?.alignment || adoptedAlignment)
+  const [vitalSigns, setVitalSigns] = useState(existing?.vitalSigns || adoptedVitalSigns)
   const [parqCatatanAwal, setParqCatatanAwal] = useState(existing?.parq_catatan_awal || '')
   const [parqCatatanAkhir, setParqCatatanAkhir] = useState(existing?.parq_catatan_akhir || '')
   const [alignCatatanAwal, setAlignCatatanAwal] = useState(existing?.align_catatan_awal || '')
@@ -503,7 +541,7 @@ export default function PPFitnessAssessmentPage() {
   const [vitalCatatanAkhir, setVitalCatatanAkhir] = useState(existing?.vital_catatan_akhir || '')
 
   // Fitness Test state
-  const [fms, setFms] = useState(existing?.fms || {})
+  const [fms, setFms] = useState(existing?.fms || adoptedFms)
   const [cardio, setCardio] = useState(existing?.cardio || {})
   const [strength, setStrength] = useState(existing?.strength || {})
   const [endurance, setEndurance] = useState(existing?.endurance || {})
@@ -568,7 +606,7 @@ export default function PPFitnessAssessmentPage() {
     setTimeout(() => setSaved(false), 2000)
   }
 
-  const isRenewal = !isNew && !!existing?.prevAssessmentId
+  const isRenewal = !!prevSource
 
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
@@ -638,23 +676,20 @@ export default function PPFitnessAssessmentPage() {
       </div>
 
       {/* Renewal Banner — shown when pre-test was auto-adopted from a previous order's post-test */}
-      {!isNew && existing?.prevAssessmentId && (() => {
-        const src = PP_ASSESSMENTS[existing.prevAssessmentId]
-        return (
-          <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
-            <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
-            <div>
-              <p className="text-sm font-semibold text-purple-800">Renewal — Data Pre-Test Diadopsi Otomatis</p>
-              <p className="text-xs text-purple-600 mt-0.5">
-                Semua nilai <span className="font-semibold">Tes Awal</span> di bawah diadopsi dari Post-Test assessment{' '}
-                <span className="font-semibold">#{existing.prevAssessmentId}</span>
-                {src ? ` · ${src.namaKlien} · Order #${src.orderId}` : ''}.
-                {' '}Nilai ini menjadi baseline awal untuk program baru ini.
-              </p>
-            </div>
+      {prevSource && (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
+          <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
+          <div>
+            <p className="text-sm font-semibold text-purple-800">Renewal — Data Pre-Test Diadopsi Otomatis</p>
+            <p className="text-xs text-purple-600 mt-0.5">
+              Semua nilai <span className="font-semibold">Tes Awal</span> di bawah diadopsi dari Post-Test assessment{' '}
+              <span className="font-semibold">#{prevSource.id}</span>
+              {` · ${prevSource.namaKlien} · Order #${prevSource.orderId}`}.
+              {' '}Nilai ini menjadi baseline awal untuk program baru ini.
+            </p>
           </div>
-        )
-      })()}
+        </div>
+      )}
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
@@ -778,9 +813,8 @@ export default function PPFitnessAssessmentPage() {
         </h2>
 
         {/* Progress Order Sebelumnya — hanya untuk renewal */}
-        {isRenewal && (() => {
-          const src = PP_ASSESSMENTS[existing.prevAssessmentId]
-          if (!src) return null
+        {isRenewal && prevSource && (() => {
+          const src = prevSource
           const t = src.tanita || {}
           const g = src.girths || {}
           const metrics = [
@@ -796,7 +830,7 @@ export default function PPFitnessAssessmentPage() {
               <div className="flex items-center gap-2 mb-3">
                 <p className="text-sm font-semibold text-purple-700">Progress Order Sebelumnya</p>
                 <span className="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-600 rounded-full">
-                  #{existing.prevAssessmentId} · {src.noIdProgram}
+                  #{prevSource.id} · {src.noIdProgram}
                 </span>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
