@@ -2280,8 +2280,16 @@ export default function PPOrderDetailPage() {
             const assessment = getAssessmentByOrderId(order.id)
             if (!assessment) return (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-2">Fitness Assessment Awal</h3>
-                <p className="text-sm text-gray-400 italic">Belum ada data fitness assessment untuk order ini.</p>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Fitness Assessment Awal</h3>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400 italic">Belum ada data fitness assessment untuk order ini.</p>
+                  <button
+                    onClick={() => navigate('/pp/screening/new', { state: { fromOrderId: order.id, leadId: order.leadId, namaKlien: order.namaKlien } })}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1E1C43] text-white rounded-lg text-xs font-semibold hover:bg-[#2d2b5e] transition"
+                  >
+                    <Plus size={13} /> Buat Assessment
+                  </button>
+                </div>
               </div>
             )
             const preTestDate = assessment.tanggalPreTest
