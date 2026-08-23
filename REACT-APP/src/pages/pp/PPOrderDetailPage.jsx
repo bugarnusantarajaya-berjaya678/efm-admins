@@ -485,19 +485,12 @@ export default function PPOrderDetailPage() {
     { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",          foto:true,  catatanKoreksi:"" },
     { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",          foto:false, catatanKoreksi:"" },
   ])
-  const [catatanProgres, setCatatanProgres] = useState([
-    { id:"CP-001", tanggal:"2026-10-29", catatan:"Klien menunjukkan peningkatan stamina. Push-up dari 8 rep ke 12 rep. Squat sudah lebih dalam.", pic:"Sarah Jenkins" },
-    { id:"CP-002", tanggal:"2026-10-27", catatan:"Sesi pertama: assessment awal. BB 78kg, tinggi 170cm. Target turun 5kg dalam 2 bulan. Fokus cardio + strength.", pic:"Sarah Jenkins" },
-  ])
   const [logTab3PP, setLogTab3PP] = useState([
     { id:1, waktu:"2026-10-31 07:00", kategori:"jadwal",  nomorLaporan:"JS-003",  teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
     { id:2, waktu:"2026-10-29 07:01", kategori:"absensi", nomorLaporan:"ABS-002", teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
-    { id:3, waktu:"2026-10-29 09:00", kategori:"catatan", nomorLaporan:"CP-001",  teks:"Catatan progres CP-001 ditambahkan oleh Sarah Jenkins" },
-    { id:4, waktu:"2026-10-27 07:03", kategori:"absensi", nomorLaporan:"ABS-001", teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
+    { id:3, waktu:"2026-10-27 07:03", kategori:"absensi", nomorLaporan:"ABS-001", teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
   ])
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
-  const [newCatatan,            setNewCatatan]            = useState("")
-  const [newCatatanTanggal,     setNewCatatanTanggal]     = useState(new Date().toISOString().split('T')[0])
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
   const [showTambahJadwalSesi,  setShowTambahJadwalSesi]  = useState(false)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
@@ -1365,6 +1358,52 @@ export default function PPOrderDetailPage() {
       {activeTab === 'operasional' && (
         <div className="space-y-4">
 
+          {/* ── Progress Summary KPI ── */}
+          {(() => {
+            const sesiSelesai  = jadwalSesi.filter(j => j.status === 'Selesai').length
+            const sesiTotal    = jadwalSesi.length
+            const absensiCount = absensiSesi.length
+            const nextSesi     = jadwalSesi.find(j => j.status === 'Terjadwal')
+            const prog         = dummyPPPrograms.find(p => p.id === order.programId)
+            const maxSesi      = prog?.totalSesi || sesiTotal
+            const pctDone      = maxSesi > 0 ? Math.round((sesiSelesai / maxSesi) * 100) : 0
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Selesai</p>
+                    <p className="text-2xl font-bold text-[#1E1C43]">{sesiSelesai}<span className="text-sm font-normal text-gray-400">/{maxSesi}</span></p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Absensi Tercatat</p>
+                    <p className="text-2xl font-bold text-[#1E1C43]">{absensiCount}</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Progress Program</p>
+                    <p className="text-2xl font-bold text-[#E05945]">{pctDone}%</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-xl p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sesi Berikutnya</p>
+                    {nextSesi ? (
+                      <p className="text-sm font-semibold text-[#1E1C43] leading-tight mt-1">
+                        {new Date(nextSesi.tanggal).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })} · {nextSesi.jam}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-gray-400 italic mt-1">—</p>
+                    )}
+                  </div>
+                </div>
+                <div className="w-full bg-gray-100 rounded-full h-2">
+                  <div
+                    className="bg-[#E05945] h-2 rounded-full transition-all"
+                    style={{ width: `${pctDone}%` }}
+                  />
+                </div>
+                <p className="text-[10px] text-gray-400 mt-1.5">{sesiSelesai} dari {maxSesi} sesi selesai</p>
+              </div>
+            )
+          })()}
+
           {/* ── Section: Agreement Klien ── */}
           {(() => {
             const prog = dummyPPPrograms.find(p => p.id === order.programId)
@@ -1954,75 +1993,7 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 4: Catatan Progres Klien ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Progres Klien</h3>
-            </div>
-            <p className="text-xs text-gray-400 mb-4 ml-3">Rekam perkembangan klien per sesi atau per periode</p>
-
-            {/* Input baru */}
-            <div className="bg-gray-50 rounded-xl p-4 mb-4 border border-gray-100">
-              <textarea
-                value={newCatatan}
-                onChange={e => setNewCatatan(e.target.value)}
-                placeholder="Tambah catatan progres..."
-                rows={3}
-                className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none mb-2"
-              />
-              <div className="flex items-center gap-2 justify-end">
-                <input
-                  type="date"
-                  value={newCatatanTanggal}
-                  onChange={e => setNewCatatanTanggal(e.target.value)}
-                  className="border border-gray-200 bg-white rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]"
-                />
-                <button
-                  onClick={() => {
-                    if (!newCatatan.trim()) return
-                    const newId = 'CP-' + Date.now()
-                    setCatatanProgres(prev => [{
-                      id: newId, tanggal: newCatatanTanggal,
-                      catatan: newCatatan.trim(), pic: 'Admin'
-                    }, ...prev])
-                    setLogTab3PP(prev => [...prev, {
-                      id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
-                      kategori: 'catatan', nomorLaporan: newId,
-                      teks: 'Catatan progres baru ditambahkan'
-                    }])
-                    setNewCatatan('')
-                  }}
-                  disabled={!newCatatan.trim()}
-                  className="bg-[#1E1C43] text-white rounded-xl px-4 py-2 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-40"
-                >
-                  Simpan Catatan
-                </button>
-              </div>
-            </div>
-
-            {/* List catatan */}
-            <div className="space-y-3">
-              {catatanProgres.map(cp => (
-                <div key={cp.id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50 transition">
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="text-xs text-gray-400">{cp.tanggal} · {cp.pic}</p>
-                    <div className="flex gap-2">
-                      <button className="text-xs text-gray-400 hover:text-[#1E1C43] transition">Edit</button>
-                      <button
-                        onClick={() => setCatatanProgres(prev => prev.filter(x => x.id !== cp.id))}
-                        className="text-xs text-red-400 hover:text-red-600 transition"
-                      >
-                        Hapus
-                      </button>
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{cp.catatan}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Section 5: Log Aktivitas ── */}
+          {/* ── Section 4: Log Aktivitas ── */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
@@ -2030,7 +2001,7 @@ export default function PPOrderDetailPage() {
                 <h3 className="text-base font-bold text-[#1E1C43]">Log Aktivitas</h3>
               </div>
               <div className="flex gap-1">
-                {['semua', 'absensi', 'catatan', 'honorarium', 'agreement'].map(k => (
+                {['semua', 'jadwal', 'absensi', 'honorarium', 'agreement'].map(k => (
                   <button
                     key={k}
                     onClick={() => setLogFilter3PP(k)}
