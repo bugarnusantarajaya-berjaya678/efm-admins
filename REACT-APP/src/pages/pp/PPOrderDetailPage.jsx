@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { getAssessmentByOrderId } from '../../data/ppAssessmentsData'
+import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -83,6 +83,21 @@ const dummyPPOrders = [
     paymentTracking: [{ id:"PT-002", periode:"Full Payment — Okt 2026", nominal:600000, status:"Lunas", tglBayar:"2026-10-22", invoiceId:"INV-PP-26-0012" }],
     loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
     quotation:{ nomor:"QUO/EFM/PP/2026/0012", tanggal:"2026-10-18", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
+  },
+  { id: "PP-26-0021", leadId: "LP-0007", programId: "PRG-PP-002", namaKlien: "Sari Dewi Lestari",
+    paket: "8 Sesi - Basic", picSalesEFM: "Dian Kartika", picOpsEFM: "Rizky Firmansyah",
+    tanggalMulai: "2026-11-02", nilaiKontrak: 1400000,
+    tahapan: "Program Berjalan", statusOrder: "Aktif",
+    paymentTerms: "Per Paket", catatanOrder: "Program muscle toning 2x seminggu",
+    noHP: "087811223344", email: "sari.dewi@email.com", hubunganKlien: "Diri Sendiri",
+    namaKlienLatihan: "Sari Dewi Lestari", noHPKlien: "087811223344",
+    usiaKlien: 28, jenisKelaminKlien: "Perempuan",
+    hariLatihan: ["Selasa", "Kamis"], jamLatihan: "09:00",
+    lokasiLatihan: "Jakarta Pusat",
+    rincianLayanan: [{ id:1, namaItem:"Private Training 8 Sesi - Basic", satuan:"Paket", jumlah:1, total:1400000 }],
+    paymentTracking: [{ id:"PT-021", periode:"Full Payment — Nov 2026", nominal:1400000, status:"Lunas", tglBayar:"2026-11-02", invoiceId:"INV-PP-26-0021" }],
+    loiStatus:"N/A", mouAda:false, contractStatus:"Active",
+    quotation:{ nomor:"QUO/EFM/PP/2026/0021", tanggal:"2026-10-30", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   }
 ]
 
@@ -2275,12 +2290,12 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 6: Fitness Assessment Awal ── */}
+          {/* ── Section 6: Fitness Assessment ── */}
           {(() => {
             const assessment = getAssessmentByOrderId(order.id)
             if (!assessment) return (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Fitness Assessment Awal</h3>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Fitness Assessment</h3>
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-gray-400 italic">Belum ada data fitness assessment untuk order ini.</p>
                   <button
@@ -2304,7 +2319,7 @@ export default function PPOrderDetailPage() {
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Fitness Assessment Awal</h3>
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Fitness Assessment</h3>
                     <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${statusColor}`}>{assessment.statusAssessment}</span>
                     {assessment.prevAssessmentId && (
                       <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-purple-100 text-purple-700">

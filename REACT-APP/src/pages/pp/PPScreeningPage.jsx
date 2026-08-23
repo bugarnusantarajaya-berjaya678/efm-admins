@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Search, Eye, ChevronRight, RotateCcw } from 'lucide-react';
-import { PP_ASSESSMENTS } from '../../data/ppAssessmentsData';
+import { getAllAssessments } from '../../data/ppAssessmentsStore';
 
 const statusColor = {
   'Post-Test Selesai': 'bg-green-50 text-green-700 border-green-200',
@@ -37,8 +37,8 @@ export default function PPScreeningPage() {
   const [filterStatus, setFilterStatus] = useState('');
   const [filterRenewal, setFilterRenewal] = useState('');
 
-  // Build a flat list from PP_ASSESSMENTS with id injected
-  const allAssessments = Object.entries(PP_ASSESSMENTS).map(([id, a]) => ({ id, ...a }));
+  // Build a flat list from store with id injected
+  const allAssessments = Object.entries(getAllAssessments()).map(([id, a]) => ({ id, ...a }));
 
   const filtered = allAssessments.filter(a => {
     const matchSearch = (a.namaKlien || '').toLowerCase().includes(search.toLowerCase())

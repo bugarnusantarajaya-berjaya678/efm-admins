@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload, Eye } from 'lucide-react'
+import { getAllAssessments } from '../../data/ppAssessmentsStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
@@ -122,15 +123,23 @@ const LEADS_FALLBACK = [
       { status: 'New',       oleh: 'Marcus Chen', tanggal: '15 Okt 2026', catatan: 'Lead masuk dari Instagram' },
     ],
   },
+  {
+    id: 'LP-0007', nama: 'Sari Dewi Lestari', tipe: 'Personal',
+    noHp: '087811223344', sumberLead: 'Referral', picEfm: 'Dian Kartika',
+    programDiminati: '8 Sesi - Basic', emailUmum: 'sari.dewi@email.com',
+    catatanAwal: 'Tertarik muscle toning, direferensikan oleh teman',
+    statusPipeline: 'Convert', orderId: 'PP-26-0021',
+    tanggalMasuk: '28 Okt 2026', tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0021',
+    logAktivitas: [
+      { status: 'Convert',   oleh: 'Dian Kartika', tanggal: '30 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0021' },
+      { status: 'Invoicing', oleh: 'Dian Kartika', tanggal: '29 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Approach',  oleh: 'Dian Kartika', tanggal: '28 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
+      { status: 'New',       oleh: 'Dian Kartika', tanggal: '28 Okt 2026', catatan: 'Lead masuk dari referral' },
+    ],
+  },
 ]
 
-/* ── Screening summary per klien ── */
-const SCREENING_SUMMARY = [
-  { id: 'SCR-26-0001', tanggal: '15 Okt 2026', namaKlien: 'James Wilson',           statusScreening: 'Selesai', orderId: 'PP-26-0013', picScreening: 'Sarah Jenkins' },
-  { id: 'SCR-26-0002', tanggal: '18 Okt 2026', namaKlien: 'Emily Chen',             statusScreening: 'Selesai', orderId: 'PP-26-0012', picScreening: 'Marcus Chen'  },
-  { id: 'SCR-26-0003', tanggal: '20 Okt 2026', namaKlien: 'Rian Maulana',           statusScreening: 'Draft',   orderId: null,          picScreening: 'Ahmad Pratama' },
-  { id: 'SCR-26-0004', tanggal: '6 Okt 2026',  namaKlien: 'Budi & Rina Santoso',   statusScreening: 'Draft',   orderId: null,          picScreening: 'Sarah Jenkins' },
-]
 
 
 /* ── Riwayat order per lead ── */
@@ -268,7 +277,6 @@ export default function PPLeadDetailPage() {
 
   const [lead, setLead]             = useState(state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null)
   const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'info')
-  const [extraScreenings, setExtraScreenings] = useState([])
   const [isEditMode, setIsEditMode] = useState(false)
   const [editForm, setEditForm]     = useState({})
   const [editingPipeline, setEditingPipeline] = useState(false)
@@ -298,12 +306,6 @@ export default function PPLeadDetailPage() {
   const [newCatatanFCOrder, setNewCatatanFCOrder] = useState('')
 
   useEffect(() => {
-    if (state?.newScreening) {
-      setExtraScreenings(prev => [state.newScreening, ...prev])
-    }
-  }, [])
-
-  useEffect(() => {
     if (lead) setCrumbs(['Private Program', 'Leads', lead.nama])
     return () => setCrumbs(null)
   }, [lead?.nama])
@@ -322,7 +324,10 @@ export default function PPLeadDetailPage() {
     )
   }
 
-  const screenings = [...SCREENING_SUMMARY.filter(s => s.namaKlien === lead.nama), ...extraScreenings]
+  const leadAssessments = Object.entries(getAllAssessments())
+    .filter(([, a]) => a.leadId === lead.id)
+    .map(([id, a]) => ({ id, ...a }))
+    .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
 
   /* ── Edit info handlers ── */
   function handleStartEdit() { setEditForm({ ...lead }); setIsEditMode(true) }
@@ -787,6 +792,56 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
+            {/* ── Section 2: Riwayat Fitness Assessment ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div>
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Pre-test & post-test dari semua order klien ini</p>
+                </div>
+                <button
+                  onClick={() => navigate('/pp/screening/new', { state: { leadId: lead.id, namaKlien: lead.nama } })}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                  <Plus size={12} /> Buat Assessment
+                </button>
+              </div>
+              <div className="p-5">
+                {leadAssessments.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic text-center py-6">Belum ada fitness assessment untuk klien ini.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {leadAssessments.map(a => {
+                      const statusCls =
+                        a.statusAssessment === 'Post-Test Selesai' ? 'bg-green-50 text-green-700 border-green-200' :
+                        a.statusAssessment === 'Pre-Test Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                        'bg-yellow-50 text-yellow-700 border-yellow-200'
+                      return (
+                        <button
+                          key={a.id}
+                          onClick={() => navigate('/pp/screening/' + a.id)}
+                          className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-0.5">
+                              <span className="text-sm font-bold text-[#1E1C43]">{a.id}</span>
+                              {a.prevAssessmentId && (
+                                <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">Renewal</span>
+                              )}
+                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{a.statusAssessment || 'Draft'}</span>
+                            </div>
+                            <p className="text-xs text-gray-500">
+                              {a.tanggalPreTest ? new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                              {a.orderId ? ` · Order #${a.orderId}` : ''}
+                              {a.namaFC ? ` · FC: ${a.namaFC}` : ''}
+                            </p>
+                          </div>
+                          <Eye size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
+                        </button>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+            </div>
 
           </div>
         )}
