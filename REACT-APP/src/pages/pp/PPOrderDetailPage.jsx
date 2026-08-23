@@ -2061,18 +2061,9 @@ export default function PPOrderDetailPage() {
             const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pengajuan Rekap Absensi</h3>
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${cur.cls}`}>{cur.label}</span>
-                  </div>
-                  <select
-                    value={rekapStatus}
-                    onChange={e => { setRekapStatus(e.target.value); setShowTolakModal(false) }}
-                    className="text-[10px] text-gray-400 border border-gray-200 rounded-lg px-2 py-1 outline-none"
-                  >
-                    {Object.entries(REKAP_LABEL).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
-                  </select>
+                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-3">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pengajuan Rekap Absensi</h3>
+                  <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${cur.cls}`}>{cur.label}</span>
                 </div>
 
                 <div className="p-5">
