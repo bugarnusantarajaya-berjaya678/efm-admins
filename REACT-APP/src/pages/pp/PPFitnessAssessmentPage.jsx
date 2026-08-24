@@ -4,6 +4,7 @@ import { ArrowLeft, Save, CheckCircle, Edit2, Link2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { ORDERS_INIT } from '../../data/ppOrdersData'
+import { PROGRAMS_INIT, PIC_DB } from '../../data/ppProgramDBData'
 import { getLeadHealthByOrderId } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
@@ -375,7 +376,12 @@ export default function PPFitnessAssessmentPage() {
     setNoIdProgram(o.id)
     setNamaKlien(o.klien)
     setNamaFC(o.pic)
-    setProgramLatihan(o.paket)
+
+    // Cari trainer dari program DB berdasarkan paket
+    const prog = PROGRAMS_INIT.find(p => p.namaPaket === o.paket)
+    const trainerName = prog ? (PIC_DB[prog.picId]?.fullname || o.pic) : o.pic
+    setNamaPelatih(trainerName)
+    setProgramLatihan(prog ? `${prog.namaLatihan} — ${o.paket}` : o.paket)
 
     // ── Data kesehatan dari leads store ──
     const health = getLeadHealthByOrderId(orderId)
@@ -388,6 +394,11 @@ export default function PPFitnessAssessmentPage() {
       setCatatanScreening(health.catatanCs || '')
     }
   }
+
+  // Auto-fill saat form dibuka langsung dari order detail (fromOrderId sudah set)
+  useEffect(() => {
+    if (isNew && fromOrderId) handleOrderPick(fromOrderId)
+  }, []) // eslint-disable-line
 
   // Personal Detail
   const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || fromOrderId || prefill.orderId || '')
@@ -522,7 +533,11 @@ export default function PPFitnessAssessmentPage() {
   const isRenewal = !!prevSource
 
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
+  const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
+  // Locked when auto-filled from order picker
+  const orderLocked = isNew && !!pickerOrderId
+  const leadsLocked = isNew && !!pickerLeadHealth?.sudahDiisi
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Kesehatan', isNew ? 'Baru' : id])
@@ -680,7 +695,7 @@ export default function PPFitnessAssessmentPage() {
             {pickerOrderId && (
               <div className="mt-2 space-y-1">
                 <p className="text-[11px] text-green-700 font-medium">
-                  ✓ Terhubung ke order #{pickerOrderId} — Nama Klien, FC, Program Latihan sudah di-auto-fill.
+                  ✓ Terhubung ke order #{pickerOrderId} — Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
                 </p>
                 {pickerLeadHealth?.sudahDiisi ? (
                   <p className="text-[11px] text-blue-700 font-medium">
@@ -699,7 +714,7 @@ export default function PPFitnessAssessmentPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className={labelCls}>No. ID Program</label>
-            <input className={inputCls} value={noIdProgram} onChange={e => setNoIdProgram(e.target.value)} placeholder="PP-26-0001" />
+            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={noIdProgram} onChange={e => setNoIdProgram(e.target.value)} placeholder="PP-26-0001" />
           </div>
           <div>
             <label className={labelCls}>Cabang / Wilayah</label>
@@ -707,17 +722,17 @@ export default function PPFitnessAssessmentPage() {
           </div>
           <div>
             <label className={labelCls}>Nama FC</label>
-            <input className={inputCls} value={namaFC} onChange={e => setNamaFC(e.target.value)} placeholder="Fitness Consultant" />
+            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaFC} onChange={e => setNamaFC(e.target.value)} placeholder="Fitness Consultant" />
           </div>
           <div>
             <label className={labelCls}>Nama Pelatih</label>
-            <input className={inputCls} value={namaPelatih} onChange={e => setNamaPelatih(e.target.value)} placeholder="Personal Trainer" />
+            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaPelatih} onChange={e => setNamaPelatih(e.target.value)} placeholder="Personal Trainer" />
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className={labelCls}>Nama Klien</label>
-            <input className={inputCls} value={namaKlien} onChange={e => setNamaKlien(e.target.value)} placeholder="Nama lengkap" />
+            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaKlien} onChange={e => setNamaKlien(e.target.value)} placeholder="Nama lengkap" />
           </div>
           <div>
             <label className={labelCls}>Usia</label>
@@ -744,11 +759,11 @@ export default function PPFitnessAssessmentPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className={labelCls}>Program Latihan</label>
-            <input className={inputCls} value={programLatihan} onChange={e => setProgramLatihan(e.target.value)} placeholder="Misal: 12 Sesi - Pro (Fatloss)" />
+            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={programLatihan} onChange={e => setProgramLatihan(e.target.value)} placeholder="Misal: 12 Sesi - Pro (Fatloss)" />
           </div>
           <div>
             <label className={labelCls}>Detail Goals Klien</label>
-            <input className={inputCls} value={detailGoals} onChange={e => setDetailGoals(e.target.value)} placeholder="Deskripsi tujuan klien" />
+            <input className={leadsLocked ? readOnlyCls : inputCls} readOnly={leadsLocked} value={detailGoals} onChange={e => setDetailGoals(e.target.value)} placeholder="Deskripsi tujuan klien" />
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -843,7 +858,8 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Kondisi Fisik Umum</label>
             <textarea
               rows={2}
-              className={`${inputCls} resize-none`}
+              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
+              readOnly={leadsLocked}
               value={kondisiFisik}
               onChange={e => setKondisiFisik(e.target.value)}
               placeholder="Deskripsi kondisi fisik klien..."
@@ -853,7 +869,8 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Riwayat Cedera</label>
             <textarea
               rows={2}
-              className={`${inputCls} resize-none`}
+              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
+              readOnly={leadsLocked}
               value={riwayatCedera}
               onChange={e => setRiwayatCedera(e.target.value)}
               placeholder="Riwayat cedera yang relevan..."
@@ -864,7 +881,8 @@ export default function PPFitnessAssessmentPage() {
           <div>
             <label className={labelCls}>Obatan / Suplemen Rutin</label>
             <input
-              className={inputCls}
+              className={leadsLocked ? readOnlyCls : inputCls}
+              readOnly={leadsLocked}
               value={obatanRutin}
               onChange={e => setObatanRutin(e.target.value)}
               placeholder="Obat atau suplemen yang dikonsumsi..."
@@ -874,7 +892,8 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Catatan Screening</label>
             <textarea
               rows={2}
-              className={`${inputCls} resize-none`}
+              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
+              readOnly={leadsLocked}
               value={catatanScreening}
               onChange={e => setCatatanScreening(e.target.value)}
               placeholder="Catatan trainer / fitness consultant..."
