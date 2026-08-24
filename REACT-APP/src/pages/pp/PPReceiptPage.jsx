@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft } from 'lucide-react'
+import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt } from 'lucide-react'
 import { RECEIPTS_INIT, WA_LABEL, formatRp } from '../../data/ppReceiptData'
 
 /* ─── WA status badge ─── */
@@ -130,15 +130,24 @@ export default function PPReceiptPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1">
-        <button
-          onClick={() => navigate('/pp/orders')}
-          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
-        >
-          <ArrowLeft size={13} /> Kembali ke PP Orders
-        </button>
-        <h1 className="text-[22px] font-bold text-text-primary">Receipt &amp; Barcode</h1>
-        <p className="text-sm text-text-muted mt-0.5">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <Receipt size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Receipt &amp; Barcode</h1>
+              <p className="text-sm text-text-muted mt-0.5">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/pp/orders')}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
+          >
+            <ArrowLeft size={12} /> Kembali ke PP Orders
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
