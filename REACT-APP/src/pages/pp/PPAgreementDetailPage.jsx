@@ -373,12 +373,12 @@ export default function PPAgreementDetailPage() {
         <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Agreement'}
       </button>
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-text-primary">{doc.displayId}</h1>
           <p className="text-sm text-text-muted mt-1">Agreement klien · {doc.namaKlien}</p>
         </div>
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {doc.statusTtd === 'waiting_approval' && (
             <button
               onClick={handleApprove}

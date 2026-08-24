@@ -282,7 +282,7 @@ export default function PPLeadsPage() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" />
           <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" />
           <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" />
@@ -391,7 +391,7 @@ export default function PPLeadsPage() {
                 className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
             </div>
             <div className="px-6 py-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="col-span-2">
                   <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
                     Nama Klien <span className="text-red-500">*</span>

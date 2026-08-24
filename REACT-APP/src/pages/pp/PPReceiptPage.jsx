@@ -152,7 +152,7 @@ export default function PPReceiptPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatMini label="Total Receipt" value={receipts.length} sub="Semua receipt" />
         <StatMini label="WA Sent"       value={sentCount}     sub="Notifikasi berhasil" accent="green" />
         <StatMini label="Not Sent"      value={notSentCount}  sub="Belum dikirim"       accent="yellow" />

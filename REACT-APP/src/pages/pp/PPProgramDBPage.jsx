@@ -156,7 +156,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
       </>}
     >
       <SectionLabel>Identitas Program</SectionLabel>
-      <div className="grid grid-cols-2 gap-3.5 mb-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <FField label="ID Program" required hint="Prefix: PRG-PP- (Private Training), PRG-TH- (Terapi)">
           <input className={inputCls} value={form.id} onChange={e => set('id', e.target.value.toUpperCase())} placeholder="Contoh: PRG-PP-005" />
         </FField>
@@ -167,7 +167,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
           </select>
         </FField>
       </div>
-      <div className="grid grid-cols-2 gap-3.5 mb-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <FField label="Nama Latihan / Terapi" required>
           {(() => {
             const sel = JENIS_PROGRAM_AKTIF.includes(form.namaLatihan) ? form.namaLatihan : (form.namaLatihan ? 'Lainnya' : '')
@@ -217,7 +217,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
       </FField>
 
       <SectionLabel>PIC / Pelatih yang Ditugaskan</SectionLabel>
-      <div className="grid grid-cols-2 gap-3.5 mb-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <FField label="Pilih PIC" required>
           <select className={selectCls} value={form.picId} onChange={e => onPICChange(e.target.value)}>
             <option value="">— Pilih PIC —</option>
@@ -239,7 +239,7 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
       )}
 
       <SectionLabel>Harga</SectionLabel>
-      <div className="grid grid-cols-2 gap-3.5 mb-3.5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 mb-3.5">
         <FField label="Harga Persesi (Rp)" required>
           <input type="number" className={inputCls} value={form.hargaPersesi} onChange={e => set('hargaPersesi', e.target.value)} placeholder="125000" min="0" />
         </FField>
@@ -312,7 +312,7 @@ export default function PPProgramDBPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Database Program Private Training</h1>
           <p className="text-sm text-text-muted mt-1">Kelola paket program, harga, dan penugasan PIC — terintegrasi dengan form Buat Order Baru</p>
@@ -327,7 +327,7 @@ export default function PPProgramDBPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatMini label="Total Program" value={programs.length} sub="semua terdaftar" />
         <StatMini label="Program Aktif" value={aktifCount} sub="tersedia di form order" accent="green" />
         <StatMini label="Harga Terendah" value={<span className="text-base">{minHarga}</span>} sub="paket terjangkau" />
