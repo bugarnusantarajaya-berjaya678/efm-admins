@@ -537,8 +537,10 @@ export default function PPFitnessAssessmentPage() {
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
-  // Locked when auto-filled from order picker
-  const orderLocked = isNew && !!pickerOrderId
+  // Lock order-linked fields whenever there is a valid order connected (new or existing)
+  const linkedOrderId = isNew ? (pickerOrderId || fromOrderId) : (existing?.orderId || '')
+  const orderInStore = linkedOrderId ? ORDERS_INIT.find(o => o.id === linkedOrderId) : null
+  const orderLocked = !!orderInStore
   const leadsLocked = isNew && !!pickerLeadHealth?.sudahDiisi
 
   useEffect(() => {
@@ -671,6 +673,32 @@ export default function PPFitnessAssessmentPage() {
         <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
           Data Klien & Program
         </h2>
+
+        {/* Indikator koneksi order — existing assessment */}
+        {!isNew && existing?.orderId && (
+          <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
+            <Link2 size={13} className="text-green-600 shrink-0" />
+            <p className="text-[11px] font-medium text-green-700 flex-1">
+              Terhubung ke Order <span className="font-bold">#{existing.orderId}</span>{orderLocked ? ' — data klien dikunci.' : '.'}
+            </p>
+            <button
+              onClick={() => navigate(`/pp/orders/${existing.orderId}`, { state: { defaultTab: 'operasional' } })}
+              className="text-[11px] font-semibold text-green-700 hover:underline shrink-0"
+            >
+              Lihat Order →
+            </button>
+          </div>
+        )}
+
+        {/* Indikator koneksi order — form baru dari order detail (picker disembunyikan) */}
+        {isNew && fromOrderId && (
+          <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
+            <Link2 size={13} className="text-green-600 shrink-0" />
+            <p className="text-[11px] font-medium text-green-700">
+              Terhubung ke Order <span className="font-bold">#{fromOrderId}</span> — Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
+            </p>
+          </div>
+        )}
 
         {/* Order picker — hanya tampil saat form baru dibuka dari /pp/screening (bukan dari order detail) */}
         {isNew && !fromOrderId && (
