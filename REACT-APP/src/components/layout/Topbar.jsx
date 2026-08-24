@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, Link } from 'react-router-dom'
 import { Bell, ChevronRight, User, Settings, LogOut, Menu } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
@@ -44,6 +44,30 @@ const routeLabels = {
   '/settings':          ['Pengaturan'],
 }
 
+/* ── Linked breadcrumbs for sub-database pages ───────────────────────────── */
+const routeLinkedCrumbs = {
+  '/pp/documents': [
+    { label: 'Private Program', path: '/pp/dashboard' },
+    { label: 'Orders', path: '/pp/orders' },
+    { label: 'Agreement' },
+  ],
+  '/pp/invoice': [
+    { label: 'Private Program', path: '/pp/dashboard' },
+    { label: 'Orders', path: '/pp/orders' },
+    { label: 'Invoice' },
+  ],
+  '/pp/receipt': [
+    { label: 'Private Program', path: '/pp/dashboard' },
+    { label: 'Orders', path: '/pp/orders' },
+    { label: 'Receipt' },
+  ],
+  '/pp/screening': [
+    { label: 'Private Program', path: '/pp/dashboard' },
+    { label: 'Orders', path: '/pp/orders' },
+    { label: 'Assessment' },
+  ],
+}
+
 /* ── Dummy notifications ─────────────────────────────────────────────────── */
 const TYPE_DOT = { order: 'bg-blue-500', payment: 'bg-green-500', alert: 'bg-orange-400' }
 
@@ -60,6 +84,7 @@ export default function Topbar({ onMenuToggle }) {
   const navigate = useNavigate()
   const { crumbs: contextCrumbs } = useBreadcrumb()
   const crumbs = contextCrumbs ?? routeLabels[pathname] ?? ['Dashboard']
+  const linkedCrumbs = routeLinkedCrumbs[pathname] ?? null
 
   const [notifOpen, setNotifOpen] = useState(false)
   const [userOpen,  setUserOpen]  = useState(false)
@@ -115,14 +140,25 @@ export default function Topbar({ onMenuToggle }) {
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1 md:gap-1.5 text-sm min-w-0 overflow-hidden">
-        {crumbs.map((crumb, i) => (
-          <span key={i} className="flex items-center gap-1 md:gap-1.5 shrink-0 last:shrink last:min-w-0">
-            {i > 0 && <ChevronRight size={13} className="text-text-muted shrink-0" />}
-            <span className={`truncate ${i === crumbs.length - 1 ? 'font-semibold text-text-primary' : 'text-text-muted hidden sm:inline'}`}>
-              {crumb}
-            </span>
-          </span>
-        ))}
+        {linkedCrumbs
+          ? linkedCrumbs.map((crumb, i) => (
+              <span key={i} className="flex items-center gap-1 md:gap-1.5 shrink-0 last:shrink last:min-w-0">
+                {i > 0 && <ChevronRight size={13} className="text-text-muted shrink-0" />}
+                {crumb.path
+                  ? <Link to={crumb.path} className="truncate text-text-muted hidden sm:inline hover:text-text-primary transition-colors">{crumb.label}</Link>
+                  : <span className="font-semibold text-text-primary truncate">{crumb.label}</span>
+                }
+              </span>
+            ))
+          : crumbs.map((crumb, i) => (
+              <span key={i} className="flex items-center gap-1 md:gap-1.5 shrink-0 last:shrink last:min-w-0">
+                {i > 0 && <ChevronRight size={13} className="text-text-muted shrink-0" />}
+                <span className={`truncate ${i === crumbs.length - 1 ? 'font-semibold text-text-primary' : 'text-text-muted hidden sm:inline'}`}>
+                  {crumb}
+                </span>
+              </span>
+            ))
+        }
       </nav>
       </div>
 

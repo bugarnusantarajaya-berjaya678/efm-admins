@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, MessageCircle, CheckCircle, X } from 'lucide-react'
+import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft } from 'lucide-react'
 import { RECEIPTS_INIT, WA_LABEL, formatRp } from '../../data/ppReceiptData'
 
 /* ─── WA status badge ─── */
@@ -130,9 +130,15 @@ export default function PPReceiptPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className="flex flex-col gap-1">
+        <button
+          onClick={() => navigate('/pp/orders')}
+          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
+        >
+          <ArrowLeft size={13} /> Kembali ke PP Orders
+        </button>
         <h1 className="text-[22px] font-bold text-text-primary">Receipt &amp; Barcode</h1>
-        <p className="text-sm text-text-muted mt-1">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
+        <p className="text-sm text-text-muted mt-0.5">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
       </div>
 
       {/* Stats */}
