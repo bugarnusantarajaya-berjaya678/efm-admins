@@ -394,16 +394,32 @@ export default function PPDashboard() {
             <div
               key={k.orderId}
               onClick={() => navigate('/pp/orders/' + k.orderId)}
-              className="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+              className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
             >
-              {/* Nama + Order ID */}
+              {/* Nama + Order ID + mobile progress */}
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-[#1E1C43] truncate">{k.nama}</p>
-                <p className="text-[10px] text-gray-400">#{k.orderId} · {k.paket}</p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-semibold text-[#1E1C43] truncate">{k.nama}</p>
+                  {/* Badge visible on mobile only (inline) */}
+                  <span className={`sm:hidden text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
+                    k.urgency === 'high' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
+                  }`}>Sisa {k.sisaSesi}</span>
+                </div>
+                <p className="text-[10px] text-gray-400 mt-0.5 truncate">#{k.orderId} · {k.paket}</p>
+                {/* Progress bar on mobile (below text row) */}
+                <div className="sm:hidden mt-1.5">
+                  <div className="w-full bg-gray-100 rounded-full h-1">
+                    <div
+                      className={`h-1 rounded-full ${k.urgency === 'high' ? 'bg-[#E05945]' : 'bg-[#F97316]'}`}
+                      style={{ width: `${(k.sesiTerpakai / k.totalSesi) * 100}%` }}
+                    />
+                  </div>
+                  <p className="text-[9px] text-gray-400 mt-0.5">{k.sesiTerpakai}/{k.totalSesi} sesi</p>
+                </div>
               </div>
 
-              {/* Progress bar */}
-              <div className="w-32 flex-shrink-0">
+              {/* Progress bar — hidden on mobile */}
+              <div className="hidden sm:block w-28 flex-shrink-0">
                 <div className="flex justify-between text-[10px] text-gray-400 mb-1">
                   <span>{k.sesiTerpakai}/{k.totalSesi} sesi</span>
                 </div>
@@ -415,8 +431,8 @@ export default function PPDashboard() {
                 </div>
               </div>
 
-              {/* Sisa sesi badge */}
-              <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
+              {/* Sisa sesi badge — hidden on mobile */}
+              <span className={`hidden sm:inline-flex text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${
                 k.urgency === 'high' ? 'bg-red-100 text-red-600' : 'bg-orange-100 text-orange-600'
               }`}>
                 Sisa {k.sisaSesi} Sesi
