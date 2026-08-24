@@ -35,6 +35,11 @@ function fmtDate(str) {
   const d = new Date(str)
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
 }
+function fmtLogWaktu(d = new Date()) {
+  const date = typeof d === 'string' ? new Date(d) : d
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+    ', ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+}
 
 const dummyPPPrograms = [
   { id:"PRG-PP-001", namaProgram:"Private Training", namaPaket:"4 Sesi - Starter",
@@ -232,6 +237,8 @@ export default function PPOrderDetailPage() {
       }
     : getOrderById(id)
 
+  const agrNomor = order?.id ? 'AGR-' + order.id : 'AGR-PP'
+
   /* ── Section state ───────────────────────────────────────────────────────── */
   const [activeTab, setActiveTab] = useState(fromState?.defaultTab || 'keuangan')
   const [editingSection, setEditingSection] = useState(isNew ? 'infoDeal' : null)
@@ -412,7 +419,6 @@ export default function PPOrderDetailPage() {
   const [selectedSource,    setSelectedSource]    = useState("")
   const [newTimPeran,       setNewTimPeran]       = useState("")
   const [newTimStatus,      setNewTimStatus]      = useState("Aktif")
-  const [logFilter3,        setLogFilter3]        = useState("semua")
   const [editingLaporan,    setEditingLaporan]    = useState(null)
   const [editingInsiden,    setEditingInsiden]    = useState(null)
   const [previewFoto,       setPreviewFoto]       = useState(null)
@@ -442,17 +448,17 @@ export default function PPOrderDetailPage() {
     { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",          foto:false, catatanKoreksi:"" },
   ])
   const [logTab3PP, setLogTab3PP] = useState([
-    { id:1,  waktu:"2026-11-03 07:05", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
-    { id:2,  waktu:"2026-11-03 07:00", kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
-    { id:3,  waktu:"2026-10-31 07:00", kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
-    { id:4,  waktu:"2026-10-29 07:01", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
-    { id:5,  waktu:"2026-10-27 07:03", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
-    { id:6,  waktu:"2026-10-24 09:00", kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
-    { id:7,  waktu:"2026-10-24 08:00", kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
-    { id:8,  waktu:"2026-10-21 14:00", kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
-    { id:9,  waktu:"2026-10-21 13:30", kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
-    { id:10, waktu:"2026-10-20 10:00", kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
-    { id:11, waktu:"2026-10-20 07:30", kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
+    { id:1,  waktu:"3 Nov 2026, 07:05",  actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
+    { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
+    { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
+    { id:4,  waktu:"29 Okt 2026, 07:01", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
+    { id:5,  waktu:"27 Okt 2026, 07:03", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
+    { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
+    { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
+    { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM",     kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
+    { id:9,  waktu:"21 Okt 2026, 13:30", actor:"James Wilson",  kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
+    { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
+    { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
   ])
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
@@ -522,18 +528,18 @@ export default function PPOrderDetailPage() {
           tanggal: jadwalItem.tanggal, jam: jadwalItem.jam,
           foto: null, catatanKoreksi: ''
         }])
-        setLogTab3PP(prev => [...prev, {
-          id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+        setLogTab3PP(prev => [{
+          id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
           kategori: 'absensi', nomorLaporan: newAbsId,
           teks: `Sesi ${jadwalItem.id} selesai — absensi ${newAbsId} otomatis dibuat (${jadwalItem.jam})`
-        }])
+        }, ...prev])
       }
     }
-    setLogTab3PP(prev => [...prev, {
-      id: Date.now() + 1, waktu: new Date().toLocaleString('id-ID'),
+    setLogTab3PP(prev => [{
+      id: Date.now() + 1, waktu: fmtLogWaktu(), actor: 'Admin EFM',
       kategori: 'jadwal', nomorLaporan: jadwalItem.id,
       teks: `Status jadwal ${jadwalItem.id} diubah ke ${newStatus}`
-    }])
+    }, ...prev])
   }
 
   /* ── Computed values ─────────────────────────────────────────────────────── */
@@ -1669,7 +1675,7 @@ export default function PPOrderDetailPage() {
                             setAgreementFlowStatus('disetujui')
                             setShowAgreementPreview(false)
                             setShowAgreementTolakForm(false)
-                            setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
+                            setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }, ...prev])
                           }}
                           className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
                         >
@@ -1702,7 +1708,7 @@ export default function PPOrderDetailPage() {
                         onClick={() => {
                           setAgreementFlowStatus('disetujui')
                           setShowAgreementTolakForm(false)
-                          setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }])
+                          setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }, ...prev])
                         }}
                         className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
                       >
@@ -1776,7 +1782,7 @@ export default function PPOrderDetailPage() {
                             <button
                               onClick={() => {
                                 setAgreementFlowStatus('pengajuan_masuk')
-                                setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: 'File TTD klien diunggah — pengajuan masuk untuk review' }])
+                                setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: 'File TTD klien diunggah — pengajuan masuk untuk review' }, ...prev])
                               }}
                               className="h-7 px-3 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition flex items-center gap-1.5"
                             >
@@ -1883,7 +1889,7 @@ export default function PPOrderDetailPage() {
                               onClick={() => {
                                 setAgreementFlowStatus('ditolak')
                                 setShowAgreementTolakForm(false)
-                                setLogTab3PP(prev => [...prev, { id: Date.now(), waktu: new Date().toLocaleString('id-ID'), kategori: 'agreement', nomorLaporan: 'AGR-PP-26-0013', teks: `Agreement ditolak — ${agreementCatatanTolak || 'tanpa catatan'}` }])
+                                setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: `Agreement ditolak — ${agreementCatatanTolak || 'tanpa catatan'}` }, ...prev])
                               }}
                               className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
                             >
@@ -2103,11 +2109,11 @@ export default function PPOrderDetailPage() {
                           <button
                             onClick={() => {
                               setRekapStatus('dikonfirmasi')
-                              setLogTab3PP(prev => [...prev, {
-                                id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                              setLogTab3PP(prev => [{
+                                id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                                 kategori: 'honorarium', nomorLaporan: order.id,
                                 teks: `Rekap absensi dikonfirmasi — ${absensiSesi.length} sesi · Rp ${(absensiSesi.length * ratePerSesi).toLocaleString('id-ID')}`
-                              }])
+                              }, ...prev])
                             }}
                             className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
                           >
@@ -2262,11 +2268,11 @@ export default function PPOrderDetailPage() {
                                     if (!file) return
                                     setHonorariumBuktiBayar({ nama: file.name, tanggal: new Date().toLocaleDateString('id-ID') })
                                     setHonorariumBayarStatus('sudah_bayar')
-                                    setLogTab3PP(prev => [...prev, {
-                                      id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                                    setLogTab3PP(prev => [{
+                                      id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                                       kategori: 'honorarium', nomorLaporan: order.id,
                                       teks: `Honorarium Rp ${totalHonorariumDue.toLocaleString('id-ID')} sudah dibayar — bukti: ${file.name}`
-                                    }])
+                                    }, ...prev])
                                   }}
                                 />
                                 <span className="text-xs text-[#1E1C43] font-semibold hover:underline">Upload Bukti Pembayaran Honorarium</span>
@@ -2434,10 +2440,12 @@ export default function PPOrderDetailPage() {
             <div className="flex items-center gap-2">
               <Activity size={15} className="text-[#1E1C43]" />
               <h3 className="text-base font-bold text-[#1E1C43]">Log & Histori</h3>
-              <span className="text-xs text-gray-400">({logTab3PP.length} aktivitas)</span>
+              <span className="text-xs text-gray-400">
+                ({logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length} aktivitas)
+              </span>
             </div>
             <div className="flex flex-wrap gap-1">
-              {['semua', 'keuangan', 'agreement', 'jadwal', 'absensi', 'honorarium'].map(k => (
+              {['semua', 'status', 'keuangan', 'agreement', 'jadwal', 'absensi', 'honorarium'].map(k => (
                 <button
                   key={k}
                   onClick={() => setLogFilter3PP(k)}
@@ -2461,6 +2469,7 @@ export default function PPOrderDetailPage() {
                 )}
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                   <p className="text-[10px] text-gray-400">{l.waktu}</p>
+                  {l.actor && <p className="text-[10px] text-gray-500 font-medium">{l.actor}</p>}
                   {l.nomorLaporan && (
                     <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
                       {l.nomorLaporan}
@@ -2472,6 +2481,7 @@ export default function PPOrderDetailPage() {
                     l.kategori === 'keuangan'   ? 'bg-teal-50 text-teal-600'     :
                     l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
                     l.kategori === 'agreement'  ? 'bg-indigo-50 text-indigo-600' :
+                    l.kategori === 'status'     ? 'bg-purple-50 text-purple-600' :
                     'bg-gray-50 text-gray-500'
                   }`}>{l.kategori}</span>
                 </div>
@@ -2547,11 +2557,11 @@ export default function PPOrderDetailPage() {
                     if (editingAbsensi.jadwalId) {
                       setJadwalSesi(prev => prev.map(j => j.id === editingAbsensi.jadwalId ? { ...j, status: 'Selesai' } : j))
                     }
-                    setLogTab3PP(prev => [...prev, {
-                      id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                    setLogTab3PP(prev => [{
+                      id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                       kategori: 'absensi', nomorLaporan: newAbsId,
                       teks: `Absensi ${newAbsId} ditambahkan manual: ${editingAbsensi.tanggal}`
-                    }])
+                    }, ...prev])
                   } else {
                     setAbsensiSesi(prev => prev.map(x => x.id === editingAbsensi.id ? { ...editingAbsensi } : x))
                   }
@@ -2643,11 +2653,11 @@ export default function PPOrderDetailPage() {
                   if (!newJadwalSesi.tanggal) return
                   const newId = 'JS-' + String(jadwalSesi.length + 1).padStart(3, '0')
                   setJadwalSesi(prev => [...prev, { id: newId, ...newJadwalSesi }])
-                  setLogTab3PP(prev => [...prev, {
-                    id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                  setLogTab3PP(prev => [{
+                    id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                     kategori: 'jadwal', nomorLaporan: newId,
                     teks: 'Jadwal sesi ' + newId + ' ditambahkan: ' + newJadwalSesi.tanggal + ' ' + newJadwalSesi.jam
-                  }])
+                  }, ...prev])
                   setShowTambahJadwalSesi(false)
                   setNewJadwalSesi({ tanggal: '', jam: '', lokasi: '', pic: '', status: 'Terjadwal' })
                 }}
@@ -2747,11 +2757,11 @@ export default function PPOrderDetailPage() {
                   setInvoicePayStatus('sudah_bayar')
                   setInvoicePP(p => ({ ...p, statusInvoice: 'Lunas' }))
                   setShowKonfirmasiPayModal(false)
-                  setLogTab3PP(prev => [...prev, {
-                    id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                  setLogTab3PP(prev => [{
+                    id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                     kategori: 'keuangan', nomorLaporan: invoicePP.nomorInvoice,
                     teks: `Pembayaran klien ${invoicePP.nomorInvoice} dikonfirmasi Lunas — ${konfirmasiPayForm.metode} · ${fmtDate(konfirmasiPayForm.tglBayar)}`
-                  }])
+                  }, ...prev])
                 }}
                 className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-40"
               >
@@ -2822,11 +2832,11 @@ export default function PPOrderDetailPage() {
                   if (!tgl || !cat.trim()) return
                   const newId = 'ABS-M' + (absensiSesi.length + 1)
                   setAbsensiSesi(prev => [...prev, { id: newId, tanggal: tgl, jam: jam || '—', foto: null, catatanKoreksi: '[MANUAL] ' + cat }])
-                  setLogTab3PP(prev => [...prev, {
-                    id: Date.now(), waktu: new Date().toLocaleString('id-ID'),
+                  setLogTab3PP(prev => [{
+                    id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                     kategori: 'absensi', nomorLaporan: newId,
                     teks: 'Absensi manual ' + newId + ' ditambahkan: ' + tgl + ' — ' + cat.substring(0, 40)
-                  }])
+                  }, ...prev])
                   setShowTambahAbsensiManual(false)
                 }}
                 className="flex-1 bg-[#E05945] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#c94a38] transition"
