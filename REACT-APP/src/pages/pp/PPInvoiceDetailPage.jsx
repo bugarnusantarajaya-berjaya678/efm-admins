@@ -11,10 +11,12 @@ const validKodeDiskon = {
 }
 
 const DEFAULT_SYARAT = [
-  'Pembayaran dilakukan sesuai dengan jadwal yang telah disepakati.',
+  'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
+  'Program dimulai setelah konfirmasi pembayaran dari Essential Fitness Management.',
   'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
   'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
-  'Essential Fitness Management berhak mengganti trainer jika diperlukan.',
+  'Essential Fitness Management berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.',
+  'Untuk pertanyaan terkait invoice, hubungi: essentialfitnessmanagement@gmail.com',
 ]
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
@@ -186,7 +188,7 @@ export default function PPInvoiceDetailPage() {
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
-        <div className="bg-[#1E1C43] rounded-t-2xl p-8 flex justify-between items-start">
+        <div className="bg-[#1E1C43] rounded-t-2xl p-6 sm:p-8 flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-start">
           <div className="flex items-center gap-3">
             <img src="/logo.png" className="w-16 h-16 rounded-full object-cover shrink-0" alt="EFM Logo" />
             <div>
@@ -199,12 +201,12 @@ export default function PPInvoiceDetailPage() {
             </div>
           </div>
 
-          <div className="text-right">
+          <div className="sm:text-right">
             <div className="text-4xl font-black text-white tracking-widest uppercase">INVOICE</div>
             <div className="text-sm text-gray-300 mt-1">No: {invoice.invNo}</div>
             <div className="border-t border-white/20 my-2" />
 
-            <div className="flex justify-end items-center gap-2 mb-1">
+            <div className="flex justify-start sm:justify-end items-center gap-2 mb-1">
               <span className="text-xs text-gray-400">Tanggal:</span>
               {editMode ? (
                 <input type="date" value={editData.tanggalInvoice}
@@ -215,7 +217,7 @@ export default function PPInvoiceDetailPage() {
               )}
             </div>
 
-            <div className="flex justify-end items-start gap-2 mb-1">
+            <div className="flex justify-start sm:justify-end items-start gap-2 mb-1">
               <span className="text-xs text-gray-400 mt-1">Jatuh Tempo:</span>
               <div>
                 {editMode ? (
@@ -232,7 +234,7 @@ export default function PPInvoiceDetailPage() {
               </div>
             </div>
 
-            <div className="flex justify-end items-center gap-2">
+            <div className="flex justify-start sm:justify-end items-center gap-2">
               <span className="text-xs text-gray-400">Order ID:</span>
               <button
                 onClick={() => navigate('/pp/orders/' + invoice.orderId)}
@@ -250,13 +252,23 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Tagihan Kepada */}
-        <div className="px-8 py-6 border-b border-gray-100">
-          <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2.5">Tagihan Kepada</div>
-          <div className="text-[18px] font-bold text-text-primary mb-1.5">{invoice.client}</div>
-          <div className="text-[12px] text-text-muted leading-[1.8]">
-            Order ID: #{invoice.orderId}<br/>
-            Private Training Program
+        <div className="px-6 sm:px-8 py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
+          <div>
+            <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-2.5">Tagihan Kepada</div>
+            <div className="text-[18px] font-bold text-text-primary mb-1">{invoice.client}</div>
+            <div className="text-[12px] text-text-muted leading-[1.8]">
+              Order ID: <button onClick={() => navigate('/pp/orders/' + invoice.orderId)} className="font-semibold text-[#1E1C43] hover:underline">#{invoice.orderId}</button>
+              {invoice.paket && <><br/>Paket: <span className="font-semibold text-text-primary">Private Training — {invoice.paket}</span></>}
+              {invoice.pic  && <><br/>PIC Pelatih: <span className="font-semibold text-text-primary">{invoice.pic}</span></>}
+            </div>
           </div>
+          {invoice.namaLatihan && (
+            <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100 text-right min-w-[160px]">
+              <div className="text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">Program Latihan</div>
+              <div className="text-sm font-semibold text-text-primary">{invoice.namaLatihan}</div>
+              <div className="text-[11px] text-text-muted mt-0.5">{invoice.sesi} Sesi</div>
+            </div>
+          )}
         </div>
 
         {/* Tabel Rincian Layanan */}
@@ -276,7 +288,7 @@ export default function PPInvoiceDetailPage() {
             <tbody>
               <tr>
                 <td className="px-2.5 py-3 border-b border-border">
-                  <div className="font-semibold text-text-primary">{invoice.paket} Package</div>
+                  <div className="font-semibold text-text-primary">Private Training — {invoice.paket}</div>
                   <div className="text-[11px] text-text-muted">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
                 </td>
                 <td className="px-2.5 py-3 border-b border-border text-right">{formatRp(invoice.hargaPersesi)}</td>
@@ -291,14 +303,10 @@ export default function PPInvoiceDetailPage() {
               </tr>
               {invoice.biayaLain > 0 && (
                 <tr>
-                  <td className="px-2.5 py-3 border-b border-border">
-                    <div className="font-semibold text-text-primary">Biaya Lain</div>
-                    <div className="text-[11px] text-text-muted">{invoice.biayaLainKet}</div>
+                  <td className="px-2.5 py-3 border-b border-border" colSpan={5}>
+                    <div className="font-semibold text-text-primary">Biaya Tambahan</div>
+                    <div className="text-[11px] text-text-muted">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
                   </td>
-                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
-                  <td className="px-2.5 py-3 border-b border-border text-center">—</td>
-                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
-                  <td className="px-2.5 py-3 border-b border-border text-right">—</td>
                   <td className="px-2.5 py-3 border-b border-border text-right font-semibold">{formatRp(invoice.biayaLain)}</td>
                 </tr>
               )}
@@ -382,7 +390,51 @@ export default function PPInvoiceDetailPage() {
             <span className="text-white font-bold text-lg">Total Tagihan</span>
             <span className="text-white font-bold text-lg">{formatRp(totalTagihan)}</span>
           </div>
+
+          {/* LUNAS confirmation — tampil jika sudah paid */}
+          {invoice.status === 'paid' && (
+            <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-start gap-3">
+              <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — LUNAS</p>
+                <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                  {invoice.paidDate && (
+                    <>
+                      <p className="text-[11px] text-green-700 font-medium">Tanggal Lunas</p>
+                      <p className="text-[11px] text-green-800 font-semibold">{invoice.paidDate}</p>
+                    </>
+                  )}
+                  {invoice.payMethod && (
+                    <>
+                      <p className="text-[11px] text-green-700 font-medium">Metode Pembayaran</p>
+                      <p className="text-[11px] text-green-800 font-semibold">{invoice.payMethod}</p>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* Cara Pembayaran — tampil jika belum paid */}
+        {invoice.status !== 'paid' && (
+          <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {[
+                { bank: 'BCA', rek: '1234567890', an: 'CV. Bugar Nusantara Jaya' },
+                { bank: 'Mandiri', rek: '1100009876543', an: 'CV. Bugar Nusantara Jaya' },
+              ].map(b => (
+                <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
+                  <p className="text-sm font-bold text-[#1E1C43] font-mono">{b.rek}</p>
+                  <p className="text-[11px] text-gray-500 mt-0.5">a.n. {b.an}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-[11px] text-gray-400 mt-3">Mohon cantumkan nomor invoice (<span className="font-semibold text-gray-600">{invoice.invNo}</span>) sebagai keterangan transfer.</p>
+          </div>
+        )}
 
         {/* Catatan Invoice */}
         <div className="px-8 py-4 border-t border-gray-100">
@@ -430,8 +482,10 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-gray-100 text-center">
-          <p className="text-xs text-gray-400">Dokumen ini digenerate oleh sistem EFM V2</p>
+        <div className="px-6 sm:px-8 py-5 border-t border-gray-100 text-center space-y-1">
+          <p className="text-xs font-semibold text-gray-500">Essential Fitness Management</p>
+          <p className="text-[11px] text-gray-400">essentialfitnessmanagement@gmail.com · Jl. Terogong Raya No.18, Jakarta Selatan</p>
+          <p className="text-[10px] text-gray-300 mt-2">Dokumen ini digenerate oleh sistem EFM V2</p>
         </div>
       </div>
 
