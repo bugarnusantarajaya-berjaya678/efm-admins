@@ -565,7 +565,7 @@ export default function PPLeadDetailPage() {
                   </div>
                 ) : (
                   /* Edit form */
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="col-span-2">
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
                         Nama Klien <span className="text-red-500">*</span>

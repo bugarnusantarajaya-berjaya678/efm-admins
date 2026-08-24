@@ -135,12 +135,12 @@ export default function PPInvoiceDetailPage() {
         <ArrowLeft size={16} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
       </button>
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-bold text-text-primary">Invoice #{invoice.invNo}</h1>
           <p className="text-sm text-text-muted mt-1">Private Training — {invoice.client}</p>
         </div>
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 flex-wrap">
           {editMode ? (
             <>
               <button
@@ -260,8 +260,8 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Tabel Rincian Layanan */}
-        <div className="px-8 pt-6 pb-2">
-          <table className="w-full text-xs" style={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+        <div className="px-8 pt-6 pb-2 overflow-x-auto">
+          <table className="w-full text-xs" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
             <thead>
               <tr className="bg-[#f8fafc]">
                 {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (

@@ -90,7 +90,7 @@ export default function PPScreeningPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatMini label="TOTAL ASSESSMENT" value={allAssessments.length} sub="Semua data" />
         <StatMini label="POST-TEST SELESAI" value={totalPostTest} sub="Program selesai" accent="green" />
         <StatMini label="PRE-TEST SELESAI" value={totalPreTest} sub="Sedang berjalan" accent="blue" />

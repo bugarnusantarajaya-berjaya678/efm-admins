@@ -324,7 +324,7 @@ export default function PPOrderNewPage() {
             <span className="text-xs text-gray-400">— orang yang mendaftar / membayar</span>
           </div>
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Pendaftar *</label>
                 <div className="relative">
@@ -386,7 +386,7 @@ export default function PPOrderNewPage() {
                 <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
@@ -473,7 +473,7 @@ export default function PPOrderNewPage() {
             </label>
           </div>
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
                 <input type="text" value={klienLatihan.nama}
@@ -491,7 +491,7 @@ export default function PPOrderNewPage() {
                   className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
                 <div className="relative">
@@ -676,7 +676,7 @@ export default function PPOrderNewPage() {
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jam Latihan</label>
                 <input type="time" value={jadwal.jamLatihan}
@@ -741,7 +741,7 @@ export default function PPOrderNewPage() {
 
             {/* Hasil Deteksi Koordinat */}
             {koordinat && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <p className="text-xs text-gray-400 uppercase tracking-wide">Latitude</p>
                   <p className="text-sm font-semibold text-gray-800 mt-1">{koordinat.lat}</p>
@@ -787,8 +787,7 @@ export default function PPOrderNewPage() {
 
       {/* ── Sticky Footer ── */}
       <div
-        className="fixed bottom-0 right-0 bg-white border-t border-gray-200 px-6 py-4 z-40"
-        style={{ left: '224px' }}>
+        className="fixed bottom-0 right-0 left-0 md:left-[224px] bg-white border-t border-gray-200 px-6 py-4 z-40">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             {items.length > 0 && (

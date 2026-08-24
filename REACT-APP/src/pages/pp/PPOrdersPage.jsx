@@ -449,7 +449,7 @@ export default function PPOrdersPage() {
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Private Training Orders</h1>
           <p className="text-sm text-text-muted mt-1">Kelola semua order klien private training</p>

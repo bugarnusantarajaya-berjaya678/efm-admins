@@ -186,7 +186,7 @@ export default function PPDashboard() {
       {/* ══════════════════════════════════
           SECTION 3: Order Terbaru + Sesi Aktif
       ══════════════════════════════════ */}
-      <div className="grid grid-cols-[1fr_280px] gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
 
         {/* Order Terbaru */}
         <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 overflow-hidden">
@@ -280,6 +280,7 @@ export default function PPDashboard() {
               Lihat Orders →
             </button>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="bg-gray-50">
@@ -321,6 +322,7 @@ export default function PPDashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Leads Pipeline */}

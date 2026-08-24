@@ -61,8 +61,8 @@ function ReceiptCard({ rcp, onGoToOrder, onGoToInvoice }) {
 
         <QRPlaceholder label={rcp.rcpNo} />
 
-        <div className="border border-border rounded-xl overflow-hidden mb-4">
-          <table className="w-full text-xs" style={{ tableLayout: 'fixed', borderCollapse: 'collapse' }}>
+        <div className="border border-border rounded-xl overflow-x-auto mb-4">
+          <table className="w-full text-xs" style={{ tableLayout: 'fixed', minWidth: '360px', borderCollapse: 'collapse' }}>
             <thead>
               <tr className="bg-bg-page">
                 <th className="px-3.5 py-2.5 text-left text-[10px] font-bold text-text-muted uppercase tracking-wider" style={{ width: '55%' }}>Program / Layanan</th>
@@ -141,12 +141,12 @@ export default function PPReceiptDetailPage() {
         <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Receipt'}
       </button>
 
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-xl font-bold text-text-primary">{receipt.rcpNo}</h1>
           <p className="text-sm text-text-muted mt-1">Receipt pembayaran · {receipt.client}</p>
         </div>
-        <div className="flex items-center gap-2.5 shrink-0">
+        <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={handleResendWA}
             className="flex items-center gap-1.5 px-4 py-2.5 bg-[#25D366] hover:bg-[#1DA851] text-white text-sm font-semibold rounded-lg transition-colors">

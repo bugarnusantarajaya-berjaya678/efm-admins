@@ -109,7 +109,7 @@ export default function PPInvoicePage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatMini label="Total Invoice"  value={invoices.length} sub="Bulan ini" />
         <StatMini label="Belum Dibayar"  value={pendingCount}    sub="Perlu follow up"      accent="orange" />
         <StatMini label="Paid"           value={paidCount}       sub="✅ Terbayar"           accent="green" />

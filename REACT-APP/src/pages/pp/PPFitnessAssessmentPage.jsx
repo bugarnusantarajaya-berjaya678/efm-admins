@@ -290,7 +290,7 @@ function ParqTable({ items, data, onChange, readOnly, isRenewal }) {
 
 function CatatanPair({ labelAwal, labelAkhir, awal, akhir, onChangeAwal, onChangeAkhir, readOnly }) {
   return (
-    <div className="grid grid-cols-2 gap-4 mt-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
       <div>
         <p className="text-xs text-gray-400 uppercase tracking-wide mb-1">{labelAwal || 'Catatan Tes Awal'}</p>
         <textarea
