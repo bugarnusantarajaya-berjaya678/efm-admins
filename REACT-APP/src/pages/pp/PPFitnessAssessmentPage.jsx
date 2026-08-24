@@ -495,7 +495,7 @@ export default function PPFitnessAssessmentPage() {
 
     const payload = {
       leadId: leadId || existing?.leadId || null,
-      orderId: noIdProgram || fromOrderId || existing?.orderId || null,
+      orderId: pickerOrderId || fromOrderId || noIdProgram || existing?.orderId || null,
       prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
       noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien, usia, jenisKelamin, tipeBadan,
       detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
@@ -517,6 +517,8 @@ export default function PPFitnessAssessmentPage() {
       addAssessment(newId, payload)
       if (fromOrderId) {
         navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
+      } else if (pickerOrderId) {
+        navigate(`/pp/orders/${pickerOrderId}`, { state: { defaultTab: 'operasional' } })
       } else if (leadId) {
         navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
       } else {
