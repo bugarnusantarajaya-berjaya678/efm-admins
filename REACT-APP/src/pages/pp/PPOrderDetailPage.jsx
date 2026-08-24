@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
@@ -668,27 +668,30 @@ export default function PPOrderDetailPage() {
 
 
       {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
 
-        {/* Single row: Avatar+Info LEFT, Buttons+NilaiKontrak RIGHT — matches Lead Detail pattern */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-4 flex-1">
+        {/* Mobile: column layout; sm+: row layout */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+
+          {/* LEFT: Avatar + Info */}
+          <div className="flex items-start gap-3 flex-1 min-w-0">
             {/* Avatar circle */}
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaKlien) }}
             >
               {getInitials(order.namaKlien)}
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'PP-DRAFT' : order.id}</p>
-              <h1 className="text-xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1.5">
+              <h1 className="text-lg sm:text-xl font-bold text-[#1E1C43] leading-tight break-words">{isNew ? 'Order Baru' : order.namaKlien}</h1>
+              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                 <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
                 <Badge cls={STATUS_CLS[statusOrderState] ?? 'bg-gray-100 text-gray-600'}>● {statusOrderState}</Badge>
                 <span className="text-[10px] text-gray-400">Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</span>
               </div>
-              <div className="flex items-center gap-1 mt-3 flex-wrap">
+              {/* Stepper — connector lines hidden on mobile */}
+              <div className="flex items-center gap-1 mt-2.5 flex-wrap">
                 {TAHAPAN_STEPS.map((step, i) => {
                   const orderIdx = TAHAPAN_ORDER[tahapanState] ?? 0
                   const stepIdx  = TAHAPAN_ORDER[step] ?? i
@@ -701,16 +704,17 @@ export default function PPOrderDetailPage() {
                       }`}>
                         {step}
                       </span>
-                      {i < TAHAPAN_STEPS.length - 1 && <div className="w-4 h-px bg-gray-300" />}
+                      {i < TAHAPAN_STEPS.length - 1 && <div className="hidden sm:block w-3 h-px bg-gray-300" />}
                     </div>
                   )
                 })}
               </div>
             </div>
           </div>
-          {/* Right: action buttons atas, Nilai Kontrak bawah */}
-          <div className="flex flex-col items-end gap-3 shrink-0">
-            <div className="flex items-center gap-2">
+
+          {/* RIGHT: on mobile → row (buttons left, nilai kontrak right); sm+ → column aligned right */}
+          <div className="flex sm:flex-col items-start sm:items-end justify-between sm:justify-start gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
               {!isNew && (
                 <button
                   onClick={() => setShowTahapanModal(true)}
@@ -1691,12 +1695,12 @@ export default function PPOrderDetailPage() {
             const pctHadir = Math.min(100, Math.round((totalHadir / totalPaket) * 100))
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
                   <div>
                     <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Monitoring Sesi</h3>
                     <p className="text-xs text-gray-400 mt-1 ml-3">Absensi dicatat otomatis oleh sistem backend pelatih</p>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap ml-3 sm:ml-0">
                     <span className="flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
                       <CheckCircle size={11} /> {totalHadir} Hadir
                     </span>
@@ -1777,7 +1781,7 @@ export default function PPOrderDetailPage() {
             const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-3">
+                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-3 flex-wrap">
                   <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pengajuan Rekap Absensi</h3>
                   <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${cur.cls}`}>{cur.label}</span>
                 </div>
@@ -2168,40 +2172,43 @@ export default function PPOrderDetailPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'log' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <Activity size={15} className="text-[#1E1C43]" />
-              <h3 className="text-base font-bold text-[#1E1C43]">Log & Histori</h3>
-              <span className="text-xs text-gray-400">
-                ({logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length} aktivitas)
-              </span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+            <div>
+              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log & Histori</h3>
+              <p className="text-xs text-gray-400 mt-1 ml-3">
+                {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length} aktivitas tercatat
+              </p>
             </div>
-            <div className="flex flex-wrap gap-1">
-              {['semua', 'status', 'keuangan', 'agreement', 'jadwal', 'absensi', 'honorarium'].map(k => (
-                <button
-                  key={k}
-                  onClick={() => setLogFilter3PP(k)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition ${
-                    logFilter3PP === k ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'
-                  }`}
-                >
-                  {k.charAt(0).toUpperCase() + k.slice(1)}
-                </button>
+            <select
+              value={logFilter3PP}
+              onChange={e => setLogFilter3PP(e.target.value)}
+              className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#1E1C43] w-full sm:w-auto"
+            >
+              {[
+                ['semua',       'Semua Kategori'],
+                ['status',      'Status'],
+                ['keuangan',    'Keuangan'],
+                ['agreement',   'Agreement'],
+                ['jadwal',      'Jadwal'],
+                ['absensi',     'Absensi'],
+                ['honorarium',  'Honorarium'],
+              ].map(([val, lbl]) => (
+                <option key={val} value={val}>{lbl}</option>
               ))}
-            </div>
+            </select>
           </div>
-          <div className="space-y-3 pl-4 relative">
+          <div className="space-y-0 pl-4 relative">
             {logTab3PP
               .filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP)
               .map((l, idx, arr) => (
-              <div key={l.id} className="relative mb-3 last:mb-0">
-                <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#1E1C43]" />
+              <div key={l.id} className="relative pb-4 last:pb-0">
+                <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
                 {idx < arr.length - 1 && (
-                  <div className="absolute -left-[13px] top-3 w-px bottom-[-12px] bg-gray-200" />
+                  <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />
                 )}
-                <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                <div className="flex items-center gap-1.5 mb-1 flex-wrap">
                   <p className="text-[10px] text-gray-400">{l.waktu}</p>
-                  {l.actor && <p className="text-[10px] text-gray-500 font-medium">{l.actor}</p>}
+                  {l.actor && <p className="text-[10px] text-gray-500 font-medium">· {l.actor}</p>}
                   {l.nomorLaporan && (
                     <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
                       {l.nomorLaporan}
@@ -2217,7 +2224,7 @@ export default function PPOrderDetailPage() {
                     'bg-gray-50 text-gray-500'
                   }`}>{l.kategori}</span>
                 </div>
-                <p className="text-xs text-gray-700">{l.teks}</p>
+                <p className="text-xs text-gray-700 leading-relaxed">{l.teks}</p>
               </div>
             ))}
             {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length === 0 && (

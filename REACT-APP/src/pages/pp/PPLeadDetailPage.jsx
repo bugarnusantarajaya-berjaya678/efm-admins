@@ -208,9 +208,9 @@ function ScrBadge({ status }) {
 
 function InfoField({ label, children }) {
   return (
-    <div className="bg-gray-50 rounded-lg p-3">
+    <div className="bg-gray-50 rounded-lg p-3 overflow-hidden min-w-0">
       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-      <div className="text-sm font-semibold text-gray-800">{children}</div>
+      <div className="text-sm font-semibold text-gray-800 break-words">{children}</div>
     </div>
   )
 }
@@ -530,7 +530,7 @@ export default function PPLeadDetailPage() {
 
               <div className="p-5">
                 {!isEditMode ? (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     <InfoField label="No HP / WhatsApp">
                       <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
                         className="text-[#1E1C43] hover:underline">
@@ -551,13 +551,13 @@ export default function PPLeadDetailPage() {
                       {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
                     </InfoField>
                     {lead.catatanAwal && (
-                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                      <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Awal</p>
                         <p className="text-sm text-gray-700">{lead.catatanAwal}</p>
                       </div>
                     )}
                     {lead.catatan && (
-                      <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                      <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
                         <p className="text-sm text-gray-700">{lead.catatan}</p>
                       </div>
