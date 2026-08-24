@@ -1723,7 +1723,7 @@ export default function PPOrderDetailPage() {
                     </span>
                     {agrDoc && (
                       <button
-                        onClick={() => navigate('/pp/documents')}
+                        onClick={() => navigate('/pp/documents', { state: { fromOrderId: order.id } })}
                         className="flex items-center gap-1 text-xs text-[#1E1C43] font-medium hover:text-[#E05945] transition"
                       >
                         <ExternalLink size={11} /> Lihat Agreement

@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search, ArrowLeft } from 'lucide-react'
 import { DOCS_INIT, STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 
@@ -409,6 +409,8 @@ const ROWS_PER_PAGE = 8
 
 export default function PPDocumentsPage() {
   const navigate = useNavigate()
+  const { state } = useLocation()
+  const fromOrderId = state?.fromOrderId
   const [docs, setDocs] = useState(DOCS_INIT)
   const [previewId, setPreviewId] = useState(null)
   const [fBulan, setFBulan] = useState('')
@@ -496,10 +498,10 @@ export default function PPDocumentsPage() {
             </div>
           </div>
           <button
-            onClick={() => navigate('/pp/orders')}
+            onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } }) : navigate('/pp/orders')}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
           >
-            <ArrowLeft size={12} /> Kembali ke PP Orders
+            <ArrowLeft size={12} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke PP Orders'}
           </button>
         </div>
       </div>
