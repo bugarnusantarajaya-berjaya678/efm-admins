@@ -629,14 +629,17 @@ Used for: halaman form panjang/kompleks yang dibuka dari parent detail page (con
 
 ### Navigasi ke sub-page (dari parent)
 
+Sub-page bisa dibuka dari 2 konteks: Lead Detail atau Order Detail. Keduanya memakai state berbeda.
+
 ```jsx
-// Parent (misal PPLeadDetailPage.jsx)
+// Dari Lead Detail
 navigate('/pp/screening/new', {
-  state: {
-    leadId: lead.id,
-    namaKlien: lead.nama,
-    picEfm: lead.picEfm,
-  }
+  state: { leadId: lead.id, namaKlien: lead.nama, picEfm: lead.picEfm }
+})
+
+// Dari Order Detail (untuk form yang terhubung ke order — auto-fill + lock fields)
+navigate('/pp/screening/new', {
+  state: { fromOrderId: order.id }
 })
 
 // Klik item existing — WAJIB pass leadId dalam state supaya handleBack di sub-page
@@ -651,9 +654,10 @@ navigate('/pp/screening/' + scr.id, { state: { leadId: lead.id } })
 const { id } = useParams()
 const { state } = useLocation()
 
-const isNew    = id === 'new'
-const leadId   = state?.leadId || null
-const namaKlien = state?.namaKlien || ''
+const isNew       = id === 'new'
+const leadId      = state?.leadId || null
+const fromOrderId = state?.fromOrderId || null  // dibuka dari order detail
+const namaKlien   = state?.namaKlien || ''
 
 const [isEditing, setIsEditing] = useState(isNew)
 // isNew → langsung edit mode; existing record → read-only dulu
@@ -673,12 +677,15 @@ Bungkus seluruh konten form (antara header dan footer) dengan wrapper yang disab
 - `select-none` → teks tidak bisa di-highlight
 - `opacity-80` → visual cue bahwa ini read-only mode
 - Jangan tambahkan `disabled` satu per satu ke tiap field — gunakan wrapper ini sebagai gantinya
+- **Pengecualian:** jika form punya field auto-fill dari order yang harus dikunci BAHKAN saat editing, gunakan Section 11 (per-field locking) BUKAN wrapper ini
 
 ### handleBack — navigasi balik dengan konteks
 
 ```jsx
 const handleBack = () => {
-  if (leadId) {
+  if (fromOrderId) {
+    navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
+  } else if (leadId) {
     navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
   } else {
     navigate('/pp/screening')  // fallback jika dibuka langsung dari URL
@@ -688,29 +695,65 @@ const handleBack = () => {
 
 Gunakan `handleBack` di: tombol arrow back di header, tombol "Kembali" di footer.
 
-### handleSave — simpan dan kirim data balik ke parent
+### handleSave — redirect priority chain
+
+Saat menyimpan record baru, redirect ke parent yang paling relevan. Urutan prioritas:
 
 ```jsx
 const handleSave = () => {
   if (isNew) {
-    const newRecord = {
-      id: 'SCR-26-' + String(Date.now()).slice(-4), // atau ID yang dihasilkan
-      tanggal: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-      namaKlien,
-      statusScreening: 'Draft',
-      picScreening: picEfm,
-      orderId: null,
-    }
-    if (leadId) {
-      navigate(`/pp/leads/${leadId}`, {
-        state: { defaultTab: 'kesehatan', newScreening: newRecord }
-      })
+    const newId = getNextAssessmentId()
+    addAssessment(newId, payload)
+    // Priority: fromOrderId > pickerOrderId > leadId > fallback list
+    if (fromOrderId) {
+      navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
+    } else if (pickerOrderId) {
+      navigate(`/pp/orders/${pickerOrderId}`, { state: { defaultTab: 'operasional' } })
+    } else if (leadId) {
+      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
     } else {
       navigate('/pp/screening')
     }
   } else {
-    // existing: simpan perubahan lokal, keluar dari edit mode
     setIsEditing(false)
+  }
+}
+```
+
+### Auto-fill dari fromOrderId saat form dibuka
+
+Ketika form dibuka dengan `fromOrderId`, jalankan auto-fill sekali saat mount:
+
+```jsx
+useEffect(() => {
+  if (isNew && fromOrderId) handleOrderPick(fromOrderId)
+}, []) // eslint-disable-line
+```
+
+### handleOrderPick — cross-data lookup
+
+Pattern untuk auto-fill dari order termasuk lookup trainer ke `PIC_DB`:
+
+```jsx
+function handleOrderPick(orderId) {
+  setPickerOrderId(orderId)
+  if (!orderId) { setPickerLeadHealth(null); return }
+  const o = ORDERS_INIT.find(x => x.id === orderId)
+  if (!o) return
+  setNamaKlien(o.klien)
+  setNamaFC(o.pic)
+  // Lookup trainer: PROGRAMS_INIT (match by namaPaket) → PIC_DB (fullname)
+  const prog = PROGRAMS_INIT.find(p => p.namaPaket === o.paket)
+  const trainerName = prog ? (PIC_DB[prog.picId]?.fullname || o.pic) : o.pic
+  setNamaPelatih(trainerName)
+  // Format: "namaLatihan — namaPaket" (em-dash dengan spasi di kedua sisi)
+  setProgramLatihan(prog ? `${prog.namaLatihan} — ${o.paket}` : o.paket)
+  // Auto-fill health data dari leads jika ada
+  const health = getLeadHealthByOrderId(orderId)
+  setPickerLeadHealth(health)
+  if (health?.sudahDiisi) {
+    setDetailGoals(health.tujuanProgram || '')
+    // ... field kesehatan lainnya
   }
 }
 ```
@@ -889,4 +932,112 @@ Used for: navigasi bolak-balik antara halaman detail yang saling terkait (Order 
 - Selalu pass `fromOrderId` / `fromLeadId` di navigate state — jangan pakai `navigate(-1)` karena tidak reliable di semua entry path
 - Dummy data orders WAJIB punya field `leadId` yang merujuk ke ID yang benar-benar ada di `LEADS_FALLBACK` — mismatch menyebabkan "Lead tidak ditemukan"
 - Pola ini perlu diterapkan konsisten di B2B dan Event ketika module tersebut punya halaman Order Detail dan Lead Detail yang setara
+
+---
+
+## 10. Connection Banner (Order/Lead Link Indicator)
+
+Used for: menampilkan status koneksi form ke Order atau Lead — muncul di atas section form utama. Berlaku untuk form baru maupun existing record.
+
+### Kapan ditampilkan
+
+- **Existing record** yang punya `orderId`: tampilkan dengan tombol "Lihat Order →"
+- **Form baru** dengan `fromOrderId` (dibuka dari order detail): tampilkan info auto-fill dikunci
+- **Form baru** dengan `pickerOrderId` (user pilih order lewat picker): opsional untuk konfirmasi
+
+### Template
+
+```jsx
+import { Link2 } from 'lucide-react'
+
+{/* Existing record — connected to an order */}
+{!isNew && existing?.orderId && (
+  <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
+    <Link2 size={13} className="text-green-600 shrink-0" />
+    <p className="text-[11px] font-medium text-green-700 flex-1">
+      Terhubung ke Order <span className="font-bold">#{existing.orderId}</span>
+      {orderLocked ? ' — data klien dikunci.' : '.'}
+    </p>
+    <button
+      onClick={() => navigate(`/pp/orders/${existing.orderId}`, { state: { defaultTab: 'operasional' } })}
+      className="text-[11px] font-semibold text-green-700 hover:underline shrink-0"
+    >
+      Lihat Order →
+    </button>
+  </div>
+)}
+
+{/* New form opened from order detail */}
+{isNew && fromOrderId && (
+  <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
+    <Link2 size={13} className="text-green-600 shrink-0" />
+    <p className="text-[11px] font-medium text-green-700">
+      Terhubung ke Order <span className="font-bold">#{fromOrderId}</span> — Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
+    </p>
+  </div>
+)}
+```
+
+**Rules:**
+- Warna: selalu `bg-green-50 border border-green-100` — hijau untuk koneksi positif (konfirmasi), biru untuk info referensi saja (lihat Context Reference Banner di Section 8)
+- Font: `text-[11px]` supaya banner compact — jangan pakai `text-xs` (terlalu besar untuk notif inline)
+- Posisi: tepat di atas form fields, setelah header card dan sebelum section pertama
+- "Lihat Order →" hanya untuk existing record — form baru belum disimpan, belum ada navigasi valid ke order
+
+---
+
+## 11. Per-field Order-linked Locking
+
+Used for: mengunci field individual yang di-auto-fill dari order — berbeda dari read-only wrapper (`pointer-events-none`) karena lebih granular: field tertentu dikunci, field lain tetap editable, bahkan dalam edit mode.
+
+### Kapan pakai per-field locking (bukan wrapper)
+
+- Form punya campuran: sebagian field auto-fill dari order (harus dikunci), sebagian diisi user (harus tetap editable)
+- Kondisi lock berlaku bahkan saat user sedang edit (bukan hanya view mode)
+- Existing record yang terhubung ke order harus tetap dikunci juga (tidak hanya form baru)
+
+### CSS classes
+
+```jsx
+// Definisikan di atas return statement, bersama konstanta form lainnya
+const inputCls    = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
+const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
+const labelCls    = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
+```
+
+### orderLocked boolean
+
+```jsx
+// Berlaku untuk new DAN existing record — derive dari data yang benar-benar ada di store
+const linkedOrderId = isNew ? (pickerOrderId || fromOrderId) : (existing?.orderId || '')
+const orderInStore  = linkedOrderId ? ORDERS_INIT.find(o => o.id === linkedOrderId) : null
+const orderLocked   = !!orderInStore  // false jika ID tidak valid
+```
+
+**Penting:** derive dari `ORDERS_INIT.find(...)`, bukan hanya keberadaan string ID — supaya lock tidak aktif untuk ID yang tidak valid.
+
+### Field render
+
+```jsx
+<input
+  className={orderLocked ? readOnlyCls : inputCls}
+  readOnly={orderLocked}
+  value={namaKlien}
+  onChange={e => setNamaKlien(e.target.value)}
+/>
+```
+
+### Field mana yang dikunci vs tidak
+
+**Dikunci** (auto-fill dari order/program):
+- Nama Klien (`order.klien`)
+- ID Program / No Order (`order.id`)
+- Nama FC / PIC (`order.pic`)
+- Nama Pelatih (dari `PROGRAMS_INIT` → `PIC_DB`)
+- Program Latihan (format `"namaLatihan — namaPaket"`)
+
+**Tidak dikunci** (tetap editable meski order terhubung):
+- Tanggal assessment, catatan, goals
+- Data tes fisik (berat, tinggi, lingkar badan, dll.)
+- Riwayat cedera, obatan-obatan, kondisi saat ini
 
