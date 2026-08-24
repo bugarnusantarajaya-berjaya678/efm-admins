@@ -819,20 +819,20 @@ export default function PPOrderDetailPage() {
                     </div>
                   )
                 })}
-                {!isNew && (
-                  <button
-                    onClick={() => setShowTahapanModal(true)}
-                    className="ml-2 text-[10px] font-semibold text-[#1E1C43] border border-gray-300 px-2.5 py-0.5 rounded-full hover:bg-gray-50 transition-colors"
-                  >
-                    Ubah Tahapan
-                  </button>
-                )}
               </div>
             </div>
           </div>
           {/* Right: action buttons atas, Nilai Kontrak bawah */}
           <div className="flex flex-col items-end gap-3 shrink-0">
             <div className="flex items-center gap-2">
+              {!isNew && (
+                <button
+                  onClick={() => setShowTahapanModal(true)}
+                  className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
+                >
+                  Ubah Tahapan
+                </button>
+              )}
               <button
                 onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
                 className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-medium"
