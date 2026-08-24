@@ -4,6 +4,7 @@ import { ArrowLeft, Save, CheckCircle, Edit2, Link2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { ORDERS_INIT } from '../../data/ppOrdersData'
+import { getLeadHealthByOrderId } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -362,13 +363,30 @@ export default function PPFitnessAssessmentPage() {
 
   // Order picker (only for new assessments opened without fromOrderId)
   const [pickerOrderId, setPickerOrderId] = useState(fromOrderId || '')
+  const [pickerLeadHealth, setPickerLeadHealth] = useState(null)
+
   function handleOrderPick(orderId) {
     setPickerOrderId(orderId)
+    if (!orderId) { setPickerLeadHealth(null); return }
     const o = ORDERS_INIT.find(x => x.id === orderId)
     if (!o) return
+
+    // ── Data Klien & Program ──
     setNoIdProgram(o.id)
     setNamaKlien(o.klien)
     setNamaFC(o.pic)
+    setProgramLatihan(o.paket)
+
+    // ── Data kesehatan dari leads store ──
+    const health = getLeadHealthByOrderId(orderId)
+    setPickerLeadHealth(health)
+    if (health?.sudahDiisi) {
+      setDetailGoals(health.tujuanProgram || '')
+      setKondisiFisik(health.kondisiSaatIni || '')
+      setRiwayatCedera(health.riwayatCedera || '')
+      setObatanRutin(health.obatanRutin || '')
+      setCatatanScreening(health.catatanCs || '')
+    }
   }
 
   // Personal Detail
@@ -660,9 +678,20 @@ export default function PPFitnessAssessmentPage() {
               ))}
             </select>
             {pickerOrderId && (
-              <p className="text-[11px] text-green-700 font-medium mt-2">
-                ✓ Terhubung ke order #{pickerOrderId} — data klien sudah di-auto-fill.
-              </p>
+              <div className="mt-2 space-y-1">
+                <p className="text-[11px] text-green-700 font-medium">
+                  ✓ Terhubung ke order #{pickerOrderId} — Nama Klien, FC, Program Latihan sudah di-auto-fill.
+                </p>
+                {pickerLeadHealth?.sudahDiisi ? (
+                  <p className="text-[11px] text-blue-700 font-medium">
+                    ✓ Data kesehatan dari leads ditemukan — Detail Goals & Ringkasan Klien sudah di-auto-fill.
+                  </p>
+                ) : pickerLeadHealth ? (
+                  <p className="text-[11px] text-yellow-700 font-medium">
+                    ⚠ Informasi kesehatan di leads belum diisi — isi manual di bagian Ringkasan Klien.
+                  </p>
+                ) : null}
+              </div>
             )}
           </div>
         )}
@@ -738,9 +767,16 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── RINGKASAN KLIEN ── */}
       <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
-        <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
-          Ringkasan Klien
-        </h2>
+        <div className="flex items-center gap-3 mb-4">
+          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+            Ringkasan Klien
+          </h2>
+          {isNew && pickerLeadHealth?.sudahDiisi && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+              <Link2 size={10} /> Data dari Leads
+            </span>
+          )}
+        </div>
 
         {/* Progress Order Sebelumnya — hanya untuk renewal */}
         {isRenewal && prevSource && (() => {
