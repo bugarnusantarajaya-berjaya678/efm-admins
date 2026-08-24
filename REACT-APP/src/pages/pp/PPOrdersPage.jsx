@@ -614,12 +614,6 @@ export default function PPOrdersPage() {
                         <Eye size={13} />
                       </button>
                       <button
-                        title="Print Invoice"
-                        className="w-7 h-7 flex items-center justify-center rounded-lg border border-[#AED6F1] bg-[#EBF5FB] text-[#2980B9] hover:bg-[#D6EAF8] transition-colors"
-                      >
-                        <Printer size={13} />
-                      </button>
-                      <button
                         title="Lihat Invoice"
                         onClick={() => navigate('/pp/invoice', { state: { filterSearch: order.invNo } })}
                         className="flex items-center gap-1 px-2 h-7 rounded-lg border border-[#FAD7A0] bg-[#FEF9E7] text-[#B7770D] hover:bg-[#FDEBD0] transition-colors text-[11px] font-semibold whitespace-nowrap"
