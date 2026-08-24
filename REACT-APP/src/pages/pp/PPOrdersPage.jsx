@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList } from 'lucide-react'
+import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList, ChevronDown } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -361,7 +361,9 @@ export default function PPOrdersPage() {
   const [drawerOrder, setDrawerOrder] = useState(null)
   const [showNew, setShowNew]         = useState(false)
   const [highlightId, setHighlightId] = useState('')
+  const [showDocMenu, setShowDocMenu] = useState(false)
   const highlightRef                  = useRef(null)
+  const docMenuRef                    = useRef(null)
 
   useEffect(() => {
     const hId = searchParams.get('highlight')
@@ -374,6 +376,17 @@ export default function PPOrdersPage() {
       }, 300)
     }
   }, [])
+
+  useEffect(() => {
+    if (!showDocMenu) return
+    function handleClickOutside(e) {
+      if (docMenuRef.current && !docMenuRef.current.contains(e.target)) {
+        setShowDocMenu(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [showDocMenu])
 
   // Stats
   const total     = orders.length
@@ -442,30 +455,34 @@ export default function PPOrdersPage() {
           <p className="text-sm text-text-muted mt-1">Kelola semua order klien private training</p>
         </div>
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigate('/pp/invoice')}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <FileText size={14} /> Cari Invoice
-          </button>
-          <button
-            onClick={() => navigate('/pp/receipt')}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <Receipt size={14} /> Cari Receipt
-          </button>
-          <button
-            onClick={() => navigate('/pp/documents')}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <FileText size={14} /> Cari Agreement
-          </button>
-          <button
-            onClick={() => navigate('/pp/screening')}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <ClipboardList size={14} /> Cari Assessment
-          </button>
+          <div className="relative" ref={docMenuRef}>
+            <button
+              onClick={() => setShowDocMenu(v => !v)}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <FileText size={14} />
+              Dokumen
+              <ChevronDown size={13} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
+            </button>
+            {showDocMenu && (
+              <div className="absolute right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
+                {[
+                  { icon: FileText,     label: 'Invoice',    path: '/pp/invoice' },
+                  { icon: Receipt,      label: 'Receipt',    path: '/pp/receipt' },
+                  { icon: FileText,     label: 'Agreement',  path: '/pp/documents' },
+                  { icon: ClipboardList, label: 'Assessment', path: '/pp/screening' },
+                ].map(({ icon: Icon, label, path }) => (
+                  <button
+                    key={path}
+                    onClick={() => { setShowDocMenu(false); navigate(path) }}
+                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  >
+                    <Icon size={14} className="text-gray-400" /> {label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
           <button
             onClick={() => navigate('/pp/orders/new')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
