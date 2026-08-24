@@ -408,7 +408,7 @@ export default function PPOrderDetailPage() {
   const [statusOrderState,      setStatusOrderState]      = useState(order?.statusOrder || 'Aktif')
   const [showTahapanModal,      setShowTahapanModal]      = useState(false)
   const [pendingTahapan,        setPendingTahapan]        = useState(null)
-  const [rekapStatus,           setRekapStatus]           = useState('pengajuan_masuk')
+  const [rekapStatus,           setRekapStatus]           = useState('belum_diajukan')
   const [rekapCatatanTolak,     setRekapCatatanTolak]     = useState('')
   const [showTolakModal,        setShowTolakModal]        = useState(false)
   const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
@@ -1401,7 +1401,7 @@ export default function PPOrderDetailPage() {
               disetujui:       'Disetujui',
               ditolak:         'Ditolak',
             }
-            const clientFileSlug = order.namaKlien.toLowerCase().replace(/\s+/g, '-')
+            const clientFileSlug = (order.namaKlien || '').toLowerCase().replace(/\s+/g, '-')
             const hasSignedFile = agreementFlowStatus === 'pengajuan_masuk' || agreementFlowStatus === 'disetujui' || agreementFlowStatus === 'ditolak'
 
             return (
@@ -1427,7 +1427,7 @@ export default function PPOrderDetailPage() {
                           <p className="text-xs text-gray-400">
                             {previewTarget === 'template'
                               ? 'Agreement Private Training EFM · Template Global'
-                              : `agreement-${clientFileSlug}.pdf · Dikirim 21 Okt 2026`}
+                              : `agreement-${clientFileSlug}.pdf · Dikirim ${agrDoc?.tglDibuat || '—'}`}
                           </p>
                         </div>
                       </div>
@@ -1566,7 +1566,7 @@ export default function PPOrderDetailPage() {
                                 </div>
                                 <div className="mt-0.5">
                                   {previewTarget === 'signed'
-                                    ? <span className="text-[10px]" style={{ color: '#27AE60' }}>✓ Ditandatangani secara digital — 21 Okt 2026</span>
+                                    ? <span className="text-[10px]" style={{ color: '#27AE60' }}>✓ Ditandatangani secara digital — {agrDoc?.tglTtd || agrDoc?.tglDibuat || '—'}</span>
                                     : <span className="text-[10px]" style={{ color: '#B7770D' }}>Status: Menunggu TTD</span>
                                   }
                                 </div>
@@ -1761,9 +1761,9 @@ export default function PPOrderDetailPage() {
                             <div className="px-3 py-2.5 border-t border-gray-200 bg-white">
                               <p className="text-xs font-semibold text-gray-800 leading-tight mb-0.5 truncate">agreement-{clientFileSlug}.pdf</p>
                               <p className="text-[10px] text-gray-400 mb-2">
-                                {agreementFlowStatus === 'disetujui' ? 'Disetujui 21 Okt 2026' :
+                                {agreementFlowStatus === 'disetujui' ? `Disetujui ${agrDoc?.tglTtd || '—'}` :
                                  agreementFlowStatus === 'ditolak'   ? 'Ditolak · perlu TTD ulang' :
-                                 'Dikirim 21 Okt 2026 · Menunggu review'}
+                                 `Dikirim ${agrDoc?.tglDibuat || '—'} · Menunggu review`}
                               </p>
                               <div className="flex gap-1.5">
                                 <button
@@ -2757,7 +2757,8 @@ export default function PPOrderDetailPage() {
                   setStatusOrderState(newStatus)
                   setLogTab3PP(prev => [{
                     id: Date.now(),
-                    waktu: new Date().toLocaleString('id-ID'),
+                    waktu: fmtLogWaktu(),
+                    actor: 'Admin EFM',
                     kategori: 'status',
                     nomorLaporan: order.id,
                     teks: `Tahapan order diubah: ${prevTahapan} → ${pendingTahapan} · Status: ${newStatus}`
