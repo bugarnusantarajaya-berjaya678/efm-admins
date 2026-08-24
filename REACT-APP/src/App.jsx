@@ -15,6 +15,7 @@ import PPOrdersPage from './pages/pp/PPOrdersPage'
 import PPProgramDBPage from './pages/pp/PPProgramDBPage'
 import PPJenisProgramPage from './pages/pp/PPJenisProgramPage'
 import PPDocumentsPage from './pages/pp/PPDocumentsPage'
+import PPAgreementDetailPage from './pages/pp/PPAgreementDetailPage'
 import PPInvoicePage from './pages/pp/PPInvoicePage'
 import PPInvoiceDetailPage from './pages/pp/PPInvoiceDetailPage'
 import PPReceiptPage from './pages/pp/PPReceiptPage'
@@ -103,6 +104,7 @@ function AppRoutes() {
       <Route path="/pp/invoice/:id" element={<AppShell><PPInvoiceDetailPage /></AppShell>} />
       <Route path="/pp/receipt" element={<AppShell><PPReceiptPage /></AppShell>} />
       <Route path="/pp/receipt/:id" element={<AppShell><PPReceiptDetailPage /></AppShell>} />
+      <Route path="/pp/agreement/:id" element={<AppShell><PPAgreementDetailPage /></AppShell>} />
 
       {/* B2B Routes */}
       <Route path="/b2b/dashboard" element={<AppShell><B2BDashboardPage /></AppShell>} />

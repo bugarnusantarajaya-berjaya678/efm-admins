@@ -5,7 +5,7 @@ import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, Ext
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
-import { DOCS_INIT } from '../../data/ppDocumentsData'
+import { getDocByOrderId, updateDoc as updateAgrDoc } from '../../data/ppDocumentsStore'
 import { addReceipt } from '../../data/ppReceiptStore'
 
 /* ═══════════════════════════════════════
@@ -239,7 +239,7 @@ export default function PPOrderDetailPage() {
       }
     : getOrderById(id)
 
-  const agrDoc = DOCS_INIT.find(d => d.orderId === order?.id)
+  const agrDoc = getDocByOrderId(order?.id)
   const agrNomor = agrDoc?.id || (order?.id ? 'AGR-' + order.id : 'AGR-PP')
 
   /* ── Section state ───────────────────────────────────────────────────────── */
@@ -322,7 +322,7 @@ export default function PPOrderDetailPage() {
 
   /* ── Agreement Klien ─────────────────────────────────────────────────────── */
   const [agreementFlowStatus,    setAgreementFlowStatus]    = useState(() => {
-    const doc = DOCS_INIT.find(d => d.orderId === order?.id)
+    const doc = getDocByOrderId(order?.id)
     if (!doc) return 'menunggu_ttd'
     return doc.statusTtd === 'signed' ? 'disetujui'
       : doc.statusTtd === 'waiting_approval' ? 'pengajuan_masuk'
@@ -330,8 +330,6 @@ export default function PPOrderDetailPage() {
   })
   const [agreementCatatanTolak,  setAgreementCatatanTolak]  = useState('')
   const [showAgreementTolakForm, setShowAgreementTolakForm] = useState(false)
-  const [showAgreementPreview,   setShowAgreementPreview]   = useState(false)
-  const [previewTarget,          setPreviewTarget]          = useState('template') // 'template' | 'signed'
   const [qDoc, setQDoc] = useState({ status: 'Terkirim', signedFile: null, riwayat: [{ id:1, nama:'LOI-pt-maju-bersama.pdf', tanggal:'8 Jun 2026', status:'Terkirim' }] })
   const [mouDoc, setMouDoc] = useState({ status: 'Drafting', gdocsUrl: '', riwayat: [] })
   const [cDoc, setCDoc] = useState({ status: 'Signed', gdocsUrl: 'https://docs.google.com/document/d/xyz789', riwayat: [{ id:1, nama:'contract-pt-maju-final.pdf', tgl:'1 Jun 2026', status:'Signed' }] })
@@ -1413,209 +1411,6 @@ export default function PPOrderDetailPage() {
             const hasSignedFile = agreementFlowStatus === 'pengajuan_masuk' || agreementFlowStatus === 'disetujui' || agreementFlowStatus === 'ditolak'
 
             return (
-              <>
-              {/* Preview Modal */}
-              {showAgreementPreview && (
-                <div
-                  className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
-                  onClick={() => setShowAgreementPreview(false)}
-                >
-                  <div
-                    className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl flex flex-col max-h-[90vh]"
-                    onClick={e => e.stopPropagation()}
-                  >
-                    {/* Modal Header */}
-                    <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-200">
-                      <div className="flex items-center gap-3">
-                        <FileText size={16} className="text-[#1E1C43]" />
-                        <div>
-                          <p className="text-sm font-bold text-[#1E1C43]">
-                            {previewTarget === 'template' ? 'Template Agreement' : `File TTD — ${order.namaKlien}`}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {previewTarget === 'template'
-                              ? 'Agreement Private Training EFM · Template Global'
-                              : `agreement-${clientFileSlug}.pdf · Dikirim ${agrDoc?.tglDibuat || '—'}`}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 flex items-center gap-1.5 transition">
-                          <Download size={12} /> Download
-                        </button>
-                        <button onClick={() => setShowAgreementPreview(false)} className="text-gray-400 hover:text-gray-700 transition">
-                          <X size={20} />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Modal Body — Full Agreement Document */}
-                    <div className="overflow-y-auto flex-1 p-6 bg-gray-100">
-                      <div className="bg-white rounded-lg shadow mx-auto max-w-lg overflow-hidden" style={{ fontFamily: "'Poppins', sans-serif" }}>
-
-                        {/* Navy header */}
-                        <div style={{ background: '#1E1C43', padding: '22px 28px 20px' }}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                              <div style={{ width: 52, height: 52, borderRadius: '50%', background: '#E8781A', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                                <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                              </div>
-                              <div>
-                                <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>Essential Fitness Management</div>
-                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>CV. Bugar Nusantara Jaya</div>
-                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>Jl. Terogong Raya No.18, Jakarta Selatan</div>
-                                <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>essentialfitnessmanagement@gmail.com</div>
-                              </div>
-                            </div>
-                            <div style={{ textAlign: 'right' }}>
-                              <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-                              <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>
-                                {previewTarget === 'template' ? 'AGR-PP-26-[AUTO]' : 'AGR-PP-26-0013'}
-                              </div>
-                            </div>
-                          </div>
-                          <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
-                            <div style={{ fontSize: 15, fontWeight: 700, color: 'white', letterSpacing: 1.5, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-                            <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — Essential Fitness Management</div>
-                          </div>
-                        </div>
-
-                        {/* Body */}
-                        <div className="p-6">
-                          {/* Detail grid */}
-                          <div className="grid grid-cols-2 gap-2.5 mb-6">
-                            {[
-                              ['Nama Klien',     previewTarget === 'template' ? '[Nama Klien]'     : order.namaKlien],
-                              ['Nama Panggilan', previewTarget === 'template' ? '[Nama Panggilan]' : order.namaKlien.split(' ')[0]],
-                              ['No. WhatsApp',   previewTarget === 'template' ? '[Nomor WA]'       : order.noHP],
-                              ['Email',          previewTarget === 'template' ? '[Email Klien]'    : order.email],
-                              ['Alamat',         previewTarget === 'template' ? '[Alamat Klien]'   : order.lokasiLatihan],
-                              ['Order ID',       previewTarget === 'template' ? '[Order ID]'       : '#' + order.id],
-                              ['Paket Dipilih',  previewTarget === 'template' ? '[Nama Paket]'     : (prog?.namaPaket || order.paket || '—')],
-                              ['Tanggal Dibuat', previewTarget === 'template' ? '[Tanggal Dibuat]' : fmtDate(order.tanggalMulai)],
-                            ].map(([lbl, val]) => (
-                              <div key={lbl} className="bg-gray-50 rounded-xl px-3.5 py-2.5">
-                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{lbl}</div>
-                                <div className="text-[13px] font-bold text-[#1E1C43]">{val}</div>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Syarat & Ketentuan */}
-                          <div className="mb-6">
-                            <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200">Syarat dan Ketentuan Layanan</div>
-                            {[
-                              ['Pasal 1 — Ruang Lingkup Layanan', [
-                                'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
-                                'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
-                              ]],
-                              ['Pasal 2 — Masa Berlaku Paket (Validity Period)', [
-                                'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
-                                'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
-                              ]],
-                              ['Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang', [
-                                'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
-                                'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
-                                'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
-                                'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
-                              ]],
-                              ['Pasal 4 — Pembayaran dan Validasi Order', [
-                                'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
-                                'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
-                              ]],
-                              ['Pasal 5 — Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', [
-                                'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
-                                'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
-                                'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
-                              ]],
-                              ['Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis', [
-                                'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
-                                'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
-                              ]],
-                              ['Pasal 7 — Pernyataan Kesadaran dan Persetujuan', [
-                                'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
-                                'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
-                                'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
-                              ]],
-                            ].map(([judul, poin]) => (
-                              <div key={judul} className="mb-3.5">
-                                <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide mb-1.5">{judul}</div>
-                                <ol className="pl-4 space-y-1">
-                                  {poin.map((p, i) => (
-                                    <li key={i} className="text-[11px] leading-relaxed text-gray-700" style={{ listStyleType: 'decimal' }}>{p}</li>
-                                  ))}
-                                </ol>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* Tanda Tangan */}
-                          <div className="border-t border-gray-200 pt-5">
-                            <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5">Tanda Tangan Para Pihak</div>
-                            <div className="grid grid-cols-2 gap-5">
-                              <div>
-                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pihak Pertama — EFM</div>
-                                <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
-                                  <span className="text-xs italic text-[#1E1C43] font-semibold opacity-60">EFM Digital Signature</span>
-                                </div>
-                                <div className="text-[11px] text-[#1E1C43] font-semibold">Manajemen EFM</div>
-                                <div className="text-[10px] text-gray-400">Ditandatangani secara digital</div>
-                              </div>
-                              <div>
-                                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pihak Kedua — Klien</div>
-                                <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
-                                  {previewTarget === 'signed'
-                                    ? <span className="text-xs italic text-[#1E1C43] font-semibold">{order.namaKlien}</span>
-                                    : <span className="text-[10px] text-gray-300 italic">Menunggu TTD Klien</span>
-                                  }
-                                </div>
-                                <div className="text-[11px] text-[#1E1C43] font-semibold">
-                                  {previewTarget === 'template' ? '[Nama Klien]' : order.namaKlien}
-                                </div>
-                                <div className="mt-0.5">
-                                  {previewTarget === 'signed'
-                                    ? <span className="text-[10px]" style={{ color: '#27AE60' }}>✓ Ditandatangani secara digital — {agrDoc?.tglTtd || agrDoc?.tglDibuat || '—'}</span>
-                                    : <span className="text-[10px]" style={{ color: '#B7770D' }}>Status: Menunggu TTD</span>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Document footer */}
-                          <div className="mt-6 pt-4 border-t border-gray-100 text-center">
-                            <p className="text-[9px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Modal Footer — approval actions only when pengajuan_masuk */}
-                    {previewTarget === 'signed' && agreementFlowStatus === 'pengajuan_masuk' && (
-                      <div className="flex-shrink-0 px-5 py-4 border-t border-gray-200 flex justify-end gap-2">
-                        <button
-                          onClick={() => { setShowAgreementPreview(false); setShowAgreementTolakForm(true) }}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-red-300 text-red-600 text-xs font-semibold hover:bg-red-50 transition"
-                        >
-                          <X size={12} /> Tolak
-                        </button>
-                        <button
-                          onClick={() => {
-                            setAgreementFlowStatus('disetujui')
-                            setShowAgreementPreview(false)
-                            setShowAgreementTolakForm(false)
-                            setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }, ...prev])
-                          }}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
-                        >
-                          <CheckCircle size={12} /> Setujui Agreement
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 {/* Header */}
                 <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
@@ -1626,7 +1421,7 @@ export default function PPOrderDetailPage() {
                     </span>
                     {agrDoc && (
                       <button
-                        onClick={() => navigate('/pp/documents', { state: { fromOrderId: order.id } })}
+                        onClick={() => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}
                         className="flex items-center gap-1 text-xs text-[#1E1C43] font-medium hover:text-[#E05945] transition"
                       >
                         <ExternalLink size={11} /> Lihat Agreement
@@ -1645,6 +1440,7 @@ export default function PPOrderDetailPage() {
                         onClick={() => {
                           setAgreementFlowStatus('disetujui')
                           setShowAgreementTolakForm(false)
+                          if (agrDoc) updateAgrDoc(agrDoc.id, { statusTtd: 'signed', tglTtd: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) })
                           setLogTab3PP(prev => [{ id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM', kategori: 'agreement', nomorLaporan: agrNomor, teks: 'Agreement disetujui — dokumen TTD klien diterima & dikonfirmasi' }, ...prev])
                         }}
                         className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
@@ -1674,7 +1470,7 @@ export default function PPOrderDetailPage() {
                       <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
                         {/* Mock thumbnail */}
                         <div className="bg-gray-50 flex-1 flex flex-col items-center justify-center py-5 px-4 cursor-pointer hover:bg-gray-100 transition group"
-                          onClick={() => { setPreviewTarget('template'); setShowAgreementPreview(true) }}>
+                          onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}>
                           <div className="w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center mb-2 group-hover:shadow-md transition">
                             <div className="w-8 h-1.5 bg-[#1E1C43]/20 rounded mb-1" />
                             <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
@@ -1691,7 +1487,7 @@ export default function PPOrderDetailPage() {
                           <p className="text-[10px] text-gray-400 mb-2">Template Global · Versi terbaru</p>
                           <div className="flex gap-1.5">
                             <button
-                              onClick={() => { setPreviewTarget('template'); setShowAgreementPreview(true) }}
+                              onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}
                               className="flex-1 h-7 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition flex items-center justify-center gap-1"
                             >
                               <Eye size={10} /> Preview
@@ -1734,7 +1530,7 @@ export default function PPOrderDetailPage() {
                                 agreementFlowStatus === 'disetujui' ? 'hover:bg-green-50' :
                                 agreementFlowStatus === 'ditolak'   ? 'hover:bg-red-50'   : ''
                               }`}
-                              onClick={() => { setPreviewTarget('signed'); setShowAgreementPreview(true) }}
+                              onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}
                             >
                               {/* Status badge overlay */}
                               {agreementFlowStatus === 'disetujui' && (
@@ -1775,7 +1571,7 @@ export default function PPOrderDetailPage() {
                               </p>
                               <div className="flex gap-1.5">
                                 <button
-                                  onClick={() => { setPreviewTarget('signed'); setShowAgreementPreview(true) }}
+                                  onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}
                                   className={`flex-1 h-7 rounded-lg text-white text-[10px] font-semibold transition flex items-center justify-center gap-1 ${
                                     agreementFlowStatus === 'disetujui' ? 'bg-green-600 hover:bg-green-700' :
                                     agreementFlowStatus === 'ditolak'   ? 'bg-red-500 hover:bg-red-600' :
@@ -1875,7 +1671,6 @@ export default function PPOrderDetailPage() {
                 </div>
               </div>
 
-              </>
             )
           })()}
         </div>
