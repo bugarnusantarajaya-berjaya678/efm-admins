@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search, ArrowLeft } from 'lucide-react'
-import { DOCS_INIT, STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
+import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft } from 'lucide-react'
+import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
+import { getAllDocs } from '../../data/ppDocumentsStore'
 
 /* ── helpers ── */
 function AvatarSm({ initials, color }) {
@@ -411,8 +412,7 @@ export default function PPDocumentsPage() {
   const navigate = useNavigate()
   const { state } = useLocation()
   const fromOrderId = state?.fromOrderId
-  const [docs, setDocs] = useState(DOCS_INIT)
-  const [previewId, setPreviewId] = useState(null)
+  const [docs] = useState(() => getAllDocs())
   const [fBulan, setFBulan] = useState('')
   const [fTahun, setFTahun] = useState('')
   const [fStatus, setFStatus] = useState('')
@@ -447,24 +447,6 @@ export default function PPDocumentsPage() {
     waiting:  docs.filter(d => d.statusTtd === 'waiting_approval').length,
     total:    docs.length,
   }), [docs])
-
-  const previewDoc = docs.find(d => d.id === previewId) || null
-
-  const handleApprove = (id) => {
-    setDocs(prev => prev.map(d => d.id === id
-      ? { ...d, statusTtd: 'signed', tglTtd: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) }
-      : d
-    ))
-    setPreviewId(null)
-  }
-
-  const handleSubmitSign = (id) => {
-    setDocs(prev => prev.map(d => d.id === id
-      ? { ...d, statusTtd: 'waiting_approval', tglTtd: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) }
-      : d
-    ))
-    setPreviewId(null)
-  }
 
   const paginationRange = () => {
     const pages = []
@@ -585,7 +567,7 @@ export default function PPDocumentsPage() {
               ) : pageRows.map((d, idx) => (
                 <tr
                   key={d.id}
-                  onClick={() => setPreviewId(d.id)}
+                  onClick={() => navigate('/pp/agreement/' + d.id)}
                   className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}`}
                 >
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.displayId}</td>
@@ -614,7 +596,7 @@ export default function PPDocumentsPage() {
                   </td>
                   <td className="px-3 py-2.5">
                     <button
-                      onClick={e => { e.stopPropagation(); setPreviewId(d.id) }}
+                      onClick={e => { e.stopPropagation(); navigate('/pp/agreement/' + d.id) }}
                       className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-text-muted hover:text-[#1E1C43]"
                       title="Lihat Dokumen"
                     >
@@ -660,15 +642,6 @@ export default function PPDocumentsPage() {
         </div>
       </div>
 
-      {/* Preview Modal */}
-      {previewId && (
-        <PreviewModal
-          doc={previewDoc}
-          onClose={() => setPreviewId(null)}
-          onApprove={handleApprove}
-          onSubmitSign={handleSubmitSign}
-        />
-      )}
     </div>
   )
 }
