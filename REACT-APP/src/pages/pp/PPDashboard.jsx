@@ -1,15 +1,19 @@
 import { useNavigate } from 'react-router-dom'
-import { Users, ShoppingBag, CreditCard, TrendingUp, ChevronRight } from 'lucide-react'
+import { Users, ShoppingBag, CreditCard, TrendingUp, ChevronRight, FileText, ClipboardList, Calendar } from 'lucide-react'
 import { ORDERS_INIT } from '../../data/ppOrdersData'
 
 /* ═══════════════════════════════════════
    Dummy Data
 ═══════════════════════════════════════ */
 const KPI_DATA = {
-  leadsKlienAktif: 11,
-  orderBulanIni:   8,
-  invoicePending:  3,
-  hotlistLeads:    2,
+  klienAktif:        11,
+  orderBulanIni:     8,
+  revenueBulanIni:   24500000,
+  invoicePending:    3,
+  hotlistLeads:      2,
+  agreementPending:  2,
+  assessmentPending: 1,
+  sesiHariIni:       3,
 }
 
 const PERLU_TINDAKAN = [
@@ -17,21 +21,25 @@ const PERLU_TINDAKAN = [
     borderColor: '#EF4444', bg: '#FEF2F2',
     judul: 'Invoice Overdue Belum Dibayar',
     detail: 'James Wilson — INV-PP-26-0010 — sudah melewati jatuh tempo',
+    path: '/pp/invoice',
   },
   {
     borderColor: '#EF4444', bg: '#FEF2F2',
     judul: 'Follow Up Leads Tertunda',
     detail: 'Dewi Ayu — LP-0002 — follow up terjadwal hari ini',
+    path: '/pp/leads',
   },
   {
     borderColor: '#F97316', bg: '#FFF7ED',
     judul: 'Screening Belum Selesai',
     detail: 'Rian Maulana — SCR-26-0003 — status masih Draft',
+    path: '/pp/screening',
   },
   {
     borderColor: '#F97316', bg: '#FFF7ED',
     judul: 'Agreement Belum TTD',
     detail: 'Robert Taylor — AGR-PP-26-0003 — menunggu tanda tangan klien',
+    path: '/pp/documents',
   },
 ]
 
@@ -82,6 +90,28 @@ const INV_CLS = {
 const ORDER_LBL = { active: 'Aktif', completed: 'Selesai', cancelled: 'Batal' }
 const INV_LBL   = { paid: 'Lunas', pending: 'Pending', overdue: 'Overdue' }
 
+const formatRp = (n) => 'Rp ' + n.toLocaleString('id-ID')
+
+function KpiCard({ label, value, sub, icon: Icon, accent, onClick }) {
+  const border = { orange: 'border-l-[#E05945]', red: 'border-l-red-500', green: 'border-l-green-500', blue: 'border-l-blue-500' }[accent] || 'border-l-gray-200'
+  const valCls = { orange: 'text-[#E05945]', red: 'text-red-600', green: 'text-green-600', blue: 'text-blue-600' }[accent] || 'text-[#1E1C43]'
+  return (
+    <div
+      onClick={onClick}
+      className={`bg-white rounded-xl border border-gray-100 border-l-4 ${border} p-4 ${onClick ? 'cursor-pointer hover:bg-gray-50' : ''} transition-all`}
+    >
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
+          <p className={`text-2xl font-bold mt-1 ${valCls}`}>{value}</p>
+          {sub && <p className={`text-xs mt-0.5 ${accent ? valCls : 'text-gray-500'}`}>{sub}</p>}
+        </div>
+        {Icon && <Icon size={18} className="text-gray-300 mt-0.5" />}
+      </div>
+    </div>
+  )
+}
+
 function StatusBadge({ val, clsMap, lblMap }) {
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${clsMap[val] ?? 'bg-gray-100 text-gray-500'}`}>
@@ -102,90 +132,25 @@ export default function PPDashboard() {
     <div className="space-y-4">
 
       {/* ── Header ─────────────────────────────────── */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1E1C43]">Dashboard Private Program</h1>
-          <p className="text-sm text-gray-500 mt-1">Ringkasan performa program latihan personal EFM</p>
-        </div>
-        <button
-          type="button"
-          onClick={() => navigate('/pp/orders/new')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#1E1C43] hover:bg-[#2d2b5e] transition-colors"
-        >
-          + Order Baru
-        </button>
+      <div>
+        <h1 className="text-[22px] font-bold text-[#1E1C43]">Dashboard Private Program</h1>
+        <p className="text-sm text-gray-500 mt-1">Ringkasan performa program latihan personal EFM</p>
       </div>
 
       {/* ══════════════════════════════════
-          SECTION 1: KPI Cards
+          SECTION 1: KPI Cards (2 rows × 4)
       ══════════════════════════════════ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-        {/* Leads/Klien Aktif */}
-        <div
-          onClick={() => navigate('/pp/leads')}
-          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Leads/Klien Aktif</p>
-              <p className="text-2xl font-bold text-[#1E1C43] mt-1">{KPI_DATA.leadsKlienAktif}</p>
-              <p className="text-xs text-gray-500 mt-0.5">leads & klien aktif</p>
-            </div>
-            <Users size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Order Bulan Ini */}
-        <div
-          onClick={() => navigate('/pp/orders')}
-          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Order Bulan Ini</p>
-              <p className="text-2xl font-bold text-[#1E1C43] mt-1">{KPI_DATA.orderBulanIni}</p>
-              <p className="text-xs text-gray-500 mt-0.5">order bulan ini</p>
-            </div>
-            <ShoppingBag size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Invoice Pending */}
-        <div
-          onClick={() => navigate('/pp/invoice')}
-          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice Pending</p>
-              <p className={`text-2xl font-bold mt-1 ${KPI_DATA.invoicePending > 0 ? 'text-red-600' : 'text-[#1E1C43]'}`}>
-                {KPI_DATA.invoicePending}
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">belum dibayar</p>
-            </div>
-            <CreditCard size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Hotlist Leads */}
-        <div
-          onClick={() => navigate('/pp/leads')}
-          className="bg-white rounded-xl border border-gray-100 p-4 cursor-pointer hover:bg-gray-50 transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Hotlist Leads</p>
-              <p className={`text-2xl font-bold mt-1 ${KPI_DATA.hotlistLeads > 0 ? 'text-[#E05945]' : 'text-[#1E1C43]'}`}>
-                {KPI_DATA.hotlistLeads}
-              </p>
-              <p className={`text-xs mt-0.5 ${KPI_DATA.hotlistLeads > 0 ? 'text-[#E05945] font-medium' : 'text-gray-500'}`}>
-                Screening & Invoicing
-              </p>
-            </div>
-            <TrendingUp size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
+        <KpiCard label="Klien Aktif"      value={KPI_DATA.klienAktif}    sub="leads & klien aktif"   icon={Users}        onClick={() => navigate('/pp/leads')} />
+        <KpiCard label="Order Bulan Ini"  value={KPI_DATA.orderBulanIni} sub="order masuk bulan ini" icon={ShoppingBag}  onClick={() => navigate('/pp/orders')} />
+        <KpiCard label="Revenue Bulan Ini" value={formatRp(KPI_DATA.revenueBulanIni)} sub="total pembayaran masuk" icon={CreditCard} accent="green" onClick={() => navigate('/pp/invoice')} />
+        <KpiCard label="Invoice Pending"  value={KPI_DATA.invoicePending} sub={KPI_DATA.invoicePending > 0 ? 'belum dibayar' : 'semua lunas'} icon={FileText} accent={KPI_DATA.invoicePending > 0 ? 'red' : undefined} onClick={() => navigate('/pp/invoice')} />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <KpiCard label="Hotlist Leads"       value={KPI_DATA.hotlistLeads}      sub="Screening & Invoicing"  icon={TrendingUp}    accent={KPI_DATA.hotlistLeads > 0 ? 'orange' : undefined}      onClick={() => navigate('/pp/leads')} />
+        <KpiCard label="Agreement Perlu TTD" value={KPI_DATA.agreementPending}  sub="menunggu tanda tangan"  icon={FileText}      accent={KPI_DATA.agreementPending > 0 ? 'orange' : undefined}  onClick={() => navigate('/pp/documents')} />
+        <KpiCard label="Assessment Pending"  value={KPI_DATA.assessmentPending} sub="belum selesai"           icon={ClipboardList} accent={KPI_DATA.assessmentPending > 0 ? 'orange' : undefined} onClick={() => navigate('/pp/screening')} />
+        <KpiCard label="Sesi Hari Ini"       value={KPI_DATA.sesiHariIni}       sub="jadwal aktif hari ini"  icon={Calendar}      accent="blue"                                                   onClick={() => navigate('/pp/orders')} />
       </div>
 
       {/* ══════════════════════════════════
@@ -204,6 +169,7 @@ export default function PPDashboard() {
           {PERLU_TINDAKAN.map((alert, i) => (
             <div
               key={i}
+              onClick={() => navigate(alert.path)}
               className="flex items-start gap-3 p-3 rounded-lg border-l-4 cursor-pointer hover:opacity-90 transition-opacity"
               style={{ borderColor: alert.borderColor, backgroundColor: alert.bg }}
             >
@@ -248,7 +214,7 @@ export default function PPDashboard() {
               </thead>
               <tbody>
                 {recentOrders.map((o, i) => (
-                  <tr key={o.id} className={`hover:bg-gray-50 ${i < recentOrders.length - 1 ? 'border-b border-gray-100' : ''}`}>
+                  <tr key={o.id} onClick={() => navigate('/pp/orders/' + o.id)} className={`hover:bg-gray-50 cursor-pointer transition-colors ${i < recentOrders.length - 1 ? 'border-b border-gray-100' : ''}`}>
                     <td className="px-4 py-3 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{o.id}</td>
                     <td className="px-4 py-3 text-[13px] font-semibold text-[#1E1C43] whitespace-nowrap">{o.klien}</td>
                     <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.paket}</td>
@@ -441,7 +407,7 @@ export default function PPDashboard() {
                 </div>
                 <div className="w-full bg-gray-100 rounded-full h-1.5">
                   <div
-                    className="bg-[#1E1C43] h-1.5 rounded-full"
+                    className={`h-1.5 rounded-full ${k.urgency === 'high' ? 'bg-[#E05945]' : 'bg-[#F97316]'}`}
                     style={{ width: `${(k.sesiTerpakai / k.totalSesi) * 100}%` }}
                   />
                 </div>
