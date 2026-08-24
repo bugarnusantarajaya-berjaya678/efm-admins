@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt } from 'lucide-react'
-import { RECEIPTS_INIT, WA_LABEL, formatRp } from '../../data/ppReceiptData'
+import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
+import { getAllReceipts } from '../../data/ppReceiptStore'
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -55,7 +56,7 @@ const ROWS = 10
 export default function PPReceiptPage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [receipts,       setReceipts]      = useState(RECEIPTS_INIT)
+  const [receipts,       setReceipts]      = useState(() => getAllReceipts())
   const [fBulan,         setFBulan]        = useState('')
   const [fTahun,         setFTahun]        = useState('')
   const [fWA,            setFWA]           = useState('')
