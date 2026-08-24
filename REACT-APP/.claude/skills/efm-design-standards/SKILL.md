@@ -76,6 +76,12 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - Value: `text-sm font-semibold text-gray-800`
 - Container: `bg-gray-50 rounded-lg p-3`
 
+**Form input fields**
+- Normal (editable): `w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white`
+- Read-only / auto-filled (locked): `w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed`
+- Label form: `text-xs text-gray-400 uppercase tracking-wide mb-1 block`
+- Gunakan per-field locking (Section 11 di `efm-component-patterns`) untuk field auto-fill dari order, bukan wrapper `pointer-events-none`
+
 **Section titles**
 - `text-base font-bold text-[#1E1C43]`, often with `border-l-4 border-[#E05945] pl-3`
 

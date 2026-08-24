@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
+import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
 
 const dummyPPLeads = [
   { id: "LP-0001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
@@ -237,7 +238,38 @@ export default function PPOrderNewPage() {
   const formatRp = (val) => 'Rp ' + (val || 0).toLocaleString('id-ID');
 
   const handleSimpanOrder = () => {
-    navigate('/pp/orders/PP-26-0013');
+    const newId = getNextOrderId()
+    const today = new Date().toISOString().split('T')[0]
+    addOrder({
+      id: newId,
+      leadId: selectedLeadId || null,
+      programId: selectedPaket?.id || null,
+      namaKlien: pendaftar.nama,
+      noHP: pendaftar.noHP,
+      email: pendaftar.email,
+      hubunganKlien: pendaftar.hubunganDenganKlien,
+      namaKlienLatihan: klienLatihan.nama,
+      noHPKlien: klienLatihan.noHP,
+      usiaKlien: klienLatihan.usia ? parseInt(klienLatihan.usia, 10) : null,
+      jenisKelaminKlien: klienLatihan.jenisKelamin,
+      paket: selectedPaket?.namaPaket || '',
+      picSalesEFM: selectedPaket?.pic?.nama || '',
+      picOpsEFM: selectedPaket?.pic?.nama || '',
+      tanggalMulai: jadwal.tanggalMulai || today,
+      hariLatihan: jadwal.hariLatihan,
+      jamLatihan: jadwal.jamLatihan,
+      lokasiLatihan,
+      nilaiKontrak: totalNilai,
+      rincianLayanan: items,
+      catatanOrder,
+      statusOrder: 'Aktif',
+      tahapan: 'Program Berjalan',
+      paymentTerms: 'Per Paket',
+      paymentTracking: [],
+      loiStatus: 'N/A', mouAda: false, contractStatus: 'Active',
+      quotation: { manajemenFee: false, manajemenFeePersen: 0, pajak: [{ nama: 'PPN 11%', persen: 11, aktif: false }], status: 'Draft', catatan: '' },
+    })
+    navigate('/pp/orders/' + newId)
   };
 
   const filteredLeads = pendaftarSearch

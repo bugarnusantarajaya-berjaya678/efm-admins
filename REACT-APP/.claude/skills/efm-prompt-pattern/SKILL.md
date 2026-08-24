@@ -102,6 +102,17 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Use realistic Indonesian names, company names, and amounts (IDR) — not placeholder text like "Test Company" or "John Doe"
 - Dates should be realistic relative to the current project timeline (2026)
 
+**Dummy data sync on format change**
+- Ketika format value sebuah field berubah (contoh: `programLatihan` berubah dari `"12 Sesi - Pro"` menjadi `"Private Training — 12 Sesi - Pro"`), SEMUA data existing di `*Data.js` terkait WAJIB diupdate mengikuti format baru
+- Tidak sync menyebabkan tampilan tidak konsisten antara data baru dan data lama
+- Setelah mengubah format apapun, grep field terkait di semua `*Data.js` dan update setiap entri
+
+**PR chaining merge conflict pattern**
+- Project ini menggunakan squash merge ke main. Ketika PR di-chain pada branch yang sama, setiap PR baru yang menambahkan import di file yang sama dengan PR sebelumnya akan menyebabkan merge conflict saat push berikutnya
+- Lokasi konflik yang sering terjadi: bagian import di file yang terus bertambah importnya antar-PR (contoh: `PPFitnessAssessmentPage.jsx` import tumbuh dari PR #101 sampai #104)
+- Fix: `git fetch origin main && git merge origin/main` → resolve conflict dengan keep HEAD (semua akumulasi import/logic baru) → `npm run build` → commit → push → retry merge
+- Saat resolve: konflik di import block → keep HEAD; konflik di logic block → keep HEAD dan verifikasi correctness
+
 ---
 
 ## 5. Claude Code Web — Branch & PR Workflow

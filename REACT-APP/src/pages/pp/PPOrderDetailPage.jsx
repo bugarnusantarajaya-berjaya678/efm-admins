@@ -4,6 +4,7 @@ import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
+import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -34,72 +35,6 @@ function fmtDate(str) {
   const d = new Date(str)
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
 }
-
-/* ═══════════════════════════════════════
-   Master data PP Orders
-═══════════════════════════════════════ */
-const dummyPPOrders = [
-  { id: "PP-27-0001", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson",
-    paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
-    tanggalMulai: "2027-01-08", nilaiKontrak: 2400000,
-    tahapan: "Program Berjalan", statusOrder: "Aktif",
-    paymentTerms: "Per Paket", catatanOrder: "Renewal — fase muscle toning setelah fatloss selesai",
-    noHP: "081234567890", email: "james@email.com", hubunganKlien: "Diri Sendiri",
-    namaKlienLatihan: "James Wilson", noHPKlien: "081234567890",
-    usiaKlien: 33, jenisKelaminKlien: "Laki-laki",
-    hariLatihan: ["Senin", "Rabu", "Jumat"], jamLatihan: "07:00",
-    lokasiLatihan: "Hampton's Park Tower A, Cilandak Barat",
-    rincianLayanan: [{ id:1, namaItem:"Private Training 12 Sesi - Muscle Toning", satuan:"Paket", jumlah:1, total:2400000 }],
-    paymentTracking: [{ id:"PT-014", periode:"Full Payment — Jan 2027", nominal:2400000, status:"Lunas", tglBayar:"2027-01-08", invoiceId:"INV-PP-27-0001" }],
-    loiStatus:"N/A", mouAda:false, contractStatus:"Active",
-    quotation:{ nomor:"QUO/EFM/PP/2027/0001", tanggal:"2027-01-05", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
-  },
-  { id: "PP-26-0013", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson",
-    paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
-    tanggalMulai: "2026-10-24", nilaiKontrak: 2400000,
-    tahapan: "Program Berjalan", statusOrder: "Aktif",
-    paymentTerms: "Per Paket", catatanOrder: "Klien target penurunan BB 5kg",
-    noHP: "081234567890", email: "james@email.com", hubunganKlien: "Diri Sendiri",
-    namaKlienLatihan: "James Wilson", noHPKlien: "081234567890",
-    usiaKlien: 32, jenisKelaminKlien: "Laki-laki",
-    hariLatihan: ["Senin", "Rabu", "Jumat"], jamLatihan: "07:00",
-    lokasiLatihan: "Hampton's Park Tower A, Cilandak Barat",
-    rincianLayanan: [{ id:1, namaItem:"Private Training 12 Sesi", satuan:"Paket", jumlah:1, total:2400000 }],
-    paymentTracking: [{ id:"PT-001", periode:"Full Payment — Okt 2026", nominal:2400000, status:"Lunas", tglBayar:"2026-10-24", invoiceId:"INV-PP-26-0013" }],
-    loiStatus:"N/A", mouAda:false, contractStatus:"Active",
-    quotation:{ nomor:"QUO/EFM/PP/2026/0013", tanggal:"2026-10-20", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
-  },
-  { id: "PP-26-0012", leadId: "LP-0006", programId: "PRG-PP-001", namaKlien: "Emily Chen",
-    paket: "4 Sesi - Starter", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
-    tanggalMulai: "2026-10-22", nilaiKontrak: 600000,
-    tahapan: "Program Selesai", statusOrder: "Completed",
-    paymentTerms: "Per Paket", catatanOrder: "",
-    noHP: "082345678901", email: "emily@email.com", hubunganKlien: "Diri Sendiri",
-    namaKlienLatihan: "Emily Chen", noHPKlien: "082345678901",
-    usiaKlien: 28, jenisKelaminKlien: "Perempuan",
-    hariLatihan: ["Selasa", "Kamis"], jamLatihan: "09:00",
-    lokasiLatihan: "Hampton's Park Tower C, Cilandak Barat",
-    rincianLayanan: [{ id:1, namaItem:"Private Training 4 Sesi", satuan:"Paket", jumlah:1, total:600000 }],
-    paymentTracking: [{ id:"PT-002", periode:"Full Payment — Okt 2026", nominal:600000, status:"Lunas", tglBayar:"2026-10-22", invoiceId:"INV-PP-26-0012" }],
-    loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
-    quotation:{ nomor:"QUO/EFM/PP/2026/0012", tanggal:"2026-10-18", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
-  },
-  { id: "PP-26-0021", leadId: "LP-0007", programId: "PRG-PP-002", namaKlien: "Sari Dewi Lestari",
-    paket: "8 Sesi - Basic", picSalesEFM: "Dian Kartika", picOpsEFM: "Rizky Firmansyah",
-    tanggalMulai: "2026-11-02", nilaiKontrak: 1400000,
-    tahapan: "Program Berjalan", statusOrder: "Aktif",
-    paymentTerms: "Per Paket", catatanOrder: "Program muscle toning 2x seminggu",
-    noHP: "087811223344", email: "sari.dewi@email.com", hubunganKlien: "Diri Sendiri",
-    namaKlienLatihan: "Sari Dewi Lestari", noHPKlien: "087811223344",
-    usiaKlien: 28, jenisKelaminKlien: "Perempuan",
-    hariLatihan: ["Selasa", "Kamis"], jamLatihan: "09:00",
-    lokasiLatihan: "Jakarta Pusat",
-    rincianLayanan: [{ id:1, namaItem:"Private Training 8 Sesi - Basic", satuan:"Paket", jumlah:1, total:1400000 }],
-    paymentTracking: [{ id:"PT-021", periode:"Full Payment — Nov 2026", nominal:1400000, status:"Lunas", tglBayar:"2026-11-02", invoiceId:"INV-PP-26-0021" }],
-    loiStatus:"N/A", mouAda:false, contractStatus:"Active",
-    quotation:{ nomor:"QUO/EFM/PP/2026/0021", tanggal:"2026-10-30", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
-  }
-]
 
 const dummyPPPrograms = [
   { id:"PRG-PP-001", namaProgram:"Private Training", namaPaket:"4 Sesi - Starter",
@@ -295,7 +230,7 @@ export default function PPOrderDetailPage() {
         rincianLayanan: [],
         paymentTracking: [],
       }
-    : dummyPPOrders.find(o => o.id === id)
+    : getOrderById(id)
 
   /* ── Section state ───────────────────────────────────────────────────────── */
   const [activeTab, setActiveTab] = useState(fromState?.defaultTab || 'keuangan')
@@ -648,6 +583,9 @@ export default function PPOrderDetailPage() {
       setPsPersenDraft(psPersen)
       setPsRowsDraft(psRows.map(r => ({ ...r })))
     }
+    if (section === 'dataKlienTambahan') {
+      setInfoDraft({ ...infoDeal })
+    }
   }
 
   function cancelEdit() { setEditingSection(null); setQuotationDraft(null); setShowGantiPaket(false) }
@@ -655,6 +593,11 @@ export default function PPOrderDetailPage() {
   function saveInfoDeal() {
     setInfoDeal({ ...infoDraft })
     setLineItems([...itemsDraft])
+    setEditingSection(null)
+  }
+
+  function saveDataKlienTambahan() {
+    setInfoDeal({ ...infoDraft })
     setEditingSection(null)
   }
 
@@ -681,10 +624,20 @@ export default function PPOrderDetailPage() {
   }
 
   function handleSimpanOrderBaru() {
-    const newId = 'PP-26-' + String(dummyPPOrders.length + 1).padStart(4, '0')
-    navigate('/pp/orders/' + newId, {
-      state: infoDraft.leadId ? { fromLeadId: infoDraft.leadId } : undefined,
-    })
+    const newId = getNextOrderId()
+    const newOrder = {
+      id: newId,
+      ...infoDraft,
+      statusOrder: infoDraft.statusOrder || 'Aktif',
+      tahapan: infoDraft.tahapan || 'Program Berjalan',
+      nilaiKontrak: lineItems.reduce((s, i) => s + (i.total || 0), 0),
+      rincianLayanan: lineItems,
+      paymentTracking: [],
+      loiStatus: 'N/A', mouAda: false, contractStatus: 'Active',
+      quotation: { manajemenFee: false, manajemenFeePersen: 0, pajak: [{ nama: 'PPN 11%', persen: 11, aktif: false }], status: 'Draft', catatan: '' },
+    }
+    addOrder(newOrder)
+    navigate('/pp/orders/' + newId)
   }
 
   /* ── LOI data ────────────────────────────────────────────────────────────── */
@@ -883,56 +836,116 @@ export default function PPOrderDetailPage() {
         <>
 
 
-          {/* ── Card: Data Klien (read-only, sourced from leads — existing orders only) ── */}
+          {/* ── Card: Data Klien ── */}
           {!isNew && (
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien</h3>
-                <span className="flex items-center gap-1.5 text-xs text-gray-400 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded-lg">
-                  <Lock size={11} /> Bersumber dari Leads
-                </span>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien</h3>
+                  <span className="flex items-center gap-1 text-[10px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">
+                    <Lock size={9} /> Nama &amp; Kontak dari Leads
+                  </span>
+                </div>
+                {editingSection === 'dataKlienTambahan' ? (
+                  <div className="flex gap-2">
+                    <button onClick={cancelEdit} className="h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50">Batal</button>
+                    <button onClick={saveDataKlienTambahan} className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold">Simpan</button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => startEdit('dataKlienTambahan')}
+                    disabled={!!editingSection && editingSection !== 'dataKlienTambahan'}
+                    className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Edit Info Tambahan
+                  </button>
+                )}
               </div>
               <div className="p-5">
+                {/* Pendaftar */}
                 <div className="mb-4">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendaftar</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
-                      { label: 'Nama Pendaftar',   val: infoDeal.namaKlien     },
-                      { label: 'No. HP',            val: infoDeal.noHP          },
-                      { label: 'Email',             val: infoDeal.email         },
-                      { label: 'Hub. dengan Klien', val: infoDeal.hubunganKlien },
+                      { label: 'Nama Pendaftar', val: infoDeal.namaKlien },
+                      { label: 'No. HP',         val: infoDeal.noHP      },
+                      { label: 'Email',          val: infoDeal.email     },
                     ].map(({ label, val }) => (
                       <div key={label} className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <Lock size={9} className="text-gray-300" /> {label}
+                        </p>
                         <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
                       </div>
                     ))}
+                    {/* Editable: Hub. dengan Klien */}
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hub. dengan Klien</p>
+                      {editingSection === 'dataKlienTambahan' ? (
+                        <select
+                          value={infoDraft?.hubunganKlien || ''}
+                          onChange={e => setInfoDraft(d => ({ ...d, hubunganKlien: e.target.value }))}
+                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                        >
+                          {['Diri Sendiri','Orang Tua','Pasangan','Anak','Saudara','Lainnya'].map(o => (
+                            <option key={o}>{o}</option>
+                          ))}
+                        </select>
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{infoDeal.hubunganKlien || '—'}</p>
+                      )}
+                    </div>
                   </div>
                 </div>
+                {/* Klien Latihan */}
                 <div>
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Klien Latihan</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama Klien</p>
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal.namaKlienLatihan || '—'}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No. HP Klien</p>
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal.noHPKlien || '—'}</p>
-                    </div>
+                    {[
+                      { label: 'Nama Klien',   val: infoDeal.namaKlienLatihan },
+                      { label: 'No. HP Klien', val: infoDeal.noHPKlien        },
+                    ].map(({ label, val }) => (
+                      <div key={label} className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                          <Lock size={9} className="text-gray-300" /> {label}
+                        </p>
+                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                      </div>
+                    ))}
+                    {/* Editable: Usia */}
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                      {editingSection === 'dataKlienTambahan' ? (
+                        <input
+                          type="number" min="1" max="99"
+                          value={infoDraft?.usiaKlien || ''}
+                          onChange={e => setInfoDraft(d => ({ ...d, usiaKlien: e.target.value }))}
+                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                        />
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                      )}
                     </div>
+                    {/* Editable: Jenis Kelamin */}
                     <div className="bg-gray-50 rounded-lg p-3">
                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
-                      <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                      {editingSection === 'dataKlienTambahan' ? (
+                        <select
+                          value={infoDraft?.jenisKelaminKlien || ''}
+                          onChange={e => setInfoDraft(d => ({ ...d, jenisKelaminKlien: e.target.value }))}
+                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                        >
+                          {['Laki-laki','Perempuan'].map(o => <option key={o}>{o}</option>)}
+                        </select>
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                      )}
                     </div>
                   </div>
                 </div>
-                <div className="mt-4 flex items-start gap-1.5 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5">
-                  <Info size={11} className="text-amber-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-amber-700">Data klien bersumber dari Leads dan tidak dapat diubah di sini. Untuk mengganti klien, hapus order ini dan buat order baru dengan memilih leads yang sesuai.</p>
+                <div className="mt-4 flex items-start gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
+                  <Info size={11} className="text-blue-500 mt-0.5 shrink-0" />
+                  <p className="text-xs text-blue-700">Nama, No. HP, dan Email dikunci karena bersumber dari data Leads. Hubungan dengan Klien, Usia, dan Jenis Kelamin dapat diubah jika ada kesalahan input.</p>
                 </div>
               </div>
             </div>
