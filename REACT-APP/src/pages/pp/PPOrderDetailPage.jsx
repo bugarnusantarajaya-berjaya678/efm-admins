@@ -6,6 +6,7 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { DOCS_INIT } from '../../data/ppDocumentsData'
+import { addReceipt } from '../../data/ppReceiptStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -520,6 +521,13 @@ export default function PPOrderDetailPage() {
   function saveInfoDeal() {
     setInfoDeal({ ...infoDraft })
     setLineItems([...itemsDraft])
+    const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
+    if (prog) {
+      setRincianDraft(prev => [
+        { id: 1, namaItem: `${prog.namaProgram} ${prog.namaPaket}`, satuan: 'Paket', jumlah: 1, total: prog.hargaPaket },
+        ...prev.slice(1)
+      ])
+    }
     setEditingSection(null)
   }
 
@@ -2588,6 +2596,22 @@ export default function PPOrderDetailPage() {
                   setInvoicePayStatus('sudah_bayar')
                   setInvoicePP(p => ({ ...p, statusInvoice: 'Lunas' }))
                   setShowKonfirmasiPayModal(false)
+                  const rcpNo = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
+                  addReceipt({
+                    rcpNo,
+                    invNo: invoicePP.nomorInvoice,
+                    orderId: order.id,
+                    client: order.namaKlien,
+                    initials: (order.namaKlien || '').split(' ').slice(0, 2).map(n => n[0].toUpperCase()).join(''),
+                    color: '#2980B9',
+                    paket: order.paket,
+                    pic: order.picOpsEFM,
+                    tglBayar: fmtDate(konfirmasiPayForm.tglBayar),
+                    metode: konfirmasiPayForm.metode,
+                    total: subtotalPP,
+                    waStatus: 'not-sent',
+                    waTgl: null,
+                  })
                   setLogTab3PP(prev => [{
                     id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                     kategori: 'keuangan', nomorLaporan: invoicePP.nomorInvoice,
