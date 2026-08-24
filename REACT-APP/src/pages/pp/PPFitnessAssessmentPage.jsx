@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2 } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Link2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
+import { ORDERS_INIT } from '../../data/ppOrdersData'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -359,6 +360,17 @@ export default function PPFitnessAssessmentPage() {
     return null
   })()
 
+  // Order picker (only for new assessments opened without fromOrderId)
+  const [pickerOrderId, setPickerOrderId] = useState(fromOrderId || '')
+  function handleOrderPick(orderId) {
+    setPickerOrderId(orderId)
+    const o = ORDERS_INIT.find(x => x.id === orderId)
+    if (!o) return
+    setNoIdProgram(o.id)
+    setNamaKlien(o.klien)
+    setNamaFC(o.pic)
+  }
+
   // Personal Detail
   const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || fromOrderId || prefill.orderId || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
@@ -624,6 +636,37 @@ export default function PPFitnessAssessmentPage() {
         <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
           Data Klien & Program
         </h2>
+
+        {/* Order picker — hanya tampil saat form baru dibuka dari /pp/screening (bukan dari order detail) */}
+        {isNew && !fromOrderId && (
+          <div className="mb-5 p-4 rounded-xl border-2 border-dashed border-[#1E1C43]/20 bg-[#F5F5F7]">
+            <div className="flex items-center gap-2 mb-2">
+              <Link2 size={14} className="text-[#1E1C43]" />
+              <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Link ke Order Klien</p>
+            </div>
+            <p className="text-[11px] text-gray-500 mb-3">
+              Pilih nomor order agar assessment ini terhubung ke klien yang tepat dan muncul di halaman detail order.
+            </p>
+            <select
+              value={pickerOrderId}
+              onChange={e => handleOrderPick(e.target.value)}
+              className="w-full md:w-auto text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:border-[#1E1C43] text-gray-800"
+            >
+              <option value="">— Pilih Order Klien —</option>
+              {ORDERS_INIT.map(o => (
+                <option key={o.id} value={o.id}>
+                  #{o.id} · {o.klien} · {o.paket}
+                </option>
+              ))}
+            </select>
+            {pickerOrderId && (
+              <p className="text-[11px] text-green-700 font-medium mt-2">
+                ✓ Terhubung ke order #{pickerOrderId} — data klien sudah di-auto-fill.
+              </p>
+            )}
+          </div>
+        )}
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className={labelCls}>No. ID Program</label>

@@ -137,17 +137,17 @@ export default function PPScreeningPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-        <table className="w-full" style={{ minWidth: '1000px' }}>
+        <table className="w-full" style={{ minWidth: '1100px' }}>
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">No. Assessment</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Klien</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Order</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Tanggal Pre-Test</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">FC / Screener</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Tipe</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Status</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Aksi</th>
+            <tr className="border-b border-gray-200 bg-gray-50">
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">No. Assessment</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Klien</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Order</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tanggal Pre-Test</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">FC / Screener</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tipe</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
+              <th className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Aksi</th>
             </tr>
           </thead>
           <tbody>
@@ -155,10 +155,10 @@ export default function PPScreeningPage() {
               <tr
                 key={a.id}
                 onClick={() => navigate('/pp/screening/' + a.id)}
-                className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition"
+                className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-150"
               >
-                <td className="px-4 py-3 text-sm font-medium text-[#1E1C43] whitespace-nowrap">{a.id}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{a.id}</td>
+                <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2">
                     <div
                       className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[10px] font-bold shrink-0"
@@ -166,49 +166,50 @@ export default function PPScreeningPage() {
                     >
                       {getInitials(a.namaKlien)}
                     </div>
-                    <span className="text-sm font-semibold text-gray-800 whitespace-nowrap">{a.namaKlien || '—'}</span>
+                    <span className="text-xs font-medium text-gray-900 whitespace-nowrap">{a.namaKlien || '—'}</span>
                   </div>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2.5">
                   {a.orderId ? (
                     <button
                       onClick={e => { e.stopPropagation(); navigate('/pp/orders/' + a.orderId); }}
-                      className="text-sm font-medium text-[#1E1C43] hover:underline flex items-center gap-1 whitespace-nowrap"
+                      className="text-xs font-semibold text-[#1E1C43] hover:underline flex items-center gap-1 whitespace-nowrap"
                     >
                       #{a.orderId} <ChevronRight size={11} />
                     </button>
                   ) : (
-                    <span className="text-sm text-gray-300">—</span>
+                    <span className="text-xs text-gray-300">—</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
+                <td className="px-3 py-2.5 text-xs font-normal text-gray-600 whitespace-nowrap">
                   {a.tanggalPreTest
                     ? new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
                     : '—'}
                 </td>
-                <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{a.namaFC || '—'}</td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2.5 text-xs font-normal text-gray-600 whitespace-nowrap">{a.namaFC || '—'}</td>
+                <td className="px-3 py-2.5">
                   {a.prevAssessmentId ? (
-                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-purple-50 text-purple-700 border border-purple-200 whitespace-nowrap">
+                    <span className="px-2 py-0.5 text-[10px] rounded-full font-medium bg-purple-50 text-purple-700 border border-purple-200 whitespace-nowrap">
                       Renewal
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-50 text-gray-500 border border-gray-200 whitespace-nowrap">
+                    <span className="px-2 py-0.5 text-[10px] rounded-full font-medium bg-gray-50 text-gray-500 border border-gray-200 whitespace-nowrap">
                       Order Pertama
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3">
-                  <span className={`px-2 py-0.5 text-xs rounded-full font-medium border whitespace-nowrap ${statusColor[a.statusAssessment] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                <td className="px-3 py-2.5">
+                  <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border whitespace-nowrap ${statusColor[a.statusAssessment] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                     {a.statusAssessment || '—'}
                   </span>
                 </td>
-                <td className="px-4 py-3">
+                <td className="px-3 py-2.5">
                   <button
                     onClick={e => { e.stopPropagation(); navigate('/pp/screening/' + a.id); }}
-                    className="text-gray-400 hover:text-[#1E1C43] transition p-1"
+                    className="w-7 h-7 rounded-lg flex items-center justify-center text-[#2980B9] border border-[#2980B9] bg-[#EBF5FB] hover:bg-[#2980B9] hover:text-white transition-colors"
+                    title="Lihat Assessment"
                   >
-                    <Eye size={16} />
+                    <Eye size={13} />
                   </button>
                 </td>
               </tr>
