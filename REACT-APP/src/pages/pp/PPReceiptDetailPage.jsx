@@ -110,12 +110,14 @@ export default function PPReceiptDetailPage() {
     return () => setCrumbs(null)
   }, [receipt?.rcpNo, id])
 
+  const fromOrderId = state?.fromOrderId
+
   if (!receipt) {
     return (
       <div className="flex flex-col gap-4">
-        <button onClick={() => navigate('/pp/receipt')}
+        <button onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/receipt')}
           className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-          <ArrowLeft size={16} /> Kembali ke Daftar Receipt
+          <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Receipt'}
         </button>
         <div className="text-center py-20 text-text-muted">Receipt tidak ditemukan.</div>
       </div>
@@ -133,9 +135,9 @@ export default function PPReceiptDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={() => navigate('/pp/receipt')}
+      <button onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/receipt')}
         className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-        <ArrowLeft size={16} /> Kembali ke Daftar Receipt
+        <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Receipt'}
       </button>
 
       <div className="flex items-start justify-between">
