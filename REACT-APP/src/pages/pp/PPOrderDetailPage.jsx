@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, Ext
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
+import { DOCS_INIT } from '../../data/ppDocumentsData'
 
 /* ═══════════════════════════════════════
    Constants
@@ -237,7 +238,8 @@ export default function PPOrderDetailPage() {
       }
     : getOrderById(id)
 
-  const agrNomor = order?.id ? 'AGR-' + order.id : 'AGR-PP'
+  const agrDoc = DOCS_INIT.find(d => d.orderId === order?.id)
+  const agrNomor = agrDoc?.id || (order?.id ? 'AGR-' + order.id : 'AGR-PP')
 
   /* ── Section state ───────────────────────────────────────────────────────── */
   const [activeTab, setActiveTab] = useState(fromState?.defaultTab || 'keuangan')
@@ -318,7 +320,13 @@ export default function PPOrderDetailPage() {
   const [editingDoc, setEditingDoc] = useState(null) // null|'quotation'|'mou'|'contract'
 
   /* ── Agreement Klien ─────────────────────────────────────────────────────── */
-  const [agreementFlowStatus,    setAgreementFlowStatus]    = useState('pengajuan_masuk')
+  const [agreementFlowStatus,    setAgreementFlowStatus]    = useState(() => {
+    const doc = DOCS_INIT.find(d => d.orderId === order?.id)
+    if (!doc) return 'menunggu_ttd'
+    return doc.statusTtd === 'signed' ? 'disetujui'
+      : doc.statusTtd === 'waiting_approval' ? 'pengajuan_masuk'
+      : 'menunggu_ttd'
+  })
   const [agreementCatatanTolak,  setAgreementCatatanTolak]  = useState('')
   const [showAgreementTolakForm, setShowAgreementTolakForm] = useState(false)
   const [showAgreementPreview,   setShowAgreementPreview]   = useState(false)
@@ -1713,6 +1721,14 @@ export default function PPOrderDetailPage() {
                     <span className={`px-2 py-1 text-xs rounded-full font-medium ${FLOW_STATUS_CLS[agreementFlowStatus]}`}>
                       {FLOW_STATUS_LABEL[agreementFlowStatus]}
                     </span>
+                    {agrDoc && (
+                      <button
+                        onClick={() => navigate('/pp/documents')}
+                        className="flex items-center gap-1 text-xs text-[#1E1C43] font-medium hover:text-[#E05945] transition"
+                      >
+                        <ExternalLink size={11} /> Lihat Agreement
+                      </button>
+                    )}
                   </div>
                   {agreementFlowStatus === 'pengajuan_masuk' && (
                     <div className="flex items-center gap-2">
