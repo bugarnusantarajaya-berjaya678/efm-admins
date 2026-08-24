@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye } from 'lucide-react'
+import { Search, Eye, ArrowLeft } from 'lucide-react'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 
 /* ─── Status badge ─── */
@@ -89,9 +89,15 @@ export default function PPInvoicePage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div>
+      <div className="flex flex-col gap-1">
+        <button
+          onClick={() => navigate('/pp/orders')}
+          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
+        >
+          <ArrowLeft size={13} /> Kembali ke PP Orders
+        </button>
         <h1 className="text-[22px] font-bold text-text-primary">Invoice Private Training</h1>
-        <p className="text-sm text-text-muted mt-1">Semua tagihan klien program private</p>
+        <p className="text-sm text-text-muted mt-0.5">Semua tagihan klien program private</p>
       </div>
 
       <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Eye, ChevronRight, RotateCcw } from 'lucide-react';
+import { Plus, Search, Eye, ChevronRight, RotateCcw, ArrowLeft } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 
 const statusColor = {
@@ -61,17 +61,25 @@ export default function PPScreeningPage() {
     <div className="flex flex-col gap-4">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1E1C43]">Fitness Assessment PP</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Data pre-test & post-test seluruh klien Private Program</p>
-        </div>
+      <div className="flex flex-col gap-1">
         <button
-          onClick={() => navigate('/pp/screening/new')}
-          className="bg-[#E05945] text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-[#c94a38] transition"
+          onClick={() => navigate('/pp/orders')}
+          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
         >
-          <Plus size={16} /> Buat Assessment
+          <ArrowLeft size={13} /> Kembali ke PP Orders
         </button>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-[22px] font-bold text-text-primary">Fitness Assessment PP</h1>
+            <p className="text-sm text-text-muted mt-0.5">Data pre-test & post-test seluruh klien Private Program</p>
+          </div>
+          <button
+            onClick={() => navigate('/pp/screening/new')}
+            className="bg-[#E05945] text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-[#c94a38] transition"
+          >
+            <Plus size={16} /> Buat Assessment
+          </button>
+        </div>
       </div>
 
       {/* KPI Cards */}
@@ -83,11 +91,11 @@ export default function PPScreeningPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors"
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua Status</option>
           <option value="Post-Test Selesai">Post-Test Selesai</option>
@@ -97,24 +105,24 @@ export default function PPScreeningPage() {
         <select
           value={filterRenewal}
           onChange={e => setFilterRenewal(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-[#1E1C43] transition-colors"
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua Tipe</option>
           <option value="first">Order Pertama</option>
           <option value="renewal">Renewal</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={14} className="text-gray-400 shrink-0" />
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Cari nama klien, ID assessment, atau order..."
-            className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400"
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
         <button
           onClick={() => { setSearch(''); setFilterStatus(''); setFilterRenewal(''); }}
-          className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
         >
           <RotateCcw size={12} /> Reset
         </button>

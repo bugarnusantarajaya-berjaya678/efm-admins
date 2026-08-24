@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search } from 'lucide-react'
+import { FileText, Eye, ChevronLeft, ChevronRight, X, Check, Download, CheckCircle, Search, ArrowLeft } from 'lucide-react'
 import { DOCS_INIT, STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 
 /* ── helpers ── */
@@ -478,17 +478,21 @@ export default function PPDocumentsPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Page header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-[22px] font-bold text-text-primary">Agreement Klien</h1>
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
-              <CheckCircle size={11} />
-              Paperless · Sign-on-Glass
-            </span>
-          </div>
-          <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
+      <div className="flex flex-col gap-1">
+        <button
+          onClick={() => navigate('/pp/orders')}
+          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
+        >
+          <ArrowLeft size={13} /> Kembali ke PP Orders
+        </button>
+        <div className="flex items-center gap-2.5">
+          <h1 className="text-[22px] font-bold text-text-primary">Agreement Klien</h1>
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
+            <CheckCircle size={11} />
+            Paperless · Sign-on-Glass
+          </span>
         </div>
+        <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
       </div>
 
       {/* Stats */}
