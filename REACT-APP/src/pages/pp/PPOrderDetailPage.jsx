@@ -477,16 +477,34 @@ export default function PPOrderDetailPage() {
   const [showTolakModal,        setShowTolakModal]        = useState(false)
   const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
   const [honorariumBuktiBayar,   setHonorariumBuktiBayar]   = useState(null)
-  const [invoicePayStatus,        setInvoicePayStatus]        = useState('belum_bayar')
+  const [invoicePayStatus,        setInvoicePayStatus]        = useState(() => {
+    const pt = order?.paymentTracking?.[0]
+    if (!pt) return 'belum_bayar'
+    return pt.status === 'Lunas' ? 'sudah_bayar' : pt.status === 'Terlambat' ? 'overdue' : 'belum_bayar'
+  })
   const [showKonfirmasiPayModal,  setShowKonfirmasiPayModal]  = useState(false)
-  const [konfirmasiPayForm,       setKonfirmasiPayForm]       = useState({ tglBayar: '', metode: 'Transfer Bank', namaBukti: '' })
+  const [konfirmasiPayForm,       setKonfirmasiPayForm]       = useState(() => {
+    const pt = order?.paymentTracking?.[0]
+    if (pt?.status === 'Lunas' && pt.tglBayar) {
+      return { tglBayar: pt.tglBayar, metode: 'Transfer Bank', namaBukti: '' }
+    }
+    return { tglBayar: '', metode: 'Transfer Bank', namaBukti: '' }
+  })
 
-  const [invoicePP, setInvoicePP] = useState({
-    nomorInvoice: 'INV-PP-26-0013',
-    tanggal: '2026-10-24',
-    jatuhTempo: '2026-11-07',
-    catatanInvoice: '',
-    statusInvoice: 'Draft',
+  const [invoicePP, setInvoicePP] = useState(() => {
+    const pt = order?.paymentTracking?.[0]
+    const invId = pt?.invoiceId || (order?.id && order.id !== 'BARU' ? `INV-${order.id}` : '')
+    const tgl = order?.tanggalMulai || ''
+    const jatuhTempo = tgl
+      ? new Date(new Date(tgl).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+      : ''
+    return {
+      nomorInvoice: invId,
+      tanggal: tgl,
+      jatuhTempo,
+      catatanInvoice: '',
+      statusInvoice: pt?.status === 'Lunas' ? 'Lunas' : 'Draft',
+    }
   })
   const [rincianDraft, setRincianDraft] = useState(order?.rincianLayanan || [])
 
