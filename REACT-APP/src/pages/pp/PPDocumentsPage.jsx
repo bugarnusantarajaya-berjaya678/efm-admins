@@ -478,21 +478,30 @@ export default function PPDocumentsPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Page header */}
-      <div className="flex flex-col gap-1">
-        <button
-          onClick={() => navigate('/pp/orders')}
-          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
-        >
-          <ArrowLeft size={13} /> Kembali ke PP Orders
-        </button>
-        <div className="flex items-center gap-2.5">
-          <h1 className="text-[22px] font-bold text-text-primary">Agreement Klien</h1>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
-            <CheckCircle size={11} />
-            Paperless · Sign-on-Glass
-          </span>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <FileText size={20} className="text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Agreement Klien</h1>
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
+                  <CheckCircle size={11} />
+                  Paperless · Sign-on-Glass
+                </span>
+              </div>
+              <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/pp/orders')}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
+          >
+            <ArrowLeft size={12} /> Kembali ke PP Orders
+          </button>
         </div>
-        <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
       </div>
 
       {/* Stats */}

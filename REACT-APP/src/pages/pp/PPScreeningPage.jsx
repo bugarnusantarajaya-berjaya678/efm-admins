@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Eye, ChevronRight, RotateCcw, ArrowLeft } from 'lucide-react';
+import { Plus, Search, Eye, ChevronRight, RotateCcw, ArrowLeft, ClipboardList } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 
 const statusColor = {
@@ -61,24 +61,31 @@ export default function PPScreeningPage() {
     <div className="flex flex-col gap-4">
 
       {/* Header */}
-      <div className="flex flex-col gap-1">
-        <button
-          onClick={() => navigate('/pp/orders')}
-          className="flex items-center gap-1.5 text-xs font-medium text-text-muted hover:text-text-primary transition-colors w-fit"
-        >
-          <ArrowLeft size={13} /> Kembali ke PP Orders
-        </button>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-[22px] font-bold text-text-primary">Fitness Assessment PP</h1>
-            <p className="text-sm text-text-muted mt-0.5">Data pre-test & post-test seluruh klien Private Program</p>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ClipboardList size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Fitness Assessment PP</h1>
+              <p className="text-sm text-text-muted mt-0.5">Data pre-test & post-test seluruh klien Private Program</p>
+            </div>
           </div>
-          <button
-            onClick={() => navigate('/pp/screening/new')}
-            className="bg-[#E05945] text-white px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 hover:bg-[#c94a38] transition"
-          >
-            <Plus size={16} /> Buat Assessment
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => navigate('/pp/screening/new')}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            >
+              <Plus size={13} /> Buat Assessment
+            </button>
+            <button
+              onClick={() => navigate('/pp/orders')}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali ke PP Orders
+            </button>
+          </div>
         </div>
       </div>
 
