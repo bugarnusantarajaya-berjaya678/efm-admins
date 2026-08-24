@@ -380,75 +380,8 @@ export default function PPOrderDetailPage() {
   ])
   const [iForm, setIForm] = useState({ tgl:'', jam:'', kategori:'Kerusakan Alat', lokasi:'', dilaporkan:'', statusAwal:'Baru', deskripsi:'', tindakan:'', foto:[] })
 
-  /* ── Tab 3: Operasional Lapangan ─────────────────────────────────────────── */
-  const dummyPICs = [
-    { id: "PIC-001", nama: "Rudi Hartono",  spesialisasi: "Personal Trainer",     wa: "081234567891", status: "Aktif" },
-    { id: "PIC-002", nama: "Sari Dewi",     spesialisasi: "Yoga Instructor",       wa: "081234567892", status: "Aktif" },
-    { id: "PIC-003", nama: "Bima Prakoso",  spesialisasi: "Zumba Instructor",      wa: "081234567893", status: "Aktif" },
-    { id: "PIC-004", nama: "Nia Rahayu",    spesialisasi: "Pilates Instructor",    wa: "081234567894", status: "Aktif" },
-    { id: "PIC-005", nama: "Doni Kusuma",   spesialisasi: "Functional Training",   wa: "081234567895", status: "Aktif" },
-  ]
+  /* ── Tab 3: Operasional Sesi (PP) ───────────────────────────────────────── */
 
-  const dummyMitras = [
-    { id: "MTR-001", nama: "PT. Gym Equipment Indonesia", tipe: "Vendor",        peran: "Supplier Alat Gym",              wa: "0211234567",    status: "Aktif" },
-    { id: "MTR-002", nama: "CV. Maintenance Pro",          tipe: "Vendor",        peran: "Maintenance Fasilitas",          wa: "082198765432",  status: "Aktif" },
-    { id: "MTR-003", nama: "Studio Fit Partner",           tipe: "Mitra Pelatih", peran: "Partner Instruktur Freelance",   wa: "081345678901",  status: "Aktif" },
-  ]
-
-  const [timLapangan, setTimLapangan] = useState([
-    { id: "TL-001", sourceId: "PIC-001", sourceType: "PIC",   nama: "Rudi Hartono",               tipe: "PIC EFM", peran: "Head Trainer",     wa: "081234567891", status: "Aktif" },
-    { id: "TL-002", sourceId: "PIC-002", sourceType: "PIC",   nama: "Sari Dewi",                  tipe: "PIC EFM", peran: "Yoga Instructor",  wa: "081234567892", status: "Aktif" },
-    { id: "TL-003", sourceId: "MTR-001", sourceType: "Mitra", nama: "PT. Gym Equipment Indonesia", tipe: "Vendor",  peran: "Supplier Alat Gym", wa: "0211234567",  status: "Aktif" },
-  ])
-
-  const [jadwalOperasional, setJadwalOperasional] = useState([
-    { id: "JDW-001", tanggal: "2025-02-03", jam: "06:00", kegiatan: "Sesi Yoga Pagi",            pic: "Sari Dewi",    status: "Selesai"      },
-    { id: "JDW-002", tanggal: "2025-02-10", jam: "07:00", kegiatan: "Sesi Functional Training",  pic: "Rudi Hartono", status: "Selesai"      },
-    { id: "JDW-003", tanggal: "2025-03-03", jam: "06:00", kegiatan: "Sesi Yoga Pagi",            pic: "Sari Dewi",    status: "Dijadwalkan"  },
-  ])
-
-  const [laporanKunjungan, setLaporanKunjungan] = useState([
-    { id: "LK-001", tanggal: "2025-02-05", picKunjungan: "Rudi Hartono", kondisiUmum: "Baik", temuan: "Treadmill unit 3 perlu servis ringan", foto: null, fotoNama: null, status: "Selesai" },
-  ])
-
-  const [laporanInsiden, setLaporanInsiden] = useState([
-    { id: "INS-001", tanggal: "2025-02-08", jenis: "Kerusakan Peralatan", severity: "Medium", pic: "Rudi Hartono", status: "Resolved",
-      deskripsi: "Treadmill unit 3 berhenti mendadak saat sesi",
-      foto: null, fotoNama: null, logAktivitas: [
-        { waktu: "2025-02-08 14:30", catatan: "Insiden dilaporkan oleh Rudi Hartono", tipe: "laporan" }
-      ]},
-  ])
-
-  const [showTambahTim,     setShowTambahTim]     = useState(false)
-  const [showTambahJadwal,  setShowTambahJadwal]  = useState(false)
-  const [showTambahLaporan, setShowTambahLaporan] = useState(false)
-  const [showTambahInsiden, setShowTambahInsiden] = useState(false)
-  const [sumberTim,         setSumberTim]         = useState("PIC")
-  const [selectedSource,    setSelectedSource]    = useState("")
-  const [newTimPeran,       setNewTimPeran]       = useState("")
-  const [newTimStatus,      setNewTimStatus]      = useState("Aktif")
-  const [editingLaporan,    setEditingLaporan]    = useState(null)
-  const [editingInsiden,    setEditingInsiden]    = useState(null)
-  const [previewFoto,       setPreviewFoto]       = useState(null)
-  const [newLaporan, setNewLaporan] = useState({
-    tanggal: '', picKunjungan: '', kondisiUmum: 'Baik',
-    temuan: '', status: 'Selesai', foto: null, fotoNama: null
-  })
-  const [newInsiden, setNewInsiden] = useState({
-    tanggal: '', jenis: '', severity: 'Low',
-    pic: '', deskripsi: '', status: 'Open',
-    foto: null, fotoNama: null, logAktivitas: []
-  })
-
-  /* ── Tab 3 PP: Sesi & Progres ────────────────────────────────────────────── */
-  const [jadwalSesi, setJadwalSesi] = useState([
-    { id:"JS-001", tanggal:"2026-10-27", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
-    { id:"JS-002", tanggal:"2026-10-29", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
-    { id:"JS-003", tanggal:"2026-10-31", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
-    { id:"JS-004", tanggal:"2026-11-03", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Selesai" },
-    { id:"JS-005", tanggal:"2026-11-05", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Terjadwal" },
-    { id:"JS-006", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A", pic:"Sarah Jenkins", status:"Terjadwal" },
-  ])
   const [absensiSesi, setAbsensiSesi] = useState([
     { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",          foto:true,  catatanKoreksi:"" },
     { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome",  foto:true,  catatanKoreksi:"" },
@@ -470,12 +403,7 @@ export default function PPOrderDetailPage() {
   ])
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
-  const [showTambahJadwalSesi,  setShowTambahJadwalSesi]  = useState(false)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
-  const [newJadwalSesi,         setNewJadwalSesi]         = useState({ tanggal:"", jam:"", lokasi:"", pic:"", status:"Terjadwal" })
-  const [editingJadwalSesi,     setEditingJadwalSesi]     = useState(null)
-  const [honorariumStatus,      setHonorariumStatus]      = useState('belum_diajukan')
-  const [honorariumDiajukanTgl, setHonorariumDiajukanTgl] = useState(null)
   const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Quotation')
   const [statusOrderState,      setStatusOrderState]      = useState(order?.statusOrder || 'Aktif')
   const [showTahapanModal,      setShowTahapanModal]      = useState(false)
@@ -519,10 +447,6 @@ export default function PPOrderDetailPage() {
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
   const formatRpPP = (val) => 'Rp ' + Math.round(val || 0).toLocaleString('id-ID')
 
-  const fotoLaporanBaruRef = useRef(null)
-  const fotoInsidenBaruRef = useRef(null)
-  const fotoInsidenRef     = useRef(null)
-  const fotoInputRef       = useRef(null)
 
   useEffect(() => {
     const label = isNew ? 'Order Baru' : (order?.namaKlien || id)
@@ -542,32 +466,6 @@ export default function PPOrderDetailPage() {
     )
   }
 
-  /* ── Operasional handlers ────────────────────────────────────────────────── */
-  function handleJadwalStatusChange(jadwalItem, newStatus) {
-    setJadwalSesi(prev => prev.map(j => j.id === jadwalItem.id ? { ...j, status: newStatus } : j))
-    if (newStatus === 'Selesai') {
-      const exists = absensiSesi.some(a => a.jadwalId === jadwalItem.id)
-      if (!exists) {
-        const newAbsId = 'ABS-' + String(absensiSesi.length + 1).padStart(3, '0')
-        setAbsensiSesi(prev => [...prev, {
-          id: newAbsId, jadwalId: jadwalItem.id,
-          tanggal: jadwalItem.tanggal, jam: jadwalItem.jam,
-          foto: null, catatanKoreksi: ''
-        }])
-        setLogTab3PP(prev => [{
-          id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
-          kategori: 'absensi', nomorLaporan: newAbsId,
-          teks: `Sesi ${jadwalItem.id} selesai — absensi ${newAbsId} otomatis dibuat (${jadwalItem.jam})`
-        }, ...prev])
-      }
-    }
-    setLogTab3PP(prev => [{
-      id: Date.now() + 1, waktu: fmtLogWaktu(), actor: 'Admin EFM',
-      kategori: 'jadwal', nomorLaporan: jadwalItem.id,
-      teks: `Status jadwal ${jadwalItem.id} diubah ke ${newStatus}`
-    }, ...prev])
-  }
-
   /* ── Computed values ─────────────────────────────────────────────────────── */
   function calcQuotationTotal(qData) {
     const sub = qData.items.reduce((s, it) => s + it.jumlah * it.rate, 0)
@@ -580,9 +478,6 @@ export default function PPOrderDetailPage() {
   const qCalcDraft = quotationDraft ? calcQuotationTotal(quotationDraft) : qCalc
   const subtotal   = qCalc.total   // "Nilai Kontrak (dari Quotation)"
 
-  const insidenAktif = laporanInsiden.filter(
-    (ins) => (ins.severity === "Critical" || ins.severity === "High") && ins.status !== "Resolved"
-  )
   const programTerkait = order ? dummyPPPrograms.find((s) => s.id === order.programId) : null
   const filteredPrograms = programSearch
     ? dummyPPPrograms.filter(p =>
@@ -2588,9 +2483,6 @@ export default function PPOrderDetailPage() {
                   if (!editingAbsensi.id) {
                     const newAbsId = 'ABS-' + String(absensiSesi.length + 1).padStart(3, '0')
                     setAbsensiSesi(prev => [...prev, { ...editingAbsensi, id: newAbsId }])
-                    if (editingAbsensi.jadwalId) {
-                      setJadwalSesi(prev => prev.map(j => j.id === editingAbsensi.jadwalId ? { ...j, status: 'Selesai' } : j))
-                    }
                     setLogTab3PP(prev => [{
                       id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
                       kategori: 'absensi', nomorLaporan: newAbsId,
@@ -2604,101 +2496,6 @@ export default function PPOrderDetailPage() {
                 className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition"
               >
                 Simpan Koreksi
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ── Modal Tambah Jadwal Sesi ──────────────────────────────────────────── */}
-      {showTambahJadwalSesi && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 flex-shrink-0">
-              <h3 className="text-base font-bold text-[#1E1C43]">Tambah Jadwal Sesi</h3>
-              <button onClick={() => setShowTambahJadwalSesi(false)} className="text-gray-400 hover:text-gray-600 transition">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="p-5 space-y-4 overflow-y-auto flex-1">
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tanggal *</label>
-                  <input
-                    type="date"
-                    value={newJadwalSesi.tanggal}
-                    onChange={e => setNewJadwalSesi({ ...newJadwalSesi, tanggal: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Jam</label>
-                  <input
-                    type="time"
-                    value={newJadwalSesi.jam}
-                    onChange={e => setNewJadwalSesi({ ...newJadwalSesi, jam: e.target.value })}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Lokasi</label>
-                <input
-                  type="text"
-                  value={newJadwalSesi.lokasi}
-                  onChange={e => setNewJadwalSesi({ ...newJadwalSesi, lokasi: e.target.value })}
-                  placeholder="cth. Hampton's Park Tower A"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">PIC Pelatih</label>
-                <input
-                  type="text"
-                  value={newJadwalSesi.pic}
-                  onChange={e => setNewJadwalSesi({ ...newJadwalSesi, pic: e.target.value })}
-                  placeholder="Nama pelatih"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Status</label>
-                <select
-                  value={newJadwalSesi.status}
-                  onChange={e => setNewJadwalSesi({ ...newJadwalSesi, status: e.target.value })}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                >
-                  <option>Terjadwal</option>
-                  <option>Berlangsung</option>
-                  <option>Selesai</option>
-                  <option>Dibatalkan</option>
-                </select>
-              </div>
-            </div>
-            <div className="flex gap-3 p-5 border-t border-gray-100 flex-shrink-0">
-              <button
-                onClick={() => { setShowTambahJadwalSesi(false); setNewJadwalSesi({ tanggal: '', jam: '', lokasi: '', pic: '', status: 'Terjadwal' }) }}
-                className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-gray-50 transition"
-              >
-                Batal
-              </button>
-              <button
-                onClick={() => {
-                  if (!newJadwalSesi.tanggal) return
-                  const newId = 'JS-' + String(jadwalSesi.length + 1).padStart(3, '0')
-                  setJadwalSesi(prev => [...prev, { id: newId, ...newJadwalSesi }])
-                  setLogTab3PP(prev => [{
-                    id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
-                    kategori: 'jadwal', nomorLaporan: newId,
-                    teks: 'Jadwal sesi ' + newId + ' ditambahkan: ' + newJadwalSesi.tanggal + ' ' + newJadwalSesi.jam
-                  }, ...prev])
-                  setShowTambahJadwalSesi(false)
-                  setNewJadwalSesi({ tanggal: '', jam: '', lokasi: '', pic: '', status: 'Terjadwal' })
-                }}
-                disabled={!newJadwalSesi.tanggal}
-                className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-50"
-              >
-                Simpan Jadwal
               </button>
             </div>
           </div>
