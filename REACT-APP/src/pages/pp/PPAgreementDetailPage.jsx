@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Check, Download, CheckCircle } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
@@ -73,114 +73,6 @@ function ClientSig({ status }) {
   )
 }
 
-/* ── Signature Canvas ── */
-function SigCanvas({ onDraw }) {
-  const canvasRef = useRef(null)
-  const drawing = useRef(false)
-  const lastPt = useRef(null)
-
-  const getPos = (e, canvas) => {
-    const rect = canvas.getBoundingClientRect()
-    const src = e.touches ? e.touches[0] : e
-    return { x: src.clientX - rect.left, y: src.clientY - rect.top }
-  }
-
-  const start = useCallback((e) => {
-    e.preventDefault()
-    drawing.current = true
-    lastPt.current = getPos(e, canvasRef.current)
-    onDraw(true)
-  }, [onDraw])
-
-  const move = useCallback((e) => {
-    if (!drawing.current) return
-    e.preventDefault()
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
-    const pt = getPos(e, canvas)
-    ctx.beginPath()
-    ctx.moveTo(lastPt.current.x, lastPt.current.y)
-    ctx.lineTo(pt.x, pt.y)
-    ctx.strokeStyle = '#1E1C43'
-    ctx.lineWidth = 2
-    ctx.lineCap = 'round'
-    ctx.stroke()
-    lastPt.current = pt
-  }, [])
-
-  const end = useCallback(() => { drawing.current = false }, [])
-
-  const clear = () => {
-    const canvas = canvasRef.current
-    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
-    onDraw(false)
-  }
-
-  return (
-    <div>
-      <div className="relative border-2 border-dashed border-gray-300 rounded-xl bg-white overflow-hidden" style={{ height: 120 }}>
-        <canvas
-          ref={canvasRef}
-          width={560}
-          height={120}
-          className="w-full h-full touch-none"
-          onMouseDown={start} onMouseMove={move} onMouseUp={end} onMouseLeave={end}
-          onTouchStart={start} onTouchMove={move} onTouchEnd={end}
-        />
-        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-40">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="1.5" width="24" height="24" className="mb-1"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-          <span className="text-[11px] text-gray-400 font-medium">Tanda tangan di sini</span>
-        </div>
-      </div>
-      <div className="flex justify-end mt-1.5">
-        <button onClick={clear} className="text-[11px] font-semibold text-text-muted border border-gray-200 px-3 py-1 rounded-md hover:bg-gray-50">Hapus</button>
-      </div>
-    </div>
-  )
-}
-
-/* ── Confirm Module (for Pending) ── */
-function ConfirmModule({ onSubmit }) {
-  const [cbx, setCbx] = useState(false)
-  const [drawn, setDrawn] = useState(false)
-  const ready = cbx && drawn
-
-  return (
-    <div className="mt-6">
-      <div className="border-t-2 border-dashed border-gray-200 mb-5" />
-      <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-[.8px] border-l-[3px] border-[#E8781A] pl-2.5 mb-4">
-        Konfirmasi &amp; Tanda Tangan Digital Klien
-      </div>
-      <label className={`flex gap-3 items-start rounded-xl p-4 mb-1.5 cursor-pointer border transition-colors ${cbx ? 'border-[#27AE60] bg-[#EAFAF1]' : 'border-gray-200 bg-white'}`}>
-        <input type="checkbox" checked={cbx} onChange={e => setCbx(e.target.checked)}
-          className="w-4 h-4 mt-0.5 accent-green-500 flex-shrink-0 cursor-pointer" />
-        <div className="text-[11.5px] leading-relaxed text-gray-700">
-          Saya yang bertanda tangan di bawah ini menyatakan bahwa <strong>seluruh data yang terlampir dan saya berikan dalam agreement ini adalah benar</strong>. Saya menandatangani dokumen ini dalam keadaan <strong>sadar, sehat walafiat, tanpa paksaan</strong>, dan sepakat menjalani paket program privat yang sudah saya beli. Dengan ini saya juga menyatakan <strong>bertanggung jawab penuh atas kesehatan serta keselamatan diri saya sendiri</strong> selama mengikuti program.
-        </div>
-      </label>
-      {!cbx && <div className="text-[11px] text-red-500 mb-3.5 pl-1">⚠ Wajib dicentang sebelum tanda tangan.</div>}
-      <div className="mb-4">
-        <div className="text-[10px] font-bold text-text-muted uppercase tracking-wide mb-2">
-          Tanda Tangan Digital <span className="text-red-500">*</span>
-        </div>
-        <SigCanvas onDraw={setDrawn} />
-        {!drawn && <div className="text-[11px] text-red-500 mt-1 pl-1">⚠ Tanda tangan wajib diisi.</div>}
-      </div>
-      <button
-        onClick={() => ready && onSubmit()}
-        className="w-full py-3 rounded-xl font-bold text-[13px] flex items-center justify-center gap-2 transition-all"
-        style={{ background: '#E8781A', color: 'white', opacity: ready ? 1 : 0.45, cursor: ready ? 'pointer' : 'not-allowed' }}
-      >
-        <Check size={15} strokeWidth={2.5} />
-        Submit &amp; Setujui Perjanjian
-      </button>
-      <div className="text-[10px] text-text-muted text-center mt-2 leading-relaxed">
-        Tanda tangan digital Anda berkekuatan hukum setara tanda tangan basah.
-      </div>
-    </div>
-  )
-}
-
 /* ── Agreement Document ── */
 function AgreementDoc({ doc }) {
   const detailCells = [
@@ -207,8 +99,8 @@ function AgreementDoc({ doc }) {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Navy header */}
-      <div style={{ background: '#1E1C43', padding: '22px 28px 20px', borderRadius: 0, marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+      <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
             <img src="/logo.png" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
               onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} alt="EFM" />
@@ -222,9 +114,9 @@ function AgreementDoc({ doc }) {
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>essentialfitnessmanagement@gmail.com</div>
             </div>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: 'right', flexShrink: 0 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'white', letterSpacing: '.3px', wordBreak: 'break-all' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
@@ -234,11 +126,11 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-2 gap-2.5 mb-6 mt-0 pt-6 px-6">
+      <div className="grid grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
         {detailCells.map(([lbl, val]) => (
-          <div key={lbl} className="bg-gray-50 rounded-xl px-3.5 py-2.5">
+          <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
-            <div className="text-[13px] font-bold text-[#1E1C43]">{val}</div>
+            <div className="text-[12px] font-bold text-[#1E1C43] break-words break-all">{val}</div>
           </div>
         ))}
       </div>
@@ -361,12 +253,6 @@ export default function PPAgreementDetailPage() {
     setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd }))
   }
 
-  const handleSubmitSign = () => {
-    const tglTtd = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-    updateDoc(doc.id, { statusTtd: 'waiting_approval', tglTtd })
-    setDoc(prev => ({ ...prev, statusTtd: 'waiting_approval', tglTtd }))
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
@@ -403,9 +289,29 @@ export default function PPAgreementDetailPage() {
 
       <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[600px] w-full">
         <AgreementDoc doc={doc} />
+
+        {/* Admin-only status notice — bukan form TTD klien */}
         {doc.statusTtd === 'pending' && (
-          <div className="px-6 pb-6">
-            <ConfirmModule onSubmit={handleSubmitSign} />
+          <div className="px-5 pb-5 pt-2">
+            <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3.5">
+              <Clock size={16} className="text-yellow-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-yellow-800">Menunggu Tanda Tangan Klien</p>
+                <p className="text-[11px] text-yellow-700 mt-0.5">Agreement belum ditandatangani. Proses TTD klien dilakukan melalui perangkat pelatih — admin tidak perlu mengambil tindakan saat ini.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {doc.statusTtd === 'waiting_approval' && (
+          <div className="px-5 pb-5 pt-2">
+            <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3.5">
+              <AlertCircle size={16} className="text-blue-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-blue-800">TTD Klien Diterima — Menunggu Approval Admin</p>
+                <p className="text-[11px] text-blue-700 mt-0.5">Klien telah menandatangani agreement. Verifikasi TTD di atas, lalu klik <strong>Approve Agreement</strong> di bagian atas halaman untuk mengonfirmasi.</p>
+              </div>
+            </div>
           </div>
         )}
       </div>
