@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
@@ -279,36 +279,52 @@ export default function PPAgreementDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={handleBack} className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-        <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Agreement'}
-      </button>
+      {/* Header Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
 
-      <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-text-primary">{doc.displayId}</h1>
-          <p className="text-sm text-text-muted mt-1">Agreement klien · {doc.namaKlien}</p>
-        </div>
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {doc.statusTtd === 'waiting_approval' && (
+          {/* LEFT: icon + info */}
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <FileText size={18} className="text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Agreement Klien</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{doc.displayId}</h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-xs text-gray-500">{doc.namaKlien}</span>
+                <span className="text-gray-300 text-xs">·</span>
+                <DocBadge status={doc.statusTtd} />
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: action buttons */}
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            {doc.statusTtd === 'waiting_approval' && (
+              <button
+                onClick={handleApprove}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
+                style={{ background: '#2980B9' }}
+              >
+                <CheckCircle size={13} /> Approve
+              </button>
+            )}
             <button
-              onClick={handleApprove}
-              className="flex items-center gap-1.5 px-4 py-2.5 text-white text-sm font-semibold rounded-lg transition-colors"
-              style={{ background: '#2980B9' }}
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors"
             >
-              <CheckCircle size={14} /> Approve Agreement
+              <Download size={13} /> Download PDF
             </button>
-          )}
-          <button
-            onClick={() => window.print()}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-lg transition-colors"
-          >
-            <Download size={14} /> Download PDF
-          </button>
-        </div>
-      </div>
+            <button
+              onClick={handleBack}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors"
+            >
+              <ArrowLeft size={13} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Agreement'}
+            </button>
+          </div>
 
-      <div className="w-fit">
-        <DocBadge status={doc.statusTtd} />
+        </div>
       </div>
 
       <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[600px] w-full">
