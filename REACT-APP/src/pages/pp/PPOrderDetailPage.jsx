@@ -1466,48 +1466,10 @@ export default function PPOrderDetailPage() {
                     </div>
                   )}
 
-                  {/* Two-column: Template | File TTD */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {/* ── Kolom kiri: Template Agreement ── */}
-                    <div className="flex flex-col">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Template Agreement</p>
-                      <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
-                        {/* Mock thumbnail */}
-                        <div className="bg-gray-50 flex-1 flex flex-col items-center justify-center py-5 px-4 cursor-pointer hover:bg-gray-100 transition group"
-                          onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}>
-                          <div className="w-16 h-20 bg-white border border-gray-200 rounded shadow-sm flex flex-col items-center justify-center mb-2 group-hover:shadow-md transition">
-                            <div className="w-8 h-1.5 bg-[#1E1C43]/20 rounded mb-1" />
-                            <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
-                            <div className="w-10 h-1 bg-gray-200 rounded mb-0.5" />
-                            <div className="w-7 h-1 bg-gray-200 rounded mb-1.5" />
-                            <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
-                            <div className="w-10 h-1 bg-gray-100 rounded mb-0.5" />
-                            <div className="w-8 h-1 bg-gray-100 rounded" />
-                          </div>
-                          <p className="text-[10px] text-gray-500 font-medium">Klik untuk preview</p>
-                        </div>
-                        <div className="px-3 py-2.5 border-t border-gray-200 bg-white">
-                          <p className="text-xs font-semibold text-[#1E1C43] leading-tight mb-0.5">Agreement Private Training EFM</p>
-                          <p className="text-[10px] text-gray-400 mb-2">Template Global · Versi terbaru</p>
-                          <div className="flex gap-1.5">
-                            <button
-                              onClick={() => agrDoc && navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } })}
-                              className="flex-1 h-7 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition flex items-center justify-center gap-1"
-                            >
-                              <Eye size={10} /> Preview
-                            </button>
-                            <button className="h-7 w-7 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition flex items-center justify-center">
-                              <ExternalLink size={10} />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* ── Kolom kanan: File TTD Klien ── */}
-                    <div className="flex flex-col">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">File TTD Klien</p>
-                      <div className="flex-1 border border-gray-200 rounded-xl overflow-hidden flex flex-col">
+                  {/* File TTD Klien — full width */}
+                  <div>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">File TTD Klien</p>
+                    <div className="border border-gray-200 rounded-xl overflow-hidden flex flex-col">
                         {!hasSignedFile ? (
                           /* Menunggu TTD — empty state */
                           <div className="flex-1 flex flex-col items-center justify-center py-6 px-4 bg-gray-50 text-center">
@@ -1591,7 +1553,6 @@ export default function PPOrderDetailPage() {
                             </div>
                           </>
                         )}
-                      </div>
                     </div>
                   </div>
 
