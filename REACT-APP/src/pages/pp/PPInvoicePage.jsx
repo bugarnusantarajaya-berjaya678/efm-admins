@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, ArrowLeft, ScrollText } from 'lucide-react'
+import { Search, ArrowLeft, ScrollText } from 'lucide-react'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 
 /* ─── Status badge ─── */
@@ -155,12 +155,11 @@ export default function PPInvoicePage() {
                 <th style={{minWidth:'120px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tanggal</th>
                 <th style={{minWidth:'130px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
                 <th style={{minWidth:'120px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status</th>
-                <th style={{minWidth:'100px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {slice.length === 0 ? (
-                <tr><td colSpan={9} className="py-10 text-center text-sm text-text-muted">Tidak ada invoice yang sesuai filter</td></tr>
+                <tr><td colSpan={8} className="py-10 text-center text-sm text-text-muted">Tidak ada invoice yang sesuai filter</td></tr>
               ) : slice.map(inv => (
                 <tr key={inv.invNo} onClick={() => navigate('/pp/invoice/' + inv.invNo, { state: { invoice: inv } })}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
@@ -177,13 +176,6 @@ export default function PPInvoicePage() {
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{inv.tanggal}</td>
                   <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 whitespace-nowrap">{formatRp(inv.total)}</td>
                   <td className="px-3 py-2.5"><InvBadge status={inv.status} /></td>
-                  <td className="px-3 py-2.5">
-                    <button onClick={e => { e.stopPropagation(); navigate('/pp/invoice/' + inv.invNo, { state: { invoice: inv } }) }}
-                      className="w-7 h-7 rounded-lg flex items-center justify-center text-[#2980B9] border border-[#2980B9] bg-[#EBF5FB] hover:bg-[#2980B9] hover:text-white transition-colors"
-                      title="Lihat Invoice">
-                      <Eye size={13} />
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
