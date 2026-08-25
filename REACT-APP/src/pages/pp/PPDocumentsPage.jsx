@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Save, RotateCcw, Settings, LayoutList } from 'lucide-react'
+import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, LayoutList, GripVertical, Pencil } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 
@@ -79,6 +79,10 @@ function TemplateEditor() {
   })
   const [dirty, setDirty] = useState(false)
   const [savedOk, setSavedOk] = useState(false)
+  const [editMode, setEditMode] = useState(false)
+  const [dragOverIdx, setDragOverIdx] = useState(null)
+  const dragIdx = useRef(null)
+  const editSnapshot = useRef(null)
 
   const mutate = fn => {
     setPasal(prev => fn(prev.map(p => ({ ...p, poin: [...p.poin] }))))
@@ -86,23 +90,24 @@ function TemplateEditor() {
     setSavedOk(false)
   }
 
-  const updateJudul  = (pi, val)      => mutate(ps => { ps[pi].judul = val; return ps })
-  const updatePoin   = (pi, ci, val)  => mutate(ps => { ps[pi].poin[ci] = val; return ps })
-  const addPoin      = (pi)           => mutate(ps => { ps[pi].poin.push(''); return ps })
-  const removePoin   = (pi, ci)       => mutate(ps => { ps[pi].poin.splice(ci, 1); return ps })
-  const addPasal     = ()             => mutate(ps => [...ps, { id: Date.now() + '', judul: '', poin: [''] }])
-  const removePasal  = (idx)          => mutate(ps => ps.filter((_, i) => i !== idx))
-  const movePasal    = (idx, dir)     => mutate(ps => {
-    const tgt = idx + dir
-    if (tgt < 0 || tgt >= ps.length) return ps
-    ;[ps[idx], ps[tgt]] = [ps[tgt], ps[idx]]
-    return ps
+  const updateJudul   = (pi, val)         => mutate(ps => { ps[pi].judul = val; return ps })
+  const updatePoin    = (pi, ci, val)     => mutate(ps => { ps[pi].poin[ci] = val; return ps })
+  const addPoin       = (pi)              => mutate(ps => { ps[pi].poin.push(''); return ps })
+  const removePoin    = (pi, ci)          => mutate(ps => { ps[pi].poin.splice(ci, 1); return ps })
+  const addPasal      = ()               => mutate(ps => [...ps, { id: Date.now() + '', judul: '', poin: [''] }])
+  const removePasal   = (idx)            => mutate(ps => ps.filter((_, i) => i !== idx))
+  const reorderPasal  = (fromIdx, toIdx) => mutate(ps => {
+    const arr = [...ps]
+    const [moved] = arr.splice(fromIdx, 1)
+    arr.splice(toIdx, 0, moved)
+    return arr
   })
 
   const handleSave = () => {
     try { localStorage.setItem('efmAgreementTemplate', JSON.stringify({ pasal })) } catch {}
     setDirty(false)
     setSavedOk(true)
+    setEditMode(false)
     setTimeout(() => setSavedOk(false), 2500)
   }
 
@@ -112,6 +117,20 @@ function TemplateEditor() {
     setPasal(def)
     try { localStorage.removeItem('efmAgreementTemplate') } catch {}
     setDirty(false)
+    setSavedOk(false)
+  }
+
+  const enterEdit = () => {
+    editSnapshot.current = pasal.map(p => ({ ...p, poin: [...p.poin] }))
+    setEditMode(true)
+  }
+
+  const cancelEdit = () => {
+    if (editSnapshot.current) {
+      setPasal(editSnapshot.current)
+      setDirty(false)
+    }
+    setEditMode(false)
     setSavedOk(false)
   }
 
@@ -129,60 +148,102 @@ function TemplateEditor() {
           </div>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={handleReset}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-          >
-            <RotateCcw size={12} /> Reset Default
-          </button>
-          <button
-            onClick={handleSave}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}
-          >
-            <Save size={12} /> {savedOk ? 'Tersimpan!' : dirty ? 'Simpan Perubahan' : 'Simpan'}
-          </button>
+          {!editMode ? (
+            <button
+              onClick={enterEdit}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-xs font-semibold text-white transition-colors"
+            >
+              <Pencil size={12} /> Edit Template
+            </button>
+          ) : (
+            <>
+              <button
+                onClick={handleReset}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <RotateCcw size={12} /> Reset Default
+              </button>
+              <button
+                onClick={cancelEdit}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSave}
+                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}
+              >
+                <Save size={12} /> {savedOk ? 'Tersimpan!' : 'Simpan Perubahan'}
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      {dirty && (
+      {!editMode && (
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 text-xs text-blue-700 font-medium">
+          Mode tampilan — klik <strong>Edit Template</strong> untuk mulai mengedit pasal.
+        </div>
+      )}
+
+      {editMode && dirty && (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2.5 text-xs text-yellow-700 font-medium">
           Ada perubahan yang belum disimpan — klik <strong>Simpan Perubahan</strong> untuk menyimpan.
         </div>
       )}
 
+      {editMode && (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-500 flex items-center gap-2">
+          <GripVertical size={13} className="text-gray-400" />
+          Drag handle di kiri kartu untuk mengubah urutan pasal.
+        </div>
+      )}
+
       {/* Pasal cards */}
       {pasal.map((ps, pi) => (
-        <div key={ps.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div
+          key={ps.id}
+          draggable={editMode}
+          onDragStart={() => { dragIdx.current = pi }}
+          onDragOver={e => { e.preventDefault(); if (dragIdx.current !== pi) setDragOverIdx(pi) }}
+          onDragLeave={() => setDragOverIdx(null)}
+          onDrop={() => {
+            if (dragIdx.current !== null && dragIdx.current !== pi) reorderPasal(dragIdx.current, pi)
+            dragIdx.current = null
+            setDragOverIdx(null)
+          }}
+          onDragEnd={() => { dragIdx.current = null; setDragOverIdx(null) }}
+          className={`bg-white rounded-xl border overflow-hidden transition-all ${dragOverIdx === pi ? 'border-[#1E1C43] ring-2 ring-[#1E1C43]/20 shadow-md' : 'border-gray-200'}`}
+        >
           {/* Pasal header row */}
           <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+            {editMode && (
+              <div className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 shrink-0 transition-colors" title="Drag untuk pindah urutan">
+                <GripVertical size={16} />
+              </div>
+            )}
             <span className="text-[10px] font-bold text-white bg-[#1E1C43] px-2 py-0.5 rounded-full shrink-0">
               PASAL {pi + 1}
             </span>
-            <input
-              className="flex-1 text-sm font-semibold text-[#1E1C43] bg-transparent border-none outline-none placeholder:text-gray-400 placeholder:font-normal min-w-0"
-              placeholder="Judul pasal..."
-              value={ps.judul}
-              onChange={e => updateJudul(pi, e.target.value)}
-            />
-            <div className="flex items-center gap-0.5 shrink-0">
-              <button
-                onClick={() => movePasal(pi, -1)}
-                disabled={pi === 0}
-                title="Pindah ke atas"
-                className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-200 disabled:opacity-25 transition-colors"
-              ><ChevronUp size={14} /></button>
-              <button
-                onClick={() => movePasal(pi, 1)}
-                disabled={pi === pasal.length - 1}
-                title="Pindah ke bawah"
-                className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-200 disabled:opacity-25 transition-colors"
-              ><ChevronDown size={14} /></button>
+            {editMode ? (
+              <input
+                className="flex-1 text-sm font-semibold text-[#1E1C43] bg-transparent border-none outline-none placeholder:text-gray-400 placeholder:font-normal min-w-0"
+                placeholder="Judul pasal..."
+                value={ps.judul}
+                onChange={e => updateJudul(pi, e.target.value)}
+              />
+            ) : (
+              <span className="flex-1 text-sm font-semibold text-[#1E1C43] min-w-0">
+                {ps.judul || <span className="text-gray-400 italic font-normal text-xs">Tanpa judul</span>}
+              </span>
+            )}
+            {editMode && (
               <button
                 onClick={() => { if (window.confirm(`Hapus Pasal ${pi + 1} — ${ps.judul || 'tanpa judul'}?`)) removePasal(pi) }}
                 title="Hapus pasal"
-                className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 transition-colors ml-1"
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 transition-colors shrink-0"
               ><Trash2 size={13} /></button>
-            </div>
+            )}
           </div>
 
           {/* Poin list */}
@@ -190,39 +251,49 @@ function TemplateEditor() {
             {ps.poin.map((poin, ci) => (
               <div key={ci} className="flex items-start gap-2">
                 <span className="text-xs text-gray-400 font-medium mt-2.5 w-5 shrink-0 text-right">{ci + 1}.</span>
-                <textarea
-                  className="flex-1 text-xs text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none outline-none focus:border-[#1E1C43] transition-colors leading-relaxed"
-                  rows={2}
-                  placeholder="Isi poin..."
-                  value={poin}
-                  onChange={e => updatePoin(pi, ci, e.target.value)}
-                  onInput={e => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px' }}
-                />
-                <button
-                  onClick={() => removePoin(pi, ci)}
-                  disabled={ps.poin.length <= 1}
-                  title="Hapus poin"
-                  className="mt-2 w-6 h-6 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 disabled:opacity-25 transition-colors shrink-0"
-                ><Trash2 size={12} /></button>
+                {editMode ? (
+                  <>
+                    <textarea
+                      className="flex-1 text-xs text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none outline-none focus:border-[#1E1C43] transition-colors leading-relaxed"
+                      rows={2}
+                      placeholder="Isi poin..."
+                      value={poin}
+                      onChange={e => updatePoin(pi, ci, e.target.value)}
+                      onInput={e => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px' }}
+                    />
+                    <button
+                      onClick={() => removePoin(pi, ci)}
+                      disabled={ps.poin.length <= 1}
+                      title="Hapus poin"
+                      className="mt-2 w-6 h-6 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 disabled:opacity-25 transition-colors shrink-0"
+                    ><Trash2 size={12} /></button>
+                  </>
+                ) : (
+                  <p className="flex-1 text-xs text-gray-700 leading-relaxed py-1">{poin}</p>
+                )}
               </div>
             ))}
-            <button
-              onClick={() => addPoin(pi)}
-              className="flex items-center gap-1.5 text-xs text-[#1E1C43] font-semibold hover:text-[#E05945] transition-colors mt-1 pl-7"
-            >
-              <Plus size={13} /> Tambah Poin
-            </button>
+            {editMode && (
+              <button
+                onClick={() => addPoin(pi)}
+                className="flex items-center gap-1.5 text-xs text-[#1E1C43] font-semibold hover:text-[#E05945] transition-colors mt-1 pl-7"
+              >
+                <Plus size={13} /> Tambah Poin
+              </button>
+            )}
           </div>
         </div>
       ))}
 
-      {/* Add pasal */}
-      <button
-        onClick={addPasal}
-        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
-      >
-        <Plus size={15} /> Tambah Pasal Baru
-      </button>
+      {/* Add pasal — edit mode only */}
+      {editMode && (
+        <button
+          onClick={addPasal}
+          className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+        >
+          <Plus size={15} /> Tambah Pasal Baru
+        </button>
+      )}
     </div>
   )
 }
