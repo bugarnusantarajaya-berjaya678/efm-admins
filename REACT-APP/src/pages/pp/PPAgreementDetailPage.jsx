@@ -168,7 +168,7 @@ function AgreementDoc({ doc }) {
           </div>
           <div className="text-center sm:text-right" style={{ flexShrink: 0 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'white', letterSpacing: '.3px', wordBreak: 'break-all' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'white', letterSpacing: '.3px', wordBreak: 'break-all' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
@@ -189,7 +189,7 @@ function AgreementDoc({ doc }) {
 
       {/* Syarat & Ketentuan */}
       <div className="mb-6 px-6">
-        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200">Syarat dan Ketentuan Layanan</div>
+        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
