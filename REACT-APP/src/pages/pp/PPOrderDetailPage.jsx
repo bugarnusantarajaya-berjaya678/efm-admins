@@ -107,6 +107,12 @@ const TAHAPAN_STEPS = ['Quotation', 'Agreement', 'Program Berjalan', 'Program Se
 const TAHAPAN_ORDER = { 'Quotation': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
 const TAHAPAN_TO_STATUS = { 'Quotation': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
 
+const validKodeDiskon = {
+  HEMAT10:   { label: 'Voucher Hemat 10%',    tipe: 'persen',  nilai: 10    },
+  HARBOLNAS: { label: 'Hari Belanja Nasional', tipe: 'persen',  nilai: 15    },
+  FLAT50K:   { label: 'Flat Diskon Spesial',  tipe: 'nominal', nilai: 50000 },
+}
+
 /* ── Generate payment schedule ────────────────────────────────────────────── */
 function generatePayRows(startStr, endStr, terms, nilaiNum) {
   if (!startStr || !endStr) return []
@@ -441,7 +447,12 @@ export default function PPOrderDetailPage() {
       statusInvoice: pt?.status === 'Lunas' ? 'Lunas' : 'Draft',
     }
   })
-  const [rincianDraft, setRincianDraft] = useState(order?.rincianLayanan || [])
+  const [rincianDraft,          setRincianDraft]          = useState(order?.rincianLayanan || [])
+  const [editingInvoiceFields,  setEditingInvoiceFields]  = useState(false)
+  const [invoiceDraft,          setInvoiceDraft]          = useState(null)
+  const [kodeDiskonPP,          setKodeDiskonPP]          = useState('')
+  const [diskonAppliedPP,       setDiskonAppliedPP]       = useState(null)
+  const [diskonErrorPP,         setDiskonErrorPP]         = useState(false)
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
   const formatRpPP = (val) => 'Rp ' + Math.round(val || 0).toLocaleString('id-ID')
@@ -1285,9 +1296,20 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section: Invoice & Pembayaran Klien ── */}
           {(() => {
-            const isOverdue = invoicePP.jatuhTempo && new Date(invoicePP.jatuhTempo) < new Date() && invoicePayStatus !== 'sudah_bayar'
-            const daysLeft = invoicePP.jatuhTempo ? Math.ceil((new Date(invoicePP.jatuhTempo) - new Date()) / (1000*60*60*24)) : null
-            const receiptId = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
+            const isOverdue   = invoicePP.jatuhTempo && new Date(invoicePP.jatuhTempo) < new Date() && invoicePayStatus !== 'sudah_bayar'
+            const daysLeft    = invoicePP.jatuhTempo ? Math.ceil((new Date(invoicePP.jatuhTempo) - new Date()) / (1000*60*60*24)) : null
+            const receiptId   = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
+
+            const minJatuhTempoDraft = invoiceDraft?.tanggal
+              ? new Date(new Date(invoiceDraft.tanggal).getTime() + 2 * 86400000).toISOString().split('T')[0]
+              : ''
+            const diskonNominalPP = diskonAppliedPP
+              ? diskonAppliedPP.tipe === 'persen'
+                ? Math.round(subtotalPP * diskonAppliedPP.nilai / 100)
+                : diskonAppliedPP.nilai
+              : 0
+            const totalTagihanPP = subtotalPP - diskonNominalPP
+
             return (
               <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
                 <div className="px-5 py-4 border-b border-gray-100 flex items-center gap-2 flex-wrap">
@@ -1299,33 +1321,157 @@ export default function PPOrderDetailPage() {
                     {invoicePayStatus === 'sudah_bayar' ? '✓ Lunas' : isOverdue ? '⚠ Overdue' : 'Belum Bayar'}
                   </span>
                   <div className="ml-auto flex items-center gap-2">
-                    <button
-                      onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
-                      <Eye size={12} /> Buka Invoice
-                    </button>
-                    {invoicePayStatus !== 'sudah_bayar' && (
-                      <button
-                        onClick={() => setShowKonfirmasiPayModal(true)}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-colors">
-                        <CheckCircle size={12} /> Konfirmasi Pembayaran
-                      </button>
+                    {editingInvoiceFields ? (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingInvoiceFields(false)
+                            setInvoiceDraft(null)
+                            setKodeDiskonPP('')
+                            setDiskonAppliedPP(null)
+                            setDiskonErrorPP(false)
+                          }}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                          <X size={12} /> Batal
+                        </button>
+                        <button
+                          onClick={() => {
+                            setInvoicePP(prev => ({
+                              ...prev,
+                              tanggal:        invoiceDraft.tanggal,
+                              jatuhTempo:     invoiceDraft.jatuhTempo,
+                              catatanInvoice: invoiceDraft.catatan,
+                            }))
+                            setEditingInvoiceFields(false)
+                            setInvoiceDraft(null)
+                          }}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-colors">
+                          <Save size={12} /> Simpan
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => {
+                            setEditingInvoiceFields(true)
+                            setInvoiceDraft({
+                              tanggal:    invoicePP.tanggal,
+                              jatuhTempo: invoicePP.jatuhTempo,
+                              catatan:    invoicePP.catatanInvoice || '',
+                            })
+                          }}
+                          disabled={!!editingSection}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white disabled:opacity-40 transition-colors">
+                          <Edit2 size={12} /> Edit Invoice
+                        </button>
+                        <button
+                          onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                          <Eye size={12} /> Buka Invoice
+                        </button>
+                        {invoicePayStatus !== 'sudah_bayar' && (
+                          <button
+                            onClick={() => setShowKonfirmasiPayModal(true)}
+                            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-colors">
+                            <CheckCircle size={12} /> Konfirmasi Pembayaran
+                          </button>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>
                 <div className="p-5 space-y-4">
-                  {/* Info grid */}
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {[
-                      ['No. Invoice',   invoicePP.nomorInvoice],
-                      ['Jatuh Tempo',   fmtDate(invoicePP.jatuhTempo)],
-                      ['Total Tagihan', formatRpPP(subtotalPP)],
-                    ].map(([label, val]) => (
-                      <div key={label} className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
-                      </div>
-                    ))}
+                  {/* Info grid — 4 columns */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No. Invoice</p>
+                      <p className="text-sm font-semibold text-gray-800">{invoicePP.nomorInvoice || '—'}</p>
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Invoice</p>
+                      {editingInvoiceFields ? (
+                        <input type="date" value={invoiceDraft.tanggal || ''}
+                          onChange={e => {
+                            const tgl = e.target.value
+                            const autoJT = tgl
+                              ? new Date(new Date(tgl).getTime() + 14 * 86400000).toISOString().split('T')[0]
+                              : ''
+                            setInvoiceDraft(d => ({ ...d, tanggal: tgl, jatuhTempo: autoJT }))
+                          }}
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{fmtDate(invoicePP.tanggal)}</p>
+                      )}
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jatuh Tempo</p>
+                      {editingInvoiceFields ? (
+                        <div>
+                          <input type="date" value={invoiceDraft.jatuhTempo || ''}
+                            min={minJatuhTempoDraft}
+                            onChange={e => setInvoiceDraft(d => ({ ...d, jatuhTempo: e.target.value }))}
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          {invoiceDraft.jatuhTempo && minJatuhTempoDraft && invoiceDraft.jatuhTempo < minJatuhTempoDraft && (
+                            <p className="text-[10px] text-red-500 mt-1">Min. H+2 dari tanggal invoice</p>
+                          )}
+                        </div>
+                      ) : (
+                        <p className="text-sm font-semibold text-gray-800">{fmtDate(invoicePP.jatuhTempo)}</p>
+                      )}
+                    </div>
+                    <div className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Tagihan</p>
+                      <p className="text-sm font-semibold text-gray-800">{formatRpPP(totalTagihanPP)}</p>
+                    </div>
+                  </div>
+
+                  {/* Kode Diskon — hanya tampil saat edit mode */}
+                  {editingInvoiceFields && (
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                      <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Kode Diskon</p>
+                      {diskonAppliedPP ? (
+                        <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                          <div>
+                            <span className="text-xs font-semibold text-green-700">{diskonAppliedPP.label}</span>
+                            <span className="text-xs text-green-600 ml-2">— {diskonAppliedPP.tipe === 'persen' ? `${diskonAppliedPP.nilai}%` : formatRpPP(diskonAppliedPP.nilai)} diskon</span>
+                          </div>
+                          <button onClick={() => { setDiskonAppliedPP(null); setDiskonErrorPP(false) }}
+                            className="text-gray-400 hover:text-red-500 transition ml-3 shrink-0">
+                            <X size={13} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <input type="text" value={kodeDiskonPP}
+                            onChange={e => { setKodeDiskonPP(e.target.value.toUpperCase()); setDiskonErrorPP(false) }}
+                            placeholder="Masukkan kode diskon..."
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          <button
+                            onClick={() => {
+                              const v = validKodeDiskon[kodeDiskonPP]
+                              if (v) { setDiskonAppliedPP(v); setKodeDiskonPP(''); setDiskonErrorPP(false) }
+                              else setDiskonErrorPP(true)
+                            }}
+                            className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition">
+                            Terapkan
+                          </button>
+                        </div>
+                      )}
+                      {diskonErrorPP && <p className="text-[11px] text-red-500">Kode diskon tidak ditemukan</p>}
+                    </div>
+                  )}
+
+                  {/* Catatan Invoice */}
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Invoice</p>
+                    {editingInvoiceFields ? (
+                      <textarea rows={3} value={invoiceDraft.catatan || ''}
+                        onChange={e => setInvoiceDraft(d => ({ ...d, catatan: e.target.value }))}
+                        placeholder="Catatan untuk klien pada invoice..."
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
+                    ) : (
+                      <p className="text-sm text-gray-600 italic">{invoicePP.catatanInvoice || 'Tidak ada catatan'}</p>
+                    )}
                   </div>
 
                   {/* Overdue warning */}

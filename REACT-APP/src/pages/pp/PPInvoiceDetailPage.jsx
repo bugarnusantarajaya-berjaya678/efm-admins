@@ -1,14 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Pencil, Trash2, Plus, Download, ScrollText } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
-
-const validKodeDiskon = {
-  HEMAT10:   { label: 'Voucher Hemat 10%',    tipe: 'persen',  nilai: 10    },
-  HARBOLNAS: { label: 'Hari Belanja Nasional', tipe: 'persen',  nilai: 15    },
-  FLAT50K:   { label: 'Flat Diskon Spesial',  tipe: 'nominal', nilai: 50000 },
-}
 
 const DEFAULT_SYARAT = [
   'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
@@ -18,6 +12,17 @@ const DEFAULT_SYARAT = [
   'Essential Fitness Management berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.',
   'Untuk pertanyaan terkait invoice, hubungi: essentialfitnessmanagement@gmail.com',
 ]
+
+function getSyaratList() {
+  try {
+    const saved = localStorage.getItem('efmInvoiceTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return DEFAULT_SYARAT
+}
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
   const [paidDate,  setPaidDate]  = useState('')
@@ -83,16 +88,8 @@ export default function PPInvoiceDetailPage() {
   const navigate  = useNavigate()
 
   const { setCrumbs } = useBreadcrumb()
-  const [invoice,         setInvoice]        = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
-  const [editMode,        setEditMode]        = useState(false)
-  const [editData,        setEditData]        = useState({ tanggalInvoice: '', jatuhTempo: '', catatan: '' })
-  const [pajakAktif,      setPajakAktif]      = useState(false)
-  const [persenPajak,     setPersenPajak]     = useState(11)
-  const [kodeDiskonInput, setKodeDiskonInput] = useState('')
-  const [diskonApplied,   setDiskonApplied]   = useState(null)
-  const [diskonError,     setDiskonError]     = useState(false)
-  const [syaratList,      setSyaratList]      = useState(DEFAULT_SYARAT)
-  const [modal,           setModal]           = useState(null)
+  const [invoice, setInvoice] = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
+  const [modal,   setModal]   = useState(null)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -113,17 +110,9 @@ export default function PPInvoiceDetailPage() {
     )
   }
 
-  const subtotalBase  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (invoice.biayaLain || 0)
-  const diskonNominal = diskonApplied
-    ? diskonApplied.tipe === 'persen' ? Math.round(subtotalBase * diskonApplied.nilai / 100) : diskonApplied.nilai
-    : 0
-  const pajakNominal  = pajakAktif ? Math.round((subtotalBase - diskonNominal) * persenPajak / 100) : 0
-  const totalTagihan  = subtotalBase - diskonNominal + pajakNominal
-  const minJatuhTempo = editData.tanggalInvoice
-    ? new Date(new Date(editData.tanggalInvoice).getTime() + 2 * 86400000).toISOString().split('T')[0]
-    : ''
-  const jatuhTempoError = !!(editData.jatuhTempo && minJatuhTempo && editData.jatuhTempo < minJatuhTempo)
-  const statusBadgeCls  = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
+  const subtotalBase   = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (invoice.biayaLain || 0)
+  const statusBadgeCls = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
+  const syaratList     = getSyaratList()
 
   function handleMarkPaid({ paidDate, payMethod }) {
     setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
@@ -133,6 +122,7 @@ export default function PPInvoiceDetailPage() {
   return (
     <div className="flex flex-col gap-4">
 
+      {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -152,26 +142,6 @@ export default function PPInvoiceDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {editMode ? (
-              <>
-                <button
-                  onClick={() => { setEditMode(false); setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: '' }) }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition">
-                  Batal
-                </button>
-                <button
-                  onClick={() => setEditMode(false)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition">
-                  Simpan
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => { setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: invoice.catatan || '' }); setEditMode(true) }}
-                className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] rounded-lg px-3.5 py-2 text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition">
-                <Pencil size={12} /> Edit Invoice
-              </button>
-            )}
             <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
               <Download size={13} /> Download PDF
             </button>
@@ -199,7 +169,7 @@ export default function PPInvoiceDetailPage() {
         </div>
       </div>
 
-      {/* ── Template Invoice ── */}
+      {/* ── Invoice Document ── */}
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
@@ -223,30 +193,12 @@ export default function PPInvoiceDetailPage() {
 
             <div className="flex justify-start sm:justify-end items-center gap-2 mb-1">
               <span className="text-xs text-gray-400">Tanggal:</span>
-              {editMode ? (
-                <input type="date" value={editData.tanggalInvoice}
-                  onChange={e => setEditData(d => ({ ...d, tanggalInvoice: e.target.value }))}
-                  className="bg-white/10 border border-white/30 rounded px-2 py-1 text-white text-sm focus:outline-none" />
-              ) : (
-                <span className="text-white font-semibold text-sm">{invoice.tanggal}</span>
-              )}
+              <span className="text-white font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-start sm:justify-end items-start gap-2 mb-1">
-              <span className="text-xs text-gray-400 mt-1">Jatuh Tempo:</span>
-              <div>
-                {editMode ? (
-                  <>
-                    <input type="date" value={editData.jatuhTempo}
-                      min={minJatuhTempo}
-                      onChange={e => setEditData(d => ({ ...d, jatuhTempo: e.target.value }))}
-                      className="bg-white/10 border border-white/30 rounded px-2 py-1 text-white text-sm focus:outline-none" />
-                    {jatuhTempoError && <p className="text-red-300 text-xs mt-1">Minimal H+2 dari tanggal invoice</p>}
-                  </>
-                ) : (
-                  <span className="text-white font-semibold text-sm">{invoice.due}</span>
-                )}
-              </div>
+            <div className="flex justify-start sm:justify-end items-center gap-2 mb-1">
+              <span className="text-xs text-gray-400">Jatuh Tempo:</span>
+              <span className="text-white font-semibold text-sm">{invoice.due}</span>
             </div>
 
             <div className="flex justify-start sm:justify-end items-center gap-2">
@@ -336,77 +288,11 @@ export default function PPInvoiceDetailPage() {
             <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
           </div>
 
-          {editMode && (
-            <div className="my-3 bg-gray-50 rounded-xl p-4 space-y-3">
-              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Kode Diskon</p>
-              {diskonApplied ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                  <span className="text-xs font-semibold text-green-700">{diskonApplied.label}</span>
-                  <button onClick={() => { setDiskonApplied(null); setDiskonError(false) }}
-                    className="text-gray-400 hover:text-red-500 transition ml-3">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input type="text" value={kodeDiskonInput}
-                    onChange={e => { setKodeDiskonInput(e.target.value.toUpperCase()); setDiskonError(false) }}
-                    placeholder="Masukkan kode diskon..."
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
-                  <button
-                    onClick={() => {
-                      const v = validKodeDiskon[kodeDiskonInput]
-                      if (v) { setDiskonApplied(v); setKodeDiskonInput(''); setDiskonError(false) }
-                      else setDiskonError(true)
-                    }}
-                    className="px-4 py-2 bg-[#1E1C43] text-white text-sm font-semibold rounded-lg hover:bg-[#2d2b5e] transition">
-                    Terapkan
-                  </button>
-                </div>
-              )}
-              {diskonError && <p className="text-[11px] text-red-500">Kode diskon tidak ditemukan</p>}
-
-              <div className="pt-2 border-t border-gray-200 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-700">Aktifkan PPN</span>
-                  <button onClick={() => setPajakAktif(v => !v)}
-                    className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full transition-colors ${pajakAktif ? 'bg-[#1E1C43]' : 'bg-gray-300'}`}>
-                    <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform mt-0.5 ${pajakAktif ? 'translate-x-4' : 'translate-x-0.5'}`} />
-                  </button>
-                </div>
-                {pajakAktif && (
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-gray-600">Persentase:</span>
-                    <input type="number" value={persenPajak} min={0} max={100}
-                      onChange={e => setPersenPajak(Number(e.target.value))}
-                      className="w-16 border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
-                    <span className="text-sm text-gray-600">%</span>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {diskonApplied && (
-            <div className="flex justify-between items-center py-1.5 text-sm">
-              <span className="text-green-600">Diskon: {diskonApplied.label}</span>
-              <span className="text-green-600 font-medium">- {formatRp(diskonNominal)}</span>
-            </div>
-          )}
-
-          {pajakAktif && (
-            <div className="flex justify-between items-center py-1.5 text-sm">
-              <span className="text-gray-600">PPN {persenPajak}%</span>
-              <span className="font-medium text-gray-800">+ {formatRp(pajakNominal)}</span>
-            </div>
-          )}
-
           <div className="mt-4 bg-[#1E1C43] rounded-xl px-6 py-4 flex justify-between items-center">
             <span className="text-white font-bold text-lg">Total Tagihan</span>
-            <span className="text-white font-bold text-lg">{formatRp(totalTagihan)}</span>
+            <span className="text-white font-bold text-lg">{formatRp(subtotalBase)}</span>
           </div>
 
-          {/* LUNAS confirmation — tampil jika sudah paid */}
           {invoice.status === 'paid' && (
             <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-start gap-3">
               <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
@@ -431,7 +317,7 @@ export default function PPInvoiceDetailPage() {
           )}
         </div>
 
-        {/* Cara Pembayaran — tampil jika belum paid */}
+        {/* Cara Pembayaran */}
         {invoice.status !== 'paid' && (
           <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran</div>
@@ -454,13 +340,8 @@ export default function PPInvoiceDetailPage() {
         {/* Catatan Invoice */}
         <div className="px-8 py-4 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-          {editMode ? (
-            <textarea rows={3} value={editData.catatan}
-              onChange={e => setEditData(d => ({ ...d, catatan: e.target.value }))}
-              placeholder="Tambahkan catatan untuk klien..."
-              className="w-full border border-gray-200 rounded-lg p-3 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
-          ) : editData.catatan || invoice.catatan ? (
-            <p className="text-sm text-gray-600">{editData.catatan || invoice.catatan}</p>
+          {invoice.catatan ? (
+            <p className="text-sm text-gray-600">{invoice.catatan}</p>
           ) : (
             <p className="text-sm text-gray-400 italic">Tidak ada catatan</p>
           )}
@@ -469,31 +350,11 @@ export default function PPInvoiceDetailPage() {
         {/* Syarat & Ketentuan */}
         <div className="px-8 py-6 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
-          {editMode ? (
-            <div className="space-y-2">
-              {syaratList.map((item, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <input type="text" value={item}
-                    onChange={e => setSyaratList(prev => prev.map((s, i) => i === idx ? e.target.value : s))}
-                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
-                  <button onClick={() => setSyaratList(prev => prev.filter((_, i) => i !== idx))}
-                    className="text-red-400 hover:text-red-600 p-1 transition">
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
-              <button onClick={() => setSyaratList(prev => [...prev, ''])}
-                className="flex items-center gap-1.5 text-sm text-[#E05945] hover:text-[#c44a38] mt-3 font-medium">
-                <Plus size={14} /> Tambah Baris
-              </button>
-            </div>
-          ) : (
-            <ol className="list-decimal list-inside space-y-2">
-              {syaratList.map((item, idx) => (
-                <li key={idx} className="text-sm text-gray-600">{item}</li>
-              ))}
-            </ol>
-          )}
+          <ol className="list-decimal list-inside space-y-2">
+            {syaratList.map((item, idx) => (
+              <li key={idx} className="text-sm text-gray-600">{item}</li>
+            ))}
+          </ol>
         </div>
 
         {/* Footer */}
