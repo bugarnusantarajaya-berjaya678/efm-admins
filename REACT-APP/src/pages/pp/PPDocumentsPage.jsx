@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, LayoutList, GripVertical, Pencil } from 'lucide-react'
+import { FileText, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, LayoutList, GripVertical, Pencil } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 
@@ -842,13 +842,12 @@ export default function PPDocumentsPage() {
                 <th style={{minWidth:'130px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">PIC</th>
                 <th style={{minWidth:'130px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Tanggal Dibuat</th>
                 <th style={{minWidth:'120px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Status</th>
-                <th style={{minWidth:'100px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={11} className="text-center py-12 text-text-muted text-[13px]">Tidak ada data yang sesuai filter.</td>
+                  <td colSpan={10} className="text-center py-12 text-text-muted text-[13px]">Tidak ada data yang sesuai filter.</td>
                 </tr>
               ) : pageRows.map((d, idx) => (
                 <tr
@@ -879,15 +878,6 @@ export default function PPDocumentsPage() {
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{d.tglDibuat}</td>
                   <td className="px-3 py-2.5">
                     <DocBadge status={d.statusTtd} />
-                  </td>
-                  <td className="px-3 py-2.5">
-                    <button
-                      onClick={e => { e.stopPropagation(); navigate('/pp/agreement/' + d.id) }}
-                      className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors text-text-muted hover:text-[#1E1C43]"
-                      title="Lihat Dokumen"
-                    >
-                      <Eye size={15} />
-                    </button>
                   </td>
                 </tr>
               ))}
