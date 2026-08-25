@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft } from 'lucide-react'
+import { FileText, Eye, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, ChevronUp, ChevronDown, Save, RotateCcw, Settings, LayoutList } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 
@@ -28,6 +28,201 @@ function StatMini({ label, value, color }) {
     <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
       <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
       <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+    </div>
+  )
+}
+
+/* ── Default Pasal Template ── */
+const DEFAULT_PASAL = [
+  { id: 'dp1', judul: 'Ruang Lingkup Layanan', poin: [
+    'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
+    'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
+  ]},
+  { id: 'dp2', judul: 'Masa Berlaku Paket (Validity Period)', poin: [
+    'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
+    'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
+  ]},
+  { id: 'dp3', judul: 'Kebijakan Pembatalan dan Penjadwalan Ulang', poin: [
+    'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
+    'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
+    'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
+    'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
+  ]},
+  { id: 'dp4', judul: 'Pembayaran dan Validasi Order', poin: [
+    'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
+    'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
+  ]},
+  { id: 'dp5', judul: 'Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', poin: [
+    'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
+    'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
+    'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
+  ]},
+  { id: 'dp6', judul: 'Kerjasama dan Etika dengan Pelatih/Terapis', poin: [
+    'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
+    'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+  ]},
+  { id: 'dp7', judul: 'Pernyataan Kesadaran dan Persetujuan', poin: [
+    'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
+    'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
+    'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
+  ]},
+]
+
+/* ── Template Editor ── */
+function TemplateEditor() {
+  const [pasal, setPasal] = useState(() => {
+    try {
+      const saved = localStorage.getItem('efmAgreementTemplate')
+      if (saved) return JSON.parse(saved).pasal
+    } catch {}
+    return DEFAULT_PASAL.map(p => ({ ...p, poin: [...p.poin] }))
+  })
+  const [dirty, setDirty] = useState(false)
+  const [savedOk, setSavedOk] = useState(false)
+
+  const mutate = fn => {
+    setPasal(prev => fn(prev.map(p => ({ ...p, poin: [...p.poin] }))))
+    setDirty(true)
+    setSavedOk(false)
+  }
+
+  const updateJudul  = (pi, val)      => mutate(ps => { ps[pi].judul = val; return ps })
+  const updatePoin   = (pi, ci, val)  => mutate(ps => { ps[pi].poin[ci] = val; return ps })
+  const addPoin      = (pi)           => mutate(ps => { ps[pi].poin.push(''); return ps })
+  const removePoin   = (pi, ci)       => mutate(ps => { ps[pi].poin.splice(ci, 1); return ps })
+  const addPasal     = ()             => mutate(ps => [...ps, { id: Date.now() + '', judul: '', poin: [''] }])
+  const removePasal  = (idx)          => mutate(ps => ps.filter((_, i) => i !== idx))
+  const movePasal    = (idx, dir)     => mutate(ps => {
+    const tgt = idx + dir
+    if (tgt < 0 || tgt >= ps.length) return ps
+    ;[ps[idx], ps[tgt]] = [ps[tgt], ps[idx]]
+    return ps
+  })
+
+  const handleSave = () => {
+    try { localStorage.setItem('efmAgreementTemplate', JSON.stringify({ pasal })) } catch {}
+    setDirty(false)
+    setSavedOk(true)
+    setTimeout(() => setSavedOk(false), 2500)
+  }
+
+  const handleReset = () => {
+    if (!window.confirm('Reset ke template default? Semua perubahan akan hilang.')) return
+    const def = DEFAULT_PASAL.map(p => ({ ...p, poin: [...p.poin] }))
+    setPasal(def)
+    try { localStorage.removeItem('efmAgreementTemplate') } catch {}
+    setDirty(false)
+    setSavedOk(false)
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* Info + action bar */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 rounded-lg bg-[rgba(30,28,67,.08)] flex items-center justify-center shrink-0 mt-0.5">
+            <Settings size={15} color="#1E1C43" />
+          </div>
+          <div>
+            <p className="text-sm font-bold text-[#1E1C43]">Template Syarat & Ketentuan Agreement</p>
+            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Pasal-pasal di sini digunakan di semua agreement baru yang digenerate sistem. Perubahan tidak mempengaruhi agreement yang sudah ada.</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={handleReset}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            <RotateCcw size={12} /> Reset Default
+          </button>
+          <button
+            onClick={handleSave}
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}
+          >
+            <Save size={12} /> {savedOk ? 'Tersimpan!' : dirty ? 'Simpan Perubahan' : 'Simpan'}
+          </button>
+        </div>
+      </div>
+
+      {dirty && (
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2.5 text-xs text-yellow-700 font-medium">
+          Ada perubahan yang belum disimpan — klik <strong>Simpan Perubahan</strong> untuk menyimpan.
+        </div>
+      )}
+
+      {/* Pasal cards */}
+      {pasal.map((ps, pi) => (
+        <div key={ps.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          {/* Pasal header row */}
+          <div className="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <span className="text-[10px] font-bold text-white bg-[#1E1C43] px-2 py-0.5 rounded-full shrink-0">
+              PASAL {pi + 1}
+            </span>
+            <input
+              className="flex-1 text-sm font-semibold text-[#1E1C43] bg-transparent border-none outline-none placeholder:text-gray-400 placeholder:font-normal min-w-0"
+              placeholder="Judul pasal..."
+              value={ps.judul}
+              onChange={e => updateJudul(pi, e.target.value)}
+            />
+            <div className="flex items-center gap-0.5 shrink-0">
+              <button
+                onClick={() => movePasal(pi, -1)}
+                disabled={pi === 0}
+                title="Pindah ke atas"
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-200 disabled:opacity-25 transition-colors"
+              ><ChevronUp size={14} /></button>
+              <button
+                onClick={() => movePasal(pi, 1)}
+                disabled={pi === pasal.length - 1}
+                title="Pindah ke bawah"
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-gray-200 disabled:opacity-25 transition-colors"
+              ><ChevronDown size={14} /></button>
+              <button
+                onClick={() => { if (window.confirm(`Hapus Pasal ${pi + 1} — ${ps.judul || 'tanpa judul'}?`)) removePasal(pi) }}
+                title="Hapus pasal"
+                className="w-7 h-7 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 transition-colors ml-1"
+              ><Trash2 size={13} /></button>
+            </div>
+          </div>
+
+          {/* Poin list */}
+          <div className="px-4 py-3 space-y-2">
+            {ps.poin.map((poin, ci) => (
+              <div key={ci} className="flex items-start gap-2">
+                <span className="text-xs text-gray-400 font-medium mt-2.5 w-5 shrink-0 text-right">{ci + 1}.</span>
+                <textarea
+                  className="flex-1 text-xs text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none outline-none focus:border-[#1E1C43] transition-colors leading-relaxed"
+                  rows={2}
+                  placeholder="Isi poin..."
+                  value={poin}
+                  onChange={e => updatePoin(pi, ci, e.target.value)}
+                  onInput={e => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px' }}
+                />
+                <button
+                  onClick={() => removePoin(pi, ci)}
+                  disabled={ps.poin.length <= 1}
+                  title="Hapus poin"
+                  className="mt-2 w-6 h-6 flex items-center justify-center rounded hover:bg-red-100 text-red-400 hover:text-red-600 disabled:opacity-25 transition-colors shrink-0"
+                ><Trash2 size={12} /></button>
+              </div>
+            ))}
+            <button
+              onClick={() => addPoin(pi)}
+              className="flex items-center gap-1.5 text-xs text-[#1E1C43] font-semibold hover:text-[#E05945] transition-colors mt-1 pl-7"
+            >
+              <Plus size={13} /> Tambah Poin
+            </button>
+          </div>
+        </div>
+      ))}
+
+      {/* Add pasal */}
+      <button
+        onClick={addPasal}
+        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border-2 border-dashed border-gray-300 text-sm font-semibold text-gray-500 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+      >
+        <Plus size={15} /> Tambah Pasal Baru
+      </button>
     </div>
   )
 }
@@ -419,6 +614,7 @@ export default function PPDocumentsPage() {
   const [fPaket, setFPaket] = useState('')
   const [fSearch, setFSearch] = useState('')
   const [page, setPage] = useState(1)
+  const [activeTab, setActiveTab] = useState('list')
 
   const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
   const filtered = useMemo(() => {
@@ -496,6 +692,25 @@ export default function PPDocumentsPage() {
         <StatMini label="Total Agreement" value={stats.total} color="navy" />
       </div>
 
+      {/* Tabs */}
+      <div className="flex gap-1.5 bg-white rounded-xl border border-gray-200 p-1.5">
+        <button
+          onClick={() => setActiveTab('list')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors flex-1 justify-center ${activeTab === 'list' ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+        >
+          <LayoutList size={14} /> Daftar Agreement
+        </button>
+        <button
+          onClick={() => setActiveTab('template')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors flex-1 justify-center ${activeTab === 'template' ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
+        >
+          <Settings size={14} /> Template Agreement
+        </button>
+      </div>
+
+      {activeTab === 'template' && <TemplateEditor />}
+
+      {activeTab === 'list' && (<>
       {/* Filters */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
@@ -641,6 +856,7 @@ export default function PPDocumentsPage() {
           </div>
         </div>
       </div>
+      </>)}
 
     </div>
   )
