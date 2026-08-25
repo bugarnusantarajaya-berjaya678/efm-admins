@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Pencil, Trash2, Plus, Download } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Pencil, Trash2, Plus, Download, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 
@@ -102,10 +102,12 @@ export default function PPInvoiceDetailPage() {
   if (!invoice) {
     return (
       <div className="flex flex-col gap-4">
-        <button onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
-          className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-          <ArrowLeft size={16} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
-        </button>
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+          <button onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors">
+            <ArrowLeft size={13} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
+          </button>
+        </div>
         <div className="text-center py-20 text-text-muted">Invoice tidak ditemukan.</div>
       </div>
     )
@@ -131,56 +133,69 @@ export default function PPInvoiceDetailPage() {
   return (
     <div className="flex flex-col gap-4">
 
-      <button
-        onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
-        className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-        <ArrowLeft size={16} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
-      </button>
-
-      <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Invoice #{invoice.invNo}</h1>
-          <p className="text-sm text-text-muted mt-1">Private Training — {invoice.client}</p>
-        </div>
-        <div className="flex items-center gap-2.5 flex-wrap">
-          {editMode ? (
-            <>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ScrollText size={18} className="text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Invoice Private Training</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Invoice #{invoice.invNo}</h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-xs text-gray-500">{invoice.client}</span>
+                <span className="text-gray-300 text-xs">·</span>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
+                  {STATUS_LABEL[invoice.status] || invoice.status}
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            {editMode ? (
+              <>
+                <button
+                  onClick={() => { setEditMode(false); setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: '' }) }}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition">
+                  Batal
+                </button>
+                <button
+                  onClick={() => setEditMode(false)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition">
+                  Simpan
+                </button>
+              </>
+            ) : (
               <button
-                onClick={() => { setEditMode(false); setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: '' }) }}
-                className="flex items-center gap-1.5 px-4 py-2 border border-gray-300 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-50 transition">
-                Batal
+                onClick={() => { setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: invoice.catatan || '' }); setEditMode(true) }}
+                className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] rounded-lg px-3.5 py-2 text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition">
+                <Pencil size={12} /> Edit Invoice
               </button>
+            )}
+            <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
+              <Download size={13} /> Download PDF
+            </button>
+            {invoice.status === 'paid' && (
               <button
-                onClick={() => setEditMode(false)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-[#1E1C43] text-white text-sm font-medium rounded-lg hover:bg-[#2d2b5e] transition">
-                Simpan
+                onClick={() => navigate('/pp/receipt', { state: { filterSearch: invoice.invNo } })}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-primary text-primary text-xs font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                Lihat Receipt
               </button>
-            </>
-          ) : (
+            )}
+            {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+              <button
+                onClick={() => setModal('markPaid')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                <CheckCircle size={13} /> Konfirmasi Pembayaran
+              </button>
+            )}
             <button
-              onClick={() => { setEditData({ tanggalInvoice: '', jatuhTempo: '', catatan: invoice.catatan || '' }); setEditMode(true) }}
-              className="flex items-center gap-2 border border-[#1E1C43] text-[#1E1C43] rounded-lg px-4 py-2 text-sm font-medium hover:bg-[#1E1C43] hover:text-white transition">
-              <Pencil size={14} /> Edit Invoice
+              onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors">
+              <ArrowLeft size={13} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
             </button>
-          )}
-          <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
-            <Download size={14} /> Download PDF
-          </button>
-          {invoice.status === 'paid' && (
-            <button
-              onClick={() => navigate('/pp/receipt', { state: { filterSearch: invoice.invNo } })}
-              className="flex items-center gap-1.5 px-4 py-2.5 border-[1.5px] border-primary text-primary text-sm font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-              Lihat Receipt
-            </button>
-          )}
-          {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-            <button
-              onClick={() => setModal('markPaid')}
-              className="flex items-center gap-1.5 px-4 py-2.5 bg-[#27AE60] hover:bg-[#1E8449] text-white text-sm font-semibold rounded-lg transition-colors">
-              <CheckCircle size={14} /> Konfirmasi Pembayaran
-            </button>
-          )}
+          </div>
         </div>
       </div>
 
