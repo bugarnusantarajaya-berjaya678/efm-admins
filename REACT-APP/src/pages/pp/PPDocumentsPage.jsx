@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, ChevronLeft, ChevronRight, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, LayoutList, GripVertical, Pencil } from 'lucide-react'
+import { FileText, ChevronLeft, ChevronRight, ChevronDown, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, GripVertical, Pencil } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 
@@ -685,7 +685,8 @@ export default function PPDocumentsPage() {
   const [fPaket, setFPaket] = useState('')
   const [fSearch, setFSearch] = useState('')
   const [page, setPage] = useState(1)
-  const [activeTab, setActiveTab] = useState('list')
+  const [showTemplate, setShowTemplate] = useState(false)
+  const templateMenuRef = useRef(null)
 
   const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
   const filtered = useMemo(() => {
@@ -746,12 +747,24 @@ export default function PPDocumentsPage() {
               <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
             </div>
           </div>
-          <button
-            onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } }) : navigate('/pp/orders')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
-          >
-            <ArrowLeft size={12} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke PP Orders'}
-          </button>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="relative" ref={templateMenuRef}>
+              <button
+                onClick={() => setShowTemplate(v => !v)}
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                <Settings size={14} />
+                Template Agreement
+                <ChevronDown size={13} className={`transition-transform duration-200 ${showTemplate ? 'rotate-180' : ''}`} />
+              </button>
+            </div>
+            <button
+              onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } }) : navigate('/pp/orders')}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            >
+              <ArrowLeft size={12} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke PP Orders'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -763,25 +776,9 @@ export default function PPDocumentsPage() {
         <StatMini label="Total Agreement" value={stats.total} color="navy" />
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1.5 bg-white rounded-xl border border-gray-200 p-1.5">
-        <button
-          onClick={() => setActiveTab('list')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors flex-1 justify-center ${activeTab === 'list' ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-        >
-          <LayoutList size={14} /> Daftar Agreement
-        </button>
-        <button
-          onClick={() => setActiveTab('template')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-colors flex-1 justify-center ${activeTab === 'template' ? 'bg-[#1E1C43] text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-        >
-          <Settings size={14} /> Template Agreement
-        </button>
-      </div>
+      {showTemplate && <TemplateEditor />}
 
-      {activeTab === 'template' && <TemplateEditor />}
-
-      {activeTab === 'list' && (<>
+      <>
       {/* Filters */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
@@ -917,7 +914,7 @@ export default function PPDocumentsPage() {
           </div>
         </div>
       </div>
-      </>)}
+      </>
 
     </div>
   )
