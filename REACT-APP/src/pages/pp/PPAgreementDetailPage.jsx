@@ -73,8 +73,60 @@ function ClientSig({ status }) {
   )
 }
 
+/* ── Settings helpers ── */
+function getCompanySettings() {
+  try {
+    const s = localStorage.getItem('efmCompanySettings')
+    return s ? JSON.parse(s) : {}
+  } catch { return {} }
+}
+
+function getTemplatePasal() {
+  try {
+    const s = localStorage.getItem('efmAgreementTemplate')
+    if (s) return JSON.parse(s).pasal
+  } catch {}
+  return null
+}
+
+const DEFAULT_PASAL_DETAIL = [
+  { judul: 'Ruang Lingkup Layanan', poin: [
+    'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
+    'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
+  ]},
+  { judul: 'Masa Berlaku Paket (Validity Period)', poin: [
+    'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
+    'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
+  ]},
+  { judul: 'Kebijakan Pembatalan dan Penjadwalan Ulang', poin: [
+    'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
+    'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
+    'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
+    'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
+  ]},
+  { judul: 'Pembayaran dan Validasi Order', poin: [
+    'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
+    'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
+  ]},
+  { judul: 'Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', poin: [
+    'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
+    'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
+    'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
+  ]},
+  { judul: 'Kerjasama dan Etika dengan Pelatih/Terapis', poin: [
+    'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
+    'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+  ]},
+  { judul: 'Pernyataan Kesadaran dan Persetujuan', poin: [
+    'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
+    'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
+    'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
+  ]},
+]
+
 /* ── Agreement Document ── */
 function AgreementDoc({ doc }) {
+  const company = getCompanySettings()
   const detailCells = [
     ['Nama Klien',     doc.namaKlien],
     ['Nama Panggilan', doc.namaPanggilan || '—'],
@@ -102,7 +154,7 @@ function AgreementDoc({ doc }) {
       <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18, flexWrap: 'wrap', gap: 12 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <img src="/logo.png" style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+            <img src={company.logoPerusahaan || '/logo.png'} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
               onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} alt="EFM" />
             <div style={{ display: 'none', width: 52, height: 52, borderRadius: '50%', background: '#E8781A', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
@@ -138,44 +190,11 @@ function AgreementDoc({ doc }) {
       {/* Syarat & Ketentuan */}
       <div className="mb-6 px-6">
         <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200">Syarat dan Ketentuan Layanan</div>
-        {[
-          ['Pasal 1', 'Ruang Lingkup Layanan', [
-            'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
-            'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
-          ]],
-          ['Pasal 2', 'Masa Berlaku Paket (Validity Period)', [
-            'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
-            'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
-          ]],
-          ['Pasal 3', 'Kebijakan Pembatalan dan Penjadwalan Ulang', [
-            'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
-            'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
-            'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
-            'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
-          ]],
-          ['Pasal 4', 'Pembayaran dan Validasi Order', [
-            'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
-            'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
-          ]],
-          ['Pasal 5', 'Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', [
-            'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
-            'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
-            'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
-          ]],
-          ['Pasal 6', 'Kerjasama dan Etika dengan Pelatih/Terapis', [
-            'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
-            'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
-          ]],
-          ['Pasal 7', 'Pernyataan Kesadaran dan Persetujuan', [
-            'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
-            'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
-            'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
-          ]],
-        ].map(([pasalNum, pasalNama, poin]) => (
-          <div key={pasalNum} className="mb-3.5">
+        {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
+          <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
-              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">{pasalNum}</div>
-              <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide">{pasalNama}</div>
+              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
@@ -193,10 +212,12 @@ function AgreementDoc({ doc }) {
           <div>
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-2">Pihak Pertama — EFM</div>
             <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
-              <EfmSig />
+              {company.tandaTanganCEO
+                ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
+                : <EfmSig />}
             </div>
-            <div className="text-[11px] text-[#1E1C43] font-semibold">Manajemen EFM</div>
-            <div className="text-[10px] text-text-muted">Ditandatangani secara digital</div>
+            <div className="text-[11px] text-[#1E1C43] font-semibold">{company.namaPenandatangan || 'Manajemen EFM'}</div>
+            <div className="text-[10px] text-text-muted">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</div>
           </div>
           <div>
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-2">Pihak Kedua — Klien</div>
