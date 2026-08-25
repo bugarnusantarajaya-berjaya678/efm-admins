@@ -768,6 +768,8 @@ export default function PPDocumentsPage() {
         </div>
       </div>
 
+      {showTemplate ? <TemplateEditor /> : (<>
+
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatMini label="Pending TTD" value={stats.pending} color="yellow" />
@@ -776,9 +778,6 @@ export default function PPDocumentsPage() {
         <StatMini label="Total Agreement" value={stats.total} color="navy" />
       </div>
 
-      {showTemplate && <TemplateEditor />}
-
-      <>
       {/* Filters */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
@@ -914,7 +913,7 @@ export default function PPDocumentsPage() {
           </div>
         </div>
       </div>
-      </>
+      </>)}
 
     </div>
   )
