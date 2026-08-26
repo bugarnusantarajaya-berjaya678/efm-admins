@@ -115,13 +115,17 @@ function TemplateInvoiceEditor({ onClose }) {
         <div className="flex items-center gap-2 flex-wrap">
           {editMode ? (
             <>
+              <button onClick={handleReset}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                <RotateCcw size={12} /> Reset Default
+              </button>
               <button onClick={cancelEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                 <X size={12} /> Batal
               </button>
               <button onClick={handleSave} disabled={!dirty}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 disabled:opacity-40 transition-colors">
-                <Save size={12} /> Simpan Template
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-xs font-semibold disabled:opacity-40 transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}>
+                <Save size={12} /> {savedOk ? 'Tersimpan!' : 'Simpan Template'}
               </button>
             </>
           ) : (
@@ -129,18 +133,14 @@ function TemplateInvoiceEditor({ onClose }) {
               {savedOk && (
                 <span className="text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-lg">✓ Tersimpan</span>
               )}
-              <button onClick={handleReset}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors">
-                <RotateCcw size={12} /> Reset Default
-              </button>
               <button onClick={enterEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold transition-colors">
                 <Pencil size={12} /> Edit Template
               </button>
             </>
           )}
           <button onClick={onClose}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
             <X size={12} /> Tutup
           </button>
         </div>
@@ -152,6 +152,28 @@ function TemplateInvoiceEditor({ onClose }) {
           <span className="font-semibold">Info:</span> Syarat &amp; Ketentuan ini akan tampil di semua invoice Private Training yang dicetak atau di-download. Perubahan tidak mempengaruhi invoice yang sudah dikirim sebelumnya.
         </p>
       </div>
+
+      {/* View mode hint */}
+      {!editMode && (
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <p className="text-[11px] text-gray-500">Mode tampilan — klik <strong className="text-[#1E1C43]">Edit Template</strong> untuk mulai mengedit baris.</p>
+        </div>
+      )}
+
+      {/* Dirty warning */}
+      {editMode && dirty && (
+        <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100">
+          <p className="text-[11px] text-yellow-700 font-medium">Ada perubahan yang belum disimpan — klik <strong>Simpan Template</strong> untuk menyimpan.</p>
+        </div>
+      )}
+
+      {/* Drag hint */}
+      {editMode && (
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+          <GripVertical size={13} className="text-gray-400" />
+          <p className="text-[11px] text-gray-500">Drag handle untuk mengubah urutan baris.</p>
+        </div>
+      )}
 
       {/* Items list */}
       <div className="p-5 space-y-2">

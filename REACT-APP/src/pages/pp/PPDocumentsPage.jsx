@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, ChevronLeft, ChevronRight, ChevronDown, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, GripVertical, Pencil } from 'lucide-react'
+import { FileText, ChevronLeft, ChevronRight, ChevronDown, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, GripVertical, Pencil, X } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 
@@ -69,7 +69,7 @@ const DEFAULT_PASAL = [
 ]
 
 /* ── Template Editor ── */
-function TemplateEditor() {
+function TemplateEditor({ onClose }) {
   const [pasal, setPasal] = useState(() => {
     try {
       const saved = localStorage.getItem('efmAgreementTemplate')
@@ -135,70 +135,83 @@ function TemplateEditor() {
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Info + action bar */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-start gap-3">
-          <div className="w-8 h-8 rounded-lg bg-[rgba(30,28,67,.08)] flex items-center justify-center shrink-0 mt-0.5">
-            <Settings size={15} color="#1E1C43" />
+    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#1E1C43] flex items-center justify-center shrink-0">
+            <FileText size={16} className="text-white" />
           </div>
           <div>
-            <p className="text-sm font-bold text-[#1E1C43]">Template Syarat & Ketentuan Agreement</p>
-            <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Pasal-pasal di sini digunakan di semua agreement baru yang digenerate sistem. Perubahan tidak mempengaruhi agreement yang sudah ada.</p>
+            <h2 className="text-sm font-bold text-[#1E1C43]">Template Syarat &amp; Ketentuan Agreement</h2>
+            <p className="text-[11px] text-gray-500 mt-0.5">Berlaku untuk semua agreement Private Training</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          {!editMode ? (
-            <button
-              onClick={enterEdit}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-xs font-semibold text-white transition-colors"
-            >
-              <Pencil size={12} /> Edit Template
-            </button>
-          ) : (
+        <div className="flex items-center gap-2 flex-wrap">
+          {editMode ? (
             <>
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-              >
+              <button onClick={handleReset}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                 <RotateCcw size={12} /> Reset Default
               </button>
-              <button
-                onClick={cancelEdit}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-xs font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-              >
-                Batal
+              <button onClick={cancelEdit}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                <X size={12} /> Batal
               </button>
-              <button
-                onClick={handleSave}
-                className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold text-white transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}
-              >
+              <button onClick={handleSave}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-xs font-semibold transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}>
                 <Save size={12} /> {savedOk ? 'Tersimpan!' : 'Simpan Perubahan'}
               </button>
             </>
+          ) : (
+            <>
+              {savedOk && (
+                <span className="text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-lg">✓ Tersimpan</span>
+              )}
+              <button onClick={enterEdit}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold transition-colors">
+                <Pencil size={12} /> Edit Template
+              </button>
+            </>
           )}
+          <button onClick={onClose}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+            <X size={12} /> Tutup
+          </button>
         </div>
       </div>
 
+      {/* Info banner */}
+      <div className="px-5 py-3 bg-blue-50 border-b border-blue-100">
+        <p className="text-[11px] text-blue-700">
+          <span className="font-semibold">Info:</span> Pasal-pasal di sini digunakan di semua agreement baru yang digenerate sistem. Perubahan tidak mempengaruhi agreement yang sudah ada.
+        </p>
+      </div>
+
+      {/* View mode hint */}
       {!editMode && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-2.5 text-xs text-blue-700 font-medium">
-          Mode tampilan — klik <strong>Edit Template</strong> untuk mulai mengedit pasal.
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <p className="text-[11px] text-gray-500">Mode tampilan — klik <strong className="text-[#1E1C43]">Edit Template</strong> untuk mulai mengedit pasal.</p>
         </div>
       )}
 
+      {/* Dirty warning */}
       {editMode && dirty && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-2.5 text-xs text-yellow-700 font-medium">
-          Ada perubahan yang belum disimpan — klik <strong>Simpan Perubahan</strong> untuk menyimpan.
+        <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100">
+          <p className="text-[11px] text-yellow-700 font-medium">Ada perubahan yang belum disimpan — klik <strong>Simpan Perubahan</strong> untuk menyimpan.</p>
         </div>
       )}
 
+      {/* Drag hint */}
       {editMode && (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 text-xs text-gray-500 flex items-center gap-2">
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
           <GripVertical size={13} className="text-gray-400" />
-          Drag handle di kiri kartu untuk mengubah urutan pasal.
+          <p className="text-[11px] text-gray-500">Drag handle di kiri kartu untuk mengubah urutan pasal.</p>
         </div>
       )}
 
+      {/* Pasal list */}
+      <div className="p-5 flex flex-col gap-4">
       {/* Pasal cards */}
       {pasal.map((ps, pi) => (
         <div
@@ -294,6 +307,7 @@ function TemplateEditor() {
           <Plus size={15} /> Tambah Pasal Baru
         </button>
       )}
+      </div>
     </div>
   )
 }
@@ -772,7 +786,7 @@ export default function PPDocumentsPage() {
         </div>
       </div>
 
-      {showTemplate ? <TemplateEditor /> : (<>
+      {showTemplate ? <TemplateEditor onClose={() => setShowTemplate(false)} /> : (<>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
