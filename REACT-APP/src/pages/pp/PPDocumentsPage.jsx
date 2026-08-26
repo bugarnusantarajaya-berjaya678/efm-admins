@@ -751,11 +751,15 @@ export default function PPDocumentsPage() {
             <div className="relative" ref={templateMenuRef}>
               <button
                 onClick={() => setShowTemplate(v => !v)}
-                className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-xs font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border ${
+                  showTemplate
+                    ? 'bg-[#1E1C43] text-white border-[#1E1C43]'
+                    : 'border-[#1E1C43] text-[#1E1C43] hover:bg-[#1E1C43] hover:text-white'
+                }`}
               >
-                <Settings size={14} />
+                <Settings size={12} />
                 Template Agreement
-                <ChevronDown size={13} className={`transition-transform duration-200 ${showTemplate ? 'rotate-180' : ''}`} />
+                <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
               </button>
             </div>
             <button
