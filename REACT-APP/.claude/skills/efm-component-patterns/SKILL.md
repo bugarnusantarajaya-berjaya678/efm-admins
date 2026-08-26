@@ -1,6 +1,6 @@
 ---
 name: efm-component-patterns
-description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, pipeline/stage progress visual, and the official List Page Template (Header + KPI cards + Filter bar + Table with pagination). MUST be checked before building any modal, image preview, invoice page, activity/history log, leads pipeline visual, or list page in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper", "add a new list page").
+description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, pipeline/stage progress visual, the official List Page Template (Header + KPI cards + Filter bar + Table with pagination), and the localStorage-backed Template Editor Container (Invoice + Agreement). MUST be checked before building any modal, image preview, invoice page, activity/history log, leads pipeline visual, list page, or template editor in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper", "add a new list page", "add a template editor").
 ---
 
 # EFM V2 Component Patterns
@@ -135,11 +135,13 @@ Used for: full invoice pages (PPInvoicePage, B2BInvoicePage, EventInvoicePage) �
 
 8. **Footer** — centered gray text: "Dokumen ini digenerate oleh sistem EFM V2"
 
-**Edit mode behavior**
-- Toggled by "Edit Invoice" button
-- Tanggal/Jatuh Tempo become date inputs (Jatuh Tempo minimum H+2 from Tanggal), Catatan becomes textarea, Syarat & Ketentuan becomes editable list, discount/tax fields become interactive
-- Footer switches to "Batal" / "Simpan" buttons instead of the normal action row
-- All calculation numbers update live as edits are made
+**Edit mode behavior (PP module — di Order Detail, bukan di Invoice Detail)**
+- PP Invoice Detail adalah **read-only** — tidak ada tombol "Edit Invoice" di halaman detail invoice
+- Edit fields (Tanggal Invoice, Jatuh Tempo, Kode Diskon, Catatan) ada di tab "Kontrak & Keuangan" di PPOrderDetailPage, dalam section "Invoice & Pembayaran Klien"
+- Klik "Edit Invoice" di Order Detail → fields jadi editable (date input, textarea, kode diskon input)
+- Jatuh Tempo: minimum H+2 dari Tanggal Invoice, default auto-set T+14 saat Tanggal berubah
+- Syarat & Ketentuan di Invoice Detail dibaca dari localStorage (`efmInvoiceTemplate`) — dikelola via Template Editor di PPInvoicePage (lihat Section 12)
+- B2B/Event: Invoice Detail masih punya edit mode lengkap (termasuk PPN, pajak kustom, management fee)
 
 ---
 
@@ -1040,4 +1042,215 @@ const orderLocked   = !!orderInStore  // false jika ID tidak valid
 - Tanggal assessment, catatan, goals
 - Data tes fisik (berat, tinggi, lingkar badan, dll.)
 - Riwayat cedera, obatan-obatan, kondisi saat ini
+
+---
+
+## 12. Template Editor Container (localStorage, Drag-reorder)
+
+Used for: panel editor Syarat & Ketentuan yang dapat dikustomisasi dan disimpan di localStorage — Invoice (flat string list) dan Agreement (nested pasal/poin). Kedua editor berbagi struktur container yang **identik** — selalu gunakan pola ini, jangan improvisasi struktur baru.
+
+### Struktur container (wajib)
+
+```jsx
+<div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+  {/* Header */}
+  <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between gap-3 flex-wrap">
+    <div className="flex items-center gap-3">
+      <div className="w-9 h-9 rounded-xl bg-[#1E1C43] flex items-center justify-center shrink-0">
+        <ScrollText size={16} className="text-white" /> {/* atau FileText */}
+      </div>
+      <div>
+        <h2 className="text-sm font-bold text-[#1E1C43]">Template Syarat &amp; Ketentuan ...</h2>
+        <p className="text-[11px] text-gray-500 mt-0.5">Berlaku untuk semua ... Private Training</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2 flex-wrap">
+      {editMode ? (
+        <>
+          <button onClick={handleReset}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+            <RotateCcw size={12} /> Reset Default
+          </button>
+          <button onClick={cancelEdit}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+            <X size={12} /> Batal
+          </button>
+          <button onClick={handleSave}
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-xs font-semibold transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}>
+            <Save size={12} /> {savedOk ? 'Tersimpan!' : 'Simpan'}
+          </button>
+        </>
+      ) : (
+        <>
+          {savedOk && (
+            <span className="text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-lg">✓ Tersimpan</span>
+          )}
+          <button onClick={enterEdit}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold transition-colors">
+            <Pencil size={12} /> Edit Template
+          </button>
+        </>
+      )}
+      <button onClick={onClose}
+        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+        <X size={12} /> Tutup
+      </button>
+    </div>
+  </div>
+
+  {/* Info banner — selalu visible */}
+  <div className="px-5 py-3 bg-blue-50 border-b border-blue-100">
+    <p className="text-[11px] text-blue-700">
+      <span className="font-semibold">Info:</span> Perubahan tidak mempengaruhi dokumen yang sudah ada.
+    </p>
+  </div>
+
+  {/* View mode hint — hanya saat tidak edit */}
+  {!editMode && (
+    <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+      <p className="text-[11px] text-gray-500">
+        Mode tampilan — klik <strong className="text-[#1E1C43]">Edit Template</strong> untuk mulai mengedit.
+      </p>
+    </div>
+  )}
+
+  {/* Dirty warning — hanya saat edit + ada unsaved changes */}
+  {editMode && dirty && (
+    <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100">
+      <p className="text-[11px] text-yellow-700 font-medium">
+        Ada perubahan yang belum disimpan — klik <strong>Simpan</strong> untuk menyimpan.
+      </p>
+    </div>
+  )}
+
+  {/* Drag hint — hanya saat edit mode */}
+  {editMode && (
+    <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+      <GripVertical size={13} className="text-gray-400" />
+      <p className="text-[11px] text-gray-500">Drag handle untuk mengubah urutan.</p>
+    </div>
+  )}
+
+  {/* Content area */}
+  <div className="p-5 flex flex-col gap-4">
+    {/* item rows (Invoice) atau pasal cards (Agreement) */}
+  </div>
+</div>
+```
+
+### Button hierarchy (wajib, semua `px-3.5 py-2 text-xs font-semibold rounded-lg`)
+
+| Mode | Tombol | Style |
+|---|---|---|
+| Read mode | Edit Template | `bg-[#1E1C43] hover:bg-[#2d2b5c] text-white` — navy **solid** |
+| Read mode | Tutup | `bg-[#E05945] hover:bg-[#c94a38] text-white` — accent orange |
+| Edit mode | Reset Default | `border border-gray-300 text-gray-600 hover:bg-gray-50` — gray outline |
+| Edit mode | Batal | `border border-gray-300 text-gray-600 hover:bg-gray-50` — gray outline |
+| Edit mode | Simpan | `bg-[#1E1C43] hover:bg-[#2d2b5c] text-white` / `bg-green-500` jika savedOk |
+| Edit mode | Tutup | `bg-[#E05945] hover:bg-[#c94a38] text-white` — **selalu visible** |
+
+Jangan pakai `h-8 px-3` — semua button template editor wajib `px-3.5 py-2`.
+
+### Header toggle button (di page header)
+
+Tombol yang membuka/menutup editor dari halaman list — conditional style berdasarkan `showTemplate`:
+
+```jsx
+<button
+  onClick={() => setShowTemplate(v => !v)}
+  className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border ${
+    showTemplate
+      ? 'bg-[#1E1C43] text-white border-[#1E1C43]'
+      : 'border-[#1E1C43] text-[#1E1C43] hover:bg-[#1E1C43] hover:text-white'
+  }`}
+>
+  <Settings size={12} /> Template Invoice
+  <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
+</button>
+```
+
+Active (editor terbuka): navy solid. Inactive: navy outline. Icon rotate-180 saat active.
+
+### State wajib di dalam editor
+
+```js
+const [dirty,       setDirty]       = useState(false)
+const [savedOk,     setSavedOk]     = useState(false)
+const [editMode,    setEditMode]    = useState(false)
+const [dragOverIdx, setDragOverIdx] = useState(null)
+const dragIdx      = useRef(null)
+const editSnapshot = useRef(null)
+```
+
+### cancelEdit — restore snapshot
+
+```js
+const enterEdit  = () => { editSnapshot.current = [...items]; setEditMode(true) }
+const cancelEdit = () => {
+  if (editSnapshot.current) { setItems(editSnapshot.current); setDirty(false) }
+  setEditMode(false); setSavedOk(false)
+}
+```
+
+### localStorage — dua format berbeda
+
+**Invoice** (flat string list):
+```js
+// Key: 'efmInvoiceTemplate'  |  Shape: { items: string[] }
+const [items, setItems] = useState(() => {
+  try {
+    const saved = localStorage.getItem('efmInvoiceTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return [...DEFAULT_INV_SYARAT]
+})
+// Save: localStorage.setItem('efmInvoiceTemplate', JSON.stringify({ items }))
+// Reset: localStorage.removeItem('efmInvoiceTemplate')
+```
+
+**Agreement** (nested pasal/poin):
+```js
+// Key: 'efmAgreementTemplate'  |  Shape: { pasal: [{ id, judul, poin: string[] }] }
+const [pasal, setPasal] = useState(() => {
+  try {
+    const saved = localStorage.getItem('efmAgreementTemplate')
+    if (saved) return JSON.parse(saved).pasal
+  } catch {}
+  return DEFAULT_PASAL.map(p => ({ ...p, poin: [...p.poin] }))
+})
+```
+
+**Invoice Detail** membaca template saat render (bukan saat edit):
+```js
+function getSyaratList() {
+  try {
+    const saved = localStorage.getItem('efmInvoiceTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return DEFAULT_SYARAT
+}
+const syaratList = getSyaratList()
+```
+
+### Render pattern di parent
+
+Editor menggantikan konten utama halaman list (bukan modal/sidebar):
+
+```jsx
+{showTemplate ? (
+  <TemplateEditor onClose={() => setShowTemplate(false)} />
+) : (
+  <>
+    {/* stats + filter + table */}
+  </>
+)}
+```
+
+**Implementasi:** `PPInvoicePage.jsx` (`TemplateInvoiceEditor`) dan `PPDocumentsPage.jsx` (`TemplateEditor`).
 
