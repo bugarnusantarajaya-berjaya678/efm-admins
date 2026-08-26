@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, ScrollText } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
+import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 
 const DEFAULT_SYARAT = [
   'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
@@ -113,10 +114,24 @@ export default function PPInvoiceDetailPage() {
   const subtotalBase   = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (invoice.biayaLain || 0)
   const statusBadgeCls = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
   const syaratList     = getSyaratList()
+  const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
   function handleMarkPaid({ paidDate, payMethod }) {
     setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
     setModal(null)
+    navigate('/pp/receipt', {
+      state: {
+        createNew: true,
+        prefill: {
+          invNo: invoice.invNo,
+          orderId: invoice.orderId,
+          client: invoice.client,
+          paket: invoice.paket,
+          pic: invoice.pic,
+          total: subtotalBase,
+        }
+      }
+    })
   }
 
   return (
@@ -145,12 +160,18 @@ export default function PPInvoiceDetailPage() {
             <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
               <Download size={13} /> Download PDF
             </button>
-            {invoice.status === 'paid' && (
+            {invoice.status === 'paid' && existingReceipt && (
               <button
-                onClick={() => navigate('/pp/receipt', { state: { filterSearch: invoice.invNo } })}
+                onClick={() => navigate('/pp/receipt/' + existingReceipt.rcpNo, { state: { receipt: existingReceipt } })}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-primary text-primary text-xs font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                Lihat Receipt
+                <Receipt size={13} /> Lihat Receipt
+              </button>
+            )}
+            {invoice.status === 'paid' && !existingReceipt && (
+              <button
+                onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                <Plus size={13} /> Buat Receipt
               </button>
             )}
             {(invoice.status === 'pending' || invoice.status === 'overdue') && (
