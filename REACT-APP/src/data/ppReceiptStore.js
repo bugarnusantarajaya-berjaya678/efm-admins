@@ -12,6 +12,10 @@ export function getReceiptByOrderId(orderId) {
   return _store.find(r => r.orderId === orderId) || null
 }
 
+export function getReceiptByInvNo(invNo) {
+  return _store.find(r => r.invNo === invNo) || null
+}
+
 export function addReceipt(receipt) {
   if (_store.some(r => r.rcpNo === receipt.rcpNo)) return
   _store = [receipt, ..._store]
