@@ -1364,11 +1364,6 @@ export default function PPOrderDetailPage() {
                           className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white disabled:opacity-40 transition-colors">
                           <Edit2 size={12} /> Edit Invoice
                         </button>
-                        <button
-                          onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
-                          <Eye size={12} /> Buka Invoice
-                        </button>
                         {invoicePayStatus !== 'sudah_bayar' && (
                           <button
                             onClick={() => setShowKonfirmasiPayModal(true)}
@@ -1489,6 +1484,20 @@ export default function PPOrderDetailPage() {
                       <p className="text-xs text-yellow-700 font-medium">Jatuh tempo dalam {daysLeft} hari ({fmtDate(invoicePP.jatuhTempo)})</p>
                     </div>
                   )}
+
+                  {/* Buka Invoice row — selalu tampil */}
+                  <div className="flex items-center justify-between bg-gray-50 rounded-xl px-4 py-3">
+                    <div>
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Invoice</p>
+                      <p className="text-sm font-semibold text-[#1E1C43]">{invoicePP.nomorInvoice}</p>
+                    </div>
+                    <button
+                      onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors"
+                    >
+                      <Eye size={12} /> Buka Invoice
+                    </button>
+                  </div>
 
                   {/* Lunas state: bukti + receipt */}
                   {invoicePayStatus === 'sudah_bayar' && (
