@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search } from 'lucide-react'
 import { initLeads, getStoredLeads } from '../../data/ppLeadsStore'
@@ -29,6 +29,7 @@ const SUMBER_OPTS    = ['Website','Referral','Meta Ads','Google Ads','Walk-in','
 const PIC_OPTS       = ['Sarah Jenkins','Marcus Chen','Admin EFM']
 const PROGRAM_OPTS   = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 const PIPELINE_STAGES = ['New','Approach','Screening','Invoicing','Closing','Convert','Lost']
+const ROWS_PER_PAGE   = 10
 
 /* ═══════════════════════════════════════
    Dummy Data
@@ -134,6 +135,189 @@ const LEADS_INIT = [
       { status: 'New',      oleh: 'Sarah Jenkins', tanggal: '15 Jun 2026', catatan: 'Lead masuk dari iklan' },
     ],
   },
+  {
+    id: 'LP-0006',
+    nama: 'Emily Chen',
+    tipe: 'Personal',
+    noHp: '082345678901',
+    sumberLead: 'Meta Ads',
+    picEfm: 'Sarah Jenkins',
+    programDiminati: 'Fatloss & Bodyshape',
+    emailUmum: 'emily.chen@email.com',
+    catatanAwal: 'Tertarik fatloss program, butuh jadwal fleksibel',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0012',
+    tanggalMasuk: '12 Mar 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0012',
+    logAktivitas: [
+      { status: 'Convert',   oleh: 'Sarah Jenkins', tanggal: '20 Mar 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '18 Mar 2026', catatan: 'Klien setuju paket' },
+      { status: 'New',       oleh: 'Sarah Jenkins', tanggal: '12 Mar 2026', catatan: 'Lead masuk dari Meta Ads' },
+    ],
+  },
+  {
+    id: 'LP-0007',
+    nama: 'Kevin Hartanto',
+    tipe: 'Personal',
+    noHp: '081345678901',
+    sumberLead: 'Referral',
+    picEfm: 'Marcus Chen',
+    programDiminati: '12 Sesi - Pro',
+    emailUmum: 'kevin.hartanto@email.com',
+    catatanAwal: 'Direferensikan oleh James Wilson',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0004',
+    tanggalMasuk: '18 Apr 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0004',
+    logAktivitas: [
+      { status: 'Convert',   oleh: 'Marcus Chen', tanggal: '25 Apr 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'Screening', oleh: 'Marcus Chen', tanggal: '22 Apr 2026', catatan: 'Screening kesehatan selesai' },
+      { status: 'New',       oleh: 'Marcus Chen', tanggal: '18 Apr 2026', catatan: 'Lead masuk dari referral' },
+    ],
+  },
+  {
+    id: 'LP-0008',
+    nama: 'Natasha Putri',
+    tipe: 'Personal',
+    noHp: '087811223344',
+    sumberLead: 'Instagram',
+    picEfm: 'Sarah Jenkins',
+    programDiminati: 'Tennis',
+    emailUmum: 'natasha.putri@email.com',
+    catatanAwal: 'Menemukan EFM dari Instagram, mau coba tennis',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0001',
+    tanggalMasuk: '22 Apr 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0001',
+    logAktivitas: [
+      { status: 'Convert', oleh: 'Sarah Jenkins', tanggal: '30 Apr 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'New',     oleh: 'Sarah Jenkins', tanggal: '22 Apr 2026', catatan: 'Lead masuk dari Instagram DM' },
+    ],
+  },
+  {
+    id: 'LP-0009',
+    nama: 'Ahmad Fauzi',
+    tipe: 'Personal',
+    noHp: '081122334455',
+    sumberLead: 'Walk-in',
+    picEfm: 'Marcus Chen',
+    programDiminati: '12 Sesi - Pro',
+    emailUmum: 'ahmad.fauzi@email.com',
+    catatanAwal: 'Datang langsung, sudah komitmen mulai bulan depan',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0002',
+    tanggalMasuk: '5 Mei 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0002',
+    logAktivitas: [
+      { status: 'Convert', oleh: 'Marcus Chen', tanggal: '10 Mei 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'New',     oleh: 'Marcus Chen', tanggal: '5 Mei 2026',  catatan: 'Walk-in langsung ke lokasi' },
+    ],
+  },
+  {
+    id: 'LP-0010',
+    nama: 'Yoga Pratama',
+    tipe: 'Group',
+    noHp: '087700112233',
+    sumberLead: 'Google Ads',
+    picEfm: 'Sarah Jenkins',
+    programDiminati: 'Tennis Group',
+    emailUmum: 'yoga.pratama@email.com',
+    catatanAwal: 'Ingin daftar grup 3 orang, jadwal weekend',
+    statusPipeline: 'Invoicing',
+    tanggalMasuk: '2 Jul 2026',
+    tanggalFollowUp: '2026-07-20',
+    catatan: 'Invoice sudah dikirim, menunggu konfirmasi pembayaran',
+    logAktivitas: [
+      { status: 'Invoicing', oleh: 'Sarah Jenkins', tanggal: '12 Jul 2026', catatan: 'Invoice dikirim via WhatsApp' },
+      { status: 'Screening', oleh: 'Sarah Jenkins', tanggal: '8 Jul 2026',  catatan: 'Screening group selesai' },
+      { status: 'New',       oleh: 'Sarah Jenkins', tanggal: '2 Jul 2026',  catatan: 'Lead masuk dari Google Ads' },
+    ],
+  },
+  {
+    id: 'LP-0011',
+    nama: 'Maya Indriati',
+    tipe: 'Personal',
+    noHp: '082233445566',
+    sumberLead: 'Website',
+    picEfm: 'Marcus Chen',
+    programDiminati: 'Fatloss & Bodyshape',
+    emailUmum: 'maya.indriati@email.com',
+    catatanAwal: 'Submit form website, tertarik program 8 sesi',
+    statusPipeline: 'Closing',
+    tanggalMasuk: '10 Jul 2026',
+    tanggalFollowUp: '2026-07-25',
+    catatan: 'Negosiasi harga, hampir deal',
+    logAktivitas: [
+      { status: 'Closing',   oleh: 'Marcus Chen', tanggal: '18 Jul 2026', catatan: 'Diskusi paket, hampir sepakat' },
+      { status: 'Invoicing', oleh: 'Marcus Chen', tanggal: '15 Jul 2026', catatan: 'Draft invoice dikirim' },
+      { status: 'Screening', oleh: 'Marcus Chen', tanggal: '13 Jul 2026', catatan: 'Screening selesai, hasil baik' },
+      { status: 'New',       oleh: 'Marcus Chen', tanggal: '10 Jul 2026', catatan: 'Lead dari form website' },
+    ],
+  },
+  {
+    id: 'LP-0012',
+    nama: 'Fiona Santika',
+    tipe: 'Personal',
+    noHp: '081988776655',
+    sumberLead: 'Referral',
+    picEfm: 'Sarah Jenkins',
+    programDiminati: 'Tennis',
+    emailUmum: 'fiona.santika@email.com',
+    catatanAwal: 'Referral dari teman, minat yoga dan tenis',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0003',
+    tanggalMasuk: '15 Agu 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0003',
+    logAktivitas: [
+      { status: 'Convert', oleh: 'Sarah Jenkins', tanggal: '22 Agu 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'New',     oleh: 'Sarah Jenkins', tanggal: '15 Agu 2026', catatan: 'Lead masuk dari referral' },
+    ],
+  },
+  {
+    id: 'LP-0013',
+    nama: 'Robert Taylor',
+    tipe: 'Personal',
+    noHp: '081567890123',
+    sumberLead: 'Website',
+    picEfm: 'Marcus Chen',
+    programDiminati: '12 Sesi - Pro',
+    emailUmum: 'robert.taylor@email.com',
+    catatanAwal: 'Expat, mencari personal trainer profesional',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0011',
+    tanggalMasuk: '22 Sep 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0011',
+    logAktivitas: [
+      { status: 'Convert', oleh: 'Marcus Chen', tanggal: '28 Sep 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'New',     oleh: 'Marcus Chen', tanggal: '22 Sep 2026', catatan: 'Lead dari form website' },
+    ],
+  },
+  {
+    id: 'LP-0014',
+    nama: 'Anita Suryani',
+    tipe: 'Personal',
+    noHp: '085599887766',
+    sumberLead: 'Meta Ads',
+    picEfm: 'Sarah Jenkins',
+    programDiminati: 'Fatloss & Bodyshape',
+    emailUmum: 'anita.suryani@email.com',
+    catatanAwal: 'Tertarik fatloss, target 5 kg dalam 2 bulan',
+    statusPipeline: 'Convert',
+    orderId: 'PP-26-0010',
+    tanggalMasuk: '1 Okt 2026',
+    tanggalFollowUp: null,
+    catatan: 'Sudah convert ke Order PP-26-0010',
+    logAktivitas: [
+      { status: 'Convert', oleh: 'Sarah Jenkins', tanggal: '8 Okt 2026', catatan: 'Order berhasil dibuat' },
+      { status: 'New',     oleh: 'Sarah Jenkins', tanggal: '1 Okt 2026', catatan: 'Lead masuk dari Meta Ads' },
+    ],
+  },
 ]
 
 /* ═══════════════════════════════════════
@@ -190,6 +374,21 @@ function StatMini({ label, value, sub, accent }) {
   )
 }
 
+function LeadsPageBtn({ label, onClick, disabled, active }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className={[
+        'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold border transition-colors',
+        active   ? 'bg-[#1E1C43] text-white border-[#1E1C43]'           : '',
+        disabled ? 'opacity-35 cursor-not-allowed border-gray-200 text-gray-400' : '',
+        !active && !disabled ? 'border-gray-200 text-gray-600 hover:border-[#1E1C43] hover:text-[#1E1C43]' : '',
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  )
+}
+
 /* ═══════════════════════════════════════
    Main Page
 ═══════════════════════════════════════ */
@@ -202,11 +401,14 @@ export default function PPLeadsPage() {
   const [tipe,        setTipe]        = useState('')
   const [stage,       setStage]       = useState('')
   const [search,      setSearch]      = useState('')
+  const [page,        setPage]        = useState(1)
   const [toast,       setToast]       = useState(null)
 
   function showToastMsg(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
-  function handleReset() { setBulan(''); setTahun(''); setTipe(''); setStage(''); setSearch('') }
+  function handleReset() { setBulan(''); setTahun(''); setTipe(''); setStage(''); setSearch(''); setPage(1) }
+
+  useEffect(() => { setPage(1) }, [bulan, tahun, tipe, stage, search])
 
   const filtered = useMemo(() => leads
     .filter(l => {
@@ -224,6 +426,10 @@ export default function PPLeadsPage() {
   const kpiHot       = leads.filter(l => l.statusPipeline === 'Screening' || l.statusPipeline === 'Invoicing').length
   const kpiConverted = leads.filter(l => l.statusPipeline === 'Convert').length
   const kpiLost      = leads.filter(l => l.statusPipeline === 'Lost').length
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE))
+  const safePage   = Math.min(page, totalPages)
+  const pageRows   = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE)
 
   return (
     <>
@@ -287,9 +493,9 @@ export default function PPLeadsPage() {
 
         {/* Table */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto w-full">
+          <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
             <table className="w-full" style={{ minWidth: '1170px' }}>
-              <thead>
+              <thead className="sticky top-0 z-10">
                 <tr className="bg-gray-50 border-b border-gray-100">
                   {[
                     ['Leads ID',110],['Nama',160],['Tipe',110],['No HP',130],
@@ -301,9 +507,9 @@ export default function PPLeadsPage() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.length === 0 ? (
+                {pageRows.length === 0 ? (
                   <tr><td colSpan={9} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
-                ) : filtered.map(lead => (
+                ) : pageRows.map(lead => (
                   <tr key={lead.id} onClick={() => navigate('/pp/leads/' + lead.id, { state: { lead } })}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{lead.id}</td>
@@ -328,11 +534,17 @@ export default function PPLeadsPage() {
               </tbody>
             </table>
           </div>
-          <div className="px-5 py-3 border-t border-gray-100">
-            <p className="text-[12px] text-text-muted">
-              Menampilkan <span className="font-semibold text-text-primary">{filtered.length}</span> dari{' '}
-              <span className="font-semibold text-text-primary">{leads.length}</span> leads
+          <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
+            <p className="text-xs text-text-muted">
+              Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} leads
             </p>
+            <div className="flex items-center gap-1">
+              <LeadsPageBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1} />
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                <LeadsPageBtn key={p} label={p} onClick={() => setPage(p)} active={p === safePage} />
+              ))}
+              <LeadsPageBtn label="›" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} />
+            </div>
           </div>
         </div>
       </div>

@@ -553,9 +553,9 @@ export default function PPOrdersPage() {
 
       {/* Table */}
       <div className="bg-bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
           <table className="w-full text-sm min-w-[1100px]">
-            <thead>
+            <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th style={{minWidth:'130px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Order ID</th>
                 <th style={{minWidth:'160px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Nama Klien</th>
