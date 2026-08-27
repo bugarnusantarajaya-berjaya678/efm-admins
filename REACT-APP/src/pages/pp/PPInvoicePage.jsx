@@ -275,7 +275,7 @@ export default function PPInvoicePage() {
     <div className="flex flex-col gap-4">
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <ScrollText size={20} className="text-white" />
@@ -285,10 +285,10 @@ export default function PPInvoicePage() {
               <p className="text-sm text-text-muted mt-0.5">Semua tagihan klien program private</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap shrink-0">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => setShowTemplate(v => !v)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border ${
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border w-full sm:w-auto ${
                 showTemplate
                   ? 'bg-[#1E1C43] text-white border-[#1E1C43]'
                   : 'border-[#1E1C43] text-[#1E1C43] hover:bg-[#1E1C43] hover:text-white'
@@ -298,7 +298,7 @@ export default function PPInvoicePage() {
             </button>
             <button
               onClick={() => navigate('/pp/orders')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors w-full sm:w-auto"
             >
               <ArrowLeft size={12} /> Kembali ke PP Orders
             </button>
