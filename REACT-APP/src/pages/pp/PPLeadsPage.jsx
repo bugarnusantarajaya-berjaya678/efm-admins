@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Plus, Search } from 'lucide-react'
+import { X, Plus, Search, MessageCircle } from 'lucide-react'
 import { initLeads, getStoredLeads } from '../../data/ppLeadsStore'
 
 
@@ -363,6 +363,30 @@ function Toast({ message, onClose }) {
   )
 }
 
+function buildWANumber(raw = '') {
+  const digits = raw.replace(/\D/g, '')
+  if (digits.startsWith('62')) return digits
+  if (digits.startsWith('0')) return '62' + digits.slice(1)
+  return '62' + digits
+}
+
+function openLeadWA(lead, e) {
+  e.stopPropagation()
+  const msg = [
+    `Halo *${lead.sapaan} ${lead.nama}*,`,
+    '',
+    `Saya dari *Essential Fitness Management* 👋`,
+    '',
+    `Kami melihat Anda tertarik dengan program *${lead.programDiminati}* bersama kami.`,
+    '',
+    `Boleh kami jadwalkan sesi konsultasi gratis untuk mengenal program kami lebih lanjut? 🏋️`,
+    '',
+    `_Essential Fitness Management_`,
+  ].join('\n')
+  const waNum = buildWANumber(lead.noHp)
+  window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank')
+}
+
 const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
 function getInitials(name) {
   return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
@@ -537,7 +561,17 @@ export default function PPLeadsPage() {
                       </div>
                     </td>
                     <td className="px-3 py-2.5"><TipeBadge tipe={lead.tipe} /></td>
-                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.noHp}</td>
+                    <td className="px-3 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs text-gray-600">{lead.noHp}</span>
+                        <button
+                          onClick={e => openLeadWA(lead, e)}
+                          title="Kirim WA"
+                          className="w-5 h-5 rounded-full bg-[#25D366] hover:bg-[#1DA851] flex items-center justify-center transition-colors shrink-0">
+                          <MessageCircle size={10} className="text-white" />
+                        </button>
+                      </div>
+                    </td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.programDiminati}</td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.sumberLead}</td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.picEfm}</td>

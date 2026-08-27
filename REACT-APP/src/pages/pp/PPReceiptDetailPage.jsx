@@ -4,6 +4,7 @@ import { ArrowLeft, MessageCircle, Download, Receipt } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
+import { getCompanySettings } from '../../utils/companySettings'
 
 function QRPlaceholder({ label }) {
   return (
@@ -126,12 +127,28 @@ export default function PPReceiptDetailPage() {
   }
 
   function handleResendWA() {
+    const cs = getCompanySettings()
+    const msg = [
+      `Halo *${receipt.sapaan} ${receipt.client}*,`,
+      '',
+      `Pembayaran Anda telah kami terima & dikonfirmasi ✅`,
+      '',
+      `📄 *Receipt #${receipt.rcpNo}*`,
+      `📋 Ref. Invoice: ${receipt.invNo}`,
+      `📅 Tanggal Bayar: ${receipt.tglBayar}`,
+      `💳 Metode: ${receipt.metode}`,
+      `🏃 Program: ${receipt.paket}`,
+      `💰 Total: ${formatRp(receipt.total)}`,
+      '',
+      `Terima kasih telah mempercayakan program fitness Anda kepada kami. Selamat berlatih! 💪`,
+      `_Essential Fitness Management_`,
+    ].join('\n')
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
     setReceipt(prev => ({
       ...prev,
       waStatus: 'sent',
       waTgl: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
     }))
-    alert(`Receipt ${receipt.rcpNo} berhasil dikirim via WhatsApp!`)
   }
 
   return (
@@ -159,7 +176,7 @@ export default function PPReceiptDetailPage() {
             <button
               onClick={handleResendWA}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-              <MessageCircle size={13} /> Resend WA
+              <MessageCircle size={13} /> Kirim WA
             </button>
             <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
               <Download size={13} /> Download PDF
