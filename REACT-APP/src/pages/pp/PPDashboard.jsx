@@ -93,21 +93,19 @@ const INV_LBL   = { paid: 'Lunas', pending: 'Pending', overdue: 'Overdue' }
 const formatRp = (n) => 'Rp ' + n.toLocaleString('id-ID')
 
 function KpiCard({ label, value, sub, icon: Icon, accent, onClick }) {
-  const border = { orange: 'border-l-[#E05945]', red: 'border-l-red-500', green: 'border-l-green-500', blue: 'border-l-blue-500' }[accent] || 'border-l-gray-200'
-  const valCls = { orange: 'text-[#E05945]', red: 'text-red-600', green: 'text-green-600', blue: 'text-blue-600' }[accent] || 'text-[#1E1C43]'
+  const dotCls = { orange: 'bg-[#E05945]', red: 'bg-red-500', green: 'bg-green-500', blue: 'bg-blue-500' }[accent]
   return (
     <div
       onClick={onClick}
-      className={`bg-white rounded-xl border border-gray-100 border-l-4 ${border} p-4 ${onClick ? 'cursor-pointer hover:bg-gray-50' : ''} transition-all`}
+      className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 relative ${onClick ? 'cursor-pointer hover:shadow-md' : ''} transition-shadow`}
     >
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</p>
-          <p className={`text-2xl font-bold mt-1 ${valCls}`}>{value}</p>
-          {sub && <p className={`text-xs mt-0.5 ${accent ? valCls : 'text-gray-500'}`}>{sub}</p>}
-        </div>
-        {Icon && <Icon size={18} className="text-gray-300 mt-0.5" />}
+      {Icon && <Icon size={16} className="absolute top-4 right-4 text-gray-300" />}
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 pr-6">{label}</p>
+      <div className="flex items-center gap-1.5">
+        <p className="text-xl font-bold text-[#1E1C43]">{value}</p>
+        {dotCls && <span className={`w-2 h-2 rounded-full ${dotCls} shrink-0 mb-0.5`} />}
       </div>
+      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
     </div>
   )
 }
