@@ -13,6 +13,7 @@ export const getCompanySettings = () => {
     namaLegal: 'CV. Bugar Nusantara Jaya',
     alamat: "Jl. Terogong Raya No. 18, Hampton's Park Apartment, Tower A, Cilandak Barat, Jakarta Selatan",
     email: 'essentialfitnessmanagement@gmail.com',
+    telepon: '+62 811-1992-0666',
     website: 'www.essentialfitnessmanagement.com',
     whatsapp: '+62 811-1992-0666',
     namaBank: 'BCA',
