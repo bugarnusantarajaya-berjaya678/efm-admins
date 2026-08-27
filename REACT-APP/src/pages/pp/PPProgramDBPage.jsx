@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Plus, Search, Edit2, Trash2 } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { PROGRAMS_INIT, PIC_DB, JENIS_OPTS, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 
 const ROWS = 10
@@ -85,7 +85,7 @@ function PBtn({ children, active, onClick }) {
 
 /* ─── Add/Edit Modal ─── */
 
-function ProgramModal({ prog, onClose, onSave, existingIds }) {
+function ProgramModal({ prog, onClose, onSave, onDelete, existingIds }) {
   const isEdit = !!prog
   const [form, setForm] = useState(isEdit ? { ...prog, sesi: String(prog.sesi), pertemuan: String(prog.pertemuan), partisipan: String(prog.partisipan), biayaSesiPIC: String(prog.biayaSesiPIC), hargaPersesi: String(prog.hargaPersesi), diskonPaket: String(prog.diskonPaket), harga: String(prog.harga) } : { ...EMPTY_FORM })
 
@@ -148,6 +148,11 @@ function ProgramModal({ prog, onClose, onSave, existingIds }) {
       title={isEdit ? `Edit Program — ${prog.id}` : 'Tambah Program Baru'}
       onClose={onClose}
       footer={<>
+        {isEdit && onDelete && (
+          <button onClick={onDelete} className="mr-auto px-4 py-2 text-sm font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
+            Hapus Program
+          </button>
+        )}
         <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-text-muted border border-border rounded-lg hover:bg-bg-page">Batal</button>
         <button onClick={handleSave} className="px-4 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg flex items-center gap-1.5">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -367,19 +372,19 @@ export default function PPProgramDBPage() {
           <table className="w-full text-sm" style={{ minWidth: '1200px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['ID Program','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status','Aksi'].map(h => (
+                {['ID Program','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status'].map(h => (
                   <th key={h} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {slice.length === 0 ? (
-                <tr><td colSpan={12} className="py-10 text-center text-sm text-text-muted">Tidak ada program yang sesuai filter</td></tr>
+                <tr><td colSpan={11} className="py-10 text-center text-sm text-text-muted">Tidak ada program yang sesuai filter</td></tr>
               ) : slice.map((p, ri) => {
                 const realIdx = programs.indexOf(p)
                 const pic = PIC_DB[p.picId] || {}
                 return (
-                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150">
+                  <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer" onClick={() => setModal({ idx: realIdx, prog: p })}>
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{p.id}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5">{p.namaLatihan}</td>
                     <td className="text-xs font-medium text-gray-900 px-3 py-2.5">{p.namaPaket}</td>
@@ -394,24 +399,6 @@ export default function PPProgramDBPage() {
                     <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.biayaSesiPIC)}</td>
                     <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.harga)}</td>
                     <td className="px-3 py-2.5 text-center"><Badge status={p.status} /></td>
-                    <td className="px-3 py-2.5">
-                      <div className="flex items-center gap-1 justify-center">
-                        <button
-                          onClick={() => setModal({ idx: realIdx, prog: p })}
-                          className="w-7 h-7 rounded-lg border border-border flex items-center justify-center text-text-muted hover:border-primary hover:text-primary hover:bg-bg-page transition-colors"
-                          title="Edit"
-                        >
-                          <Edit2 size={13} />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(realIdx)}
-                          className="w-7 h-7 rounded-lg border border-border flex items-center justify-center text-text-muted hover:border-danger hover:text-danger hover:bg-[#FDEDEC] transition-colors"
-                          title="Hapus"
-                        >
-                          <Trash2 size={13} />
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 )
               })}
@@ -442,6 +429,7 @@ export default function PPProgramDBPage() {
           prog={modal === 'add' ? null : modal.prog}
           onClose={() => setModal(null)}
           onSave={handleSave}
+          onDelete={modal !== 'add' ? () => { handleDelete(modal.idx); setModal(null) } : undefined}
           existingIds={programs.map(p => p.id)}
         />
       )}
