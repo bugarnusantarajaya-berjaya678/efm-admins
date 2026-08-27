@@ -379,6 +379,7 @@ export default function PPLeadDetailPage() {
     { key: 'info',      label: 'Info Klien'         },
     { key: 'kesehatan', label: 'Progres & Kesehatan' },
     { key: 'riwayat',   label: 'Riwayat'            },
+    { key: 'log',       label: 'Log Aktivitas'       },
   ]
 
   return (
@@ -626,31 +627,6 @@ export default function PPLeadDetailPage() {
                   </div>
                 )}
               </div>
-            </div>
-
-            {/* Log Aktivitas */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Log Aktivitas</h3>
-              {(lead.logAktivitas || []).length === 0 ? (
-                <p className="text-sm text-gray-400 italic">Belum ada aktivitas.</p>
-              ) : (
-                <div className="space-y-0">
-                  {[...(lead.logAktivitas || [])].reverse().map((log, i, arr) => (
-                    <div key={i} className={`pl-4 pb-4 border-l-2 ${STAGE_BORDER[log.status] ?? 'border-gray-300'} ${i === arr.length - 1 ? 'border-transparent' : ''}`}>
-                      <div className="flex items-center justify-between mb-0.5">
-                        <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                            {log.status}
-                          </span>
-                          {log.oleh && <span className="text-[10px] text-gray-400">— {log.oleh}</span>}
-                        </div>
-                        <span className="text-[10px] text-gray-400">{log.tanggal}</span>
-                      </div>
-                      <p className="text-xs text-gray-600">{log.catatan}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
             </div>
 
           </div>
@@ -975,6 +951,36 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 4: LOG AKTIVITAS
+        ════════════════════════════════ */}
+        {activeTab === 'log' && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Log Aktivitas</h3>
+            <p className="text-xs text-gray-400 pl-4 -mt-3 mb-4">Semua update aktivitas, perubahan pipeline, dan edit data lead</p>
+            {(lead.logAktivitas || []).length === 0 ? (
+              <p className="text-sm text-gray-400 italic">Belum ada aktivitas.</p>
+            ) : (
+              <div className="space-y-0">
+                {[...(lead.logAktivitas || [])].reverse().map((log, i, arr) => (
+                  <div key={i} className={`pl-4 pb-4 border-l-2 ${STAGE_BORDER[log.status] ?? 'border-gray-300'} ${i === arr.length - 1 ? 'border-transparent' : ''}`}>
+                    <div className="flex items-center justify-between mb-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                          {log.status}
+                        </span>
+                        {log.oleh && <span className="text-[10px] text-gray-400">— {log.oleh}</span>}
+                      </div>
+                      <span className="text-[10px] text-gray-400">{log.tanggal}</span>
+                    </div>
+                    <p className="text-xs text-gray-600">{log.catatan}</p>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

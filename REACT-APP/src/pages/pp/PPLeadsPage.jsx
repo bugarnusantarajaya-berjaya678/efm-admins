@@ -324,13 +324,13 @@ export default function PPLeadsPage() {
         {/* Table */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-x-auto w-full">
-            <table className="w-full" style={{ minWidth: '1270px' }}>
+            <table className="w-full" style={{ minWidth: '1170px' }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   {[
                     ['Leads ID',110],['Nama',160],['Tipe',110],['No HP',130],
                     ['Program Diminati',160],['Sumber',120],['PIC EFM',130],
-                    ['Status Pipeline',120],['Tanggal Masuk',120],['Aksi',100],
+                    ['Status Pipeline',120],['Tanggal Masuk',120],
                   ].map(([h, mw]) => (
                     <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
@@ -338,7 +338,7 @@ export default function PPLeadsPage() {
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
-                  <tr><td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
+                  <tr><td colSpan={9} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
                 ) : filtered.map(lead => (
                   <tr key={lead.id} onClick={() => navigate('/pp/leads/' + lead.id, { state: { lead } })}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
@@ -359,12 +359,6 @@ export default function PPLeadsPage() {
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.picEfm}</td>
                     <td className="px-3 py-2.5"><StageBadge stage={lead.statusPipeline} /></td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.tanggalMasuk}</td>
-                    <td className="px-3 py-2.5">
-                      <button onClick={e => { e.stopPropagation(); navigate('/pp/leads/' + lead.id, { state: { lead } }) }}
-                        className="text-xs text-[#1E1C43] font-medium hover:underline whitespace-nowrap">
-                        Detail →
-                      </button>
-                    </td>
                   </tr>
                 ))}
               </tbody>
