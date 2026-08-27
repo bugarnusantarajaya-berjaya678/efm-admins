@@ -454,22 +454,36 @@ export default function PPLeadDetailPage() {
 
             {/* Status Pipeline */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between px-5 pt-5 pb-0 mb-5">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Status Pipeline</h3>
-                {!editingPipeline && (
-                  <button
-                    onClick={() => { setEditingPipeline(true); setNewStage(lead.statusPipeline) }}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                    <Edit2 size={12} /> Update Pipeline
-                  </button>
-                )}
+                <div className="flex gap-2">
+                  {editingPipeline ? (
+                    <>
+                      <button
+                        onClick={handleUpdatePipeline}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                        <Save size={12} /> Simpan
+                      </button>
+                      <button
+                        onClick={() => setEditingPipeline(false)}
+                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                        <X size={12} /> Batal
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => { setEditingPipeline(true); setNewStage(lead.statusPipeline) }}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                      <Edit2 size={12} /> Update Pipeline
+                    </button>
+                  )}
+                </div>
               </div>
-              <div className="px-5 pb-5">
+              <div className="px-5 py-5">
                 <PipelineStepper currentStage={lead.statusPipeline} />
-                <div className="border-t border-gray-100 pt-4">
-                  {editingPipeline && (
+                {editingPipeline && (
+                  <div className="border-t border-gray-100 pt-4 mt-2">
                     <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                      <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Update Status</p>
                       <div className="grid grid-cols-2 gap-3">
                         <div>
                           <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
@@ -490,19 +504,9 @@ export default function PPLeadDetailPage() {
                           placeholder="Catatan perubahan status..."
                           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
                       </div>
-                      <div className="flex gap-2">
-                        <button onClick={handleUpdatePipeline}
-                          className="flex-1 bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                          ✓ Simpan Perubahan
-                        </button>
-                        <button onClick={() => setEditingPipeline(false)}
-                          className="px-4 py-2 border border-gray-200 text-gray-600 text-xs font-medium rounded-lg hover:bg-gray-50 transition-colors">
-                          Batal
-                        </button>
-                      </div>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
             </div>
 
