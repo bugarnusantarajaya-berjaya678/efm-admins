@@ -841,10 +841,10 @@ export default function PPDocumentsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto w-full">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)', minHeight: '280px' }}>
           <table className="w-full text-[13px]" style={{ minWidth: '1540px' }}>
-            <thead>
+            <thead className="sticky top-0 z-10">
               <tr className="border-b border-gray-100 bg-gray-50">
                 <th style={{minWidth:'160px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Agreement</th>
                 <th style={{minWidth:'170px'}} className="text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-3 py-2.5 whitespace-nowrap">No. Receipt</th>

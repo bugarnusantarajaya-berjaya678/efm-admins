@@ -343,10 +343,10 @@ export default function PPInvoicePage() {
             <button onClick={reset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
           </div>
 
-          <div className="bg-bg-surface border border-border rounded-xl overflow-hidden">
-            <div className="overflow-x-auto">
+          <div className="bg-bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+            <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 360px)', minHeight: '280px' }}>
               <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
-                <thead>
+                <thead className="sticky top-0 z-10">
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th style={{minWidth:'165px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">No. Invoice</th>
                     <th style={{minWidth:'130px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Order ID</th>
