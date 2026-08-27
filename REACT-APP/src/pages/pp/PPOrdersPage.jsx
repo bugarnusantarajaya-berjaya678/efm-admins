@@ -465,7 +465,7 @@ export default function PPOrdersPage() {
               <ChevronDown size={13} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
             </button>
             {showDocMenu && (
-              <div className="absolute right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
+              <div className="absolute left-0 sm:left-auto sm:right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
                 {[
                   { icon: FileText,     label: 'Invoice',    path: '/pp/invoice' },
                   { icon: Receipt,      label: 'Receipt',    path: '/pp/receipt' },
