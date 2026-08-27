@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
+import { getCompanySettings } from '../../utils/companySettings'
 
 const DEFAULT_SYARAT = [
   'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
@@ -116,6 +117,53 @@ export default function PPInvoiceDetailPage() {
   const syaratList     = getSyaratList()
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
+  function handleKirimWA() {
+    const cs = getCompanySettings()
+    const msg = [
+      `Halo *${invoice.sapaan} ${invoice.client}*,`,
+      '',
+      `Berikut kami sampaikan invoice untuk program Private Training Anda di *Essential Fitness Management* 🏋️`,
+      '',
+      `📋 *Invoice #${invoice.invNo}*`,
+      `📅 Tanggal: ${invoice.tanggal}`,
+      `⏰ Jatuh Tempo: ${invoice.due}`,
+      `🏃 Program: Private Training — ${invoice.paket}`,
+      `👤 Pelatih: ${invoice.pic}`,
+      `💰 Total: ${formatRp(subtotalBase)}`,
+      '',
+      `Mohon lakukan pembayaran sebelum tanggal jatuh tempo ke:`,
+      `🏦 ${cs.namaBank}: ${cs.nomorRekening} a.n. ${cs.atasNamaRekening}`,
+      '',
+      `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
+      '',
+      `Terima kasih 🙏`,
+      `_Essential Fitness Management_`,
+    ].join('\n')
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+  }
+
+  function handleReminderWA() {
+    const cs = getCompanySettings()
+    const msg = [
+      `Halo *${invoice.sapaan} ${invoice.client}*,`,
+      '',
+      `Kami ingin mengingatkan bahwa invoice berikut masih belum terbayar:`,
+      '',
+      `📋 *Invoice #${invoice.invNo}*`,
+      `⏰ Jatuh Tempo: ${invoice.due}`,
+      `💰 Total: ${formatRp(subtotalBase)}`,
+      '',
+      `Mohon segera lakukan pembayaran ke:`,
+      `🏦 ${cs.namaBank}: ${cs.nomorRekening} a.n. ${cs.atasNamaRekening}`,
+      '',
+      `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
+      '',
+      `Jika ada pertanyaan, silakan hubungi kami. Terima kasih 🙏`,
+      `_Essential Fitness Management_`,
+    ].join('\n')
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+  }
+
   function handleMarkPaid({ paidDate, payMethod }) {
     setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
     setModal(null)
@@ -157,6 +205,18 @@ export default function PPInvoiceDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <button
+              onClick={handleKirimWA}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
+              <MessageCircle size={13} /> Kirim WA
+            </button>
+            {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+              <button
+                onClick={handleReminderWA}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-[#25D366] text-[#25D366] text-xs font-semibold rounded-lg hover:bg-[#25D366] hover:text-white transition-colors">
+                <MessageCircle size={13} /> Reminder WA
+              </button>
+            )}
             <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
               <Download size={13} /> Download PDF
             </button>
