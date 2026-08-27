@@ -536,12 +536,7 @@ export default function PPLeadsPage() {
           </div>
           <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
             <p className="text-xs text-text-muted">
-              Menampilkan{' '}
-              <span className="font-semibold text-text-primary">
-                {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)}
-              </span>
-              {' '}dari{' '}
-              <span className="font-semibold text-text-primary">{filtered.length}</span> leads
+              Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} leads
             </p>
             <div className="flex items-center gap-1">
               <LeadsPageBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1} />
