@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Eye, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList, ChevronDown } from 'lucide-react'
+import { Plus, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList, ChevronDown } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -565,12 +565,11 @@ export default function PPOrdersPage() {
                 <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tgl. Mulai</th>
                 <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status Order</th>
                 <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status Invoice</th>
-                <th style={{minWidth:'100px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {pageRows.length === 0 ? (
-                <tr><td colSpan={9} className="text-center py-12 text-text-muted text-sm">Tidak ada order yang sesuai filter.</td></tr>
+                <tr><td colSpan={8} className="text-center py-12 text-text-muted text-sm">Tidak ada order yang sesuai filter.</td></tr>
               ) : pageRows.map((order) => {
                 const isHighlighted = order.id === highlightId
                 return (
@@ -604,25 +603,6 @@ export default function PPOrdersPage() {
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{order.tglMulai}</td>
                   <td className="px-3 py-2.5"><Badge type="order" status={order.statusOrder} /></td>
                   <td className="px-3 py-2.5"><Badge type="inv"   status={order.statusInv}   /></td>
-                  <td className="px-3 py-2.5" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        title="Detail"
-                        onClick={() => navigate('/pp/orders/' + order.id)}
-                        className="w-7 h-7 flex items-center justify-center rounded-lg border border-border bg-bg-page text-text-muted hover:border-primary hover:text-primary transition-colors"
-                      >
-                        <Eye size={13} />
-                      </button>
-                      <button
-                        title="Lihat Invoice"
-                        onClick={() => navigate('/pp/invoice', { state: { filterSearch: order.invNo } })}
-                        className="flex items-center gap-1 px-2 h-7 rounded-lg border border-[#FAD7A0] bg-[#FEF9E7] text-[#B7770D] hover:bg-[#FDEBD0] transition-colors text-[11px] font-semibold whitespace-nowrap"
-                      >
-                        <Receipt size={12} />
-                        Invoice
-                      </button>
-                    </div>
-                  </td>
                 </tr>
               )})}
             </tbody>
