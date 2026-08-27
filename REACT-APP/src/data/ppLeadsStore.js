@@ -102,3 +102,24 @@ export function getLeadHealthById(leadId) {
 export function updateLeadHealth(leadId, patch) {
   _healthStore = { ..._healthStore, [leadId]: { ...(_healthStore[leadId] || {}), ...patch, sudahDiisi: true } }
 }
+
+// ─── Module-level leads store (cross-page state sharing) ─────────────────────
+let _leads = null
+
+export function initLeads(initialLeads) {
+  if (_leads === null) _leads = [...initialLeads]
+}
+
+export function getStoredLeads() {
+  return _leads ? [..._leads] : []
+}
+
+export function addStoredLead(lead) {
+  if (!_leads) _leads = []
+  _leads = [..._leads, lead]
+}
+
+export function getNextLeadId() {
+  const n = _leads ? _leads.length + 1 : 1
+  return 'LP-' + String(n).padStart(4, '0')
+}

@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search } from 'lucide-react'
+import { initLeads, getStoredLeads } from '../../data/ppLeadsStore'
 
 
 /* ═══════════════════════════════════════
@@ -28,11 +29,6 @@ const SUMBER_OPTS    = ['Website','Referral','Meta Ads','Google Ads','Walk-in','
 const PIC_OPTS       = ['Sarah Jenkins','Marcus Chen','Admin EFM']
 const PROGRAM_OPTS   = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 const PIPELINE_STAGES = ['New','Approach','Screening','Invoicing','Closing','Convert','Lost']
-
-const emptyLeadForm = {
-  nama: '', tipe: 'Personal', noHp: '', emailUmum: '',
-  sumberLead: '', picEfm: 'Sarah Jenkins', programDiminati: '', catatanAwal: '',
-}
 
 /* ═══════════════════════════════════════
    Dummy Data
@@ -200,10 +196,7 @@ function StatMini({ label, value, sub, accent }) {
 export default function PPLeadsPage() {
   const navigate = useNavigate()
 
-  const [leads,       setLeads]       = useState(LEADS_INIT)
-  const [showAddLead, setShowAddLead] = useState(false)
-  const [leadForm,    setLeadForm]    = useState({ ...emptyLeadForm })
-  const [formErrors,  setFormErrors]  = useState({})
+  const [leads] = useState(() => { initLeads(LEADS_INIT); return getStoredLeads() })
   const [bulan,       setBulan]       = useState('')
   const [tahun,       setTahun]       = useState('')
   const [tipe,        setTipe]        = useState('')
@@ -214,31 +207,6 @@ export default function PPLeadsPage() {
   function showToastMsg(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
   function handleReset() { setBulan(''); setTahun(''); setTipe(''); setStage(''); setSearch('') }
-
-  function handleSaveLead() {
-    const errors = {}
-    if (!leadForm.nama.trim())          errors.nama            = 'Wajib diisi'
-    if (!leadForm.noHp.trim())          errors.noHp            = 'Wajib diisi'
-    if (!leadForm.emailUmum.trim())     errors.emailUmum       = 'Wajib diisi'
-    if (!leadForm.sumberLead)           errors.sumberLead      = 'Wajib dipilih'
-    if (!leadForm.programDiminati)      errors.programDiminati = 'Wajib dipilih'
-    if (Object.keys(errors).length > 0) { setFormErrors(errors); return }
-    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-    const newId = 'LP-' + String(leads.length + 1).padStart(4, '0')
-    setLeads(prev => [...prev, {
-      ...leadForm,
-      id: newId,
-      statusPipeline: 'New',
-      tanggalMasuk: today,
-      tanggalFollowUp: null,
-      catatan: '',
-      logAktivitas: [{ tanggal: today, status: 'New', catatan: leadForm.catatanAwal || 'Lead baru ditambahkan', oleh: leadForm.picEfm }],
-    }])
-    setShowAddLead(false)
-    setLeadForm({ ...emptyLeadForm })
-    setFormErrors({})
-    showToastMsg('✓ Lead baru berhasil ditambahkan')
-  }
 
   const filtered = useMemo(() => leads
     .filter(l => {
@@ -257,10 +225,6 @@ export default function PPLeadsPage() {
   const kpiConverted = leads.filter(l => l.statusPipeline === 'Convert').length
   const kpiLost      = leads.filter(l => l.statusPipeline === 'Lost').length
 
-  function fieldCls(key) {
-    return `w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] ${formErrors[key] ? 'border-red-400' : 'border-gray-200'}`
-  }
-
   return (
     <>
       <div className="space-y-5">
@@ -273,7 +237,7 @@ export default function PPLeadsPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => { setLeadForm({ ...emptyLeadForm }); setFormErrors({}); setShowAddLead(true) }}
+              onClick={() => navigate('/pp/leads/new')}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
             >
               <Plus size={15} strokeWidth={2.5} /> Tambah Lead
@@ -372,110 +336,6 @@ export default function PPLeadsPage() {
           </div>
         </div>
       </div>
-
-      {/* ═══════════════════════════════════════
-          MODAL: TAMBAH LEAD BARU
-      ═══════════════════════════════════════ */}
-      {showAddLead && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl my-8">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-semibold text-[#1E1C43]">Tambah Lead Baru</h2>
-              <button onClick={() => { setShowAddLead(false); setLeadForm({ ...emptyLeadForm }); setFormErrors({}) }}
-                className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-            </div>
-            <div className="px-6 py-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    Nama Klien <span className="text-red-500">*</span>
-                  </label>
-                  <input type="text" value={leadForm.nama}
-                    onChange={e => { setLeadForm(p => ({ ...p, nama: e.target.value })); setFormErrors(p => ({ ...p, nama: '' })) }}
-                    placeholder="Nama lengkap klien"
-                    className={fieldCls('nama')}
-                  />
-                  {formErrors.nama && <p className="text-red-500 text-[10px] mt-1">{formErrors.nama}</p>}
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    Tipe <span className="text-red-500">*</span>
-                  </label>
-                  <select value={leadForm.tipe} onChange={e => setLeadForm(p => ({ ...p, tipe: e.target.value }))}
-                    className={fieldCls('tipe')}>
-                    <option>Personal</option><option>Group</option><option>Couple</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    Sumber Lead <span className="text-red-500">*</span>
-                  </label>
-                  <select value={leadForm.sumberLead}
-                    onChange={e => { setLeadForm(p => ({ ...p, sumberLead: e.target.value })); setFormErrors(p => ({ ...p, sumberLead: '' })) }}
-                    className={fieldCls('sumberLead')}>
-                    <option value="">Pilih Sumber...</option>
-                    {SUMBER_OPTS.map(s => <option key={s}>{s}</option>)}
-                  </select>
-                  {formErrors.sumberLead && <p className="text-red-500 text-[10px] mt-1">{formErrors.sumberLead}</p>}
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    No HP / WhatsApp <span className="text-red-500">*</span>
-                  </label>
-                  <input type="text" value={leadForm.noHp}
-                    onChange={e => { setLeadForm(p => ({ ...p, noHp: e.target.value })); setFormErrors(p => ({ ...p, noHp: '' })) }}
-                    placeholder="08xx-xxxx-xxxx"
-                    className={fieldCls('noHp')}
-                  />
-                  {formErrors.noHp && <p className="text-red-500 text-[10px] mt-1">{formErrors.noHp}</p>}
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    Email Umum <span className="text-red-500">*</span>
-                  </label>
-                  <input type="email" value={leadForm.emailUmum}
-                    onChange={e => { setLeadForm(p => ({ ...p, emailUmum: e.target.value })); setFormErrors(p => ({ ...p, emailUmum: '' })) }}
-                    placeholder="email@example.com"
-                    className={fieldCls('emailUmum')}
-                  />
-                  {formErrors.emailUmum && <p className="text-red-500 text-[10px] mt-1">{formErrors.emailUmum}</p>}
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">
-                    Program Diminati <span className="text-red-500">*</span>
-                  </label>
-                  <select value={leadForm.programDiminati}
-                    onChange={e => { setLeadForm(p => ({ ...p, programDiminati: e.target.value })); setFormErrors(p => ({ ...p, programDiminati: '' })) }}
-                    className={fieldCls('programDiminati')}>
-                    <option value="">Pilih Program...</option>
-                    {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
-                  </select>
-                  {formErrors.programDiminati && <p className="text-red-500 text-[10px] mt-1">{formErrors.programDiminati}</p>}
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">PIC EFM</label>
-                  <select value={leadForm.picEfm} onChange={e => setLeadForm(p => ({ ...p, picEfm: e.target.value }))}
-                    className={fieldCls('picEfm')}>
-                    {PIC_OPTS.map(p => <option key={p}>{p}</option>)}
-                  </select>
-                </div>
-                <div className="col-span-2">
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1">Catatan Awal</label>
-                  <textarea value={leadForm.catatanAwal} onChange={e => setLeadForm(p => ({ ...p, catatanAwal: e.target.value }))}
-                    rows={3} placeholder="Sumber lead, konteks awal, atau catatan penting..."
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
-              <button onClick={() => { setShowAddLead(false); setLeadForm({ ...emptyLeadForm }); setFormErrors({}) }}
-                className="border border-gray-200 text-gray-600 text-sm px-4 py-2 rounded-lg hover:bg-gray-50">Batal</button>
-              <button onClick={handleSaveLead}
-                className="bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">Simpan Lead</button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Toast */}
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
