@@ -133,10 +133,10 @@ export default function PPProgramDBPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-bg-surface border border-border rounded-xl overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="bg-bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)', minHeight: '280px' }}>
           <table className="w-full text-sm" style={{ minWidth: '1200px' }}>
-            <thead>
+            <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 {['ID Program','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status'].map(h => (
                   <th key={h} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
