@@ -48,8 +48,6 @@ const OPS_SUB = [
   { label: 'Pelatih',    path: '/ops/pelatih'           },
   { label: 'Mitra',      path: '/ops/mitra'             },
   { label: 'Aset',       path: '/ops/assets'            },
-  { label: 'Absensi',    path: '/ops/pelatih/absensi'   },
-  { label: 'Honorarium', path: '/ops/pelatih/honorarium' },
   { label: 'Kontrak PKS', path: '/ops/pelatih/kontrak'  },
 ]
 
@@ -95,7 +93,7 @@ export default function Sidebar({ isOpen, onClose }) {
   const isPPRoute      = location.pathname.startsWith('/pp')
   const isB2BRoute     = location.pathname.startsWith('/b2b')
   const isEventRoute   = location.pathname.startsWith('/event')
-  const isOpsRoute     = ['/ops/', '/attendance', '/payment'].some(p => location.pathname.startsWith(p))
+  const isOpsRoute     = location.pathname.startsWith('/ops/')
   const isLaporanRoute = location.pathname.startsWith('/laporan')
   const [openMenu, setOpenMenu] = useState(
     isPPRoute ? 'pp' : isB2BRoute ? 'b2b' : isEventRoute ? 'event' : isOpsRoute ? 'ops' : isLaporanRoute ? 'laporan' : null
