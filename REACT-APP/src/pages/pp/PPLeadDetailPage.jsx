@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload, Eye } from 'lucide-react'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
+import { getAllOrders } from '../../data/ppOrdersStore'
+import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
@@ -141,16 +143,6 @@ const LEADS_FALLBACK = [
 ]
 
 
-
-/* ── Riwayat order per lead ── */
-const RIWAYAT_ORDERS_DUMMY = {
-  'LP-0001': [
-    { orderId: 'PP-26-0013', status: 'Aktif', paket: '12 Sesi - Pro', tanggalMulai: '22 Okt 2026', nilaiKontrak: 14400000, sesiSelesai: 6, totalSesi: 12 },
-  ],
-  'LP-0006': [
-    { orderId: 'PP-26-0012', status: 'Selesai', paket: '4 Sesi - Starter', tanggalMulai: '20 Okt 2026', nilaiKontrak: 4800000, sesiSelesai: 4, totalSesi: 4 },
-  ],
-}
 
 /* ── Catatan internal admin/FC per lead ── */
 const CATATAN_FC_DUMMY = {
@@ -833,46 +825,78 @@ export default function PPLeadDetailPage() {
           <div className="space-y-4">
 
             {/* Riwayat Order */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
-              </div>
-              <div className="p-5">
-                {(RIWAYAT_ORDERS_DUMMY[id] || []).length === 0 ? (
-                  <div className="flex flex-col items-center py-8 gap-2">
-                    <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
-                    <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
+            {(() => {
+              const leadOrders = getAllOrders()
+                .filter(o => o.leadId === lead.id)
+                .sort((a, b) => b.tanggalMulai.localeCompare(a.tanggalMulai))
+              return (
+                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                  <div className="px-5 py-4 border-b border-gray-100">
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {(RIWAYAT_ORDERS_DUMMY[id] || []).map(order => {
-                      const statusCls = order.status === 'Aktif'    ? 'bg-green-50 text-green-700 border-green-200' :
-                                        order.status === 'Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
-                                        'bg-gray-50 text-gray-500 border-gray-200'
-                      return (
-                        <button
-                          key={order.orderId}
-                          onClick={() => navigate('/pp/orders/' + order.orderId, { state: { fromLeadId: lead.id } })}
-                          className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="text-sm font-bold text-[#1E1C43]">#{order.orderId}</span>
-                              <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{order.status}</span>
+                  <div className="p-5">
+                    {leadOrders.length === 0 ? (
+                      <div className="flex flex-col items-center py-8 gap-2">
+                        <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
+                        <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {leadOrders.map(order => {
+                          const invoiceId = order.paymentTracking?.[0]?.invoiceId || null
+                          const receipt   = invoiceId ? getReceiptByInvNo(invoiceId) : null
+                          const statusCls =
+                            order.statusOrder === 'Aktif'     ? 'bg-green-50 text-green-700 border-green-200' :
+                            order.statusOrder === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                            order.statusOrder === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200'       :
+                            'bg-gray-50 text-gray-500 border-gray-200'
+                          const statusLabel =
+                            order.statusOrder === 'Aktif'     ? 'Aktif'    :
+                            order.statusOrder === 'Completed' ? 'Selesai'  :
+                            order.statusOrder === 'Cancelled' ? 'Dibatalkan' :
+                            order.statusOrder
+                          return (
+                            <div key={order.id} className="p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-sm font-bold text-[#1E1C43]">#{order.id}</span>
+                                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{statusLabel}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-500">{order.paket} · Mulai {formatFollowUp(order.tanggalMulai)}</p>
+                                  <p className="text-xs text-gray-600 mt-1">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></p>
+                                </div>
+                                <div className="flex flex-col gap-1.5 shrink-0">
+                                  <button
+                                    onClick={() => navigate('/pp/orders/' + order.id, { state: { fromLeadId: lead.id } })}
+                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:bg-[#2d2b5e] transition-colors whitespace-nowrap">
+                                    <Eye size={10} /> Lihat Order
+                                  </button>
+                                  {invoiceId && (
+                                    <button
+                                      onClick={() => navigate('/pp/invoice/' + invoiceId)}
+                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors whitespace-nowrap">
+                                      <FileText size={10} /> Lihat Invoice
+                                    </button>
+                                  )}
+                                  {receipt && (
+                                    <button
+                                      onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { receipt, fromOrderId: order.id } })}
+                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-green-500 text-green-700 text-[10px] font-semibold hover:bg-green-50 transition-colors whitespace-nowrap">
+                                      <FileText size={10} /> Lihat Receipt
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <p className="text-xs text-gray-500">{order.paket} · Mulai {order.tanggalMulai}</p>
-                            <div className="flex items-center gap-4 mt-1.5">
-                              <span className="text-xs text-gray-600">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></span>
-                              <span className="text-xs text-gray-400">{order.sesiSelesai}/{order.totalSesi} sesi</span>
-                            </div>
-                          </div>
-                          <ChevronRight size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
-                        </button>
-                      )
-                    })}
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            </div>
+                </div>
+              )
+            })()}
 
             {/* Catatan Internal Admin/FC */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
@@ -899,8 +923,8 @@ export default function PPLeadDetailPage() {
                         onChange={e => setNewCatatanFCOrder(e.target.value)}
                         className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
                         <option value="">— Tanpa referensi —</option>
-                        {(RIWAYAT_ORDERS_DUMMY[id] || []).map(o => (
-                          <option key={o.orderId} value={o.orderId}>#{o.orderId}</option>
+                        {getAllOrders().filter(o => o.leadId === lead.id).map(o => (
+                          <option key={o.id} value={o.id}>#{o.id}</option>
                         ))}
                       </select>
                     </div>
