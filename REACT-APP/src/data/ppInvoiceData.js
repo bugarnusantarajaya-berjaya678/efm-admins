@@ -1,7 +1,7 @@
 export const INVOICES_INIT = [
   {
     invNo: 'INV-PP-27-0001', orderId: 'PP-27-0001',
-    client: 'James Wilson', initials: 'JW', color: '#2980B9',
+    client: 'James Wilson', sapaan: 'Pak', initials: 'JW', color: '#2980B9',
     paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     pic: 'Sarah Jenkins', tanggal: '8 Jan 2027', due: '22 Jan 2027',
     status: 'paid',
@@ -13,7 +13,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0021', orderId: 'PP-26-0021',
-    client: 'Sari Dewi Lestari', initials: 'SD', color: '#8E44AD',
+    client: 'Sari Dewi Lestari', sapaan: 'Kak', initials: 'SD', color: '#8E44AD',
     paket: '8 Sesi - Basic', namaLatihan: 'Private Training',
     pic: 'Dian Kartika', tanggal: '2 Nov 2026', due: '16 Nov 2026',
     status: 'paid',
@@ -25,7 +25,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0013', orderId: 'PP-26-0013',
-    client: 'James Wilson', initials: 'JW', color: '#2980B9',
+    client: 'James Wilson', sapaan: 'Pak', initials: 'JW', color: '#2980B9',
     paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     pic: 'Sarah Jenkins', tanggal: '24 Okt 2026', due: '7 Nov 2026',
     status: 'paid',
@@ -37,7 +37,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0012', orderId: 'PP-26-0012',
-    client: 'Emily Chen', initials: 'EC', color: '#27AE60',
+    client: 'Emily Chen', sapaan: 'Kak', initials: 'EC', color: '#27AE60',
     paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     pic: 'Marcus Chen', tanggal: '22 Okt 2026', due: '5 Nov 2026',
     status: 'paid',
@@ -49,7 +49,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0011', orderId: 'PP-26-0011',
-    client: 'Robert Taylor', initials: 'RT', color: '#E05945',
+    client: 'Robert Taylor', sapaan: 'Pak', initials: 'RT', color: '#E05945',
     paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
     pic: 'Elena Rodriguez', tanggal: '18 Okt 2026', due: '1 Nov 2026',
     status: 'pending',
@@ -61,7 +61,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0010', orderId: 'PP-26-0010',
-    client: 'Anita Kumar', initials: 'AK', color: '#F39C12',
+    client: 'Anita Kumar', sapaan: 'Kak', initials: 'AK', color: '#F39C12',
     paket: '8 Sesi - Base', namaLatihan: 'Private Training',
     pic: 'Sarah Jenkins', tanggal: '15 Okt 2026', due: '29 Okt 2026',
     status: 'overdue',
@@ -73,7 +73,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0008', orderId: 'PP-26-0008',
-    client: 'Budi Santoso', initials: 'BS', color: '#16A085',
+    client: 'Budi Santoso', sapaan: 'Pak', initials: 'BS', color: '#16A085',
     paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     pic: 'Marcus Chen', tanggal: '10 Okt 2026', due: '24 Okt 2026',
     status: 'paid',
@@ -85,7 +85,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0007', orderId: 'PP-26-0007',
-    client: 'Rina Kusuma', initials: 'RK', color: '#D35400',
+    client: 'Rina Kusuma', sapaan: 'Kak', initials: 'RK', color: '#D35400',
     paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     pic: 'Elena Rodriguez', tanggal: '5 Okt 2026', due: '19 Okt 2026',
     status: 'paid',
@@ -97,7 +97,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0006', orderId: 'PP-26-0006',
-    client: 'Hendra Wijaya', initials: 'HW', color: '#1ABC9C',
+    client: 'Hendra Wijaya', sapaan: 'Mas', initials: 'HW', color: '#1ABC9C',
     paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
     pic: 'Sarah Jenkins', tanggal: '1 Okt 2026', due: '15 Okt 2026',
     status: 'pending',
@@ -109,7 +109,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0005', orderId: 'PP-26-0005',
-    client: 'Dewi Anggraini', initials: 'DA', color: '#2ECC71',
+    client: 'Dewi Anggraini', sapaan: 'Kak', initials: 'DA', color: '#2ECC71',
     paket: '8 Sesi - Base', namaLatihan: 'Private Training',
     pic: 'Marcus Chen', tanggal: '25 Sep 2026', due: '9 Okt 2026',
     status: 'paid',
@@ -121,7 +121,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0004', orderId: 'PP-26-0004',
-    client: 'Kevin Hartanto', initials: 'KH', color: '#3498DB',
+    client: 'Kevin Hartanto', sapaan: 'Mas', initials: 'KH', color: '#3498DB',
     paket: '12 Sesi - Pro', namaLatihan: 'Private Training',
     pic: 'Elena Rodriguez', tanggal: '20 Sep 2026', due: '4 Okt 2026',
     status: 'paid',
@@ -133,7 +133,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0003', orderId: 'PP-26-0003',
-    client: 'Fiona Santika', initials: 'FS', color: '#E74C3C',
+    client: 'Fiona Santika', sapaan: 'Kak', initials: 'FS', color: '#E74C3C',
     paket: '4 Sesi - Starter', namaLatihan: 'Private Training',
     pic: 'Sarah Jenkins', tanggal: '15 Sep 2026', due: '29 Sep 2026',
     status: 'overdue',
@@ -145,7 +145,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0002', orderId: 'PP-26-0002',
-    client: 'Ahmad Fauzi', initials: 'AF', color: '#9B59B6',
+    client: 'Ahmad Fauzi', sapaan: 'Pak', initials: 'AF', color: '#9B59B6',
     paket: '24 Sesi - Elite', namaLatihan: 'Private Training',
     pic: 'Marcus Chen', tanggal: '10 Sep 2026', due: '24 Sep 2026',
     status: 'paid',
@@ -157,7 +157,7 @@ export const INVOICES_INIT = [
   },
   {
     invNo: 'INV-PP-26-0001', orderId: 'PP-26-0001',
-    client: 'Natasha Putri', initials: 'NP', color: '#E67E22',
+    client: 'Natasha Putri', sapaan: 'Kak', initials: 'NP', color: '#E67E22',
     paket: '8 Sesi - Base', namaLatihan: 'Private Training',
     pic: 'Elena Rodriguez', tanggal: '1 Sep 2026', due: '15 Sep 2026',
     status: 'paid',

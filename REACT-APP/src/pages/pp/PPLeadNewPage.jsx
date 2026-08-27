@@ -8,8 +8,11 @@ const SUMBER_OPTS  = ['Website','Referral','Meta Ads','Google Ads','Walk-in','In
 const PIC_OPTS     = ['Sarah Jenkins','Marcus Chen','Admin EFM']
 const PROGRAM_OPTS = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 
+const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
+
 const EMPTY_FORM = {
   nama: '',
+  sapaan: 'Kak',
   tipe: 'Personal',
   noHp: '',
   emailUmum: '',
@@ -54,6 +57,7 @@ export default function PPLeadNewPage() {
     addStoredLead({
       id: newId,
       nama: form.nama.trim(),
+      sapaan: form.sapaan,
       tipe: form.tipe,
       noHp: form.noHp.trim(),
       emailUmum: form.emailUmum.trim(),
@@ -115,6 +119,12 @@ export default function PPLeadNewPage() {
                 className={inputCls('nama')}
               />
               {errors.nama && <p className="text-red-500 text-[10px] mt-1">{errors.nama}</p>}
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Sapaan</label>
+              <select value={form.sapaan} onChange={e => set('sapaan', e.target.value)} className={inputCls('sapaan')}>
+                {SAPAAN_OPTS.map(s => <option key={s}>{s}</option>)}
+              </select>
             </div>
             <div>
               <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tipe</label>
