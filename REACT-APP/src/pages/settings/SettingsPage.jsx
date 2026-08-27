@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Users, Lock, CheckSquare, Building2, Shield, Plus, Edit2, X } from 'lucide-react'
+import { getCompanySettings } from '../../utils/companySettings'
 
 /* ── Left-nav config ── */
 const NAV_ITEMS = [
@@ -258,25 +259,7 @@ function PanelApproval() {
 
 /* ── Panel: Info Perusahaan ── */
 function PanelCompany() {
-  const [companySettings, setCompanySettings] = useState({
-    namaBank: 'BCA',
-    nomorRekening: '1234567890',
-    atasNamaRekening: 'CV. Bugar Nusantara Jaya',
-    logoPerusahaan: '',
-    tandaTanganCEO: '',
-    namaPenandatangan: 'Bagoes Soeharto',
-    jabatanPenandatangan: 'Owner & Co-Founder',
-  })
-
-  useEffect(() => {
-    const saved = localStorage.getItem('efmCompanySettings')
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setCompanySettings(prev => ({ ...prev, ...parsed }))
-      } catch (_) {}
-    }
-  }, [])
+  const [companySettings, setCompanySettings] = useState(() => getCompanySettings())
 
   function handleSettingsChange(field, value) {
     setCompanySettings(prev => ({ ...prev, [field]: value }))
@@ -314,24 +297,34 @@ function PanelCompany() {
       <div className="space-y-4">
         <div>
           <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Nama Perusahaan <span className="text-accent">*</span></label>
-          <input type="text" defaultValue="Essential Fitness Management" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+          <input type="text" value={companySettings.namaPerusahaan || ''} onChange={e => handleSettingsChange('namaPerusahaan', e.target.value)} className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
         </div>
         <div>
           <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Nama Legal (CV/PT) <span className="text-accent">*</span></label>
-          <input type="text" defaultValue="CV. Bugar Nusantara Jaya" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+          <input type="text" value={companySettings.namaLegal || ''} onChange={e => handleSettingsChange('namaLegal', e.target.value)} className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
         </div>
         <div>
           <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Alamat <span className="text-accent">*</span></label>
-          <input type="text" defaultValue="Jl. Terogong Raya No.18, Jakarta Selatan" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+          <input type="text" value={companySettings.alamat || ''} onChange={e => handleSettingsChange('alamat', e.target.value)} className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Email Operasional</label>
-            <input type="email" defaultValue="essentialfitnessmanagement@gmail.com" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+            <input type="email" value={companySettings.email || ''} onChange={e => handleSettingsChange('email', e.target.value)} className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
           </div>
           <div>
             <label className="block text-[12px] font-semibold text-text-primary mb-1.5">No. Telepon</label>
-            <input type="text" defaultValue="+62 812-xxxx-xxxx" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+            <input type="text" value={companySettings.telepon || ''} onChange={e => handleSettingsChange('telepon', e.target.value)} placeholder="+62 811-xxxx-xxxx" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Website</label>
+            <input type="text" value={companySettings.website || ''} onChange={e => handleSettingsChange('website', e.target.value)} placeholder="www.essentialfitnessmanagement.com" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
+          </div>
+          <div>
+            <label className="block text-[12px] font-semibold text-text-primary mb-1.5">WhatsApp Bisnis</label>
+            <input type="text" value={companySettings.whatsapp || ''} onChange={e => handleSettingsChange('whatsapp', e.target.value)} placeholder="+62 811-xxxx-xxxx" className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
           </div>
         </div>
 
