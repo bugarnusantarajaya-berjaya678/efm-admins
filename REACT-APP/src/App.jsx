@@ -25,6 +25,7 @@ import PPOrderNewPage from './pages/pp/PPOrderNewPage'
 import PPScreeningPage from './pages/pp/PPScreeningPage'
 import PPFitnessAssessmentPage from './pages/pp/PPFitnessAssessmentPage'
 import PPLeadDetailPage from './pages/pp/PPLeadDetailPage'
+import PPLeadNewPage from './pages/pp/PPLeadNewPage'
 
 // B2B
 import B2BDashboardPage from './pages/b2b/B2BDashboardPage'
@@ -91,6 +92,7 @@ function AppRoutes() {
       {/* PP Routes */}
       <Route path="/pp/dashboard" element={<AppShell><PPDashboard /></AppShell>} />
       <Route path="/pp/leads" element={<AppShell><PPLeadsPage /></AppShell>} />
+      <Route path="/pp/leads/new" element={<AppShell><PPLeadNewPage /></AppShell>} />
       <Route path="/pp/leads/:id" element={<AppShell><PPLeadDetailPage /></AppShell>} />
       <Route path="/pp/screening" element={<AppShell><PPScreeningPage /></AppShell>} />
       <Route path="/pp/screening/:id" element={<AppShell><PPFitnessAssessmentPage /></AppShell>} />

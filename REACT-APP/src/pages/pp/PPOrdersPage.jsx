@@ -487,7 +487,7 @@ export default function PPOrdersPage() {
             onClick={() => navigate('/pp/orders/new')}
             className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
           >
-            <Plus size={15} strokeWidth={2.5} /> New Order
+            <Plus size={15} strokeWidth={2.5} /> Tambah Order
           </button>
         </div>
       </div>
