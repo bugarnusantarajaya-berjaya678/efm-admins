@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2, Link2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
@@ -328,6 +328,101 @@ function adoptAkhirAsAwal(sectionData) {
   return result
 }
 
+function SignaturePad({ onSign, onClear, readOnly, existingSignature }) {
+  const canvasRef = useRef(null)
+  const isDrawingRef = useRef(false)
+  const lastPosRef = useRef(null)
+
+  useEffect(() => {
+    if (existingSignature && canvasRef.current) {
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      img.src = existingSignature
+    }
+  }, [existingSignature])
+
+  const getPos = (e) => {
+    const canvas = canvasRef.current
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const src = e.touches ? e.touches[0] : e
+    return {
+      x: (src.clientX - rect.left) * scaleX,
+      y: (src.clientY - rect.top) * scaleY,
+    }
+  }
+
+  const startDraw = (e) => {
+    if (readOnly) return
+    e.preventDefault()
+    isDrawingRef.current = true
+    lastPosRef.current = getPos(e)
+  }
+
+  const draw = (e) => {
+    if (!isDrawingRef.current || readOnly) return
+    e.preventDefault()
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const pos = getPos(e)
+    ctx.beginPath()
+    ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y)
+    ctx.lineTo(pos.x, pos.y)
+    ctx.strokeStyle = '#1E1C43'
+    ctx.lineWidth = 2.5
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    ctx.stroke()
+    lastPosRef.current = pos
+  }
+
+  const endDraw = () => {
+    if (!isDrawingRef.current) return
+    isDrawingRef.current = false
+    onSign?.(canvasRef.current.toDataURL())
+  }
+
+  const clear = () => {
+    const canvas = canvasRef.current
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    onClear?.()
+  }
+
+  return (
+    <div className="w-full">
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={120}
+        className={`w-full h-24 rounded-lg mb-1 touch-none ${
+          readOnly
+            ? 'border border-gray-200'
+            : 'border-2 border-dashed border-gray-300 cursor-crosshair hover:border-[#1E1C43] transition-colors'
+        }`}
+        onMouseDown={startDraw}
+        onMouseMove={draw}
+        onMouseUp={endDraw}
+        onMouseLeave={endDraw}
+        onTouchStart={startDraw}
+        onTouchMove={draw}
+        onTouchEnd={endDraw}
+      />
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={clear}
+          className="text-[10px] text-gray-400 hover:text-red-500 transition-colors underline"
+        >
+          Hapus tanda tangan
+        </button>
+      )}
+    </div>
+  )
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 export default function PPFitnessAssessmentPage() {
@@ -466,6 +561,7 @@ export default function PPFitnessAssessmentPage() {
   const [obatanRutin, setObatanRutin] = useState(existing?.ringkasan?.obatanRutin || '')
   const [catatanScreening, setCatatanScreening] = useState(existing?.ringkasan?.catatanScreening || '')
 
+  const [signatures, setSignatures] = useState({ klien: null, pelatih: null, fc: null })
   const [saved, setSaved] = useState(false)
   const [isEditing, setIsEditing] = useState(isNew)
 
@@ -1120,17 +1216,23 @@ export default function PPFitnessAssessmentPage() {
         <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
           Persetujuan
         </h2>
+        {!isEditing && (
+          <p className="text-xs text-gray-400 mb-4 italic">Mode tampilan — klik Edit untuk menandatangani.</p>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { label: 'Klien', sublabel: namaKlien || '—' },
-            { label: 'Personal Trainer', sublabel: namaPelatih || '—' },
-            { label: 'Fitness Consultant', sublabel: namaFC || '—' },
+            { label: 'Klien', sublabel: namaKlien || '—', key: 'klien' },
+            { label: 'Personal Trainer', sublabel: namaPelatih || '—', key: 'pelatih' },
+            { label: 'Fitness Consultant', sublabel: namaFC || '—', key: 'fc' },
           ].map(sig => (
             <div key={sig.label} className="flex flex-col items-center">
-              <div className="w-full h-24 border-2 border-dashed border-gray-300 rounded-lg mb-2 flex items-center justify-center">
-                <p className="text-xs text-gray-300">Tanda Tangan</p>
-              </div>
-              <p className="text-xs font-semibold text-[#1E1C43]">{sig.label}</p>
+              <SignaturePad
+                readOnly={!isEditing}
+                existingSignature={signatures[sig.key]}
+                onSign={(dataUrl) => setSignatures(prev => ({ ...prev, [sig.key]: dataUrl }))}
+                onClear={() => setSignatures(prev => ({ ...prev, [sig.key]: null }))}
+              />
+              <p className="text-xs font-semibold text-[#1E1C43] mt-1">{sig.label}</p>
               <p className="text-xs text-gray-400">{sig.sublabel}</p>
             </div>
           ))}
