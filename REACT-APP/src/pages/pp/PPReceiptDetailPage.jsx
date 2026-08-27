@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Download } from 'lucide-react'
+import { ArrowLeft, MessageCircle, Download, Receipt } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
@@ -136,25 +136,40 @@ export default function PPReceiptDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <button onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/receipt')}
-        className="inline-flex items-center gap-2 text-sm text-text-muted hover:text-text-primary transition-colors font-medium w-fit">
-        <ArrowLeft size={16} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Receipt'}
-      </button>
-
-      <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-text-primary">{receipt.rcpNo}</h1>
-          <p className="text-sm text-text-muted mt-1">Receipt pembayaran · {receipt.client}</p>
-        </div>
-        <div className="flex items-center gap-2.5 flex-wrap">
-          <button
-            onClick={handleResendWA}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#25D366] hover:bg-[#1DA851] text-white text-sm font-semibold rounded-lg transition-colors">
-            <MessageCircle size={14} /> Resend WA
-          </button>
-          <button onClick={() => window.print()} className="flex items-center gap-1.5 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-lg transition-colors">
-            <Download size={14} /> Download PDF
-          </button>
+      {/* Page Header */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <Receipt size={18} className="text-white" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Receipt Pembayaran PP</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{receipt.rcpNo}</h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-xs text-gray-500">{receipt.client}</span>
+                <span className="text-gray-300 text-xs">·</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-green-500">
+                  LUNAS
+                </span>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <button
+              onClick={handleResendWA}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
+              <MessageCircle size={13} /> Resend WA
+            </button>
+            <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
+              <Download size={13} /> Download PDF
+            </button>
+            <button
+              onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/receipt')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors">
+              <ArrowLeft size={13} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Receipt'}
+            </button>
+          </div>
         </div>
       </div>
 
