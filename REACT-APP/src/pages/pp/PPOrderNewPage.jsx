@@ -5,13 +5,15 @@ import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDow
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
 
+const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
+
 const dummyPPLeads = [
-  { id: "LP-0001", nama: "James Wilson", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
-  { id: "LP-0003", nama: "Budi Santoso", noHP: "085678901234", email: "budi@email.com", sumber: "Walk-in", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "Budi Santoso", hpPendaftar: "085678901234", emailPendaftar: "budi@email.com" },
-  { id: "LP-0004", nama: "Rian Maulana", noHP: "081298765432", email: "rian@email.com", sumber: "Meta Ads", programDiminati: "Fatloss & Bodyshape", statusPipeline: "Follow Up", namaPendaftar: "Rian Maulana", hpPendaftar: "081298765432", emailPendaftar: "rian@email.com" },
-  { id: "LP-0005", nama: "Siti Rahayu", noHP: "082211334455", email: "siti@email.com", sumber: "WhatsApp", programDiminati: "Yoga", statusPipeline: "New", namaPendaftar: "Siti Rahayu", hpPendaftar: "082211334455", emailPendaftar: "siti@email.com" },
-  { id: "LP-0006", nama: "Emily Chen", noHP: "082345678901", email: "emily@email.com", sumber: "Meta Ads", programDiminati: "4 Sesi - Starter", statusPipeline: "Closed Won", namaPendaftar: "Emily Chen", hpPendaftar: "082345678901", emailPendaftar: "emily@email.com" },
-  { id: "LP-0007", nama: "Sari Dewi Lestari", noHP: "087811223344", email: "sari.dewi@email.com", sumber: "Referral", programDiminati: "8 Sesi - Basic", statusPipeline: "Closed Won", namaPendaftar: "Sari Dewi Lestari", hpPendaftar: "087811223344", emailPendaftar: "sari.dewi@email.com" },
+  { id: "LP-0001", nama: "James Wilson", sapaan: "Pak", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
+  { id: "LP-0003", nama: "Budi Santoso", sapaan: "Pak", noHP: "085678901234", email: "budi@email.com", sumber: "Walk-in", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "Budi Santoso", hpPendaftar: "085678901234", emailPendaftar: "budi@email.com" },
+  { id: "LP-0004", nama: "Rian Maulana", sapaan: "Mas", noHP: "081298765432", email: "rian@email.com", sumber: "Meta Ads", programDiminati: "Fatloss & Bodyshape", statusPipeline: "Follow Up", namaPendaftar: "Rian Maulana", hpPendaftar: "081298765432", emailPendaftar: "rian@email.com" },
+  { id: "LP-0005", nama: "Siti Rahayu", sapaan: "Kak", noHP: "082211334455", email: "siti@email.com", sumber: "WhatsApp", programDiminati: "Yoga", statusPipeline: "New", namaPendaftar: "Siti Rahayu", hpPendaftar: "082211334455", emailPendaftar: "siti@email.com" },
+  { id: "LP-0006", nama: "Emily Chen", sapaan: "Kak", noHP: "082345678901", email: "emily@email.com", sumber: "Meta Ads", programDiminati: "4 Sesi - Starter", statusPipeline: "Closed Won", namaPendaftar: "Emily Chen", hpPendaftar: "082345678901", emailPendaftar: "emily@email.com" },
+  { id: "LP-0007", nama: "Sari Dewi Lestari", sapaan: "Kak", noHP: "087811223344", email: "sari.dewi@email.com", sumber: "Referral", programDiminati: "8 Sesi - Basic", statusPipeline: "Closed Won", namaPendaftar: "Sari Dewi Lestari", hpPendaftar: "087811223344", emailPendaftar: "sari.dewi@email.com" },
 ];
 
 const dummyPaketDB = [
@@ -94,7 +96,7 @@ export default function PPOrderNewPage() {
 
   // Section 1: Data Pendaftar
   const [pendaftar, setPendaftar] = useState({
-    nama: '', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri'
+    nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri'
   });
 
   // Section 2: Data Klien Latihan
@@ -131,6 +133,7 @@ export default function PPOrderNewPage() {
   const handleSelectLead = (lead) => {
     setPendaftar({
       nama: lead.namaPendaftar || lead.nama,
+      sapaan: lead.sapaan || 'Kak',
       noHP: lead.hpPendaftar || lead.noHP,
       email: lead.emailPendaftar || lead.email,
       hubunganDenganKlien: 'Diri Sendiri'
@@ -245,6 +248,7 @@ export default function PPOrderNewPage() {
       leadId: selectedLeadId || null,
       programId: selectedPaket?.id || null,
       namaKlien: pendaftar.nama,
+      sapaan: pendaftar.sapaan,
       noHP: pendaftar.noHP,
       email: pendaftar.email,
       hubunganKlien: pendaftar.hubunganDenganKlien,
@@ -409,6 +413,17 @@ export default function PPOrderNewPage() {
                   <option>Saudara</option>
                   <option>Lainnya</option>
                 </select>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Sapaan</label>
+                <select value={pendaftar.sapaan}
+                  onChange={e => setPendaftar({ ...pendaftar, sapaan: e.target.value })}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
+                  {SAPAAN_OPTS.map(s => <option key={s}>{s}</option>)}
+                </select>
+                <p className="text-xs text-gray-400 mt-1">Digunakan pada pesan WA & dokumen</p>
               </div>
             </div>
 

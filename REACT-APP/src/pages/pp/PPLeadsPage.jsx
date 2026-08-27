@@ -38,6 +38,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0001',
     nama: 'James Wilson',
+    sapaan: 'Pak',
     tipe: 'Personal',
     noHp: '081234567890',
     sumberLead: 'Website',
@@ -62,6 +63,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0002',
     nama: 'Dewi Ayu',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '087766554433',
     sumberLead: 'Referral',
@@ -81,6 +83,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0003',
     nama: 'Budi & Rina Santoso',
+    sapaan: 'Kak',
     tipe: 'Couple',
     noHp: '085678901234',
     sumberLead: 'Walk-in',
@@ -100,6 +103,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0004',
     nama: 'Rian Maulana (Group Tennis)',
+    sapaan: 'Mas',
     tipe: 'Group',
     noHp: '087712345678',
     sumberLead: 'Meta Ads',
@@ -118,6 +122,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0005',
     nama: 'Anita Kumar',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '081298765432',
     sumberLead: 'Meta Ads',
@@ -138,6 +143,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0006',
     nama: 'Emily Chen',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '082345678901',
     sumberLead: 'Meta Ads',
@@ -159,6 +165,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0007',
     nama: 'Kevin Hartanto',
+    sapaan: 'Mas',
     tipe: 'Personal',
     noHp: '081345678901',
     sumberLead: 'Referral',
@@ -180,6 +187,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0008',
     nama: 'Natasha Putri',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '087811223344',
     sumberLead: 'Instagram',
@@ -200,6 +208,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0009',
     nama: 'Ahmad Fauzi',
+    sapaan: 'Pak',
     tipe: 'Personal',
     noHp: '081122334455',
     sumberLead: 'Walk-in',
@@ -220,6 +229,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0010',
     nama: 'Yoga Pratama',
+    sapaan: 'Mas',
     tipe: 'Group',
     noHp: '087700112233',
     sumberLead: 'Google Ads',
@@ -240,6 +250,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0011',
     nama: 'Maya Indriati',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '082233445566',
     sumberLead: 'Website',
@@ -261,6 +272,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0012',
     nama: 'Fiona Santika',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '081988776655',
     sumberLead: 'Referral',
@@ -281,6 +293,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0013',
     nama: 'Robert Taylor',
+    sapaan: 'Pak',
     tipe: 'Personal',
     noHp: '081567890123',
     sumberLead: 'Website',
@@ -301,6 +314,7 @@ const LEADS_INIT = [
   {
     id: 'LP-0014',
     nama: 'Anita Suryani',
+    sapaan: 'Kak',
     tipe: 'Personal',
     noHp: '085599887766',
     sumberLead: 'Meta Ads',
