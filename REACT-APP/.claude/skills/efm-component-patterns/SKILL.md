@@ -1,6 +1,6 @@
 ---
 name: efm-component-patterns
-description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, pipeline/stage progress visual, the official List Page Template (Header + KPI cards + Filter bar + Table with pagination), and the localStorage-backed Template Editor Container (Invoice + Agreement). MUST be checked before building any modal, image preview, invoice page, activity/history log, leads pipeline visual, list page, or template editor in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper", "add a new list page", "add a template editor").
+description: Reusable, battle-tested UI component patterns for the EFM V2 (Essential Fitness Management) React admin dashboard project — covers the scrollable-body modal, photo preview popup, full invoice template structure, filterable activity log, pipeline/stage progress visual, the official List Page Template (Header + KPI cards + Filter bar + Table with pagination), the localStorage-backed Template Editor Container (Invoice + Agreement), and the Full-Page Form Pattern (Add/Edit) with its companion Module Store. MUST be checked before building any modal, image preview, invoice page, activity/history log, leads pipeline visual, list page, template editor, or add/edit form in this project — these patterns have been built multiple times before, so reuse them exactly rather than reinventing a new structure. Always consult this skill even if the request only vaguely resembles one of these patterns (e.g. "add a popup", "show a log of changes", "add a status stepper", "add a new list page", "add a template editor", "form untuk tambah/edit data").
 ---
 
 # EFM V2 Component Patterns
@@ -1253,4 +1253,154 @@ Editor menggantikan konten utama halaman list (bukan modal/sidebar):
 ```
 
 **Implementasi:** `PPInvoicePage.jsx` (`TemplateInvoiceEditor`) dan `PPDocumentsPage.jsx` (`TemplateEditor`).
+
+---
+
+## 8. Full-Page Form Pattern (Add/Edit) + Module Store
+
+Digunakan untuk: form tambah/edit data yang sebelumnya menggunakan modal — ketika form memiliki banyak field (>6), multi-section, atau perlu UX yang lebih luas dari modal.
+
+**Kapan pakai page-form vs modal:**
+- **Page-form** → form dengan 3+ section, banyak field, ada relasi antar-field (auto-calc, auto-populate), atau ketika tombol "Hapus" juga ada di form yang sama
+- **Modal** → aksi cepat, field sedikit (<5), atau konfirmasi sederhana (contoh: ubah status, input satu field)
+
+### Struktur Route
+
+```
+/[module]/[resource]/new              → mode tambah baru
+/[module]/[resource]/:itemId/edit     → mode edit (itemId = ID record)
+```
+
+Contoh aktual: `/pp/program-db/new` dan `/pp/program-db/:progId/edit`
+
+**Aturan routing:** pastikan route `/new` dideklarasikan di App.jsx SEBELUM route `/:itemId/edit` agar segment `new` tidak ter-parse sebagai itemId.
+
+### Module Store (data persistence lintas navigasi)
+
+Ketika form ada di halaman terpisah dari list, data WAJIB disimpan di module-level store (bukan di `useState` lokal list page). Alasannya: React Router unmount/remount component saat navigasi, sehingga useState list page di-reset setiap kali pengguna kembali.
+
+```js
+// src/data/[module]Store.js
+import { DATA_INIT } from './[module]Data'
+
+let _items = null
+
+function init() {
+  if (!_items) _items = DATA_INIT.map(item => ({ ...item }))
+}
+
+export function getStoredItems()         { init(); return _items }
+export function getItemById(id)          { init(); return _items.find(i => i.id === id) || null }
+export function addStoredItem(item)      { init(); _items = [..._items, item] }
+export function updateStoredItem(id, u)  { init(); _items = _items.map(i => i.id === id ? { ...i, ...u } : i) }
+export function deleteStoredItem(id)     { init(); _items = _items.filter(i => i.id !== id) }
+export function getExistingIds()         { init(); return _items.map(i => i.id) }
+```
+
+**List page** membaca dari store saat mount:
+```js
+const [items] = useState(() => getStoredItems())
+```
+Karena component di-remount setiap kali user navigasi kembali ke list page, data terbaru dari store otomatis terbaca.
+
+### Layout Page-Form
+
+```jsx
+export default function [Module]FormPage() {
+  const navigate = useNavigate()
+  const { itemId } = useParams()          // undefined untuk mode tambah
+  const isEdit = !!itemId
+  const existing = isEdit ? getItemById(itemId) : null
+
+  useBreadcrumb([
+    { label: 'Module Name' },
+    { label: 'Resource', to: '/module/resource' },
+    { label: isEdit ? `Edit — ${itemId}` : 'Tambah Baru' },
+  ])
+
+  return (
+    <div className="bg-[#F5F5F7] min-h-screen pb-24">
+
+      {/* Header Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <IconName size={22} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Module — Sub</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
+                {isEdit ? `Edit — ${itemId}` : 'Tambah Baru'}
+              </h1>
+              <p className="text-xs text-gray-400 mt-1">Deskripsi singkat tujuan form</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/module/resource')}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+          >
+            <ArrowLeft size={12} /> Kembali
+          </button>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {/* Section Card (repeat per group of fields) */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Nama Section</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* fields here */}
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-100 px-6 py-4 z-40">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <div>
+            {isEdit && (
+              <button onClick={handleHapus} className="px-4 py-2 text-sm font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors">
+                Hapus
+              </button>
+            )}
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => navigate('/module/resource')} className="border border-gray-200 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              Batal
+            </button>
+            <button onClick={handleSimpan} className="bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+              {isEdit ? 'Simpan Perubahan' : 'Simpan'}
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  )
+}
+```
+
+**Aturan wajib:**
+- `pb-24` pada outer wrapper agar konten tidak tertutup fixed footer
+- Footer: `md:left-64` untuk clear sidebar (256px) — JANGAN pakai `md:left-[224px]` atau nilai lain
+- ID field: `disabled` + `bg-gray-50 text-gray-400 cursor-not-allowed` saat mode edit (ID tidak boleh diubah)
+- Hapus: konfirmasi via `confirm()` sebelum delete, redirect ke list page setelah hapus
+- Validasi: gunakan inline error (`errors` state + `border-red-400 bg-red-50` pada input) bukan `alert()`
+- Auto-calc field: `readOnly` + `bg-gray-50 text-gray-500 cursor-not-allowed`
+
+### Input & Label styling
+
+```js
+// Label
+const label = 'text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block'
+
+// Input (base)
+const inputCls = (key) =>
+  `w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] transition-colors ${
+    errors[key] ? 'border-red-400 bg-red-50' : 'border-gray-200'
+  }`
+```
+
+**Implementasi aktual:** `PPProgramFormPage.jsx` (store: `ppProgramStore.js`) — routes `/pp/program-db/new` dan `/pp/program-db/:progId/edit`.
 
