@@ -1,5 +1,5 @@
 const ORDERS_INIT = [
-  { id: "PP-27-0001", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson",
+  { id: "PP-27-0001", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson", sapaan: "Pak",
     paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2027-01-08", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -14,7 +14,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2027/0001", tanggal:"2027-01-05", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0021", leadId: "LP-0007", programId: "PRG-PP-002", namaKlien: "Sari Dewi Lestari",
+  { id: "PP-26-0021", leadId: "LP-0007", programId: "PRG-PP-002", namaKlien: "Sari Dewi Lestari", sapaan: "Kak",
     paket: "8 Sesi - Basic", picSalesEFM: "Dian Kartika", picOpsEFM: "Rizky Firmansyah",
     tanggalMulai: "2026-11-02", nilaiKontrak: 1400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -29,7 +29,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0021", tanggal:"2026-10-30", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0013", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson",
+  { id: "PP-26-0013", leadId: "LP-0001", programId: "PRG-PP-003", namaKlien: "James Wilson", sapaan: "Pak",
     paket: "12 Sesi - Pro", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-10-24", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -44,7 +44,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0013", tanggal:"2026-10-20", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0012", leadId: "LP-0006", programId: "PRG-PP-001", namaKlien: "Emily Chen",
+  { id: "PP-26-0012", leadId: "LP-0006", programId: "PRG-PP-001", namaKlien: "Emily Chen", sapaan: "Kak",
     paket: "4 Sesi - Starter", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-10-22", nilaiKontrak: 600000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -59,7 +59,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
     quotation:{ nomor:"QUO/EFM/PP/2026/0012", tanggal:"2026-10-18", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0011", leadId: "LP-0017", programId: "PRG-PP-004", namaKlien: "Robert Taylor",
+  { id: "PP-26-0011", leadId: "LP-0017", programId: "PRG-PP-004", namaKlien: "Robert Taylor", sapaan: "Pak",
     paket: "24 Sesi - Elite", picSalesEFM: "Elena Rodriguez", picOpsEFM: "Elena Rodriguez",
     tanggalMulai: "2026-10-18", nilaiKontrak: 4800000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -74,7 +74,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0011", tanggal:"2026-10-15", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0010", leadId: "LP-0016", programId: "PRG-PP-002", namaKlien: "Anita Kumar",
+  { id: "PP-26-0010", leadId: "LP-0016", programId: "PRG-PP-002", namaKlien: "Anita Kumar", sapaan: "Kak",
     paket: "8 Sesi - Base", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-10-15", nilaiKontrak: 1600000,
     tahapan: "Kontrak Dibatalkan", statusOrder: "Cancelled",
@@ -89,7 +89,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Terminated",
     quotation:{ nomor:"QUO/EFM/PP/2026/0010", tanggal:"2026-10-12", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0008", leadId: "LP-0015", programId: "PRG-PP-003", namaKlien: "Budi Santoso",
+  { id: "PP-26-0008", leadId: "LP-0015", programId: "PRG-PP-003", namaKlien: "Budi Santoso", sapaan: "Pak",
     paket: "12 Sesi - Pro", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-10-10", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -104,7 +104,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0008", tanggal:"2026-10-07", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0007", leadId: "LP-0014", programId: "PRG-PP-001", namaKlien: "Rina Kusuma",
+  { id: "PP-26-0007", leadId: "LP-0014", programId: "PRG-PP-001", namaKlien: "Rina Kusuma", sapaan: "Kak",
     paket: "4 Sesi - Starter", picSalesEFM: "Elena Rodriguez", picOpsEFM: "Elena Rodriguez",
     tanggalMulai: "2026-10-05", nilaiKontrak: 800000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -119,7 +119,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
     quotation:{ nomor:"QUO/EFM/PP/2026/0007", tanggal:"2026-10-02", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0006", leadId: "LP-0013", programId: "PRG-PP-004", namaKlien: "Hendra Wijaya",
+  { id: "PP-26-0006", leadId: "LP-0013", programId: "PRG-PP-004", namaKlien: "Hendra Wijaya", sapaan: "Mas",
     paket: "24 Sesi - Elite", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-10-01", nilaiKontrak: 4800000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -134,7 +134,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0006", tanggal:"2026-09-28", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0005", leadId: "LP-0012", programId: "PRG-PP-002", namaKlien: "Dewi Anggraini",
+  { id: "PP-26-0005", leadId: "LP-0012", programId: "PRG-PP-002", namaKlien: "Dewi Anggraini", sapaan: "Kak",
     paket: "8 Sesi - Base", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-09-25", nilaiKontrak: 1600000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -149,7 +149,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
     quotation:{ nomor:"QUO/EFM/PP/2026/0005", tanggal:"2026-09-22", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0004", leadId: "LP-0011", programId: "PRG-PP-003", namaKlien: "Kevin Hartanto",
+  { id: "PP-26-0004", leadId: "LP-0011", programId: "PRG-PP-003", namaKlien: "Kevin Hartanto", sapaan: "Mas",
     paket: "12 Sesi - Pro", picSalesEFM: "Elena Rodriguez", picOpsEFM: "Elena Rodriguez",
     tanggalMulai: "2026-09-20", nilaiKontrak: 2400000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",
@@ -164,7 +164,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Active",
     quotation:{ nomor:"QUO/EFM/PP/2026/0004", tanggal:"2026-09-17", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0003", leadId: "LP-0010", programId: "PRG-PP-001", namaKlien: "Fiona Santika",
+  { id: "PP-26-0003", leadId: "LP-0010", programId: "PRG-PP-001", namaKlien: "Fiona Santika", sapaan: "Kak",
     paket: "4 Sesi - Starter", picSalesEFM: "Sarah Jenkins", picOpsEFM: "Sarah Jenkins",
     tanggalMulai: "2026-09-15", nilaiKontrak: 800000,
     tahapan: "Kontrak Dibatalkan", statusOrder: "Cancelled",
@@ -179,7 +179,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Terminated",
     quotation:{ nomor:"QUO/EFM/PP/2026/0003", tanggal:"2026-09-12", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0002", leadId: "LP-0009", programId: "PRG-PP-004", namaKlien: "Ahmad Fauzi",
+  { id: "PP-26-0002", leadId: "LP-0009", programId: "PRG-PP-004", namaKlien: "Ahmad Fauzi", sapaan: "Pak",
     paket: "24 Sesi - Elite", picSalesEFM: "Marcus Chen", picOpsEFM: "Marcus Chen",
     tanggalMulai: "2026-09-10", nilaiKontrak: 4800000,
     tahapan: "Program Selesai", statusOrder: "Completed",
@@ -194,7 +194,7 @@ const ORDERS_INIT = [
     loiStatus:"N/A", mouAda:false, contractStatus:"Completed",
     quotation:{ nomor:"QUO/EFM/PP/2026/0002", tanggal:"2026-09-07", manajemenFee:false, manajemenFeePersen:0, pajak:[{nama:"PPN 11%", persen:11, aktif:false}], status:"Approved", catatan:"" }
   },
-  { id: "PP-26-0001", leadId: "LP-0008", programId: "PRG-PP-002", namaKlien: "Natasha Putri",
+  { id: "PP-26-0001", leadId: "LP-0008", programId: "PRG-PP-002", namaKlien: "Natasha Putri", sapaan: "Kak",
     paket: "8 Sesi - Base", picSalesEFM: "Elena Rodriguez", picOpsEFM: "Elena Rodriguez",
     tanggalMulai: "2026-09-01", nilaiKontrak: 1600000,
     tahapan: "Program Berjalan", statusOrder: "Aktif",

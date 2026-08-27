@@ -257,6 +257,7 @@ export default function PPOrderDetailPage() {
   const initInfo = order
     ? {
         namaKlien:         order.namaKlien         || '',
+        sapaan:            order.sapaan            || '',
         paket:             order.paket             || '',
         tanggalMulai:      order.tanggalMulai      || '',
         tanggalSelesai:    order.tanggalSelesai    || '',
@@ -815,6 +816,7 @@ export default function PPOrderDetailPage() {
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendaftar</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
+                      { label: 'Sapaan',         val: infoDeal.sapaan    },
                       { label: 'Nama Pendaftar', val: infoDeal.namaKlien },
                       { label: 'No. HP',         val: infoDeal.noHP      },
                       { label: 'Email',          val: infoDeal.email     },
@@ -893,7 +895,7 @@ export default function PPOrderDetailPage() {
                 </div>
                 <div className="mt-4 flex items-start gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
                   <Info size={11} className="text-blue-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-blue-700">Nama, No. HP, dan Email dikunci karena bersumber dari data Leads. Hubungan dengan Klien, Usia, dan Jenis Kelamin dapat diubah jika ada kesalahan input.</p>
+                  <p className="text-xs text-blue-700">Sapaan, Nama, No. HP, dan Email dikunci karena bersumber dari data Leads. Hubungan dengan Klien, Usia, dan Jenis Kelamin dapat diubah jika ada kesalahan input.</p>
                 </div>
               </div>
             </div>

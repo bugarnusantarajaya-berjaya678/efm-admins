@@ -46,7 +46,7 @@ const PROGRAM_OPTS     = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatl
 /* ── Fallback static data (for direct URL access) ── */
 const LEADS_FALLBACK = [
   {
-    id: 'LP-0001', nama: 'James Wilson', tipe: 'Personal',
+    id: 'LP-0001', sapaan: 'Pak', nama: 'James Wilson', tipe: 'Personal',
     noHp: '081234567890', sumberLead: 'Website', picEfm: 'Sarah Jenkins',
     programDiminati: '12 Sesi - Pro', emailUmum: 'james.wilson@email.com',
     catatanAwal: 'Tertarik program fatloss, sudah follow up 2x',
@@ -63,7 +63,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0002', nama: 'Dewi Ayu', tipe: 'Personal',
+    id: 'LP-0002', sapaan: 'Kak', nama: 'Dewi Ayu', tipe: 'Personal',
     noHp: '087766554433', sumberLead: 'Referral', picEfm: 'Marcus Chen',
     programDiminati: 'Tennis', emailUmum: 'dewi.ayu@email.com',
     catatanAwal: 'Direferensikan oleh klien lama',
@@ -75,7 +75,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0003', nama: 'Budi & Rina Santoso', tipe: 'Couple',
+    id: 'LP-0003', sapaan: 'Pak', nama: 'Budi & Rina Santoso', tipe: 'Couple',
     noHp: '085678901234', sumberLead: 'Walk-in', picEfm: 'Sarah Jenkins',
     programDiminati: '12 Sesi - Pro', emailUmum: 'budi.santoso@email.com',
     catatanAwal: 'Datang langsung ke lokasi, tertarik program couple',
@@ -87,7 +87,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0004', nama: 'Rian Maulana (Group Tennis)', tipe: 'Group',
+    id: 'LP-0004', sapaan: 'Mas', nama: 'Rian Maulana (Group Tennis)', tipe: 'Group',
     noHp: '087712345678', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
     programDiminati: 'Tennis Group', emailUmum: 'rian.maulana@email.com',
     catatanAwal: 'Mau daftar grup 4 orang untuk tennis',
@@ -98,7 +98,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0005', nama: 'Anita Kumar', tipe: 'Personal',
+    id: 'LP-0005', sapaan: 'Kak', nama: 'Anita Kumar', tipe: 'Personal',
     noHp: '081298765432', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
     programDiminati: 'Fatloss & Bodyshape', emailUmum: 'anita.kumar@email.com',
     catatanAwal: 'Tertarik program fatloss',
@@ -111,7 +111,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0006', nama: 'Emily Chen', tipe: 'Personal',
+    id: 'LP-0006', sapaan: 'Kak', nama: 'Emily Chen', tipe: 'Personal',
     noHp: '082345678901', sumberLead: 'Instagram', picEfm: 'Marcus Chen',
     programDiminati: '4 Sesi - Starter', emailUmum: 'emily@email.com',
     catatanAwal: 'Tertarik program starter, fokus kebugaran umum',
@@ -126,7 +126,7 @@ const LEADS_FALLBACK = [
     ],
   },
   {
-    id: 'LP-0007', nama: 'Sari Dewi Lestari', tipe: 'Personal',
+    id: 'LP-0007', sapaan: 'Kak', nama: 'Sari Dewi Lestari', tipe: 'Personal',
     noHp: '087811223344', sumberLead: 'Referral', picEfm: 'Dian Kartika',
     programDiminati: '8 Sesi - Basic', emailUmum: 'sari.dewi@email.com',
     catatanAwal: 'Tertarik muscle toning, direferensikan oleh teman',
@@ -389,7 +389,7 @@ export default function PPLeadDetailPage() {
               </div>
               <div>
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{lead.id}</p>
-                <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{lead.nama}</h1>
+                <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{lead.sapaan ? lead.sapaan + ' ' : ''}{lead.nama}</h1>
                 <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                   <TipeBadge tipe={lead.tipe} />
                   <StageBadge stage={lead.statusPipeline} />
@@ -528,6 +528,7 @@ export default function PPLeadDetailPage() {
               <div className="p-5">
                 {!isEditMode ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                    <InfoField label="Sapaan">{lead.sapaan || '—'}</InfoField>
                     <InfoField label="No HP / WhatsApp">
                       <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
                         className="text-[#1E1C43] hover:underline">
@@ -563,6 +564,13 @@ export default function PPLeadDetailPage() {
                 ) : (
                   /* Edit form */
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sapaan</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.sapaan || ''} onChange={e => setEditForm(p => ({ ...p, sapaan: e.target.value }))}>
+                        {['Kak','Pak','Bu','Mas','Mbak'].map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
                     <div className="col-span-2">
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
                         Nama Klien <span className="text-red-500">*</span>
