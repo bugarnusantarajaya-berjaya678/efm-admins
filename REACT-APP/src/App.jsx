@@ -58,8 +58,6 @@ import OPSPICPage from './pages/pic/OPSPICPage'
 import PICDetail  from './pages/pic/PICDetail'
 import OPSMitraPage from './pages/pic/OPSMitraPage'
 import OPSAssetsPage from './pages/assignment/OPSAssetsPage'
-import PaymentPage from './pages/payment/PaymentPage'
-import AttendancePage from './pages/attendance/AttendancePage'
 
 // Laporan
 import LaporanRevenuePage   from './pages/laporan/LaporanRevenuePage'
@@ -139,12 +137,8 @@ function AppRoutes() {
       <Route path="/event/receipt"      element={<AppShell><EventReceiptPage   /></AppShell>} />
 
       {/* OPS */}
-      <Route path="/ops/pelatih/absensi"   element={<AppShell><AttendancePage /></AppShell>} />
-      <Route path="/ops/pelatih/honorarium" element={<AppShell><PaymentPage /></AppShell>} />
       <Route path="/ops/pelatih/kontrak"    element={<AppShell><ContractPage /></AppShell>} />
       <Route path="/contract" element={<Navigate to="/ops/pelatih/kontrak" replace />} />
-      <Route path="/attendance" element={<Navigate to="/ops/pelatih/absensi" replace />} />
-      <Route path="/payment"    element={<Navigate to="/ops/pelatih/honorarium" replace />} />
 
       {/* Laporan & Keuangan */}
       <Route path="/laporan/revenue"   element={<AppShell><LaporanRevenuePage /></AppShell>} />
