@@ -787,7 +787,7 @@ export default function PPOrderNewPage() {
 
       {/* ── Sticky Footer ── */}
       <div
-        className="fixed bottom-0 right-0 left-0 md:left-[224px] bg-white border-t border-gray-200 px-6 py-4 z-40">
+        className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 z-40">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             {items.length > 0 && (

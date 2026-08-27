@@ -201,7 +201,7 @@ export default function PPLeadNewPage() {
       </div>
 
       {/* Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-6 py-4 flex items-center justify-end gap-3 z-40">
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-100 px-6 py-4 flex items-center justify-end gap-3 z-40">
         <button
           onClick={() => navigate('/pp/leads')}
           className="border border-gray-200 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
