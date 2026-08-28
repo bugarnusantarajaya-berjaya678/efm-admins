@@ -6,6 +6,16 @@ Catatan perubahan UI/fitur yang sudah diimplementasikan dan di-merge ke main.
 
 ## 2026-08-28
 
+### Fix: Event propagation bug pada panel Jenis Program (PR #167)
+
+**Bug:** Setelah user klik Edit atau Hapus di dalam panel Jenis Program, form sub-modal terbuka. Namun setelah aksi selesai (Simpan/Batal/Ya Hapus), panel Jenis Program ikut tertutup — kembali ke halaman utama Program DB.
+
+**Root cause:** `JenisFormModal` dan `JenisDeleteDialog` di-render sebagai child dari outer overlay div `JenisPanelModal` yang punya `onClick={onClose}`. Klik pada tombol di sub-modal bubble up ke overlay parent → trigger `onClose` pada panel utama.
+
+**Fix:** Tambah `onClick={e => e.stopPropagation()}` pada outer div kedua sub-modal — memutus event bubbling sebelum mencapai overlay `JenisPanelModal`.
+
+---
+
 ### PP: Jenis Program dipindahkan ke Modal Panel di Program DB (PR #165)
 
 **Perubahan struktur:**
