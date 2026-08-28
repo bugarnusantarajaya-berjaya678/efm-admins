@@ -68,7 +68,7 @@ export default function EventLeadNewPage() {
       stage: 'New',
       tanggal: today,
       konsultasiId: null,
-      orderId: null,
+      orderIds: [],
       logAktivitas: [{
         tanggal: today,
         stage: 'New',

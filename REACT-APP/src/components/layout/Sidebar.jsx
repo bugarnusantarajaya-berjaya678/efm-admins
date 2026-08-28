@@ -215,7 +215,7 @@ export default function Sidebar({ isOpen, onClose }) {
                               )
                             }
 
-                            const subActive = location.pathname === sub.path
+                            const subActive = location.pathname.startsWith(sub.path)
                             return (
                               <li key={sub.path}>
                                 <NavLink
