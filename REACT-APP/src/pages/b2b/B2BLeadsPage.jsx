@@ -347,7 +347,8 @@ export default function B2BLeadsPage() {
     if (stage && l.stage      !== stage) return false
     if (search && !l.companyName.toLowerCase().includes(search.toLowerCase())) return false
     return true
-  }), [leads, bulan, tahun, tipe, stage, search])
+  }).sort((a, b) => parseInt(b.id.split('-')[1]) - parseInt(a.id.split('-')[1]))
+  , [leads, bulan, tahun, tipe, stage, search])
 
   const kpiTotal     = leads.length
   const kpiHot       = leads.filter(l => l.stage === 'Proposal' || l.stage === 'Closing').length
