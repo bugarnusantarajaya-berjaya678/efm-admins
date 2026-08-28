@@ -16,7 +16,7 @@ const LEADS_INIT = [
       { tanggal: '2026-05-20', stage: 'Closing',   catatan: 'Proposal diterima, jadwalkan konsultasi',     picEFM: 'Bagoes' },
       { tanggal: '2026-06-01', stage: 'Converted', catatan: 'Deal ditandatangani, order dibuat',           picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0001', orderId: 'EV-26-0001',
+    konsultasiId: 'KNS-26-0001', orderIds: ['EV-26-0001'],
   },
   {
     id: 'LE-0002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
@@ -31,7 +31,7 @@ const LEADS_INIT = [
       { tanggal: '2026-05-22', stage: 'Approach',  catatan: 'Presentasi online ke HR Director',           picEFM: 'Emma' },
       { tanggal: '2026-06-01', stage: 'Converted', catatan: 'Proposal disetujui, kontrak ditandatangani', picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-26-0002', orderId: 'EV-26-0002',
+    konsultasiId: 'KNS-26-0002', orderIds: ['EV-26-0002'],
   },
   {
     id: 'LE-0003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
@@ -45,7 +45,7 @@ const LEADS_INIT = [
       { tanggal: '2026-06-05', stage: 'New',      catatan: 'Kontak masuk dari LinkedIn',            picEFM: 'Bagoes' },
       { tanggal: '2026-06-10', stage: 'Proposal', catatan: 'Konsultasi selesai, kirim proposal EFM', picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0003', orderId: null,
+    konsultasiId: 'KNS-26-0003', orderIds: [],
   },
   {
     id: 'LE-0004', namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community', kota: 'Jakarta Pusat',
@@ -59,7 +59,7 @@ const LEADS_INIT = [
       { tanggal: '2026-06-08', stage: 'New',  catatan: 'DM Instagram, budget sangat terbatas',           picEFM: 'Emma' },
       { tanggal: '2026-06-14', stage: 'Lost', catatan: 'Tidak lanjut — margin tidak memenuhi threshold', picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-26-0004', orderId: null,
+    konsultasiId: 'KNS-26-0004', orderIds: [],
   },
   {
     id: 'LE-0005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
@@ -74,7 +74,7 @@ const LEADS_INIT = [
       { tanggal: '2026-06-15', stage: 'Presentation', catatan: 'Presentasi resmi ke Kepala Bidang Olahraga', picEFM: 'Bagoes' },
       { tanggal: '2026-06-18', stage: 'Closing',      catatan: 'Konsultasi selesai, masuk proses tender',    picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0005', orderId: 'EV-26-0003',
+    konsultasiId: 'KNS-26-0005', orderIds: ['EV-26-0003'],
   },
   {
     id: 'LE-0006', namaKlien: 'PT. Telkom Indonesia', tipeKlien: 'Corporate', kota: 'Jakarta Selatan',
@@ -87,7 +87,7 @@ const LEADS_INIT = [
       { tanggal: '2026-06-20', stage: 'New',      catatan: 'Cold email ke HRD Telkom Indonesia', picEFM: 'Bagoes' },
       { tanggal: '2026-06-25', stage: 'Approach', catatan: 'Balas email — minta meeting awal',   picEFM: 'Bagoes' },
     ],
-    konsultasiId: null, orderId: null,
+    konsultasiId: null, orderIds: [],
   },
 ]
 

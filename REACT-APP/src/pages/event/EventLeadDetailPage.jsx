@@ -61,7 +61,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-05-20', stage: 'Closing',   catatan: 'Proposal diterima, jadwalkan konsultasi',     picEFM: 'Bagoes' },
       { tanggal: '2026-06-01', stage: 'Converted', catatan: 'Deal ditandatangani, order dibuat',           picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0001', orderId: 'EV-26-0001',
+    konsultasiId: 'KNS-26-0001', orderIds: ['EV-26-0001'],
   },
   {
     id: 'LE-0002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
@@ -76,7 +76,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-05-22', stage: 'Approach',  catatan: 'Presentasi online ke HR Director',            picEFM: 'Emma' },
       { tanggal: '2026-06-01', stage: 'Converted', catatan: 'Proposal disetujui, kontrak ditandatangani',  picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-26-0002', orderId: 'EV-26-0002',
+    konsultasiId: 'KNS-26-0002', orderIds: ['EV-26-0002'],
   },
   {
     id: 'LE-0003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
@@ -90,7 +90,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-06-05', stage: 'New',      catatan: 'Kontak masuk dari LinkedIn',             picEFM: 'Bagoes' },
       { tanggal: '2026-06-10', stage: 'Proposal', catatan: 'Konsultasi selesai, kirim proposal EFM', picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0003', orderId: null,
+    konsultasiId: 'KNS-26-0003', orderIds: [],
   },
   {
     id: 'LE-0004', namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community', kota: 'Jakarta Pusat',
@@ -104,7 +104,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-06-08', stage: 'New',  catatan: 'DM Instagram, budget sangat terbatas',             picEFM: 'Emma' },
       { tanggal: '2026-06-14', stage: 'Lost', catatan: 'Tidak lanjut — margin tidak memenuhi threshold',   picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-26-0004', orderId: null,
+    konsultasiId: 'KNS-26-0004', orderIds: [],
   },
   {
     id: 'LE-0005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
@@ -119,7 +119,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-06-15', stage: 'Presentation', catatan: 'Presentasi resmi ke Kepala Bidang Olahraga',  picEFM: 'Bagoes' },
       { tanggal: '2026-06-18', stage: 'Closing',      catatan: 'Konsultasi selesai, masuk proses tender',     picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-26-0005', orderId: 'EV-26-0003',
+    konsultasiId: 'KNS-26-0005', orderIds: ['EV-26-0003'],
   },
   {
     id: 'LE-0006', namaKlien: 'PT. Telkom Indonesia', tipeKlien: 'Corporate', kota: 'Jakarta Selatan',
@@ -132,7 +132,7 @@ const LEADS_FALLBACK = [
       { tanggal: '2026-06-20', stage: 'New',      catatan: 'Cold email ke HRD Telkom Indonesia', picEFM: 'Bagoes' },
       { tanggal: '2026-06-25', stage: 'Approach', catatan: 'Balas email — minta meeting awal',   picEFM: 'Bagoes' },
     ],
-    konsultasiId: null, orderId: null,
+    konsultasiId: null, orderIds: [],
   },
 ]
 
@@ -575,31 +575,6 @@ export default function EventLeadDetailPage() {
                       </div>
                     </div>
 
-                    {/* Linked records */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {lead.konsultasiId && (
-                        <button
-                          onClick={() => navigate(`/event/konsultasi/${lead.konsultasiId}`)}
-                          className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors text-left">
-                          <div>
-                            <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide">Konsultasi</p>
-                            <p className="text-sm font-bold text-[#1E1C43]">{lead.konsultasiId}</p>
-                          </div>
-                          <ExternalLink size={14} className="text-blue-500" />
-                        </button>
-                      )}
-                      {lead.orderId && (
-                        <button
-                          onClick={() => navigate(`/event/orders/${lead.orderId}`)}
-                          className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-xl hover:bg-green-100 transition-colors text-left">
-                          <div>
-                            <p className="text-[10px] font-semibold text-green-600 uppercase tracking-wide">Order</p>
-                            <p className="text-sm font-bold text-[#1E1C43]">#{lead.orderId}</p>
-                          </div>
-                          <ExternalLink size={14} className="text-green-500" />
-                        </button>
-                      )}
-                    </div>
                   </div>
                 ) : (
                   /* Edit form */
@@ -767,27 +742,33 @@ export default function EventLeadDetailPage() {
         {activeTab === 'riwayat' && (
           <div className="space-y-4">
 
-            {/* Order terhubung */}
+            {/* Riwayat Order */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Order Terhubung</h3>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
+                <p className="text-xs text-gray-400 pl-4 mt-0.5">Semua order yang terhubung dengan lead ini</p>
               </div>
               <div className="p-5">
-                {!lead.orderId ? (
+                {(lead.orderIds || []).length === 0 ? (
                   <div className="flex flex-col items-center py-8 gap-2">
                     <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
                     <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
                   </div>
                 ) : (
-                  <button
-                    onClick={() => navigate(`/event/orders/${lead.orderId}`)}
-                    className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
-                    <div>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Order B2B Event</p>
-                      <p className="text-sm font-bold text-[#1E1C43]">#{lead.orderId}</p>
-                    </div>
-                    <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors shrink-0" />
-                  </button>
+                  <div className="space-y-2">
+                    {(lead.orderIds || []).map(ordId => (
+                      <button
+                        key={ordId}
+                        onClick={() => navigate(`/event/orders/${ordId}`)}
+                        className="w-full flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                        <div>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Order Event</p>
+                          <p className="text-sm font-bold text-[#1E1C43]">#{ordId}</p>
+                        </div>
+                        <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                      </button>
+                    ))}
+                  </div>
                 )}
               </div>
             </div>
