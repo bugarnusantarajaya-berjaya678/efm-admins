@@ -287,8 +287,37 @@ function PanelCompany() {
     }
   }
 
+  function handleRekeningChange(idx, field, value) {
+    setCompanySettings(prev => {
+      const list = [...(prev.rekeningList || [])]
+      list[idx] = { ...list[idx], [field]: value }
+      return { ...prev, rekeningList: list }
+    })
+  }
+
+  function handleAddRekening() {
+    setCompanySettings(prev => ({
+      ...prev,
+      rekeningList: [...(prev.rekeningList || []), { bank: '', rek: '', an: '' }],
+    }))
+  }
+
+  function handleRemoveRekening(idx) {
+    setCompanySettings(prev => {
+      const list = (prev.rekeningList || []).filter((_, i) => i !== idx)
+      return { ...prev, rekeningList: list }
+    })
+  }
+
   function handleSaveSettings() {
-    localStorage.setItem('efmCompanySettings', JSON.stringify(companySettings))
+    const rek0 = (companySettings.rekeningList || [])[0] || {}
+    const toSave = {
+      ...companySettings,
+      namaBank: rek0.bank || companySettings.namaBank || '',
+      nomorRekening: rek0.rek || companySettings.nomorRekening || '',
+      atasNamaRekening: rek0.an || companySettings.atasNamaRekening || '',
+    }
+    localStorage.setItem('efmCompanySettings', JSON.stringify(toSave))
     alert('Pengaturan berhasil disimpan.')
   }
 
@@ -334,42 +363,57 @@ function PanelCompany() {
             Informasi Rekening Bank
           </p>
           <p className="text-xs text-gray-400 mb-4">
-            Digunakan otomatis sebagai informasi pembayaran di Invoice
+            Bisa diisi lebih dari satu rekening. Semua rekening tampil otomatis di Invoice & Receipt.
           </p>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                Nama Bank
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                placeholder="BCA / Mandiri / BNI..."
-                value={companySettings.namaBank}
-                onChange={e => handleSettingsChange('namaBank', e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                Nomor Rekening
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:border-[#1E1C43]"
-                placeholder="1234567890"
-                value={companySettings.nomorRekening}
-                onChange={e => handleSettingsChange('nomorRekening', e.target.value)}
-              />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
-                Atas Nama Rekening
-              </label>
-              <input
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                placeholder="CV. Bugar Nusantara Jaya"
-                value={companySettings.atasNamaRekening}
-                onChange={e => handleSettingsChange('atasNamaRekening', e.target.value)}
-              />
-            </div>
+          <div className="flex flex-col gap-3">
+            {(companySettings.rekeningList || []).map((rek, idx) => (
+              <div key={idx} className="flex gap-2 items-start p-3 bg-gray-50 rounded-xl border border-gray-200">
+                <div className="flex-1 grid grid-cols-3 gap-2">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Nama Bank</label>
+                    <input
+                      className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      placeholder="BCA / Mandiri..."
+                      value={rek.bank}
+                      onChange={e => handleRekeningChange(idx, 'bank', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Nomor Rekening</label>
+                    <input
+                      className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm font-mono focus:outline-none focus:border-[#1E1C43]"
+                      placeholder="1234567890"
+                      value={rek.rek}
+                      onChange={e => handleRekeningChange(idx, 'rek', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Atas Nama</label>
+                    <input
+                      className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      placeholder="CV. Bugar Nusantara Jaya"
+                      value={rek.an}
+                      onChange={e => handleRekeningChange(idx, 'an', e.target.value)}
+                    />
+                  </div>
+                </div>
+                {(companySettings.rekeningList || []).length > 1 && (
+                  <button
+                    onClick={() => handleRemoveRekening(idx)}
+                    className="mt-5 p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    title="Hapus rekening ini"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              onClick={handleAddRekening}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#1E1C43] hover:text-[#E05945] transition-colors py-1 w-fit"
+            >
+              <Plus size={13} /> Tambah Rekening
+            </button>
           </div>
         </div>
 
