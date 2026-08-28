@@ -7,12 +7,7 @@ import {
   getProgramById, addStoredProgram, updateStoredProgram,
   deleteStoredProgram, getExistingIds,
 } from '../../data/ppProgramStore'
-
-const JENIS_PROGRAM_AKTIF = [
-  'Private Training', 'Semi Private Training', 'Group Training',
-  'Fisioterapi', 'Yoga Therapy', 'Posture Correction',
-  'Strength & Conditioning', 'Nutrition Coaching', 'Kids Fitness',
-]
+import { getStoredJenis } from '../../data/ppJenisStore'
 
 // Kode jenis per nama latihan — menentukan segment kedua ID (PRG-[KODE]-[URUT])
 const KODE_MAP = {
@@ -88,8 +83,9 @@ export default function PPProgramFormPage() {
   const [form, setForm] = useState(() => isEdit && existing ? toFormValues(existing) : { ...EMPTY_FORM })
   const [errors, setErrors] = useState({})
 
+  const jenisAktif = getStoredJenis().filter(j => j.status === 'aktif').map(j => j.nama)
   const picInfo = PIC_DB[form.picId] || null
-  const jenisOptions = JENIS_PROGRAM_AKTIF.includes(form.namaLatihan) ? form.namaLatihan : (form.namaLatihan ? 'Lainnya' : '')
+  const jenisOptions = jenisAktif.includes(form.namaLatihan) ? form.namaLatihan : (form.namaLatihan ? 'Lainnya' : '')
 
   function set(key, val) {
     setForm(prev => {
@@ -224,7 +220,7 @@ export default function PPProgramFormPage() {
                 disabled={isEdit}
               >
                 <option value="">— Pilih Jenis Program —</option>
-                {JENIS_PROGRAM_AKTIF.map(j => <option key={j} value={j}>{j}</option>)}
+                {jenisAktif.map(j => <option key={j} value={j}>{j}</option>)}
                 <option value="Lainnya">Lainnya</option>
               </select>
               {jenisOptions === 'Lainnya' && (

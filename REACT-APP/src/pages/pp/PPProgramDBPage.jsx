@@ -1,8 +1,9 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Search, Layers } from 'lucide-react'
-import { PIC_DB, JENIS_OPTS, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
+import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
+import { getStoredJenis } from '../../data/ppJenisStore'
 
 const ROWS = 10
 
@@ -123,7 +124,7 @@ export default function PPProgramDBPage() {
         </select>
         <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors" value={fJenis} onChange={e => setFJenis(e.target.value)}>
           <option value="">Semua Jenis</option>
-          {JENIS_OPTS.map(j => <option key={j} value={j}>{j}</option>)}
+          {getStoredJenis().filter(j => j.status === 'aktif').map(j => <option key={j.nama} value={j.nama}>{j.nama}</option>)}
         </select>
         <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors" value={fPIC} onChange={e => setFPIC(e.target.value)}>
           <option value="">Semua PIC</option>
