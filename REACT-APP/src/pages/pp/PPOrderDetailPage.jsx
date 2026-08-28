@@ -740,14 +740,14 @@ export default function PPOrderDetailPage() {
               {!isNew && (
                 <button
                   onClick={() => setShowTahapanModal(true)}
-                  className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-semibold"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
                 >
                   Ubah Tahapan
                 </button>
               )}
               <button
                 onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-                className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs px-3 py-1.5 rounded-lg hover:bg-[#c94a38] transition-colors font-semibold"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
               >
                 <ArrowLeft size={12} /> Kembali
               </button>
