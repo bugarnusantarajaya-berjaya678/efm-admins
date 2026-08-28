@@ -13,7 +13,6 @@ import PPDashboard from './pages/pp/PPDashboard'
 import PPLeadsPage from './pages/pp/PPLeadsPage'
 import PPOrdersPage from './pages/pp/PPOrdersPage'
 import PPProgramDBPage from './pages/pp/PPProgramDBPage'
-import PPJenisProgramPage from './pages/pp/PPJenisProgramPage'
 import PPDocumentsPage from './pages/pp/PPDocumentsPage'
 import PPAgreementDetailPage from './pages/pp/PPAgreementDetailPage'
 import PPInvoicePage from './pages/pp/PPInvoicePage'
@@ -101,7 +100,6 @@ function AppRoutes() {
       <Route path="/pp/program-db" element={<AppShell><PPProgramDBPage /></AppShell>} />
       <Route path="/pp/program-db/new" element={<AppShell><PPProgramFormPage /></AppShell>} />
       <Route path="/pp/program-db/:progId/edit" element={<AppShell><PPProgramFormPage /></AppShell>} />
-      <Route path="/pp/program-db/jenis-program" element={<AppShell><PPJenisProgramPage /></AppShell>} />
       <Route path="/pp/documents" element={<AppShell><PPDocumentsPage /></AppShell>} />
       <Route path="/pp/invoice" element={<AppShell><PPInvoicePage /></AppShell>} />
       <Route path="/pp/invoice/:id" element={<AppShell><PPInvoiceDetailPage /></AppShell>} />
