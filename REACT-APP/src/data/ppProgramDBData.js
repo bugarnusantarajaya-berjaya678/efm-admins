@@ -16,6 +16,7 @@ export const PROGRAMS_INIT = [
 
 export const JENIS_OPTS = ['Private Training', 'Yoga & Stretching', 'Sports Rehab']
 export const PIC_OPTS_DB = Object.entries(PIC_DB).map(([id, p]) => ({ id, label: `${id} — ${p.fullname}` }))
+export const PIC_OPTS    = [...Object.values(PIC_DB).map(p => p.fullname), 'Admin EFM']
 
 export function formatRp(n) {
   return 'Rp ' + Math.round(n).toLocaleString('id-ID')

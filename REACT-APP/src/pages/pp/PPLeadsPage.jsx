@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search, MessageCircle } from 'lucide-react'
 import { initLeads, getStoredLeads } from '../../data/ppLeadsStore'
 import { getCompanySettings } from '../../utils/companySettings'
+import { PIC_OPTS } from '../../data/ppProgramDBData'
 
 
 /* ═══════════════════════════════════════
@@ -27,7 +28,6 @@ const STAGE_CLS = {
 }
 
 const SUMBER_OPTS    = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
-const PIC_OPTS       = ['Sarah Jenkins','Marcus Chen','Admin EFM']
 const PROGRAM_OPTS   = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 const PIPELINE_STAGES = ['New','Approach','Screening','Invoicing','Closing','Convert','Lost']
 const ROWS_PER_PAGE   = 10
