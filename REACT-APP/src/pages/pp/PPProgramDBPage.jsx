@@ -407,19 +407,23 @@ export default function PPProgramDBPage() {
           <table className="w-full text-sm" style={{ minWidth: '1200px' }}>
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['ID Program','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status'].map(h => (
+                {['ID Program','Kode Jenis','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status'].map(h => (
                   <th key={h} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {slice.length === 0 ? (
-                <tr><td colSpan={11} className="py-10 text-center text-sm text-text-muted">Tidak ada program yang sesuai filter</td></tr>
+                <tr><td colSpan={12} className="py-10 text-center text-sm text-text-muted">Tidak ada program yang sesuai filter</td></tr>
               ) : slice.map((p) => {
                 const pic = PIC_DB[p.picId] || {}
+                const kodeJenis = p.id.split('-')[1] || '—'
                 return (
                   <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer" onClick={() => navigate(`/pp/program-db/${p.id}/edit`)}>
-                    <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{p.id}</td>
+                    <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap font-mono">{p.id}</td>
+                    <td className="px-3 py-2.5 whitespace-nowrap">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-[#1E1C43] text-white">{kodeJenis}</span>
+                    </td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5">{p.namaLatihan}</td>
                     <td className="text-xs font-medium text-gray-900 px-3 py-2.5">{p.namaPaket}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 text-center">{p.sesi}</td>

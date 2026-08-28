@@ -14,14 +14,48 @@ const JENIS_PROGRAM_AKTIF = [
   'Strength & Conditioning', 'Nutrition Coaching', 'Kids Fitness',
 ]
 
+// Kode jenis per nama latihan — menentukan segment kedua ID (PRG-[KODE]-[URUT])
+const KODE_MAP = {
+  'Private Training':        'PP',
+  'Semi Private Training':   'SP',
+  'Group Training':          'GP',
+  'Fisioterapi':             'TH',
+  'Yoga Therapy':            'TH',
+  'Posture Correction':      'TH',
+  'Yoga & Stretching':       'TH',
+  'Sports Rehab':            'TH',
+  'Strength & Conditioning': 'SC',
+  'Nutrition Coaching':      'NC',
+  'Kids Fitness':            'KF',
+}
+
+function getNextSequence(kode) {
+  const prefix = `PRG-${kode}-`
+  const maxSeq = getExistingIds()
+    .filter(id => id.startsWith(prefix))
+    .reduce((max, id) => {
+      const seq = parseInt(id.split('-').pop()) || 0
+      return seq > max ? seq : max
+    }, 0)
+  return maxSeq + 1
+}
+
+function buildId(kode, urut) {
+  return `PRG-${kode}-${String(parseInt(urut) || 1).padStart(3, '0')}`
+}
+
 const EMPTY_FORM = {
-  id: '', namaLatihan: '', namaPaket: '', sesi: '', pertemuan: '', partisipan: '1',
+  id: '', kodeJenis: '', nomorUrut: '',
+  namaLatihan: '', namaPaket: '', sesi: '', pertemuan: '', partisipan: '1',
   masa: '', picId: '', biayaSesiPIC: '', hargaPersesi: '', diskonPaket: '0', harga: '', status: 'aktif',
 }
 
 function toFormValues(prog) {
+  const parts = prog.id.split('-') // ['PRG', 'PP', '001']
   return {
     ...prog,
+    kodeJenis: parts[1] || '',
+    nomorUrut: parts[2] || '',
     sesi: String(prog.sesi),
     pertemuan: String(prog.pertemuan),
     partisipan: String(prog.partisipan),
@@ -61,6 +95,16 @@ export default function PPProgramFormPage() {
     setForm(prev => {
       const next = { ...prev, [key]: val }
       if (['sesi', 'hargaPersesi', 'diskonPaket'].includes(key)) next.harga = calcHarga(next)
+      if (key === 'namaLatihan' && !isEdit) {
+        const kode = KODE_MAP[val] || (val ? 'OT' : '')
+        const urut = kode ? String(getNextSequence(kode)) : ''
+        next.kodeJenis = kode
+        next.nomorUrut = urut
+        next.id = kode && urut ? buildId(kode, urut) : ''
+      }
+      if (key === 'nomorUrut' && !isEdit && prev.kodeJenis) {
+        next.id = buildId(prev.kodeJenis, val)
+      }
       return next
     })
     if (errors[key]) setErrors(p => ({ ...p, [key]: '' }))
@@ -78,9 +122,9 @@ export default function PPProgramFormPage() {
 
   function validate() {
     const e = {}
-    const id = form.id.trim().toUpperCase()
-    if (!id)                    e.id           = 'ID Program wajib diisi'
-    else if (!isEdit && getExistingIds().includes(id)) e.id = 'ID Program sudah ada'
+    if (!form.kodeJenis)                                          e.nomorUrut = 'Pilih jenis program terlebih dahulu'
+    else if (!form.nomorUrut || parseInt(form.nomorUrut) < 1)    e.nomorUrut = 'Nomor urut tidak valid'
+    else if (!isEdit && getExistingIds().includes(form.id))       e.nomorUrut = `ID ${form.id} sudah digunakan`
     if (!form.namaLatihan.trim()) e.namaLatihan = 'Nama latihan wajib dipilih'
     if (!form.namaPaket.trim())   e.namaPaket   = 'Nama paket wajib diisi'
     if (!form.sesi)               e.sesi        = 'Jumlah sesi wajib diisi'
@@ -97,7 +141,7 @@ export default function PPProgramFormPage() {
     if (Object.keys(e).length) { setErrors(e); return }
 
     const prog = {
-      id:           form.id.trim().toUpperCase(),
+      id:           isEdit ? progId : buildId(form.kodeJenis, form.nomorUrut),
       namaLatihan:  form.namaLatihan.trim(),
       namaPaket:    form.namaPaket.trim(),
       sesi:         parseInt(form.sesi) || 0,
@@ -167,30 +211,7 @@ export default function PPProgramFormPage() {
           <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Identitas Program</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            <div>
-              <label className={label}>ID Program <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                value={form.id}
-                onChange={e => set('id', e.target.value.toUpperCase())}
-                placeholder="Contoh: PRG-PP-007"
-                disabled={isEdit}
-                className={`${inputCls('id')} ${isEdit ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''}`}
-              />
-              {errors.id
-                ? <p className="text-red-500 text-[10px] mt-1">{errors.id}</p>
-                : <p className="text-[10px] text-gray-400 mt-1">Prefix: PRG-PP- (Private Training), PRG-TH- (Terapi)</p>
-              }
-            </div>
-
-            <div>
-              <label className={label}>Status</label>
-              <select value={form.status} onChange={e => set('status', e.target.value)} className={inputCls('status')}>
-                <option value="aktif">Aktif</option>
-                <option value="inactive">Nonaktif</option>
-              </select>
-            </div>
-
+            {/* Nama Latihan — PERTAMA, karena menentukan Kode Jenis */}
             <div className="sm:col-span-2">
               <label className={label}>Nama Latihan / Terapi <span className="text-red-500">*</span></label>
               <select
@@ -200,6 +221,7 @@ export default function PPProgramFormPage() {
                   if (e.target.value !== 'Lainnya') set('namaLatihan', e.target.value)
                   else set('namaLatihan', '')
                 }}
+                disabled={isEdit}
               >
                 <option value="">— Pilih Jenis Program —</option>
                 {JENIS_PROGRAM_AKTIF.map(j => <option key={j} value={j}>{j}</option>)}
@@ -211,9 +233,42 @@ export default function PPProgramFormPage() {
                   placeholder="Tulis nama latihan / terapi..."
                   value={form.namaLatihan}
                   onChange={e => set('namaLatihan', e.target.value)}
+                  disabled={isEdit}
                 />
               )}
               {errors.namaLatihan && <p className="text-red-500 text-[10px] mt-1">{errors.namaLatihan}</p>}
+            </div>
+
+            {/* ID Program — display-only, auto-generated dari jenis program */}
+            <div>
+              <label className={label}>ID Program</label>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm font-mono font-semibold text-gray-400 shrink-0">PRG</span>
+                <span className="text-gray-300 shrink-0">—</span>
+                <div className={`flex items-center justify-center w-12 rounded-lg py-2.5 text-sm font-mono font-bold text-center select-none ${form.kodeJenis ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                  {form.kodeJenis || '??'}
+                </div>
+                <span className="text-gray-300 shrink-0">—</span>
+                <div className={`w-16 rounded-lg px-3 py-2.5 text-sm font-mono font-bold text-center select-none ${form.nomorUrut ? 'bg-gray-100 text-[#1E1C43]' : 'bg-gray-50 text-gray-300'}`}>
+                  {form.nomorUrut ? String(parseInt(form.nomorUrut)).padStart(3, '0') : '???'}
+                </div>
+              </div>
+              {errors.nomorUrut
+                ? <p className="text-red-500 text-[10px] mt-1">{errors.nomorUrut}</p>
+                : <p className="text-[10px] text-gray-400 mt-1">
+                    {form.id
+                      ? <>ID: <span className="font-mono font-medium text-[#1E1C43]">{form.id}</span> · Auto-generated, tidak dapat diubah manual</>
+                      : 'Pilih Nama Latihan / Terapi — ID akan otomatis terbuat'}
+                  </p>
+              }
+            </div>
+
+            <div>
+              <label className={label}>Status</label>
+              <select value={form.status} onChange={e => set('status', e.target.value)} className={inputCls('status')}>
+                <option value="aktif">Aktif</option>
+                <option value="inactive">Nonaktif</option>
+              </select>
             </div>
 
             <div className="sm:col-span-2">
