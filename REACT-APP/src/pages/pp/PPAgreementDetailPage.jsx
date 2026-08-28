@@ -192,7 +192,7 @@ function AgreementDoc({ doc }) {
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
-                <li key={i} className="text-[11px] leading-relaxed text-gray-700" style={{ listStyleType: 'decimal' }}>{p}</li>
+                <li key={i} className="text-[11px] leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
           </div>
