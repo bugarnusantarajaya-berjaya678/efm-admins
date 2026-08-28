@@ -7,6 +7,8 @@ import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { getDocByOrderId, updateDoc as updateAgrDoc } from '../../data/ppDocumentsStore'
 import { addReceipt } from '../../data/ppReceiptStore'
+import { getStoredPrograms } from '../../data/ppProgramStore'
+import { PIC_DB } from '../../data/ppProgramDBData'
 
 /* ═══════════════════════════════════════
    Constants
@@ -43,48 +45,24 @@ function fmtLogWaktu(d = new Date()) {
     ', ' + date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
 }
 
-const dummyPPPrograms = [
-  { id:"PRG-PP-001", namaProgram:"Private Training", namaPaket:"4 Sesi - Starter",
-    totalSesi:4, frekuensi:"2x seminggu", masaBerlaku:"30 hari", hargaPaket:600000,
-    pic:{ nama:"Marcus Chen", spesialisasi:"Personal Trainer", rate:"Rp 150.000/sesi" },
-    keterangan:"Cocok untuk pemula yang baru memulai latihan" },
-  { id:"PRG-PP-002", namaProgram:"Private Training", namaPaket:"8 Sesi - Basic",
-    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1400000,
-    pic:{ nama:"Marcus Chen", spesialisasi:"Personal Trainer", rate:"Rp 175.000/sesi" },
-    keterangan:"Include evaluasi fisik di sesi pertama" },
-  { id:"PRG-PP-003", namaProgram:"Private Training", namaPaket:"12 Sesi - Pro",
-    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2400000,
-    pic:{ nama:"Sarah Jenkins", spesialisasi:"Personal Trainer", rate:"Rp 200.000/sesi" },
-    keterangan:"Include program latihan harian dan evaluasi mingguan" },
-  { id:"PRG-PP-004", namaProgram:"Private Training", namaPaket:"20 Sesi - Premium",
-    totalSesi:20, frekuensi:"3x seminggu", masaBerlaku:"90 hari", hargaPaket:3800000,
-    pic:{ nama:"Sarah Jenkins", spesialisasi:"Personal Trainer", rate:"Rp 190.000/sesi" },
-    keterangan:"Include video analisis gerakan dan meal plan" },
-  { id:"PRG-PP-005", namaProgram:"Yoga Private", namaPaket:"8 Sesi Yoga - Basic",
-    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1280000,
-    pic:{ nama:"Sari Dewi", spesialisasi:"Yoga Instructor", rate:"Rp 160.000/sesi" },
-    keterangan:"Include matras yoga premium" },
-  { id:"PRG-PP-006", namaProgram:"Yoga Private", namaPaket:"12 Sesi Yoga - Pro",
-    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2160000,
-    pic:{ nama:"Sari Dewi", spesialisasi:"Yoga Instructor", rate:"Rp 180.000/sesi" },
-    keterangan:"Include sesi meditasi dan breathing exercise" },
-  { id:"PRG-PP-007", namaProgram:"Pilates Private", namaPaket:"8 Sesi Pilates - Basic",
-    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1360000,
-    pic:{ nama:"Nia Rahayu", spesialisasi:"Pilates Instructor", rate:"Rp 170.000/sesi" },
-    keterangan:"Include assessment postur di sesi pertama" },
-  { id:"PRG-PP-008", namaProgram:"Pilates Private", namaPaket:"12 Sesi Pilates - Pro",
-    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2220000,
-    pic:{ nama:"Nia Rahayu", spesialisasi:"Pilates Instructor", rate:"Rp 185.000/sesi" },
-    keterangan:"Include program rehabilitasi khusus" },
-  { id:"PRG-PP-009", namaProgram:"Zumba Private", namaPaket:"8 Sesi Zumba - Basic",
-    totalSesi:8, frekuensi:"2x seminggu", masaBerlaku:"45 hari", hargaPaket:1240000,
-    pic:{ nama:"Bima Prakoso", spesialisasi:"Zumba Instructor", rate:"Rp 155.000/sesi" },
-    keterangan:"Include akses playlist Zumba eksklusif" },
-  { id:"PRG-PP-010", namaProgram:"Functional Training", namaPaket:"12 Sesi FT - Pro",
-    totalSesi:12, frekuensi:"3x seminggu", masaBerlaku:"60 hari", hargaPaket:2340000,
-    pic:{ nama:"Doni Kusuma", spesialisasi:"Functional Trainer", rate:"Rp 195.000/sesi" },
-    keterangan:"Include functional movement screening" },
-]
+function toPaket(p) {
+  const pic = PIC_DB[p.picId] || {}
+  return {
+    id: p.id,
+    namaProgram: p.namaLatihan,
+    namaPaket: p.namaPaket,
+    totalSesi: p.sesi,
+    frekuensi: `${p.pertemuan}x seminggu`,
+    masaBerlaku: p.masa,
+    hargaPaket: p.harga,
+    pic: {
+      nama: pic.fullname || '—',
+      spesialisasi: pic.spesialis || '—',
+      rate: 'Rp ' + (p.biayaSesiPIC || 0).toLocaleString('id-ID') + '/sesi',
+    },
+    keterangan: '',
+  }
+}
 
 /* ── Per-order line items ─────────────────────────────────────────────────── */
 function defaultLineItems(order) {
@@ -281,7 +259,9 @@ export default function PPOrderDetailPage() {
   const [infoDeal, setInfoDeal] = useState(initInfo)
   const [infoDraft, setInfoDraft] = useState(initInfo)
 
-  const initProgram = dummyPPPrograms.find(p => p.id === (order?.programId || ''))
+  const ppPrograms = getStoredPrograms().map(toPaket)
+
+  const initProgram = ppPrograms.find(p => p.id === (order?.programId || ''))
   const [programSearch, setProgramSearch] = useState(
     initProgram ? `${initProgram.id} — ${initProgram.namaPaket}` : ''
   )
@@ -499,14 +479,14 @@ export default function PPOrderDetailPage() {
   const qCalcDraft = quotationDraft ? calcQuotationTotal(quotationDraft) : qCalc
   const subtotal   = qCalc.total   // "Nilai Kontrak (dari Quotation)"
 
-  const programTerkait = order ? dummyPPPrograms.find((s) => s.id === order.programId) : null
+  const programTerkait = order ? ppPrograms.find((s) => s.id === order.programId) : null
   const filteredPrograms = programSearch
-    ? dummyPPPrograms.filter(p =>
+    ? ppPrograms.filter(p =>
         p.id.toLowerCase().includes(programSearch.toLowerCase()) ||
         p.namaPaket.toLowerCase().includes(programSearch.toLowerCase()) ||
         p.namaProgram.toLowerCase().includes(programSearch.toLowerCase())
       )
-    : dummyPPPrograms
+    : ppPrograms
 
   /* ── Edit handlers ───────────────────────────────────────────────────────── */
   function startEdit(section) {
@@ -515,7 +495,7 @@ export default function PPOrderDetailPage() {
     if (section === 'infoDeal') {
       setInfoDraft({ ...infoDeal })
       setItemsDraft(lineItems.map(li => ({ ...li })))
-      const prog = dummyPPPrograms.find(p => p.id === infoDeal.programId)
+      const prog = ppPrograms.find(p => p.id === infoDeal.programId)
       setProgramSearch(prog ? `${prog.id} — ${prog.namaPaket}` : '')
       setShowGantiPaket(false)
     }
@@ -541,7 +521,7 @@ export default function PPOrderDetailPage() {
   function saveInfoDeal() {
     setInfoDeal({ ...infoDraft })
     setLineItems([...itemsDraft])
-    const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
+    const prog = ppPrograms.find(p => p.id === infoDraft.programId)
     if (prog) {
       setRincianDraft(prev => [
         { id: 1, namaItem: `${prog.namaProgram} ${prog.namaPaket}`, satuan: 'Paket', jumlah: 1, total: prog.hargaPaket },
@@ -1039,7 +1019,7 @@ export default function PPOrderDetailPage() {
                       onFocus={() => { setProgramSearch(''); setProgramDropdownOpen(true) }}
                       onBlur={() => setTimeout(() => {
                         setProgramDropdownOpen(false)
-                        const prog = dummyPPPrograms.find(p => p.id === infoDraft.programId)
+                        const prog = ppPrograms.find(p => p.id === infoDraft.programId)
                         if (prog) setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
                       }, 150)}
                       placeholder="Ketik ID program atau nama paket..."
@@ -1076,7 +1056,7 @@ export default function PPOrderDetailPage() {
               {/* Compact paket strip — shown always (unless ganti paket combobox is active) */}
               {!(editingSection === 'infoDeal' && showGantiPaket) && (() => {
                 const stripProg = editingSection === 'infoDeal'
-                  ? (dummyPPPrograms.find(p => p.id === infoDraft.programId) || programTerkait)
+                  ? (ppPrograms.find(p => p.id === infoDraft.programId) || programTerkait)
                   : programTerkait
                 return stripProg ? (
                   <div className="bg-gray-50 rounded-xl p-4 mb-3">
@@ -1560,7 +1540,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section: Agreement Klien ── */}
           {(() => {
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const prog = ppPrograms.find(p => p.id === order.programId)
             const masaBerlakuDays = prog ? parseInt(prog.masaBerlaku.replace(/[^0-9]/g, ''), 10) : 0
             const tglBerakhir = prog && order.tanggalMulai
               ? new Date(new Date(order.tanggalMulai).getTime() + masaBerlakuDays * 24 * 60 * 60 * 1000)
@@ -1816,7 +1796,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section 3: Monitoring Sesi (read-only, dari backend) ── */}
           {(() => {
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const prog = ppPrograms.find(p => p.id === order.programId)
             const totalPaket = prog?.totalSesi || 12
             const totalHadir = absensiSesi.length
             const sesiTersisa = Math.max(0, totalPaket - totalHadir)
@@ -1905,7 +1885,7 @@ export default function PPOrderDetailPage() {
               ditolak:         { label: 'Ditolak',          cls: 'bg-red-100 text-red-700'       },
             }
             const cur = REKAP_LABEL[rekapStatus] || REKAP_LABEL.belum_diajukan
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const prog = ppPrograms.find(p => p.id === order.programId)
             const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
@@ -2063,7 +2043,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section 5: Honorarium Pelatih ── */}
           {(() => {
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const prog = ppPrograms.find(p => p.id === order.programId)
             const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
             const totalHonorariumDue = absensiSesi.length * ratePerSesi
             const isUnlocked = rekapStatus === 'dikonfirmasi'
@@ -2258,7 +2238,7 @@ export default function PPOrderDetailPage() {
 
           {/* ── Section 7: Catatan Progres Pelatih ── */}
           {(() => {
-            const prog = dummyPPPrograms.find(p => p.id === order.programId)
+            const prog = ppPrograms.find(p => p.id === order.programId)
             const catatanProgres = [
               { tanggal: '20 Nov 2026', catatan: 'Klien menunjukkan progress signifikan pada endurance. Berat turun 2 kg sejak sesi ke-4. Disarankan meningkatkan intensitas kardio minggu depan.' },
               { tanggal: '5 Nov 2026',  catatan: 'Sesi ke-4 selesai. Fokus compound movement. Klien mulai konsisten dengan teknik squat dan deadlift, form sudah membaik.' },
