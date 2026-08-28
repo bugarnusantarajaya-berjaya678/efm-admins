@@ -69,6 +69,22 @@ const PIPELINE = [
   { stage: 'New',          count: 1, color: '#9CA3AF' },
 ]
 
+const MENDEKATI_HDAY = [
+  {
+    orderId:   'EV-26-0001',
+    namaEvent: 'Health Run for Hope 2026',
+    klien:     'Yayasan Kanker Indonesia',
+    tipe:      'Foundation',
+    sisaHari:  1,
+    pic:       'Bagoes',
+  },
+]
+
+const PIC_SUMMARY = [
+  { nama: 'Bagoes S.', ordersAktif: 2, leadsAktif: 3, hotLeads: 1, eventBulanIni: 1 },
+  { nama: 'Emma R.',   ordersAktif: 1, leadsAktif: 2, hotLeads: 1, eventBulanIni: 0 },
+]
+
 const JADWAL = [
   { tgl: '28', bln: 'Jun', nama: 'Health Run for Hope 2026 — H-Day',       klien: 'Yayasan Kanker Indonesia',   pic: 'Bagoes',    tipe: 'Sesi/Class' },
   { tgl: '28', bln: 'Jun', nama: 'Pelunasan #EV-26-0001 Jatuh Tempo',      klien: 'Yayasan Kanker Indonesia',   pic: 'Admin EFM', tipe: 'Penagihan'  },
@@ -167,13 +183,6 @@ export default function EventDashboardPage() {
           <h1 className="text-[22px] font-bold text-[#1E1C43]">B2B Event Management</h1>
           <p className="text-sm text-gray-500 mt-1">Overview pipeline & operasional event — Corporate, Foundation, Government & Brand</p>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate('/event/leads')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
-        >
-          + New Lead
-        </button>
       </div>
 
       {/* ══════════════════════════════════
@@ -344,6 +353,117 @@ export default function EventDashboardPage() {
           </div>
         </div>
 
+        {/* Kanan: Event Mendekati H-Day */}
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">🏁 Mendekati H-Day</h3>
+            <span className="text-[10px] bg-red-100 text-red-600 font-bold px-2 py-0.5 rounded-full">≤ H-14</span>
+          </div>
+          {MENDEKATI_HDAY.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center py-6">Tidak ada event mendekati H-Day</p>
+          ) : (
+            <div className="space-y-3">
+              {MENDEKATI_HDAY.map(ev => {
+                const urg = ev.sisaHari <= 1 ? 'red' : ev.sisaHari <= 3 ? 'orange' : 'yellow'
+                const cfg = {
+                  red:    { bg: '#FEF2F2', border: '#EF4444', text: 'text-red-600' },
+                  orange: { bg: '#FFF7ED', border: '#F97316', text: 'text-orange-500' },
+                  yellow: { bg: '#FEFCE8', border: '#EAB308', text: 'text-yellow-600' },
+                }[urg]
+                return (
+                  <div
+                    key={ev.orderId}
+                    onClick={() => navigate('/event/orders/' + ev.orderId)}
+                    className="p-3 rounded-xl border-l-4 cursor-pointer hover:opacity-90 transition-opacity"
+                    style={{ borderColor: cfg.border, backgroundColor: cfg.bg }}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-semibold text-[#1E1C43] truncate">{ev.namaEvent}</p>
+                        <p className="text-[10px] text-gray-500 mt-0.5">{ev.klien}</p>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <TipeBadge tipe={ev.tipe} />
+                          <span className="text-[10px] text-gray-400">PIC: {ev.pic}</span>
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className={`text-lg font-black ${cfg.text}`}>{ev.sisaHari <= 0 ? 'H-Day!' : `H-${ev.sisaHari}`}</p>
+                        <p className="text-[10px] text-gray-400">{ev.orderId}</p>
+                      </div>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => navigate('/event/kalender')}
+            className="mt-4 w-full text-xs text-center text-[#E05945] font-medium hover:underline"
+          >
+            Lihat Kalender →
+          </button>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════
+          SECTION 4: PIC Summary + Pipeline
+      ══════════════════════════════════ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+        {/* Kiri: PIC / Tim Performance */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">Performa Tim Event</h3>
+            <button
+              type="button"
+              onClick={() => navigate('/event/orders')}
+              className="text-xs text-[#E05945] font-medium hover:underline"
+            >
+              Detail Order →
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full" style={{ minWidth: '420px' }}>
+              <thead>
+                <tr className="bg-gray-50">
+                  {['PIC', 'Orders Aktif', 'Leads Aktif', 'Hot Leads', 'Event Bulan Ini'].map(h => (
+                    <th key={h} className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide text-left whitespace-nowrap">
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {PIC_SUMMARY.map((pic, i) => (
+                  <tr key={pic.nama} className={`border-b border-gray-100 hover:bg-gray-50 transition-colors ${i === PIC_SUMMARY.length - 1 ? 'border-0' : ''}`}>
+                    <td className="px-3 py-3">
+                      <div className="flex items-center gap-2">
+                        <div className="w-7 h-7 rounded-full bg-[#1E1C43] text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0">
+                          {pic.nama.split(' ').map(n => n[0]).join('')}
+                        </div>
+                        <span className="text-xs font-semibold text-gray-800">{pic.nama}</span>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3 text-sm font-bold text-[#1E1C43]">{pic.ordersAktif}</td>
+                    <td className="px-3 py-3 text-sm font-bold text-[#1E1C43]">{pic.leadsAktif}</td>
+                    <td className="px-3 py-3">
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${pic.hotLeads > 0 ? 'bg-orange-100 text-orange-600' : 'bg-gray-100 text-gray-400'}`}>
+                        {pic.hotLeads}
+                      </span>
+                    </td>
+                    <td className="px-3 py-3">
+                      <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${pic.eventBulanIni > 0 ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                        {pic.eventBulanIni}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         {/* Kanan: Leads Pipeline */}
         <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
@@ -395,7 +515,7 @@ export default function EventDashboardPage() {
       </div>
 
       {/* ══════════════════════════════════
-          SECTION 4: Jadwal Minggu Ini
+          SECTION 5: Jadwal Minggu Ini
       ══════════════════════════════════ */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
@@ -435,7 +555,7 @@ export default function EventDashboardPage() {
       </div>
 
       {/* ══════════════════════════════════
-          SECTION 5: Konsultasi Terbaru
+          SECTION 6: Konsultasi Terbaru
       ══════════════════════════════════ */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
