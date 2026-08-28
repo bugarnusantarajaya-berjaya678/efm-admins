@@ -529,6 +529,7 @@ export default function PPLeadDetailPage() {
                 {!isEditMode ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     <InfoField label="Sapaan">{lead.sapaan || '—'}</InfoField>
+                    <InfoField label="Nama Klien">{lead.nama || '—'}</InfoField>
                     <InfoField label="No HP / WhatsApp">
                       <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
                         className="text-[#1E1C43] hover:underline">
