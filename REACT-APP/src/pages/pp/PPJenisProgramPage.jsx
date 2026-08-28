@@ -17,7 +17,7 @@ function JenisBadge({ status }) {
     : <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-gray-100 text-gray-500">Nonaktif</span>
 }
 
-function JenisFormModal({ jenis, onClose, onSave }) {
+function JenisFormModal({ jenis, existingList, onClose, onSave }) {
   const isEdit = !!jenis
   const [form, setForm] = useState(
     isEdit ? { ...jenis } : { kode: '', nama: '', deskripsi: '', status: 'aktif' }
@@ -25,10 +25,13 @@ function JenisFormModal({ jenis, onClose, onSave }) {
   const [err, setErr] = useState('')
 
   function handleSave() {
-    if (!form.kode.trim()) { setErr('Kode Jenis wajib diisi.'); return }
-    if (!/^[A-Z]{2,5}$/.test(form.kode.trim())) { setErr('Kode harus 2–5 huruf kapital (contoh: PP, TH, SC).'); return }
+    const kode = form.kode.trim()
+    if (!kode) { setErr('Kode Jenis wajib diisi.'); return }
+    if (!/^[A-Z]{2,5}$/.test(kode)) { setErr('Kode harus 2–5 huruf kapital (contoh: PP, TH, SC).'); return }
+    const duplicate = existingList.find(j => j.kode === kode && (!isEdit || j.id !== jenis.id))
+    if (duplicate) { setErr(`Kode "${kode}" sudah digunakan oleh jenis "${duplicate.nama}". Gunakan kode lain.`); return }
     if (!form.nama.trim()) { setErr('Nama Jenis Program wajib diisi.'); return }
-    onSave({ ...form, kode: form.kode.trim(), nama: form.nama.trim(), deskripsi: form.deskripsi.trim() })
+    onSave({ ...form, kode, nama: form.nama.trim(), deskripsi: form.deskripsi.trim() })
   }
 
   return (
@@ -284,6 +287,7 @@ export default function PPJenisProgramPage() {
       {modal && (
         <JenisFormModal
           jenis={modal === 'add' ? null : modal.item}
+          existingList={list}
           onClose={() => setModal(null)}
           onSave={handleSave}
         />
