@@ -144,11 +144,24 @@ export default function PPProgramDBPage() {
       {/* Table */}
       <div className="bg-bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
         <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)', minHeight: '280px' }}>
-          <table className="w-full text-sm" style={{ minWidth: '1200px' }}>
+          <table className="w-full text-sm">
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
-                {['ID Program','Kode Jenis','Nama Latihan/ Terapi','Nama Paket','Sesi','Pertemuan','Masa Berlaku','Peserta','PIC','Biaya/Sesi','Harga Paket','Status'].map(h => (
-                  <th key={h} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                {[
+                  { h: 'ID Program',         w: 130 },
+                  { h: 'Kode Jenis',         w: 90  },
+                  { h: 'Nama Latihan/Terapi',w: 170 },
+                  { h: 'Nama Paket',         w: 150 },
+                  { h: 'Sesi',               w: 55  },
+                  { h: 'Pertemuan',          w: 90  },
+                  { h: 'Masa Berlaku',       w: 100 },
+                  { h: 'Peserta',            w: 80  },
+                  { h: 'PIC',                w: 150 },
+                  { h: 'Biaya/Sesi',         w: 110 },
+                  { h: 'Harga Paket',        w: 130 },
+                  { h: 'Status',             w: 80  },
+                ].map(({ h, w }) => (
+                  <th key={h} style={{ minWidth: `${w}px` }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -164,18 +177,18 @@ export default function PPProgramDBPage() {
                     <td className="px-3 py-2.5 whitespace-nowrap">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-[#1E1C43] text-white">{kodeJenis}</span>
                     </td>
-                    <td className="text-xs font-normal text-gray-600 px-3 py-2.5">{p.namaLatihan}</td>
-                    <td className="text-xs font-medium text-gray-900 px-3 py-2.5">{p.namaPaket}</td>
+                    <td className="text-xs font-semibold text-gray-700 px-3 py-2.5 whitespace-nowrap">{p.namaLatihan}</td>
+                    <td className="text-xs font-semibold text-gray-900 px-3 py-2.5 whitespace-nowrap">{p.namaPaket}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 text-center">{p.sesi}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 text-center">{p.pertemuan}x</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{p.masa}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 text-center">{p.partisipan} org</td>
                     <td className="px-3 py-2.5">
-                      <div className="text-[11px] font-bold text-accent">{p.picId}</div>
-                      <div className="text-[11px] text-text-muted">{pic.fullname || '—'}</div>
+                      <div className="text-xs font-bold text-[#E05945]">{p.picId}</div>
+                      <div className="text-xs text-gray-400">{pic.fullname || '—'}</div>
                     </td>
-                    <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.biayaSesiPIC)}</td>
-                    <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.harga)}</td>
+                    <td className="text-xs font-semibold text-gray-500 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.biayaSesiPIC)}</td>
+                    <td className="text-xs font-bold text-[#1E1C43] px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.harga)}</td>
                     <td className="px-3 py-2.5 text-center"><Badge status={p.status} /></td>
                   </tr>
                 )
