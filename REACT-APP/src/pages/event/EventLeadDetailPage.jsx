@@ -402,7 +402,7 @@ export default function EventLeadDetailPage() {
               )}
               <button
                 onClick={() => navigate('/event/leads')}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-200 text-gray-700 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors flex-shrink-0">
                 <ArrowLeft size={12} /> Kembali
               </button>
             </div>
