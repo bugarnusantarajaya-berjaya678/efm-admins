@@ -42,6 +42,7 @@ import B2BSurveiDetailPage from './pages/b2b/B2BSurveiDetailPage'
 // Event
 import EventDashboardPage from './pages/event/EventDashboardPage'
 import EventLeadsPage from './pages/event/EventLeadsPage'
+import EventLeadNewPage from './pages/event/EventLeadNewPage'
 import EventLeadDetailPage from './pages/event/EventLeadDetailPage'
 import EventKonsultasiPage from './pages/event/EventKonsultasiPage'
 import EventKonsultasiDetailPage from './pages/event/EventKonsultasiDetailPage'
@@ -125,6 +126,7 @@ function AppRoutes() {
       <Route path="/event"              element={<AppShell><EventDashboardPage /></AppShell>} />
       <Route path="/event/dashboard"    element={<AppShell><EventDashboardPage /></AppShell>} />
       <Route path="/event/leads"        element={<AppShell><EventLeadsPage      /></AppShell>} />
+      <Route path="/event/leads/new"    element={<AppShell><EventLeadNewPage    /></AppShell>} />
       <Route path="/event/leads/:id"    element={<AppShell><EventLeadDetailPage /></AppShell>} />
       <Route path="/event/konsultasi"     element={<AppShell><EventKonsultasiPage /></AppShell>} />
       <Route path="/event/konsultasi/new" element={<AppShell><EventKonsultasiDetailPage /></AppShell>} />
