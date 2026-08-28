@@ -346,7 +346,7 @@ export default function PPProgramDBPage() {
       <div className="flex items-start justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-[22px] font-bold text-text-primary">Database Program Private Training</h1>
-          <p className="text-sm text-text-muted mt-1">Kelola paket program, harga, dan penugasan PIC — terintegrasi dengan form Buat Order Baru</p>
+          <p className="text-sm text-text-muted mt-1">Kelola paket program, harga, dan penugasan PIC trainer</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <button
