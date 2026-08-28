@@ -20,13 +20,15 @@ function JenisBadge({ status }) {
 function JenisFormModal({ jenis, onClose, onSave }) {
   const isEdit = !!jenis
   const [form, setForm] = useState(
-    isEdit ? { ...jenis } : { nama: '', deskripsi: '', status: 'aktif' }
+    isEdit ? { ...jenis } : { kode: '', nama: '', deskripsi: '', status: 'aktif' }
   )
   const [err, setErr] = useState('')
 
   function handleSave() {
+    if (!form.kode.trim()) { setErr('Kode Jenis wajib diisi.'); return }
+    if (!/^[A-Z]{2,5}$/.test(form.kode.trim())) { setErr('Kode harus 2–5 huruf kapital (contoh: PP, TH, SC).'); return }
     if (!form.nama.trim()) { setErr('Nama Jenis Program wajib diisi.'); return }
-    onSave({ ...form, nama: form.nama.trim(), deskripsi: form.deskripsi.trim() })
+    onSave({ ...form, kode: form.kode.trim(), nama: form.nama.trim(), deskripsi: form.deskripsi.trim() })
   }
 
   return (
@@ -42,6 +44,26 @@ function JenisFormModal({ jenis, onClose, onSave }) {
         </div>
         <div className="overflow-y-auto flex-1 px-6 py-5 space-y-4">
           {err && <p className="text-xs text-red-500 bg-red-50 rounded-lg px-3 py-2">{err}</p>}
+          <div>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+              Kode Jenis <span className="text-[#E05945]">*</span>
+              <span className="ml-1 font-normal text-gray-400 normal-case">(2–5 huruf kapital, digunakan untuk ID Program)</span>
+            </label>
+            <div className="flex items-center gap-2">
+              <input
+                className={`${inputCls} w-28 font-mono tracking-widest uppercase`}
+                placeholder="PP"
+                maxLength={5}
+                value={form.kode}
+                onChange={e => { setErr(''); setForm(p => ({ ...p, kode: e.target.value.toUpperCase().replace(/[^A-Z]/g, '') })) }}
+              />
+              {form.kode && (
+                <span className="inline-flex items-center px-2.5 py-1 rounded text-xs font-bold font-mono bg-[#1E1C43] text-white tracking-widest">
+                  PRG-{form.kode}-001
+                </span>
+              )}
+            </div>
+          </div>
           <div>
             <label className="block text-xs font-semibold text-gray-700 mb-1.5">
               Nama Jenis Program <span className="text-[#E05945]">*</span>
@@ -209,7 +231,7 @@ export default function PPJenisProgramPage() {
           <table className="w-full" style={{ minWidth: '600px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200">
-                {['No', 'Nama Jenis Program', 'Deskripsi', 'Status', 'Aksi'].map(h => (
+                {['No', 'Kode', 'Nama Jenis Program', 'Deskripsi', 'Status', 'Aksi'].map(h => (
                   <th key={h} className="px-4 py-3 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
@@ -217,13 +239,16 @@ export default function PPJenisProgramPage() {
             <tbody className="divide-y divide-gray-100">
               {list.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="py-10 text-center text-sm text-gray-400">
+                  <td colSpan={6} className="py-10 text-center text-sm text-gray-400">
                     Belum ada jenis program. Klik "+ Tambah Jenis" untuk menambahkan.
                   </td>
                 </tr>
               ) : list.map((item, idx) => (
                 <tr key={item.id} className="hover:bg-gray-50/60 transition-colors">
                   <td className="px-4 py-3.5 text-xs font-medium text-gray-400 w-12">{idx + 1}</td>
+                  <td className="px-4 py-3.5 whitespace-nowrap">
+                    <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-[#1E1C43] text-white tracking-widest">{item.kode || '—'}</span>
+                  </td>
                   <td className="px-4 py-3.5 text-sm font-semibold text-gray-900 whitespace-nowrap">{item.nama}</td>
                   <td className="px-4 py-3.5 text-xs text-gray-500 max-w-xs">{item.deskripsi || '—'}</td>
                   <td className="px-4 py-3.5"><JenisBadge status={item.status} /></td>
