@@ -407,7 +407,7 @@ export default function PPOrdersPage() {
       const matchPaket  = !filterPaket  || o.paket        === filterPaket
       const matchSearch = !q || o.klien.toLowerCase().includes(q) || o.id.toLowerCase().includes(q)
       return matchBulan && matchTahun && matchStatus && matchInv && matchPIC && matchPaket && matchSearch
-    })
+    }).sort((a, b) => b.id.localeCompare(a.id))
   }, [orders, filterBulan, filterTahun, filterStatus, filterInv, filterPIC, filterPaket, search])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE))
