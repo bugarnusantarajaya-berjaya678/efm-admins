@@ -183,13 +183,6 @@ export default function EventDashboardPage() {
           <h1 className="text-[22px] font-bold text-[#1E1C43]">B2B Event Management</h1>
           <p className="text-sm text-gray-500 mt-1">Overview pipeline & operasional event — Corporate, Foundation, Government & Brand</p>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate('/event/leads')}
-          className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
-        >
-          + New Lead
-        </button>
       </div>
 
       {/* ══════════════════════════════════
