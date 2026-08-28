@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, ArrowLeft, ScrollText, Settings, ChevronDown, GripVertical, Save, RotateCcw, Plus, Trash2, Pencil, X } from 'lucide-react'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
+import { getCompanySettings } from '../../utils/companySettings'
 
 /* ─── Status badge ─── */
 const INV_STYLE = {
@@ -51,14 +52,17 @@ function PBtn({ children, active, onClick }) {
 }
 
 /* ─── Template Invoice Editor ─── */
-const DEFAULT_INV_SYARAT = [
-  'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
-  'Program dimulai setelah konfirmasi pembayaran dari Essential Fitness Management.',
-  'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
-  'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
-  'Essential Fitness Management berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.',
-  'Untuk pertanyaan terkait invoice, hubungi: essentialfitnessmanagement@gmail.com',
-]
+function getDefaultInvSyarat() {
+  const cs = getCompanySettings()
+  return [
+    'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
+    `Program dimulai setelah konfirmasi pembayaran dari ${cs.namaPerusahaan}.`,
+    'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
+    'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
+    `${cs.namaPerusahaan} berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.`,
+    `Untuk pertanyaan terkait invoice, hubungi: ${cs.email}`,
+  ]
+}
 
 function TemplateInvoiceEditor({ onClose }) {
   const [items, setItems] = useState(() => {
@@ -69,7 +73,7 @@ function TemplateInvoiceEditor({ onClose }) {
         if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
       }
     } catch {}
-    return [...DEFAULT_INV_SYARAT]
+    return [...getDefaultInvSyarat()]
   })
   const [dirty,       setDirty]       = useState(false)
   const [savedOk,     setSavedOk]     = useState(false)
@@ -88,7 +92,7 @@ function TemplateInvoiceEditor({ onClose }) {
 
   const handleReset = () => {
     if (!window.confirm('Reset ke template default? Semua perubahan akan hilang.')) return
-    setItems([...DEFAULT_INV_SYARAT])
+    setItems([...getDefaultInvSyarat()])
     try { localStorage.removeItem('efmInvoiceTemplate') } catch {}
     setDirty(false); setSavedOk(false)
   }

@@ -6,14 +6,17 @@ import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
 
-const DEFAULT_SYARAT = [
-  'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
-  'Program dimulai setelah konfirmasi pembayaran dari Essential Fitness Management.',
-  'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
-  'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
-  'Essential Fitness Management berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.',
-  'Untuk pertanyaan terkait invoice, hubungi: essentialfitnessmanagement@gmail.com',
-]
+function getDefaultSyarat() {
+  const cs = getCompanySettings()
+  return [
+    'Pembayaran dilakukan paling lambat 3 hari setelah invoice diterima.',
+    `Program dimulai setelah konfirmasi pembayaran dari ${cs.namaPerusahaan}.`,
+    'Sesi yang tidak dihadiri tanpa konfirmasi H-1 tidak dapat dijadwal ulang.',
+    'Pembatalan program setelah sesi ke-3 tidak dapat direfund.',
+    `${cs.namaPerusahaan} berhak mengganti pelatih jika diperlukan dengan pemberitahuan terlebih dahulu.`,
+    `Untuk pertanyaan terkait invoice, hubungi: ${cs.email}`,
+  ]
+}
 
 function getSyaratList() {
   try {
@@ -23,7 +26,7 @@ function getSyaratList() {
       if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
     }
   } catch {}
-  return DEFAULT_SYARAT
+  return getDefaultSyarat()
 }
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
@@ -92,6 +95,7 @@ export default function PPInvoiceDetailPage() {
   const { setCrumbs } = useBreadcrumb()
   const [invoice, setInvoice] = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
   const [modal,   setModal]   = useState(null)
+  const [cs]                  = useState(() => getCompanySettings())
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -122,7 +126,7 @@ export default function PPInvoiceDetailPage() {
     const msg = [
       `Halo *${invoice.sapaan} ${invoice.client}*,`,
       '',
-      `Berikut kami sampaikan invoice untuk program Private Training Anda di *Essential Fitness Management* 🏋️`,
+      `Berikut kami sampaikan invoice untuk program Private Training Anda di *${cs.namaPerusahaan}* 🏋️`,
       '',
       `📋 *Invoice #${invoice.invNo}*`,
       `📅 Tanggal: ${invoice.tanggal}`,
@@ -137,7 +141,7 @@ export default function PPInvoiceDetailPage() {
       `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
       '',
       `Terima kasih 🙏`,
-      `_Essential Fitness Management_`,
+      `_${cs.namaPerusahaan}_`,
     ].join('\n')
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
@@ -159,7 +163,7 @@ export default function PPInvoiceDetailPage() {
       `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
       '',
       `Jika ada pertanyaan, silakan hubungi kami. Terima kasih 🙏`,
-      `_Essential Fitness Management_`,
+      `_${cs.namaPerusahaan}_`,
     ].join('\n')
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
   }
@@ -258,11 +262,11 @@ export default function PPInvoiceDetailPage() {
           <div className="flex items-center gap-3">
             <img src="/logo.png" className="w-16 h-16 rounded-full object-cover shrink-0" alt="EFM Logo" />
             <div>
-              <div className="text-white font-bold text-sm leading-snug">Essential Fitness Management</div>
+              <div className="text-white font-bold text-sm leading-snug">{cs.namaPerusahaan}</div>
               <div className="text-white/60 text-[10.5px] mt-1 leading-relaxed">
-                CV. Bugar Nusantara Jaya<br/>
-                Jl. Terogong Raya No.18, Jakarta Selatan<br/>
-                essentialfitnessmanagement@gmail.com
+                {cs.namaLegal}<br/>
+                {cs.alamat}<br/>
+                {cs.email}
               </div>
             </div>
           </div>
@@ -403,10 +407,7 @@ export default function PPInvoiceDetailPage() {
           <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {[
-                { bank: 'BCA', rek: '1234567890', an: 'CV. Bugar Nusantara Jaya' },
-                { bank: 'Mandiri', rek: '1100009876543', an: 'CV. Bugar Nusantara Jaya' },
-              ].map(b => (
+              {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
                   <p className="text-sm font-bold text-[#1E1C43] font-mono">{b.rek}</p>
@@ -440,8 +441,8 @@ export default function PPInvoiceDetailPage() {
 
         {/* Footer */}
         <div className="px-6 sm:px-8 py-5 border-t border-gray-100 text-center space-y-1">
-          <p className="text-xs font-semibold text-gray-500">Essential Fitness Management</p>
-          <p className="text-[11px] text-gray-400">essentialfitnessmanagement@gmail.com · Jl. Terogong Raya No.18, Jakarta Selatan</p>
+          <p className="text-xs font-semibold text-gray-500">{cs.namaPerusahaan}</p>
+          <p className="text-[11px] text-gray-400">{cs.email} · {cs.alamat}</p>
           <p className="text-[10px] text-gray-300 mt-2">Dokumen ini digenerate oleh sistem EFM V2</p>
         </div>
       </div>
