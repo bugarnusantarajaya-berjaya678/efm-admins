@@ -16,39 +16,39 @@ const ALERTS = [
   {
     borderColor: '#EF4444', bg: '#FEF2F2',
     judul: 'Invoice DP Overdue Belum Dibayar',
-    detail: 'PT. Garuda Nusa Tbk — EO-002 — DP 50% sudah melewati jatuh tempo',
-    url: '/event/orders/EO-002',
+    detail: 'PT. Garuda Nusa Tbk — #EV-26-0002 — DP 50% sudah melewati jatuh tempo',
+    url: '/event/orders/EV-26-0002',
   },
   {
     borderColor: '#EF4444', bg: '#FEF2F2',
     judul: 'Pelunasan Event Mendekat',
-    detail: 'Yayasan Kanker Indonesia — EO-001 — Pelunasan jatuh tempo H-7 sebelum event',
-    url: '/event/orders/EO-001',
+    detail: 'Yayasan Kanker Indonesia — #EV-26-0001 — Pelunasan jatuh tempo H-7 sebelum event',
+    url: '/event/orders/EV-26-0001',
   },
   {
     borderColor: '#F97316', bg: '#FFF7ED',
     judul: 'Quotation Belum Disetujui',
-    detail: 'Dinas Pemuda & Olahraga DKI (#EO-003) — Quotation masih Draft',
-    url: '/event/orders/EO-003',
+    detail: 'Dinas Pemuda & Olahraga DKI (#EV-26-0003) — Quotation masih Draft',
+    url: '/event/orders/EV-26-0003',
   },
   {
     borderColor: '#F97316', bg: '#FFF7ED',
     judul: 'Konsultasi Belum Ditindaklanjuti',
-    detail: 'Brand Tropicana Slim (KNS-003) — status Pending sejak 10 Jun 2026',
-    url: '/event/konsultasi/KNS-003',
+    detail: 'Brand Tropicana Slim (KNS-26-0003) — status Pending sejak 10 Jun 2026',
+    url: '/event/konsultasi/KNS-26-0003',
   },
   {
     borderColor: '#EAB308', bg: '#FEFCE8',
     judul: 'Contract Belum Signed',
-    detail: 'PT. Garuda Nusa Tbk (#EO-002) — Contract masih On Review',
-    url: '/event/orders/EO-002',
+    detail: 'PT. Garuda Nusa Tbk (#EV-26-0002) — Contract masih On Review',
+    url: '/event/orders/EV-26-0002',
   },
 ]
 
 const ORDERS_AKTIF = [
-  { id: 'EO-001', nama: 'Yayasan Kanker Indonesia',   tipe: 'Foundation', namaEvent: 'Health Run for Hope 2026',    tahapan: 'Event Running',  sisaHari: 1  },
-  { id: 'EO-002', nama: 'PT. Garuda Nusa Tbk',         tipe: 'Corporate',  namaEvent: 'Corporate Fun Run 2026',       tahapan: 'Contract',        sisaHari: 17 },
-  { id: 'EO-003', nama: 'Dinas Pemuda & Olahraga DKI', tipe: 'Government', namaEvent: 'Hari Olahraga Nasional DKI',   tahapan: 'Quotation & LOI', sisaHari: 51 },
+  { id: 'EV-26-0001', nama: 'Yayasan Kanker Indonesia',   tipe: 'Foundation', namaEvent: 'Health Run for Hope 2026',    tahapan: 'Event Running',  sisaHari: 1  },
+  { id: 'EV-26-0002', nama: 'PT. Garuda Nusa Tbk',         tipe: 'Corporate',  namaEvent: 'Corporate Fun Run 2026',       tahapan: 'Contract',        sisaHari: 17 },
+  { id: 'EV-26-0003', nama: 'Dinas Pemuda & Olahraga DKI', tipe: 'Government', namaEvent: 'Hari Olahraga Nasional DKI',   tahapan: 'Quotation & LOI', sisaHari: 51 },
 ]
 
 const PIPELINE = [
@@ -60,12 +60,12 @@ const PIPELINE = [
 ]
 
 const JADWAL = [
-  { tgl: '28', bln: 'Jun', nama: 'Health Run for Hope 2026 — H-Day',    klien: 'Yayasan Kanker Indonesia',   pic: 'Bagoes',        tipe: 'Sesi/Class' },
-  { tgl: '28', bln: 'Jun', nama: 'Pelunasan EO-001 Jatuh Tempo',         klien: 'Yayasan Kanker Indonesia',   pic: 'Admin EFM',     tipe: 'Penagihan'  },
-  { tgl: '29', bln: 'Jun', nama: 'Briefing Tim Lapangan EO-002',         klien: 'PT. Garuda Nusa Tbk',         pic: 'Emma',          tipe: 'Meeting'    },
-  { tgl: '30', bln: 'Jun', nama: 'Penagihan DP EO-002',                  klien: 'PT. Garuda Nusa Tbk',         pic: 'Admin EFM',     tipe: 'Penagihan'  },
-  { tgl: '01', bln: 'Jul', nama: 'Submit Dokumen Tender EO-003',         klien: 'Dinas Pemuda & Olahraga DKI', pic: 'Bagoes',        tipe: 'Meeting'    },
-  { tgl: '15', bln: 'Jul', nama: 'Corporate Fun Run 2026 — H-Day',       klien: 'PT. Garuda Nusa Tbk',         pic: 'Emma',          tipe: 'Sesi/Class' },
+  { tgl: '28', bln: 'Jun', nama: 'Health Run for Hope 2026 — H-Day',       klien: 'Yayasan Kanker Indonesia',   pic: 'Bagoes',    tipe: 'Sesi/Class' },
+  { tgl: '28', bln: 'Jun', nama: 'Pelunasan #EV-26-0001 Jatuh Tempo',      klien: 'Yayasan Kanker Indonesia',   pic: 'Admin EFM', tipe: 'Penagihan'  },
+  { tgl: '29', bln: 'Jun', nama: 'Briefing Tim Lapangan #EV-26-0002',      klien: 'PT. Garuda Nusa Tbk',         pic: 'Emma',      tipe: 'Meeting'    },
+  { tgl: '30', bln: 'Jun', nama: 'Penagihan DP #EV-26-0002',               klien: 'PT. Garuda Nusa Tbk',         pic: 'Admin EFM', tipe: 'Penagihan'  },
+  { tgl: '01', bln: 'Jul', nama: 'Submit Dokumen Tender #EV-26-0003',      klien: 'Dinas Pemuda & Olahraga DKI', pic: 'Bagoes',    tipe: 'Meeting'    },
+  { tgl: '15', bln: 'Jul', nama: 'Corporate Fun Run 2026 — H-Day',         klien: 'PT. Garuda Nusa Tbk',         pic: 'Emma',      tipe: 'Sesi/Class' },
 ]
 
 const JADWAL_WARNA = {
@@ -78,11 +78,11 @@ const JADWAL_WARNA = {
 }
 
 const KONSULTASI = [
-  { id: 'KNS-001', nama: 'Yayasan Kanker Indonesia',   hasil: 'Lanjut'       },
-  { id: 'KNS-002', nama: 'PT. Garuda Nusa Tbk',         hasil: 'Lanjut'       },
-  { id: 'KNS-003', nama: 'Brand Tropicana Slim',        hasil: 'Pending'      },
-  { id: 'KNS-004', nama: 'Komunitas Pelari Jakarta',    hasil: 'Tidak Lanjut' },
-  { id: 'KNS-005', nama: 'Dinas Pemuda & Olahraga DKI', hasil: 'Lanjut'       },
+  { id: 'KNS-26-0001', nama: 'Yayasan Kanker Indonesia',   hasil: 'Lanjut'       },
+  { id: 'KNS-26-0002', nama: 'PT. Garuda Nusa Tbk',         hasil: 'Lanjut'       },
+  { id: 'KNS-26-0003', nama: 'Brand Tropicana Slim',        hasil: 'Pending'      },
+  { id: 'KNS-26-0004', nama: 'Komunitas Pelari Jakarta',    hasil: 'Tidak Lanjut' },
+  { id: 'KNS-26-0005', nama: 'Dinas Pemuda & Olahraga DKI', hasil: 'Lanjut'       },
 ]
 
 /* ═══════════════════════════════════════
@@ -124,7 +124,7 @@ export default function EventDashboardPage() {
       {/* Page Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-[22px] font-bold text-[#1E1C43]">Event Management</h1>
+          <h1 className="text-[22px] font-bold text-[#1E1C43]">B2B Event Management</h1>
           <p className="text-sm text-gray-500 mt-1">Overview pipeline & operasional event — Corporate, Foundation, Government & Brand</p>
         </div>
         <button

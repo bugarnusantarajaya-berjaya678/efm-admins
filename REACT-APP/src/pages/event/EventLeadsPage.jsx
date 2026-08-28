@@ -11,7 +11,7 @@ const BULAN_IDX     = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Ok
 
 const LEADS_INIT = [
   {
-    id: 'EL-001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation', kota: 'Jakarta Selatan',
+    id: 'LE-0001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation', kota: 'Jakarta Selatan',
     namaEvent: 'Health Run for Hope 2026', jenisEvent: 'Charity Run',
     emailUmum: 'info@yayasankanker.or.id', sumberLead: 'Referral', picSalesEFM: 'Bagoes',
     stage: 'Converted', tanggal: '2026-05-01', catatanAwal: 'Referral dari jaringan nonprofit kesehatan',
@@ -24,10 +24,10 @@ const LEADS_INIT = [
       { tanggal: '2026-05-20', stage: 'Closing',  catatan: 'Proposal diterima, jadwalkan konsultasi',     picEFM: 'Bagoes' },
       { tanggal: '2026-06-01', stage: 'Converted', catatan: 'Deal ditandatangani, order dibuat',          picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-001', orderId: 'EO-001',
+    konsultasiId: 'KNS-26-0001', orderId: 'EV-26-0001',
   },
   {
-    id: 'EL-002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
+    id: 'LE-0002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
     namaEvent: 'Corporate Fun Run 2026', jenisEvent: 'Fun Run',
     emailUmum: 'hrd@garudanusa.co.id', sumberLead: 'Cold Email', picSalesEFM: 'Emma',
     stage: 'Converted', tanggal: '2026-05-15', catatanAwal: 'Cold email ke divisi HRD, dibalas GM HR',
@@ -39,10 +39,10 @@ const LEADS_INIT = [
       { tanggal: '2026-05-22', stage: 'Approach',     catatan: 'Presentasi online ke HR Director',         picEFM: 'Emma' },
       { tanggal: '2026-06-01', stage: 'Converted',    catatan: 'Proposal disetujui, kontrak ditandatangani', picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-002', orderId: 'EO-002',
+    konsultasiId: 'KNS-26-0002', orderId: 'EV-26-0002',
   },
   {
-    id: 'EL-003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
+    id: 'LE-0003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
     namaEvent: 'Healthy Living Expo', jenisEvent: 'Exhibition',
     emailUmum: 'marketing@tropicanaslim.co.id', sumberLead: 'LinkedIn', picSalesEFM: 'Bagoes',
     stage: 'Proposal', tanggal: '2026-06-05', catatanAwal: 'Kontak via LinkedIn dari Brand Manager',
@@ -53,10 +53,10 @@ const LEADS_INIT = [
       { tanggal: '2026-06-05', stage: 'New',      catatan: 'Kontak masuk dari LinkedIn',           picEFM: 'Bagoes' },
       { tanggal: '2026-06-10', stage: 'Proposal', catatan: 'Konsultasi selesai, kirim proposal EFM', picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-003', orderId: null,
+    konsultasiId: 'KNS-26-0003', orderId: null,
   },
   {
-    id: 'EL-004', namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community', kota: 'Jakarta Pusat',
+    id: 'LE-0004', namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community', kota: 'Jakarta Pusat',
     namaEvent: 'Jakarta Night Run 2026', jenisEvent: 'Night Run',
     emailUmum: 'info@komunitas-pelari.id', sumberLead: 'Instagram', picSalesEFM: 'Emma',
     stage: 'Lost', tanggal: '2026-06-08', catatanAwal: 'DM Instagram dari ketua komunitas',
@@ -67,10 +67,10 @@ const LEADS_INIT = [
       { tanggal: '2026-06-08', stage: 'New',      catatan: 'DM Instagram, budget sangat terbatas',  picEFM: 'Emma' },
       { tanggal: '2026-06-14', stage: 'Lost',     catatan: 'Tidak lanjut — margin tidak memenuhi threshold', picEFM: 'Emma' },
     ],
-    konsultasiId: 'KNS-004', orderId: null,
+    konsultasiId: 'KNS-26-0004', orderId: null,
   },
   {
-    id: 'EL-005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
+    id: 'LE-0005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
     namaEvent: 'Hari Olahraga Nasional DKI', jenisEvent: 'Mass Event',
     emailUmum: 'info@dinpora.jakarta.go.id', sumberLead: 'Referral', picSalesEFM: 'Bagoes',
     stage: 'Closing', tanggal: '2026-06-10', catatanAwal: 'Referral dari koneksi pemerintah daerah',
@@ -82,10 +82,10 @@ const LEADS_INIT = [
       { tanggal: '2026-06-15', stage: 'Presentation', catatan: 'Presentasi resmi ke Kepala Bidang Olahraga', picEFM: 'Bagoes' },
       { tanggal: '2026-06-18', stage: 'Closing',      catatan: 'Konsultasi selesai, masuk proses tender',    picEFM: 'Bagoes' },
     ],
-    konsultasiId: 'KNS-005', orderId: 'EO-003',
+    konsultasiId: 'KNS-26-0005', orderId: 'EV-26-0003',
   },
   {
-    id: 'EL-006', namaKlien: 'PT. Telkom Indonesia', tipeKlien: 'Corporate', kota: 'Jakarta Selatan',
+    id: 'LE-0006', namaKlien: 'PT. Telkom Indonesia', tipeKlien: 'Corporate', kota: 'Jakarta Selatan',
     namaEvent: 'Telkom SportFest 2026', jenisEvent: 'Corporate Sports Day',
     emailUmum: 'hrd@telkom.co.id', sumberLead: 'Cold Email', picSalesEFM: 'Bagoes',
     stage: 'Approach', tanggal: '2026-06-20', catatanAwal: 'Cold email ke tim HRD Telkom, direspons positif',
@@ -205,14 +205,7 @@ export default function EventLeadsPage() {
   }
 
   function handleOpenDetail(lead) {
-    setSelectedLead(lead)
-    setShowLeadModal(true)
-    setEditingPipeline(false)
-    setIsEditMode(false)
-    setEditForm({})
-    setNewStage(lead.stage)
-    setNewStageTanggal(new Date().toISOString().split('T')[0])
-    setNewStageCatatan('')
+    navigate('/event/leads/' + lead.id, { state: { lead } })
   }
 
   function handleCloseModal() { setShowLeadModal(false); setEditingPipeline(false); setIsEditMode(false); setEditForm({}) }
@@ -279,7 +272,7 @@ export default function EventLeadsPage() {
     const errors = validateForm(leadForm)
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return }
     const today = new Date().toISOString().split('T')[0]
-    const newId = 'EL-' + String(leads.length + 1).padStart(3, '0')
+    const newId = 'LE-' + String(leads.length + 1).padStart(4, '0')
     setLeads(prev => [...prev, {
       ...leadForm,
       id: newId,
@@ -335,7 +328,7 @@ export default function EventLeadsPage() {
           </div>
           <button
             onClick={() => { setLeadForm({ ...emptyLeadForm }); setFormErrors({}); setShowAddLead(true) }}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-accent hover:bg-accent-hover transition-colors"
           >
             <Plus size={15} strokeWidth={2.5} /> Tambah Lead
           </button>
@@ -673,10 +666,8 @@ export default function EventLeadsPage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════
-          MODAL: DETAIL / EDIT LEAD
-      ═══════════════════════════════════════ */}
-      {showLeadModal && selectedLead && (
+      {/* Lead detail modal removed — clicking a row now navigates to /event/leads/:id */}
+      {false && selectedLead && (
         <div
           className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto"
           onClick={e => { if (e.target === e.currentTarget) handleCloseModal() }}
