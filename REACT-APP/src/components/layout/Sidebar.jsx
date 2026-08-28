@@ -12,13 +12,7 @@ const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
   { label: 'Leads',      path: '/pp/leads'      },
   { label: 'Orders', path: '/pp/orders' },
-  {
-    label: 'Program DB', path: '/pp/program-db',
-    subKey: 'pp-program-db',
-    sub: [
-      { label: 'Jenis Program', path: '/pp/program-db/jenis-program' },
-    ],
-  },
+  { label: 'Program DB', path: '/pp/program-db' },
 ]
 
 const B2B_SUB = [
