@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { ArrowLeft, Dumbbell } from 'lucide-react'
+import { ArrowLeft, Dumbbell, Wand2 } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import {
   getProgramById, addStoredProgram, updateStoredProgram,
@@ -13,6 +13,31 @@ const JENIS_PROGRAM_AKTIF = [
   'Fisioterapi', 'Yoga Therapy', 'Posture Correction',
   'Strength & Conditioning', 'Nutrition Coaching', 'Kids Fitness',
 ]
+
+const PREFIX_MAP = {
+  'Private Training':        'PRG-PP',
+  'Semi Private Training':   'PRG-SP',
+  'Group Training':          'PRG-GP',
+  'Fisioterapi':             'PRG-TH',
+  'Yoga Therapy':            'PRG-TH',
+  'Posture Correction':      'PRG-TH',
+  'Yoga & Stretching':       'PRG-TH',
+  'Sports Rehab':            'PRG-TH',
+  'Strength & Conditioning': 'PRG-SC',
+  'Nutrition Coaching':      'PRG-NC',
+  'Kids Fitness':            'PRG-KF',
+}
+
+function generateProgramId(namaLatihan) {
+  const prefix = PREFIX_MAP[namaLatihan] || 'PRG-OT'
+  const existing = getExistingIds().filter(id => id.startsWith(prefix + '-'))
+  const maxSeq = existing.reduce((max, id) => {
+    const parts = id.split('-')
+    const seq = parseInt(parts[parts.length - 1]) || 0
+    return seq > max ? seq : max
+  }, 0)
+  return `${prefix}-${String(maxSeq + 1).padStart(3, '0')}`
+}
 
 const EMPTY_FORM = {
   id: '', namaLatihan: '', namaPaket: '', sesi: '', pertemuan: '', partisipan: '1',
@@ -61,6 +86,7 @@ export default function PPProgramFormPage() {
     setForm(prev => {
       const next = { ...prev, [key]: val }
       if (['sesi', 'hargaPersesi', 'diskonPaket'].includes(key)) next.harga = calcHarga(next)
+      if (key === 'namaLatihan' && !isEdit) next.id = val ? generateProgramId(val) : ''
       return next
     })
     if (errors[key]) setErrors(p => ({ ...p, [key]: '' }))
@@ -169,17 +195,35 @@ export default function PPProgramFormPage() {
 
             <div>
               <label className={label}>ID Program <span className="text-red-500">*</span></label>
-              <input
-                type="text"
-                value={form.id}
-                onChange={e => set('id', e.target.value.toUpperCase())}
-                placeholder="Contoh: PRG-PP-007"
-                disabled={isEdit}
-                className={`${inputCls('id')} ${isEdit ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''}`}
-              />
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.id}
+                  onChange={e => !isEdit && set('id', e.target.value.toUpperCase())}
+                  placeholder={form.namaLatihan ? 'Pilih jenis program dulu...' : 'Otomatis saat jenis dipilih'}
+                  disabled={isEdit}
+                  className={`${inputCls('id')} flex-1 font-mono ${isEdit ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''}`}
+                />
+                {!isEdit && form.namaLatihan && (
+                  <button
+                    type="button"
+                    onClick={() => set('id', generateProgramId(form.namaLatihan))}
+                    title="Generate ulang ID"
+                    className="px-3 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-[#1E1C43] transition-colors shrink-0"
+                  >
+                    <Wand2 size={14} />
+                  </button>
+                )}
+              </div>
               {errors.id
                 ? <p className="text-red-500 text-[10px] mt-1">{errors.id}</p>
-                : <p className="text-[10px] text-gray-400 mt-1">Prefix: PRG-PP- (Private Training), PRG-TH- (Terapi)</p>
+                : <p className="text-[10px] text-gray-400 mt-1">
+                    {isEdit
+                      ? 'ID tidak dapat diubah setelah program dibuat'
+                      : form.namaLatihan
+                        ? `Auto-generated dari jenis program · Bisa diubah manual`
+                        : 'Pilih Nama Latihan / Terapi terlebih dahulu'}
+                  </p>
               }
             </div>
 
