@@ -638,9 +638,13 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                       <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">dari Settings</span>
                     </div>
                     <p className="text-xs text-gray-500 mb-1">Transfer ke:</p>
-                    <p className="text-sm font-bold text-gray-800">{efmCompanySettings.namaBank}</p>
-                    <p className="text-sm font-mono font-semibold text-gray-800 mt-1">{efmCompanySettings.nomorRekening}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">A/N: {efmCompanySettings.atasNamaRekening}</p>
+                    {(settings.rekeningList || [{ bank: settings.namaBank, rek: settings.nomorRekening, an: settings.atasNamaRekening }]).map((r, i) => (
+                      <div key={i} className={i > 0 ? 'mt-3 pt-3 border-t border-gray-200' : ''}>
+                        <p className="text-sm font-bold text-gray-800">{r.bank}</p>
+                        <p className="text-sm font-mono font-semibold text-gray-800 mt-1">{r.rek}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">A/N: {r.an}</p>
+                      </div>
+                    ))}
                     <p className="text-[10px] text-gray-400 mt-3 italic">Sertakan nomor invoice saat transfer.</p>
                   </div>
                 </div>
@@ -893,9 +897,13 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                 <span className="text-[10px] bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">dari Settings</span>
               </div>
               <p className="text-xs text-gray-500 mb-1">Transfer ke:</p>
-              <p className="text-sm font-bold text-gray-800">{efmCompanySettings.namaBank}</p>
-              <p className="text-sm font-mono font-semibold text-gray-800 mt-1">{efmCompanySettings.nomorRekening}</p>
-              <p className="text-xs text-gray-500 mt-0.5">A/N: {efmCompanySettings.atasNamaRekening}</p>
+              {(settings.rekeningList || [{ bank: settings.namaBank, rek: settings.nomorRekening, an: settings.atasNamaRekening }]).map((r, i) => (
+                <div key={i} className={i > 0 ? 'mt-3 pt-3 border-t border-gray-200' : ''}>
+                  <p className="text-sm font-bold text-gray-800">{r.bank}</p>
+                  <p className="text-sm font-mono font-semibold text-gray-800 mt-1">{r.rek}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">A/N: {r.an}</p>
+                </div>
+              ))}
               <p className="text-[10px] text-gray-400 mt-3 italic">Sertakan nomor invoice saat transfer.</p>
             </div>
           </div>
