@@ -371,34 +371,34 @@ export default function EventKonsultasiDetailPage() {
         </div>
       )}
 
-      <div className="px-6 py-6">
+      <div className="px-4 py-4 md:px-6 md:py-6">
 
       {/* ══════════════════════════════════════════
           HEADER CARD
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-5">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-5">
 
         {/* Breadcrumb */}
-        <div className="flex items-center justify-between mb-5">
-          <nav className="flex items-center gap-1 text-xs text-gray-400">
-            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors">Event Management</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors">Konsultasi</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <span className="text-[#1E1C43] font-medium">{profilKlien.namaKlien || (isNew ? 'Konsultasi Baru' : id)}</span>
+        <div className="flex items-start justify-between gap-3 mb-4 sm:mb-5">
+          <nav className="flex items-center gap-1 text-xs text-gray-400 flex-wrap min-w-0">
+            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Event Management</button>
+            <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
+            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Konsultasi</button>
+            <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
+            <span className="text-[#1E1C43] font-medium truncate max-w-[120px] sm:max-w-none">{profilKlien.namaKlien || (isNew ? 'Konsultasi Baru' : id)}</span>
           </nav>
           <button
             onClick={() => navigate('/event/konsultasi')}
-            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors flex-shrink-0 whitespace-nowrap"
           >
-            <ArrowLeft size={12} /> Kembali ke Konsultasi
+            <ArrowLeft size={12} /> Kembali
           </button>
         </div>
 
         {/* Info utama + Stepper */}
-        <div className="flex items-start justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-semibold bg-gray-100 text-[#1E1C43] px-2.5 py-1 rounded-lg">
                 {isNew ? 'KNS-NEW' : id}
@@ -412,7 +412,7 @@ export default function EventKonsultasiDetailPage() {
                 {hasilKonsultasi || 'Draft'}
               </span>
             </div>
-            <h1 className="text-2xl font-bold text-[#1E1C43] mb-1">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1E1C43] mb-1 break-words">
               {profilKlien.namaKlien || (isNew ? 'Form Konsultasi Baru' : id)}
             </h1>
             <p className="text-sm text-gray-500">
@@ -432,7 +432,7 @@ export default function EventKonsultasiDetailPage() {
           </div>
 
           {/* Stepper */}
-          <div className="flex-shrink-0 ml-8">
+          <div className="flex-shrink-0 sm:ml-8">
             {hasilKonsultasi ? (
               <div className="flex flex-col items-end gap-3">
                 <div className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 ${
@@ -510,7 +510,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           LEAD SELECTOR
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 mb-4">
         <div className="flex items-center justify-between mb-3">
           <p className="text-sm font-semibold text-[#1E1C43]">Kaitkan dengan Lead Event</p>
           {!selectedLeadId && (
@@ -593,10 +593,10 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 1: Profil Klien
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
         <SectionHeader num="1" title="Profil Klien" subtitle="Informasi dasar klien dan kontak koordinator" />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
           {selectedLeadId ? (
             <div className="col-span-2 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 mb-2">
@@ -659,10 +659,10 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 2: Detail Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
         <SectionHeader num="2" title="Detail Event" subtitle="Informasi teknis event yang akan diselenggarakan" />
 
-        <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div className="col-span-2">
             <FieldLabel required>Nama Event</FieldLabel>
             <input
@@ -754,7 +754,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 3: Isi Program Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
         <SectionHeader num="3" title="Isi Program Event" subtitle="Pilih kegiatan / segmen fitness yang akan ada di event" />
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -831,7 +831,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 4: Anggaran & Hasil Konsultasi
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
         <SectionHeader num="4" title="Anggaran & Hasil Konsultasi" />
 
         {/* Estimasi anggaran */}
@@ -847,7 +847,7 @@ export default function EventKonsultasiDetailPage() {
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <div>
             <FieldLabel>Catatan Umum / Temuan Konsultasi</FieldLabel>
             <textarea value={catatanUmum} onChange={e => setCatatanUmum(e.target.value)}
@@ -866,7 +866,7 @@ export default function EventKonsultasiDetailPage() {
           <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-2">
             Hasil Keputusan Konsultasi
           </label>
-          <div className="flex gap-3 mb-3">
+          <div className="flex flex-wrap gap-2 mb-3">
             {[
               { val: 'Lanjut',       borderActive: 'border-green-500',  bgActive: 'bg-green-50',  dot: 'bg-green-500',  textActive: 'text-green-700' },
               { val: 'Pending',      borderActive: 'border-yellow-500', bgActive: 'bg-yellow-50', dot: 'bg-yellow-500', textActive: 'text-yellow-700' },
@@ -901,10 +901,10 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           FOOTER
       ══════════════════════════════════════════ */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] px-6 py-3 mt-4 rounded-b-xl z-10">
-        <div className="flex items-center justify-between">
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] px-4 sm:px-6 py-3 mt-4 z-10">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
 
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 hidden sm:block">
             <span className="font-medium text-[#1E1C43]">
               {profilKlien.namaKlien || 'Form Konsultasi'}
             </span>
@@ -925,19 +925,19 @@ export default function EventKonsultasiDetailPage() {
             )}
           </p>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
             <button type="button" onClick={handleSimpanDraft}
-              className="inline-flex items-center gap-2 border border-[#1E1C43] text-[#1E1C43] text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-              <Save size={14} /> Simpan Draft
+              className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              <Save size={13} /> Simpan Draft
             </button>
             <button type="button" onClick={handleSimpanSelesai}
-              className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-              <Send size={14} /> Simpan & Selesai
+              className="inline-flex items-center gap-1.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 rounded-lg transition-colors">
+              <Send size={13} /> Simpan & Selesai
             </button>
             {hasilKonsultasi === 'Lanjut' && (
               <button type="button" onClick={handleBuatOrder}
-                className="inline-flex items-center gap-2 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
-                📋 Simpan & Buat Order →
+                className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs sm:text-sm font-medium px-3 sm:px-5 py-2 rounded-lg transition-colors">
+                📋 Buat Order →
               </button>
             )}
           </div>
