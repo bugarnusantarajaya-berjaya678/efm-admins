@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2, Link2 } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Link2, Activity } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { ORDERS_INIT } from '../../data/ppOrdersData'
@@ -648,58 +648,67 @@ export default function PPFitnessAssessmentPage() {
     <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6">
 
       {/* Header Card */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => handleBack()}
-            className="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition"
-          >
-            <ArrowLeft size={16} className="text-gray-600" />
-          </button>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-base font-bold text-[#1E1C43]">
-                {isNew ? 'Fitness Assessment Baru' : `Fitness Assessment — ${id}`}
-              </h1>
-              {!isNew && (
-                <span className={`px-2 py-1 text-xs rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
-                  {statusLabel}
-                </span>
-              )}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <Activity size={18} className="text-white" />
             </div>
-            <p className="text-xs text-gray-400 mt-0.5">
-              {isNew ? 'Isi data assessment klien baru' : `Klien: ${existing?.namaKlien || '—'} · Program: ${existing?.programLatihan || '—'}`}
-            </p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Fitness Assessment PP</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
+                {isNew ? 'Assessment Baru' : id}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                {isNew ? (
+                  <span className="text-xs text-gray-400">Isi data assessment klien baru</span>
+                ) : (
+                  <>
+                    <span className="text-xs text-gray-500">{existing?.namaKlien || '—'}</span>
+                    <span className="text-gray-300 text-xs">·</span>
+                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                      {statusLabel}
+                    </span>
+                  </>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex gap-2">
-          {!isNew && !isEditing && (
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            {!isNew && !isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors"
+              >
+                <Edit2 size={13} /> Edit
+              </button>
+            )}
+            {!isNew && isEditing && (
+              <button
+                onClick={() => setIsEditing(false)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Batalkan
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={handleSave}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
+                  saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] hover:bg-[#2d2a5e] text-white'
+                }`}
+              >
+                {saved ? <CheckCircle size={13} /> : <Save size={13} />}
+                {saved ? 'Tersimpan' : isNew ? 'Simpan' : 'Simpan Perubahan'}
+              </button>
+            )}
             <button
-              onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] hover:bg-[#c94a38] text-white transition"
+              onClick={() => handleBack()}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
             >
-              <Edit2 size={15} /> Edit
+              <ArrowLeft size={13} /> Kembali
             </button>
-          )}
-          {!isNew && isEditing && (
-            <button
-              onClick={() => setIsEditing(false)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition"
-            >
-              Batalkan
-            </button>
-          )}
-          {isEditing && (
-            <button
-              onClick={handleSave}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
-                saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
-              }`}
-            >
-              {saved ? <CheckCircle size={15} /> : <Save size={15} />}
-              {saved ? 'Tersimpan' : isNew ? 'Simpan' : 'Simpan Perubahan'}
-            </button>
-          )}
+          </div>
         </div>
       </div>
 
