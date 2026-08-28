@@ -55,9 +55,9 @@ const menuGroups = [
   {
     label: 'PROGRAM',
     items: [
-      { label: 'Private Program', path: '/pp',  icon: Dumbbell,  menuKey: 'pp',  sub: PP_SUB  },
-      { label: 'B2B Management',  path: '/b2b', icon: Building2, menuKey: 'b2b', sub: B2B_SUB },
-      { label: 'Event',           path: '/event', icon: Calendar, menuKey: 'event', sub: EVENT_SUB },
+      { label: 'Private Program', path: '/pp',    icon: Dumbbell,  menuKey: 'pp',    sub: PP_SUB    },
+      { label: 'B2B Event',       path: '/event', icon: Calendar,  menuKey: 'event', sub: EVENT_SUB },
+      { label: 'B2B Management',  path: '/b2b',   icon: Building2, menuKey: 'b2b',   sub: B2B_SUB   },
     ],
   },
   {
