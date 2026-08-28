@@ -92,7 +92,8 @@ export default function PPProgramFormPage() {
       const next = { ...prev, [key]: val }
       if (['sesi', 'hargaPersesi', 'diskonPaket'].includes(key)) next.harga = calcHarga(next)
       if (key === 'namaLatihan' && !isEdit) {
-        const kode = KODE_MAP[val] || (val ? 'OT' : '')
+        const jenisItem = getStoredJenis().find(j => j.nama === val)
+        const kode = jenisItem?.kode || KODE_MAP[val] || (val ? 'OT' : '')
         const urut = kode ? String(getNextSequence(kode)) : ''
         next.kodeJenis = kode
         next.nomorUrut = urut
