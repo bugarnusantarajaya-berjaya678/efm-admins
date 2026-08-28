@@ -4,6 +4,8 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
+import { getStoredPrograms } from '../../data/ppProgramStore';
+import { PIC_DB } from '../../data/ppProgramDBData';
 
 const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
 
@@ -16,63 +18,24 @@ const dummyPPLeads = [
   { id: "LP-0007", nama: "Sari Dewi Lestari", sapaan: "Kak", noHP: "087811223344", email: "sari.dewi@email.com", sumber: "Referral", programDiminati: "8 Sesi - Basic", statusPipeline: "Closed Won", namaPendaftar: "Sari Dewi Lestari", hpPendaftar: "087811223344", emailPendaftar: "sari.dewi@email.com" },
 ];
 
-const dummyPaketDB = [
-  {
-    id: 'PRG-PP-001',
-    namaProgram: 'Private Training',
-    namaPaket: '12 Sesi - Pro',
-    totalSesi: 12,
-    frekuensi: '3x seminggu',
-    masaBerlaku: '60 hari',
-    hargaPaket: 1600000,
-    pic: { nama: 'Sarah Jenkins', spesialisasi: 'Personal Trainer', rate: 'Rp 125.000/sesi' },
-    keterangan: 'Include program latihan, evaluasi mingguan'
-  },
-  {
-    id: 'PRG-PP-002',
-    namaProgram: 'Private Training',
-    namaPaket: '8 Sesi - Base',
-    totalSesi: 8,
-    frekuensi: '2x seminggu',
-    masaBerlaku: '45 hari',
-    hargaPaket: 1000000,
-    pic: { nama: 'Marcus Chen', spesialisasi: 'Personal Trainer', rate: 'Rp 120.000/sesi' },
-    keterangan: 'Paket starter untuk pemula'
-  },
-  {
-    id: 'PRG-PP-003',
-    namaProgram: 'Tennis',
-    namaPaket: '4 Sesi - Starter',
-    totalSesi: 4,
-    frekuensi: '1x seminggu',
-    masaBerlaku: '30 hari',
-    hargaPaket: 600000,
-    pic: { nama: 'Elena Rodriguez', spesialisasi: 'Tennis Coach', rate: 'Rp 150.000/sesi' },
-    keterangan: 'Include raket dan ballboy'
-  },
-  {
-    id: 'PRG-PP-004',
-    namaProgram: 'Tennis',
-    namaPaket: '8 Sesi - Pro',
-    totalSesi: 8,
-    frekuensi: '2x seminggu',
-    masaBerlaku: '45 hari',
-    hargaPaket: 1400000,
-    pic: { nama: 'Budi Wijaya', spesialisasi: 'Tennis Coach', rate: 'Rp 160.000/sesi' },
-    keterangan: 'Include raket, ballboy, dan video analisis'
-  },
-  {
-    id: 'PRG-PP-005',
-    namaProgram: 'Yoga',
-    namaPaket: 'Monthly - 8 Sesi',
-    totalSesi: 8,
-    frekuensi: '2x seminggu',
-    masaBerlaku: '30 hari',
-    hargaPaket: 900000,
-    pic: { nama: 'Sari Dewi', spesialisasi: 'Yoga Instructor', rate: 'Rp 110.000/sesi' },
-    keterangan: 'Include matras yoga'
-  },
-];
+function toPaket(p) {
+  const pic = PIC_DB[p.picId] || {};
+  return {
+    id: p.id,
+    namaProgram: p.namaLatihan,
+    namaPaket: p.namaPaket,
+    totalSesi: p.sesi,
+    frekuensi: `${p.pertemuan}x seminggu`,
+    masaBerlaku: p.masa,
+    hargaPaket: p.harga,
+    pic: {
+      nama: pic.fullname || '—',
+      spesialisasi: pic.spesialis || '—',
+      rate: 'Rp ' + (p.biayaSesiPIC || 0).toLocaleString('id-ID') + '/sesi',
+    },
+    keterangan: '',
+  };
+}
 
 const hariOptions = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
 
@@ -237,6 +200,8 @@ export default function PPOrderNewPage() {
     return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
+  const paketList = getStoredPrograms().filter(p => p.status === 'aktif').map(toPaket);
+
   const totalNilai = items.reduce((sum, item) => sum + (item.total || 0), 0);
   const formatRp = (val) => 'Rp ' + (val || 0).toLocaleString('id-ID');
 
@@ -287,12 +252,12 @@ export default function PPOrderNewPage() {
   const tanggalBerakhir = calcTanggalBerakhir();
 
   const filteredPaket = programSearch
-    ? dummyPaketDB.filter(p =>
+    ? paketList.filter(p =>
         p.id.toLowerCase().includes(programSearch.toLowerCase()) ||
         p.namaPaket.toLowerCase().includes(programSearch.toLowerCase()) ||
         p.namaProgram.toLowerCase().includes(programSearch.toLowerCase())
       )
-    : dummyPaketDB;
+    : paketList;
 
   // ── Render ──────────────────────────────────────
   return (

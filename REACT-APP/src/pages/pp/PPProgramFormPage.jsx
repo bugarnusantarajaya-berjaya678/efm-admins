@@ -8,6 +8,7 @@ import {
   deleteStoredProgram, getExistingIds,
 } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
+import { getAllOrders } from '../../data/ppOrdersStore'
 
 // Kode jenis per nama latihan — menentukan segment kedua ID (PRG-[KODE]-[URUT])
 const KODE_MAP = {
@@ -162,6 +163,12 @@ export default function PPProgramFormPage() {
   }
 
   function handleHapus() {
+    const linkedOrders = getAllOrders().filter(o => o.programId === progId)
+    if (linkedOrders.length > 0) {
+      const ids = linkedOrders.map(o => o.id).join(', ')
+      alert(`Program "${progId}" tidak dapat dihapus karena terhubung dengan ${linkedOrders.length} order aktif: ${ids}.\n\nNonaktifkan program terlebih dahulu jika tidak ingin program ini tersedia untuk order baru.`)
+      return
+    }
     if (!confirm(`Hapus program "${progId}"? Tindakan ini tidak dapat dibatalkan.`)) return
     deleteStoredProgram(progId)
     navigate('/pp/program-db')
