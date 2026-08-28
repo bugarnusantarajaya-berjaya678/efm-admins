@@ -430,12 +430,6 @@ export default function PPLeadDetailPage() {
                   Buat Order →
                 </button>
               )}
-              {lead.statusPipeline === 'Convert' && lead.orderId && (
-                <button onClick={() => navigate('/pp/orders/' + lead.orderId, { state: { fromLeadId: lead.id } })}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
-                  Lihat Order #{lead.orderId}
-                </button>
-              )}
               <button
                 onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
