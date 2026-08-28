@@ -239,34 +239,26 @@ export default function PPProgramFormPage() {
               {errors.namaLatihan && <p className="text-red-500 text-[10px] mt-1">{errors.namaLatihan}</p>}
             </div>
 
-            {/* ID Program — split: PRG · [Kode Jenis] · [Nomor Urut] */}
+            {/* ID Program — display-only, auto-generated dari jenis program */}
             <div>
-              <label className={label}>ID Program <span className="text-red-500">*</span></label>
+              <label className={label}>ID Program</label>
               <div className="flex items-center gap-1.5">
                 <span className="text-sm font-mono font-semibold text-gray-400 shrink-0">PRG</span>
                 <span className="text-gray-300 shrink-0">—</span>
-                <div className={`flex items-center justify-center w-12 border rounded-lg py-2.5 text-sm font-mono font-bold text-center ${form.kodeJenis ? 'bg-[#1E1C43] text-white border-[#1E1C43]' : 'bg-gray-100 text-gray-400 border-gray-200'}`}>
+                <div className={`flex items-center justify-center w-12 rounded-lg py-2.5 text-sm font-mono font-bold text-center select-none ${form.kodeJenis ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-400'}`}>
                   {form.kodeJenis || '??'}
                 </div>
                 <span className="text-gray-300 shrink-0">—</span>
-                <input
-                  type="number"
-                  value={form.nomorUrut}
-                  onChange={e => !isEdit && set('nomorUrut', e.target.value)}
-                  disabled={isEdit || !form.kodeJenis}
-                  placeholder="001"
-                  min="1"
-                  className={`w-20 border rounded-lg px-3 py-2.5 text-sm font-mono text-center focus:outline-none focus:border-[#1E1C43] transition-colors ${errors.nomorUrut ? 'border-red-400 bg-red-50' : 'border-gray-200'} ${(isEdit || !form.kodeJenis) ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : ''}`}
-                />
+                <div className={`w-16 rounded-lg px-3 py-2.5 text-sm font-mono font-bold text-center select-none ${form.nomorUrut ? 'bg-gray-100 text-[#1E1C43]' : 'bg-gray-50 text-gray-300'}`}>
+                  {form.nomorUrut ? String(parseInt(form.nomorUrut)).padStart(3, '0') : '???'}
+                </div>
               </div>
               {errors.nomorUrut
                 ? <p className="text-red-500 text-[10px] mt-1">{errors.nomorUrut}</p>
                 : <p className="text-[10px] text-gray-400 mt-1">
-                    {isEdit
-                      ? <>ID: <span className="font-mono font-medium text-[#1E1C43]">{form.id}</span> · Tidak dapat diubah</>
-                      : form.kodeJenis
-                        ? <>ID: <span className="font-mono font-medium text-[#1E1C43]">{form.id || '—'}</span> · Nomor urut bisa diubah</>
-                        : 'Pilih Nama Latihan / Terapi terlebih dahulu'}
+                    {form.id
+                      ? <>ID: <span className="font-mono font-medium text-[#1E1C43]">{form.id}</span> · Auto-generated, tidak dapat diubah manual</>
+                      : 'Pilih Nama Latihan / Terapi — ID akan otomatis terbuat'}
                   </p>
               }
             </div>
