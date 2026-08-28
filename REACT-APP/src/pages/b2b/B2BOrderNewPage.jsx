@@ -322,7 +322,7 @@ export default function B2BOrderNewPage() {
             </nav>
             <button
               onClick={() => navigate('/b2b/orders')}
-              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
             >
               <ArrowLeft size={12} /> Kembali ke Orders
             </button>
