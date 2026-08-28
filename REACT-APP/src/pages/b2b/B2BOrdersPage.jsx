@@ -978,7 +978,7 @@ export default function B2BOrdersPage() {
       if (search && !o.namaKlien.toLowerCase().includes(search.toLowerCase())
                  && !o.id.toLowerCase().includes(search.toLowerCase())) return false
       return true
-    })
+    }).sort((a, b) => b.id.localeCompare(a.id))
   }, [bulan, tahun, tipe, statusF, tahapanF, search])
 
   /* KPI */
