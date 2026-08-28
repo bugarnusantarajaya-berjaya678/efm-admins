@@ -394,19 +394,25 @@ export default function PPOrderDetailPage() {
     { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",          foto:true,  catatanKoreksi:"" },
     { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",          foto:false, catatanKoreksi:"" },
   ])
-  const [logTab3PP, setLogTab3PP] = useState([
-    { id:1,  waktu:"3 Nov 2026, 07:05",  actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
-    { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
-    { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
-    { id:4,  waktu:"29 Okt 2026, 07:01", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
-    { id:5,  waktu:"27 Okt 2026, 07:03", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
-    { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
-    { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
-    { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM",     kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
-    { id:9,  waktu:"21 Okt 2026, 13:30", actor:"James Wilson",  kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
-    { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
-    { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
-  ])
+  const [logTab3PP, setLogTab3PP] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`order-log3-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return [
+      { id:1,  waktu:"3 Nov 2026, 07:05",  actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
+      { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
+      { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
+      { id:4,  waktu:"29 Okt 2026, 07:01", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
+      { id:5,  waktu:"27 Okt 2026, 07:03", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
+      { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
+      { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
+      { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM",     kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
+      { id:9,  waktu:"21 Okt 2026, 13:30", actor:"James Wilson",  kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
+      { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
+      { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
+    ]
+  })
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
@@ -464,6 +470,10 @@ export default function PPOrderDetailPage() {
     setCrumbs(['Private Program', 'Orders', label])
     return () => setCrumbs(null)
   }, [isNew, order?.namaKlien, id])
+
+  useEffect(() => {
+    try { localStorage.setItem(`order-log3-${id}`, JSON.stringify(logTab3PP)) } catch {}
+  }, [logTab3PP, id])
 
   /* ── 404 ─────────────────────────────────────────────────────────────────── */
   if (!order) {

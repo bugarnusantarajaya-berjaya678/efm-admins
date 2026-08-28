@@ -267,7 +267,15 @@ export default function PPLeadDetailPage() {
   const { state }      = useLocation()
   const { setCrumbs }  = useBreadcrumb()
 
-  const [lead, setLead]             = useState(state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null)
+  const [lead, setLead]             = useState(() => {
+    const initial = state?.lead || LEADS_FALLBACK.find(l => l.id === id) || null
+    if (!initial) return null
+    try {
+      const savedLog = localStorage.getItem(`lead-log-${id}`)
+      if (savedLog) return { ...initial, logAktivitas: JSON.parse(savedLog) }
+    } catch {}
+    return initial
+  })
   const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'info')
   const [isEditMode, setIsEditMode] = useState(false)
   const [editForm, setEditForm]     = useState({})
@@ -293,7 +301,13 @@ export default function PPLeadDetailPage() {
   const [dokumenKesehatan, setDokumenKesehatan] = useState(
     id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
   )
-  const [catatanInternalFC, setCatatanInternalFC] = useState(CATATAN_FC_DUMMY[id] || [])
+  const [catatanInternalFC, setCatatanInternalFC] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`lead-catatan-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return CATATAN_FC_DUMMY[id] || []
+  })
   const [newCatatanGeneral, setNewCatatanGeneral] = useState('')
   const [newCatatanPerOrder, setNewCatatanPerOrder] = useState({})
   const [expandedOrderNotes, setExpandedOrderNotes] = useState({})
@@ -302,6 +316,16 @@ export default function PPLeadDetailPage() {
     if (lead) setCrumbs(['Private Program', 'Leads', lead.nama])
     return () => setCrumbs(null)
   }, [lead?.nama])
+
+  useEffect(() => {
+    if (lead?.logAktivitas) {
+      try { localStorage.setItem(`lead-log-${id}`, JSON.stringify(lead.logAktivitas)) } catch {}
+    }
+  }, [lead?.logAktivitas, id])
+
+  useEffect(() => {
+    try { localStorage.setItem(`lead-catatan-${id}`, JSON.stringify(catatanInternalFC)) } catch {}
+  }, [catatanInternalFC, id])
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
