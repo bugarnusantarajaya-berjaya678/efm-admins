@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { ArrowLeft, UserPlus } from 'lucide-react'
 import { addStoredLead, getNextLeadId } from '../../data/ppLeadsStore'
+import { PIC_OPTS } from '../../data/ppProgramDBData'
 
 const SUMBER_OPTS  = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
-const PIC_OPTS     = ['Sarah Jenkins','Marcus Chen','Admin EFM']
 const PROGRAM_OPTS = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 
 const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
