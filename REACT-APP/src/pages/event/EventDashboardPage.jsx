@@ -1,5 +1,10 @@
-﻿import { useNavigate } from 'react-router-dom'
-import { Building2, TrendingUp, ClipboardList, AlertCircle, ChevronRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Building2, TrendingUp, ClipboardList, AlertCircle, ChevronRight, CreditCard, Calendar, CheckCircle } from 'lucide-react'
+
+/* ═══════════════════════════════════════
+   Helpers
+═══════════════════════════════════════ */
+const formatRp = n => 'Rp ' + (n >= 1_000_000 ? (n / 1_000_000).toLocaleString('id-ID') + 'jt' : n.toLocaleString('id-ID'))
 
 /* ═══════════════════════════════════════
    Dummy Data
@@ -10,7 +15,12 @@ const KPI = {
   hotLeads:            2,
   konsultasiPending:   1,
   invoiceOverdue:      1,
+  revenueBulanIni:     85000000,
+  mendekatiHday:       1,
+  eventSelesaiBulan:   1,
 }
+
+const PIPELINE_OUTCOME = { converted: 2, lost: 1 }
 
 const ALERTS = [
   {
@@ -46,9 +56,9 @@ const ALERTS = [
 ]
 
 const ORDERS_AKTIF = [
-  { id: 'EV-26-0001', nama: 'Yayasan Kanker Indonesia',   tipe: 'Foundation', namaEvent: 'Health Run for Hope 2026',    tahapan: 'Event Running',  sisaHari: 1  },
-  { id: 'EV-26-0002', nama: 'PT. Garuda Nusa Tbk',         tipe: 'Corporate',  namaEvent: 'Corporate Fun Run 2026',       tahapan: 'Contract',        sisaHari: 17 },
-  { id: 'EV-26-0003', nama: 'Dinas Pemuda & Olahraga DKI', tipe: 'Government', namaEvent: 'Hari Olahraga Nasional DKI',   tahapan: 'Quotation & LOI', sisaHari: 51 },
+  { id: 'EV-26-0001', nama: 'Yayasan Kanker Indonesia',   tipe: 'Foundation', namaEvent: 'Health Run for Hope 2026',   tahapan: 'Event Running',  sisaHari: 1,  pic: 'Bagoes', statusInv: 'overdue' },
+  { id: 'EV-26-0002', nama: 'PT. Garuda Nusa Tbk',         tipe: 'Corporate',  namaEvent: 'Corporate Fun Run 2026',     tahapan: 'Contract',        sisaHari: 17, pic: 'Emma',   statusInv: 'pending' },
+  { id: 'EV-26-0003', nama: 'Dinas Pemuda & Olahraga DKI', tipe: 'Government', namaEvent: 'Hari Olahraga Nasional DKI', tahapan: 'Quotation & LOI', sisaHari: 51, pic: 'Bagoes', statusInv: 'draft'   },
 ]
 
 const PIPELINE = [
@@ -86,8 +96,37 @@ const KONSULTASI = [
 ]
 
 /* ═══════════════════════════════════════
-   Helper Badges
+   Invoice Status Config
 ═══════════════════════════════════════ */
+const INV_CLS = {
+  lunas:   'bg-green-100 text-green-700',
+  pending: 'bg-yellow-100 text-yellow-700',
+  overdue: 'bg-red-100 text-red-600',
+  draft:   'bg-gray-100 text-gray-500',
+}
+const INV_LBL = { lunas: 'Lunas', pending: 'Pending', overdue: 'Overdue', draft: 'Draft' }
+
+/* ═══════════════════════════════════════
+   Components
+═══════════════════════════════════════ */
+function KpiCard({ label, value, sub, icon: Icon, accent, onClick }) {
+  const dotCls = { orange: 'bg-[#E05945]', red: 'bg-red-500', green: 'bg-green-500', blue: 'bg-blue-500' }[accent]
+  return (
+    <div
+      onClick={onClick}
+      className={`bg-white rounded-xl border border-gray-100 shadow-sm p-4 relative ${onClick ? 'cursor-pointer hover:shadow-md' : ''} transition-shadow`}
+    >
+      {Icon && <Icon size={16} className="absolute top-4 right-4 text-gray-300" />}
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 pr-6">{label}</p>
+      <div className="flex items-center gap-1.5">
+        <p className="text-xl font-bold text-[#1E1C43]">{value}</p>
+        {dotCls && <span className={`w-2 h-2 rounded-full ${dotCls} shrink-0 mb-0.5`} />}
+      </div>
+      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
+    </div>
+  )
+}
+
 function TipeBadge({ tipe }) {
   const cls = {
     Corporate:  'bg-[#1E1C43] text-white',
@@ -117,6 +156,7 @@ function TahapanBadge({ tahapan }) {
 ═══════════════════════════════════════ */
 export default function EventDashboardPage() {
   const navigate = useNavigate()
+  const totalPipeline = PIPELINE.reduce((s, d) => s + d.count, 0)
 
   return (
     <div className="space-y-4">
@@ -137,86 +177,84 @@ export default function EventDashboardPage() {
       </div>
 
       {/* ══════════════════════════════════
-          SECTION 1: KPI Cards
+          SECTION 1: KPI Cards — Row 1
       ══════════════════════════════════ */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-        {/* Event Aktif */}
-        <div
+        <KpiCard
+          label="Event Aktif"
+          value={KPI.klienAktif}
+          sub="event berjalan"
+          icon={Building2}
           onClick={() => navigate('/event/orders')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Event Aktif</p>
-              <p className="text-2xl font-bold text-[#1E1C43] mt-1">{KPI.klienAktif}</p>
-              <p className="text-xs text-gray-500 mt-0.5">event berjalan</p>
-            </div>
-            <Building2 size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Leads Aktif */}
-        <div
+        />
+        <KpiCard
+          label="Leads Aktif"
+          value={KPI.leadsAktif}
+          sub={`${KPI.hotLeads} Hot (Proposal & Closing)`}
+          icon={TrendingUp}
+          accent={KPI.hotLeads > 0 ? 'orange' : undefined}
           onClick={() => navigate('/event/leads')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Leads Aktif</p>
-              <p className="text-2xl font-bold text-[#1E1C43] mt-1">{KPI.leadsAktif}</p>
-              <p className={`text-xs mt-0.5 ${KPI.hotLeads > 0 ? 'text-[#E05945] font-medium' : 'text-gray-500'}`}>
-                {KPI.hotLeads} Hot (Proposal & Closing)
-              </p>
-            </div>
-            <TrendingUp size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Konsultasi Pending */}
-        <div
+        />
+        <KpiCard
+          label="Konsultasi Pending"
+          value={KPI.konsultasiPending}
+          sub="menunggu tindak lanjut"
+          icon={ClipboardList}
+          accent={KPI.konsultasiPending > 0 ? 'orange' : undefined}
           onClick={() => navigate('/event/konsultasi')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Konsultasi Pending</p>
-              <div className="flex items-center gap-2 mt-1">
-                <p className="text-2xl font-bold text-[#1E1C43]">{KPI.konsultasiPending}</p>
-                {KPI.konsultasiPending > 0 && (
-                  <span className="bg-red-500 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">!</span>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 mt-0.5">menunggu tindak lanjut</p>
-            </div>
-            <ClipboardList size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
-
-        {/* Invoice Overdue */}
-        <div
+        />
+        <KpiCard
+          label="Invoice Overdue"
+          value={KPI.invoiceOverdue}
+          sub="melewati jatuh tempo"
+          icon={AlertCircle}
+          accent={KPI.invoiceOverdue > 0 ? 'red' : undefined}
           onClick={() => navigate('/event/invoice')}
-          className="bg-white rounded-xl shadow-sm p-4 border border-gray-100 cursor-pointer hover:shadow-md transition-all"
-        >
-          <div className="flex items-start justify-between">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice Overdue</p>
-              <p className={`text-2xl font-bold mt-1 ${KPI.invoiceOverdue > 0 ? 'text-red-600' : 'text-[#1E1C43]'}`}>
-                {KPI.invoiceOverdue}
-              </p>
-              <p className="text-xs text-gray-500 mt-0.5">melewati jatuh tempo</p>
-            </div>
-            <AlertCircle size={18} className="text-gray-300 mt-0.5" />
-          </div>
-        </div>
+        />
+      </div>
+
+      {/* KPI Row 2 */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <KpiCard
+          label="Revenue Bulan Ini"
+          value={formatRp(KPI.revenueBulanIni)}
+          sub="total pembayaran masuk"
+          icon={CreditCard}
+          accent="green"
+          onClick={() => navigate('/event/invoice')}
+        />
+        <KpiCard
+          label="Hot Leads"
+          value={KPI.hotLeads}
+          sub="Proposal & Closing"
+          icon={TrendingUp}
+          accent={KPI.hotLeads > 0 ? 'orange' : undefined}
+          onClick={() => navigate('/event/leads')}
+        />
+        <KpiCard
+          label="Mendekati H-Day"
+          value={KPI.mendekatiHday}
+          sub="event ≤ H-14"
+          icon={Calendar}
+          accent={KPI.mendekatiHday > 0 ? 'red' : undefined}
+          onClick={() => navigate('/event/kalender')}
+        />
+        <KpiCard
+          label="Event Selesai Bulan Ini"
+          value={KPI.eventSelesaiBulan}
+          sub="event berhasil dijalankan"
+          icon={CheckCircle}
+          accent="green"
+          onClick={() => navigate('/event/orders')}
+        />
       </div>
 
       {/* ══════════════════════════════════
           SECTION 2: Alert & Perlu Tindakan
       ══════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#1E1C43] flex items-center gap-2">
+          <h3 className="text-[13px] font-bold text-[#1E1C43] flex items-center gap-2">
             ⚠️ Perlu Tindakan
           </h3>
           <span className="bg-[#E05945] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -247,40 +285,45 @@ export default function EventDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Kiri: Orders Aktif */}
-        <div className="lg:col-span-2 bg-white rounded-xl shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#1E1C43]">Orders Aktif</h3>
+        <div className="lg:col-span-2 bg-white rounded-2xl border-[1.5px] border-gray-200 overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">Orders Aktif</h3>
             <button
               type="button"
               onClick={() => navigate('/event/orders')}
-              className="text-xs text-[#E05945] font-medium hover:underline"
+              className="text-[12px] font-semibold text-[#E05945] hover:underline flex items-center gap-0.5"
             >
-              Lihat Semua →
+              Lihat Semua <ChevronRight size={13} />
             </button>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full border-collapse" style={{ minWidth: '680px' }}>
               <thead>
-                <tr className="bg-gray-50">
-                  {['Nama Klien', 'Tipe', 'Nama Event', 'Tahapan', 'Tgl Event', 'Aksi'].map(h => (
-                    <th key={h} className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2 text-left whitespace-nowrap">
+                <tr>
+                  {[['Order ID', '120px'], ['Nama Klien', null], ['Nama Event', null], ['Tahapan', null], ['PIC', null], ['Tgl Event', null], ['Invoice', null]].map(([h, mw]) => (
+                    <th
+                      key={h}
+                      style={mw ? { minWidth: mw } : undefined}
+                      className="bg-gray-50 px-4 py-2.5 text-[11px] font-semibold text-gray-400 text-left uppercase tracking-wide whitespace-nowrap"
+                    >
                       {h}
                     </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {ORDERS_AKTIF.map(order => (
+                {ORDERS_AKTIF.map((order, i) => (
                   <tr
                     key={order.id}
                     onClick={() => navigate('/event/orders/' + order.id)}
-                    className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors"
+                    className={`hover:bg-gray-50 cursor-pointer transition-colors ${i < ORDERS_AKTIF.length - 1 ? 'border-b border-gray-100' : ''}`}
                   >
-                    <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{order.nama}</td>
-                    <td className="px-3 py-2.5"><TipeBadge tipe={order.tipe} /></td>
-                    <td className="px-3 py-2.5 text-xs text-gray-600">{order.namaEvent}</td>
-                    <td className="px-3 py-2.5"><TahapanBadge tahapan={order.tahapan} /></td>
-                    <td className="px-3 py-2.5">
+                    <td className="px-4 py-3 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{order.id}</td>
+                    <td className="px-4 py-3 text-[13px] font-semibold text-[#1E1C43] whitespace-nowrap">{order.nama}</td>
+                    <td className="px-4 py-3 text-xs text-gray-600 whitespace-nowrap">{order.namaEvent}</td>
+                    <td className="px-4 py-3"><TahapanBadge tahapan={order.tahapan} /></td>
+                    <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{order.pic}</td>
+                    <td className="px-4 py-3">
                       <span className={`text-xs font-medium ${
                         order.sisaHari <= 3  ? 'text-red-600' :
                         order.sisaHari <= 14 ? 'text-yellow-600' : 'text-gray-600'
@@ -288,8 +331,11 @@ export default function EventDashboardPage() {
                         {order.sisaHari <= 0 ? 'Hari ini' : `H-${order.sisaHari}`}
                       </span>
                     </td>
-                    <td className="px-3 py-2.5">
-                      <ChevronRight size={14} className="text-gray-400" />
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold ${INV_CLS[order.statusInv] ?? 'bg-gray-100 text-gray-500'}`}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
+                        {INV_LBL[order.statusInv] ?? order.statusInv}
+                      </span>
                     </td>
                   </tr>
                 ))}
@@ -299,9 +345,9 @@ export default function EventDashboardPage() {
         </div>
 
         {/* Kanan: Leads Pipeline */}
-        <div className="bg-white rounded-xl shadow-sm p-5">
+        <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-[#1E1C43]">Leads Pipeline</h3>
+            <h3 className="text-[13px] font-bold text-[#1E1C43]">Leads Pipeline</h3>
             <button
               type="button"
               onClick={() => navigate('/event/leads')}
@@ -323,7 +369,7 @@ export default function EventDashboardPage() {
                   <div className="w-16 bg-gray-100 rounded-full h-1.5">
                     <div
                       className="h-1.5 rounded-full"
-                      style={{ backgroundColor: item.color, width: (item.count / 8 * 100) + '%' }}
+                      style={{ backgroundColor: item.color, width: (item.count / (totalPipeline || 1) * 100) + '%' }}
                     />
                   </div>
                   <span className="text-xs font-semibold text-gray-700 w-4 text-right">{item.count}</span>
@@ -331,14 +377,18 @@ export default function EventDashboardPage() {
               </div>
             ))}
           </div>
-          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-2 gap-2">
+          <div className="mt-3 pt-3 border-t border-gray-100 grid grid-cols-3 gap-2">
             <div className="text-center">
-              <p className="text-lg font-bold text-[#1E1C43]">6</p>
-              <p className="text-[10px] text-gray-400">Total Leads</p>
+              <p className="text-lg font-bold text-[#1E1C43]">{totalPipeline}</p>
+              <p className="text-[10px] text-gray-400">Aktif</p>
             </div>
             <div className="text-center">
-              <p className="text-lg font-bold text-green-600">2</p>
+              <p className="text-lg font-bold text-green-600">{PIPELINE_OUTCOME.converted}</p>
               <p className="text-[10px] text-gray-400">Converted</p>
+            </div>
+            <div className="text-center">
+              <p className={`text-lg font-bold ${PIPELINE_OUTCOME.lost > 0 ? 'text-red-500' : 'text-gray-400'}`}>{PIPELINE_OUTCOME.lost}</p>
+              <p className="text-[10px] text-gray-400">Lost</p>
             </div>
           </div>
         </div>
@@ -347,9 +397,9 @@ export default function EventDashboardPage() {
       {/* ══════════════════════════════════
           SECTION 4: Jadwal Minggu Ini
       ══════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#1E1C43]">🗓 Jadwal Kegiatan Minggu Ini</h3>
+          <h3 className="text-[13px] font-bold text-[#1E1C43]">🗓 Jadwal Kegiatan Minggu Ini</h3>
           <button
             type="button"
             onClick={() => navigate('/event/kalender')}
@@ -387,9 +437,9 @@ export default function EventDashboardPage() {
       {/* ══════════════════════════════════
           SECTION 5: Konsultasi Terbaru
       ══════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-5">
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-[#1E1C43]">Konsultasi Terbaru</h3>
+          <h3 className="text-[13px] font-bold text-[#1E1C43]">Konsultasi Terbaru</h3>
           <button
             type="button"
             onClick={() => navigate('/event/konsultasi')}
@@ -399,60 +449,60 @@ export default function EventDashboardPage() {
           </button>
         </div>
         <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="bg-gray-50">
-              {['ID', 'Nama Klien', 'Hasil', 'Aksi'].map(h => (
-                <th key={h} className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2 text-left">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {KONSULTASI.map(kns => (
-              <tr key={kns.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
-                <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43]">{kns.id}</td>
-                <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{kns.nama}</td>
-                <td className="px-3 py-2.5">
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                    kns.hasil === 'Lanjut'       ? 'bg-green-100 text-green-700' :
-                    kns.hasil === 'Pending'      ? 'bg-yellow-100 text-yellow-700' :
-                    kns.hasil === 'Tidak Lanjut' ? 'bg-red-100 text-red-600' :
-                                                    'bg-gray-100 text-gray-500'
-                  }`}>
-                    {kns.hasil}
-                  </span>
-                </td>
-                <td className="px-3 py-2.5">
-                  {kns.hasil === 'Lanjut' && (
-                    <button
-                      type="button"
-                      onClick={() => navigate('/event/orders/new', {
-                        state: { fromKonsultasi: true, konsultasiId: kns.id, namaKlien: kns.nama },
-                      })}
-                      className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors"
-                    >
-                      Buat Order →
-                    </button>
-                  )}
-                  {kns.hasil === 'Pending' && (
-                    <button
-                      type="button"
-                      onClick={() => navigate('/event/konsultasi/' + kns.id)}
-                      className="text-[10px] font-medium px-2.5 py-1 rounded-lg border border-yellow-400 text-yellow-700 hover:bg-yellow-50 transition-colors"
-                    >
-                      Tindak Lanjut →
-                    </button>
-                  )}
-                  {kns.hasil === 'Tidak Lanjut' && (
-                    <span className="text-xs text-gray-300">—</span>
-                  )}
-                </td>
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50">
+                {['ID', 'Nama Klien', 'Hasil', 'Aksi'].map(h => (
+                  <th key={h} className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2 text-left whitespace-nowrap">
+                    {h}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {KONSULTASI.map(kns => (
+                <tr key={kns.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{kns.id}</td>
+                  <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{kns.nama}</td>
+                  <td className="px-3 py-2.5">
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                      kns.hasil === 'Lanjut'       ? 'bg-green-100 text-green-700' :
+                      kns.hasil === 'Pending'      ? 'bg-yellow-100 text-yellow-700' :
+                      kns.hasil === 'Tidak Lanjut' ? 'bg-red-100 text-red-600' :
+                                                      'bg-gray-100 text-gray-500'
+                    }`}>
+                      {kns.hasil}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2.5">
+                    {kns.hasil === 'Lanjut' && (
+                      <button
+                        type="button"
+                        onClick={() => navigate('/event/orders/new', {
+                          state: { fromKonsultasi: true, konsultasiId: kns.id, namaKlien: kns.nama },
+                        })}
+                        className="text-[10px] font-medium px-2.5 py-1 rounded-lg bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors"
+                      >
+                        Buat Order →
+                      </button>
+                    )}
+                    {kns.hasil === 'Pending' && (
+                      <button
+                        type="button"
+                        onClick={() => navigate('/event/konsultasi/' + kns.id)}
+                        className="text-[10px] font-medium px-2.5 py-1 rounded-lg border border-yellow-400 text-yellow-700 hover:bg-yellow-50 transition-colors"
+                      >
+                        Tindak Lanjut →
+                      </button>
+                    )}
+                    {kns.hasil === 'Tidak Lanjut' && (
+                      <span className="text-xs text-gray-300">—</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
 
