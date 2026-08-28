@@ -989,7 +989,7 @@ export default function EventKonsultasiDetailPage() {
               <Save size={14} /> Simpan Draft
             </button>
             <button type="button" onClick={handleSimpanSelesai}
-              className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+              className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
               <Send size={14} /> Simpan & Selesai
             </button>
             {hasilKonsultasi === 'Lanjut' && (

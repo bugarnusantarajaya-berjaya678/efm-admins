@@ -225,7 +225,7 @@ function DetailDrawer({ order, onClose, onStatusChange }) {
               <CheckCircle size={14} /> Simpan Status
             </button>
           )}
-          <button className="flex items-center gap-2 px-5 py-2 text-sm font-bold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
+          <button className="flex items-center gap-2 px-5 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">
             <Printer size={14} /> Print Invoice
           </button>
         </div>
@@ -326,7 +326,7 @@ function NewOrderModal({ onClose, onSave }) {
         {/* Footer */}
         <div className="flex justify-end gap-2.5 px-6 py-4 border-t border-border">
           <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-text-muted border border-border rounded-lg hover:border-primary hover:text-primary transition-colors">Batal</button>
-          <button onClick={handleSave} className="px-5 py-2 text-sm font-bold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">Buat Order</button>
+          <button onClick={handleSave} className="px-5 py-2 text-sm font-semibold text-white bg-accent hover:bg-accent-hover rounded-lg transition-colors">Buat Order</button>
         </div>
       </div>
     </div>
@@ -485,7 +485,7 @@ export default function PPOrdersPage() {
           </div>
           <button
             onClick={() => navigate('/pp/orders/new')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-accent hover:bg-accent-hover transition-colors"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-accent hover:bg-accent-hover transition-colors"
           >
             <Plus size={15} strokeWidth={2.5} /> Tambah Order
           </button>
