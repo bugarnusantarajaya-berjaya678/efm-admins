@@ -62,7 +62,7 @@ export default function PPScreeningPage() {
 
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <ClipboardList size={20} className="text-white" />
@@ -72,16 +72,16 @@ export default function PPScreeningPage() {
               <p className="text-sm text-text-muted mt-0.5">Data pre-test & post-test seluruh klien Private Program</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => navigate('/pp/screening/new')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors w-full sm:w-auto"
             >
               <Plus size={13} /> Buat Assessment
             </button>
             <button
               onClick={() => navigate('/pp/orders')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors w-full sm:w-auto"
             >
               <ArrowLeft size={12} /> Kembali ke PP Orders
             </button>

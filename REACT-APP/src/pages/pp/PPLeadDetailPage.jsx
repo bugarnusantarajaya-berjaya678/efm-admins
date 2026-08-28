@@ -294,8 +294,9 @@ export default function PPLeadDetailPage() {
     id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
   )
   const [catatanInternalFC, setCatatanInternalFC] = useState(CATATAN_FC_DUMMY[id] || [])
-  const [newCatatanFC, setNewCatatanFC]           = useState('')
-  const [newCatatanFCOrder, setNewCatatanFCOrder] = useState('')
+  const [newCatatanGeneral, setNewCatatanGeneral] = useState('')
+  const [newCatatanPerOrder, setNewCatatanPerOrder] = useState({})
+  const [expandedOrderNotes, setExpandedOrderNotes] = useState({})
 
   useEffect(() => {
     if (lead) setCrumbs(['Private Program', 'Leads', lead.nama])
@@ -365,6 +366,26 @@ export default function PPLeadDetailPage() {
     setNewStageTanggal(new Date().toISOString().split('T')[0])
     setNewStageCatatan('')
     showToast('✓ Status pipeline diperbarui')
+  }
+
+  function toggleOrderNotes(orderId) {
+    setExpandedOrderNotes(prev => ({ ...prev, [orderId]: !prev[orderId] }))
+  }
+  function addCatatanForOrder(orderId) {
+    const text = (newCatatanPerOrder[orderId] || '').trim()
+    if (!text) return
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setCatatanInternalFC(prev => [{ id: 'CFC-' + String(prev.length + 1).padStart(3, '0'), tanggal: today, oleh: lead.picEfm || 'Admin EFM', orderId, catatan: text }, ...prev])
+    setNewCatatanPerOrder(prev => ({ ...prev, [orderId]: '' }))
+    showToast('✓ Catatan berhasil ditambahkan')
+  }
+  function addCatatanGeneral() {
+    const text = newCatatanGeneral.trim()
+    if (!text) return
+    const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setCatatanInternalFC(prev => [{ id: 'CFC-' + String(prev.length + 1).padStart(3, '0'), tanggal: today, oleh: lead.picEfm || 'Admin EFM', orderId: null, catatan: text }, ...prev])
+    setNewCatatanGeneral('')
+    showToast('✓ Catatan berhasil ditambahkan')
   }
 
   const TABS = [
@@ -833,160 +854,170 @@ export default function PPLeadDetailPage() {
         {activeTab === 'riwayat' && (
           <div className="space-y-4">
 
-            {/* Riwayat Order */}
+            {/* Riwayat Order — setiap order punya catatan internal terintegrasi */}
             {(() => {
               const leadOrders = getAllOrders()
                 .filter(o => o.leadId === lead.id)
                 .sort((a, b) => b.tanggalMulai.localeCompare(a.tanggalMulai))
+              const generalNotes = catatanInternalFC.filter(c => !c.orderId)
               return (
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-                  <div className="px-5 py-4 border-b border-gray-100">
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
-                  </div>
-                  <div className="p-5">
-                    {leadOrders.length === 0 ? (
-                      <div className="flex flex-col items-center py-8 gap-2">
-                        <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
-                        <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {leadOrders.map(order => {
-                          const invoiceId = order.paymentTracking?.[0]?.invoiceId || null
-                          const receipt   = invoiceId ? getReceiptByInvNo(invoiceId) : null
-                          const statusCls =
-                            order.statusOrder === 'Aktif'     ? 'bg-green-50 text-green-700 border-green-200' :
-                            order.statusOrder === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200'   :
-                            order.statusOrder === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200'       :
-                            'bg-gray-50 text-gray-500 border-gray-200'
-                          const statusLabel =
-                            order.statusOrder === 'Aktif'     ? 'Aktif'    :
-                            order.statusOrder === 'Completed' ? 'Selesai'  :
-                            order.statusOrder === 'Cancelled' ? 'Dibatalkan' :
-                            order.statusOrder
-                          return (
-                            <div key={order.id} className="p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
-                              <div className="flex items-start justify-between gap-3">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span className="text-sm font-bold text-[#1E1C43]">#{order.id}</span>
-                                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{statusLabel}</span>
+                <>
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="px-5 py-4 border-b border-gray-100">
+                      <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Order</h3>
+                      <p className="text-xs text-gray-400 pl-4 mt-0.5">Catatan internal tersimpan per order — tidak terlihat oleh klien</p>
+                    </div>
+                    <div className="p-5">
+                      {leadOrders.length === 0 ? (
+                        <div className="flex flex-col items-center py-8 gap-2">
+                          <p className="text-sm text-gray-500 font-medium">Belum ada order dari lead ini</p>
+                          <p className="text-xs text-gray-400 text-center">Order akan muncul di sini setelah lead Convert</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3">
+                          {leadOrders.map(order => {
+                            const invoiceId  = order.paymentTracking?.[0]?.invoiceId || null
+                            const receipt    = invoiceId ? getReceiptByInvNo(invoiceId) : null
+                            const orderNotes = catatanInternalFC.filter(c => c.orderId === order.id)
+                            const isExpanded = !!expandedOrderNotes[order.id]
+                            const statusCls  =
+                              order.statusOrder === 'Aktif'     ? 'bg-green-50 text-green-700 border-green-200' :
+                              order.statusOrder === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                              order.statusOrder === 'Cancelled' ? 'bg-red-50 text-red-700 border-red-200'       :
+                              'bg-gray-50 text-gray-500 border-gray-200'
+                            const statusLabel =
+                              order.statusOrder === 'Aktif'     ? 'Aktif'      :
+                              order.statusOrder === 'Completed' ? 'Selesai'    :
+                              order.statusOrder === 'Cancelled' ? 'Dibatalkan' :
+                              order.statusOrder
+                            return (
+                              <div key={order.id} className="rounded-xl border border-gray-100 bg-white overflow-hidden">
+                                {/* Order info row */}
+                                <div className="p-4">
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="text-sm font-bold text-[#1E1C43]">#{order.id}</span>
+                                        <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{statusLabel}</span>
+                                      </div>
+                                      <p className="text-xs text-gray-500">{order.paket} · Mulai {formatFollowUp(order.tanggalMulai)}</p>
+                                      <p className="text-xs text-gray-600 mt-1">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></p>
+                                    </div>
+                                    <div className="flex flex-col gap-1.5 shrink-0">
+                                      <button
+                                        onClick={() => navigate('/pp/orders/' + order.id, { state: { fromLeadId: lead.id } })}
+                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:bg-[#2d2b5e] transition-colors whitespace-nowrap">
+                                        <Eye size={10} /> Lihat Order
+                                      </button>
+                                      {invoiceId && (
+                                        <button
+                                          onClick={() => navigate('/pp/invoice/' + invoiceId)}
+                                          className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors whitespace-nowrap">
+                                          <FileText size={10} /> Lihat Invoice
+                                        </button>
+                                      )}
+                                      {receipt && (
+                                        <button
+                                          onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { receipt, fromOrderId: order.id } })}
+                                          className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-green-500 text-green-700 text-[10px] font-semibold hover:bg-green-50 transition-colors whitespace-nowrap">
+                                          <FileText size={10} /> Lihat Receipt
+                                        </button>
+                                      )}
+                                      <button
+                                        onClick={() => toggleOrderNotes(order.id)}
+                                        className={`flex items-center justify-center gap-1 h-7 px-2.5 rounded-lg border text-[10px] font-semibold transition-colors whitespace-nowrap
+                                          ${isExpanded ? 'bg-amber-50 border-amber-300 text-amber-700' : 'border-gray-200 text-gray-500 hover:border-amber-300 hover:text-amber-700 hover:bg-amber-50'}`}>
+                                        <ClipboardList size={10} />
+                                        {orderNotes.length > 0 ? `${orderNotes.length} Catatan` : 'Catatan'}
+                                        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                          {isExpanded ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                                        </svg>
+                                      </button>
+                                    </div>
                                   </div>
-                                  <p className="text-xs text-gray-500">{order.paket} · Mulai {formatFollowUp(order.tanggalMulai)}</p>
-                                  <p className="text-xs text-gray-600 mt-1">Nilai: <span className="font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span></p>
                                 </div>
-                                <div className="flex flex-col gap-1.5 shrink-0">
-                                  <button
-                                    onClick={() => navigate('/pp/orders/' + order.id, { state: { fromLeadId: lead.id } })}
-                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:bg-[#2d2b5e] transition-colors whitespace-nowrap">
-                                    <Eye size={10} /> Lihat Order
-                                  </button>
-                                  {invoiceId && (
-                                    <button
-                                      onClick={() => navigate('/pp/invoice/' + invoiceId)}
-                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors whitespace-nowrap">
-                                      <FileText size={10} /> Lihat Invoice
-                                    </button>
-                                  )}
-                                  {receipt && (
-                                    <button
-                                      onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { receipt, fromOrderId: order.id } })}
-                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-green-500 text-green-700 text-[10px] font-semibold hover:bg-green-50 transition-colors whitespace-nowrap">
-                                      <FileText size={10} /> Lihat Receipt
-                                    </button>
-                                  )}
-                                </div>
+
+                                {/* Catatan sub-section */}
+                                {isExpanded && (
+                                  <div className="border-t border-gray-100 bg-gray-50 px-4 py-3 space-y-2.5">
+                                    {orderNotes.length === 0 ? (
+                                      <p className="text-xs text-gray-400 italic">Belum ada catatan untuk order ini.</p>
+                                    ) : (
+                                      <div className="space-y-2">
+                                        {orderNotes.map(c => (
+                                          <div key={c.id} className="p-2.5 rounded-lg bg-white border border-gray-100">
+                                            <div className="flex items-start justify-between gap-2 mb-0.5">
+                                              <span className="text-xs font-semibold text-[#1E1C43]">{c.oleh}</span>
+                                              <span className="text-[10px] text-gray-400 shrink-0">{c.tanggal}</span>
+                                            </div>
+                                            <p className="text-sm text-gray-700">{c.catatan}</p>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
+                                    <div className="flex gap-2 pt-1">
+                                      <input
+                                        className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg text-xs bg-white focus:outline-none focus:border-[#1E1C43]"
+                                        placeholder="Tambah catatan untuk order ini..."
+                                        value={newCatatanPerOrder[order.id] || ''}
+                                        onChange={e => setNewCatatanPerOrder(prev => ({ ...prev, [order.id]: e.target.value }))}
+                                        onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); addCatatanForOrder(order.id) } }}
+                                      />
+                                      <button
+                                        onClick={() => addCatatanForOrder(order.id)}
+                                        className="px-3 py-1.5 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition-colors shrink-0">
+                                        Simpan
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
+
+                  {/* Catatan Umum — tanpa referensi order */}
+                  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="px-5 py-4 border-b border-gray-100">
+                      <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Umum</h3>
+                      <p className="text-xs text-gray-400 pl-4 mt-0.5">Tidak terkait order tertentu — tidak terlihat oleh klien</p>
+                    </div>
+                    <div className="p-5 space-y-3">
+                      {generalNotes.length > 0 && (
+                        <div className="space-y-2">
+                          {generalNotes.map(c => (
+                            <div key={c.id} className="p-3 rounded-xl border border-gray-100 bg-gray-50">
+                              <div className="flex items-start justify-between gap-2 mb-0.5">
+                                <span className="text-xs font-semibold text-[#1E1C43]">{c.oleh}</span>
+                                <span className="text-[10px] text-gray-400 shrink-0">{c.tanggal}</span>
+                              </div>
+                              <p className="text-sm text-gray-700">{c.catatan}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <textarea
+                          rows={2}
+                          value={newCatatanGeneral}
+                          onChange={e => setNewCatatanGeneral(e.target.value)}
+                          placeholder="Tulis catatan umum (tidak terkait order)..."
+                          className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                        />
+                        <button
+                          onClick={addCatatanGeneral}
+                          className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition-colors self-end shrink-0">
+                          Simpan
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )
             })()}
-
-            {/* Catatan Internal Admin/FC */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Catatan Internal Admin / FC</h3>
-                <p className="text-xs text-gray-400 pl-4 mt-0.5">Catatan lintas order — tidak terlihat oleh klien</p>
-              </div>
-              <div className="p-5 space-y-4">
-                {/* Add form */}
-                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Tambah Catatan</p>
-                  <textarea
-                    rows={2}
-                    value={newCatatanFC}
-                    onChange={e => setNewCatatanFC(e.target.value)}
-                    placeholder="Tulis catatan internal..."
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                  />
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Referensi Order (opsional)</label>
-                      <select
-                        value={newCatatanFCOrder}
-                        onChange={e => setNewCatatanFCOrder(e.target.value)}
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                        <option value="">— Tanpa referensi —</option>
-                        {getAllOrders().filter(o => o.leadId === lead.id).map(o => (
-                          <option key={o.id} value={o.id}>#{o.id}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex items-end" style={{ minWidth: '120px' }}>
-                      <button
-                        onClick={() => {
-                          if (!newCatatanFC.trim()) return
-                          const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-                          setCatatanInternalFC(prev => [{
-                            id: 'CFC-' + String(prev.length + 1).padStart(3, '0'),
-                            tanggal: today,
-                            oleh: lead.picEfm || 'Admin EFM',
-                            orderId: newCatatanFCOrder || null,
-                            catatan: newCatatanFC.trim(),
-                          }, ...prev])
-                          setNewCatatanFC('')
-                          setNewCatatanFCOrder('')
-                          showToast('✓ Catatan berhasil ditambahkan')
-                        }}
-                        className="w-full bg-[#1E1C43] text-white text-xs font-semibold py-2 rounded-lg hover:bg-[#2d2b5e] transition-colors">
-                        Simpan
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Catatan list */}
-                {catatanInternalFC.length === 0 ? (
-                  <p className="text-sm text-gray-400 italic">Belum ada catatan internal.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {catatanInternalFC.map(c => (
-                      <div key={c.id} className="p-3 rounded-xl border border-gray-100 bg-white hover:bg-gray-50 transition-colors">
-                        <div className="flex items-start justify-between gap-2 mb-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="text-xs font-semibold text-[#1E1C43]">{c.oleh}</span>
-                            {c.orderId && (
-                              <button
-                                onClick={() => navigate('/pp/orders/' + c.orderId, { state: { fromLeadId: lead.id } })}
-                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#1E1C43]/10 text-[#1E1C43] text-[10px] font-semibold hover:bg-[#1E1C43]/20 transition-colors">
-                                #{c.orderId}
-                              </button>
-                            )}
-                          </div>
-                          <span className="text-[10px] text-gray-400 shrink-0">{c.tanggal}</span>
-                        </div>
-                        <p className="text-sm text-gray-700">{c.catatan}</p>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
 
           </div>
         )}
