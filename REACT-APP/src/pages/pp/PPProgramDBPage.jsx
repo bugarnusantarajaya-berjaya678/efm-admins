@@ -351,9 +351,9 @@ export default function PPProgramDBPage() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setShowJenisPanel(true)}
-            className="flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-gray-700 text-sm font-semibold rounded-lg hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
           >
-            <Layers size={15} strokeWidth={2} />
+            <Layers size={14} />
             Jenis Program
           </button>
           <button
