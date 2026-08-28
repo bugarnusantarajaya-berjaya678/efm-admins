@@ -26,6 +26,7 @@ import PPFitnessAssessmentPage from './pages/pp/PPFitnessAssessmentPage'
 import PPLeadDetailPage from './pages/pp/PPLeadDetailPage'
 import PPLeadNewPage from './pages/pp/PPLeadNewPage'
 import PPProgramFormPage from './pages/pp/PPProgramFormPage'
+import PPJenisProgramPage from './pages/pp/PPJenisProgramPage'
 
 // B2B
 import B2BDashboardPage from './pages/b2b/B2BDashboardPage'
@@ -100,6 +101,7 @@ function AppRoutes() {
       <Route path="/pp/orders/new" element={<AppShell><PPOrderNewPage /></AppShell>} />
       <Route path="/pp/orders/:id" element={<AppShell><PPOrderDetailPage /></AppShell>} />
       <Route path="/pp/program-db" element={<AppShell><PPProgramDBPage /></AppShell>} />
+      <Route path="/pp/program-db/jenis" element={<AppShell><PPJenisProgramPage /></AppShell>} />
       <Route path="/pp/program-db/new" element={<AppShell><PPProgramFormPage /></AppShell>} />
       <Route path="/pp/program-db/:progId/edit" element={<AppShell><PPProgramFormPage /></AppShell>} />
       <Route path="/pp/documents" element={<AppShell><PPDocumentsPage /></AppShell>} />
