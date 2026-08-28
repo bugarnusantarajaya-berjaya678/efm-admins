@@ -121,15 +121,15 @@ export default function EventKonsultasiPage() {
           <option value="tidak_lanjut">Tidak Lanjut</option>
           <option value="pending">Pending</option>
         </select>
-        <div className="flex items-center gap-3 ml-auto">
-          <div className="relative">
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+          <div className="relative flex-1 sm:flex-none">
             <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input type="text" value={search} onChange={e => setSearch(e.target.value)}
               placeholder="Cari nama perusahaan..."
-              className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
+              className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] sm:min-w-[220px]" />
           </div>
           <button onClick={() => { setFBulan(''); setFTahun(''); setFJenis(''); setFHasil(''); setSearch('') }}
-            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
+            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors flex-shrink-0">
             <RotateCcw size={12} />
             Reset
           </button>
