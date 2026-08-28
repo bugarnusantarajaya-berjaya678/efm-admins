@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ExternalLink, Phone, Mail } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
+import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -135,25 +136,6 @@ const LEADS_FALLBACK = [
   },
 ]
 
-/* ── Dummy konsultasi linked to each lead ── */
-const KONSULTASI_BY_LEAD = {
-  'LE-0001': [
-    { id: 'KNS-26-0001', tanggal: '2026-05-20', status: 'Selesai', ringkasan: 'Diskusi konsep Health Run, estimasi peserta 500–1.000 orang, lokasi GBK.' },
-  ],
-  'LE-0002': [
-    { id: 'KNS-26-0002', tanggal: '2026-05-28', status: 'Selesai', ringkasan: 'Presentasi konsep Corporate Fun Run 5K & 10K, kapasitas 300 orang.' },
-  ],
-  'LE-0003': [
-    { id: 'KNS-26-0003', tanggal: '2026-06-08', status: 'Selesai', ringkasan: 'Diskusi konsep booth kesehatan dan mini competition di venue Healthy Living Expo.' },
-  ],
-  'LE-0004': [
-    { id: 'KNS-26-0004', tanggal: '2026-06-11', status: 'Selesai', ringkasan: 'Konsultasi awal, budget klien tidak sesuai — tidak dilanjutkan.' },
-  ],
-  'LE-0005': [
-    { id: 'KNS-26-0005', tanggal: '2026-06-16', status: 'Selesai', ringkasan: 'Presentasi resmi, scope event nasional 2.000 peserta. Masuk proses tender.' },
-  ],
-  'LE-0006': [],
-}
 
 /* ═══════════════════════════════════════
    Helpers
@@ -383,7 +365,8 @@ export default function EventLeadDetailPage() {
     { key: 'log',        label: 'Log & Histori' },
   ]
 
-  const leadKonsultasi = KONSULTASI_BY_LEAD[lead.id] || []
+  initKonsultasi(KONSULTASI_INIT)
+  const leadKonsultasi = getStoredKonsultasi().filter(k => k.leadId === lead.id)
 
   return (
     <>
@@ -736,7 +719,7 @@ export default function EventLeadDetailPage() {
                 <p className="text-xs text-gray-400 pl-4 mt-0.5">Semua sesi konsultasi yang terhubung dengan lead ini</p>
               </div>
               <button
-                onClick={() => navigate('/event/konsultasi/new', { state: { leadId: lead.id, namaKlien: lead.namaKlien } })}
+                onClick={() => navigate('/event/konsultasi/new', { state: { fromLead: true, leadId: lead.id, namaKlien: lead.namaKlien, namaEvent: lead.namaEvent, jenisEvent: lead.jenisEvent } })}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
                 <Plus size={12} /> Buat Konsultasi
               </button>
@@ -747,9 +730,12 @@ export default function EventLeadDetailPage() {
               ) : (
                 <div className="space-y-2">
                   {leadKonsultasi.map(k => {
-                    const statusCls = k.status === 'Selesai'
+                    const hasilCls = k.hasil === 'lanjut'
                       ? 'bg-green-50 text-green-700 border-green-200'
-                      : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                      : k.hasil === 'pending'
+                      ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                      : 'bg-red-50 text-red-600 border-red-200'
+                    const hasilLabel = k.hasil === 'lanjut' ? 'Lanjut' : k.hasil === 'pending' ? 'Pending' : 'Tidak Lanjut'
                     return (
                       <button key={k.id}
                         onClick={() => navigate(`/event/konsultasi/${k.id}`)}
@@ -757,10 +743,13 @@ export default function EventLeadDetailPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-sm font-bold text-[#1E1C43]">{k.id}</span>
-                            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{k.status}</span>
+                            {k.hasil && (
+                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${hasilCls}`}>{hasilLabel}</span>
+                            )}
                           </div>
-                          <p className="text-xs text-gray-500">{formatTgl(k.tanggal)}</p>
-                          {k.ringkasan && <p className="text-xs text-gray-600 mt-1 line-clamp-1">{k.ringkasan}</p>}
+                          <p className="text-xs text-gray-500">{k.tanggal}</p>
+                          {k.namaEvent && <p className="text-xs text-gray-600 mt-0.5">{k.namaEvent}</p>}
+                          {k.rekomendasi && <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{k.rekomendasi}</p>}
                         </div>
                         <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
                       </button>
