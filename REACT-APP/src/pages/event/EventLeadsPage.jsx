@@ -205,14 +205,7 @@ export default function EventLeadsPage() {
   }
 
   function handleOpenDetail(lead) {
-    setSelectedLead(lead)
-    setShowLeadModal(true)
-    setEditingPipeline(false)
-    setIsEditMode(false)
-    setEditForm({})
-    setNewStage(lead.stage)
-    setNewStageTanggal(new Date().toISOString().split('T')[0])
-    setNewStageCatatan('')
+    navigate('/event/leads/' + lead.id, { state: { lead } })
   }
 
   function handleCloseModal() { setShowLeadModal(false); setEditingPipeline(false); setIsEditMode(false); setEditForm({}) }
@@ -673,10 +666,8 @@ export default function EventLeadsPage() {
         </div>
       )}
 
-      {/* ═══════════════════════════════════════
-          MODAL: DETAIL / EDIT LEAD
-      ═══════════════════════════════════════ */}
-      {showLeadModal && selectedLead && (
+      {/* Lead detail modal removed — clicking a row now navigates to /event/leads/:id */}
+      {false && selectedLead && (
         <div
           className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto"
           onClick={e => { if (e.target === e.currentTarget) handleCloseModal() }}
