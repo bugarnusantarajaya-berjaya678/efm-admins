@@ -162,7 +162,7 @@ function AgreementDoc({ doc }) {
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
@@ -201,10 +201,11 @@ function AgreementDoc({ doc }) {
 
       {/* Tanda Tangan */}
       <div className="border-t border-gray-200 pt-5 px-6 pb-6">
-        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5">Tanda Tangan Para Pihak</div>
-        <div className="grid grid-cols-2 gap-5">
-          <div>
-            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-2">Pihak Pertama — EFM</div>
+        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-4 text-center">Tanda Tangan Para Pihak</div>
+        <div className="flex flex-col gap-5 items-center">
+          <div className="w-full max-w-xs text-center">
+            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
+            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">EFM</div>
             <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
               {company.tandaTanganCEO
                 ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
@@ -213,8 +214,9 @@ function AgreementDoc({ doc }) {
             <div className="text-[11px] text-[#1E1C43] font-semibold">{company.namaPenandatangan || 'Manajemen EFM'}</div>
             <div className="text-[10px] text-text-muted">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</div>
           </div>
-          <div>
-            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-2">Pihak Kedua — Klien</div>
+          <div className="w-full max-w-xs text-center">
+            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Kedua</div>
+            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">Klien</div>
             <ClientSig status={doc.statusTtd} />
             <div className="text-[11px] text-[#1E1C43] font-semibold">{doc.namaKlien}</div>
             <div className="mt-0.5">{sigMeta()}</div>
