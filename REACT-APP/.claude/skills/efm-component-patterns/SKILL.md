@@ -135,6 +135,60 @@ Used for: full invoice pages (PPInvoicePage, B2BInvoicePage, EventInvoicePage) �
 
 8. **Footer** — centered gray text: "Dokumen ini digenerate oleh sistem EFM V2"
 
+**Document header (navy) — 2-column layout fix**
+- Gunakan `display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start'` TANPA `flexWrap: 'wrap'`
+- Sisi kiri (logo + info perusahaan): `flex: 1, minWidth: 0` agar bisa shrink saat alamat panjang
+- Text content di dalam sisi kiri: tambah `minWidth: 0` agar teks bisa wrap, tidak overflow
+- Sisi kanan (No. Dokumen / label): `flexShrink: 0, paddingLeft: 16, textAlign: 'right'`
+- Font No. Dokumen: `fontSize: 11` (bukan 13 — teks dokumen panjang seperti `AGR-PP-26-0008/EFM/IX/2026` membutuhkan ukuran lebih kecil)
+- JANGAN gunakan `flexWrap: 'wrap'` — menyebabkan blok kanan turun ke baris baru di container sempit
+
+```jsx
+// Correct pattern — navy header 2-column
+<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+  <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 0 }}>
+    {/* logo */}
+    <div style={{ minWidth: 0 }}>
+      <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>{cs.namaPerusahaan}</div>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)' }}>{cs.namaLegal}</div>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)' }}>{cs.alamat}</div>
+      <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)' }}>{cs.email}</div>
+    </div>
+  </div>
+  <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16 }}>
+    <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
+    <div style={{ fontSize: 11, fontWeight: 700, color: 'white' }}>{docNomor(...)}</div>
+  </div>
+</div>
+```
+
+**Agreement TTD (Tanda Tangan Para Pihak) section**
+- Layout: `grid grid-cols-2 gap-5` — 2 kolom berdampingan
+- Setiap kolom: `text-center`
+- Label role dibuat 2 baris terpisah (tanpa em-dash): baris 1 = "Pihak Pertama" (muted uppercase), baris 2 = "EFM" atau "Klien" (navy bold)
+- Judul seksi "Tanda Tangan Para Pihak": `text-center` wajib, `uppercase tracking-wide`
+- Isi poin pasal (legal body text): gunakan `text-justify` agar teks rata kiri kanan, sisi kanan tidak menggantung
+
+```jsx
+// Correct pattern — TTD section
+<div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-4 text-center">Tanda Tangan Para Pihak</div>
+<div className="grid grid-cols-2 gap-5">
+  <div className="text-center">
+    <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
+    <div className="text-[10px] font-bold text-[#1E1C43] mb-2">EFM</div>
+    {/* signature box */}
+    <div className="text-[11px] text-[#1E1C43] font-semibold">{namaPenandatangan}</div>
+    <div className="text-[10px] text-text-muted">{jabatan}</div>
+  </div>
+  <div className="text-center">
+    <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Kedua</div>
+    <div className="text-[10px] font-bold text-[#1E1C43] mb-2">Klien</div>
+    {/* ClientSig component */}
+    <div className="text-[11px] text-[#1E1C43] font-semibold">{namaKlien}</div>
+  </div>
+</div>
+```
+
 **Edit mode behavior (PP module — di Order Detail, bukan di Invoice Detail)**
 - PP Invoice Detail adalah **read-only** — tidak ada tombol "Edit Invoice" di halaman detail invoice
 - Edit fields (Tanggal Invoice, Jatuh Tempo, Kode Diskon, Catatan) ada di tab "Kontrak & Keuangan" di PPOrderDetailPage, dalam section "Invoice & Pembayaran Klien"

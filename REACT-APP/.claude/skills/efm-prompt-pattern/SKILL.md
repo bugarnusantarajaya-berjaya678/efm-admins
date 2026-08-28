@@ -107,6 +107,15 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Tidak sync menyebabkan tampilan tidak konsisten antara data baru dan data lama
 - Setelah mengubah format apapun, grep field terkait di semua `*Data.js` dan update setiap entri
 
+**Info Perusahaan sync — getCompanySettings() convention**
+- Semua PP pages (Invoice, Receipt, Agreement, Documents, Leads) WAJIB membaca data perusahaan dari `getCompanySettings()` di `src/utils/companySettings.js` — TIDAK boleh hardcode nama perusahaan, alamat, email, atau rekening bank
+- Import: `import { getCompanySettings } from '../../utils/companySettings'`
+- Panggil di dalam komponen atau fungsi yang membutuhkannya: `const cs = getCompanySettings()`
+- Field yang tersedia: `namaPerusahaan`, `namaLegal`, `alamat`, `email`, `telepon`, `website`, `whatsapp`, `namaBank`, `nomorRekening`, `atasNamaRekening`, `rekeningList` (array multi-bank), `logoPerusahaan`, `tandaTanganCEO`, `namaPenandatangan`, `jabatanPenandatangan`
+- `rekeningList` adalah array `[{ bank, rek, an }]` — gunakan ini untuk daftar rekening di invoice/receipt, dengan fallback: `(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }])`
+- Untuk template teks (syarat & ketentuan, WA message): ubah dari konstanta array statis menjadi fungsi yang memanggil `getCompanySettings()` di dalamnya, agar nilai selalu fresh
+- Jika sebuah file punya private `getCompanySettings()` sendiri yang return `{}` saat localStorage kosong — HAPUS dan ganti dengan import dari utility (yang return defaults lengkap saat localStorage kosong)
+
 **PR chaining merge conflict pattern**
 - Project ini menggunakan squash merge ke main. Ketika PR di-chain pada branch yang sama, setiap PR baru yang menambahkan import di file yang sama dengan PR sebelumnya akan menyebabkan merge conflict saat push berikutnya
 - Lokasi konflik yang sering terjadi: bagian import di file yang terus bertambah importnya antar-PR (contoh: `PPFitnessAssessmentPage.jsx` import tumbuh dari PR #101 sampai #104)
