@@ -150,32 +150,37 @@ export default function PPJenisProgramPage() {
   return (
     <div className="flex flex-col gap-4">
 
-      {/* Header */}
-      <div>
-        <button
-          onClick={() => navigate('/pp/program-db')}
-          className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-[#1E1C43] mb-3 transition-colors"
-        >
-          <ArrowLeft size={13} />
-          Database Program
-        </button>
-        <div className="flex items-start justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#1E1C43] flex items-center justify-center shrink-0">
+      {/* Header Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <Layers size={18} className="text-white" />
             </div>
-            <div>
-              <h1 className="text-[22px] font-bold text-[#1E1C43]">Jenis Program</h1>
-              <p className="text-sm text-gray-400 mt-0.5">Kelola jenis-jenis program yang tersedia di Database Program</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Private Program · Database Program</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Jenis Program</h1>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {list.length} jenis terdaftar · {aktifCount} aktif
+              </p>
             </div>
           </div>
-          <button
-            onClick={() => setModal('add')}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold rounded-lg transition-colors"
-          >
-            <Plus size={15} strokeWidth={2.5} />
-            Tambah Jenis
-          </button>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <button
+              onClick={() => setModal('add')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors"
+            >
+              <Plus size={13} strokeWidth={2.5} />
+              Tambah Jenis
+            </button>
+            <button
+              onClick={() => navigate('/pp/program-db')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            >
+              <ArrowLeft size={13} />
+              Kembali
+            </button>
+          </div>
         </div>
       </div>
 
