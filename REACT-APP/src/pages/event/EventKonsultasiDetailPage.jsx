@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, ChevronRight, Save, Send, Plus } from 'lucide-react'
+import { getStoredLeads, initLeads, LEADS_INIT } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -19,73 +20,10 @@ const ANGGARAN_OPTS = [
 ]
 
 /* ═══════════════════════════════════════
-   Leads data — untuk selector
-═══════════════════════════════════════ */
-const LEADS_FOR_SELECTOR = [
-  {
-    id: 'EL-001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation',
-    kota: 'Jakarta Selatan', stage: 'Converted',
-    namaEvent: 'Health Run for Hope 2026', jenisEvent: 'Charity Run',
-    emailUmum: 'info@yayasankankeri.or.id', teleponUmum: '021-5551234',
-    alamatLengkap: 'Jl. Sudirman No. 20, Jakarta Selatan',
-    namaKoordinator: 'Ibu Ratna', jabatanKoordinator: 'Event Director',
-    waKoordinator: '0812-3456-7890', emailKoordinator: 'ratna@yayasankankeri.or.id',
-    picSalesEFM: 'Bagoes',
-  },
-  {
-    id: 'EL-002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate',
-    kota: 'Jakarta Pusat', stage: 'Converted',
-    namaEvent: 'Corporate Fun Run 2026', jenisEvent: 'Fun Run',
-    emailUmum: 'ga@garudanusa.co.id', teleponUmum: '021-6661234',
-    alamatLengkap: 'Jl. Thamrin No. 5, Jakarta Pusat',
-    namaKoordinator: 'Pak Hendra', jabatanKoordinator: 'HR Director',
-    waKoordinator: '0821-1234-5678', emailKoordinator: 'hendra.hr@garudanusa.co.id',
-    picSalesEFM: 'Emma',
-  },
-  {
-    id: 'EL-003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand',
-    kota: 'Tangerang', stage: 'Proposal',
-    namaEvent: 'Healthy Living Expo', jenisEvent: 'Exhibition',
-    emailUmum: 'marketing@tropicanaslim.com', teleponUmum: '',
-    alamatLengkap: 'ICE BSD, Tangerang',
-    namaKoordinator: 'Ibu Sari', jabatanKoordinator: 'Brand Manager',
-    waKoordinator: '0815-5678-9012', emailKoordinator: 'sari.brand@tropicanaslim.com',
-    picSalesEFM: 'Bagoes',
-  },
-  {
-    id: 'EL-004', namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community',
-    kota: 'Jakarta Pusat', stage: 'Lost',
-    namaEvent: 'Jakarta Night Run 2026', jenisEvent: 'Night Run',
-    emailUmum: '', teleponUmum: '', alamatLengkap: '',
-    namaKoordinator: '', jabatanKoordinator: '',
-    waKoordinator: '', emailKoordinator: '', picSalesEFM: 'Emma',
-  },
-  {
-    id: 'EL-005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government',
-    kota: 'Jakarta', stage: 'Closing',
-    namaEvent: 'Hari Olahraga Nasional DKI', jenisEvent: 'Mass Event',
-    emailUmum: 'info@dispora.jakarta.go.id', teleponUmum: '021-3456789',
-    alamatLengkap: 'Jl. Pemuda No. 1, Jakarta Timur',
-    namaKoordinator: 'Pak Surya', jabatanKoordinator: 'Kasi Olahraga',
-    waKoordinator: '0813-9876-5432', emailKoordinator: 'surya@dispora.jakarta.go.id',
-    picSalesEFM: 'Bagoes',
-  },
-  {
-    id: 'EL-006', namaKlien: 'PT. Telkom Indonesia', tipeKlien: 'Corporate',
-    kota: 'Jakarta Selatan', stage: 'Approach',
-    namaEvent: '', jenisEvent: '',
-    emailUmum: 'humas@telkom.co.id', teleponUmum: '021-5235000',
-    alamatLengkap: 'Jl. Gatot Subroto No. 52, Jakarta Selatan',
-    namaKoordinator: '', jabatanKoordinator: '',
-    waKoordinator: '', emailKoordinator: '', picSalesEFM: 'Emma',
-  },
-]
-
-/* ═══════════════════════════════════════
-   Dummy data — KNS-001 s/d KNS-005
+   Dummy data — KNS-26-0001 s/d KNS-26-0005
 ═══════════════════════════════════════ */
 const KONSULTASI_DETAIL_MAP = {
-  'KNS-001': {
+  'KNS-26-0001': {
     profilKlien: {
       namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation',
       kota: 'Jakarta Selatan', emailUmum: 'info@yayasankankeri.or.id',
@@ -106,7 +44,7 @@ const KONSULTASI_DETAIL_MAP = {
     hasilKonsultasi: 'Lanjut',
     catatanHasil: 'Setuju lanjut ke tahap penawaran. Nilai estimasi Rp 85jt all-in.',
   },
-  'KNS-002': {
+  'KNS-26-0002': {
     profilKlien: {
       namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate',
       kota: 'Jakarta Pusat', emailUmum: 'ga@garudanusa.co.id',
@@ -127,7 +65,7 @@ const KONSULTASI_DETAIL_MAP = {
     hasilKonsultasi: 'Lanjut',
     catatanHasil: 'Lanjut ke quotation. Estimasi nilai Rp 40jt.',
   },
-  'KNS-003': {
+  'KNS-26-0003': {
     profilKlien: {
       namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand',
       kota: 'Tangerang', emailUmum: 'marketing@tropicanaslim.com',
@@ -148,7 +86,7 @@ const KONSULTASI_DETAIL_MAP = {
     hasilKonsultasi: 'Pending',
     catatanHasil: 'Menunggu konfirmasi anggaran dari brand manager.',
   },
-  'KNS-004': {
+  'KNS-26-0004': {
     profilKlien: {
       namaKlien: 'Komunitas Pelari Jakarta', tipeKlien: 'Community',
       kota: 'Jakarta Pusat', emailUmum: '',
@@ -169,7 +107,7 @@ const KONSULTASI_DETAIL_MAP = {
     hasilKonsultasi: 'Tidak Lanjut',
     catatanHasil: 'Ditunda. Arahkan ke komunitas yang lebih besar di Q4 2026.',
   },
-  'KNS-005': {
+  'KNS-26-0005': {
     profilKlien: {
       namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government',
       kota: 'Jakarta', emailUmum: 'info@dispora.jakarta.go.id',
@@ -248,6 +186,10 @@ export default function EventKonsultasiDetailPage() {
   const isNew     = !id || id === 'new'
   const fromState = location.state || {}
   const existing  = !isNew ? KONSULTASI_DETAIL_MAP[id] : null
+
+  // Initialize leads store and load for selector — idempotent if already seeded
+  initLeads(LEADS_INIT)
+  const LEADS_FOR_SELECTOR = getStoredLeads()
 
   /* ── Lead selector state ── */
   const [selectedLeadId,   setSelectedLeadId]   = useState(() =>

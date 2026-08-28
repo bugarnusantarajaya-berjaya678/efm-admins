@@ -1,9 +1,8 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus, Clock, CheckCircle, ClipboardList, Search, RotateCcw } from 'lucide-react'
+import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
-const BULAN_OPTS = ['Semua Bulan','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
-const TAHUN_OPTS = ['Semua Tahun','2026','2025']
 const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
 
 const HASIL_CFG = {
@@ -22,54 +21,6 @@ const JENIS_CFG = {
   Individual: 'bg-gray-400 text-white',
 }
 
-const KONSULTASI_INIT = [
-  {
-    id: 'KNS-26-0001', nama: 'Yayasan Kanker Indonesia', jenis: 'Foundation',
-    namaEvent: 'Health Run for Hope 2026', jenisEvent: 'Charity Run',
-    tanggal: '5 Jun 2026', pic: 'Bagoes', estimasiPeserta: '2.000',
-    lokasi: 'GBK, Jakarta Selatan', hasil: 'lanjut', peranEFM: 'Main Organizer',
-    temuan: 'Event skala besar, estimasi 2.000 peserta. Venue GBK sudah dikonfirmasi. Panitia sangat kooperatif.',
-    rekomendasi: 'EFM sebagai main organizer fitness segment. Perlu 5 instruktur dan 3 koordinator lapangan.',
-    keputusan: 'Setuju lanjut ke tahap penawaran. Nilai estimasi Rp 85jt all-in.',
-  },
-  {
-    id: 'KNS-26-0002', nama: 'PT. Garuda Nusa Tbk', jenis: 'Corporate',
-    namaEvent: 'Corporate Fun Run 2026', jenisEvent: 'Fun Run',
-    tanggal: '8 Jun 2026', pic: 'Emma', estimasiPeserta: '500',
-    lokasi: 'Sudirman Park, Jakarta Pusat', hasil: 'lanjut', peranEFM: 'Co-Organizer',
-    temuan: 'Event internal perusahaan untuk 500 karyawan. Budget sudah disetujui direksi. HR sangat antusias.',
-    rekomendasi: 'Co-organizer untuk fitness & wellness segment. Perlu 3 instruktur.',
-    keputusan: 'Lanjut ke quotation. Estimasi nilai Rp 40jt.',
-  },
-  {
-    id: 'KNS-26-0003', nama: 'Brand Tropicana Slim', jenis: 'Brand',
-    namaEvent: 'Healthy Living Expo', jenisEvent: 'Exhibition',
-    tanggal: '10 Jun 2026', pic: 'Bagoes', estimasiPeserta: '300',
-    lokasi: 'ICE BSD, Tangerang', hasil: 'pending', peranEFM: 'Fitness Consultant',
-    temuan: 'Expo 3 hari, stand fitness demo dibutuhkan. Masih menunggu approval anggaran brand.',
-    rekomendasi: 'EFM sebagai konsultan fitness, sediakan demo area dan instruktur showcase.',
-    keputusan: 'Menunggu konfirmasi anggaran dari brand manager.',
-  },
-  {
-    id: 'KNS-26-0004', nama: 'Komunitas Pelari Jakarta', jenis: 'Community',
-    namaEvent: 'Jakarta Night Run 2026', jenisEvent: 'Night Run',
-    tanggal: '14 Jun 2026', pic: 'Emma', estimasiPeserta: '200',
-    lokasi: 'Monas, Jakarta Pusat', hasil: 'tidak_lanjut', peranEFM: 'Vendor',
-    temuan: 'Budget komunitas sangat terbatas. Panitia lebih memilih vendor yang lebih murah.',
-    rekomendasi: 'Tidak disarankan. Margin terlalu kecil untuk operasional EFM.',
-    keputusan: 'Ditunda. Arahkan ke komunitas yang lebih besar di Q4 2026.',
-  },
-  {
-    id: 'KNS-26-0005', nama: 'Dinas Pemuda & Olahraga DKI', jenis: 'Government',
-    namaEvent: 'Hari Olahraga Nasional DKI', jenisEvent: 'Mass Event',
-    tanggal: '18 Jun 2026', pic: 'Bagoes', estimasiPeserta: '1.500',
-    lokasi: 'Lapangan Banteng, Jakarta', hasil: 'lanjut', peranEFM: 'Main Organizer',
-    temuan: 'Event resmi pemerintah provinsi, peserta ribuan orang. Anggaran APBD. Proses tender.',
-    rekomendasi: 'Ikut tender resmi. Persiapkan dokumen perusahaan dan portofolio event.',
-    keputusan: 'Lanjut proses tender. Submit dokumen sebelum 30 Jun 2026.',
-  },
-]
-
 function HasilBadge({ hasil }) {
   const cfg = HASIL_CFG[hasil] || { label: hasil, cls: 'bg-gray-100 text-gray-500' }
   return (
@@ -82,12 +33,12 @@ function HasilBadge({ hasil }) {
 
 export default function EventKonsultasiPage() {
   const navigate = useNavigate()
-  const [list, setList] = useState(KONSULTASI_INIT)
-  const [fBulan, setFBulan]       = useState('')
-  const [fTahun, setFTahun]       = useState('')
-  const [fJenis, setFJenis]       = useState('')
-  const [fHasil, setFHasil]       = useState('')
-  const [search, setSearch]       = useState('')
+  const [list] = useState(() => { initKonsultasi(KONSULTASI_INIT); return getStoredKonsultasi() })
+  const [fBulan, setFBulan] = useState('')
+  const [fTahun, setFTahun] = useState('')
+  const [fJenis, setFJenis] = useState('')
+  const [fHasil, setFHasil] = useState('')
+  const [search, setSearch] = useState('')
 
   const filtered = list.filter(s => {
     if (fBulan && !(s.tanggal ?? '').includes(BSHORT[fBulan] ?? fBulan)) return false
@@ -120,7 +71,7 @@ export default function EventKonsultasiPage() {
         </button>
       </div>
 
-      {/* Stats */}
+      {/* KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
           { label: 'Total Konsultasi',       val: totalKonsultasi, bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary', icon: ClipboardList },
@@ -136,53 +87,52 @@ export default function EventKonsultasiPage() {
               </div>
               <div>
                 <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">{s.label}</p>
-                <p className="text-[24px] font-bold text-text-primary">{s.val}</p>
+                <p className="text-xl font-bold text-[#1E1C43]">{s.val}</p>
               </div>
             </div>
           )
         })}
       </div>
 
-      {/* Filter */}
-      <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-        <div className="flex items-center gap-3 flex-wrap">
-          <select value={fBulan} onChange={e => setFBulan(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-            <option value="">Semua Bulan</option>
-            {Object.keys(BSHORT).map(o => <option key={o} value={o}>{o}</option>)}
-          </select>
-          <select value={fTahun} onChange={e => setFTahun(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-            <option value="">Semua Tahun</option>
-            {TAHUN_OPTS.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
-          </select>
-          <select value={fJenis} onChange={e => setFJenis(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-            <option value="">Semua Jenis</option>
-            <option>Corporate</option><option>Foundation</option>
-            <option>Government</option><option>Brand</option>
-            <option>Community</option><option>Private</option><option>Individual</option>
-          </select>
-          <select value={fHasil} onChange={e => setFHasil(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-            <option value="">Semua Hasil</option>
-            <option value="lanjut">Lanjut</option>
-            <option value="tidak_lanjut">Tidak Lanjut</option>
-            <option value="pending">Pending</option>
-          </select>
-          <div className="flex items-center gap-3 ml-auto">
-            <div className="relative">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Cari nama perusahaan..."
-                className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
-            </div>
-            <button onClick={() => { setFBulan(''); setFTahun(''); setFJenis(''); setFHasil(''); setSearch('') }}
-              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
-              <RotateCcw size={12} />
-              Reset
-            </button>
+      {/* Filter — flat, no shadow wrapper */}
+      <div className="flex items-center gap-3 flex-wrap">
+        <select value={fBulan} onChange={e => setFBulan(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          <option value="">Semua Bulan</option>
+          {Object.keys(BSHORT).map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+        <select value={fTahun} onChange={e => setFTahun(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          <option value="">Semua Tahun</option>
+          <option>2026</option>
+          <option>2025</option>
+        </select>
+        <select value={fJenis} onChange={e => setFJenis(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          <option value="">Semua Jenis</option>
+          <option>Corporate</option><option>Foundation</option>
+          <option>Government</option><option>Brand</option>
+          <option>Community</option><option>Private</option><option>Individual</option>
+        </select>
+        <select value={fHasil} onChange={e => setFHasil(e.target.value)}
+          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          <option value="">Semua Hasil</option>
+          <option value="lanjut">Lanjut</option>
+          <option value="tidak_lanjut">Tidak Lanjut</option>
+          <option value="pending">Pending</option>
+        </select>
+        <div className="flex items-center gap-3 ml-auto">
+          <div className="relative">
+            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Cari nama perusahaan..."
+              className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
           </div>
+          <button onClick={() => { setFBulan(''); setFTahun(''); setFJenis(''); setFHasil(''); setSearch('') }}
+            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
+            <RotateCcw size={12} />
+            Reset
+          </button>
         </div>
       </div>
 
