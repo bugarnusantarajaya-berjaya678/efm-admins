@@ -484,7 +484,7 @@ export default function PPLeadsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => navigate('/pp/leads/new')}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-bold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
             >
               <Plus size={15} strokeWidth={2.5} /> Tambah Lead
             </button>

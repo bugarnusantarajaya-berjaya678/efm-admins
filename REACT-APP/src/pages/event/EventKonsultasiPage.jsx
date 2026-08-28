@@ -114,7 +114,7 @@ export default function EventKonsultasiPage() {
         </div>
         <button
           onClick={() => navigate('/event/konsultasi/new')}
-          className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-medium px-4 py-2 rounded-xl transition-colors"
+          className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
         >
           <Plus size={15} strokeWidth={2.5} /> Tambah Konsultasi
         </button>

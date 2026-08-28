@@ -2331,7 +2331,7 @@ export default function EventOrderDetailPage() {
                 <button onClick={() => navigate('/event/orders')} className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
                   <ArrowLeft size={13} /> Batal
                 </button>
-                <button onClick={handleSimpanOrderBaru} className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+                <button onClick={handleSimpanOrderBaru} className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
                   💾 Simpan & Buka Order
                 </button>
               </>
@@ -2558,7 +2558,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[#c94a38]">
+                  className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#c94a38]">
                   ⬇️ Download PDF
                 </button>
                 <button

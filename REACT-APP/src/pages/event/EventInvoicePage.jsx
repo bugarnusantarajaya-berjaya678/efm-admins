@@ -920,7 +920,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
               <button onClick={handleSimpanDraftInvoice} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
                 Simpan Draft
               </button>
-              <button onClick={handleKirimInvoice} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors">
+              <button onClick={handleKirimInvoice} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors">
                 Kirim Invoice →
               </button>
             </div>
@@ -955,7 +955,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                   <button className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
                     Simpan Draft
                   </button>
-                  <button className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-[#E05945] hover:bg-[#C94A38] transition-colors">
+                  <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors">
                     Kirim Invoice →
                   </button>
                 </>
