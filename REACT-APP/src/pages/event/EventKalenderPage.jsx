@@ -32,12 +32,12 @@ const TIPE_LIST  = ['Semua Tipe', 'Persiapan', 'Gladi Bersih', 'Hari H', 'Evalua
 
 /* ── Dummy data aktivitas kalender ─────────────────────────────────────────── */
 const dummyKalenderActivities = [
-  // EO-001 — Fun Run Jakarta 2026
+  // EV-26-0001 — Fun Run Jakarta 2026
   {
     id: 'KEV-001',
-    orderId: 'EO-001',
-    leadId: 'EL-001',
-    konsultasiId: 'KNS-001',
+    orderId: 'EV-26-0001',
+    leadId: 'LE-0001',
+    konsultasiId: 'KNS-26-0001',
     namaEvent: 'Fun Run Jakarta 2026',
     namaKlien: 'PT. Sinar Abadi',
     tipeAktivitas: 'Meeting Klien',
@@ -53,9 +53,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-002',
-    orderId: 'EO-001',
-    leadId: 'EL-001',
-    konsultasiId: 'KNS-001',
+    orderId: 'EV-26-0001',
+    leadId: 'LE-0001',
+    konsultasiId: 'KNS-26-0001',
     namaEvent: 'Fun Run Jakarta 2026',
     namaKlien: 'PT. Sinar Abadi',
     tipeAktivitas: 'Persiapan',
@@ -71,9 +71,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-003',
-    orderId: 'EO-001',
-    leadId: 'EL-001',
-    konsultasiId: 'KNS-001',
+    orderId: 'EV-26-0001',
+    leadId: 'LE-0001',
+    konsultasiId: 'KNS-26-0001',
     namaEvent: 'Fun Run Jakarta 2026',
     namaKlien: 'PT. Sinar Abadi',
     tipeAktivitas: 'Gladi Bersih',
@@ -89,9 +89,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-004',
-    orderId: 'EO-001',
-    leadId: 'EL-001',
-    konsultasiId: 'KNS-001',
+    orderId: 'EV-26-0001',
+    leadId: 'LE-0001',
+    konsultasiId: 'KNS-26-0001',
     namaEvent: 'Fun Run Jakarta 2026',
     namaKlien: 'PT. Sinar Abadi',
     tipeAktivitas: 'Hari H',
@@ -107,9 +107,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-005',
-    orderId: 'EO-001',
-    leadId: 'EL-001',
-    konsultasiId: 'KNS-001',
+    orderId: 'EV-26-0001',
+    leadId: 'LE-0001',
+    konsultasiId: 'KNS-26-0001',
     namaEvent: 'Fun Run Jakarta 2026',
     namaKlien: 'PT. Sinar Abadi',
     tipeAktivitas: 'Evaluasi Pasca Event',
@@ -123,12 +123,12 @@ const dummyKalenderActivities = [
     status: 'Dijadwalkan',
     catatan: 'Evaluasi pasca event, laporan akhir',
   },
-  // EO-002 — Yoga Festival Senayan 2026
+  // EV-26-0002 — Yoga Festival Senayan 2026
   {
     id: 'KEV-006',
-    orderId: 'EO-002',
-    leadId: 'EL-003',
-    konsultasiId: 'KNS-003',
+    orderId: 'EV-26-0002',
+    leadId: 'LE-0003',
+    konsultasiId: 'KNS-26-0003',
     namaEvent: 'Yoga Festival Senayan 2026',
     namaKlien: 'Komunitas Sehat ID',
     tipeAktivitas: 'Meeting Klien',
@@ -144,9 +144,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-007',
-    orderId: 'EO-002',
-    leadId: 'EL-003',
-    konsultasiId: 'KNS-003',
+    orderId: 'EV-26-0002',
+    leadId: 'LE-0003',
+    konsultasiId: 'KNS-26-0003',
     namaEvent: 'Yoga Festival Senayan 2026',
     namaKlien: 'Komunitas Sehat ID',
     tipeAktivitas: 'Gladi Bersih',
@@ -162,9 +162,9 @@ const dummyKalenderActivities = [
   },
   {
     id: 'KEV-008',
-    orderId: 'EO-002',
-    leadId: 'EL-003',
-    konsultasiId: 'KNS-003',
+    orderId: 'EV-26-0002',
+    leadId: 'LE-0003',
+    konsultasiId: 'KNS-26-0003',
     namaEvent: 'Yoga Festival Senayan 2026',
     namaKlien: 'Komunitas Sehat ID',
     tipeAktivitas: 'Hari H',
