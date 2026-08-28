@@ -75,7 +75,7 @@ function JenisFormModal({ jenis, onClose, onSave }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-5">
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-5" onClick={e => e.stopPropagation()}>
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl">
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
           <h3 className="text-base font-bold text-gray-900">
@@ -145,7 +145,7 @@ function JenisFormModal({ jenis, onClose, onSave }) {
 /* ─── Jenis Program Delete Confirm ─── */
 function JenisDeleteDialog({ nama, onClose, onConfirm }) {
   return (
-    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-5">
+    <div className="fixed inset-0 bg-black/50 z-[60] flex items-center justify-center p-5" onClick={e => e.stopPropagation()}>
       <div className="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6">
         <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mx-auto mb-4">
           <Trash2 size={22} className="text-red-500" />
