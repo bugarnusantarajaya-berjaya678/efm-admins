@@ -173,7 +173,7 @@ export default function PPProgramDBPage() {
                 const kodeJenis = p.id.split('-')[1] || '—'
                 return (
                   <tr key={p.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer" onClick={() => navigate(`/pp/program-db/${p.id}/edit`)}>
-                    <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap font-mono">{p.id}</td>
+                    <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{p.id}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap">
                       <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold font-mono bg-[#1E1C43] text-white">{kodeJenis}</span>
                     </td>
