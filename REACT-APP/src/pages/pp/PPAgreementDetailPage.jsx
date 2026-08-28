@@ -4,6 +4,7 @@ import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from '
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
+import { getCompanySettings } from '../../utils/companySettings'
 
 /* ── helpers ── */
 function DocBadge({ status }) {
@@ -74,13 +75,6 @@ function ClientSig({ status }) {
 }
 
 /* ── Settings helpers ── */
-function getCompanySettings() {
-  try {
-    const s = localStorage.getItem('efmCompanySettings')
-    return s ? JSON.parse(s) : {}
-  } catch { return {} }
-}
-
 function getTemplatePasal() {
   try {
     const s = localStorage.getItem('efmAgreementTemplate')
@@ -160,10 +154,10 @@ function AgreementDoc({ doc }) {
               <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
             <div>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>Essential Fitness Management</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>CV. Bugar Nusantara Jaya</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>Jl. Terogong Raya No.18, Jakarta Selatan</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>essentialfitnessmanagement@gmail.com</div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
             </div>
           </div>
           <div className="text-center sm:text-right" style={{ flexShrink: 0 }}>
@@ -173,7 +167,7 @@ function AgreementDoc({ doc }) {
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
           <div style={{ fontSize: 15, fontWeight: 700, color: 'white', letterSpacing: 1.5, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — Essential Fitness Management</div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
         </div>
       </div>
 

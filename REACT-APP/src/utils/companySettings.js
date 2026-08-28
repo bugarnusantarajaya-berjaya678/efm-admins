@@ -19,6 +19,10 @@ export const getCompanySettings = () => {
     namaBank: 'BCA',
     nomorRekening: '1234567890',
     atasNamaRekening: 'CV. Bugar Nusantara Jaya',
+    rekeningList: [
+      { bank: 'BCA',     rek: '1234567890',    an: 'CV. Bugar Nusantara Jaya' },
+      { bank: 'Mandiri', rek: '1100009876543', an: 'CV. Bugar Nusantara Jaya' },
+    ],
     logoPerusahaan: '',
     tandaTanganCEO: '',
     namaPenandatangan: 'Bagoes Soeharto',

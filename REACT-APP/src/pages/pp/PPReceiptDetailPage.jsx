@@ -25,12 +25,13 @@ function QRPlaceholder({ label }) {
 }
 
 function ReceiptCard({ rcp, onGoToOrder, onGoToInvoice }) {
+  const cs = getCompanySettings()
   const sesi = sesiCount(rcp.paket)
   return (
     <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[560px] w-full">
       <div className="bg-primary px-7 py-6 flex items-center justify-between">
         <div>
-          <div className="text-white font-extrabold text-sm tracking-wide">Essential Fitness Management</div>
+          <div className="text-white font-extrabold text-sm tracking-wide">{cs.namaPerusahaan}</div>
           <button
             onClick={() => onGoToOrder(rcp.orderId)}
             className="text-white/55 text-[11px] mt-1 hover:text-white hover:underline block">
@@ -92,7 +93,7 @@ function ReceiptCard({ rcp, onGoToOrder, onGoToInvoice }) {
         <div className="text-[11px] text-text-muted text-center mt-4 pt-4 border-t border-dashed border-border leading-[1.7]">
           Terima kasih telah mempercayakan program fitness Anda kepada kami.<br/>
           Simpan receipt ini sebagai bukti pembayaran yang sah.<br/>
-          <strong>Essential Fitness Management</strong> — Profesional &amp; Terpercaya
+          <strong>{cs.namaPerusahaan}</strong> — Profesional &amp; Terpercaya
         </div>
       </div>
     </div>
@@ -141,7 +142,7 @@ export default function PPReceiptDetailPage() {
       `💰 Total: ${formatRp(receipt.total)}`,
       '',
       `Terima kasih telah mempercayakan program fitness Anda kepada kami. Selamat berlatih! 💪`,
-      `_Essential Fitness Management_`,
+      `_${cs.namaPerusahaan}_`,
     ].join('\n')
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
     setReceipt(prev => ({

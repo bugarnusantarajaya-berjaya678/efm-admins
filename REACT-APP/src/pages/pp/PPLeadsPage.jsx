@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Plus, Search, MessageCircle } from 'lucide-react'
 import { initLeads, getStoredLeads } from '../../data/ppLeadsStore'
+import { getCompanySettings } from '../../utils/companySettings'
 
 
 /* ═══════════════════════════════════════
@@ -372,16 +373,17 @@ function buildWANumber(raw = '') {
 
 function openLeadWA(lead, e) {
   e.stopPropagation()
+  const cs = getCompanySettings()
   const msg = [
     `Halo *${lead.sapaan} ${lead.nama}*,`,
     '',
-    `Saya dari *Essential Fitness Management* 👋`,
+    `Saya dari *${cs.namaPerusahaan}* 👋`,
     '',
     `Kami melihat Anda tertarik dengan program *${lead.programDiminati}* bersama kami.`,
     '',
     `Boleh kami jadwalkan sesi konsultasi gratis untuk mengenal program kami lebih lanjut? 🏋️`,
     '',
-    `_Essential Fitness Management_`,
+    `_${cs.namaPerusahaan}_`,
   ].join('\n')
   const waNum = buildWANumber(lead.noHp)
   window.open(`https://wa.me/${waNum}?text=${encodeURIComponent(msg)}`, '_blank')
