@@ -572,7 +572,7 @@ export default function PPLeadDetailPage() {
                         {['Kak','Pak','Bu','Mas','Mbak'].map(s => <option key={s}>{s}</option>)}
                       </select>
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-full">
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
                         Nama Klien <span className="text-red-500">*</span>
                       </label>
@@ -624,7 +624,7 @@ export default function PPLeadDetailPage() {
                       <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
                     </div>
-                    <div className="col-span-2">
+                    <div className="col-span-full">
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan Awal</label>
                       <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
                         value={editForm.catatanAwal || ''} onChange={e => setEditForm(p => ({ ...p, catatanAwal: e.target.value }))} />
