@@ -513,7 +513,7 @@ export default function PPFitnessAssessmentPage() {
 
   // Section Toggles
   const [toggles, setToggles] = useState(
-    existing?.toggles || { bodyMeasurement: true, healthScreening: true, fitnessTest: false }
+    existing?.toggles || { bodyMeasurement: false, healthScreening: false, fitnessTest: false }
   )
 
   // For new renewal assessments, adopt _akhir from prevSource as _awal baseline
@@ -716,28 +716,6 @@ export default function PPFitnessAssessmentPage() {
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
-
-      {/* Section Toggle Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <SectionToggleCard
-          title="Body Measurement"
-          description="TANITA Body Composition & Girths Measurement"
-          checked={toggles.bodyMeasurement}
-          onChange={v => setToggles(p => ({ ...p, bodyMeasurement: v }))}
-        />
-        <SectionToggleCard
-          title="Health Screening"
-          description="Verifikasi formal PAR-Q, Postural Alignment & Vital Signs"
-          checked={toggles.healthScreening}
-          onChange={v => setToggles(p => ({ ...p, healthScreening: v }))}
-        />
-        <SectionToggleCard
-          title="Fitness Test"
-          description="FMS, Cardiorespiratory, Strength & Endurance"
-          checked={toggles.fitnessTest}
-          onChange={v => setToggles(p => ({ ...p, fitnessTest: v }))}
-        />
-      </div>
 
       {/* ── REFERENSI STAGE 1 ── */}
       {leadId && (
@@ -1075,11 +1053,15 @@ export default function PPFitnessAssessmentPage() {
       </div>
 
       {/* ── BODY MEASUREMENT ── */}
-      {toggles.bodyMeasurement && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Body Measurement
           </h2>
+          <ToggleSwitch checked={toggles.bodyMeasurement} onChange={v => setToggles(p => ({ ...p, bodyMeasurement: v }))} />
+        </div>
+        {toggles.bodyMeasurement && (
+        <div className="mt-5">
 
           {/* TANITA */}
           <div className="mb-5">
@@ -1117,14 +1099,19 @@ export default function PPFitnessAssessmentPage() {
             />
           </div>
         </div>
-      )}
+        )}
+      </div>
 
       {/* ── HEALTH SCREENING ── */}
-      {toggles.healthScreening && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Health Screening
           </h2>
+          <ToggleSwitch checked={toggles.healthScreening} onChange={v => setToggles(p => ({ ...p, healthScreening: v }))} />
+        </div>
+        {toggles.healthScreening && (
+        <div className="mt-5">
 
           {/* PAR-Q */}
           <div className="mb-5">
@@ -1174,14 +1161,19 @@ export default function PPFitnessAssessmentPage() {
             />
           </div>
         </div>
-      )}
+        )}
+      </div>
 
       {/* ── FITNESS TEST ── */}
-      {toggles.fitnessTest && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Fitness Test
           </h2>
+          <ToggleSwitch checked={toggles.fitnessTest} onChange={v => setToggles(p => ({ ...p, fitnessTest: v }))} />
+        </div>
+        {toggles.fitnessTest && (
+        <div className="mt-5">
 
           {/* FMS */}
           <div className="mb-5">
@@ -1255,7 +1247,8 @@ export default function PPFitnessAssessmentPage() {
             </div>
           </div>
         </div>
-      )}
+        )}
+      </div>
 
       {/* ── PERSETUJUAN ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
