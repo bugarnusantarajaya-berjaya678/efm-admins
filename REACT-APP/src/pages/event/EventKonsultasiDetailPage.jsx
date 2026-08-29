@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, ChevronRight, Save, Send, Plus } from 'lucide-react'
 import { getStoredLeads, initLeads, LEADS_INIT } from '../../data/eventLeadsStore'
+import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -187,14 +188,18 @@ export default function EventKonsultasiDetailPage() {
   const fromState = location.state || {}
   const existing  = !isNew ? KONSULTASI_DETAIL_MAP[id] : null
 
-  // Initialize leads store and load for selector — idempotent if already seeded
+  // Initialize stores — both are idempotent (only seed once)
   initLeads(LEADS_INIT)
   const LEADS_FOR_SELECTOR = getStoredLeads()
+  initKonsultasi(KONSULTASI_INIT)
+  const storedKns = !isNew ? getStoredKonsultasi().find(k => k.id === id) : null
 
   /* ── Lead selector state ── */
-  const [selectedLeadId,   setSelectedLeadId]   = useState(() =>
-    (fromState.fromLead && fromState.leadId) ? fromState.leadId : ''
-  )
+  const [selectedLeadId,   setSelectedLeadId]   = useState(() => {
+    if (fromState.fromLead && fromState.leadId) return fromState.leadId
+    if (storedKns?.leadId) return storedKns.leadId
+    return ''
+  })
   const [showLeadSelector, setShowLeadSelector] = useState(false)
   const [leadSearch,       setLeadSearch]       = useState('')
 
