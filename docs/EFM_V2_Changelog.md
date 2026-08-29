@@ -4,6 +4,35 @@ Catatan perubahan UI/fitur yang sudah diimplementasikan dan di-merge ke main.
 
 ---
 
+## 2026-08-29
+
+### PP: Integrasi Leads & Order pages ke live ppProgramStore / ppLeadsStore / ppJenisStore (PR #193 + PR #194)
+
+**Latar belakang:** Setelah ppProgramStore dan ppJenisStore dijadikan sumber data utama (PR #191), beberapa halaman PP masih menggunakan hardcoded dummy data terpisah — menyebabkan inkonsistensi saat program baru ditambahkan.
+
+**Perubahan PR #193 — PPOrderNewPage, PPOrderDetailPage, PPProgramFormPage:**
+- `PPOrderNewPage`: Hapus `dummyPaketDB` (5 item hardcoded); ganti dengan `getStoredPrograms().filter(aktif).map(toPaket)` + helper `toPaket(p)` yang memetakan `ppProgramStore` shape ke paket shape
+- `PPOrderDetailPage`: Hapus `dummyPPPrograms` (10 item, ~42 baris); ganti dengan `getStoredPrograms().map(toPaket)`
+- `PPProgramFormPage`: Tambah proteksi hapus — cek `getAllOrders()` sebelum delete; jika ada order aktif yang terhubung, tampilkan alert dan batalkan hapus
+
+**Perubahan PR #194 — ppLeadsStore, PPLeadsPage, PPLeadNewPage, PPLeadDetailPage, PPOrderNewPage:**
+- `ppLeadsStore`: Pindahkan `LEADS_INIT` (14 record) ke dalam store; auto-initialize `_leads` sehingga `getStoredLeads()` langsung bekerja tanpa `initLeads()` — menghilangkan bug leads kosong di Order Baru jika user belum buka halaman Leads
+- `PPLeadsPage`: Hapus 298 baris `LEADS_INIT` dead code; filter dropdown "Program" dari hardcoded array → `getStoredJenis()`
+- `PPLeadNewPage`: Dropdown "Program Diminati" dari hardcoded `PROGRAM_OPTS` → `getStoredJenis().filter(aktif)` + opsi "Lainnya"
+- `PPLeadDetailPage`: Sama — dropdown edit form "Program Diminati" → `getStoredJenis()`
+- `PPOrderNewPage`: Hapus `dummyPPLeads` (7 item hardcoded); combobox pencarian pendaftar dari `getStoredLeads()` dengan mapping field `noHp` → `noHP`, `emailUmum` → `email`
+
+**File yang diubah:**
+- `REACT-APP/src/data/ppLeadsStore.js`
+- `REACT-APP/src/pages/pp/PPLeadsPage.jsx`
+- `REACT-APP/src/pages/pp/PPLeadNewPage.jsx`
+- `REACT-APP/src/pages/pp/PPLeadDetailPage.jsx`
+- `REACT-APP/src/pages/pp/PPOrderNewPage.jsx`
+- `REACT-APP/src/pages/pp/PPOrderDetailPage.jsx`
+- `REACT-APP/src/pages/pp/PPProgramFormPage.jsx`
+
+---
+
 ## 2026-08-28
 
 ### Fix: Event propagation bug pada panel Jenis Program (PR #167)
