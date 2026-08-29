@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, Send, Plus, ClipboardList } from 'lucide-react'
+import { ArrowLeft, Save, Send, Plus, ClipboardList, Link2 } from 'lucide-react'
 import { getStoredLeads, initLeads, LEADS_INIT } from '../../data/eventLeadsStore'
 import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
@@ -436,7 +436,7 @@ export default function EventKonsultasiDetailPage() {
         </div>
 
         {selectedLeadId ? (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start justify-between">
+          <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between">
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1">
                 <span>✅</span>
@@ -459,50 +459,57 @@ export default function EventKonsultasiDetailPage() {
             </button>
           </div>
         ) : (
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setShowLeadSelector(p => !p)}
-              className="w-full flex items-center justify-between border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-500 hover:border-gray-300 bg-white transition-colors text-left"
-            >
-              <span>Pilih dari leads yang ada...</span>
-              <span className="text-gray-400 text-xs ml-2">{showLeadSelector ? '▲' : '▼'}</span>
-            </button>
+          <div className="p-4 rounded-xl border-2 border-dashed border-[#1E1C43]/20 bg-[#F5F5F7]">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Link2 size={13} className="text-[#1E1C43]" />
+              <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Lead Klien</p>
+            </div>
+            <p className="text-[11px] text-gray-500 mb-3">Hubungkan ke lead untuk auto-fill data klien secara otomatis</p>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setShowLeadSelector(p => !p)}
+                className="w-full flex items-center justify-between border border-gray-300 rounded-lg px-4 py-2.5 text-xs text-gray-500 hover:border-gray-400 bg-white transition-colors text-left"
+              >
+                <span>Pilih dari leads yang ada...</span>
+                <span className="text-gray-400 ml-2">{showLeadSelector ? '▲' : '▼'}</span>
+              </button>
 
-            {showLeadSelector && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20">
-                <div className="p-2 border-b border-gray-100">
-                  <input
-                    type="text"
-                    value={leadSearch}
-                    onChange={e => setLeadSearch(e.target.value)}
-                    placeholder="Cari nama klien atau ID..."
-                    className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
-                    autoFocus
-                  />
-                </div>
-                <div className="max-h-52 overflow-y-auto">
-                  {filteredLeads.length === 0 ? (
-                    <p className="text-xs text-gray-400 text-center py-4">Tidak ada lead ditemukan</p>
-                  ) : filteredLeads.map(lead => (
-                    <button
-                      key={lead.id}
-                      type="button"
-                      onClick={() => handleSelectLead(lead)}
-                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0 transition-colors"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs font-medium text-gray-800 truncate">{lead.namaKlien}</span>
-                          <span className="text-[10px] text-gray-400 flex-shrink-0">{lead.id}</span>
+              {showLeadSelector && (
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20">
+                  <div className="p-2 border-b border-gray-100">
+                    <input
+                      type="text"
+                      value={leadSearch}
+                      onChange={e => setLeadSearch(e.target.value)}
+                      placeholder="Cari nama klien atau ID..."
+                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                      autoFocus
+                    />
+                  </div>
+                  <div className="max-h-52 overflow-y-auto">
+                    {filteredLeads.length === 0 ? (
+                      <p className="text-xs text-gray-400 text-center py-4">Tidak ada lead ditemukan</p>
+                    ) : filteredLeads.map(lead => (
+                      <button
+                        key={lead.id}
+                        type="button"
+                        onClick={() => handleSelectLead(lead)}
+                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0 transition-colors"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-medium text-gray-800 truncate">{lead.namaKlien}</span>
+                            <span className="text-[10px] text-gray-400 flex-shrink-0">{lead.id}</span>
+                          </div>
+                          <p className="text-[10px] text-gray-400 mt-0.5">{lead.tipeKlien} · {lead.kota} · {lead.stage}</p>
                         </div>
-                        <p className="text-[10px] text-gray-400 mt-0.5">{lead.tipeKlien} · {lead.kota} · {lead.stage}</p>
-                      </div>
-                    </button>
-                  ))}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
       </div>
