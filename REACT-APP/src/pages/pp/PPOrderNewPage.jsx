@@ -288,38 +288,68 @@ export default function PPOrderNewPage() {
           </div>
           <div className="space-y-3">
             {/* Lead selector */}
-            {selectedLeadId ? (
-              <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">{selectedLeadId}</span>
-                    <span className="text-sm font-bold text-green-800">{pendaftar.nama}</span>
+            {selectedLeadId ? (() => {
+              const leadAssessments = Object.entries(getAllAssessments())
+                .filter(([, a]) => a.leadId === selectedLeadId)
+                .map(([id, a]) => ({ id, ...a }))
+              const lead = allLeads.find(l => l.id === selectedLeadId)
+              return (
+                <div className="rounded-xl border-2 border-green-200 bg-green-50 overflow-hidden">
+                  {/* Main info row */}
+                  <div className="p-4 flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <CheckCircle size={14} className="text-green-600 shrink-0" />
+                        <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">{selectedLeadId}</span>
+                        <span className="text-sm font-bold text-green-800">{pendaftar.nama}</span>
+                      </div>
+                      <p className="text-xs text-green-700">{pendaftar.noHP}{pendaftar.email ? ` · ${pendaftar.email}` : ''}</p>
+                      {lead?.statusPipeline && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium mt-1 inline-block ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                          {lead.statusPipeline}
+                        </span>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSelectedLeadId(null)
+                        setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
+                        setKlienLatihan(prev => ({ ...prev, nama: '', noHP: '' }))
+                        setPendaftarDropdownOpen(false)
+                        setPendaftarSearch('')
+                      }}
+                      className="text-xs text-gray-500 hover:text-red-500 transition-colors whitespace-nowrap shrink-0 px-2 py-1 rounded-lg border border-gray-200 bg-white hover:border-red-200"
+                    >
+                      × Ganti Lead
+                    </button>
                   </div>
-                  <p className="text-xs text-green-700">{pendaftar.noHP}{pendaftar.email ? ` · ${pendaftar.email}` : ''}</p>
-                  {(() => {
-                    const lead = allLeads.find(l => l.id === selectedLeadId)
-                    return lead?.statusPipeline ? (
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium mt-1 inline-block ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                        {lead.statusPipeline}
-                      </span>
-                    ) : null
-                  })()}
+                  {/* Assessment info row */}
+                  <div className="border-t border-green-200 px-4 py-3 flex items-start gap-2">
+                    <ClipboardList size={13} className="text-green-600 mt-0.5 shrink-0" />
+                    <div className="flex-1">
+                      {leadAssessments.length > 0 ? (
+                        <>
+                          <p className="text-xs font-semibold text-green-700 mb-1.5">
+                            Lead ini sudah memiliki {leadAssessments.length} fitness assessment:
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 mb-1">
+                            {leadAssessments.map(a => (
+                              <span key={a.id} className="text-[10px] font-medium text-green-700 bg-green-100 px-2 py-0.5 rounded border border-green-200">
+                                #{a.id} ({a.statusAssessment})
+                              </span>
+                            ))}
+                          </div>
+                          <p className="text-[11px] text-green-600">Order baru akan otomatis ditandai sebagai renewal jika assessment terakhir sudah Post-Test Selesai.</p>
+                        </>
+                      ) : (
+                        <p className="text-xs text-green-600">Lead ini belum memiliki fitness assessment. Assessment dapat dibuat setelah order tersimpan.</p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedLeadId(null)
-                    setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
-                    setKlienLatihan(prev => ({ ...prev, nama: '', noHP: '' }))
-                    setPendaftarDropdownOpen(false)
-                    setPendaftarSearch('')
-                  }}
-                  className="text-xs text-gray-500 hover:text-red-500 transition-colors whitespace-nowrap shrink-0 px-2 py-1 rounded-lg border border-gray-200 bg-white hover:border-red-200"
-                >
-                  × Ganti Lead
-                </button>
-              </div>
-            ) : (
+              )
+            })() : (
               <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
                 <div className="flex items-center gap-2 mb-1.5">
                   <Link2 size={13} className="text-[#1E1C43]" />
@@ -413,40 +443,6 @@ export default function PPOrderNewPage() {
               </div>
             </div>
 
-            {/* Info assessment untuk lead yang dipilih */}
-            {selectedLeadId && (() => {
-              const leadAssessments = Object.entries(getAllAssessments())
-                .filter(([, a]) => a.leadId === selectedLeadId)
-                .map(([id, a]) => ({ id, ...a }));
-              if (leadAssessments.length > 0) {
-                return (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
-                    <ClipboardList size={14} className="text-blue-600 mt-0.5 shrink-0" />
-                    <div className="flex-1">
-                      <p className="text-xs font-semibold text-blue-700 mb-1">
-                        Lead ini sudah memiliki {leadAssessments.length} fitness assessment:
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {leadAssessments.map(a => (
-                          <span key={a.id} className="text-xs font-medium text-blue-700 bg-blue-100 px-2 py-0.5 rounded">
-                            #{a.id} ({a.statusAssessment})
-                          </span>
-                        ))}
-                      </div>
-                      <p className="text-[11px] text-blue-500 mt-1">Order baru akan otomatis ditandai sebagai renewal jika assessment terakhir sudah Post-Test Selesai.</p>
-                    </div>
-                  </div>
-                );
-              }
-              return (
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 flex items-center gap-2">
-                  <ClipboardList size={14} className="text-gray-400 shrink-0" />
-                  <p className="text-xs text-gray-500">
-                    Lead ini belum memiliki fitness assessment. Assessment dapat dibuat setelah order tersimpan.
-                  </p>
-                </div>
-              );
-            })()}
           </div>
         </div>
 
