@@ -438,10 +438,10 @@ export default function EventKonsultasiDetailPage() {
         {selectedLeadId ? (
           <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between">
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span>✅</span>
-                <span className="text-sm font-bold text-green-800">{selectedLead?.namaKlien}</span>
                 <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">{selectedLeadId}</span>
+                <span className="text-sm font-bold text-green-800">{selectedLead?.namaKlien}</span>
               </div>
               <p className="text-xs text-green-700">
                 {[selectedLead?.tipeKlien, selectedLead?.kota, selectedLead?.stage].filter(Boolean).join(' · ')}

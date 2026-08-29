@@ -299,8 +299,8 @@ export default function PPOrderNewPage() {
                   <div className="p-4 flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <CheckCircle size={14} className="text-green-600 shrink-0" />
-                        <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">{selectedLeadId}</span>
+                        <span>✅</span>
+                        <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">{selectedLeadId}</span>
                         <span className="text-sm font-bold text-green-800">{pendaftar.nama}</span>
                       </div>
                       <p className="text-xs text-green-700">{pendaftar.noHP}{pendaftar.email ? ` · ${pendaftar.email}` : ''}</p>
