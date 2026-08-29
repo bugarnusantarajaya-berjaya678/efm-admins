@@ -341,6 +341,14 @@ function TabProfil({ pic, extra, isEditing, editForm, setEditForm, onEditStart, 
           </div>
           <div className="bg-white border border-gray-100 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-[#1E1C43] mb-3">Informasi Profesional</h3>
+            <InputRow label="Jenis PIC">
+              <select className={inputCls} value={editForm.jenis ?? ''} onChange={set('jenis')}>
+                <option value="">Pilih jenis PIC...</option>
+                {['Trainer','Instruktur','Expert','Speaker','Dokter','Lainnya'].map(j => (
+                  <option key={j} value={j}>{j}</option>
+                ))}
+              </select>
+            </InputRow>
             <InputRow label="Spesialisasi">
               <input className={inputCls} value={editForm.spesialisasiList ?? ''} onChange={set('spesialisasiList')} />
             </InputRow>
@@ -375,6 +383,7 @@ function TabProfil({ pic, extra, isEditing, editForm, setEditForm, onEditStart, 
           </div>
           <div className="bg-white border border-gray-100 rounded-xl p-5">
             <h3 className="text-sm font-semibold text-[#1E1C43] mb-3">Informasi Profesional</h3>
+            <InfoRow label="Jenis PIC"          value={extra.jenis ?? pic.jenis} />
             <InfoRow label="Spesialisasi"       value={extra.spesialisasiList ?? pic.spesialis} />
             <InfoRow label="Tanggal Bergabung"  value={extra.tglBergabung ?? pic.tglMulaiPks} />
             <div className="py-2.5 border-b border-gray-100">
@@ -1113,6 +1122,7 @@ export default function PICDetail() {
       jenisKelamin:     extra.jenisKelamin     ?? '',
       email:            extra.email            ?? '',
       alamat:           extra.alamat           ?? '',
+      jenis:            extra.jenis            ?? pic.jenis ?? '',
       spesialisasiList: extra.spesialisasiList ?? pic.spesialis ?? '',
       tglBergabung:     extra.tglBergabung     ?? '',
       namaBank:         extra.namaBank         ?? '',
@@ -1139,10 +1149,10 @@ export default function PICDetail() {
   if (!pic) {
     return (
       <div className="p-7 flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <p className="text-base font-semibold text-gray-500">Pelatih tidak ditemukan — ID: {id}</p>
+        <p className="text-base font-semibold text-gray-500">PIC tidak ditemukan — ID: {id}</p>
         <button onClick={() => navigate('/ops/pelatih')}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E05945] text-white text-[13px] font-semibold">
-          <ArrowLeft size={14} />Kembali ke Daftar Pelatih
+          <ArrowLeft size={14} />Kembali ke Daftar PIC
         </button>
       </div>
     )
@@ -1169,7 +1179,7 @@ export default function PICDetail() {
       <nav className="flex items-center gap-2 text-[13px] text-gray-500">
         <Link to="/ops/pelatih" className="hover:text-[#1E1C43] transition-colors">Operasional</Link>
         <span className="text-gray-300">/</span>
-        <Link to="/ops/pelatih" className="hover:text-[#1E1C43] transition-colors">Pelatih</Link>
+        <Link to="/ops/pelatih" className="hover:text-[#1E1C43] transition-colors">PIC</Link>
         <span className="text-gray-300">/</span>
         <span className="font-medium text-[#1E1C43]">{pic.nama}</span>
       </nav>

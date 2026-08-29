@@ -38,9 +38,9 @@ const LAPORAN_SUB = [
 ]
 
 const OPS_SUB = [
-  { label: 'Pelatih',    path: '/ops/pelatih'           },
-  { label: 'Mitra',      path: '/ops/mitra'             },
-  { label: 'Aset',       path: '/ops/assets'            },
+  { label: 'PIC',         path: '/ops/pelatih'           },
+  { label: 'Mitra',       path: '/ops/mitra'             },
+  { label: 'Aset',        path: '/ops/assets'            },
   { label: 'Kontrak PKS', path: '/ops/pelatih/kontrak'  },
 ]
 
