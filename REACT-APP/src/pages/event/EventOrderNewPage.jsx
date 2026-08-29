@@ -159,6 +159,12 @@ export default function EventOrderNewPage() {
     nilaiKontrak: '', picEFMOps: '', catatan: '',
   })
 
+  /* ── Kategori Layanan ── */
+  const [kategori, setKategori] = useState([])
+  function toggleKategori(key) {
+    setKategori(prev => prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key])
+  }
+
   /* ── Rincian Layanan (line items) ── */
   const [rincianLayanan, setRincianLayanan] = useState([
     { id: 1, item: '', satuan: 'Bulan', jumlah: '1', rateUnit: '', total: 0 },
@@ -313,6 +319,10 @@ export default function EventOrderNewPage() {
     }
     if (!orderData.programNama || !orderData.periodeAwal || !orderData.periodeAkhir) {
       alert('Lengkapi: Nama Program, Tanggal Mulai, dan Tanggal Selesai.')
+      return
+    }
+    if (kategori.length === 0) {
+      alert('Pilih minimal satu Kategori Layanan.')
       return
     }
     const newOrderId = 'EO-' + String(Date.now()).slice(-4)
@@ -584,6 +594,49 @@ export default function EventOrderNewPage() {
                 placeholder="Corporate Wellness — Yoga & Functional Training"
                 className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] min-h-[36px]"
               />
+            </div>
+
+            {/* Kategori Layanan */}
+            <div className="col-span-2">
+              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                Kategori Layanan<span className="text-red-500 ml-0.5">*</span>
+                <span className="ml-1.5 text-gray-300 font-normal normal-case">Pilih satu atau lebih kategori</span>
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { key: 'kat1', label: 'Kat 1 — Instruktur / Trainer', desc: 'Penyediaan instruktur/trainer untuk kelas atau program olahraga', color: '#1E1C43' },
+                  { key: 'kat2', label: 'Kat 2 — Expert / Speaker',     desc: 'Narasumber, dokter, konsultan wellness, atau tenaga ahli',      color: '#2980B9' },
+                  { key: 'kat3', label: 'Kat 3 — Event Solution (EO)',   desc: 'EO mitra yang menangani keseluruhan penyelenggaraan event',      color: '#E05945' },
+                ].map(({ key, label, desc, color }) => {
+                  const checked = kategori.includes(key)
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => toggleKategori(key)}
+                      className={[
+                        'text-left p-3 rounded-xl border-2 transition-all duration-150',
+                        checked
+                          ? 'border-[' + color + '] bg-[' + color + ']/5'
+                          : 'border-gray-200 bg-white hover:border-gray-300',
+                      ].join(' ')}
+                    >
+                      <div className="flex items-start gap-2">
+                        <div className={[
+                          'mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0',
+                          checked ? 'border-[' + color + '] bg-[' + color + ']' : 'border-gray-300',
+                        ].join(' ')}>
+                          {checked && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                        </div>
+                        <div>
+                          <p className={['text-[11px] font-semibold leading-tight', checked ? 'text-[' + color + ']' : 'text-gray-700'].join(' ')}>{label}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">{desc}</p>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
 
             {/* Baris 2: Periode Awal + Akhir */}
