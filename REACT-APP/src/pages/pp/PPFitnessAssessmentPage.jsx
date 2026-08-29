@@ -656,14 +656,14 @@ export default function PPFitnessAssessmentPage() {
   }, [isNew, id])
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6 pb-24">
+    <div className="bg-[#F5F5F7] min-h-screen pb-24">
 
       {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <Activity size={18} className="text-white" />
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <Activity size={22} className="text-white" />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Fitness Assessment PP</p>
@@ -698,7 +698,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* Renewal Banner */}
       {prevSource && (
-        <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
+        <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
           <div className="mt-0.5 w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center shrink-0 text-purple-600 font-bold text-sm">↻</div>
           <div>
             <p className="text-sm font-semibold text-purple-800">
@@ -715,10 +715,10 @@ export default function PPFitnessAssessmentPage() {
       )}
 
       {/* Content wrapper — non-interactive when not editing */}
-      <div className={!isEditing ? 'pointer-events-none select-none opacity-80' : ''}>
+      <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
 
       {/* Section Toggle Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <SectionToggleCard
           title="Body Measurement"
           description="TANITA Body Composition & Girths Measurement"
@@ -741,7 +741,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── REFERENSI STAGE 1 ── */}
       {leadId && (
-        <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-5">
+        <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
           <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
             <span className="text-[10px] font-bold text-blue-600">i</span>
           </div>
@@ -758,7 +758,7 @@ export default function PPFitnessAssessmentPage() {
       )}
 
       {/* ── PERSONAL DETAIL (always shown) ── */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
           Data Klien & Program
         </h2>
@@ -953,7 +953,7 @@ export default function PPFitnessAssessmentPage() {
       </div>
 
       {/* ── RINGKASAN KLIEN ── */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center gap-3 mb-4">
           <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Ringkasan Klien
@@ -1076,7 +1076,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── BODY MEASUREMENT ── */}
       {toggles.bodyMeasurement && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
             Body Measurement
           </h2>
@@ -1121,7 +1121,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── HEALTH SCREENING ── */}
       {toggles.healthScreening && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
             Health Screening
           </h2>
@@ -1178,7 +1178,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── FITNESS TEST ── */}
       {toggles.fitnessTest && (
-        <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
             Fitness Test
           </h2>
@@ -1258,7 +1258,7 @@ export default function PPFitnessAssessmentPage() {
       )}
 
       {/* ── PERSETUJUAN ── */}
-      <div className="bg-white rounded-xl border border-gray-100 p-5 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
           Persetujuan
         </h2>
