@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Building2, TrendingUp, ClipboardList, AlertCircle, ChevronRight, CreditCard, Calendar, CheckCircle } from 'lucide-react'
 
@@ -45,7 +46,7 @@ const ALERTS = [
     borderColor: '#F97316', bg: '#FFF7ED',
     judul: 'Konsultasi Belum Ditindaklanjuti',
     detail: 'Brand Tropicana Slim (KNS-26-0003) — status Pending sejak 10 Jun 2026',
-    url: '/event/konsultasi/KNS-26-0003',
+    url: '/event/leads/LE-0003',
   },
   {
     borderColor: '#EAB308', bg: '#FEFCE8',
@@ -170,9 +171,13 @@ function TahapanBadge({ tahapan }) {
 /* ═══════════════════════════════════════
    Main Page
 ═══════════════════════════════════════ */
+const HASIL_FILTER_OPTS = ['Semua', 'Pending', 'Lanjut', 'Tidak Lanjut']
+
 export default function EventDashboardPage() {
   const navigate = useNavigate()
   const totalPipeline = PIPELINE.reduce((s, d) => s + d.count, 0)
+  const [filterHasil, setFilterHasil] = useState('Semua')
+  const konsultasiFiltered = filterHasil === 'Semua' ? KONSULTASI : KONSULTASI.filter(k => k.hasil === filterHasil)
 
   return (
     <div className="space-y-4">
@@ -210,7 +215,7 @@ export default function EventDashboardPage() {
           sub="menunggu tindak lanjut"
           icon={ClipboardList}
           accent={KPI.konsultasiPending > 0 ? 'orange' : undefined}
-          onClick={() => navigate('/event/konsultasi')}
+          onClick={() => navigate('/event/leads')}
         />
         <KpiCard
           label="Invoice Overdue"
@@ -555,18 +560,40 @@ export default function EventDashboardPage() {
       </div>
 
       {/* ══════════════════════════════════
-          SECTION 6: Konsultasi Terbaru
+          SECTION 6: Konsultasi — Semua Klien
       ══════════════════════════════════ */}
       <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[13px] font-bold text-[#1E1C43]">Konsultasi Terbaru</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-[13px] font-bold text-[#1E1C43]">Konsultasi — Semua Klien</h3>
           <button
             type="button"
-            onClick={() => navigate('/event/konsultasi')}
+            onClick={() => navigate('/event/leads')}
             className="text-xs text-[#E05945] font-medium hover:underline"
           >
-            Lihat Semua →
+            Lihat Semua Leads →
           </button>
+        </div>
+        {/* Filter pills */}
+        <div className="flex gap-2 mb-3 flex-wrap">
+          {HASIL_FILTER_OPTS.map(opt => (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => setFilterHasil(opt)}
+              className={`text-[10px] font-semibold px-3 py-1 rounded-full border transition-colors ${
+                filterHasil === opt
+                  ? 'bg-[#1E1C43] text-white border-[#1E1C43]'
+                  : 'bg-white text-gray-500 border-gray-200 hover:border-gray-400'
+              }`}
+            >
+              {opt}
+              {opt !== 'Semua' && (
+                <span className="ml-1 opacity-70">
+                  ({KONSULTASI.filter(k => k.hasil === opt).length})
+                </span>
+              )}
+            </button>
+          ))}
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -580,7 +607,13 @@ export default function EventDashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {KONSULTASI.map(kns => (
+              {konsultasiFiltered.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="px-3 py-6 text-center text-xs text-gray-400">
+                    Tidak ada konsultasi dengan status ini.
+                  </td>
+                </tr>
+              ) : konsultasiFiltered.map(kns => (
                 <tr key={kns.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                   <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{kns.id}</td>
                   <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{kns.nama}</td>
