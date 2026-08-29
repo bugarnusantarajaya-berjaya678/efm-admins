@@ -459,7 +459,7 @@ export default function EventKonsultasiDetailPage() {
             </button>
           </div>
         ) : (
-          <div className="p-4 rounded-xl border-2 border-dashed border-[#1E1C43]/20 bg-[#F5F5F7]">
+          <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
             <div className="flex items-center gap-2 mb-1.5">
               <Link2 size={13} className="text-[#1E1C43]" />
               <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Lead Klien</p>
