@@ -702,17 +702,6 @@ export default function PPFitnessAssessmentPage() {
                 Batalkan
               </button>
             )}
-            {isEditing && (
-              <button
-                onClick={handleSave}
-                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors ${
-                  saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] hover:bg-[#2d2a5e] text-white'
-                }`}
-              >
-                {saved ? <CheckCircle size={13} /> : <Save size={13} />}
-                {saved ? 'Tersimpan' : isNew ? 'Simpan' : 'Simpan Perubahan'}
-              </button>
-            )}
             <button
               onClick={() => handleBack()}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
@@ -1360,12 +1349,6 @@ export default function PPFitnessAssessmentPage() {
                 {saved ? 'Tersimpan' : isNew ? 'Simpan Assessment' : 'Simpan Perubahan'}
               </button>
             )}
-            <button
-              onClick={() => handleBack()}
-              className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
-            >
-              <ArrowLeft size={14} /> Kembali
-            </button>
           </div>
         </div>
       </div>

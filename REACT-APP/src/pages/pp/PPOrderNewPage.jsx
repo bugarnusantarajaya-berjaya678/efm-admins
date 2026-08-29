@@ -799,10 +799,6 @@ export default function PPOrderNewPage() {
           </div>
           {/* Right: action buttons */}
           <div className="flex items-center gap-3 ml-auto">
-            <button onClick={() => navigate('/pp/orders')}
-              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors flex items-center gap-2">
-              <ArrowLeft size={14} /> Batal
-            </button>
             <button onClick={handleSimpanOrder}
               disabled={!pendaftar.nama || !klienLatihan.nama || !selectedPaket}
               className="px-6 py-2.5 bg-[#1E1C43] text-white rounded-xl text-sm font-semibold hover:bg-[#2d2b5e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
