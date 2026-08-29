@@ -60,8 +60,8 @@ export default function EventKonsultasiPage() {
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-[22px] font-bold text-text-primary">Konsultasi Event</h1>
-          <p className="text-[13px] text-text-muted mt-1">Riwayat konsultasi & penawaran event klien</p>
+          <h1 className="text-[22px] font-bold text-[#1E1C43]">Konsultasi Event</h1>
+          <p className="text-[13px] text-gray-500 mt-1">Riwayat konsultasi & penawaran event klien</p>
         </div>
         <button
           onClick={() => navigate('/event/konsultasi/new')}
@@ -151,7 +151,7 @@ export default function EventKonsultasiPage() {
               {filtered.length === 0 ? (
                 <tr><td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data konsultasi.</td></tr>
               ) : filtered.map((s) => (
-                <tr key={s.id} onClick={() => navigate('/event/konsultasi/' + s.id)} className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
+                <tr key={s.id} onClick={() => navigate('/event/konsultasi/' + s.id)} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{s.id}</td>
                   <td className="text-xs font-medium text-gray-900 px-3 py-2.5 whitespace-nowrap">{s.nama}</td>
                   <td className="px-3 py-2.5">
@@ -185,7 +185,7 @@ export default function EventKonsultasiPage() {
                           }}
                           className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[#c94a38] whitespace-nowrap"
                         >
-                          📋 Buat Order
+                          <ClipboardList size={12} /> Buat Order
                         </button>
                       )}
                     </div>
