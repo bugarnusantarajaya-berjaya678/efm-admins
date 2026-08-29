@@ -268,7 +268,7 @@ function TemplateEditor({ onClose }) {
                 {editMode ? (
                   <>
                     <textarea
-                      className="flex-1 text-xs text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none outline-none focus:border-[#1E1C43] transition-colors leading-relaxed"
+                      className="flex-1 text-sm text-gray-700 border border-gray-200 rounded-lg px-3 py-2 resize-none outline-none focus:border-[#1E1C43] transition-colors leading-relaxed"
                       rows={2}
                       placeholder="Isi poin..."
                       value={poin}
@@ -747,7 +747,7 @@ export default function PPDocumentsPage() {
     <div className="flex flex-col gap-4">
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <FileText size={20} className="text-white" />
@@ -763,7 +763,7 @@ export default function PPDocumentsPage() {
               <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <div className="relative" ref={templateMenuRef}>
               <button
                 onClick={() => setShowTemplate(v => !v)}
