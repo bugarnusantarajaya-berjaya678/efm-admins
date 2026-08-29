@@ -282,13 +282,13 @@ function ReceiptModal({ rec, onClose }) {
         <div className="px-7 py-4 border-t border-gray-100 flex items-center justify-end gap-2.5">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
           >
             Tutup
           </button>
           <button
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-[#1E1C43] hover:bg-[#2d2b5a] transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#1E1C43] hover:bg-[#2d2b5a] transition-colors"
           >
             <Download size={14} /> Download PDF
           </button>
@@ -354,7 +354,7 @@ export default function B2BReceiptPage() {
     return true
   })
 
-  const selectCls   = 'h-9 px-3 pr-7 rounded-lg border border-gray-200 bg-white text-[13px] outline-none appearance-none cursor-pointer hover:border-gray-300 focus:border-[#1E1C43] transition-colors'
+  const selectCls   = 'h-9 px-3 pr-7 rounded-lg border border-gray-200 bg-white text-sm outline-none appearance-none cursor-pointer hover:border-gray-300 focus:border-[#1E1C43] transition-colors'
   const selectStyle = { backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center' }
 
   return (

@@ -217,7 +217,7 @@ function MarkPaidModal({ inv, onConfirm, onClose }) {
           </div>
         </div>
         <div className="px-7 pb-6 flex justify-end gap-2.5 border-t border-gray-100 pt-4">
-          <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50">Batal</button>
+          <button onClick={onClose} className="px-4 py-2 text-sm font-semibold text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50">Batal</button>
           <button onClick={handleConfirm}
             className="px-4 py-2 text-sm font-semibold text-white bg-[#27AE60] hover:bg-[#1E8449] rounded-lg flex items-center gap-1.5">
             <CheckCircle size={14} /> Konfirmasi Lunas
@@ -656,7 +656,7 @@ export default function B2BInvoicePage() {
       </div>
 
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
-        <select className="px-3 py-[7px] border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors"
+        <select className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors"
           value={fStatus} onChange={e => { setFStatus(e.target.value); setPage(1) }}>
           <option value="">Semua Status</option>
           <option value="Lunas">Lunas</option>
@@ -664,13 +664,13 @@ export default function B2BInvoicePage() {
           <option value="Sebagian">Sebagian</option>
           <option value="Overdue">Overdue</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
           <Search size={14} className="text-gray-400 shrink-0" />
           <input className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400"
             placeholder="Cari invoice, perusahaan, program..."
             value={fSearch} onChange={e => { setFSearch(e.target.value); setPage(1) }} />
         </div>
-        <button onClick={reset} className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+        <button onClick={reset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
       </div>
 
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">
