@@ -4,19 +4,12 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
+import { getStoredLeads } from '../../data/ppLeadsStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
 import { PIC_DB } from '../../data/ppProgramDBData';
 
 const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
 
-const dummyPPLeads = [
-  { id: "LP-0001", nama: "James Wilson", sapaan: "Pak", noHP: "081234567890", email: "james@email.com", sumber: "Website", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "James Wilson", hpPendaftar: "081234567890", emailPendaftar: "james@email.com" },
-  { id: "LP-0003", nama: "Budi Santoso", sapaan: "Pak", noHP: "085678901234", email: "budi@email.com", sumber: "Walk-in", programDiminati: "12 Sesi - Pro", statusPipeline: "Closed Won", namaPendaftar: "Budi Santoso", hpPendaftar: "085678901234", emailPendaftar: "budi@email.com" },
-  { id: "LP-0004", nama: "Rian Maulana", sapaan: "Mas", noHP: "081298765432", email: "rian@email.com", sumber: "Meta Ads", programDiminati: "Fatloss & Bodyshape", statusPipeline: "Follow Up", namaPendaftar: "Rian Maulana", hpPendaftar: "081298765432", emailPendaftar: "rian@email.com" },
-  { id: "LP-0005", nama: "Siti Rahayu", sapaan: "Kak", noHP: "082211334455", email: "siti@email.com", sumber: "WhatsApp", programDiminati: "Yoga", statusPipeline: "New", namaPendaftar: "Siti Rahayu", hpPendaftar: "082211334455", emailPendaftar: "siti@email.com" },
-  { id: "LP-0006", nama: "Emily Chen", sapaan: "Kak", noHP: "082345678901", email: "emily@email.com", sumber: "Meta Ads", programDiminati: "4 Sesi - Starter", statusPipeline: "Closed Won", namaPendaftar: "Emily Chen", hpPendaftar: "082345678901", emailPendaftar: "emily@email.com" },
-  { id: "LP-0007", nama: "Sari Dewi Lestari", sapaan: "Kak", noHP: "087811223344", email: "sari.dewi@email.com", sumber: "Referral", programDiminati: "8 Sesi - Basic", statusPipeline: "Closed Won", namaPendaftar: "Sari Dewi Lestari", hpPendaftar: "087811223344", emailPendaftar: "sari.dewi@email.com" },
-];
 
 function toPaket(p) {
   const pic = PIC_DB[p.picId] || {};
@@ -241,13 +234,14 @@ export default function PPOrderNewPage() {
     navigate('/pp/orders/' + newId)
   };
 
+  const allLeads = getStoredLeads().map(l => ({ ...l, noHP: l.noHp, email: l.emailUmum, sumber: l.sumberLead }));
   const filteredLeads = pendaftarSearch
-    ? dummyPPLeads.filter(l =>
+    ? allLeads.filter(l =>
         l.nama.toLowerCase().includes(pendaftarSearch.toLowerCase()) ||
-        l.noHP.includes(pendaftarSearch) ||
+        (l.noHp || '').includes(pendaftarSearch) ||
         l.id.toLowerCase().includes(pendaftarSearch.toLowerCase())
       )
-    : dummyPPLeads;
+    : allLeads;
 
   const tanggalBerakhir = calcTanggalBerakhir();
 

@@ -4,9 +4,9 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { ArrowLeft, UserPlus } from 'lucide-react'
 import { addStoredLead, getNextLeadId } from '../../data/ppLeadsStore'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
+import { getStoredJenis } from '../../data/ppJenisStore'
 
 const SUMBER_OPTS  = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
-const PROGRAM_OPTS = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 
 const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
 
@@ -173,7 +173,8 @@ export default function PPLeadNewPage() {
               </label>
               <select value={form.programDiminati} onChange={e => set('programDiminati', e.target.value)} className={inputCls('programDiminati')}>
                 <option value="">Pilih Program...</option>
-                {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
+                {getStoredJenis().filter(j => j.status === 'aktif').map(j => <option key={j.nama}>{j.nama}</option>)}
+                <option>Lainnya</option>
               </select>
               {errors.programDiminati && <p className="text-red-500 text-[10px] mt-1">{errors.programDiminati}</p>}
             </div>
