@@ -727,7 +727,7 @@ export default function PPOrderDetailPage() {
               )}
               <button
                 onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
               >
                 <ArrowLeft size={12} /> Kembali
               </button>
@@ -788,7 +788,7 @@ export default function PPOrderDetailPage() {
                 {editingSection === 'dataKlienTambahan' ? (
                   <div className="flex gap-2">
                     <button onClick={cancelEdit} className="h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50">Batal</button>
-                    <button onClick={saveDataKlienTambahan} className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold">Simpan</button>
+                    <button onClick={saveDataKlienTambahan} className="h-8 px-3 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold">Simpan</button>
                   </div>
                 ) : (
                   <button

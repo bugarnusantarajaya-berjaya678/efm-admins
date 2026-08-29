@@ -302,7 +302,7 @@ export default function PPInvoicePage() {
             </button>
             <button
               onClick={() => navigate('/pp/orders')}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors w-full sm:w-auto"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
               <ArrowLeft size={12} /> Kembali ke PP Orders
             </button>
@@ -344,7 +344,7 @@ export default function PPInvoicePage() {
                 placeholder="Cari nomor invoice atau nama klien..."
                 value={fSearch} onChange={e => { setFSearch(e.target.value); setPage(1) }} />
             </div>
-            <button onClick={reset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+            <button onClick={reset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
           </div>
 
           <div className="bg-bg-surface border border-border rounded-xl shadow-sm overflow-hidden">

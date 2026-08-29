@@ -399,7 +399,7 @@ export default function EventReceiptPage() {
                   className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
               </div>
               <button onClick={handleReset}
-                className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
+                className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 transition-colors">
                 <RotateCcw size={12} />
                 Reset
               </button>

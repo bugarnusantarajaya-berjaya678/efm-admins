@@ -533,7 +533,7 @@ export default function PPOrdersPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={resetFilter} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+        <button onClick={resetFilter} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
       </div>
 
       {/* Highlight banner */}
