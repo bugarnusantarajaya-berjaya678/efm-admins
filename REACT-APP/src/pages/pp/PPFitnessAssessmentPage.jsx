@@ -460,6 +460,8 @@ export default function PPFitnessAssessmentPage() {
   // Order picker (only for new assessments opened without fromOrderId)
   const [pickerOrderId, setPickerOrderId] = useState(fromOrderId || '')
   const [pickerLeadHealth, setPickerLeadHealth] = useState(null)
+  const [showOrderSelector, setShowOrderSelector] = useState(false)
+  const [orderSearch, setOrderSearch] = useState('')
 
   function handleOrderPick(orderId) {
     setPickerOrderId(orderId)
@@ -633,6 +635,15 @@ export default function PPFitnessAssessmentPage() {
   const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
   const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
+  const filteredOrders = orderSearch
+    ? ORDERS_INIT.filter(o =>
+        o.klien.toLowerCase().includes(orderSearch.toLowerCase()) ||
+        o.id.toLowerCase().includes(orderSearch.toLowerCase()) ||
+        (o.paket || '').toLowerCase().includes(orderSearch.toLowerCase())
+      )
+    : ORDERS_INIT
+  const selectedOrder = ORDERS_INIT.find(o => o.id === pickerOrderId)
+
   // Lock order-linked fields whenever there is a valid order connected (new or existing)
   const linkedOrderId = isNew ? (pickerOrderId || fromOrderId) : (existing?.orderId || '')
   const orderInStore = linkedOrderId ? ORDERS_INIT.find(o => o.id === linkedOrderId) : null
@@ -807,40 +818,93 @@ export default function PPFitnessAssessmentPage() {
 
         {/* Order picker — hanya tampil saat form baru dibuka dari /pp/screening (bukan dari order detail) */}
         {isNew && !fromOrderId && (
-          <div className="mb-5 p-4 rounded-xl border-2 border-dashed border-[#1E1C43]/20 bg-[#F5F5F7]">
-            <div className="flex items-center gap-2 mb-2">
-              <Link2 size={14} className="text-[#1E1C43]" />
-              <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Link ke Order Klien</p>
-            </div>
-            <p className="text-[11px] text-gray-500 mb-3">
-              Pilih nomor order agar assessment ini terhubung ke klien yang tepat dan muncul di halaman detail order.
-            </p>
-            <select
-              value={pickerOrderId}
-              onChange={e => handleOrderPick(e.target.value)}
-              className="w-full md:w-auto text-xs border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:border-[#1E1C43] text-gray-800"
-            >
-              <option value="">— Pilih Order Klien —</option>
-              {ORDERS_INIT.map(o => (
-                <option key={o.id} value={o.id}>
-                  #{o.id} · {o.klien} · {o.paket}
-                </option>
-              ))}
-            </select>
-            {pickerOrderId && (
-              <div className="mt-2 space-y-1">
-                <p className="text-[11px] text-green-700 font-medium">
-                  ✓ Terhubung ke order #{pickerOrderId} — Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
+          <div className="mb-5">
+            {pickerOrderId ? (
+              <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span>✅</span>
+                    <span className="text-sm font-bold text-green-800">#{pickerOrderId}</span>
+                    <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">{selectedOrder?.klien}</span>
+                  </div>
+                  <p className="text-xs text-green-700">{selectedOrder?.paket}</p>
+                  <div className="mt-1.5 space-y-0.5">
+                    <p className="text-[11px] text-green-600 font-medium">
+                      ✓ Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
+                    </p>
+                    {pickerLeadHealth?.sudahDiisi ? (
+                      <p className="text-[11px] text-blue-700 font-medium">
+                        ✓ Data kesehatan dari leads ditemukan — Detail Goals & Ringkasan Klien sudah di-auto-fill.
+                      </p>
+                    ) : pickerLeadHealth ? (
+                      <p className="text-[11px] text-yellow-700 font-medium">
+                        ⚠ Informasi kesehatan di leads belum diisi — isi manual di bagian Ringkasan Klien.
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { handleOrderPick(''); setShowOrderSelector(false) }}
+                  className="text-xs text-gray-500 hover:text-red-500 transition-colors flex-shrink-0 ml-4 whitespace-nowrap"
+                >
+                  × Ganti Order
+                </button>
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Link2 size={13} className="text-[#1E1C43]" />
+                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Link ke Order Klien</p>
+                </div>
+                <p className="text-[11px] text-gray-500 mb-3">
+                  Pilih nomor order agar assessment ini terhubung ke klien yang tepat dan muncul di halaman detail order.
                 </p>
-                {pickerLeadHealth?.sudahDiisi ? (
-                  <p className="text-[11px] text-blue-700 font-medium">
-                    ✓ Data kesehatan dari leads ditemukan — Detail Goals & Ringkasan Klien sudah di-auto-fill.
-                  </p>
-                ) : pickerLeadHealth ? (
-                  <p className="text-[11px] text-yellow-700 font-medium">
-                    ⚠ Informasi kesehatan di leads belum diisi — isi manual di bagian Ringkasan Klien.
-                  </p>
-                ) : null}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowOrderSelector(p => !p)}
+                    className="w-full flex items-center justify-between border border-gray-300 rounded-lg px-4 py-2.5 text-xs text-gray-500 hover:border-gray-400 bg-white transition-colors text-left"
+                  >
+                    <span>Pilih dari daftar order...</span>
+                    <span className="text-gray-400 ml-2">{showOrderSelector ? '▲' : '▼'}</span>
+                  </button>
+
+                  {showOrderSelector && (
+                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20">
+                      <div className="p-2 border-b border-gray-100">
+                        <input
+                          type="text"
+                          value={orderSearch}
+                          onChange={e => setOrderSearch(e.target.value)}
+                          placeholder="Cari nama klien, ID order, atau paket..."
+                          className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                          autoFocus
+                        />
+                      </div>
+                      <div className="max-h-52 overflow-y-auto">
+                        {filteredOrders.length === 0 ? (
+                          <p className="text-xs text-gray-400 text-center py-4">Tidak ada order ditemukan</p>
+                        ) : filteredOrders.map(o => (
+                          <button
+                            key={o.id}
+                            type="button"
+                            onClick={() => { handleOrderPick(o.id); setShowOrderSelector(false); setOrderSearch('') }}
+                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0 transition-colors"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-semibold text-[#1E1C43] whitespace-nowrap">#{o.id}</span>
+                                <span className="text-xs font-medium text-gray-800 truncate">{o.klien}</span>
+                              </div>
+                              <p className="text-[10px] text-gray-400 mt-0.5">{o.paket}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
