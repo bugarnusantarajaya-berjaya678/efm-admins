@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
-import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2 } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
@@ -287,68 +287,95 @@ export default function PPOrderNewPage() {
             <span className="text-xs text-gray-400">— orang yang mendaftar / membayar</span>
           </div>
           <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Pendaftar *</label>
+            {/* Lead selector */}
+            {selectedLeadId ? (
+              <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1 flex-wrap">
+                    <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-1.5 py-0.5 rounded">{selectedLeadId}</span>
+                    <span className="text-sm font-bold text-green-800">{pendaftar.nama}</span>
+                  </div>
+                  <p className="text-xs text-green-700">{pendaftar.noHP}{pendaftar.email ? ` · ${pendaftar.email}` : ''}</p>
+                  {(() => {
+                    const lead = allLeads.find(l => l.id === selectedLeadId)
+                    return lead?.statusPipeline ? (
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium mt-1 inline-block ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {lead.statusPipeline}
+                      </span>
+                    ) : null
+                  })()}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedLeadId(null)
+                    setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
+                    setKlienLatihan(prev => ({ ...prev, nama: '', noHP: '' }))
+                    setPendaftarDropdownOpen(false)
+                    setPendaftarSearch('')
+                  }}
+                  className="text-xs text-gray-500 hover:text-red-500 transition-colors whitespace-nowrap shrink-0 px-2 py-1 rounded-lg border border-gray-200 bg-white hover:border-red-200"
+                >
+                  × Ganti Lead
+                </button>
+              </div>
+            ) : (
+              <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <Link2 size={13} className="text-[#1E1C43]" />
+                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Lead Pendaftar</p>
+                </div>
+                <p className="text-[11px] text-gray-500 mb-3">Hubungkan ke data leads untuk auto-fill nama, HP, email, dan info klien secara otomatis</p>
                 <div className="relative">
-                  <input
-                    type="text"
-                    value={pendaftarDropdownOpen ? pendaftarSearch : pendaftar.nama}
-                    onChange={e => {
-                      setPendaftarSearch(e.target.value)
-                      setPendaftar({ ...pendaftar, nama: e.target.value })
-                      setPendaftarDropdownOpen(true)
-                    }}
-                    onFocus={() => { setPendaftarSearch(''); setPendaftarDropdownOpen(true) }}
-                    onBlur={() => setTimeout(() => {
-                      setPendaftarDropdownOpen(false)
-                      setPendaftarSearch('')
-                    }, 150)}
-                    placeholder="Cari dari leads, atau ketik nama manual..."
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-9"
-                  />
-                  <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <button
+                    type="button"
+                    onClick={() => setPendaftarDropdownOpen(p => !p)}
+                    className="w-full flex items-center justify-between border border-gray-300 rounded-lg px-4 py-2.5 text-xs bg-white hover:border-[#1E1C43] transition-colors"
+                  >
+                    <span className="text-gray-400">Pilih dari daftar leads...</span>
+                    <span className="text-gray-400 ml-2">{pendaftarDropdownOpen ? '▲' : '▼'}</span>
+                  </button>
                   {pendaftarDropdownOpen && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30 max-h-52 overflow-y-auto">
-                      {filteredLeads.length === 0 ? (
-                        <p className="text-sm text-gray-400 text-center py-4">Tidak ada leads ditemukan</p>
-                      ) : (
-                        filteredLeads.map(lead => (
-                          <button
-                            key={lead.id}
-                            type="button"
-                            onMouseDown={() => {
-                              handleSelectLead(lead)
-                              setPendaftarSearch(lead.namaPendaftar || lead.nama)
-                              setPendaftarDropdownOpen(false)
-                            }}
-                            className="w-full text-left px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2"
-                          >
-                            <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded shrink-0">{lead.id}</span>
-                            <span className="text-sm font-medium text-gray-800 flex-1">{lead.nama}</span>
-                            <span className="text-xs text-gray-400 shrink-0">{lead.noHP}</span>
-                            <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                              {lead.statusPipeline}
-                            </span>
-                          </button>
-                        ))
-                      )}
+                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-xl shadow-lg z-30">
+                      <div className="p-2 border-b border-gray-100">
+                        <input
+                          autoFocus
+                          value={pendaftarSearch}
+                          onChange={e => setPendaftarSearch(e.target.value)}
+                          placeholder="Cari nama, ID lead, atau nomor HP..."
+                          className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg outline-none focus:border-[#1E1C43]"
+                        />
+                      </div>
+                      <div className="max-h-52 overflow-y-auto">
+                        {filteredLeads.length === 0 ? (
+                          <p className="text-xs text-gray-400 text-center py-4">Tidak ada leads ditemukan</p>
+                        ) : (
+                          filteredLeads.map(lead => (
+                            <button
+                              key={lead.id}
+                              type="button"
+                              onClick={() => {
+                                handleSelectLead(lead)
+                                setPendaftarDropdownOpen(false)
+                                setPendaftarSearch('')
+                              }}
+                              className="w-full text-left px-4 py-3 border-b border-gray-50 last:border-0 hover:bg-blue-50 transition-colors flex items-center gap-2"
+                            >
+                              <span className="text-[10px] font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-1.5 py-0.5 rounded shrink-0">{lead.id}</span>
+                              <span className="text-xs font-medium text-gray-800 flex-1">{lead.nama}</span>
+                              <span className="text-[10px] text-gray-400 shrink-0">{lead.noHP}</span>
+                              <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium shrink-0 ${lead.statusPipeline === 'Closed Won' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                                {lead.statusPipeline}
+                              </span>
+                            </button>
+                          ))
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Pilih dari data leads untuk auto-isi, atau ketik nama baru</p>
               </div>
-              <div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No. HP / WhatsApp</p>
-                  {pendaftar.noHP
-                    ? <p className="text-sm font-semibold text-gray-800">{pendaftar.noHP}</p>
-                    : <p className="text-sm text-gray-400 italic">— pilih leads terlebih dahulu</p>
-                  }
-                </div>
-                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
-              </div>
-            </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <div className="bg-gray-50 rounded-lg p-3">
