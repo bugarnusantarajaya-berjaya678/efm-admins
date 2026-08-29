@@ -656,7 +656,7 @@ export default function PPFitnessAssessmentPage() {
   }, [isNew, id])
 
   return (
-    <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6">
+    <div className="min-h-screen bg-[#F5F5F7] p-4 md:p-6 pb-24">
 
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5 mb-5">
@@ -1314,25 +1314,60 @@ export default function PPFitnessAssessmentPage() {
 
       </div>{/* end content wrapper */}
 
-      {/* Footer Save */}
-      <div className="flex justify-end gap-3 pb-8">
-        <button
-          onClick={() => handleBack()}
-          className="px-5 py-2 rounded-lg border border-gray-300 text-sm font-medium text-gray-600 hover:bg-gray-50 transition"
-        >
-          Kembali
-        </button>
-        {isEditing && (
-          <button
-            onClick={handleSave}
-            className={`flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-medium transition ${
-              saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
-            }`}
-          >
-            {saved ? <CheckCircle size={15} /> : <Save size={15} />}
-            {saved ? 'Tersimpan' : 'Simpan Assessment'}
-          </button>
-        )}
+      {/* Footer */}
+      <div className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 z-40">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+          {/* Left: context info */}
+          <div className="hidden sm:block min-w-0">
+            <p className="text-sm text-gray-700 font-semibold truncate">
+              {namaKlien || 'Assessment Baru'}
+              {!isNew && <span className="text-gray-400 font-normal ml-1.5">· {id}</span>}
+            </p>
+            {!isNew && (
+              <span className={`text-xs font-medium ${
+                statusLabel === 'Post-Test Selesai' ? 'text-green-600' :
+                statusLabel === 'Pre-Test Selesai' ? 'text-blue-600' :
+                'text-yellow-600'
+              }`}>{statusLabel}</span>
+            )}
+          </div>
+          {/* Right: action buttons */}
+          <div className="flex items-center gap-3 ml-auto">
+            {!isNew && !isEditing && (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                <Edit2 size={14} /> Edit
+              </button>
+            )}
+            {!isNew && isEditing && (
+              <button
+                onClick={() => setIsEditing(false)}
+                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Batalkan
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={handleSave}
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                  saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
+                }`}
+              >
+                {saved ? <CheckCircle size={15} /> : <Save size={15} />}
+                {saved ? 'Tersimpan' : isNew ? 'Simpan Assessment' : 'Simpan Perubahan'}
+              </button>
+            )}
+            <button
+              onClick={() => handleBack()}
+              className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={14} /> Kembali
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
