@@ -95,6 +95,13 @@ function AddPICModal({ onClose }) {
                 <input type={type} placeholder={ph} className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary" />
               </div>
             ))}
+            <div>
+              <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Jenis PIC <span className="text-accent">*</span></label>
+              <select className="w-full px-3 py-2.5 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary bg-white">
+                <option value="">Pilih jenis PIC...</option>
+                {JENIS_LIST.map(j => <option key={j} value={j}>{j}</option>)}
+              </select>
+            </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-[12px] font-semibold text-text-primary mb-1.5">Tgl Mulai PKS</label>
@@ -144,7 +151,14 @@ function PICCard({ pic }) {
             </div>
             <StatusBadge status={pic.status} />
           </div>
-          <p className="text-[12px] text-text-muted mt-1.5 truncate">{pic.spesialis}</p>
+          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+            {pic.jenis && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[rgba(30,28,67,0.08)] text-[#1E1C43]">
+                {pic.jenis}
+              </span>
+            )}
+            <p className="text-[12px] text-text-muted truncate">{pic.spesialis}</p>
+          </div>
         </div>
       </div>
 
@@ -186,17 +200,20 @@ function PICCard({ pic }) {
 }
 
 const AREA_LIST = ['Semua Area', 'Jakarta Selatan', 'Jakarta Barat', 'Jakarta Pusat', 'Jakarta Utara', 'Jakarta Timur']
+const JENIS_LIST = ['Trainer', 'Instruktur', 'Expert', 'Speaker', 'Dokter', 'Lainnya']
 
 export default function OPSPICPage() {
   const [statusFilter, setStatusFilter] = useState('')
   const [areaFilter, setAreaFilter] = useState('')
+  const [jenisFilter, setJenisFilter] = useState('')
   const [search, setSearch] = useState('')
   const [showAdd, setShowAdd] = useState(false)
 
   const filtered = picList.filter(p => {
     if (statusFilter && p.status !== statusFilter) return false
     if (areaFilter && areaFilter !== 'Semua Area' && p.area !== areaFilter) return false
-    if (search && !p.nama.toLowerCase().includes(search.toLowerCase()) && !p.spesialis.toLowerCase().includes(search.toLowerCase())) return false
+    if (jenisFilter && p.jenis !== jenisFilter) return false
+    if (search && !p.nama.toLowerCase().includes(search.toLowerCase()) && !p.spesialis.toLowerCase().includes(search.toLowerCase()) && !(p.jenis || '').toLowerCase().includes(search.toLowerCase())) return false
     return true
   })
 
@@ -204,8 +221,8 @@ export default function OPSPICPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-[22px] font-bold text-text-primary">Database PIC / Pelatih</h1>
-          <p className="text-[13px] text-text-muted mt-1">Kelola data trainer dan therapist aktif EFM</p>
+          <h1 className="text-[22px] font-bold text-text-primary">Database PIC</h1>
+          <p className="text-[13px] text-text-muted mt-1">Kelola data PIC aktif EFM (Trainer, Instruktur, Expert, Speaker, dll)</p>
         </div>
         <button onClick={() => setShowAdd(true)} className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-[13px] font-semibold rounded-lg transition-colors">
           <Plus size={15} />Tambah PIC
@@ -253,7 +270,7 @@ export default function OPSPICPage() {
       </div>
 
       {/* Filter */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-3 mb-5 flex-wrap">
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
@@ -263,6 +280,14 @@ export default function OPSPICPage() {
           <option value="aktif">Aktif</option>
           <option value="cuti">Cuti</option>
           <option value="nonaktif">Nonaktif</option>
+        </select>
+        <select
+          value={jenisFilter}
+          onChange={e => setJenisFilter(e.target.value)}
+          className="px-3 py-2 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none bg-white"
+        >
+          <option value="">Semua Jenis</option>
+          {JENIS_LIST.map(j => <option key={j}>{j}</option>)}
         </select>
         <select
           value={areaFilter}
@@ -276,7 +301,7 @@ export default function OPSPICPage() {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Cari nama atau spesialisasi..."
+            placeholder="Cari nama, spesialisasi, atau jenis..."
             className="w-full pl-8 pr-3 py-2 border-[1.5px] border-gray-200 rounded-lg text-[13px] outline-none focus:border-text-primary"
           />
         </div>
