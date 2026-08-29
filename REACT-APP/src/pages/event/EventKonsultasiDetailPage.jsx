@@ -146,8 +146,8 @@ const emptyDetailEvent = {
 function SectionHeader({ num, title, subtitle }) {
   return (
     <div className="mb-5">
-      <h3 className="text-sm font-semibold text-[#1E1C43]">{num}. {title}</h3>
-      {subtitle && <p className="text-[10px] text-gray-400 mt-0.5">{subtitle}</p>}
+      <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{num}. {title}</h3>
+      {subtitle && <p className="text-[10px] text-gray-400 mt-1 pl-3">{subtitle}</p>}
     </div>
   )
 }
@@ -323,7 +323,8 @@ export default function EventKonsultasiDetailPage() {
     if (e) { e.preventDefault(); e.stopPropagation() }
     if (!validate()) return
     showToast('✓ Konsultasi berhasil disimpan')
-    setTimeout(() => navigate('/event/konsultasi'), 1000)
+    const backPath = selectedLeadId ? `/event/leads/${selectedLeadId}` : '/event/leads'
+    setTimeout(() => navigate(backPath), 1000)
   }
 
   function handleBuatOrder(e) {
@@ -381,15 +382,21 @@ export default function EventKonsultasiDetailPage() {
         {/* Breadcrumb */}
         <div className="flex items-start justify-between gap-3 mb-4 sm:mb-5">
           <nav className="flex items-center gap-1 text-xs text-gray-400 flex-wrap min-w-0">
-            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Event Management</button>
+            <button onClick={() => navigate('/event/dashboard')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">B2B Event</button>
             <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
-            <button onClick={() => navigate('/event/konsultasi')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Konsultasi</button>
+            <button onClick={() => navigate('/event/leads')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Leads</button>
+            {selectedLeadId && selectedLead && (
+              <>
+                <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
+                <button onClick={() => navigate(`/event/leads/${selectedLeadId}`)} className="hover:text-[#1E1C43] transition-colors truncate max-w-[100px] sm:max-w-[160px]">{selectedLead.namaKlien}</button>
+              </>
+            )}
             <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
-            <span className="text-[#1E1C43] font-medium truncate max-w-[120px] sm:max-w-none">{profilKlien.namaKlien || (isNew ? 'Konsultasi Baru' : id)}</span>
+            <span className="text-[#1E1C43] font-medium whitespace-nowrap">{isNew ? 'Konsultasi Baru' : id}</span>
           </nav>
           <button
-            onClick={() => navigate('/event/konsultasi')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors flex-shrink-0 whitespace-nowrap"
+            onClick={() => navigate(selectedLeadId ? `/event/leads/${selectedLeadId}` : '/event/leads')}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-700 text-xs font-medium hover:bg-gray-50 transition-colors flex-shrink-0 whitespace-nowrap"
           >
             <ArrowLeft size={12} /> Kembali
           </button>
@@ -403,16 +410,16 @@ export default function EventKonsultasiDetailPage() {
               <span className="text-xs font-semibold bg-gray-100 text-[#1E1C43] px-2.5 py-1 rounded-lg">
                 {isNew ? 'KNS-NEW' : id}
               </span>
-              <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                hasilKonsultasi === 'Lanjut'       ? 'bg-green-100 text-green-700' :
-                hasilKonsultasi === 'Pending'      ? 'bg-yellow-100 text-yellow-700' :
-                hasilKonsultasi === 'Tidak Lanjut' ? 'bg-red-100 text-red-600' :
-                                                      'bg-gray-100 text-gray-500'
+              <span className={`text-xs font-medium px-2 py-1 rounded-full border ${
+                hasilKonsultasi === 'Lanjut'       ? 'bg-green-50 text-green-700 border-green-200' :
+                hasilKonsultasi === 'Pending'      ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                hasilKonsultasi === 'Tidak Lanjut' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                      'bg-gray-50 text-gray-500 border-gray-200'
               }`}>
                 {hasilKonsultasi || 'Draft'}
               </span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold text-[#1E1C43] mb-1 break-words">
+            <h1 className="text-[22px] font-bold text-[#1E1C43] mb-1 break-words">
               {profilKlien.namaKlien || (isNew ? 'Form Konsultasi Baru' : id)}
             </h1>
             <p className="text-sm text-gray-500">
@@ -604,8 +611,8 @@ export default function EventKonsultasiDetailPage() {
               <p className="text-xs text-blue-700">
                 Data profil klien diisi otomatis dari <strong>Leads {selectedLeadId}</strong> dan tidak dapat diedit di sini.{' '}
                 Untuk mengubah data klien, lakukan edit di halaman{' '}
-                <button onClick={() => navigate('/event/leads')} className="underline font-semibold hover:text-blue-900">
-                  Leads
+                <button onClick={() => navigate(`/event/leads/${selectedLeadId}`)} className="underline font-semibold hover:text-blue-900">
+                  Lead Detail
                 </button>.
               </p>
             </div>
