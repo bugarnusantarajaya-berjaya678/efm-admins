@@ -6,6 +6,7 @@ import { getAllOrders } from '../../data/ppOrdersStore'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
+import { getStoredJenis } from '../../data/ppJenisStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -41,7 +42,6 @@ const STAGE_BORDER = {
 const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert', 'Lost']
 const PIPELINE_LINEAR  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert']
 const SUMBER_OPTS      = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
-const PROGRAM_OPTS     = ['12 Sesi - Pro','Tennis','Couple','Tennis Group','Fatloss & Bodyshape','Lainnya']
 
 /* ── Fallback static data (for direct URL access) ── */
 const LEADS_FALLBACK = [
@@ -648,7 +648,8 @@ export default function PPLeadDetailPage() {
                       <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.programDiminati || ''} onChange={e => setEditForm(p => ({ ...p, programDiminati: e.target.value }))}>
                         <option value="">Pilih Program...</option>
-                        {PROGRAM_OPTS.map(p => <option key={p}>{p}</option>)}
+                        {getStoredJenis().filter(j => j.status === 'aktif').map(j => <option key={j.nama}>{j.nama}</option>)}
+                        <option>Lainnya</option>
                       </select>
                     </div>
                     <div>
