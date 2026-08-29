@@ -483,7 +483,7 @@ export default function EventKonsultasiDetailPage() {
                       value={leadSearch}
                       onChange={e => setLeadSearch(e.target.value)}
                       placeholder="Cari nama klien atau ID..."
-                      className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                      className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
                       autoFocus
                     />
                   </div>
@@ -766,13 +766,13 @@ export default function EventKonsultasiDetailPage() {
             <FieldLabel>Catatan Umum / Temuan Konsultasi</FieldLabel>
             <textarea value={catatanUmum} onChange={e => setCatatanUmum(e.target.value)}
               rows={5} placeholder="Deskripsikan kondisi umum event, temuan, kebutuhan khusus klien, dll..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
           </div>
           <div>
             <FieldLabel>Rekomendasi EFM</FieldLabel>
             <textarea value={rekomendasi} onChange={e => setRekomendasi(e.target.value)}
               rows={5} placeholder="Rekomendasi peran EFM, estimasi nilai kontrak, hal yang perlu ditindaklanjuti..."
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
           </div>
         </div>
 
@@ -807,7 +807,7 @@ export default function EventKonsultasiDetailPage() {
                 hasilKonsultasi === 'Pending'       ? 'Apa yang perlu ditunggu / ditindaklanjuti...' :
                                                       'Alasan tidak lanjut...'
               }
-              className="mt-2 w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
+              className="mt-2 w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#1E1C43] resize-none" />
           )}
         </div>
       </div>

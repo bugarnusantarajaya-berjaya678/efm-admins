@@ -381,7 +381,7 @@ export default function EventLeadDetailPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+              <div className="w-12 h-12 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
                 style={{ background: getAvatarColor(lead.namaKlien) }}>
                 {getInitials(lead.namaKlien)}
               </div>
