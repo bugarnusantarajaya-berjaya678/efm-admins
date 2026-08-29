@@ -660,12 +660,12 @@ export default function PPFitnessAssessmentPage() {
 
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <Activity size={22} className="text-white" />
             </div>
-            <div className="min-w-0 flex-1">
+            <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Fitness Assessment PP</p>
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
                 {isNew ? 'Assessment Baru' : id}
@@ -685,14 +685,12 @@ export default function PPFitnessAssessmentPage() {
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap shrink-0">
-            <button
-              onClick={() => handleBack()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-            >
-              <ArrowLeft size={13} /> Kembali
-            </button>
-          </div>
+          <button
+            onClick={() => handleBack()}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors flex-shrink-0"
+          >
+            <ArrowLeft size={12} /> Kembali
+          </button>
         </div>
       </div>
 
