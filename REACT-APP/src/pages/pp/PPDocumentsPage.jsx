@@ -780,7 +780,7 @@ export default function PPDocumentsPage() {
             </div>
             <button
               onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } }) : navigate('/pp/orders')}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors w-full sm:w-auto"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
               <ArrowLeft size={12} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke PP Orders'}
             </button>

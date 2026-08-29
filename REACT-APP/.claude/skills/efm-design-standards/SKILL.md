@@ -102,19 +102,30 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 **Badges:** `text-xs font-medium`, `px-2 py-1 rounded-full`
 
-**Buttons** — 3 tipe, pilih sesuai konteks:
+**Buttons — Warna & Ukuran**
 
-| Tipe | Konteks | Kelas Tailwind |
-|---|---|---|
-| Page-level primary | Tombol utama di page header (Tambah Data, Buat Order baru) | `bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-bold px-4 py-2.5 rounded-lg` |
-| Card/tab action | Tombol di kanan atas header tab/card (Buat Screening, Update Pipeline, Edit) | `h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold` |
-| Secondary / Batal | Tombol pendamping (Batal, Reset, Lihat Detail) | `h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50` |
+### Aturan Warna Tombol (FINAL — berlaku semua modul PP, B2B, Event)
 
-**Aturan card/tab action button (orange):**
-- Selalu gunakan orange (`#E05945`) untuk tombol primary di dalam header card/tab — BUKAN gray border, BUKAN navy
-- Tombol ini harus selalu ada di header kanan atas, BUKAN hanya di empty state container
-- Saat form editing aktif, sembunyikan tombol ini dan tampilkan Simpan + Batal sebagai gantinya
-- Lihat detail pola di `efm-component-patterns` Section 7
+| Warna | Hex | Gunakan untuk | Contoh |
+|---|---|---|---|
+| **Orange (CTA)** | `#E05945` | Aksi bisnis utama yang menggerakkan workflow — maks 1 per halaman/section | Buat Order Baru, Konfirmasi Pembayaran, Kirim Invoice, Tambah Lead |
+| **Navy (Primary)** | `#1E1C43` | Save/submit standard di form dan modal | Simpan, Lanjut, Terapkan |
+| **Gray secondary** | `border-gray-300 text-gray-600` | Navigasi & pembatalan | **Kembali**, Batal, Reset, Download PDF |
+| **Red** | `bg-red-600` | Aksi destruktif | Hapus, Delete |
+
+⚠️ **Kembali SELALU gray secondary** — BUKAN orange, BUKAN navy. Berlaku di semua modul dan semua page.
+⚠️ **Orange adalah CTA eksklusif** — jika 2+ tombol orange ada di 1 baris, salah satunya salah; ganti yang bukan CTA utama ke navy atau gray.
+⚠️ **Dilarang:** `text-[13px]` (ganti ke `text-sm`), `py-[7px]` (ganti ke `py-2`), `rounded-xl` pada tombol (standar `rounded-lg`).
+
+### Aturan Ukuran Tombol per Konteks
+
+| Konteks | Class dasar (tambahkan warna sesuai tipe) |
+|---|---|
+| **Header page** — action row di kanan atas halaman | `flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition-colors` |
+| **List page** — tombol Buat/Tambah Baru | `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
+| **Modal footer** — Batal / Simpan | `px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
+| **Section CTA standalone** — Konfirmasi, Kirim | `flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors` |
+| **Inline kecil** — Edit/Lihat di dalam baris tabel | `px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors` |
 
 **Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. `text-sm` is correct for form inputs and section titles in detail/form pages — but NOT for table body cells in list pages (use `text-xs` there). `text-[10px]` is standard for all field labels (both form pages and list-page table headers).
 
@@ -151,7 +162,7 @@ Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultas
     <div className="flex items-center gap-2 flex-shrink-0">
       <button
         onClick={handleBack}
-        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
       >
         <ArrowLeft size={12} /> Kembali
       </button>
@@ -165,7 +176,7 @@ Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultas
 - Outer wrapper: `flex items-start justify-between gap-4 flex-wrap` — JANGAN `flex-col sm:flex-row sm:items-center sm:justify-between`
 - `items-start` (bukan `items-center`): ikon dan teks di-align top, tombol Kembali di top-right — tidak bergeser ke tengah saat tinggi berbeda
 - Tombol kanan: selalu dalam wrapper `flex items-center gap-2 flex-shrink-0` agar tidak shrink saat ruang sempit
-- Tombol Kembali: selalu orange (`bg-[#E05945]`), bukan navy atau gray
+- Tombol Kembali: selalu gray secondary (`border border-gray-300 text-gray-600 hover:bg-gray-50`), BUKAN orange atau navy
 - `flex-wrap` pada outer: tombol turun ke baris baru di mobile, tidak menimpa judul
 - Ikon: `w-12 h-12 rounded-full bg-[#1E1C43] shrink-0` — lingkaran navy, JANGAN shrink
 

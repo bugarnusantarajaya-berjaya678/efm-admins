@@ -226,7 +226,7 @@ export default function PPLeadsPage() {
               placeholder="Cari nama klien..."
               value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <button onClick={handleReset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+          <button onClick={handleReset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
         </div>
 
         {/* Table */}
