@@ -368,7 +368,7 @@ export default function EventKonsultasiDetailPage() {
 
   /* ── Render ── */
   return (
-    <div className="bg-[#F5F5F7] min-h-screen">
+    <div className="bg-[#F5F5F7] min-h-screen pb-24">
 
       {/* Toast */}
       {toast && (
@@ -377,12 +377,10 @@ export default function EventKonsultasiDetailPage() {
         </div>
       )}
 
-      <div className="px-4 py-4 md:px-6 md:py-6 pb-24">
-
       {/* ══════════════════════════════════════════
           HEADER CARD
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
@@ -392,7 +390,7 @@ export default function EventKonsultasiDetailPage() {
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">
                 B2B Event{selectedLeadId && selectedLead ? ` · ${selectedLead.namaKlien}` : ''}
               </p>
-              <h1 className="text-[22px] font-bold text-[#1E1C43] leading-tight">
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
                 {profilKlien.namaKlien || (isNew ? 'Konsultasi Baru' : id)}
               </h1>
               <p className="text-xs text-gray-400 mt-0.5">
@@ -426,10 +424,12 @@ export default function EventKonsultasiDetailPage() {
         </div>
       </div>
 
+      <div className="space-y-4">
+
       {/* ══════════════════════════════════════════
           LEAD SELECTOR
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="mb-3">
           <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Kaitkan dengan Lead</h3>
           <p className="text-[10px] text-gray-400 mt-1 pl-3">Pilih lead yang sudah ada untuk mengisi data klien secara otomatis</p>
@@ -517,7 +517,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 1: Profil Klien
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <SectionHeader num="1" title="Profil Klien" subtitle="Informasi dasar klien dan kontak koordinator" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -573,7 +573,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 2: Detail Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <SectionHeader num="2" title="Detail Event" subtitle="Informasi teknis event yang akan diselenggarakan" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
@@ -668,7 +668,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 3: Isi Program Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <SectionHeader num="3" title="Isi Program Event" subtitle="Pilih kegiatan / segmen fitness yang akan ada di event" />
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -745,7 +745,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 4: Anggaran & Hasil Konsultasi
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <SectionHeader num="4" title="Anggaran & Hasil Konsultasi" />
 
         {/* Estimasi anggaran */}
@@ -815,7 +815,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           FOOTER
       ══════════════════════════════════════════ */}
-      </div>{/* close px-4 py-4 wrapper early so footer is outside */}
+      </div>{/* close space-y-4 sections wrapper */}
       <div className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 z-40">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
           {/* Left — context info */}
