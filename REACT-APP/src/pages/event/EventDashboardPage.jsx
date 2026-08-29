@@ -25,31 +25,31 @@ const PIPELINE_OUTCOME = { converted: 2, lost: 1 }
 
 const ALERTS = [
   {
-    borderColor: '#EF4444', bg: '#FEF2F2',
+    cls: 'border-red-400 bg-red-50',
     judul: 'Invoice DP Overdue Belum Dibayar',
     detail: 'PT. Garuda Nusa Tbk — #EV-26-0002 — DP 50% sudah melewati jatuh tempo',
     url: '/event/orders/EV-26-0002',
   },
   {
-    borderColor: '#EF4444', bg: '#FEF2F2',
+    cls: 'border-red-400 bg-red-50',
     judul: 'Pelunasan Event Mendekat',
     detail: 'Yayasan Kanker Indonesia — #EV-26-0001 — Pelunasan jatuh tempo H-7 sebelum event',
     url: '/event/orders/EV-26-0001',
   },
   {
-    borderColor: '#F97316', bg: '#FFF7ED',
+    cls: 'border-orange-400 bg-orange-50',
     judul: 'Quotation Belum Disetujui',
     detail: 'Dinas Pemuda & Olahraga DKI (#EV-26-0003) — Quotation masih Draft',
     url: '/event/orders/EV-26-0003',
   },
   {
-    borderColor: '#F97316', bg: '#FFF7ED',
+    cls: 'border-orange-400 bg-orange-50',
     judul: 'Konsultasi Belum Ditindaklanjuti',
     detail: 'Brand Tropicana Slim (KNS-26-0003) — status Pending sejak 10 Jun 2026',
     url: '/event/leads/LE-0003',
   },
   {
-    borderColor: '#EAB308', bg: '#FEFCE8',
+    cls: 'border-yellow-400 bg-yellow-50',
     judul: 'Contract Belum Signed',
     detail: 'PT. Garuda Nusa Tbk (#EV-26-0002) — Contract masih On Review',
     url: '/event/orders/EV-26-0002',
@@ -280,8 +280,7 @@ export default function EventDashboardPage() {
             <div
               key={i}
               onClick={() => navigate(alert.url)}
-              className="flex items-start gap-3 p-3 rounded-lg border-l-4 cursor-pointer hover:opacity-90 transition-opacity"
-              style={{ borderColor: alert.borderColor, backgroundColor: alert.bg }}
+              className={`flex items-start gap-3 p-3 rounded-lg border-l-4 cursor-pointer hover:opacity-90 transition-opacity ${alert.cls}`}
             >
               <div className="flex-1">
                 <p className="text-xs font-semibold text-gray-800">{alert.judul}</p>

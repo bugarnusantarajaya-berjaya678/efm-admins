@@ -171,7 +171,7 @@ export default function EventLeadsPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3">
+          <div className="bg-white rounded-xl border-[1.5px] border-gray-200 px-4 py-3">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Leads</p>
             <p className="text-xl font-bold text-[#1E1C43]">{kpiTotal}</p>
             <p className="text-[11px] text-gray-500 mt-0.5">Semua pipeline</p>
@@ -181,12 +181,12 @@ export default function EventLeadsPage() {
             <p className="text-xl font-bold text-[#E05945]">{kpiHot}</p>
             <p className="text-[11px] text-gray-500 mt-0.5">Proposal &amp; Closing</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3">
+          <div className="bg-white rounded-xl border-[1.5px] border-green-500 px-4 py-3">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Converted</p>
             <p className="text-xl font-bold text-green-600">{kpiConverted}</p>
             <p className="text-[11px] text-gray-500 mt-0.5">Jadi klien aktif</p>
           </div>
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm px-4 py-3">
+          <div className="bg-white rounded-xl border-[1.5px] border-red-400 px-4 py-3">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lost</p>
             <p className="text-xl font-bold text-red-500">{kpiLost}</p>
             <p className="text-[11px] text-gray-500 mt-0.5">Tidak closing</p>
