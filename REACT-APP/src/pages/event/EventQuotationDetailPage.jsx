@@ -70,7 +70,7 @@ function QuotationDocument({ quotation, subtotal, afterTax }) {
       {/* Ditujukan Kepada */}
       <div className="px-6 pt-5 pb-4 border-b border-gray-100">
         <p className="text-xs uppercase tracking-wide text-gray-400 mb-1">Ditujukan Kepada</p>
-        <p className="text-base font-bold text-[#1E1C43]">{quotation.namaKlien}</p>
+        <p className="text-sm font-bold text-[#1E1C43]">{quotation.namaKlien}</p>
         {quotation.namaEvent && (
           <p className="text-sm text-gray-500 mt-0.5">{quotation.namaEvent}</p>
         )}
@@ -180,7 +180,7 @@ function KirimModal({ quotation, onClose, onKirim }) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={onClose}>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
         <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-base font-bold text-[#1E1C43]">Kirim Quotation ke Klien</h3>
+          <h3 className="text-sm font-bold text-[#1E1C43]">Kirim Quotation ke Klien</h3>
           <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
         </div>
         <div className="overflow-y-auto flex-1 p-5 space-y-4">
