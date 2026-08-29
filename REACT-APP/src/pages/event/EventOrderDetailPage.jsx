@@ -1,7 +1,7 @@
 ﻿import { useState, useRef } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, FileText, Clock } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, FileText, Clock, Upload } from 'lucide-react'
 
 /* ═══════════════════════════════════════
    Constants
@@ -66,6 +66,7 @@ const dummyEventOrders = [
     telepon:       '0812-3456-7890',
     catatan:       'Event skala besar 2.000 peserta. Venue GBK sudah confirmed.',
     konsultasiId:  'KNS-26-0001',
+    kategori:      ['kat1', 'kat3'],
     payTerms:      '50% DP + Pelunasan',
   },
   {
@@ -90,6 +91,7 @@ const dummyEventOrders = [
     telepon:       '0821-9876-5432',
     catatan:       '',
     konsultasiId:  'KNS-26-0003',
+    kategori:      ['kat1'],
     payTerms:      '50% DP + Pelunasan',
   },
 ]
@@ -458,52 +460,52 @@ export default function EventOrderDetailPage() {
   const [newTimStatus,      setNewTimStatus]      = useState("Aktif")
   const [logFilter3,        setLogFilter3]        = useState("semua")
 
-  /* ── Tab 4: Kelas Jalan ───────────────────────────────────────────────────── */
-  const [kelasList, setKelasList] = useState([
-    { id: 'KLS-EV-26-0001', tanggal: '2026-06-28', waktuMulai: '06:00', waktuSelesai: '09:00', jenisKegiatan: 'Fun Run / Walk',       lokasi: 'GBK, Jakarta Selatan — Start Gate A', estimasiPeserta: 2000, aktualPeserta: 1847, pic: 'Rudi Hartono', status: 'Selesai',      catatan: 'Cuaca cerah. Peserta antusias. Tidak ada insiden.',
-      absensiPelatih: [
-        { id: 'ABS-001', pelatihId: 'PIC-001', nama: 'Rudi Hartono',  spesialisasi: 'Personal Trainer',   status: 'Hadir',       checkIn: '05:45', catatan: 'Hadir tepat waktu, memimpin briefing tim.' },
-        { id: 'ABS-002', pelatihId: 'PIC-002', nama: 'Sari Dewi',     spesialisasi: 'Yoga Instructor',     status: 'Hadir',       checkIn: '05:50', catatan: '' },
-        { id: 'ABS-003', pelatihId: 'PIC-003', nama: 'Bima Prakoso',  spesialisasi: 'Zumba Instructor',    status: 'Terlambat',   checkIn: '06:35', catatan: 'Terlambat 35 menit karena macet.' },
-      ]
-    },
-    { id: 'KLS-EV-26-0002', tanggal: '2026-06-28', waktuMulai: '09:30', waktuSelesai: '10:30', jenisKegiatan: 'Warm-up & Stretching', lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 1500, aktualPeserta: 1320, pic: 'Sari Dewi',    status: 'Selesai',      catatan: '',
-      absensiPelatih: [
-        { id: 'ABS-004', pelatihId: 'PIC-002', nama: 'Sari Dewi',     spesialisasi: 'Yoga Instructor',     status: 'Hadir',       checkIn: '09:15', catatan: '' },
-        { id: 'ABS-005', pelatihId: 'PIC-004', nama: 'Nia Rahayu',    spesialisasi: 'Pilates Instructor',  status: 'Tidak Hadir', checkIn: '',      catatan: 'Sakit, digantikan Sari Dewi.' },
-      ]
-    },
-    { id: 'KLS-EV-26-0003', tanggal: '2026-06-28', waktuMulai: '11:00', waktuSelesai: '12:00', jenisKegiatan: 'Cool-down & Penutupan',lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 800,  aktualPeserta: null,  pic: 'Sari Dewi',    status: 'Dijadwalkan',  catatan: '',
-      absensiPelatih: []
-    },
-  ])
-  const kelasStatusCls = {
-    Dijadwalkan: 'bg-blue-50 text-blue-700 border-blue-200',
-    Berjalan:    'bg-green-50 text-green-700 border-green-200',
-    Selesai:     'bg-gray-100 text-gray-600 border-gray-200',
-    Dibatalkan:  'bg-red-50 text-red-600 border-red-200',
-  }
-  const [showTambahKelas,    setShowTambahKelas]    = useState(false)
-  const [editingKelas,       setEditingKelas]       = useState(null)
-  const [expandedKelas,      setExpandedKelas]      = useState(null)
-  const [showAbsensiModal,   setShowAbsensiModal]   = useState(null) // kelasId | null
-  const [editingAbsensi,     setEditingAbsensi]     = useState(null) // absensi object | null
+  /* ── Tab 4: Hari-H & PIC ────────────────────────────────────────────────── */
+  const orderKategori = order?.kategori || ['kat1', 'kat2']
+  const hasKat12 = orderKategori.some(k => k === 'kat1' || k === 'kat2')
+  const hasKat3  = orderKategori.includes('kat3')
+
   const absensiStatusCls = {
     'Hadir':       'bg-green-50 text-green-700 border-green-200',
     'Terlambat':   'bg-yellow-50 text-yellow-700 border-yellow-200',
     'Tidak Hadir': 'bg-red-50 text-red-600 border-red-200',
   }
-  const absensiTemplate = { pelatihId: '', nama: '', spesialisasi: '', status: 'Hadir', checkIn: '', catatan: '' }
-  const [newAbsensi, setNewAbsensi] = useState(absensiTemplate)
-  const kelasTemplate = { tanggal: '', waktuMulai: '', waktuSelesai: '', jenisKegiatan: '', lokasi: '', estimasiPeserta: '', aktualPeserta: '', pic: '', status: 'Dijadwalkan', catatan: '', absensiPelatih: [] }
-  const [newKelas, setNewKelas] = useState(kelasTemplate)
-  function getNextKelasId() {
-    const maxNum = kelasList.reduce((max, k) => {
-      const n = parseInt(k.id.split('-').pop(), 10)
-      return n > max ? n : max
-    }, 0)
-    return `KLS-EV-26-${String(maxNum + 1).padStart(4, '0')}`
-  }
+
+  const [harihPICs, setHarihPICs] = useState(
+    id === 'EV-26-0003' || id === 'EV-26-0002' ? [
+      { id: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', peran: 'Lead Instructor', pksStatus: 'Signed',    warna: '#E05945' },
+      { id: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  peran: 'Instructor',      pksStatus: 'Generated', warna: '#2980B9' },
+      { id: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', peran: 'Instructor',      pksStatus: 'Belum',     warna: '#27AE60' },
+    ] : []
+  )
+  const [absensiMode, setAbsensiMode] = useState('onsite')
+  const [harihAbsensi, setHarihAbsensi] = useState(
+    id === 'EV-26-0003' || id === 'EV-26-0002' ? [
+      { picId: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', status: 'Hadir',     checkIn: '05:45', catatan: '',          linkSent: false },
+      { picId: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  status: 'Hadir',     checkIn: '06:00', catatan: '',          linkSent: false },
+      { picId: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', status: 'Terlambat', checkIn: '06:35', catatan: 'Macet KS',  linkSent: false },
+    ] : []
+  )
+  const [eventSelesai,          setEventSelesai]          = useState(false)
+  const [showKonfirmasiSelesai, setShowKonfirmasiSelesai] = useState(false)
+  const [showTambahPIC,         setShowTambahPIC]         = useState(false)
+  const [newPICForm,            setNewPICForm]            = useState({ picId: '', peran: '' })
+  const [showAbsensiHModal,     setShowAbsensiHModal]     = useState(false)
+  const [editingAbsensiH,       setEditingAbsensiH]       = useState(null)
+
+  const [eoMitra, setEoMitra] = useState({
+    namaEO: 'PT. Kreasi Event Prima', picEO: 'Bapak Andi Wijaya',
+    kontakEO: '0812-5678-9012', emailEO: 'andi@kreasi-event.co.id',
+    pksBStatus: id === 'EV-26-0003' ? 'Uploaded' : 'Belum',
+    pksBFile:   id === 'EV-26-0003' ? 'PKS-EO-EV26-0003.pdf' : null,
+    pksBDate:   id === 'EV-26-0003' ? '2026-06-01' : null,
+  })
+  const [buktiUpload, setBuktiUpload] = useState(
+    id === 'EV-26-0003' ? [
+      { id: 'BKT-001', namaFile: 'Foto-FunRun-GBK-1.jpg',       tipe: 'Foto',    uploadedAt: '2026-06-28' },
+      { id: 'BKT-002', namaFile: 'Laporan-Penyelenggaraan.pdf',  tipe: 'Dokumen', uploadedAt: '2026-06-29' },
+    ] : []
+  )
 
   /* ── 404 ─────────────────────────────────────────────────────────────────── */
   if (!order) {
@@ -789,7 +791,7 @@ export default function EventOrderDetailPage() {
           { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
           { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
           { key: 'operasional', label: 'Operasional Lapangan'  },
-          { key: 'kelas',       label: 'Kelas Jalan'           },
+          { key: 'kelas',       label: 'Hari-H & PIC'          },
         ].map(tab => (
           <button
             key={tab.key}
@@ -2350,350 +2352,409 @@ export default function EventOrderDetailPage() {
       )}
 
       {/* ══════════════════════════════════════════════════════════════════════
-          TAB 4 — Kelas Jalan
+          TAB 4 — Hari-H & PIC
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'kelas' && (
-        <div>
+        <div className="space-y-5">
 
-          {/* KPI row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            {[
-              { label: 'TOTAL KELAS',   value: kelasList.length },
-              { label: 'SELESAI',        value: kelasList.filter(k => k.status === 'Selesai').length },
-              { label: 'DIJADWALKAN',    value: kelasList.filter(k => k.status === 'Dijadwalkan').length },
-              { label: 'DIBATALKAN',     value: kelasList.filter(k => k.status === 'Dibatalkan').length },
-            ].map(kpi => (
-              <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-4">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">{kpi.label}</p>
-                <p className="text-2xl font-bold text-[#1E1C43] mt-1">{kpi.value}</p>
+          {/* ── Kat 1 & 2 Block ──────────────────────────────────────────────── */}
+          {hasKat12 && (
+            <>
+              {/* KPI row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  { label: 'PIC Ditugaskan',    value: harihPICs.length,                                                   text: false },
+                  { label: 'PKS Ditandatangani', value: harihPICs.filter(p => p.pksStatus === 'Signed').length,             text: false },
+                  { label: 'Hadir Hari-H',       value: harihAbsensi.filter(a => a.status === 'Hadir').length,              text: false },
+                  { label: 'Status Event',        value: eventSelesai ? 'Selesai' : 'Berlangsung', color: eventSelesai ? 'text-green-600' : 'text-blue-600', text: true },
+                ].map(kpi => (
+                  <div key={kpi.label} className="bg-white rounded-xl border border-gray-200 p-4">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">{kpi.label}</p>
+                    {kpi.text
+                      ? <p className={`text-base font-bold mt-1 ${kpi.color}`}>{kpi.value}</p>
+                      : <p className="text-2xl font-bold text-[#1E1C43] mt-1">{kpi.value}</p>
+                    }
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Daftar Kelas */}
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
-                Daftar Kelas Jalan
-                <span className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full ml-1">{kelasList.length}</span>
-              </h3>
-              <button
-                onClick={() => { setNewKelas(kelasTemplate); setShowTambahKelas(true) }}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                <Plus size={13} /> Tambah Kelas
-              </button>
-            </div>
-
-            {kelasList.length === 0 ? (
-              <div className="text-center py-10 text-gray-400">
-                <ClipboardList size={32} className="mx-auto mb-2 opacity-30" />
-                <p className="text-sm">Belum ada kelas yang dicatat</p>
-                <p className="text-xs mt-1">Klik "Tambah Kelas" untuk mulai mencatat kelas yang berjalan</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full" style={{ minWidth: '900px' }}>
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      {['ID Kelas','Tanggal','Waktu','Jenis Kegiatan','Lokasi','Peserta','PIC','Status',''].map(h => (
-                        <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {kelasList.map(kelas => (
-                      <>
-                        <tr
-                          key={kelas.id}
-                          onClick={() => setExpandedKelas(expandedKelas === kelas.id ? null : kelas.id)}
-                          className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition">
-                          <td className="px-4 py-3 text-sm font-medium text-[#1E1C43] whitespace-nowrap">{kelas.id}</td>
-                          <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{fmtDate(kelas.tanggal)}</td>
-                          <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{kelas.waktuMulai}–{kelas.waktuSelesai}</td>
-                          <td className="px-4 py-3 text-sm font-semibold text-gray-800 whitespace-nowrap">{kelas.jenisKegiatan}</td>
-                          <td className="px-4 py-3 text-sm text-gray-700 max-w-[200px] truncate">{kelas.lokasi}</td>
-                          <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-                            {kelas.aktualPeserta != null
-                              ? <><span className="font-semibold text-[#1E1C43]">{kelas.aktualPeserta.toLocaleString('id-ID')}</span><span className="text-gray-400"> / {kelas.estimasiPeserta.toLocaleString('id-ID')}</span></>
-                              : <span className="text-gray-400">Est. {kelas.estimasiPeserta.toLocaleString('id-ID')}</span>
-                            }
-                          </td>
-                          <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">{kelas.pic || '—'}</td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 text-xs rounded-full font-medium border ${kelasStatusCls[kelas.status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
-                              {kelas.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
-                            <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                              <button
-                                onClick={() => { setEditingKelas({ ...kelas }); setShowTambahKelas(true) }}
-                                className="text-xs text-[#1E1C43] hover:underline font-medium">Edit</button>
-                              <button
-                                onClick={() => setKelasList(prev => prev.filter(k => k.id !== kelas.id))}
-                                className="text-xs text-red-500 hover:underline font-medium">Hapus</button>
-                              <ChevronDown
-                                size={14}
-                                className={`text-gray-400 transition-transform ${expandedKelas === kelas.id ? 'rotate-180' : ''}`}
-                              />
+              {/* PIC yang Ditugaskan */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
+                    PIC yang Ditugaskan
+                    <span className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full">{harihPICs.length}</span>
+                  </h3>
+                  <button
+                    onClick={() => { setNewPICForm({ picId: '', peran: '' }); setShowTambahPIC(true) }}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                    <Plus size={13} /> Tambah PIC
+                  </button>
+                </div>
+                {harihPICs.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400">
+                    <Users size={28} className="mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">Belum ada PIC yang ditugaskan</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50">
+                    {harihPICs.map(pic => {
+                      const pksCls = pic.pksStatus === 'Signed'
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : pic.pksStatus === 'Generated'
+                          ? 'bg-blue-50 text-blue-700 border-blue-200'
+                          : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                      const initials = pic.nama.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+                      return (
+                        <div key={pic.id} className="flex items-center gap-4 px-5 py-4">
+                          <div className="w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0"
+                            style={{ backgroundColor: pic.warna || '#1E1C43' }}>
+                            {initials}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-gray-800">{pic.nama}</p>
+                            <p className="text-xs text-gray-400">{pic.spesialisasi} · {pic.peran}</p>
+                          </div>
+                          <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+                            <div className="text-right">
+                              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-0.5">PKS Type A</p>
+                              <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${pksCls}`}>
+                                {pic.pksStatus}
+                              </span>
                             </div>
-                          </td>
-                        </tr>
-                        {expandedKelas === kelas.id && (
-                          <tr key={`${kelas.id}-expand`} className="bg-gray-50">
-                            <td colSpan={9} className="px-6 py-5">
-                              {/* Info kelas */}
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-                                <div>
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Lokasi Lengkap</p>
-                                  <p className="text-sm text-gray-700">{kelas.lokasi}</p>
-                                </div>
-                                <div>
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Peserta Hadir / Estimasi</p>
-                                  <p className="text-sm text-gray-700">
-                                    {kelas.aktualPeserta != null ? `${kelas.aktualPeserta.toLocaleString('id-ID')} / ${kelas.estimasiPeserta.toLocaleString('id-ID')} orang` : `Belum tercatat (Est. ${kelas.estimasiPeserta.toLocaleString('id-ID')} orang)`}
-                                  </p>
-                                </div>
-                                <div>
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Catatan</p>
-                                  <p className="text-sm text-gray-700 italic">{kelas.catatan || '—'}</p>
-                                </div>
-                              </div>
-
-                              {/* Pelatih Absen section */}
-                              <div className="bg-white rounded-xl border border-gray-200 p-4">
-                                <div className="flex items-center justify-between mb-3">
-                                  <h4 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
-                                    Absensi Pelatih
-                                    <span className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full ml-1">{kelas.absensiPelatih.length}</span>
-                                  </h4>
-                                  <button
-                                    onClick={() => { setNewAbsensi(absensiTemplate); setEditingAbsensi(null); setShowAbsensiModal(kelas.id) }}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold transition-colors">
-                                    <Plus size={12} /> Tambah Pelatih
-                                  </button>
-                                </div>
-
-                                {/* Summary pills */}
-                                {kelas.absensiPelatih.length > 0 && (
-                                  <div className="flex gap-2 flex-wrap mb-3">
-                                    {['Hadir','Terlambat','Tidak Hadir'].map(s => {
-                                      const count = kelas.absensiPelatih.filter(a => a.status === s).length
-                                      return count > 0 ? (
-                                        <span key={s} className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absensiStatusCls[s]}`}>
-                                          {s}: {count}
-                                        </span>
-                                      ) : null
-                                    })}
-                                  </div>
-                                )}
-
-                                {kelas.absensiPelatih.length === 0 ? (
-                                  <p className="text-sm text-gray-400 italic text-center py-4">Belum ada absensi pelatih untuk kelas ini</p>
-                                ) : (
-                                  <div className="overflow-x-auto">
-                                    <table className="w-full" style={{ minWidth: '600px' }}>
-                                      <thead>
-                                        <tr className="border-b border-gray-100">
-                                          {['Pelatih','Spesialisasi','Status','Check-in','Catatan',''].map(h => (
-                                            <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
-                                          ))}
-                                        </tr>
-                                      </thead>
-                                      <tbody>
-                                        {kelas.absensiPelatih.map(abs => (
-                                          <tr key={abs.id} className="border-b border-gray-50 last:border-0">
-                                            <td className="px-3 py-2 text-sm font-semibold text-gray-800 whitespace-nowrap">{abs.nama}</td>
-                                            <td className="px-3 py-2 text-sm text-gray-500 whitespace-nowrap">{abs.spesialisasi}</td>
-                                            <td className="px-3 py-2">
-                                              <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absensiStatusCls[abs.status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
-                                                {abs.status}
-                                              </span>
-                                            </td>
-                                            <td className="px-3 py-2 text-sm text-gray-700 whitespace-nowrap">{abs.checkIn || '—'}</td>
-                                            <td className="px-3 py-2 text-sm text-gray-500 max-w-[200px] truncate">{abs.catatan || '—'}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">
-                                              <div className="flex gap-2">
-                                                <button
-                                                  onClick={() => { setEditingAbsensi({ ...abs, kelasId: kelas.id }); setShowAbsensiModal(kelas.id) }}
-                                                  className="text-xs text-[#1E1C43] hover:underline font-medium">Edit</button>
-                                                <button
-                                                  onClick={() => setKelasList(prev => prev.map(k => k.id === kelas.id ? { ...k, absensiPelatih: k.absensiPelatih.filter(a => a.id !== abs.id) } : k))}
-                                                  className="text-xs text-red-500 hover:underline font-medium">Hapus</button>
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </>
-                    ))}
-                  </tbody>
-                </table>
+                            <div className="flex gap-1.5 flex-wrap">
+                              {pic.pksStatus === 'Belum' && (
+                                <button
+                                  onClick={() => setHarihPICs(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Generated' } : p))}
+                                  className="px-2.5 py-1.5 text-xs font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition">
+                                  Generate PKS
+                                </button>
+                              )}
+                              {(pic.pksStatus === 'Generated' || pic.pksStatus === 'Signed') && (
+                                <button className="px-2.5 py-1.5 text-xs font-semibold border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition">
+                                  Download
+                                </button>
+                              )}
+                              {pic.pksStatus === 'Generated' && (
+                                <button
+                                  onClick={() => setHarihPICs(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Signed' } : p))}
+                                  className="px-2.5 py-1.5 text-xs font-semibold border border-green-200 text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition">
+                                  Tandai Signed
+                                </button>
+                              )}
+                              <button
+                                onClick={() => setHarihPICs(prev => prev.filter(p => p.id !== pic.id))}
+                                className="p-1.5 text-gray-300 hover:text-red-500 transition rounded">
+                                <X size={13} />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+
+              {/* Absensi Hari-H */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-wrap gap-3">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+                    Absensi Hari-H
+                  </h3>
+                  <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
+                    {[{ key: 'onsite', label: 'On-site' }, { key: 'remote', label: 'Remote / Link' }].map(m => (
+                      <button key={m.key}
+                        onClick={() => setAbsensiMode(m.key)}
+                        className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+                          absensiMode === m.key ? 'bg-white text-[#1E1C43] shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                        }`}>
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {absensiMode === 'remote' && (
+                  <div className="px-5 py-3 bg-blue-50 border-b border-blue-100">
+                    <p className="text-xs text-blue-700 font-medium">Mode Remote: Sistem mengirim link form absensi ke WhatsApp masing-masing PIC. PIC mengisi kehadiran secara mandiri.</p>
+                  </div>
+                )}
+
+                {/* Summary pills */}
+                {harihAbsensi.length > 0 && (
+                  <div className="flex gap-2 flex-wrap px-5 pt-4">
+                    {['Hadir', 'Terlambat', 'Tidak Hadir'].map(s => {
+                      const count = harihAbsensi.filter(a => a.status === s).length
+                      return count > 0 ? (
+                        <span key={s} className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absensiStatusCls[s]}`}>
+                          {s}: {count}
+                        </span>
+                      ) : null
+                    })}
+                  </div>
+                )}
+
+                <div className="divide-y divide-gray-50 mt-3">
+                  {harihAbsensi.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400 px-5">
+                      <ClipboardList size={28} className="mx-auto mb-2 opacity-30" />
+                      <p className="text-sm">Belum ada data absensi</p>
+                    </div>
+                  ) : harihAbsensi.map(abs => {
+                    const absCls = absensiStatusCls[abs.status] || 'bg-gray-50 text-gray-500 border-gray-200'
+                    return (
+                      <div key={abs.picId} className="flex items-center gap-4 px-5 py-3.5 flex-wrap">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-gray-800">{abs.nama}</p>
+                          <p className="text-xs text-gray-400">{abs.spesialisasi}</p>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0 flex-wrap">
+                          {absensiMode === 'remote' && (
+                            abs.linkSent
+                              ? <span className="text-xs text-green-600 font-medium">✓ Link Terkirim</span>
+                              : <button
+                                  onClick={() => setHarihAbsensi(prev => prev.map(a => a.picId === abs.picId ? { ...a, linkSent: true } : a))}
+                                  className="px-2.5 py-1.5 text-xs font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition">
+                                  Kirim Link WA
+                                </button>
+                          )}
+                          <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absCls}`}>
+                            {abs.status}
+                          </span>
+                          {abs.checkIn && (
+                            <span className="text-xs text-gray-400">Check-in: {abs.checkIn}</span>
+                          )}
+                          <button
+                            onClick={() => { setEditingAbsensiH({ ...abs }); setShowAbsensiHModal(true) }}
+                            className="text-xs text-[#1E1C43] hover:underline font-medium">
+                            Edit
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+
+                <div className={`px-5 py-4 border-t border-gray-100 ${eventSelesai ? 'bg-green-50' : ''}`}>
+                  {eventSelesai ? (
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle size={16} />
+                      <span className="text-sm font-semibold">Event telah dikonfirmasi selesai — proses pelunasan dapat dilanjutkan</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowKonfirmasiSelesai(true)}
+                      className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2">
+                      <CheckCircle size={16} /> Konfirmasi Event Selesai
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Divider between blocks */}
+          {hasKat12 && hasKat3 && (
+            <div className="border-t-2 border-dashed border-gray-200" />
+          )}
+
+          {/* ── Kat 3 Block ──────────────────────────────────────────────────── */}
+          {hasKat3 && (
+            <>
+              {/* Mitra EO */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="px-5 py-4 border-b border-gray-100">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+                    Mitra EO — Kat 3 Event Solution
+                  </h3>
+                </div>
+                <div className="px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Nama EO / Perusahaan', value: eoMitra.namaEO },
+                    { label: 'PIC EO',               value: eoMitra.picEO },
+                    { label: 'Kontak',                value: eoMitra.kontakEO },
+                    { label: 'Email',                 value: eoMitra.emailEO },
+                  ].map(f => (
+                    <div key={f.label} className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{f.label}</p>
+                      <p className="text-sm font-semibold text-gray-800">{f.value}</p>
+                    </div>
+                  ))}
+                </div>
+                {/* PKS Type B */}
+                <div className="px-5 pb-5">
+                  <div className="bg-gray-50 rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-600 mb-0.5">PKS Type B — Dokumen Eksternal EO</p>
+                      {eoMitra.pksBStatus === 'Uploaded'
+                        ? <p className="text-xs text-gray-400">{eoMitra.pksBFile} · Diupload {eoMitra.pksBDate}</p>
+                        : <p className="text-xs text-gray-400 italic">Belum ada dokumen PKS</p>
+                      }
+                    </div>
+                    <div className="flex gap-2 shrink-0">
+                      {eoMitra.pksBStatus === 'Uploaded' && (
+                        <button className="px-3 py-1.5 text-xs font-semibold border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-100 transition">
+                          Download
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setEoMitra(prev => ({ ...prev, pksBStatus: 'Uploaded', pksBFile: 'PKS-EO-Updated.pdf', pksBDate: '2026-08-29' }))}
+                        className="px-3 py-1.5 text-xs font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition flex items-center gap-1.5">
+                        <Upload size={12} />
+                        {eoMitra.pksBStatus === 'Uploaded' ? 'Ganti File' : 'Upload PKS'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bukti Penyelenggaraan */}
+              <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
+                    Bukti Penyelenggaraan
+                    {buktiUpload.length > 0 && (
+                      <span className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full">{buktiUpload.length}</span>
+                    )}
+                  </h3>
+                  <button
+                    onClick={() => setBuktiUpload(prev => [...prev, { id: 'BKT-' + Date.now(), namaFile: 'Dokumen-Baru.pdf', tipe: 'Dokumen', uploadedAt: '2026-08-29' }])}
+                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold transition-colors">
+                    <Upload size={13} /> Upload
+                  </button>
+                </div>
+                {buktiUpload.length === 0 ? (
+                  <div className="text-center py-10 text-gray-400">
+                    <Upload size={28} className="mx-auto mb-2 opacity-30" />
+                    <p className="text-sm">Belum ada bukti yang diupload</p>
+                    <p className="text-xs mt-1">Upload foto atau dokumen bukti penyelenggaraan event</p>
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-50">
+                    {buktiUpload.map(bkt => (
+                      <div key={bkt.id} className="flex items-center gap-3 px-5 py-3.5">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${bkt.tipe === 'Foto' ? 'bg-blue-50' : 'bg-orange-50'}`}>
+                          {bkt.tipe === 'Foto'
+                            ? <ImageIcon size={15} className="text-blue-500" />
+                            : <FileText size={15} className="text-orange-500" />
+                          }
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">{bkt.namaFile}</p>
+                          <p className="text-xs text-gray-400">{bkt.tipe} · Diupload {bkt.uploadedAt}</p>
+                        </div>
+                        <div className="flex gap-2 shrink-0">
+                          <button className="text-xs text-[#1E1C43] hover:underline font-medium">Lihat</button>
+                          <button
+                            onClick={() => setBuktiUpload(prev => prev.filter(b => b.id !== bkt.id))}
+                            className="text-xs text-red-500 hover:underline font-medium">Hapus</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className={`px-5 py-4 border-t border-gray-100 ${eventSelesai ? 'bg-green-50' : ''}`}>
+                  {eventSelesai ? (
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle size={16} />
+                      <span className="text-sm font-semibold">Event telah dikonfirmasi selesai — proses pelunasan dapat dilanjutkan</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => setShowKonfirmasiSelesai(true)}
+                      className="px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors flex items-center gap-2">
+                      <CheckCircle size={16} /> Konfirmasi Event Selesai
+                    </button>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
 
         </div>
       )}
 
-      {/* ══ MODAL: Tambah / Edit Kelas Jalan ══════════════════════════════════ */}
-      {showTambahKelas && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg my-8 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43]">
-                {editingKelas ? 'Edit Kelas' : 'Tambah Kelas Jalan'}
-              </h3>
-              <button onClick={() => { setShowTambahKelas(false); setEditingKelas(null) }} className="text-gray-400 hover:text-gray-600">
-                <X size={18} />
-              </button>
+      {/* ══ MODAL: Tambah PIC Hari-H ══════════════════════════════════════════ */}
+      {showTambahPIC && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
+            <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43]">Tambah PIC</h3>
+              <button onClick={() => setShowTambahPIC(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
             </div>
-            <div className="p-6 space-y-4 overflow-y-auto max-h-[70vh]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tanggal</label>
-                  <input type="date" value={editingKelas ? editingKelas.tanggal : newKelas.tanggal}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, tanggal: e.target.value })) : setNewKelas(p => ({ ...p, tanggal: e.target.value }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Status</label>
-                  <select value={editingKelas ? editingKelas.status : newKelas.status}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, status: e.target.value })) : setNewKelas(p => ({ ...p, status: e.target.value }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white">
-                    {['Dijadwalkan','Berjalan','Selesai','Dibatalkan'].map(s => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Waktu Mulai</label>
-                  <input type="time" value={editingKelas ? editingKelas.waktuMulai : newKelas.waktuMulai}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, waktuMulai: e.target.value })) : setNewKelas(p => ({ ...p, waktuMulai: e.target.value }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Waktu Selesai</label>
-                  <input type="time" value={editingKelas ? editingKelas.waktuSelesai : newKelas.waktuSelesai}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, waktuSelesai: e.target.value })) : setNewKelas(p => ({ ...p, waktuSelesai: e.target.value }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-                </div>
-              </div>
+            <div className="overflow-y-auto flex-1 p-6 space-y-4">
               <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kegiatan</label>
-                <input type="text" placeholder="cth. Zumba, Fun Run, Yoga Outdoor..."
-                  value={editingKelas ? editingKelas.jenisKegiatan : newKelas.jenisKegiatan}
-                  onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, jenisKegiatan: e.target.value })) : setNewKelas(p => ({ ...p, jenisKegiatan: e.target.value }))}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-              </div>
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Lokasi / Area</label>
-                <input type="text" placeholder="cth. GBK — Main Stage, Hall B Lt. 2..."
-                  value={editingKelas ? editingKelas.lokasi : newKelas.lokasi}
-                  onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, lokasi: e.target.value })) : setNewKelas(p => ({ ...p, lokasi: e.target.value }))}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-              </div>
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">PIC Kelas</label>
-                <select value={editingKelas ? editingKelas.pic : newKelas.pic}
-                  onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, pic: e.target.value })) : setNewKelas(p => ({ ...p, pic: e.target.value }))}
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Pilih PIC dari Database</label>
+                <select
+                  value={newPICForm.picId}
+                  onChange={e => setNewPICForm(p => ({ ...p, picId: e.target.value }))}
                   className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white">
                   <option value="">— Pilih PIC —</option>
-                  {dummyPICs.map(p => <option key={p.id} value={p.nama}>{p.nama} — {p.spesialisasi}</option>)}
+                  {dummyPICs.filter(dp => !harihPICs.find(h => h.id === dp.id)).map(p => (
+                    <option key={p.id} value={p.id}>{p.nama} — {p.spesialisasi}</option>
+                  ))}
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Estimasi Peserta</label>
-                  <input type="number" min="0" placeholder="0"
-                    value={editingKelas ? editingKelas.estimasiPeserta : newKelas.estimasiPeserta}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, estimasiPeserta: e.target.value })) : setNewKelas(p => ({ ...p, estimasiPeserta: e.target.value }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-                </div>
-                <div>
-                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Aktual Peserta</label>
-                  <input type="number" min="0" placeholder="Isi setelah kelas"
-                    value={editingKelas ? (editingKelas.aktualPeserta ?? '') : (newKelas.aktualPeserta ?? '')}
-                    onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, aktualPeserta: e.target.value === '' ? null : Number(e.target.value) })) : setNewKelas(p => ({ ...p, aktualPeserta: e.target.value === '' ? null : Number(e.target.value) }))}
-                    className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
-                </div>
-              </div>
               <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan</label>
-                <textarea rows={3} placeholder="Catatan pelaksanaan, kendala, dll..."
-                  value={editingKelas ? editingKelas.catatan : newKelas.catatan}
-                  onChange={e => editingKelas ? setEditingKelas(p => ({ ...p, catatan: e.target.value })) : setNewKelas(p => ({ ...p, catatan: e.target.value }))}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Peran dalam Event</label>
+                <input type="text" placeholder="cth. Lead Instructor, Co-Instructor, Support..."
+                  value={newPICForm.peran}
+                  onChange={e => setNewPICForm(p => ({ ...p, peran: e.target.value }))}
+                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
               </div>
             </div>
-            <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
-              <button
-                onClick={() => { setShowTambahKelas(false); setEditingKelas(null) }}
+            <div className="flex-shrink-0 flex gap-3 px-6 py-4 border-t border-gray-100">
+              <button onClick={() => setShowTambahPIC(false)}
                 className="flex-1 border border-gray-200 text-gray-600 rounded-lg py-2 text-sm font-semibold hover:bg-gray-50 transition">
                 Batal
               </button>
               <button
                 onClick={() => {
-                  if (editingKelas) {
-                    setKelasList(prev => prev.map(k => k.id === editingKelas.id ? { ...editingKelas } : k))
-                    setEditingKelas(null)
-                  } else {
-                    setKelasList(prev => [...prev, { ...newKelas, id: getNextKelasId(), estimasiPeserta: Number(newKelas.estimasiPeserta) || 0 }])
-                  }
-                  setShowTambahKelas(false)
+                  if (!newPICForm.picId) return
+                  const found = dummyPICs.find(p => p.id === newPICForm.picId)
+                  if (!found) return
+                  const colors = ['#E05945', '#2980B9', '#27AE60', '#8E44AD', '#E67E22']
+                  setHarihPICs(prev => [...prev, {
+                    id: found.id, nama: found.nama, spesialisasi: found.spesialisasi,
+                    peran: newPICForm.peran || 'Instructor', pksStatus: 'Belum',
+                    warna: colors[prev.length % colors.length],
+                  }])
+                  setHarihAbsensi(prev => [...prev, {
+                    picId: found.id, nama: found.nama, spesialisasi: found.spesialisasi,
+                    status: 'Hadir', checkIn: '', catatan: '', linkSent: false,
+                  }])
+                  setShowTambahPIC(false)
                 }}
                 className="flex-1 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white rounded-lg py-2 text-sm font-semibold transition">
-                {editingKelas ? 'Simpan Perubahan' : 'Tambah Kelas'}
+                Tambah PIC
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* ══ MODAL: Absensi Pelatih ════════════════════════════════════════════ */}
-      {showAbsensiModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43]">
-                {editingAbsensi ? 'Edit Absensi Pelatih' : 'Tambah Absensi Pelatih'}
-              </h3>
-              <button onClick={() => { setShowAbsensiModal(null); setEditingAbsensi(null) }} className="text-gray-400 hover:text-gray-600">
-                <X size={18} />
-              </button>
+      {/* ══ MODAL: Edit Absensi Hari-H ════════════════════════════════════════ */}
+      {showAbsensiHModal && editingAbsensiH && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
+            <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43]">Edit Absensi — {editingAbsensiH.nama}</h3>
+              <button onClick={() => { setShowAbsensiHModal(false); setEditingAbsensiH(null) }} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
             </div>
-            <div className="p-6 space-y-4">
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Pelatih</label>
-                <select
-                  value={editingAbsensi ? editingAbsensi.pelatihId : newAbsensi.pelatihId}
-                  onChange={e => {
-                    const found = dummyPICs.find(p => p.id === e.target.value)
-                    if (editingAbsensi) {
-                      setEditingAbsensi(prev => ({ ...prev, pelatihId: e.target.value, nama: found?.nama || '', spesialisasi: found?.spesialisasi || '' }))
-                    } else {
-                      setNewAbsensi(prev => ({ ...prev, pelatihId: e.target.value, nama: found?.nama || '', spesialisasi: found?.spesialisasi || '' }))
-                    }
-                  }}
-                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white">
-                  <option value="">— Pilih Pelatih —</option>
-                  {dummyPICs.map(p => <option key={p.id} value={p.id}>{p.nama} — {p.spesialisasi}</option>)}
-                </select>
-              </div>
+            <div className="overflow-y-auto flex-1 p-6 space-y-4">
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Status Kehadiran</label>
                 <div className="flex gap-2 flex-wrap">
-                  {['Hadir','Terlambat','Tidak Hadir'].map(s => {
-                    const isActive = (editingAbsensi ? editingAbsensi.status : newAbsensi.status) === s
+                  {['Hadir', 'Terlambat', 'Tidak Hadir'].map(s => {
+                    const isActive = editingAbsensiH.status === s
+                    const activeCls = s === 'Hadir' ? 'bg-green-600 text-white border-green-600'
+                      : s === 'Terlambat' ? 'bg-yellow-500 text-white border-yellow-500'
+                      : 'bg-red-500 text-white border-red-500'
                     return (
                       <button key={s}
-                        onClick={() => editingAbsensi ? setEditingAbsensi(p => ({ ...p, status: s })) : setNewAbsensi(p => ({ ...p, status: s }))}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${isActive ? (s === 'Hadir' ? 'bg-green-600 text-white border-green-600' : s === 'Terlambat' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-red-500 text-white border-red-500') : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+                        onClick={() => setEditingAbsensiH(p => ({ ...p, status: s }))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${isActive ? activeCls : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
                         {s}
                       </button>
                     )
@@ -2703,45 +2764,60 @@ export default function EventOrderDetailPage() {
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jam Check-in</label>
                 <input type="time"
-                  value={editingAbsensi ? editingAbsensi.checkIn : newAbsensi.checkIn}
-                  onChange={e => editingAbsensi ? setEditingAbsensi(p => ({ ...p, checkIn: e.target.value })) : setNewAbsensi(p => ({ ...p, checkIn: e.target.value }))}
+                  value={editingAbsensiH.checkIn}
+                  onChange={e => setEditingAbsensiH(p => ({ ...p, checkIn: e.target.value }))}
                   className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
               </div>
               <div>
                 <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan</label>
                 <textarea rows={2} placeholder="Catatan kehadiran, penggantian, dll..."
-                  value={editingAbsensi ? editingAbsensi.catatan : newAbsensi.catatan}
-                  onChange={e => editingAbsensi ? setEditingAbsensi(p => ({ ...p, catatan: e.target.value })) : setNewAbsensi(p => ({ ...p, catatan: e.target.value }))}
+                  value={editingAbsensiH.catatan}
+                  onChange={e => setEditingAbsensiH(p => ({ ...p, catatan: e.target.value }))}
                   className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
               </div>
             </div>
-            <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
-              <button
-                onClick={() => { setShowAbsensiModal(null); setEditingAbsensi(null) }}
+            <div className="flex-shrink-0 flex gap-3 px-6 py-4 border-t border-gray-100">
+              <button onClick={() => { setShowAbsensiHModal(false); setEditingAbsensiH(null) }}
                 className="flex-1 border border-gray-200 text-gray-600 rounded-lg py-2 text-sm font-semibold hover:bg-gray-50 transition">
                 Batal
               </button>
               <button
                 onClick={() => {
-                  const kelasId = showAbsensiModal
-                  if (editingAbsensi) {
-                    setKelasList(prev => prev.map(k => k.id === kelasId
-                      ? { ...k, absensiPelatih: k.absensiPelatih.map(a => a.id === editingAbsensi.id ? { ...editingAbsensi } : a) }
-                      : k
-                    ))
-                    setEditingAbsensi(null)
-                  } else {
-                    const nextId = 'ABS-' + String(Date.now()).slice(-4)
-                    setKelasList(prev => prev.map(k => k.id === kelasId
-                      ? { ...k, absensiPelatih: [...k.absensiPelatih, { ...newAbsensi, id: nextId }] }
-                      : k
-                    ))
-                  }
-                  setShowAbsensiModal(null)
+                  setHarihAbsensi(prev => prev.map(a => a.picId === editingAbsensiH.picId ? { ...editingAbsensiH } : a))
+                  setShowAbsensiHModal(false)
+                  setEditingAbsensiH(null)
                 }}
                 className="flex-1 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white rounded-lg py-2 text-sm font-semibold transition">
-                {editingAbsensi ? 'Simpan Perubahan' : 'Tambah'}
+                Simpan Perubahan
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══ MODAL: Konfirmasi Event Selesai ══════════════════════════════════ */}
+      {showKonfirmasiSelesai && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+            <div className="p-6 text-center">
+              <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                <CheckCircle size={24} className="text-green-600" />
+              </div>
+              <h3 className="text-base font-bold text-[#1E1C43] mb-2">Konfirmasi Event Selesai</h3>
+              <p className="text-sm text-gray-500 mb-6">
+                Setelah dikonfirmasi, status event akan berubah menjadi <strong>Selesai</strong> dan proses pelunasan pembayaran dapat dilanjutkan.
+              </p>
+              <div className="flex gap-3">
+                <button onClick={() => setShowKonfirmasiSelesai(false)}
+                  className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm font-semibold hover:bg-gray-50 transition">
+                  Batal
+                </button>
+                <button
+                  onClick={() => { setEventSelesai(true); setShowKonfirmasiSelesai(false) }}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-xl py-2.5 text-sm font-semibold transition">
+                  Ya, Konfirmasi
+                </button>
+              </div>
             </div>
           </div>
         </div>
