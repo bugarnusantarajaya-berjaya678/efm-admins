@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, ChevronRight, Plus, Trash2, Save } from 'lucide-react'
+import { initLeads, getStoredLeads, LEADS_INIT } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
    Dummy Konsultasi Data
@@ -126,6 +127,13 @@ function fmtRp(n) {
 ═══════════════════════════════════════ */
 export default function EventOrderNewPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+
+  /* ── From Quotation state (navigate state, passed by EventQuotationDetailPage) ── */
+  const qState = location.state?.fromQuotation ? location.state : null
+  const quotationId    = qState?.quotationId   || ''
+  const quotationLeadId = qState?.leadId        || ''
+  const isFromQuotation = !!quotationId
 
   /* ── Source tracking ── */
   const [konsultasiId,       setKonsultasiId]       = useState('')
@@ -158,6 +166,38 @@ export default function EventOrderNewPage() {
 
   /* ── Parse URL params & auto-populate dari konsultasi ── */
   useEffect(() => {
+    /* ── Branch A: dari Quotation (navigate state) ── */
+    if (isFromQuotation && qState) {
+      initLeads(LEADS_INIT)
+      const lead = getStoredLeads().find(l => l.id === quotationLeadId)
+      if (lead) {
+        setClientData({
+          namaKlien:          lead.namaKlien          || qState.namaKlien || '',
+          tipeKlien:          lead.tipeKlien          || '',
+          kota:               lead.kota               || '',
+          emailUmum:          lead.emailUmum          || '',
+          teleponUmum:        lead.teleponUmum        || '',
+          alamatLengkap:      lead.alamatLengkap      || '',
+          namaKoordinator:    lead.namaKoordinator    || '',
+          jabatanKoordinator: lead.jabatanKoordinator || '',
+          waKoordinator:      lead.waKoordinator      || '',
+          emailKoordinator:   lead.emailKoordinator   || '',
+          picSalesEFM:        lead.picSalesEFM        || '',
+        })
+      } else {
+        // fallback: hanya namaKlien dari state
+        setClientData(prev => ({ ...prev, namaKlien: qState.namaKlien || '' }))
+      }
+      const eventName = qState.namaEvent || ''
+      const nilaiQ    = qState.nilaiQuotation || 0
+      setOrderData(prev => ({ ...prev, programNama: eventName }))
+      setRincianLayanan([
+        { id: 1, item: eventName, satuan: 'Paket', jumlah: '1', rateUnit: String(nilaiQ), total: nilaiQ },
+      ])
+      return
+    }
+
+    /* ── Branch B: dari URL params (konsultasi flow lama) ── */
     const params = new URLSearchParams(window.location.search)
     const svId   = params.get('konsultasiId')
     const ldId   = params.get('leadId')
@@ -211,7 +251,7 @@ export default function EventOrderNewPage() {
     setOrderData(prev => ({ ...prev, nilaiKontrak: subtotal.toString() }))
   }, [subtotal])
 
-  /* ── isFromKonsultasi ── */
+  /* ── Source flags ── */
   const isFromKonsultasi = !!konsultasiId
 
   /* ── Lead link/unlink ── */
@@ -267,7 +307,7 @@ export default function EventOrderNewPage() {
   }
 
   function handleSimpanOrder() {
-    if (!isFromKonsultasi && !linkedLeadId) {
+    if (!isFromKonsultasi && !isFromQuotation && !linkedLeadId) {
       alert('Pilih lead terlebih dahulu untuk mengisi data klien.')
       return
     }
@@ -318,14 +358,40 @@ export default function EventOrderNewPage() {
               {clientData.namaKlien || 'Order Baru'}
             </h1>
             <p className="text-sm text-gray-400 mt-1">
-              {isFromKonsultasi
-                ? `Dibuat dari Konsultasi #${konsultasiId} · ${clientData.tipeKlien || ''}`
-                : linkedLeadId
-                  ? `Terhubung ke Lead ${linkedLeadId} · ${clientData.tipeKlien || ''}`
-                  : 'Pilih lead event untuk memulai'}
+              {isFromQuotation
+                ? `Dibuat dari Quotation #${quotationId} · ${clientData.tipeKlien || ''}`
+                : isFromKonsultasi
+                  ? `Dibuat dari Konsultasi #${konsultasiId} · ${clientData.tipeKlien || ''}`
+                  : linkedLeadId
+                    ? `Terhubung ke Lead ${linkedLeadId} · ${clientData.tipeKlien || ''}`
+                    : 'Pilih lead event untuk memulai'}
             </p>
           </div>
         </div>
+
+        {/* ══════════════════════════
+            BANNER: dari quotation
+        ══════════════════════════ */}
+        {isFromQuotation && (
+          <div className="flex items-center gap-3 bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-6">
+            <span className="text-purple-600">📋</span>
+            <div className="flex-1">
+              <p className="text-xs font-semibold text-purple-800">
+                Dibuat dari Quotation #{quotationId}
+                {quotationLeadId && <span className="text-purple-500 font-normal"> · Lead {quotationLeadId}</span>}
+              </p>
+              <p className="text-[11px] text-purple-600 mt-0.5">
+                Data klien &amp; nilai order diambil dari quotation yang disetujui
+              </p>
+            </div>
+            <button
+              onClick={() => navigate(`/event/quotation/${quotationId}`)}
+              className="text-[11px] text-purple-700 underline hover:no-underline shrink-0"
+            >
+              Lihat Quotation
+            </button>
+          </div>
+        )}
 
         {/* ══════════════════════════
             BANNER: dari konsultasi
@@ -354,7 +420,7 @@ export default function EventOrderNewPage() {
         {/* ══════════════════════════
             LEAD SELECTOR (order manual)
         ══════════════════════════ */}
-        {!isFromKonsultasi && (
+        {!isFromKonsultasi && !isFromQuotation && (
           <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
             <div className="mb-3">
               <p className="text-sm font-semibold text-[#1E1C43]">Kaitkan dengan Lead Event</p>
@@ -446,16 +512,20 @@ export default function EventOrderNewPage() {
             <div>
               <h3 className="text-sm font-semibold text-gray-700">Data Klien</h3>
               <p className="text-xs text-gray-400 mt-0.5">
-                {isFromKonsultasi
-                  ? `Sumber: Konsultasi #${konsultasiId}`
-                  : linkedLeadId
-                    ? `Sumber: Lead ${linkedLeadId}`
-                    : 'Pilih lead di atas untuk mengisi data klien'
+                {isFromQuotation
+                  ? `Sumber: Quotation #${quotationId} · Lead ${quotationLeadId}`
+                  : isFromKonsultasi
+                    ? `Sumber: Konsultasi #${konsultasiId}`
+                    : linkedLeadId
+                      ? `Sumber: Lead ${linkedLeadId}`
+                      : 'Pilih lead di atas untuk mengisi data klien'
                 }
               </p>
             </div>
-            {(isFromKonsultasi || linkedLeadId) && (
-              <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium">
+            {(isFromKonsultasi || isFromQuotation || linkedLeadId) && (
+              <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${
+                isFromQuotation ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+              }`}>
                 Auto-filled · Read-only
               </span>
             )}
