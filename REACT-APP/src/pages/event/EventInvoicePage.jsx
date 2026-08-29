@@ -913,11 +913,11 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
         {/* Footer — CREATE mode */}
         {!inv && (
           <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100 shrink-0">
-            <button onClick={onClose} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+            <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors">
               ✕ Batal
             </button>
             <div className="flex items-center gap-2">
-              <button onClick={handleSimpanDraftInvoice} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
+              <button onClick={handleSimpanDraftInvoice} className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
                 Simpan Draft
               </button>
               <button onClick={handleKirimInvoice} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors">
@@ -934,13 +934,13 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
             <div>
               {!editMode && !showBuatReceipt && localStatus !== 'Lunas' && (
                 <button onClick={handleKonfirmasiLunas}
-                  className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors">
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors">
                   Konfirmasi Lunas
                 </button>
               )}
               {(!editMode && showBuatReceipt) && (
                 <button onClick={() => navigate('/event/receipt')}
-                  className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors flex items-center gap-1.5">
+                  className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-green-600 hover:bg-green-700 transition-colors flex items-center gap-1.5">
                   Buat Receipt →
                 </button>
               )}
@@ -949,10 +949,10 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
             <div className="flex items-center gap-2">
               {editMode ? (
                 <>
-                  <button onClick={onClose} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors">
                     Batal
                   </button>
-                  <button className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
+                  <button className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors">
                     Simpan Draft
                   </button>
                   <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors">
@@ -961,7 +961,7 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
                 </>
               ) : (
                 <>
-                  <button onClick={onClose} className="px-4 py-2 rounded-lg text-[13px] font-semibold text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors">
                     Tutup
                   </button>
                   <button
@@ -1172,7 +1172,7 @@ export default function EventInvoicePage() {
                 className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43]" />
             </div>
             <button onClick={handleReset}
-              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 transition-colors whitespace-nowrap flex-shrink-0">
+              className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 transition-colors whitespace-nowrap flex-shrink-0">
               <RotateCcw size={12} />
               Reset
             </button>

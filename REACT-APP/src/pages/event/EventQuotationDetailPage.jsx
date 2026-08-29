@@ -440,7 +440,7 @@ export default function EventQuotationDetailPage() {
     return (
       <div className="p-8 text-center text-gray-400 text-sm">
         Quotation tidak ditemukan.
-        <button onClick={() => navigate(-1)} className="ml-3 text-[#E05945] underline">Kembali</button>
+        <button onClick={() => navigate(-1)} className="ml-3 text-[#1E1C43] underline">Kembali</button>
       </div>
     )
   }
@@ -527,7 +527,7 @@ export default function EventQuotationDetailPage() {
                   </button>
                   {!isNew && (
                     <button onClick={() => setEditing(false)}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                       <X size={12} /> Batal
                     </button>
                   )}
@@ -536,7 +536,7 @@ export default function EventQuotationDetailPage() {
 
               <button
                 onClick={() => navigate(quotation.leadId ? `/event/leads/${quotation.leadId}` : '/event/leads')}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                 <ArrowLeft size={12} /> Kembali
               </button>
             </div>
