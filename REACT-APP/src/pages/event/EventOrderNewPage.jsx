@@ -159,6 +159,12 @@ export default function EventOrderNewPage() {
     nilaiKontrak: '', picEFMOps: '', catatan: '',
   })
 
+  /* ── Kategori Layanan ── */
+  const [kategori, setKategori] = useState([])
+  function toggleKategori(key) {
+    setKategori(prev => prev.includes(key) ? prev.filter(x => x !== key) : [...prev, key])
+  }
+
   /* ── Rincian Layanan (line items) ── */
   const [rincianLayanan, setRincianLayanan] = useState([
     { id: 1, item: '', satuan: 'Bulan', jumlah: '1', rateUnit: '', total: 0 },
@@ -315,6 +321,10 @@ export default function EventOrderNewPage() {
       alert('Lengkapi: Nama Program, Tanggal Mulai, dan Tanggal Selesai.')
       return
     }
+    if (kategori.length === 0) {
+      alert('Pilih minimal satu Kategori Layanan.')
+      return
+    }
     const newOrderId = 'EO-' + String(Date.now()).slice(-4)
     navigate('/event/orders/' + newOrderId)
   }
@@ -325,7 +335,7 @@ export default function EventOrderNewPage() {
   )
 
   return (
-    <div className="bg-[#F5F5F7] flex flex-col min-h-screen">
+    <div className="bg-[#F5F5F7] min-h-screen pb-24">
 
       {/* Toast */}
       {toast && (
@@ -334,48 +344,51 @@ export default function EventOrderNewPage() {
         </div>
       )}
 
-      <div className="flex-1 px-6 py-6">
+      <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4">
 
-        {/* Header Card */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-5">
-          <div className="flex items-center justify-between mb-4">
-            <nav className="flex items-center gap-1 text-xs text-gray-400">
-              <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Event Management</button>
-              <ChevronRight size={12} className="text-gray-300" />
-              <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-              <ChevronRight size={12} className="text-gray-300" />
-              <span className="text-[#1E1C43] font-medium">Buat Order Baru</span>
-            </nav>
+        {/* ── Header Card ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+                <Save size={18} className="text-white" />
+              </div>
+              <div>
+                <nav className="flex items-center gap-1 text-[10px] text-gray-400 mb-0.5">
+                  <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">B2B Event</button>
+                  <ChevronRight size={10} className="text-gray-300" />
+                  <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
+                  <ChevronRight size={10} className="text-gray-300" />
+                  <span className="text-[#1E1C43] font-medium">Order Baru</span>
+                </nav>
+                <h1 className="text-base font-bold text-[#1E1C43] leading-tight">
+                  {clientData.namaKlien || 'Order Baru'}
+                </h1>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {isFromQuotation
+                    ? `Dari Quotation #${quotationId} · ${clientData.tipeKlien || ''}`
+                    : isFromKonsultasi
+                      ? `Dari Konsultasi #${konsultasiId} · ${clientData.tipeKlien || ''}`
+                      : linkedLeadId
+                        ? `Lead ${linkedLeadId} · ${clientData.tipeKlien || ''}`
+                        : 'Pilih lead event untuk memulai'}
+                </p>
+              </div>
+            </div>
             <button
               onClick={() => navigate('/event/orders')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
             >
-              <ArrowLeft size={12} /> Kembali ke Orders
+              <ArrowLeft size={12} /> Kembali
             </button>
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-[#1E1C43]">
-              {clientData.namaKlien || 'Order Baru'}
-            </h1>
-            <p className="text-sm text-gray-400 mt-1">
-              {isFromQuotation
-                ? `Dibuat dari Quotation #${quotationId} · ${clientData.tipeKlien || ''}`
-                : isFromKonsultasi
-                  ? `Dibuat dari Konsultasi #${konsultasiId} · ${clientData.tipeKlien || ''}`
-                  : linkedLeadId
-                    ? `Terhubung ke Lead ${linkedLeadId} · ${clientData.tipeKlien || ''}`
-                    : 'Pilih lead event untuk memulai'}
-            </p>
           </div>
         </div>
 
-        {/* ══════════════════════════
-            BANNER: dari quotation
-        ══════════════════════════ */}
+        {/* ── BANNER: dari quotation ── */}
         {isFromQuotation && (
-          <div className="flex items-center gap-3 bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-6">
-            <span className="text-purple-600">📋</span>
-            <div className="flex-1">
+          <div className="flex items-start gap-3 bg-purple-50 border border-purple-200 rounded-2xl px-4 py-3">
+            <span className="text-purple-600 mt-0.5">📋</span>
+            <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-purple-800">
                 Dibuat dari Quotation #{quotationId}
                 {quotationLeadId && <span className="text-purple-500 font-normal"> · Lead {quotationLeadId}</span>}
@@ -386,67 +399,54 @@ export default function EventOrderNewPage() {
             </div>
             <button
               onClick={() => navigate(`/event/quotation/${quotationId}`)}
-              className="text-[11px] text-purple-700 underline hover:no-underline shrink-0"
+              className="text-[11px] text-purple-700 underline hover:no-underline shrink-0 mt-0.5"
             >
-              Lihat Quotation
+              Lihat
             </button>
           </div>
         )}
 
-        {/* ══════════════════════════
-            BANNER: dari konsultasi
-        ══════════════════════════ */}
+        {/* ── BANNER: dari konsultasi ── */}
         {isFromKonsultasi && (
-          <div className="flex items-center gap-3 bg-[#1E1C43]/5 border border-[#1E1C43]/15 rounded-xl px-4 py-3 mb-6">
-            <span className="text-[#1E1C43]">🔗</span>
-            <div className="flex-1">
+          <div className="flex items-start gap-3 bg-[#1E1C43]/5 border border-[#1E1C43]/15 rounded-2xl px-4 py-3">
+            <span className="text-[#1E1C43] mt-0.5">🔗</span>
+            <div className="flex-1 min-w-0">
               <p className="text-xs font-semibold text-[#1E1C43]">
                 Terhubung ke Konsultasi #{konsultasiId}
                 {leadId && <span className="text-gray-400 font-normal"> · Lead {leadId}</span>}
               </p>
-              <p className="text-[11px] text-gray-500 mt-0.5">
-                Data klien diambil dari hasil konsultasi
-              </p>
+              <p className="text-[11px] text-gray-500 mt-0.5">Data klien diambil dari hasil konsultasi</p>
             </div>
             <button
               onClick={() => navigate(`/event/konsultasi/${konsultasiId}`)}
-              className="text-[11px] text-[#1E1C43] underline hover:no-underline"
+              className="text-[11px] text-[#1E1C43] underline hover:no-underline shrink-0 mt-0.5"
             >
-              Lihat Konsultasi
+              Lihat
             </button>
           </div>
         )}
 
-        {/* ══════════════════════════
-            LEAD SELECTOR (order manual)
-        ══════════════════════════ */}
+        {/* ── LEAD SELECTOR (order manual) ── */}
         {!isFromKonsultasi && !isFromQuotation && (
-          <div className="bg-white rounded-xl shadow-sm p-5 mb-6">
-            <div className="mb-3">
-              <p className="text-sm font-semibold text-[#1E1C43]">Kaitkan dengan Lead Event</p>
-              <p className="text-xs text-gray-400 mt-0.5">
-                Pilih data klien dari daftar leads yang tersedia
-              </p>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center gap-2 mb-3">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Kaitkan Lead Event</h3>
             </div>
+            <p className="text-xs text-gray-400 mb-3">Pilih data klien dari daftar leads yang tersedia</p>
 
-            {/* Belum ada lead dipilih */}
-            {!linkedLeadId && (
+            {!linkedLeadId ? (
               <div className="relative lead-selector-wrapper">
                 <div className="relative">
                   <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">🔍</span>
                   <input
                     type="text"
-                    className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    className="w-full pl-9 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-[#1E1C43]"
                     placeholder="Cari nama perusahaan..."
                     value={leadSearchQuery}
-                    onChange={e => {
-                      setLeadSearchQuery(e.target.value)
-                      setShowLeadDropdown(true)
-                    }}
+                    onChange={e => { setLeadSearchQuery(e.target.value); setShowLeadDropdown(true) }}
                     onFocus={() => setShowLeadDropdown(true)}
                   />
                 </div>
-
                 {showLeadDropdown && (
                   <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-52 overflow-y-auto">
                     {filteredLeads.map(lead => (
@@ -455,45 +455,32 @@ export default function EventOrderNewPage() {
                         onClick={() => handleLinkLead(lead)}
                         className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-50 last:border-0 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <p className="text-sm font-medium text-gray-800">{lead.namaKlien}</p>
-                            <p className="text-xs text-gray-400 mt-0.5">
-                              {lead.tipeKlien} · {lead.kota}
-                              {lead.namaKoordinator && <span> · {lead.namaKoordinator}</span>}
-                            </p>
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="text-sm font-medium text-gray-800 truncate">{lead.namaKlien}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">{lead.tipeKlien} · {lead.kota}</p>
                           </div>
-                          <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium ml-2 shrink-0">
+                          <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium shrink-0">
                             {lead.stage}
                           </span>
                         </div>
                       </button>
                     ))}
                     {filteredLeads.length === 0 && (
-                      <div className="px-4 py-3 text-xs text-gray-400 italic text-center">
-                        Tidak ada leads ditemukan
-                      </div>
+                      <div className="px-4 py-3 text-xs text-gray-400 italic text-center">Tidak ada leads ditemukan</div>
                     )}
                   </div>
                 )}
               </div>
-            )}
-
-            {/* Lead sudah dipilih */}
-            {linkedLeadId && (() => {
+            ) : (() => {
               const linked = availableLeadsForOrder.find(l => l.id === linkedLeadId)
               return linked ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-4 py-3">
-                  <div>
-                    <p className="text-sm font-semibold text-green-800">✅ {linked.namaKlien}</p>
-                    <p className="text-xs text-green-600 mt-0.5">
-                      {linked.tipeKlien} · {linked.kota} · {linked.id}
-                    </p>
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 gap-3">
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-green-800 truncate">✅ {linked.namaKlien}</p>
+                    <p className="text-xs text-green-600 mt-0.5">{linked.tipeKlien} · {linked.id}</p>
                   </div>
-                  <button
-                    onClick={handleUnlinkLead}
-                    className="text-xs text-gray-400 hover:text-red-500 ml-4 shrink-0"
-                  >
+                  <button onClick={handleUnlinkLead} className="text-xs text-gray-400 hover:text-red-500 shrink-0 border border-gray-200 bg-white rounded-lg px-2.5 py-1">
                     × Ganti
                   </button>
                 </div>
@@ -502,28 +489,25 @@ export default function EventOrderNewPage() {
           </div>
         )}
 
-        {/* ══════════════════════════
-            SECTION: Info Deal
-        ══════════════════════════ */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
+        {/* ── SECTION: Data Klien + Detail Order ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
 
-          {/* ── Sub-bagian A: Data Klien ── */}
-          <div className="flex items-center justify-between mb-4">
+          {/* Sub-bagian A: Data Klien */}
+          <div className="flex items-start justify-between gap-2 mb-4 flex-wrap">
             <div>
-              <h3 className="text-sm font-semibold text-gray-700">Data Klien</h3>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien</h3>
+              <p className="text-xs text-gray-400 mt-1 pl-0">
                 {isFromQuotation
-                  ? `Sumber: Quotation #${quotationId} · Lead ${quotationLeadId}`
+                  ? `Quotation #${quotationId} · Lead ${quotationLeadId}`
                   : isFromKonsultasi
-                    ? `Sumber: Konsultasi #${konsultasiId}`
+                    ? `Konsultasi #${konsultasiId}`
                     : linkedLeadId
-                      ? `Sumber: Lead ${linkedLeadId}`
-                      : 'Pilih lead di atas untuk mengisi data klien'
-                }
+                      ? `Lead ${linkedLeadId}`
+                      : 'Pilih lead di atas untuk mengisi data klien'}
               </p>
             </div>
             {(isFromKonsultasi || isFromQuotation || linkedLeadId) && (
-              <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${
+              <span className={`text-[10px] px-2 py-1 rounded-full font-medium shrink-0 ${
                 isFromQuotation ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
               }`}>
                 Auto-filled · Read-only
@@ -531,113 +515,145 @@ export default function EventOrderNewPage() {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-
-            {/* Baris 1: Nama Klien — full width */}
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="sm:col-span-2">
               <ReadOnlyField label="Nama Klien / Penyelenggara" value={clientData.namaKlien} />
             </div>
-
-            {/* Baris 2: Tipe + Kota */}
             <ReadOnlyField label="Tipe Klien"  value={clientData.tipeKlien} />
             <ReadOnlyField label="Kota / Area" value={clientData.kota} />
-
-            {/* Baris 3: Email + Telepon */}
-            <ReadOnlyField label="Email Umum"        value={clientData.emailUmum} />
-            <ReadOnlyField label="No. Telepon Umum"  value={clientData.teleponUmum} />
-
-            {/* Baris 4: Alamat — full width */}
-            <div className="col-span-2">
+            <ReadOnlyField label="Email Umum"       value={clientData.emailUmum} />
+            <ReadOnlyField label="No. Telepon Umum" value={clientData.teleponUmum} />
+            <div className="sm:col-span-2">
               <ReadOnlyField label="Alamat Lengkap" value={clientData.alamatLengkap} />
             </div>
 
-            {/* Sub-header Koordinator */}
-            <p className="col-span-2 text-xs font-semibold text-gray-400 uppercase tracking-wide mt-3 mb-1">
+            <p className="sm:col-span-2 text-xs font-semibold text-gray-400 uppercase tracking-wide mt-2">
               Koordinator / PIC Klien
             </p>
-
-            {/* Baris 5: Nama + Jabatan */}
             <ReadOnlyField label="Nama Koordinator" value={clientData.namaKoordinator} />
             <ReadOnlyField label="Jabatan"          value={clientData.jabatanKoordinator} />
-
-            {/* Baris 6: WA + Email Koordinator */}
             <ReadOnlyField label="No. WA Koordinator" value={clientData.waKoordinator} />
             <ReadOnlyField label="Email Koordinator"  value={clientData.emailKoordinator} />
+            <ReadOnlyField label="PIC Sales EFM"      value={clientData.picSalesEFM} />
+          </div>
 
-            {/* Baris 7: PIC Sales EFM */}
-            <ReadOnlyField label="PIC Sales EFM" value={clientData.picSalesEFM} />
+          {/* Sub-bagian B: Detail Order */}
+          <hr className="border-gray-100 my-5" />
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Detail Order</h3>
 
-            {/* ── Sub-bagian B: Detail Order ── */}
-            <hr className="col-span-2 border-gray-100 my-4" />
-            <p className="col-span-2 text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
-              Detail Order
-            </p>
+          <div className="space-y-3">
 
-            {/* Baris 1: Nama Program — full width */}
-            <div className="col-span-2">
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
+            {/* Nama Program */}
+            <div>
+              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
                 Nama Program<span className="text-red-500 ml-0.5">*</span>
               </label>
               <input
                 value={orderData.programNama}
                 onChange={e => setOrderData(p => ({ ...p, programNama: e.target.value }))}
                 placeholder="Corporate Wellness — Yoga & Functional Training"
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] min-h-[36px]"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43]"
               />
             </div>
 
-            {/* Baris 2: Periode Awal + Akhir */}
+            {/* Kategori Layanan */}
             <div>
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-                Periode Awal<span className="text-red-500 ml-0.5">*</span>
+              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                Kategori Layanan<span className="text-red-500 ml-0.5">*</span>
+                <span className="ml-1.5 text-gray-300 font-normal normal-case">Pilih satu atau lebih</span>
               </label>
-              <input
-                type="date"
-                value={orderData.periodeAwal}
-                onChange={e => setOrderData(p => ({ ...p, periodeAwal: e.target.value }))}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] min-h-[36px]"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-                Periode Akhir<span className="text-red-500 ml-0.5">*</span>
-              </label>
-              <input
-                type="date"
-                value={orderData.periodeAkhir}
-                onChange={e => setOrderData(p => ({ ...p, periodeAkhir: e.target.value }))}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] min-h-[36px]"
-              />
-            </div>
-
-            {/* Baris 3: PIC Operasional + Nilai Kontrak */}
-            <div>
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-                PIC Operasional EFM
-                <span className="ml-1.5 text-gray-300 font-normal normal-case">PIC yang handle operasional program ini</span>
-              </label>
-              <select
-                value={orderData.picEFMOps}
-                onChange={e => setOrderData(p => ({ ...p, picEFMOps: e.target.value }))}
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] min-h-[36px]"
-              >
-                <option value="">-- Pilih PIC --</option>
-                <option>Bagoes</option><option>Emma</option><option>Lainnya</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
-                Nilai Kontrak (Rp)
-                <span className="ml-1.5 text-gray-300 font-normal normal-case">Auto dari subtotal</span>
-              </label>
-              <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 min-h-[36px] flex items-center font-medium">
-                {subtotal > 0 ? fmtRp(subtotal) : <span className="text-gray-300 italic">Akan diisi dari rincian layanan</span>}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {[
+                  { key: 'kat1', label: 'Kat 1 — Instruktur / Trainer', desc: 'Instruktur/trainer untuk kelas atau program olahraga', color: '#1E1C43' },
+                  { key: 'kat2', label: 'Kat 2 — Expert / Speaker',     desc: 'Narasumber, dokter, konsultan wellness, tenaga ahli',   color: '#2980B9' },
+                  { key: 'kat3', label: 'Kat 3 — Event Solution (EO)',   desc: 'EO mitra penyelenggara keseluruhan event',              color: '#E05945' },
+                ].map(({ key, label, desc, color }) => {
+                  const checked = kategori.includes(key)
+                  return (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => toggleKategori(key)}
+                      className={[
+                        'text-left p-3 rounded-xl border-2 transition-all duration-150',
+                        checked
+                          ? 'border-[' + color + '] bg-[' + color + ']/5'
+                          : 'border-gray-200 bg-white hover:border-gray-300',
+                      ].join(' ')}
+                    >
+                      <div className="flex items-start gap-2">
+                        <div className={[
+                          'mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0',
+                          checked ? 'border-[' + color + '] bg-[' + color + ']' : 'border-gray-300',
+                        ].join(' ')}>
+                          {checked && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                        </div>
+                        <div>
+                          <p className={['text-[11px] font-semibold leading-tight', checked ? 'text-[' + color + ']' : 'text-gray-700'].join(' ')}>{label}</p>
+                          <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">{desc}</p>
+                        </div>
+                      </div>
+                    </button>
+                  )
+                })}
               </div>
             </div>
 
-            {/* Baris 4: Catatan — full width */}
-            <div className="col-span-2">
-              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
+            {/* Periode */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Periode Awal<span className="text-red-500 ml-0.5">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={orderData.periodeAwal}
+                  onChange={e => setOrderData(p => ({ ...p, periodeAwal: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43]"
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Periode Akhir<span className="text-red-500 ml-0.5">*</span>
+                </label>
+                <input
+                  type="date"
+                  value={orderData.periodeAkhir}
+                  onChange={e => setOrderData(p => ({ ...p, periodeAkhir: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43]"
+                />
+              </div>
+            </div>
+
+            {/* PIC Ops + Nilai Kontrak */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  PIC Operasional EFM
+                </label>
+                <select
+                  value={orderData.picEFMOps}
+                  onChange={e => setOrderData(p => ({ ...p, picEFMOps: e.target.value }))}
+                  className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#1E1C43]"
+                >
+                  <option value="">-- Pilih PIC --</option>
+                  <option>Bagoes</option><option>Emma</option><option>Lainnya</option>
+                </select>
+                <p className="text-[10px] text-gray-400 mt-1">PIC yang handle operasional program ini</p>
+              </div>
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                  Nilai Kontrak (Rp)
+                </label>
+                <div className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 flex items-center font-medium min-h-[42px]">
+                  {subtotal > 0 ? fmtRp(subtotal) : <span className="text-gray-400 italic text-xs">Auto dari rincian layanan</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* Catatan */}
+            <div>
+              <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
                 Catatan Order
               </label>
               <textarea
@@ -645,21 +661,19 @@ export default function EventOrderNewPage() {
                 onChange={e => setOrderData(p => ({ ...p, catatan: e.target.value }))}
                 rows={3}
                 placeholder="Catatan tambahan, instruksi khusus, atau informasi penting..."
-                className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] resize-none"
+                className="w-full px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] resize-none"
               />
             </div>
 
           </div>
         </div>
 
-        {/* ══════════════════════════
-            SECTION: Rincian Layanan
-        ══════════════════════════ */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
-          <h3 className="text-sm font-semibold text-gray-700 mb-4">Rincian Layanan</h3>
+        {/* ── SECTION: Rincian Layanan ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Rincian Layanan</h3>
 
           <div className="overflow-x-auto">
-            <table className="w-full" style={{ minWidth: 700 }}>
+            <table className="w-full" style={{ minWidth: 600 }}>
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   {['Item Layanan', 'Satuan', 'Jumlah', 'Rate / Unit (Rp)', 'Total', ''].map(h => (
@@ -677,14 +691,14 @@ export default function EventOrderNewPage() {
                         value={row.item}
                         onChange={e => updateRincian(row.id, 'item', e.target.value)}
                         placeholder="Nama layanan / item..."
-                        className="w-full min-w-[200px] border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                        className="w-full min-w-[160px] border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
                       />
                     </td>
                     <td className="px-3 py-2.5">
                       <select
                         value={row.satuan}
                         onChange={e => updateRincian(row.id, 'satuan', e.target.value)}
-                        className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43] min-w-[90px]"
+                        className="border border-gray-200 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43] min-w-[80px]"
                       >
                         <option>Bulan</option><option>Sesi</option><option>Paket</option>
                         <option>Orang</option><option>Kelas</option><option>Unit</option>
@@ -696,7 +710,7 @@ export default function EventOrderNewPage() {
                         value={row.jumlah}
                         onChange={e => updateRincian(row.id, 'jumlah', e.target.value)}
                         placeholder="0"
-                        className="w-16 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                        className="w-14 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
                       />
                     </td>
                     <td className="px-3 py-2.5">
@@ -705,7 +719,7 @@ export default function EventOrderNewPage() {
                         value={row.rateUnit}
                         onChange={e => updateRincian(row.id, 'rateUnit', e.target.value)}
                         placeholder="0"
-                        className="w-36 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                        className="w-28 border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-right focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
                       />
                     </td>
                     <td className="px-3 py-2.5 text-xs font-medium text-gray-800 whitespace-nowrap text-right">
@@ -713,11 +727,7 @@ export default function EventOrderNewPage() {
                     </td>
                     <td className="px-3 py-2.5">
                       {rincianLayanan.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => hapusItem(row.id)}
-                          className="text-red-400 hover:text-red-600 transition-colors"
-                        >
+                        <button type="button" onClick={() => hapusItem(row.id)} className="text-red-400 hover:text-red-600 transition-colors">
                           <Trash2 size={13} />
                         </button>
                       )}
@@ -731,72 +741,81 @@ export default function EventOrderNewPage() {
           <button
             type="button"
             onClick={tambahItem}
-            className="mt-3 inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-gray-50 transition-colors"
+            className="mt-3 w-full sm:w-auto inline-flex items-center justify-center gap-1.5 border-2 border-dashed border-gray-200 text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] text-xs font-medium px-4 py-2 rounded-xl transition-colors"
           >
             <Plus size={13} /> Tambah Item
           </button>
 
-          {/* Subtotal */}
           <div className="flex justify-end mt-4 pt-4 border-t border-gray-100">
             <div className="text-right">
               <p className="text-xs text-gray-400">Subtotal (Nilai Kontrak)</p>
-              <p className="text-sm font-bold text-[#1E1C43]">
-                {fmtRp(subtotal)}
-              </p>
+              <p className="text-xl font-bold text-[#1E1C43] mt-0.5">{fmtRp(subtotal)}</p>
             </div>
           </div>
         </div>
 
-        {/* Konsultasi context card — jika ada data konsultasi */}
+        {/* ── Konsultasi context card ── */}
         {konsultasiDetailData && (
-          <div className="bg-white rounded-xl shadow-sm p-6 mb-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-3">Info dari Konsultasi #{konsultasiId}</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
+              Info dari Konsultasi #{konsultasiId}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Nama Event</p>
-                <p className="text-xs text-gray-700">{konsultasiDetailData.namaEvent || '—'} · {konsultasiDetailData.jenisEvent || '—'}</p>
+                <p className="text-sm text-gray-700">{konsultasiDetailData.namaEvent || '—'} · {konsultasiDetailData.jenisEvent || '—'}</p>
               </div>
-              <div>
+              <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Peran EFM & Peserta</p>
-                <p className="text-xs text-gray-700">{konsultasiDetailData.peranEFM || '—'} · Est. {konsultasiDetailData.estimasiPeserta || '—'}</p>
+                <p className="text-sm text-gray-700">{konsultasiDetailData.peranEFM || '—'} · Est. {konsultasiDetailData.estimasiPeserta || '—'}</p>
               </div>
-              <div>
+              <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Lokasi Event</p>
-                <p className="text-xs text-gray-700">{konsultasiDetailData.kota || '—'}</p>
+                <p className="text-sm text-gray-700">{konsultasiDetailData.kota || '—'}</p>
               </div>
-              <div>
+              <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Catatan Konsultasi</p>
-                <p className="text-xs text-gray-700">{konsultasiDetailData.catatanKonsultasi || '—'}</p>
+                <p className="text-sm text-gray-700">{konsultasiDetailData.catatanKonsultasi || '—'}</p>
               </div>
             </div>
           </div>
         )}
 
-      </div>{/* end px-6 py-6 */}
+      </div>
 
-      {/* ══════════════════════════
-          STICKY FOOTER
-      ══════════════════════════ */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 px-6 py-4 flex justify-between items-center z-10 shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
-        <button
-          onClick={() => navigate(-1)}
-          className="px-4 py-2 text-sm text-gray-500 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-        >
-          ← Batal
-        </button>
-        <div className="flex gap-3">
-          <button
-            onClick={handleSimpanDraft}
-            className="inline-flex items-center gap-2 px-4 py-2 text-sm border border-[#1E1C43] text-[#1E1C43] rounded-lg hover:bg-gray-50 transition-colors"
-          >
-            <Save size={14} /> Simpan Draft
-          </button>
-          <button
-            onClick={handleSimpanOrder}
-            className="px-5 py-2 text-sm bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] font-medium transition-colors"
-          >
-            💾 Simpan & Buat Order
-          </button>
+      {/* ── Fixed Footer (sidebar-aware) ── */}
+      <div className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-200 px-4 sm:px-6 py-3 z-40 shadow-[0_-2px_8px_rgba(0,0,0,0.06)]">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-3">
+          <div className="hidden sm:block min-w-0">
+            <p className="text-sm text-gray-700 font-semibold truncate">
+              {clientData.namaKlien || 'Order Baru'}
+            </p>
+            {subtotal > 0 && (
+              <p className="text-xs text-gray-400 mt-0.5">
+                Total: <span className="font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
+              </p>
+            )}
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            <button
+              onClick={() => navigate(-1)}
+              className="px-3.5 py-2 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              Batal
+            </button>
+            <button
+              onClick={handleSimpanDraft}
+              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-sm border border-[#1E1C43] text-[#1E1C43] rounded-xl hover:bg-gray-50 transition-colors"
+            >
+              <Save size={13} /> Draft
+            </button>
+            <button
+              onClick={handleSimpanOrder}
+              className="px-4 sm:px-5 py-2 text-sm bg-[#1E1C43] text-white rounded-xl hover:bg-[#2d2b5e] font-semibold transition-colors"
+            >
+              Simpan & Buat Order →
+            </button>
+          </div>
         </div>
       </div>
 
