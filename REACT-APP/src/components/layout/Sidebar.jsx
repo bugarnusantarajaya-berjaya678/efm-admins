@@ -24,11 +24,10 @@ const B2B_SUB = [
 ]
 
 const EVENT_SUB = [
-  { label: 'Dashboard',  path: '/event/dashboard'  },
-  { label: 'Leads',      path: '/event/leads'      },
-  { label: 'Konsultasi', path: '/event/konsultasi' },
-  { label: 'Orders',     path: '/event/orders'     },
-  { label: 'Kalender',   path: '/event/kalender'   },
+  { label: 'Dashboard', path: '/event/dashboard' },
+  { label: 'Leads',     path: '/event/leads'     },
+  { label: 'Orders',    path: '/event/orders'    },
+  { label: 'Kalender',  path: '/event/kalender'  },
 ]
 
 const LAPORAN_SUB = [
