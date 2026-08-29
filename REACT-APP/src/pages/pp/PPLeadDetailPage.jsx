@@ -444,7 +444,7 @@ export default function PPLeadDetailPage() {
             </div>
 
             {/* Action buttons */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
               {lead.statusPipeline !== 'Lost' && (
                 <button
                   onClick={() => navigate('/pp/orders/new', {
