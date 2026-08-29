@@ -47,6 +47,7 @@ import EventLeadNewPage from './pages/event/EventLeadNewPage'
 import EventLeadDetailPage from './pages/event/EventLeadDetailPage'
 import EventKonsultasiPage from './pages/event/EventKonsultasiPage'
 import EventKonsultasiDetailPage from './pages/event/EventKonsultasiDetailPage'
+import EventQuotationDetailPage from './pages/event/EventQuotationDetailPage'
 import EventOrdersPage from './pages/event/EventOrdersPage'
 import EventOrderDetailPage from './pages/event/EventOrderDetailPage'
 import EventOrderNewPage from './pages/event/EventOrderNewPage'
@@ -133,6 +134,8 @@ function AppRoutes() {
       <Route path="/event/konsultasi"     element={<AppShell><EventKonsultasiPage /></AppShell>} />
       <Route path="/event/konsultasi/new" element={<AppShell><EventKonsultasiDetailPage /></AppShell>} />
       <Route path="/event/konsultasi/:id" element={<AppShell><EventKonsultasiDetailPage /></AppShell>} />
+      <Route path="/event/quotation/new"  element={<AppShell><EventQuotationDetailPage /></AppShell>} />
+      <Route path="/event/quotation/:id"  element={<AppShell><EventQuotationDetailPage /></AppShell>} />
       <Route path="/event/orders"       element={<AppShell><EventOrdersPage      /></AppShell>} />
       <Route path="/event/orders/new"   element={<AppShell><EventOrderNewPage    /></AppShell>} />
       <Route path="/event/orders/:id"   element={<AppShell><EventOrderDetailPage /></AppShell>} />

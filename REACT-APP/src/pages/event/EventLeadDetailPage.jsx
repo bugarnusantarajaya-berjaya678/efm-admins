@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ExternalLink, Phone, Mail } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
+import { initQuotations, getStoredQuotations, QUOTATIONS_INIT } from '../../data/eventQuotationsStore'
 
 /* ═══════════════════════════════════════
    Constants
@@ -361,12 +362,16 @@ export default function EventLeadDetailPage() {
   const TABS = [
     { key: 'info',       label: 'Info Klien'   },
     { key: 'konsultasi', label: 'Konsultasi'   },
+    { key: 'quotation',  label: 'Quotation'    },
     { key: 'riwayat',    label: 'Riwayat'      },
     { key: 'log',        label: 'Log & Histori' },
   ]
 
   initKonsultasi(KONSULTASI_INIT)
   const leadKonsultasi = getStoredKonsultasi().filter(k => k.leadId === lead.id)
+
+  initQuotations(QUOTATIONS_INIT)
+  const leadQuotations = getStoredQuotations().filter(q => q.leadId === lead.id)
 
   return (
     <>
@@ -737,7 +742,60 @@ export default function EventLeadDetailPage() {
         )}
 
         {/* ════════════════════════════════
-            TAB 3: RIWAYAT
+            TAB 3: QUOTATION
+        ════════════════════════════════ */}
+        {activeTab === 'quotation' && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Daftar Quotation</h3>
+                <p className="text-xs text-gray-400 pl-4 mt-0.5">Semua penawaran harga yang terhubung dengan lead ini</p>
+              </div>
+              <button
+                onClick={() => navigate('/event/quotation/new', { state: { fromLead: true, leadId: lead.id, namaKlien: lead.namaKlien, namaEvent: lead.namaEvent } })}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+                <Plus size={12} /> Buat Quotation
+              </button>
+            </div>
+            <div className="p-5">
+              {leadQuotations.length === 0 ? (
+                <p className="text-xs text-gray-400 italic text-center py-8">Belum ada quotation untuk lead ini.</p>
+              ) : (
+                <div className="space-y-2">
+                  {leadQuotations.map(q => {
+                    const statusCls = {
+                      Draft:     'bg-yellow-50 text-yellow-700 border-yellow-200',
+                      Terkirim:  'bg-blue-50 text-blue-700 border-blue-200',
+                      Disetujui: 'bg-green-50 text-green-700 border-green-200',
+                      Revisi:    'bg-red-50 text-red-600 border-red-200',
+                    }[q.status] || 'bg-gray-50 text-gray-500 border-gray-200'
+                    return (
+                      <button key={q.id}
+                        onClick={() => navigate(`/event/quotation/${q.id}`)}
+                        className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-sm font-bold text-[#1E1C43]">{q.id}</span>
+                            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{q.status}</span>
+                          </div>
+                          <p className="text-xs text-gray-500">{q.tanggalDibuat} · Berlaku s/d {q.tanggalBerlaku || '—'}</p>
+                          {q.namaEvent && <p className="text-xs text-gray-600 mt-0.5">{q.namaEvent}</p>}
+                          <p className="text-sm font-semibold text-[#E05945] mt-1">
+                            Rp {(q.nilaiTotal || 0).toLocaleString('id-ID')}
+                          </p>
+                        </div>
+                        <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
+                      </button>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 4: RIWAYAT
         ════════════════════════════════ */}
         {activeTab === 'riwayat' && (
           <div className="space-y-4">
@@ -814,7 +872,7 @@ export default function EventLeadDetailPage() {
         )}
 
         {/* ════════════════════════════════
-            TAB 4: LOG AKTIVITAS
+            TAB 5: LOG AKTIVITAS
         ════════════════════════════════ */}
         {activeTab === 'log' && (
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-hidden">
