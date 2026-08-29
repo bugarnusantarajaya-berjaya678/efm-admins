@@ -686,22 +686,6 @@ export default function PPFitnessAssessmentPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {!isNew && !isEditing && (
-              <button
-                onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors"
-              >
-                <Edit2 size={13} /> Edit
-              </button>
-            )}
-            {!isNew && isEditing && (
-              <button
-                onClick={() => setIsEditing(false)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-200 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Batalkan
-              </button>
-            )}
             <button
               onClick={() => handleBack()}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
