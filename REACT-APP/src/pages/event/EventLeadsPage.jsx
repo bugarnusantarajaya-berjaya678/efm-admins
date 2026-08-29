@@ -22,13 +22,13 @@ const TIPE_CLS = {
 }
 
 const STAGE_CLS = {
-  New:          'bg-gray-100 text-gray-600',
-  Approach:     'bg-blue-100 text-blue-700',
-  Presentation: 'bg-yellow-100 text-yellow-700',
-  Proposal:     'bg-purple-100 text-purple-700',
-  Closing:      'bg-orange-100 text-[#E05945]',
-  Converted:    'bg-green-100 text-green-700',
-  Lost:         'bg-red-100 text-red-600',
+  New:         'bg-gray-100 text-gray-600',
+  Approach:    'bg-blue-100 text-blue-700',
+  Konsultasi:  'bg-yellow-100 text-yellow-700',
+  Quotation:   'bg-purple-100 text-purple-700',
+  Closing:     'bg-orange-100 text-[#E05945]',
+  Converted:   'bg-green-100 text-green-700',
+  Lost:        'bg-red-100 text-red-600',
 }
 
 
@@ -143,7 +143,7 @@ export default function EventLeadsPage() {
   , [leads, bulan, tahun, tipe, stage, search])
 
   const kpiTotal     = leads.length
-  const kpiHot       = leads.filter(l => l.stage === 'Proposal' || l.stage === 'Closing').length
+  const kpiHot       = leads.filter(l => l.stage === 'Quotation' || l.stage === 'Closing').length
   const kpiConverted = leads.filter(l => l.stage === 'Converted').length
   const kpiLost      = leads.filter(l => l.stage === 'Lost').length
 
@@ -215,8 +215,8 @@ export default function EventLeadsPage() {
           <select value={stage} onChange={e => setStage(e.target.value)}
             className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors">
             <option value="">Semua Status</option>
-            <option>New</option><option>Approach</option><option>Presentation</option>
-            <option>Proposal</option><option>Closing</option><option>Converted</option><option>Lost</option>
+            <option>New</option><option>Approach</option><option>Konsultasi</option>
+            <option>Quotation</option><option>Closing</option><option>Converted</option><option>Lost</option>
           </select>
           <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
             <Search size={14} className="text-gray-400 shrink-0" />

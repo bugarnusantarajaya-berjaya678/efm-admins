@@ -6,7 +6,23 @@ EFM V2 adalah admin dashboard untuk CV. Bugar Nusantara Jaya (Essential
 
 Fitness Management) — mengelola 3 pilar bisnis: Private Program (PP), 
 
-B2B Corporate & Property, dan Event Management.
+B2B Management (Corporate & Property), dan B2B Event.
+
+## Penamaan Modul — PENTING
+
+- Modul ketiga bernama resmi **"B2B Event"** (bukan "Event Management" atau 
+  hanya "Event"). Ini adalah divisi B2B khusus event fitness (Zumba, wellness 
+  event, dll), berbeda dari B2B Management yang mengelola gym/fitness center 
+  korporat dan apartemen secara recurring.
+- Kode/route di codebase menggunakan prefix `/event/` dan nama file `Event*` —
+  ini tetap dipertahankan untuk konsistensi teknis, tapi label UI dan komunikasi
+  ke pengguna harus menyebut "B2B Event", bukan "Event" saja.
+- Perbedaan B2B Management vs B2B Event:
+  - **B2B Management**: kontrak recurring bulanan/tahunan, gym corporat, 
+    apartemen; alur: Leads → Survei → Quotation → Order → Invoice → Kontrak
+  - **B2B Event**: event satu kali atau periodik (Zumba, fitness challenge, dll);
+    alur: Leads → Konsultasi → Quotation → Order → Invoice → Kelas Jalan → 
+    Pelatih Absen → Rekap
 
 - Stack: React 18 + Vite + Tailwind CSS v3 + React Router v6
 
