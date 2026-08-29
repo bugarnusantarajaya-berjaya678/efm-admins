@@ -679,7 +679,7 @@ export default function PPOrderDetailPage() {
           <div className="flex items-start gap-3 flex-1 min-w-0">
             {/* Avatar circle */}
             <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-sm sm:text-base font-bold shrink-0"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-sm sm:text-sm font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaKlien) }}
             >
               {getInitials(order.namaKlien)}
@@ -825,7 +825,7 @@ export default function PPOrderDetailPage() {
                         <select
                           value={infoDraft?.hubunganKlien || ''}
                           onChange={e => setInfoDraft(d => ({ ...d, hubunganKlien: e.target.value }))}
-                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
                         >
                           {['Diri Sendiri','Orang Tua','Pasangan','Anak','Saudara','Lainnya'].map(o => (
                             <option key={o}>{o}</option>
@@ -860,7 +860,7 @@ export default function PPOrderDetailPage() {
                           type="number" min="1" max="99"
                           value={infoDraft?.usiaKlien || ''}
                           onChange={e => setInfoDraft(d => ({ ...d, usiaKlien: e.target.value }))}
-                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
                         />
                       ) : (
                         <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
@@ -873,7 +873,7 @@ export default function PPOrderDetailPage() {
                         <select
                           value={infoDraft?.jenisKelaminKlien || ''}
                           onChange={e => setInfoDraft(d => ({ ...d, jenisKelaminKlien: e.target.value }))}
-                          className="w-full text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
                         >
                           {['Laki-laki','Perempuan'].map(o => <option key={o}>{o}</option>)}
                         </select>
@@ -932,7 +932,7 @@ export default function PPOrderDetailPage() {
                       {editingSection === 'infoDeal' ? (
                         <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
                           onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                       ) : (
                         <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
                       )}
@@ -942,7 +942,7 @@ export default function PPOrderDetailPage() {
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hubungan dengan Klien</p>
                     {editingSection === 'infoDeal' ? (
                       <select value={infoDraft.hubunganKlien || 'Diri Sendiri'} onChange={e => setInfoDraft(p => ({...p, hubunganKlien: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white">
                         {['Diri Sendiri','Pasangan','Anak','Orang Tua','Keluarga Lain','Lainnya'].map(o => <option key={o}>{o}</option>)}
                       </select>
                     ) : (
@@ -964,7 +964,7 @@ export default function PPOrderDetailPage() {
                       {editingSection === 'infoDeal' ? (
                         <input type={type} value={infoDraft[field] || ''} placeholder={`Isi ${label.toLowerCase()}`}
                           onChange={e => setInfoDraft(p => ({...p, [field]: e.target.value}))}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                       ) : (
                         <p className="text-sm font-semibold text-gray-800">{infoDeal[field] || '—'}</p>
                       )}
@@ -976,7 +976,7 @@ export default function PPOrderDetailPage() {
                       <div className="flex items-center gap-1.5">
                         <input type="number" min="1" max="99" value={infoDraft.usiaKlien || ''} placeholder="0"
                           onChange={e => setInfoDraft(p => ({...p, usiaKlien: e.target.value}))}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                         <span className="text-xs text-gray-400 whitespace-nowrap">tahun</span>
                       </div>
                     ) : (
@@ -987,7 +987,7 @@ export default function PPOrderDetailPage() {
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
                     {editingSection === 'infoDeal' ? (
                       <select value={infoDraft.jenisKelaminKlien || ''} onChange={e => setInfoDraft(p => ({...p, jenisKelaminKlien: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white">
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white">
                         <option value="">-- Pilih --</option>
                         <option value="Laki-laki">Laki-laki</option>
                         <option value="Perempuan">Perempuan</option>
@@ -1023,7 +1023,7 @@ export default function PPOrderDetailPage() {
                         if (prog) setProgramSearch(`${prog.id} — ${prog.namaPaket}`)
                       }, 150)}
                       placeholder="Ketik ID program atau nama paket..."
-                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-xs focus:outline-none focus:border-[#1E1C43] bg-white pr-8" />
+                      className="w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm focus:outline-none focus:border-[#1E1C43] bg-white pr-8" />
                     <ChevronDown size={12} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                     {programDropdownOpen && (
                       <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-52 overflow-y-auto">
@@ -1069,7 +1069,7 @@ export default function PPOrderDetailPage() {
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        <p className="text-base font-bold text-[#1E1C43]">{formatRpPP(stripProg.hargaPaket)}</p>
+                        <p className="text-sm font-bold text-[#1E1C43]">{formatRpPP(stripProg.hargaPaket)}</p>
                         {editingSection === 'infoDeal' && (
                           <button onClick={() => setShowGantiPaket(true)}
                             className="text-xs border border-gray-200 text-gray-500 bg-white rounded-lg px-3 py-1 hover:bg-gray-100 transition whitespace-nowrap">
@@ -1121,7 +1121,7 @@ export default function PPOrderDetailPage() {
                             onChange={e => setRincianDraft(prev => prev.map((it, i) =>
                               i === idx + 1 ? { ...it, namaItem: e.target.value } : it
                             ))}
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]" />
                         </div>
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
@@ -1132,7 +1132,7 @@ export default function PPOrderDetailPage() {
                               const harga = it.harga ?? (it.total / Math.max(1, it.jumlah || 1))
                               return { ...it, jumlah: jml, total: jml * harga }
                             }))}
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]" />
                         </div>
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
@@ -1142,7 +1142,7 @@ export default function PPOrderDetailPage() {
                               const harga = Number(e.target.value)
                               return { ...it, harga, total: (it.jumlah ?? 1) * harga }
                             }))}
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]" />
                         </div>
                       </div>
                       <div className="mt-2 text-right">
@@ -1172,7 +1172,7 @@ export default function PPOrderDetailPage() {
 
               <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
                 <span className="text-sm font-medium text-white/80">Total Nilai Order</span>
-                <span className="text-base font-bold text-white">{formatRpPP(subtotalPP)}</span>
+                <span className="text-sm font-bold text-white">{formatRpPP(subtotalPP)}</span>
               </div>
             </div>
 
@@ -1218,7 +1218,7 @@ export default function PPOrderDetailPage() {
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
                     {editingSection === 'infoDeal' ? (
                       <input type="time" value={infoDraft.jamLatihan || ''} onChange={e => setInfoDraft(p => ({...p, jamLatihan: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                     ) : (
                       <p className="text-sm font-semibold text-gray-800">{infoDeal.jamLatihan || order.jamLatihan || '—'}{(infoDeal.jamLatihan || order.jamLatihan) ? ' WIB' : ''}</p>
                     )}
@@ -1227,7 +1227,7 @@ export default function PPOrderDetailPage() {
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Mulai</p>
                     {editingSection === 'infoDeal' ? (
                       <input type="date" value={infoDraft.tanggalMulai || ''} onChange={e => setInfoDraft(p => ({...p, tanggalMulai: e.target.value}))}
-                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                        className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                     ) : (
                       <p className="text-sm font-semibold text-gray-800">{infoDeal.tanggalMulai || order.tanggalMulai || '—'}</p>
                     )}
@@ -1247,7 +1247,7 @@ export default function PPOrderDetailPage() {
                   {editingSection === 'infoDeal' ? (
                     <input type="text" value={infoDraft.lokasiLatihan || ''} placeholder="cth. Hampton's Park Tower A, Lt. 3 — Gym Area"
                       onChange={e => setInfoDraft(p => ({...p, lokasiLatihan: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                   ) : (
                     <p className="text-sm font-semibold text-gray-800">{infoDeal.lokasiLatihan || order.lokasiLatihan || '—'}</p>
                   )}
@@ -1257,7 +1257,7 @@ export default function PPOrderDetailPage() {
                   {editingSection === 'infoDeal' ? (
                     <input type="text" value={infoDraft.linkMaps || ''} placeholder="https://maps.google.com/..."
                       onChange={e => setInfoDraft(p => ({...p, linkMaps: e.target.value}))}
-                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                      className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                   ) : (
                     infoDeal.linkMaps || order.linkMaps ? (
                       <a href={infoDeal.linkMaps || order.linkMaps} target="_blank" rel="noopener noreferrer"
@@ -1385,7 +1385,7 @@ export default function PPOrderDetailPage() {
                               : ''
                             setInvoiceDraft(d => ({ ...d, tanggal: tgl, jatuhTempo: autoJT }))
                           }}
-                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                          className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                       ) : (
                         <p className="text-sm font-semibold text-gray-800">{fmtDate(invoicePP.tanggal)}</p>
                       )}
@@ -1397,7 +1397,7 @@ export default function PPOrderDetailPage() {
                           <input type="date" value={invoiceDraft.jatuhTempo || ''}
                             min={minJatuhTempoDraft}
                             onChange={e => setInvoiceDraft(d => ({ ...d, jatuhTempo: e.target.value }))}
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-[#1E1C43] bg-white" />
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
                           {invoiceDraft.jatuhTempo && minJatuhTempoDraft && invoiceDraft.jatuhTempo < minJatuhTempoDraft && (
                             <p className="text-[10px] text-red-500 mt-1">Min. H+2 dari tanggal invoice</p>
                           )}
@@ -1803,9 +1803,9 @@ export default function PPOrderDetailPage() {
             const pctHadir = Math.min(100, Math.round((totalHadir / totalPaket) * 100))
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+                <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
                   <div>
-                    <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Monitoring Sesi</h3>
+                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Monitoring Sesi</h3>
                     <p className="text-xs text-gray-400 mt-1 ml-3">Absensi dicatat otomatis oleh sistem backend pelatih</p>
                   </div>
                   <div className="flex items-center gap-2 flex-wrap ml-3 sm:ml-0">
@@ -2141,7 +2141,7 @@ export default function PPOrderDetailPage() {
                           </div>
                           <div className="flex justify-between items-center bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl px-4 py-3">
                             <p className="text-sm font-bold text-[#1E1C43]">Total Dibayarkan</p>
-                            <p className="text-base font-bold text-[#E05945]">Rp {totalHonorariumDue.toLocaleString('id-ID')}</p>
+                            <p className="text-sm font-bold text-[#E05945]">Rp {totalHonorariumDue.toLocaleString('id-ID')}</p>
                           </div>
                         </div>
                       )}
@@ -2280,9 +2280,9 @@ export default function PPOrderDetailPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'log' && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-3">
+          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
             <div>
-              <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log & Histori</h3>
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log & Histori</h3>
               <p className="text-xs text-gray-400 mt-1 ml-3">
                 {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length} aktivitas tercatat
               </p>
@@ -2436,7 +2436,7 @@ export default function PPOrderDetailPage() {
             <div className="p-5 space-y-4 overflow-y-auto flex-1">
               <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">
                 <p className="text-xs text-gray-500">Total Tagihan</p>
-                <p className="text-base font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</p>
+                <p className="text-sm font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</p>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -2543,7 +2543,7 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]">
             <div className="flex items-center justify-between p-5 border-b border-gray-100 flex-shrink-0">
               <div>
-                <h3 className="text-base font-bold text-[#1E1C43]">Tambah Absensi Manual</h3>
+                <h3 className="text-sm font-bold text-[#1E1C43]">Tambah Absensi Manual</h3>
                 <p className="text-xs text-gray-400 mt-0.5">Untuk kasus pelatih sama sekali tidak scan barcode</p>
               </div>
               <button onClick={() => setShowTambahAbsensiManual(false)} className="text-gray-400 hover:text-gray-600 transition">

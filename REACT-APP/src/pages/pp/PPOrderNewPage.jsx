@@ -570,7 +570,7 @@ export default function PPOrderNewPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <p className="text-base font-bold text-[#1E1C43]">{formatRp(selectedPaket.hargaPaket)}</p>
+                  <p className="text-sm font-bold text-[#1E1C43]">{formatRp(selectedPaket.hargaPaket)}</p>
                   <button
                     onClick={() => { setSelectedPaket(null); setItems([]); }}
                     className="text-xs border border-gray-200 text-gray-500 bg-white rounded-lg px-3 py-1 hover:bg-gray-100 transition whitespace-nowrap">
