@@ -19,7 +19,7 @@ const EMPTY_FORM = {
 export default function EventLeadNewPage() {
   const navigate = useNavigate()
   useBreadcrumb([
-    { label: 'Event Management' },
+    { label: 'B2B Event' },
     { label: 'Leads', to: '/event/leads' },
     { label: 'Lead Baru' },
   ])
@@ -95,12 +95,12 @@ export default function EventLeadNewPage() {
             <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Event Management</p>
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Lead Baru</h1>
-              <p className="text-xs text-gray-400 mt-1">Tambah prospek klien Event Management baru</p>
+              <p className="text-xs text-gray-400 mt-1">Tambah prospek klien B2B Event baru</p>
             </div>
           </div>
           <button
             onClick={() => navigate('/event/leads')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold transition-colors"
           >
             <ArrowLeft size={12} /> Kembali
           </button>

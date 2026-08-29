@@ -226,7 +226,7 @@ export default function EventLeadsPage() {
               value={search} onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <button onClick={handleReset} className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+          <button onClick={handleReset} className="px-3.5 py-[7px] border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
         </div>
 
         {/* Table */}
@@ -253,7 +253,7 @@ export default function EventLeadsPage() {
                   <tr
                     key={lead.id}
                     onClick={() => navigate('/event/leads/' + lead.id, { state: { lead } })}
-                    className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer"
+                    className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                   >
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{lead.id}</td>
                     <td className="px-3 py-2.5">
