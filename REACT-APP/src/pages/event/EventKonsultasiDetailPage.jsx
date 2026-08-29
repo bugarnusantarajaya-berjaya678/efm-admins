@@ -377,7 +377,7 @@ export default function EventKonsultasiDetailPage() {
         </div>
       )}
 
-      <div className="px-4 py-4 md:px-6 md:py-6">
+      <div className="px-4 py-4 md:px-6 md:py-6 pb-24">
 
       {/* ══════════════════════════════════════════
           HEADER CARD
@@ -815,32 +815,37 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           FOOTER
       ══════════════════════════════════════════ */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-[0_-2px_12px_rgba(0,0,0,0.06)] px-5 py-3.5 mt-4 z-10">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-xs text-gray-400 hidden sm:block truncate">
-            <span className="font-semibold text-[#1E1C43]">
+      </div>{/* close px-4 py-4 wrapper early so footer is outside */}
+      <div className="fixed bottom-0 right-0 left-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 z-40">
+        <div className="max-w-5xl mx-auto flex items-center justify-between gap-4">
+          {/* Left — context info */}
+          <div className="hidden sm:block min-w-0">
+            <p className="text-sm text-gray-700 font-semibold truncate">
               {profilKlien.namaKlien || 'Form Konsultasi'}
-            </span>
-            {selectedLeadId && <span className="text-[#1E1C43]/50 ml-1.5">· {selectedLeadId}</span>}
+              {selectedLeadId && <span className="text-gray-400 font-normal ml-1.5">· {selectedLeadId}</span>}
+            </p>
             {hasilKonsultasi && (
-              <span className={`ml-1.5 ${
-                hasilKonsultasi === 'Lanjut'  ? 'text-green-600' :
-                hasilKonsultasi === 'Pending' ? 'text-yellow-600' : 'text-red-500'
-              }`}>· {hasilKonsultasi}</span>
+              <p className={`text-xs font-medium mt-0.5 ${
+                hasilKonsultasi === 'Lanjut'       ? 'text-green-600' :
+                hasilKonsultasi === 'Pending'      ? 'text-yellow-600' :
+                                                     'text-red-500'
+              }`}>{hasilKonsultasi}</p>
             )}
-          </p>
-          <div className="flex items-center gap-2 ml-auto">
+          </div>
+
+          {/* Right — actions */}
+          <div className="flex items-center gap-3 ml-auto">
             <button type="button" onClick={handleSimpanDraft}
-              className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-700 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-              <Save size={13} /> Simpan Draft
+              className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition flex items-center gap-2">
+              <Save size={14} /> Simpan Draft
             </button>
             <button type="button" onClick={handleSimpanSelesai}
-              className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
-              <Send size={13} /> Simpan & Selesai
+              className="px-6 py-2.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white rounded-xl text-sm font-semibold transition flex items-center gap-2">
+              <Send size={14} /> Simpan & Selesai
             </button>
             {hasilKonsultasi === 'Lanjut' && (
               <button type="button" onClick={handleBuatOrder}
-                className="inline-flex items-center gap-1.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                className="px-6 py-2.5 bg-[#E05945] hover:bg-[#c94a38] text-white rounded-xl text-sm font-semibold transition">
                 Buat Order →
               </button>
             )}
@@ -848,7 +853,6 @@ export default function EventKonsultasiDetailPage() {
         </div>
       </div>
 
-      </div>{/* end px-6 py-6 */}
     </div>
   )
 }
