@@ -1153,7 +1153,7 @@ export default function EventOrderDetailPage() {
                       {/* Total */}
                       <div className="flex justify-between items-center pt-2 border-t-2 border-gray-200">
                         <span className="text-sm font-bold text-gray-700">TOTAL PENAWARAN</span>
-                        <span className="text-base font-bold text-[#E05945]">{fmtRp(calc.total)}</span>
+                        <span className="text-sm font-bold text-[#E05945]">{fmtRp(calc.total)}</span>
                       </div>
                     </div>
                   </div>
@@ -1179,7 +1179,7 @@ export default function EventOrderDetailPage() {
                       <select
                         value={quotationData.status}
                         onChange={e => setQuotationData(p => ({...p, status: e.target.value}))}
-                        className="border border-gray-200 rounded-lg px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
+                        className="border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
                       >
                         {['Draft','Terkirim','Disetujui','Ditolak','Revisi'].map(s => <option key={s}>{s}</option>)}
                       </select>
@@ -2352,7 +2352,7 @@ export default function EventOrderDetailPage() {
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl">
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-bold text-[#1E1C43]">Buat Laporan Kunjungan — {order.namaKlien}</h2>
+              <h2 className="text-sm font-bold text-[#1E1C43]">Buat Laporan Kunjungan — {order.namaKlien}</h2>
               <button onClick={() => setShowFormLaporan(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
             </div>
 
@@ -2586,7 +2586,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                     </div>
                   )}
                   <div className="text-left">
-                    <p className="text-base font-bold text-[#1E1C43] tracking-wide uppercase">
+                    <p className="text-sm font-bold text-[#1E1C43] tracking-wide uppercase">
                       {settings.namaPerusahaan || 'Essential Fitness Management'}
                     </p>
                     <p className="text-xs text-gray-600 mt-0.5">
@@ -2746,7 +2746,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                       : dummyMitras.find((m) => m.id === e.target.value)
                     if (src) setNewTimPeran(sumberTim === "PIC" ? src.spesialisasi : src.peran)
                   }}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
                 >
                   <option value="">— Pilih {sumberTim} —</option>
                   {(sumberTim === "PIC" ? dummyPICs : dummyMitras).map((item) => (
@@ -2765,7 +2765,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                   value={newTimPeran}
                   onChange={(e) => setNewTimPeran(e.target.value)}
                   placeholder="cth. Head Trainer, Supervisor Lapangan"
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
                 />
               </div>
 
@@ -2775,7 +2775,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                 <select
                   value={newTimStatus}
                   onChange={(e) => setNewTimStatus(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]"
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
                 >
                   <option>Aktif</option>
                   <option>Standby</option>
@@ -2828,7 +2828,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8 px-4" style={{ background:'rgba(0,0,0,0.45)' }}>
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-base font-bold text-[#1E1C43]">Laporan Insiden — {order.namaKlien}</h2>
+              <h2 className="text-sm font-bold text-[#1E1C43]">Laporan Insiden — {order.namaKlien}</h2>
               <button onClick={() => setShowFormInsiden(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
             </div>
 
@@ -3411,7 +3411,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                     type="text"
                     id="catatanLogInsiden"
                     placeholder="cth. Barang ditemukan di lokasi parkir..."
-                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-[#1E1C43]"
+                    className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]"
                   />
                   <button
                     onClick={() => {

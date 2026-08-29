@@ -740,7 +740,7 @@ export default function EventOrderNewPage() {
           <div className="flex justify-end mt-4 pt-4 border-t border-gray-100">
             <div className="text-right">
               <p className="text-xs text-gray-400">Subtotal (Nilai Kontrak)</p>
-              <p className="text-base font-bold text-[#1E1C43]">
+              <p className="text-sm font-bold text-[#1E1C43]">
                 {fmtRp(subtotal)}
               </p>
             </div>
