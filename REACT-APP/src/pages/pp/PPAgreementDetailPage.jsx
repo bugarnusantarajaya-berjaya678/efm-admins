@@ -277,7 +277,7 @@ export default function PPAgreementDetailPage() {
     <div className="flex flex-col gap-4">
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
 
           {/* LEFT: icon + info */}
           <div className="flex items-center gap-3 flex-1 min-w-0">

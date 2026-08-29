@@ -42,7 +42,7 @@ function MarkPaidModal({ inv, onConfirm, onClose }) {
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-5">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden">
         <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-border">
-          <h3 className="text-base font-bold text-text-primary">Konfirmasi Pembayaran</h3>
+          <h3 className="text-sm font-bold text-text-primary">Konfirmasi Pembayaran</h3>
           <button onClick={onClose} className="w-8 h-8 rounded-lg border border-border flex items-center justify-center text-text-muted hover:bg-bg-page">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>
@@ -191,7 +191,7 @@ export default function PPInvoiceDetailPage() {
 
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <ScrollText size={18} className="text-white" />
