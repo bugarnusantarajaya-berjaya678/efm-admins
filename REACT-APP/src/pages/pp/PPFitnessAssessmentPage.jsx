@@ -717,7 +717,7 @@ export default function PPFitnessAssessmentPage() {
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
 
-{/* ── REFERENSI STAGE 1 ── */}
+      {/* ── REFERENSI STAGE 1 ── */}
       {leadId && (
         <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
           <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
