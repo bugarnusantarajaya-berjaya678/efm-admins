@@ -460,9 +460,22 @@ export default function EventOrderDetailPage() {
 
   /* ── Tab 4: Kelas Jalan ───────────────────────────────────────────────────── */
   const [kelasList, setKelasList] = useState([
-    { id: 'KLS-EV-26-0001', tanggal: '2026-06-28', waktuMulai: '06:00', waktuSelesai: '09:00', jenisKegiatan: 'Fun Run / Walk',       lokasi: 'GBK, Jakarta Selatan — Start Gate A', estimasiPeserta: 2000, aktualPeserta: 1847, pic: 'Rudi Hartono', status: 'Selesai',      catatan: 'Cuaca cerah. Peserta antusias. Tidak ada insiden.' },
-    { id: 'KLS-EV-26-0002', tanggal: '2026-06-28', waktuMulai: '09:30', waktuSelesai: '10:30', jenisKegiatan: 'Warm-up & Stretching', lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 1500, aktualPeserta: 1320, pic: 'Sari Dewi',    status: 'Selesai',      catatan: '' },
-    { id: 'KLS-EV-26-0003', tanggal: '2026-06-28', waktuMulai: '11:00', waktuSelesai: '12:00', jenisKegiatan: 'Cool-down & Penutupan',lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 800,  aktualPeserta: null,  pic: 'Sari Dewi',    status: 'Dijadwalkan',  catatan: '' },
+    { id: 'KLS-EV-26-0001', tanggal: '2026-06-28', waktuMulai: '06:00', waktuSelesai: '09:00', jenisKegiatan: 'Fun Run / Walk',       lokasi: 'GBK, Jakarta Selatan — Start Gate A', estimasiPeserta: 2000, aktualPeserta: 1847, pic: 'Rudi Hartono', status: 'Selesai',      catatan: 'Cuaca cerah. Peserta antusias. Tidak ada insiden.',
+      absensiPelatih: [
+        { id: 'ABS-001', pelatihId: 'PIC-001', nama: 'Rudi Hartono',  spesialisasi: 'Personal Trainer',   status: 'Hadir',       checkIn: '05:45', catatan: 'Hadir tepat waktu, memimpin briefing tim.' },
+        { id: 'ABS-002', pelatihId: 'PIC-002', nama: 'Sari Dewi',     spesialisasi: 'Yoga Instructor',     status: 'Hadir',       checkIn: '05:50', catatan: '' },
+        { id: 'ABS-003', pelatihId: 'PIC-003', nama: 'Bima Prakoso',  spesialisasi: 'Zumba Instructor',    status: 'Terlambat',   checkIn: '06:35', catatan: 'Terlambat 35 menit karena macet.' },
+      ]
+    },
+    { id: 'KLS-EV-26-0002', tanggal: '2026-06-28', waktuMulai: '09:30', waktuSelesai: '10:30', jenisKegiatan: 'Warm-up & Stretching', lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 1500, aktualPeserta: 1320, pic: 'Sari Dewi',    status: 'Selesai',      catatan: '',
+      absensiPelatih: [
+        { id: 'ABS-004', pelatihId: 'PIC-002', nama: 'Sari Dewi',     spesialisasi: 'Yoga Instructor',     status: 'Hadir',       checkIn: '09:15', catatan: '' },
+        { id: 'ABS-005', pelatihId: 'PIC-004', nama: 'Nia Rahayu',    spesialisasi: 'Pilates Instructor',  status: 'Tidak Hadir', checkIn: '',      catatan: 'Sakit, digantikan Sari Dewi.' },
+      ]
+    },
+    { id: 'KLS-EV-26-0003', tanggal: '2026-06-28', waktuMulai: '11:00', waktuSelesai: '12:00', jenisKegiatan: 'Cool-down & Penutupan',lokasi: 'GBK, Jakarta Selatan — Main Stage',   estimasiPeserta: 800,  aktualPeserta: null,  pic: 'Sari Dewi',    status: 'Dijadwalkan',  catatan: '',
+      absensiPelatih: []
+    },
   ])
   const kelasStatusCls = {
     Dijadwalkan: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -470,10 +483,19 @@ export default function EventOrderDetailPage() {
     Selesai:     'bg-gray-100 text-gray-600 border-gray-200',
     Dibatalkan:  'bg-red-50 text-red-600 border-red-200',
   }
-  const [showTambahKelas, setShowTambahKelas] = useState(false)
-  const [editingKelas,    setEditingKelas]    = useState(null)
-  const [expandedKelas,   setExpandedKelas]   = useState(null)
-  const kelasTemplate = { tanggal: '', waktuMulai: '', waktuSelesai: '', jenisKegiatan: '', lokasi: '', estimasiPeserta: '', aktualPeserta: '', pic: '', status: 'Dijadwalkan', catatan: '' }
+  const [showTambahKelas,    setShowTambahKelas]    = useState(false)
+  const [editingKelas,       setEditingKelas]       = useState(null)
+  const [expandedKelas,      setExpandedKelas]      = useState(null)
+  const [showAbsensiModal,   setShowAbsensiModal]   = useState(null) // kelasId | null
+  const [editingAbsensi,     setEditingAbsensi]     = useState(null) // absensi object | null
+  const absensiStatusCls = {
+    'Hadir':       'bg-green-50 text-green-700 border-green-200',
+    'Terlambat':   'bg-yellow-50 text-yellow-700 border-yellow-200',
+    'Tidak Hadir': 'bg-red-50 text-red-600 border-red-200',
+  }
+  const absensiTemplate = { pelatihId: '', nama: '', spesialisasi: '', status: 'Hadir', checkIn: '', catatan: '' }
+  const [newAbsensi, setNewAbsensi] = useState(absensiTemplate)
+  const kelasTemplate = { tanggal: '', waktuMulai: '', waktuSelesai: '', jenisKegiatan: '', lokasi: '', estimasiPeserta: '', aktualPeserta: '', pic: '', status: 'Dijadwalkan', catatan: '', absensiPelatih: [] }
   const [newKelas, setNewKelas] = useState(kelasTemplate)
   function getNextKelasId() {
     const maxNum = kelasList.reduce((max, k) => {
@@ -2419,8 +2441,9 @@ export default function EventOrderDetailPage() {
                         </tr>
                         {expandedKelas === kelas.id && (
                           <tr key={`${kelas.id}-expand`} className="bg-gray-50">
-                            <td colSpan={9} className="px-6 py-4">
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                            <td colSpan={9} className="px-6 py-5">
+                              {/* Info kelas */}
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
                                 <div>
                                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Lokasi Lengkap</p>
                                   <p className="text-sm text-gray-700">{kelas.lokasi}</p>
@@ -2433,10 +2456,79 @@ export default function EventOrderDetailPage() {
                                 </div>
                                 <div>
                                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Catatan</p>
-                                  <p className="text-sm text-gray-700 italic">{kelas.catatan || 'Tidak ada catatan'}</p>
+                                  <p className="text-sm text-gray-700 italic">{kelas.catatan || '—'}</p>
                                 </div>
                               </div>
-                              <p className="text-xs text-gray-400 italic">Absensi pelatih akan tersedia di Chunk 2.</p>
+
+                              {/* Pelatih Absen section */}
+                              <div className="bg-white rounded-xl border border-gray-200 p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <h4 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
+                                    Absensi Pelatih
+                                    <span className="bg-[#1E1C43] text-white text-xs px-2 py-0.5 rounded-full ml-1">{kelas.absensiPelatih.length}</span>
+                                  </h4>
+                                  <button
+                                    onClick={() => { setNewAbsensi(absensiTemplate); setEditingAbsensi(null); setShowAbsensiModal(kelas.id) }}
+                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold transition-colors">
+                                    <Plus size={12} /> Tambah Pelatih
+                                  </button>
+                                </div>
+
+                                {/* Summary pills */}
+                                {kelas.absensiPelatih.length > 0 && (
+                                  <div className="flex gap-2 flex-wrap mb-3">
+                                    {['Hadir','Terlambat','Tidak Hadir'].map(s => {
+                                      const count = kelas.absensiPelatih.filter(a => a.status === s).length
+                                      return count > 0 ? (
+                                        <span key={s} className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absensiStatusCls[s]}`}>
+                                          {s}: {count}
+                                        </span>
+                                      ) : null
+                                    })}
+                                  </div>
+                                )}
+
+                                {kelas.absensiPelatih.length === 0 ? (
+                                  <p className="text-sm text-gray-400 italic text-center py-4">Belum ada absensi pelatih untuk kelas ini</p>
+                                ) : (
+                                  <div className="overflow-x-auto">
+                                    <table className="w-full" style={{ minWidth: '600px' }}>
+                                      <thead>
+                                        <tr className="border-b border-gray-100">
+                                          {['Pelatih','Spesialisasi','Status','Check-in','Catatan',''].map(h => (
+                                            <th key={h} className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
+                                          ))}
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        {kelas.absensiPelatih.map(abs => (
+                                          <tr key={abs.id} className="border-b border-gray-50 last:border-0">
+                                            <td className="px-3 py-2 text-sm font-semibold text-gray-800 whitespace-nowrap">{abs.nama}</td>
+                                            <td className="px-3 py-2 text-sm text-gray-500 whitespace-nowrap">{abs.spesialisasi}</td>
+                                            <td className="px-3 py-2">
+                                              <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${absensiStatusCls[abs.status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                                                {abs.status}
+                                              </span>
+                                            </td>
+                                            <td className="px-3 py-2 text-sm text-gray-700 whitespace-nowrap">{abs.checkIn || '—'}</td>
+                                            <td className="px-3 py-2 text-sm text-gray-500 max-w-[200px] truncate">{abs.catatan || '—'}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">
+                                              <div className="flex gap-2">
+                                                <button
+                                                  onClick={() => { setEditingAbsensi({ ...abs, kelasId: kelas.id }); setShowAbsensiModal(kelas.id) }}
+                                                  className="text-xs text-[#1E1C43] hover:underline font-medium">Edit</button>
+                                                <button
+                                                  onClick={() => setKelasList(prev => prev.map(k => k.id === kelas.id ? { ...k, absensiPelatih: k.absensiPelatih.filter(a => a.id !== abs.id) } : k))}
+                                                  className="text-xs text-red-500 hover:underline font-medium">Hapus</button>
+                                              </div>
+                                            </td>
+                                          </tr>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  </div>
+                                )}
+                              </div>
                             </td>
                           </tr>
                         )}
@@ -2557,6 +2649,98 @@ export default function EventOrderDetailPage() {
                 }}
                 className="flex-1 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white rounded-lg py-2 text-sm font-semibold transition">
                 {editingKelas ? 'Simpan Perubahan' : 'Tambah Kelas'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══ MODAL: Absensi Pelatih ════════════════════════════════════════════ */}
+      {showAbsensiModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md my-8 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+              <h3 className="text-sm font-bold text-[#1E1C43]">
+                {editingAbsensi ? 'Edit Absensi Pelatih' : 'Tambah Absensi Pelatih'}
+              </h3>
+              <button onClick={() => { setShowAbsensiModal(null); setEditingAbsensi(null) }} className="text-gray-400 hover:text-gray-600">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Pelatih</label>
+                <select
+                  value={editingAbsensi ? editingAbsensi.pelatihId : newAbsensi.pelatihId}
+                  onChange={e => {
+                    const found = dummyPICs.find(p => p.id === e.target.value)
+                    if (editingAbsensi) {
+                      setEditingAbsensi(prev => ({ ...prev, pelatihId: e.target.value, nama: found?.nama || '', spesialisasi: found?.spesialisasi || '' }))
+                    } else {
+                      setNewAbsensi(prev => ({ ...prev, pelatihId: e.target.value, nama: found?.nama || '', spesialisasi: found?.spesialisasi || '' }))
+                    }
+                  }}
+                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white">
+                  <option value="">— Pilih Pelatih —</option>
+                  {dummyPICs.map(p => <option key={p.id} value={p.id}>{p.nama} — {p.spesialisasi}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Status Kehadiran</label>
+                <div className="flex gap-2 flex-wrap">
+                  {['Hadir','Terlambat','Tidak Hadir'].map(s => {
+                    const isActive = (editingAbsensi ? editingAbsensi.status : newAbsensi.status) === s
+                    return (
+                      <button key={s}
+                        onClick={() => editingAbsensi ? setEditingAbsensi(p => ({ ...p, status: s })) : setNewAbsensi(p => ({ ...p, status: s }))}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors ${isActive ? (s === 'Hadir' ? 'bg-green-600 text-white border-green-600' : s === 'Terlambat' ? 'bg-yellow-500 text-white border-yellow-500' : 'bg-red-500 text-white border-red-500') : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>
+                        {s}
+                      </button>
+                    )
+                  })}
+                </div>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jam Check-in</label>
+                <input type="time"
+                  value={editingAbsensi ? editingAbsensi.checkIn : newAbsensi.checkIn}
+                  onChange={e => editingAbsensi ? setEditingAbsensi(p => ({ ...p, checkIn: e.target.value })) : setNewAbsensi(p => ({ ...p, checkIn: e.target.value }))}
+                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white" />
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan</label>
+                <textarea rows={2} placeholder="Catatan kehadiran, penggantian, dll..."
+                  value={editingAbsensi ? editingAbsensi.catatan : newAbsensi.catatan}
+                  onChange={e => editingAbsensi ? setEditingAbsensi(p => ({ ...p, catatan: e.target.value })) : setNewAbsensi(p => ({ ...p, catatan: e.target.value }))}
+                  className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] resize-none bg-white" />
+              </div>
+            </div>
+            <div className="flex gap-3 px-6 py-4 border-t border-gray-100">
+              <button
+                onClick={() => { setShowAbsensiModal(null); setEditingAbsensi(null) }}
+                className="flex-1 border border-gray-200 text-gray-600 rounded-lg py-2 text-sm font-semibold hover:bg-gray-50 transition">
+                Batal
+              </button>
+              <button
+                onClick={() => {
+                  const kelasId = showAbsensiModal
+                  if (editingAbsensi) {
+                    setKelasList(prev => prev.map(k => k.id === kelasId
+                      ? { ...k, absensiPelatih: k.absensiPelatih.map(a => a.id === editingAbsensi.id ? { ...editingAbsensi } : a) }
+                      : k
+                    ))
+                    setEditingAbsensi(null)
+                  } else {
+                    const nextId = 'ABS-' + String(Date.now()).slice(-4)
+                    setKelasList(prev => prev.map(k => k.id === kelasId
+                      ? { ...k, absensiPelatih: [...k.absensiPelatih, { ...newAbsensi, id: nextId }] }
+                      : k
+                    ))
+                  }
+                  setShowAbsensiModal(null)
+                }}
+                className="flex-1 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white rounded-lg py-2 text-sm font-semibold transition">
+                {editingAbsensi ? 'Simpan Perubahan' : 'Tambah'}
               </button>
             </div>
           </div>
