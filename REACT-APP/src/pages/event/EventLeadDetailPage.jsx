@@ -18,26 +18,26 @@ const TIPE_CLS = {
 }
 
 const STAGE_CLS = {
-  New:          'bg-gray-100 text-gray-600',
-  Approach:     'bg-blue-100 text-blue-700',
-  Presentation: 'bg-yellow-100 text-yellow-700',
-  Proposal:     'bg-purple-100 text-purple-700',
-  Closing:      'bg-orange-100 text-[#E05945]',
-  Converted:    'bg-green-100 text-green-700',
-  Lost:         'bg-red-100 text-red-600',
+  New:         'bg-gray-100 text-gray-600',
+  Approach:    'bg-blue-100 text-blue-700',
+  Konsultasi:  'bg-yellow-100 text-yellow-700',
+  Quotation:   'bg-purple-100 text-purple-700',
+  Closing:     'bg-orange-100 text-[#E05945]',
+  Converted:   'bg-green-100 text-green-700',
+  Lost:        'bg-red-100 text-red-600',
 }
 
 const STAGE_DOT = {
-  New:          'bg-gray-400',
-  Approach:     'bg-blue-500',
-  Presentation: 'bg-yellow-500',
-  Proposal:     'bg-purple-500',
-  Closing:      'bg-[#E05945]',
-  Converted:    'bg-green-500',
-  Lost:         'bg-red-400',
+  New:         'bg-gray-400',
+  Approach:    'bg-blue-500',
+  Konsultasi:  'bg-yellow-500',
+  Quotation:   'bg-purple-500',
+  Closing:     'bg-[#E05945]',
+  Converted:   'bg-green-500',
+  Lost:        'bg-red-400',
 }
 
-const PIPELINE_LINEAR = ['New', 'Approach', 'Presentation', 'Proposal', 'Closing', 'Converted']
+const PIPELINE_LINEAR = ['New', 'Approach', 'Konsultasi', 'Quotation', 'Closing', 'Converted']
 const PIPELINE_STAGES = [...PIPELINE_LINEAR, 'Lost']
 
 const SUMBER_OPTS    = ['Referral', 'Cold Email', 'LinkedIn', 'Instagram', 'Website', 'Walk-in', 'Lainnya']
@@ -82,13 +82,13 @@ const LEADS_FALLBACK = [
     id: 'LE-0003', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
     namaEvent: 'Healthy Living Expo', jenisEvent: 'Exhibition',
     emailUmum: 'marketing@tropicanaslim.co.id', sumberLead: 'LinkedIn', picSalesEFM: 'Bagoes',
-    stage: 'Proposal', tanggal: '2026-06-05', catatanAwal: 'Kontak via LinkedIn dari Brand Manager',
+    stage: 'Quotation', tanggal: '2026-06-05', catatanAwal: 'Kontak via LinkedIn dari Brand Manager',
     teleponUmum: '021-6667890', alamatLengkap: 'Kawasan ICE BSD City, Tangerang Selatan',
     linkGoogleMaps: '', namaKoordinator: 'Bpk. Dani', jabatanKoordinator: 'Brand Manager',
     waKoordinator: '081398765432', emailKoordinator: 'dani@tropicanaslim.co.id',
     logAktivitas: [
       { tanggal: '2026-06-05', stage: 'New',      catatan: 'Kontak masuk dari LinkedIn',             picEFM: 'Bagoes' },
-      { tanggal: '2026-06-10', stage: 'Proposal', catatan: 'Konsultasi selesai, kirim proposal EFM', picEFM: 'Bagoes' },
+      { tanggal: '2026-06-10', stage: 'Quotation', catatan: 'Konsultasi selesai, kirim proposal EFM', picEFM: 'Bagoes' },
     ],
     konsultasiId: 'KNS-26-0003', orderIds: [],
   },
@@ -116,7 +116,7 @@ const LEADS_FALLBACK = [
     waKoordinator: '087865432100', emailKoordinator: 'eko.prasetyo@dinpora.jakarta.go.id',
     logAktivitas: [
       { tanggal: '2026-06-10', stage: 'New',          catatan: 'Lead masuk via referral pemerintah',          picEFM: 'Bagoes' },
-      { tanggal: '2026-06-15', stage: 'Presentation', catatan: 'Presentasi resmi ke Kepala Bidang Olahraga',  picEFM: 'Bagoes' },
+      { tanggal: '2026-06-15', stage: 'Konsultasi', catatan: 'Presentasi resmi ke Kepala Bidang Olahraga',  picEFM: 'Bagoes' },
       { tanggal: '2026-06-18', stage: 'Closing',      catatan: 'Konsultasi selesai, masuk proses tender',     picEFM: 'Bagoes' },
     ],
     konsultasiId: 'KNS-26-0005', orderIds: ['EV-26-0003'],
