@@ -1056,9 +1056,9 @@ Used for: mengunci field individual yang di-auto-fill dari order — berbeda dar
 
 ```jsx
 // Definisikan di atas return statement, bersama konstanta form lainnya
-const inputCls    = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
-const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
-const labelCls    = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
+const inputCls    = "w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
+const readOnlyCls = "w-full text-sm border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
+const labelCls    = "text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block"
 ```
 
 ### orderLocked boolean
@@ -1390,12 +1390,14 @@ export default function [Module]FormPage() {
               <p className="text-xs text-gray-400 mt-1">Deskripsi singkat tujuan form</p>
             </div>
           </div>
-          <button
-            onClick={() => navigate('/module/resource')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-          >
-            <ArrowLeft size={12} /> Kembali
-          </button>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <button
+              onClick={() => navigate('/module/resource')}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1457,4 +1459,75 @@ const inputCls = (key) =>
 ```
 
 **Implementasi aktual:** `PPProgramFormPage.jsx` (store: `ppProgramStore.js`) — routes `/pp/program-db/new` dan `/pp/program-db/:progId/edit`.
+
+---
+
+## 13. Toggle-in-Header Section Pattern
+
+Used for: optional sections in a detail/form page where the user can enable or disable an entire block of fields (e.g. Pengukuran Tubuh, Health Screening, Fitness Test in PPFitnessAssessmentPage). Replaces the old pattern of standalone SectionToggleCard rows above sections.
+
+### Prinsip
+
+- Card always visible — tidak disembunyikan sama sekali ketika toggle off
+- Toggle switch berada di header card (kanan atas), bukan sebagai baris terpisah di atas card
+- Konten (fields) hanya muncul saat toggle ON — tersembunyi saat toggle OFF
+- Default: `false` (off) — user harus aktifkan secara eksplisit
+- Saat toggle ON: tampilkan field grid di bawah header divider
+- Saat toggle OFF: hanya header yang terlihat (compact, tidak ada konten di bawah)
+
+### State
+
+```jsx
+const [toggles, setToggles] = useState({
+  bodyMeasurement: false,
+  healthScreening: false,
+  fitnessTest: false,
+})
+```
+
+### Section card struktur
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+  {/* Header — selalu visible */}
+  <div className="flex items-center justify-between px-5 py-4">
+    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+      Nama Section
+    </h3>
+    <label className="flex items-center gap-2 cursor-pointer select-none">
+      <span className="text-xs text-gray-500">
+        {toggles.sectionKey ? 'Aktif' : 'Nonaktif'}
+      </span>
+      <div
+        onClick={() => setToggles(t => ({ ...t, sectionKey: !t.sectionKey }))}
+        className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer ${
+          toggles.sectionKey ? 'bg-[#1E1C43]' : 'bg-gray-300'
+        }`}
+      >
+        <div className={`w-4 h-4 bg-white rounded-full absolute top-0.5 transition-all ${
+          toggles.sectionKey ? 'left-5' : 'left-0.5'
+        }`} />
+      </div>
+    </label>
+  </div>
+
+  {/* Konten — hanya visible saat toggle ON */}
+  {toggles.sectionKey && (
+    <div className="px-5 pb-5 border-t border-gray-100">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+        {/* field inputs */}
+      </div>
+    </div>
+  )}
+</div>
+```
+
+### Aturan wajib
+
+- Jangan buat baris `SectionToggleCard` tersendiri di atas card — toggle selalu berada DI DALAM header card
+- `overflow-hidden` pada card container wajib agar border-radius tidak pecah saat konten muncul
+- Label "Aktif" / "Nonaktif" di samping toggle untuk kejelasan visual
+- Default semua toggle `false` — user memilih sendiri section mana yang ingin diisi
+- Saat form dalam read-only mode (existing record, `!isEditing`), toggle tetap bisa diklik hanya jika ada nilai tersimpan — atau sembunyikan toggle dan tampilkan konten saja (bergantung UX halaman). Untuk form prototype dummy, wrapper `pointer-events-none` pada outer form sudah cukup
+- **Implementasi aktual:** `PPFitnessAssessmentPage.jsx` — sections Pengukuran Tubuh, Health Screening, dan Fitness Test (diimplementasi 2026-08-29)
 

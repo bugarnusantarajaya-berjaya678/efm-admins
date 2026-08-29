@@ -76,14 +76,14 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - Value: `text-sm font-semibold text-gray-800`
 - Container: `bg-gray-50 rounded-lg p-3`
 
-**Form input fields**
-- Normal (editable): `w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white`
-- Read-only / auto-filled (locked): `w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed`
-- Label form: `text-xs text-gray-400 uppercase tracking-wide mb-1 block`
+**Form input fields** (detail/form pages — bukan tabel list)
+- Normal (editable): `w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white`
+- Read-only / auto-filled (locked): `w-full text-sm border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed`
+- Label form: `text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block`
 - Gunakan per-field locking (Section 11 di `efm-component-patterns`) untuk field auto-fill dari order, bukan wrapper `pointer-events-none`
 
 **Section titles**
-- `text-base font-bold text-[#1E1C43]`, often with `border-l-4 border-[#E05945] pl-3`
+- `text-sm font-bold text-[#1E1C43]`, often with `border-l-4 border-[#E05945] pl-3`
 
 **Table**
 - Header: `text-xs font-semibold text-gray-400 uppercase tracking-wide`
@@ -116,7 +116,58 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - Saat form editing aktif, sembunyikan tombol ini dan tampilkan Simpan + Batal sebagai gantinya
 - Lihat detail pola di `efm-component-patterns` Section 7
 
-**Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. Never use `text-sm` for table body cells in list pages — use `text-xs` consistently.
+**Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. `text-sm` is correct for form inputs and section titles in detail/form pages — but NOT for table body cells in list pages (use `text-xs` there). `text-[10px]` is standard for all field labels (both form pages and list-page table headers).
+
+---
+
+## 3b. Full-Page Form / Detail Page — Header Card Standard
+
+Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultasi Detail, Order New, dll). Ini adalah struktur WAJIB — jangan improvisasi dengan `flex-col sm:flex-row` atau variasi lain.
+
+```jsx
+{/* Header Card — selalu full-bleed tanpa outer horizontal padding */}
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
+  <div className="flex items-start justify-between gap-4 flex-wrap">
+
+    {/* Kiri: ikon bulat + judul + sub-info */}
+    <div className="flex items-center gap-4">
+      <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+        <IconName size={22} className="text-white" />
+      </div>
+      <div>
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+          Module — Sub-context
+        </p>
+        <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
+          Judul Halaman / ID Record
+        </h1>
+        <p className="text-xs text-gray-400 mt-1">
+          Sub-info opsional (nama klien, status, dll)
+        </p>
+      </div>
+    </div>
+
+    {/* Kanan: tombol Kembali (dan tombol lain jika perlu) */}
+    <div className="flex items-center gap-2 flex-shrink-0">
+      <button
+        onClick={handleBack}
+        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+      >
+        <ArrowLeft size={12} /> Kembali
+      </button>
+    </div>
+
+  </div>
+</div>
+```
+
+**Aturan wajib:**
+- Outer wrapper: `flex items-start justify-between gap-4 flex-wrap` — JANGAN `flex-col sm:flex-row sm:items-center sm:justify-between`
+- `items-start` (bukan `items-center`): ikon dan teks di-align top, tombol Kembali di top-right — tidak bergeser ke tengah saat tinggi berbeda
+- Tombol kanan: selalu dalam wrapper `flex items-center gap-2 flex-shrink-0` agar tidak shrink saat ruang sempit
+- Tombol Kembali: selalu orange (`bg-[#E05945]`), bukan navy atau gray
+- `flex-wrap` pada outer: tombol turun ke baris baru di mobile, tidak menimpa judul
+- Ikon: `w-12 h-12 rounded-full bg-[#1E1C43] shrink-0` — lingkaran navy, JANGAN shrink
 
 ---
 
@@ -155,7 +206,7 @@ Ini mencegah kolom "Nama Klien" di Invoice berbeda lebar dengan "Nama Klien" di 
     {h}
   </th>
 ))}
-``` Reserved only for section titles (`text-base font-bold`) and document headers (`text-4xl font-black`). If a component "looks too big," check that value/label pairs use `text-sm`/`text-xs`.
+```
 
 ---
 
