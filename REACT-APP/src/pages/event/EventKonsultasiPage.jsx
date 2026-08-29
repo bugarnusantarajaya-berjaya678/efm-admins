@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Clock, CheckCircle, ClipboardList, Search, RotateCcw } from 'lucide-react'
+import { Plus, ClipboardList, Search, RotateCcw } from 'lucide-react'
 import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
 const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
@@ -21,6 +21,21 @@ const JENIS_CFG = {
   Individual: 'bg-gray-400 text-white',
 }
 
+const ROWS_PER_PAGE = 10
+function PBtn({ label, onClick, disabled, active }) {
+  return (
+    <button onClick={onClick} disabled={disabled}
+      className={[
+        'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold border transition-colors',
+        active   ? 'bg-[#1E1C43] text-white border-[#1E1C43]' : '',
+        disabled ? 'opacity-35 cursor-not-allowed border-gray-200 text-gray-400' : '',
+        !active && !disabled ? 'border-gray-200 text-gray-600 hover:border-[#1E1C43] hover:text-[#1E1C43]' : '',
+      ].join(' ')}>
+      {label}
+    </button>
+  )
+}
+
 function HasilBadge({ hasil }) {
   const cfg = HASIL_CFG[hasil] || { label: hasil, cls: 'bg-gray-100 text-gray-500' }
   return (
@@ -39,6 +54,9 @@ export default function EventKonsultasiPage() {
   const [fJenis, setFJenis] = useState('')
   const [fHasil, setFHasil] = useState('')
   const [search, setSearch] = useState('')
+  const [page,   setPage]   = useState(1)
+
+  useEffect(() => { setPage(1) }, [fBulan, fTahun, fJenis, fHasil, search])
 
   const filtered = list.filter(s => {
     if (fBulan && !(s.tanggal ?? '').includes(BSHORT[fBulan] ?? fBulan)) return false
@@ -53,6 +71,10 @@ export default function EventKonsultasiPage() {
   const menunggu        = list.filter(s => s.hasil === 'pending').length
   const sudahPenawaran  = list.filter(s => s.hasil === 'lanjut').length
   const tidakLanjut     = list.filter(s => s.hasil === 'tidak_lanjut').length
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE))
+  const safePage   = Math.min(page, totalPages)
+  const pageRows   = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE)
 
   return (
     <div className="space-y-5">
@@ -72,30 +94,27 @@ export default function EventKonsultasiPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { label: 'Total Konsultasi',       val: totalKonsultasi, bg: 'bg-[rgba(30,28,67,0.08)]', iconCls: 'text-text-primary', icon: ClipboardList },
-          { label: 'Menunggu Tindak Lanjut', val: menunggu,        bg: 'bg-yellow-50',             iconCls: 'text-yellow-600',   icon: Clock         },
-          { label: 'Sudah Penawaran',        val: sudahPenawaran,  bg: 'bg-green-50',              iconCls: 'text-green-600',    icon: CheckCircle   },
-          { label: 'Tidak Lanjut',           val: tidakLanjut,     bg: 'bg-red-50',                iconCls: 'text-red-600',      icon: ClipboardList },
-        ].map(s => {
-          const Icon = s.icon
-          return (
-            <div key={s.label} className="bg-white rounded-2xl border-[1.5px] border-gray-200 p-5 flex items-center gap-3.5">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${s.bg}`}>
-                <Icon size={18} className={s.iconCls} />
-              </div>
-              <div>
-                <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">{s.label}</p>
-                <p className="text-xl font-bold text-[#1E1C43]">{s.val}</p>
-              </div>
-            </div>
-          )
-        })}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-white rounded-xl border-[1.5px] border-gray-200 px-4 py-3">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Total Konsultasi</p>
+          <p className="text-xl font-bold text-[#1E1C43]">{totalKonsultasi}</p>
+        </div>
+        <div className="bg-white rounded-xl border-[1.5px] border-amber-400 px-4 py-3">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Menunggu Tindak Lanjut</p>
+          <p className="text-xl font-bold text-amber-500">{menunggu}</p>
+        </div>
+        <div className="bg-white rounded-xl border-[1.5px] border-green-500 px-4 py-3">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Sudah Penawaran</p>
+          <p className="text-xl font-bold text-green-600">{sudahPenawaran}</p>
+        </div>
+        <div className="bg-white rounded-xl border-[1.5px] border-red-400 px-4 py-3">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tidak Lanjut</p>
+          <p className="text-xl font-bold text-red-500">{tidakLanjut}</p>
+        </div>
       </div>
 
-      {/* Filter — flat, no shadow wrapper */}
-      <div className="flex items-center gap-3 flex-wrap">
+      {/* Filter */}
+      <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
           className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
           <option value="">Semua Bulan</option>
@@ -148,9 +167,9 @@ export default function EventKonsultasiPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {pageRows.length === 0 ? (
                 <tr><td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data konsultasi.</td></tr>
-              ) : filtered.map((s) => (
+              ) : pageRows.map((s) => (
                 <tr key={s.id} onClick={() => navigate('/event/konsultasi/' + s.id)} className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{s.id}</td>
                   <td className="text-xs font-medium text-gray-900 px-3 py-2.5 whitespace-nowrap">{s.nama}</td>
@@ -194,6 +213,18 @@ export default function EventKonsultasiPage() {
               ))}
             </tbody>
           </table>
+        </div>
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
+          <p className="text-xs text-gray-500">
+            Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} konsultasi
+          </p>
+          <div className="flex items-center gap-1">
+            <PBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1} />
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <PBtn key={p} label={p} onClick={() => setPage(p)} active={p === safePage} />
+            ))}
+            <PBtn label="›" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} />
+          </div>
         </div>
       </div>
 
