@@ -632,9 +632,9 @@ export default function PPFitnessAssessmentPage() {
 
   const isRenewal = !!prevSource
 
-  const inputCls = "w-full text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
-  const readOnlyCls = "w-full text-xs border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
-  const labelCls = "text-xs text-gray-400 uppercase tracking-wide mb-1 block"
+  const inputCls = "w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
+  const readOnlyCls = "w-full text-sm border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
+  const labelCls = "text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block"
   const filteredOrders = orderSearch
     ? ORDERS_INIT.filter(o =>
         o.klien.toLowerCase().includes(orderSearch.toLowerCase()) ||
@@ -737,7 +737,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── PERSONAL DETAIL (always shown) ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
+        <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
           Data Klien & Program
         </h2>
 
@@ -933,7 +933,7 @@ export default function PPFitnessAssessmentPage() {
       {/* ── RINGKASAN KLIEN ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Ringkasan Klien
           </h2>
           {isNew && pickerLeadHealth?.sudahDiisi && (
@@ -1055,7 +1055,7 @@ export default function PPFitnessAssessmentPage() {
       {/* ── BODY MEASUREMENT ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Body Measurement
           </h2>
           <ToggleSwitch checked={toggles.bodyMeasurement} onChange={v => setToggles(p => ({ ...p, bodyMeasurement: v }))} />
@@ -1105,7 +1105,7 @@ export default function PPFitnessAssessmentPage() {
       {/* ── HEALTH SCREENING ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Health Screening
           </h2>
           <ToggleSwitch checked={toggles.healthScreening} onChange={v => setToggles(p => ({ ...p, healthScreening: v }))} />
@@ -1167,7 +1167,7 @@ export default function PPFitnessAssessmentPage() {
       {/* ── FITNESS TEST ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Fitness Test
           </h2>
           <ToggleSwitch checked={toggles.fitnessTest} onChange={v => setToggles(p => ({ ...p, fitnessTest: v }))} />
@@ -1252,7 +1252,7 @@ export default function PPFitnessAssessmentPage() {
 
       {/* ── PERSETUJUAN ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
+        <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
           Persetujuan
         </h2>
         {!isEditing && (

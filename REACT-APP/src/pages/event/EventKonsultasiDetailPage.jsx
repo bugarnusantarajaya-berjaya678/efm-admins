@@ -155,14 +155,14 @@ function SectionHeader({ num, title, subtitle }) {
 
 function FieldLabel({ children, required }) {
   return (
-    <label className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
+    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wider mb-1.5">
       {children}{required && <span className="text-red-500 ml-0.5">*</span>}
     </label>
   )
 }
 
-const inputCls  = 'w-full h-9 px-3 rounded-lg border border-gray-200 text-xs outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] bg-white transition-colors'
-const selectCls = 'w-full h-9 px-3 rounded-lg border border-gray-200 text-xs outline-none focus:border-[#1E1C43] bg-white'
+const inputCls  = 'w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] focus:ring-1 focus:ring-[#1E1C43] bg-white transition-colors'
+const selectCls = 'w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] bg-white'
 
 function ReadOnlyField({ label, value }) {
   return (
@@ -170,7 +170,7 @@ function ReadOnlyField({ label, value }) {
       <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">
         {label}
       </label>
-      <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-700 min-h-[36px] flex items-center">
+      <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 min-h-[36px] flex items-center">
         {value || <span className="italic text-gray-300">—</span>}
       </div>
     </div>
