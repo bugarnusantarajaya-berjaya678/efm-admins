@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, ChevronRight, Save, Send, Plus } from 'lucide-react'
+import { ArrowLeft, Save, Send, Plus, ClipboardList } from 'lucide-react'
 import { getStoredLeads, initLeads, LEADS_INIT } from '../../data/eventLeadsStore'
 import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 
@@ -147,7 +147,7 @@ const emptyDetailEvent = {
 function SectionHeader({ num, title, subtitle }) {
   return (
     <div className="mb-5">
-      <h3 className="text-base font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{num}. {title}</h3>
+      <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{num}. {title}</h3>
       {subtitle && <p className="text-[10px] text-gray-400 mt-1 pl-3">{subtitle}</p>}
     </div>
   )
@@ -382,152 +382,57 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           HEADER CARD
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4 sm:mb-5">
-
-        {/* Breadcrumb */}
-        <div className="flex items-start justify-between gap-3 mb-4 sm:mb-5">
-          <nav className="flex items-center gap-1 text-xs text-gray-400 flex-wrap min-w-0">
-            <button onClick={() => navigate('/event/dashboard')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">B2B Event</button>
-            <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
-            <button onClick={() => navigate('/event/leads')} className="hover:text-[#1E1C43] transition-colors whitespace-nowrap">Leads</button>
-            {selectedLeadId && selectedLead && (
-              <>
-                <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
-                <button onClick={() => navigate(`/event/leads/${selectedLeadId}`)} className="hover:text-[#1E1C43] transition-colors truncate max-w-[100px] sm:max-w-[160px]">{selectedLead.namaKlien}</button>
-              </>
-            )}
-            <ChevronRight size={12} className="text-gray-300 flex-shrink-0" />
-            <span className="text-[#1E1C43] font-medium whitespace-nowrap">{isNew ? 'Konsultasi Baru' : id}</span>
-          </nav>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ClipboardList size={22} className="text-white" />
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+                B2B Event{selectedLeadId && selectedLead ? ` · ${selectedLead.namaKlien}` : ''}
+              </p>
+              <h1 className="text-[22px] font-bold text-[#1E1C43] leading-tight">
+                {profilKlien.namaKlien || (isNew ? 'Konsultasi Baru' : id)}
+              </h1>
+              <p className="text-xs text-gray-400 mt-0.5">
+                {isNew
+                  ? 'Isi form konsultasi event klien baru'
+                  : [profilKlien.tipeKlien, profilKlien.kota, detailEvent.namaEvent].filter(Boolean).join(' · ')}
+              </p>
+              {!isNew && (
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <span className="text-[10px] font-semibold bg-gray-100 text-[#1E1C43] px-2 py-0.5 rounded">{id}</span>
+                  {hasilKonsultasi && (
+                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                      hasilKonsultasi === 'Lanjut'       ? 'bg-green-50 text-green-700 border-green-200' :
+                      hasilKonsultasi === 'Pending'      ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                      hasilKonsultasi === 'Tidak Lanjut' ? 'bg-red-50 text-red-700 border-red-200' :
+                                                            'bg-gray-50 text-gray-500 border-gray-200'
+                    }`}>
+                      {hasilKonsultasi}
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
           <button
             onClick={() => navigate(selectedLeadId ? `/event/leads/${selectedLeadId}` : '/event/leads')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-700 text-xs font-medium hover:bg-gray-50 transition-colors flex-shrink-0 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors flex-shrink-0"
           >
             <ArrowLeft size={12} /> Kembali
           </button>
-        </div>
-
-        {/* Info utama + Stepper */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-semibold bg-gray-100 text-[#1E1C43] px-2.5 py-1 rounded-lg">
-                {isNew ? 'KNS-NEW' : id}
-              </span>
-              <span className={`text-xs font-medium px-2 py-1 rounded-full border ${
-                hasilKonsultasi === 'Lanjut'       ? 'bg-green-50 text-green-700 border-green-200' :
-                hasilKonsultasi === 'Pending'      ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
-                hasilKonsultasi === 'Tidak Lanjut' ? 'bg-red-50 text-red-700 border-red-200' :
-                                                      'bg-gray-50 text-gray-500 border-gray-200'
-              }`}>
-                {hasilKonsultasi || 'Draft'}
-              </span>
-            </div>
-            <h1 className="text-[22px] font-bold text-[#1E1C43] mb-1 break-words">
-              {profilKlien.namaKlien || (isNew ? 'Form Konsultasi Baru' : id)}
-            </h1>
-            <p className="text-sm text-gray-500">
-              {[
-                profilKlien.tipeKlien,
-                profilKlien.kota,
-                detailEvent.namaEvent,
-                profilKlien.tanggalKonsultasi ? new Date(profilKlien.tanggalKonsultasi).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : null,
-                profilKlien.picSalesEFM ? 'FC: ' + profilKlien.picSalesEFM : null,
-              ].filter(Boolean).join(' · ')}
-            </p>
-            {selectedLeadId && (
-              <div className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 border border-blue-200 rounded-lg">
-                <span className="text-[10px] text-blue-700">📋 Dikaitkan ke Lead {selectedLeadId} — data klien pre-filled</span>
-              </div>
-            )}
-          </div>
-
-          {/* Stepper */}
-          <div className="flex-shrink-0 sm:ml-8">
-            {hasilKonsultasi ? (
-              <div className="flex flex-col items-end gap-3">
-                <div className={`flex items-center gap-2.5 px-4 py-3 rounded-xl border-2 ${
-                  hasilKonsultasi === 'Lanjut'       ? 'border-green-400 bg-green-50' :
-                  hasilKonsultasi === 'Pending'      ? 'border-yellow-400 bg-yellow-50' :
-                                                        'border-red-400 bg-red-50'
-                }`}>
-                  <span className="text-xl">
-                    {hasilKonsultasi === 'Lanjut' ? '✅' : hasilKonsultasi === 'Pending' ? '⏳' : '❌'}
-                  </span>
-                  <div>
-                    <p className={`text-sm font-bold ${
-                      hasilKonsultasi === 'Lanjut'       ? 'text-green-700' :
-                      hasilKonsultasi === 'Pending'      ? 'text-yellow-700' :
-                                                            'text-red-600'
-                    }`}>{hasilKonsultasi}</p>
-                    <p className="text-[10px] text-gray-400">Hasil keputusan konsultasi</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  {[
-                    { label: 'Profil',   done: !!(profilKlien.namaKlien && profilKlien.tanggalKonsultasi) },
-                    { label: 'Event',    done: !!(detailEvent.namaEvent && detailEvent.peranEFM) },
-                    { label: 'Program',  done: isiProgram.length > 0 },
-                  ].map(({ label, done }) => (
-                    <span key={label} className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                      done ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'
-                    }`}>
-                      {label} {done ? '✓' : '○'}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <>
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3 text-right">
-                  Tahapan Pengisian
-                </p>
-                <div className="flex flex-col gap-0">
-                  {[
-                    { label: 'Profil Klien',      done: !!(profilKlien.namaKlien && profilKlien.tanggalKonsultasi), active: !profilKlien.namaKlien },
-                    { label: 'Detail Event',       done: !!(detailEvent.namaEvent && detailEvent.peranEFM),          active: !!(profilKlien.namaKlien && !detailEvent.namaEvent) },
-                    { label: 'Isi Program',        done: isiProgram.length > 0,                                       active: !!(detailEvent.namaEvent && isiProgram.length === 0) },
-                    { label: 'Hasil Konsultasi',   done: !!hasilKonsultasi,                                           active: !!(isiProgram.length > 0 && !hasilKonsultasi) },
-                  ].map((step, i, arr) => (
-                    <div key={step.label} className="flex items-start gap-2.5">
-                      <div className="flex flex-col items-center">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold ${
-                          step.done   ? 'bg-green-500 text-white' :
-                          step.active ? 'bg-[#E05945] text-white' :
-                                        'bg-gray-200 text-gray-500'
-                        }`}>
-                          {step.done ? '✓' : i + 1}
-                        </div>
-                        {i < arr.length - 1 && (
-                          <div className={`w-px h-5 ${step.done ? 'bg-green-300' : 'bg-gray-200'}`} />
-                        )}
-                      </div>
-                      <span className={`text-xs whitespace-nowrap pt-0.5 ${
-                        step.done   ? 'text-green-700 font-medium' :
-                        step.active ? 'text-[#E05945] font-semibold' :
-                                      'text-gray-400'
-                      }`}>
-                        {step.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
         </div>
       </div>
 
       {/* ══════════════════════════════════════════
           LEAD SELECTOR
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-5 mb-4">
-        <div className="flex items-center justify-between mb-3">
-          <p className="text-sm font-semibold text-[#1E1C43]">Kaitkan dengan Lead Event</p>
-          {!selectedLeadId && (
-            <span className="text-[10px] text-gray-400">Opsional — untuk tracking pipeline Event</span>
-          )}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+        <div className="mb-3">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Kaitkan dengan Lead</h3>
+          <p className="text-[10px] text-gray-400 mt-1 pl-3">Pilih lead yang sudah ada untuk mengisi data klien secara otomatis</p>
         </div>
 
         {selectedLeadId ? (
@@ -605,28 +510,18 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 1: Profil Klien
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
         <SectionHeader num="1" title="Profil Klien" subtitle="Informasi dasar klien dan kontak koordinator" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-          {selectedLeadId ? (
-            <div className="col-span-2 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 mb-2">
-              <span className="text-blue-500 mt-0.5 flex-shrink-0">ℹ️</span>
-              <p className="text-xs text-blue-700">
-                Data profil klien diisi otomatis dari <strong>Leads {selectedLeadId}</strong> dan tidak dapat diedit di sini.{' '}
-                Untuk mengubah data klien, lakukan edit di halaman{' '}
-                <button onClick={() => navigate(`/event/leads/${selectedLeadId}`)} className="underline font-semibold hover:text-blue-900">
-                  Lead Detail
-                </button>.
-              </p>
-            </div>
-          ) : (
-            <div className="col-span-2 flex items-start gap-2 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2 mb-2">
-              <span className="text-amber-500 mt-0.5 flex-shrink-0">⚠️</span>
-              <p className="text-xs text-amber-700">
-                Belum ada leads dipilih. Pilih leads terlebih dahulu dari selector di atas agar data klien terisi otomatis.
-              </p>
+          {selectedLeadId && (
+            <div className="col-span-2 flex items-center gap-2 mb-1">
+              <span className="text-[10px] text-gray-400">Data dari</span>
+              <button onClick={() => navigate(`/event/leads/${selectedLeadId}`)} className="text-[10px] font-semibold text-[#1E1C43] hover:underline">
+                Lead {selectedLeadId}
+              </button>
+              <span className="text-[10px] text-gray-400">— edit data klien di Lead Detail</span>
             </div>
           )}
 
@@ -671,7 +566,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 2: Detail Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
         <SectionHeader num="2" title="Detail Event" subtitle="Informasi teknis event yang akan diselenggarakan" />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
@@ -766,7 +661,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 3: Isi Program Event
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
         <SectionHeader num="3" title="Isi Program Event" subtitle="Pilih kegiatan / segmen fitness yang akan ada di event" />
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -843,7 +738,7 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           SECTION 4: Anggaran & Hasil Konsultasi
       ══════════════════════════════════════════ */}
-      <div className="bg-white rounded-xl shadow-sm p-4 sm:p-6 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
         <SectionHeader num="4" title="Anggaran & Hasil Konsultasi" />
 
         {/* Estimasi anggaran */}
@@ -913,43 +808,33 @@ export default function EventKonsultasiDetailPage() {
       {/* ══════════════════════════════════════════
           FOOTER
       ══════════════════════════════════════════ */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] px-4 sm:px-6 py-3 mt-4 z-10">
-        <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-
-          <p className="text-xs text-gray-400 hidden sm:block">
-            <span className="font-medium text-[#1E1C43]">
+      <div className="sticky bottom-0 bg-white border-t border-gray-200 shadow-[0_-2px_12px_rgba(0,0,0,0.06)] px-5 py-3.5 mt-4 z-10">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-xs text-gray-400 hidden sm:block truncate">
+            <span className="font-semibold text-[#1E1C43]">
               {profilKlien.namaKlien || 'Form Konsultasi'}
             </span>
-            {selectedLeadId && (
-              <span className="text-blue-500 ml-1.5">· Lead {selectedLeadId}</span>
-            )}
+            {selectedLeadId && <span className="text-[#1E1C43]/50 ml-1.5">· {selectedLeadId}</span>}
             {hasilKonsultasi && (
-              <>
-                {' · '}
-                <span className={
-                  hasilKonsultasi === 'Lanjut'  ? 'text-green-600 font-medium' :
-                  hasilKonsultasi === 'Pending' ? 'text-yellow-600 font-medium' :
-                                                  'text-red-500 font-medium'
-                }>
-                  {hasilKonsultasi}
-                </span>
-              </>
+              <span className={`ml-1.5 ${
+                hasilKonsultasi === 'Lanjut'  ? 'text-green-600' :
+                hasilKonsultasi === 'Pending' ? 'text-yellow-600' : 'text-red-500'
+              }`}>· {hasilKonsultasi}</span>
             )}
           </p>
-
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 ml-auto">
             <button type="button" onClick={handleSimpanDraft}
-              className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs sm:text-sm font-medium px-3 sm:px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-700 text-xs font-medium px-3.5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
               <Save size={13} /> Simpan Draft
             </button>
             <button type="button" onClick={handleSimpanSelesai}
-              className="inline-flex items-center gap-1.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs sm:text-sm font-semibold px-3 sm:px-5 py-2 rounded-lg transition-colors">
+              className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
               <Send size={13} /> Simpan & Selesai
             </button>
             {hasilKonsultasi === 'Lanjut' && (
               <button type="button" onClick={handleBuatOrder}
-                className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs sm:text-sm font-medium px-3 sm:px-5 py-2 rounded-lg transition-colors">
-                📋 Buat Order →
+                className="inline-flex items-center gap-1.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                Buat Order →
               </button>
             )}
           </div>
