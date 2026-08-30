@@ -813,8 +813,7 @@ export default function EventOrderDetailPage() {
   }
 
   function handleSimpanOrderBaru() {
-    const newId = 'EO-00' + (dummyEventOrders.length + 1)
-    navigate('/event/orders/' + newId)
+    navigate('/event/orders')
   }
 
   /* ── LOI data ────────────────────────────────────────────────────────────── */
@@ -1045,10 +1044,14 @@ export default function EventOrderDetailPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: 'Nama Klien',    value: infoDraft.namaKlien },
-                      { label: 'Jenis',          value: infoDraft.jenis },
-                      { label: 'Contact Person', value: infoDraft.contactPerson },
-                      { label: 'Telepon',        value: infoDraft.telepon },
+                      { label: 'Nama Klien',       value: infoDraft.namaKlien },
+                      { label: 'Jenis Klien',       value: infoDraft.jenis },
+                      { label: 'Nama Event',        value: order?.namaEvent },
+                      { label: 'Jenis Event',       value: order?.jenisEvent },
+                      { label: 'Peran EFM',         value: order?.peranEFM },
+                      { label: 'Estimasi Peserta',  value: konsultasiTerkait?.jumlahPeserta ? konsultasiTerkait.jumlahPeserta + ' orang' : null },
+                      { label: 'Contact Person',    value: infoDraft.contactPerson },
+                      { label: 'Telepon',           value: infoDraft.telepon },
                     ].map(({ label, value }) => (
                       <div key={label}>
                         <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</label>
@@ -1057,6 +1060,12 @@ export default function EventOrderDetailPage() {
                         </div>
                       </div>
                     ))}
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Event</label>
+                      <div className="h-9 px-3 flex items-center rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600 select-none">
+                        {order?.lokasiEvent || '—'}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1623,7 +1632,17 @@ export default function EventOrderDetailPage() {
             </div>
 
             {!hasPS && (
-              <p className="text-sm text-gray-400 italic">Kontrak ini tidak menggunakan profit sharing.</p>
+              (order.peranEFM === 'Fitness Partner' || order.peranEFM === 'Co-Organizer') ? (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+                  <span className="text-amber-500 mt-0.5">💡</span>
+                  <p className="text-xs text-amber-800">
+                    Peran EFM sebagai <strong>{order.peranEFM}</strong> umumnya memiliki kesepakatan profit sharing.
+                    Aktifkan toggle di atas jika kontrak ini mencakup bagi hasil.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic">Kontrak ini tidak menggunakan profit sharing.</p>
+              )
             )}
 
             {hasPS && (
