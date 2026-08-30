@@ -57,43 +57,6 @@ const dummyKonsultasiData = [
   },
 ]
 
-/* ═══════════════════════════════════════
-   Available Leads (untuk dropdown order manual)
-═══════════════════════════════════════ */
-const availableLeadsForOrder = [
-  {
-    id: 'EL-0001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation', kota: 'Jakarta Selatan',
-    emailUmum: 'info@yayasankanker.or.id', teleponUmum: '021-3334567',
-    alamatLengkap: 'Jl. Gatot Subroto No. 55, Jakarta Selatan',
-    namaKoordinator: 'Ibu Ratna', jabatanKoordinator: 'Program Director',
-    waKoordinator: '081234567890', emailKoordinator: 'ratna@yayasankanker.or.id',
-    picSalesEFM: 'Bagoes', stage: 'Converted',
-  },
-  {
-    id: 'EL-0002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
-    emailUmum: 'hrd@garudanusa.co.id', teleponUmum: '021-5557890',
-    alamatLengkap: 'Jl. Jend. Sudirman Kav. 56, Jakarta Pusat',
-    namaKoordinator: 'Bpk. Hendra', jabatanKoordinator: 'HR Director',
-    waKoordinator: '082112345678', emailKoordinator: 'hendra.hr@garudanusa.co.id',
-    picSalesEFM: 'Emma', stage: 'Converted',
-  },
-  {
-    id: 'EL-0005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
-    emailUmum: 'info@dinpora.jakarta.go.id', teleponUmum: '021-3451234',
-    alamatLengkap: 'Jl. Medan Merdeka Utara No. 14, Jakarta Pusat',
-    namaKoordinator: 'Bpk. Eko Prasetyo', jabatanKoordinator: 'Kepala Bidang Olahraga',
-    waKoordinator: '087865432100', emailKoordinator: 'eko.prasetyo@dinpora.jakarta.go.id',
-    picSalesEFM: 'Bagoes', stage: 'Qualified',
-  },
-  {
-    id: 'EL-0006', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
-    emailUmum: 'marketing@tropicanaslim.co.id', teleponUmum: '021-6667890',
-    alamatLengkap: 'Kawasan ICE BSD City, Tangerang Selatan',
-    namaKoordinator: 'Bpk. Dani', jabatanKoordinator: 'Brand Manager',
-    waKoordinator: '081398765432', emailKoordinator: 'dani@tropicanaslim.co.id',
-    picSalesEFM: 'Bagoes', stage: 'Contacted',
-  },
-]
 
 /* ═══════════════════════════════════════
    ReadOnlyField component
@@ -325,12 +288,11 @@ export default function EventOrderNewPage() {
       alert('Pilih minimal satu Kategori Layanan.')
       return
     }
-    const newOrderId = 'EO-' + String(Date.now()).slice(-4)
-    navigate('/event/orders/' + newOrderId)
+    navigate('/event/orders')
   }
 
   /* ── Filtered leads for dropdown ── */
-  const filteredLeads = availableLeadsForOrder.filter(l =>
+  const filteredLeads = getStoredLeads().filter(l =>
     l.namaKlien.toLowerCase().includes(leadSearchQuery.toLowerCase())
   )
 
@@ -467,7 +429,7 @@ export default function EventOrderNewPage() {
                 )}
               </div>
             ) : (() => {
-              const linked = availableLeadsForOrder.find(l => l.id === linkedLeadId)
+              const linked = getStoredLeads().find(l => l.id === linkedLeadId)
               return linked ? (
                 <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-4 py-3 gap-3">
                   <div className="min-w-0">
