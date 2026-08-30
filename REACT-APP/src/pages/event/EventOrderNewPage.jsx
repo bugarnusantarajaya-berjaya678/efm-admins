@@ -8,7 +8,7 @@ import { initLeads, getStoredLeads, LEADS_INIT } from '../../data/eventLeadsStor
 ═══════════════════════════════════════ */
 const dummyKonsultasiData = [
   {
-    id: 'KNS-001', leadId: 'EL-001', tanggal: '2026-06-05', status: 'Selesai',
+    id: 'KNS-26-0001', leadId: 'EL-0001', tanggal: '2026-06-05', status: 'Selesai',
     namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation',
     namaEvent: 'Health Run for Hope 2026', jenisEvent: 'Charity Run',
     peranEFM: 'Main Organizer', estimasiPeserta: '2.000 orang',
@@ -20,7 +20,7 @@ const dummyKonsultasiData = [
     catatanKonsultasi: 'Event skala besar, estimasi 2.000 peserta. Venue GBK sudah dikonfirmasi.',
   },
   {
-    id: 'KNS-002', leadId: 'EL-002', tanggal: '2026-06-08', status: 'Selesai',
+    id: 'KNS-26-0002', leadId: 'EL-0002', tanggal: '2026-06-08', status: 'Selesai',
     namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate',
     namaEvent: 'Corporate Fun Run 2026', jenisEvent: 'Fun Run',
     peranEFM: 'Co-Organizer', estimasiPeserta: '500 orang',
@@ -32,7 +32,7 @@ const dummyKonsultasiData = [
     catatanKonsultasi: 'Event internal perusahaan untuk 500 karyawan. Budget sudah disetujui direksi.',
   },
   {
-    id: 'KNS-003', leadId: 'EL-003', tanggal: '2026-06-10', status: 'Pending',
+    id: 'KNS-26-0003', leadId: 'EL-0003', tanggal: '2026-06-10', status: 'Pending',
     namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand',
     namaEvent: 'Healthy Living Expo', jenisEvent: 'Exhibition',
     peranEFM: 'Fitness Consultant', estimasiPeserta: '1.500 pengunjung',
@@ -44,7 +44,7 @@ const dummyKonsultasiData = [
     catatanKonsultasi: 'Expo 3 hari, stand fitness demo dibutuhkan. Masih menunggu approval anggaran.',
   },
   {
-    id: 'KNS-005', leadId: 'EL-005', tanggal: '2026-06-18', status: 'Selesai',
+    id: 'KNS-26-0005', leadId: 'EL-0005', tanggal: '2026-06-18', status: 'Selesai',
     namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government',
     namaEvent: 'Hari Olahraga Nasional DKI', jenisEvent: 'Mass Event',
     peranEFM: 'Main Organizer', estimasiPeserta: '5.000 orang',
@@ -62,7 +62,7 @@ const dummyKonsultasiData = [
 ═══════════════════════════════════════ */
 const availableLeadsForOrder = [
   {
-    id: 'EL-001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation', kota: 'Jakarta Selatan',
+    id: 'EL-0001', namaKlien: 'Yayasan Kanker Indonesia', tipeKlien: 'Foundation', kota: 'Jakarta Selatan',
     emailUmum: 'info@yayasankanker.or.id', teleponUmum: '021-3334567',
     alamatLengkap: 'Jl. Gatot Subroto No. 55, Jakarta Selatan',
     namaKoordinator: 'Ibu Ratna', jabatanKoordinator: 'Program Director',
@@ -70,7 +70,7 @@ const availableLeadsForOrder = [
     picSalesEFM: 'Bagoes', stage: 'Converted',
   },
   {
-    id: 'EL-002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
+    id: 'EL-0002', namaKlien: 'PT. Garuda Nusa Tbk', tipeKlien: 'Corporate', kota: 'Jakarta Pusat',
     emailUmum: 'hrd@garudanusa.co.id', teleponUmum: '021-5557890',
     alamatLengkap: 'Jl. Jend. Sudirman Kav. 56, Jakarta Pusat',
     namaKoordinator: 'Bpk. Hendra', jabatanKoordinator: 'HR Director',
@@ -78,7 +78,7 @@ const availableLeadsForOrder = [
     picSalesEFM: 'Emma', stage: 'Converted',
   },
   {
-    id: 'EL-005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
+    id: 'EL-0005', namaKlien: 'Dinas Pemuda & Olahraga DKI', tipeKlien: 'Government', kota: 'Jakarta Pusat',
     emailUmum: 'info@dinpora.jakarta.go.id', teleponUmum: '021-3451234',
     alamatLengkap: 'Jl. Medan Merdeka Utara No. 14, Jakarta Pusat',
     namaKoordinator: 'Bpk. Eko Prasetyo', jabatanKoordinator: 'Kepala Bidang Olahraga',
@@ -86,7 +86,7 @@ const availableLeadsForOrder = [
     picSalesEFM: 'Bagoes', stage: 'Qualified',
   },
   {
-    id: 'EL-006', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
+    id: 'EL-0006', namaKlien: 'Brand Tropicana Slim', tipeKlien: 'Brand', kota: 'Tangerang Selatan',
     emailUmum: 'marketing@tropicanaslim.co.id', teleponUmum: '021-6667890',
     alamatLengkap: 'Kawasan ICE BSD City, Tangerang Selatan',
     namaKoordinator: 'Bpk. Dani', jabatanKoordinator: 'Brand Manager',
@@ -309,7 +309,7 @@ export default function EventOrderNewPage() {
 
   /* ── Footer handlers ── */
   function handleSimpanDraft() {
-    alert('Draft order tersimpan.')
+    showToastMsg('Draft order tersimpan.')
   }
 
   function handleSimpanOrder() {
@@ -335,7 +335,7 @@ export default function EventOrderNewPage() {
   )
 
   return (
-    <div className="bg-[#F5F5F7] min-h-screen pb-24">
+    <div className="pb-24">
 
       {/* Toast */}
       {toast && (
@@ -344,7 +344,7 @@ export default function EventOrderNewPage() {
         </div>
       )}
 
-      <div className="px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+      <div className="flex flex-col gap-4 px-4 sm:px-6 py-4 sm:py-6">
 
         {/* ── Header Card ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
@@ -377,7 +377,7 @@ export default function EventOrderNewPage() {
             </div>
             <button
               onClick={() => navigate('/event/orders')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0"
             >
               <ArrowLeft size={12} /> Kembali
             </button>
@@ -763,19 +763,19 @@ export default function EventOrderNewPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Nama Event</p>
-                <p className="text-sm text-gray-700">{konsultasiDetailData.namaEvent || '—'} · {konsultasiDetailData.jenisEvent || '—'}</p>
+                <p className="text-sm font-semibold text-gray-800">{konsultasiDetailData.namaEvent || '—'} · {konsultasiDetailData.jenisEvent || '—'}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Peran EFM & Peserta</p>
-                <p className="text-sm text-gray-700">{konsultasiDetailData.peranEFM || '—'} · Est. {konsultasiDetailData.estimasiPeserta || '—'}</p>
+                <p className="text-sm font-semibold text-gray-800">{konsultasiDetailData.peranEFM || '—'} · Est. {konsultasiDetailData.estimasiPeserta || '—'}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Lokasi Event</p>
-                <p className="text-sm text-gray-700">{konsultasiDetailData.kota || '—'}</p>
+                <p className="text-sm font-semibold text-gray-800">{konsultasiDetailData.kota || '—'}</p>
               </div>
               <div className="bg-gray-50 rounded-lg p-3">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Catatan Konsultasi</p>
-                <p className="text-sm text-gray-700">{konsultasiDetailData.catatanKonsultasi || '—'}</p>
+                <p className="text-sm font-semibold text-gray-800">{konsultasiDetailData.catatanKonsultasi || '—'}</p>
               </div>
             </div>
           </div>
@@ -799,7 +799,7 @@ export default function EventOrderNewPage() {
           <div className="flex items-center gap-2 ml-auto">
             <button
               onClick={() => navigate(-1)}
-              className="px-3.5 py-2 text-sm text-gray-500 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+              className="px-3.5 py-2 text-sm text-gray-500 border border-gray-300 rounded-xl hover:bg-gray-50 transition-colors"
             >
               Batal
             </button>
