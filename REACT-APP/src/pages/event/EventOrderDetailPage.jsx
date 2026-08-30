@@ -339,12 +339,12 @@ function generatePayRows(_startStr, _endStr, terms, nilaiNum) {
   if (terms === '50% DP + Pelunasan') {
     const dp = Math.round(nilaiNum * 0.5)
     return [
-      { id: 0, periode: 'DP (50%)',        nominal: dp,            status: 'Belum Ditagih', tglBayar: '' },
-      { id: 1, periode: 'Pelunasan (50%)', nominal: nilaiNum - dp, status: 'Belum Ditagih', tglBayar: '' },
+      { id: 0, periode: 'DP (50%)',        nominal: dp,            status: 'Belum Ditagih', tglBayar: '', jatuhTempo: '' },
+      { id: 1, periode: 'Pelunasan (50%)', nominal: nilaiNum - dp, status: 'Belum Ditagih', tglBayar: '', jatuhTempo: '' },
     ]
   }
   if (terms === 'Full Payment') {
-    return [{ id: 0, periode: 'Full Payment', nominal: nilaiNum, status: 'Belum Ditagih', tglBayar: '' }]
+    return [{ id: 0, periode: 'Full Payment', nominal: nilaiNum, status: 'Belum Ditagih', tglBayar: '', jatuhTempo: '' }]
   }
   return []
 }
@@ -363,8 +363,8 @@ const RECEIPT_ID_MAP = {
 
 /* ── EO-001 specific payment rows ─────────────────────────────────────────── */
 const PAY_ROWS_EO001 = [
-  { id: 0, periode: 'DP (50%)',        nominal: 42_500_000, status: 'Lunas',          tglBayar: '2026-06-05' },
-  { id: 1, periode: 'Pelunasan (50%)', nominal: 42_500_000, status: 'Belum Ditagih',  tglBayar: '' },
+  { id: 0, periode: 'DP (50%)',        nominal: 42_500_000, status: 'Lunas',          tglBayar: '2026-06-05', jatuhTempo: '2026-06-01' },
+  { id: 1, periode: 'Pelunasan (50%)', nominal: 42_500_000, status: 'Belum Ditagih',  tglBayar: '',           jatuhTempo: '2026-06-25' },
 ]
 
 /* ═══════════════════════════════════════
@@ -592,9 +592,10 @@ export default function EventOrderDetailPage() {
   const konsultasiTerkait = order ? dummyKonsultasiRef.find((k) => k.id === order.konsultasiId) : null
 
   const [timLapangan, setTimLapangan] = useState([
-    { id: "TL-001", sourceId: "PIC-001", sourceType: "PIC",   nama: "Rudi Hartono",       tipe: "PIC EFM", peran: "Event Coordinator",       wa: "081234567891", status: "Aktif" },
-    { id: "TL-002", sourceId: "PIC-002", sourceType: "PIC",   nama: "Sari Dewi",          tipe: "PIC EFM", peran: "Fitness Stage Host",      wa: "081234567892", status: "Aktif" },
-    { id: "TL-003", sourceId: "MTR-001", sourceType: "Mitra", nama: "PT. Sound System Pro", tipe: "Vendor", peran: "Sound System & Stage",   wa: "0211234567",   status: "Aktif" },
+    { id: "TL-001", sourceId: "PIC-001", sourceType: "PIC",   nama: "Rudi Hartono",        tipe: "PIC EFM", peran: "Event Coordinator",  wa: "081234567891", status: "Aktif", spesialisasi: "Personal Trainer", pksStatus: "Signed",    warna: "#E05945" },
+    { id: "TL-002", sourceId: "PIC-002", sourceType: "PIC",   nama: "Sari Dewi",           tipe: "PIC EFM", peran: "Fitness Stage Host", wa: "081234567892", status: "Aktif", spesialisasi: "Yoga Instructor",  pksStatus: "Generated", warna: "#2980B9" },
+    { id: "TL-003", sourceId: "MTR-001", sourceType: "Mitra", nama: "PT. Sound System Pro", tipe: "Vendor",  peran: "Sound System & Stage", wa: "0211234567", status: "Aktif" },
+    { id: "TL-004", sourceId: "PIC-003", sourceType: "PIC",   nama: "Bima Prakoso",        tipe: "PIC EFM", peran: "Instructor",         wa: "081234567893", status: "Aktif", spesialisasi: "Zumba Instructor", pksStatus: "Belum",     warna: "#27AE60" },
   ])
 
   const [jadwalOperasional, setJadwalOperasional] = useState([
@@ -644,11 +645,7 @@ export default function EventOrderDetailPage() {
     'Tidak Hadir': 'bg-red-50 text-red-600 border-red-200',
   }
 
-  const [harihPICs, setHarihPICs] = useState([
-    { id: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', peran: 'Lead Instructor', pksStatus: 'Signed',    warna: '#E05945' },
-    { id: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  peran: 'Instructor',      pksStatus: 'Generated', warna: '#2980B9' },
-    { id: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', peran: 'Instructor',      pksStatus: 'Belum',     warna: '#27AE60' },
-  ])
+  const harihPICs = timLapangan.filter(t => t.sourceType === 'PIC')
   const [absensiMode, setAbsensiMode] = useState('onsite')
   const [harihAbsensi, setHarihAbsensi] = useState([
     { picId: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', status: 'Hadir',     checkIn: '05:45', catatan: '',         linkSent: false },
@@ -1483,7 +1480,7 @@ export default function EventOrderDetailPage() {
               <table className="w-full">
                 <thead>
                   <tr className="bg-gray-50">
-                    {['No','Periode','Nominal','Status','Tgl Bayar','Aksi'].map(h => (
+                    {['No','Periode','Nominal','Status','Jatuh Tempo','Tgl Bayar','Aksi'].map(h => (
                       <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -1505,6 +1502,18 @@ export default function EventOrderDetailPage() {
                           </select>
                         ) : (
                           <Badge cls={PAY_STATUS_CLS[r.status] ?? 'bg-gray-100 text-gray-500'}>{r.status}</Badge>
+                        )}
+                      </td>
+                      <td className="px-3 py-2.5">
+                        {editingSection === 'paymentTerms' ? (
+                          <input
+                            type="date"
+                            value={r.jatuhTempo}
+                            onChange={e => updatePayRowDraft(i, 'jatuhTempo', e.target.value)}
+                            className="h-7 px-2 rounded border border-gray-200 text-xs outline-none focus:border-[#1E1C43]"
+                          />
+                        ) : (
+                          <span className="text-xs text-gray-700">{r.jatuhTempo || '—'}</span>
                         )}
                       </td>
                       <td className="px-3 py-2.5">
@@ -2624,7 +2633,7 @@ export default function EventOrderDetailPage() {
                             <div className="flex gap-1.5 flex-wrap">
                               {pic.pksStatus === 'Belum' && (
                                 <button
-                                  onClick={() => setHarihPICs(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Generated' } : p))}
+                                  onClick={() => setTimLapangan(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Generated' } : p))}
                                   className="px-2.5 py-1.5 text-xs font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition">
                                   Generate PKS
                                 </button>
@@ -2636,13 +2645,13 @@ export default function EventOrderDetailPage() {
                               )}
                               {pic.pksStatus === 'Generated' && (
                                 <button
-                                  onClick={() => setHarihPICs(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Signed' } : p))}
+                                  onClick={() => setTimLapangan(prev => prev.map(p => p.id === pic.id ? { ...p, pksStatus: 'Signed' } : p))}
                                   className="px-2.5 py-1.5 text-xs font-semibold border border-green-200 text-green-700 bg-green-50 rounded-lg hover:bg-green-100 transition">
                                   Tandai Signed
                                 </button>
                               )}
                               <button
-                                onClick={() => setHarihPICs(prev => prev.filter(p => p.id !== pic.id))}
+                                onClick={() => setTimLapangan(prev => prev.filter(p => p.id !== pic.id))}
                                 className="p-1.5 text-gray-300 hover:text-red-500 transition rounded">
                                 <X size={13} />
                               </button>
@@ -2914,10 +2923,14 @@ export default function EventOrderDetailPage() {
                   const found = dummyPICs.find(p => p.id === newPICForm.picId)
                   if (!found) return
                   const colors = ['#E05945', '#2980B9', '#27AE60', '#8E44AD', '#E67E22']
-                  setHarihPICs(prev => [...prev, {
-                    id: found.id, nama: found.nama, spesialisasi: found.spesialisasi,
-                    peran: newPICForm.peran || 'Instructor', pksStatus: 'Belum',
-                    warna: colors[prev.length % colors.length],
+                  const tlId = 'TL-' + String(Date.now()).slice(-4).padStart(3, '0')
+                  setTimLapangan(prev => [...prev, {
+                    id: tlId, sourceId: found.id, sourceType: 'PIC',
+                    nama: found.nama, tipe: 'PIC EFM',
+                    peran: newPICForm.peran || 'Instructor', wa: found.wa || '',
+                    status: 'Aktif', spesialisasi: found.spesialisasi,
+                    pksStatus: 'Belum',
+                    warna: colors[prev.filter(t => t.sourceType === 'PIC').length % colors.length],
                   }])
                   setHarihAbsensi(prev => [...prev, {
                     picId: found.id, nama: found.nama, spesialisasi: found.spesialisasi,
