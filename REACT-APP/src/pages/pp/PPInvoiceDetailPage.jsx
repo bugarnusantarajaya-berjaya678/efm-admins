@@ -253,12 +253,11 @@ export default function PPInvoiceDetailPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-24">
 
       {/* Page header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 pt-5 pb-4">
-        {/* Row 1 — Identity */}
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
             <ScrollText size={16} className="text-white" />
           </div>
@@ -273,61 +272,42 @@ export default function PPInvoiceDetailPage() {
               </span>
             </div>
           </div>
-          {/* Back button — top-right corner */}
-          <button
-            onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
-            <ArrowLeft size={13} /> {state?.fromOrderId ? `Order #${state.fromOrderId}` : 'Invoice'}
-          </button>
-        </div>
 
-        {/* Row 2 — Actions */}
-        <div className="flex items-center gap-2 flex-wrap border-t border-gray-100 pt-3">
-          {editing ? (
-            <>
-              <button onClick={saveEdit}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
-                <CheckCircle size={13} /> Simpan Perubahan
-              </button>
-              <button onClick={() => setEditing(false)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                <X size={13} /> Batal
-              </button>
-            </>
-          ) : (
+          {/* Action buttons — hidden during editing */}
+          {!editing && (
             <>
               {/* Primary CTA */}
               {(invoice.status === 'pending' || invoice.status === 'overdue') && (
                 <button
                   onClick={() => setModal('markPaid')}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
                   <CheckCircle size={13} /> Konfirmasi Pembayaran
                 </button>
               )}
               {invoice.status === 'paid' && existingReceipt && (
                 <button
                   onClick={() => navigate('/pp/receipt/' + existingReceipt.rcpNo, { state: { receipt: existingReceipt } })}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
                   <Receipt size={13} /> Lihat Receipt
                 </button>
               )}
               {invoice.status === 'paid' && !existingReceipt && (
                 <button
                   onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
                   <Plus size={13} /> Buat Receipt
                 </button>
               )}
 
-              {/* Secondary actions */}
-              <div className="relative">
+              {/* WA dropdown */}
+              <div className="relative shrink-0">
                 <button
                   onClick={() => setShowWAMenu(p => !p)}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
                   <MessageCircle size={13} /> Kirim WA <ChevronDown size={11} />
                 </button>
                 {showWAMenu && (
-                  <div className="absolute left-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
                     <button
                       onClick={() => { handleKirimWA(); setShowWAMenu(false) }}
                       className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
@@ -343,16 +323,21 @@ export default function PPInvoiceDetailPage() {
                   </div>
                 )}
               </div>
+
+              {/* Download PDF */}
               <button onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
                 <Download size={13} /> Download PDF
-              </button>
-              <button onClick={startEdit}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                <Edit size={13} /> Edit
               </button>
             </>
           )}
+
+          {/* Back button — always visible */}
+          <button
+            onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
+            <ArrowLeft size={13} /> {state?.fromOrderId ? `Order #${state.fromOrderId}` : 'Invoice'}
+          </button>
         </div>
       </div>
 
@@ -605,6 +590,30 @@ export default function PPInvoiceDetailPage() {
       {modal === 'markPaid' && (
         <MarkPaidModal inv={invoice} onConfirm={handleMarkPaid} onClose={() => setModal(null)} />
       )}
+
+      {/* Sticky footer — Edit / Simpan / Batal */}
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 z-40">
+        {editing ? (
+          <>
+            <button
+              onClick={() => setEditing(false)}
+              className="border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+              Batal
+            </button>
+            <button
+              onClick={saveEdit}
+              className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+              <CheckCircle size={14} /> Simpan Perubahan
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={startEdit}
+            className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <Edit size={14} /> Edit Invoice
+          </button>
+        )}
+      </div>
 
     </div>
   )
