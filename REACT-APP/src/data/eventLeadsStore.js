@@ -106,6 +106,11 @@ export function addStoredLead(lead) {
   _leads = [..._leads, lead]
 }
 
+export function updateStoredLead(id, patch) {
+  if (!_leads) return
+  _leads = _leads.map(l => l.id === id ? { ...l, ...patch } : l)
+}
+
 export function getNextLeadId() {
   const n = _leads ? _leads.length + 1 : 1
   return 'LE-' + String(n).padStart(4, '0')

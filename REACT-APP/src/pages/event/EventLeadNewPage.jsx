@@ -4,9 +4,10 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { ArrowLeft, UserPlus } from 'lucide-react'
 import { addStoredLead, getNextLeadId } from '../../data/eventLeadsStore'
 
-const TIPE_OPTS   = ['Corporate','Foundation','Government','Brand','Community','Private','Individual']
-const SUMBER_OPTS = ['Referral','Cold Email','Google / Web','LinkedIn','Instagram','Walk-in','Existing Client','Lainnya']
-const PIC_OPTS    = ['Bagoes','Emma','Lainnya']
+const TIPE_OPTS       = ['Corporate','Foundation','Government','Brand','Community','Private','Individual']
+const SUMBER_OPTS     = ['Referral','Cold Email','Google / Web','LinkedIn','Instagram','Walk-in','Existing Client','Lainnya']
+const PIC_OPTS        = ['Bagoes','Emma','Lainnya']
+const JENIS_EVENT_OPTS = ['Fun Run','Charity Run','Night Run','Corporate Sports Day','Corporate Wellness','Exhibition','Mass Event','HIIT Event','Yoga','Zumba','Lainnya']
 
 const EMPTY_FORM = {
   namaKlien: '', tipeKlien: 'Corporate', kota: '', emailUmum: '',
@@ -187,9 +188,11 @@ export default function EventLeadNewPage() {
 
             <div>
               <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Event</label>
-              <input type="text" value={form.jenisEvent} onChange={e => set('jenisEvent', e.target.value)}
-                placeholder="Fun Run, Exhibition, Corporate Sports Day..."
-                className={inputCls('jenisEvent')} />
+              <select value={form.jenisEvent} onChange={e => set('jenisEvent', e.target.value)}
+                className={inputCls('jenisEvent')}>
+                <option value="">Pilih Jenis Event...</option>
+                {JENIS_EVENT_OPTS.map(j => <option key={j} value={j}>{j}</option>)}
+              </select>
             </div>
 
             <div>
