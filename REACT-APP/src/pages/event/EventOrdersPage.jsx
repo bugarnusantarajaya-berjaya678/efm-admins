@@ -168,10 +168,10 @@ export default function EventOrdersPage() {
   const kpiPending = ORDERS_DATA.filter(o => !['Contract','Event Running','Event Selesai'].includes(o.tahapan) && !['Selesai','Batal'].includes(o.status)).length
   const kpiSelesai = ORDERS_DATA.filter(o => o.status === 'Selesai').length
 
-  const SELECT_CLS = 'px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors'
+  const SELECT_CLS = 'px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors'
 
   return (
-    <div className="space-y-5 p-6">
+    <div className="flex flex-col gap-4">
 
       {/* ── Header ── */}
       <div className="flex items-start justify-between flex-wrap gap-3">
@@ -247,7 +247,7 @@ export default function EventOrdersPage() {
           <option value="">Semua Tahapan</option>
           {['Quotation & LOI','MOU','Contract','Event Running','Event Selesai'].map(t => <option key={t} value={t}>{t}</option>)}
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
           <input
             type="text" value={search}
@@ -256,7 +256,7 @@ export default function EventOrdersPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={handleReset} className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+        <button onClick={handleReset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">
           Reset
         </button>
       </div>
@@ -264,7 +264,7 @@ export default function EventOrdersPage() {
       {/* ── Table ── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-[13px]" style={{ minWidth: '1100px' }}>
+          <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
