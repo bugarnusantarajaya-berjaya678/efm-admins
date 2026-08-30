@@ -18,6 +18,125 @@ function formatRpShort(n) {
 
 const ORDERS_DATA = [
   {
+    id: '#EV-26-0020', namaKlien: 'Yayasan Dharma Bhakti', jenis: 'Foundation',
+    namaEvent: 'Dharma Fun Run 2026', jenisEvent: 'Fun Run',
+    nilaiKontrak: 'Rp 60jt', nilaiNum: 60_000_000,
+    tglEvent: '22 Apr 2026', bulan: 'Apr', tahun: '2026',
+    tahapan: 'Quotation & LOI', status: 'Pending', pic: 'Dinda',
+  },
+  {
+    id: '#EV-26-0019', namaKlien: 'PT. Telkom Indonesia Tbk', jenis: 'Corporate',
+    namaEvent: 'Telkom Active Life 2026', jenisEvent: 'Corporate Wellness',
+    nilaiKontrak: 'Rp 135jt', nilaiNum: 135_000_000,
+    tglEvent: '14 Mar 2026', bulan: 'Mar', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Bagoes',
+  },
+  {
+    id: '#EV-26-0018', namaKlien: 'Komunitas Fitnes Jakarta', jenis: 'Community',
+    namaEvent: 'Outdoor HIIT Blast Vol.3', jenisEvent: 'HIIT Event',
+    nilaiKontrak: 'Rp 30jt', nilaiNum: 30_000_000,
+    tglEvent: '07 Feb 2026', bulan: 'Feb', tahun: '2026',
+    tahapan: 'Quotation & LOI', status: 'Batal', pic: 'Rudi',
+  },
+  {
+    id: '#EV-26-0017', namaKlien: 'PT. Bank Mandiri Tbk', jenis: 'Corporate',
+    namaEvent: 'Mandiri Marathon Charity 2026', jenisEvent: 'Charity Run',
+    nilaiKontrak: 'Rp 160jt', nilaiNum: 160_000_000,
+    tglEvent: '25 Jan 2026', bulan: 'Jan', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Emma',
+  },
+  {
+    id: '#EV-26-0016', namaKlien: 'Nike Indonesia', jenis: 'Brand',
+    namaEvent: 'Nike Run Club Jakarta 2026', jenisEvent: 'Fun Run',
+    nilaiKontrak: 'Rp 220jt', nilaiNum: 220_000_000,
+    tglEvent: '12 Des 2026', bulan: 'Des', tahun: '2026',
+    tahapan: 'Contract', status: 'Aktif', pic: 'Bagoes',
+  },
+  {
+    id: '#EV-26-0015', namaKlien: 'Yayasan Peduli Gizi', jenis: 'Foundation',
+    namaEvent: 'Walk for Nutrition 2026', jenisEvent: 'Charity Run',
+    nilaiKontrak: 'Rp 45jt', nilaiNum: 45_000_000,
+    tglEvent: '18 Apr 2026', bulan: 'Apr', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Dinda',
+  },
+  {
+    id: '#EV-26-0014', namaKlien: 'PT. Unilever Indonesia Tbk', jenis: 'Corporate',
+    namaEvent: 'Unilever Run for Health 2026', jenisEvent: 'Fun Run',
+    nilaiKontrak: 'Rp 95jt', nilaiNum: 95_000_000,
+    tglEvent: '08 Nov 2026', bulan: 'Nov', tahun: '2026',
+    tahapan: 'Quotation & LOI', status: 'Pending', pic: 'Emma',
+  },
+  {
+    id: '#EV-26-0013', namaKlien: 'Pemprov Jawa Barat', jenis: 'Government',
+    namaEvent: 'Jabar Bergerak 2026', jenisEvent: 'Mass Event',
+    nilaiKontrak: 'Rp 250jt', nilaiNum: 250_000_000,
+    tglEvent: '25 Okt 2026', bulan: 'Okt', tahun: '2026',
+    tahapan: 'MOU', status: 'Aktif', pic: 'Rudi',
+  },
+  {
+    id: '#EV-26-0012', namaKlien: 'PT. Indofood Sukses Makmur', jenis: 'Corporate',
+    namaEvent: 'Indofood Corporate Wellness Day', jenisEvent: 'Corporate Wellness',
+    nilaiKontrak: 'Rp 110jt', nilaiNum: 110_000_000,
+    tglEvent: '19 Sep 2026', bulan: 'Sep', tahun: '2026',
+    tahapan: 'Contract', status: 'Aktif', pic: 'Bagoes',
+  },
+  {
+    id: '#EV-26-0011', namaKlien: 'Komunitas Yoga Nusantara', jenis: 'Community',
+    namaEvent: 'Sunday Yoga in the Park', jenisEvent: 'Yoga',
+    nilaiKontrak: 'Rp 22jt', nilaiNum: 22_000_000,
+    tglEvent: '21 Jun 2026', bulan: 'Jun', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Dinda',
+  },
+  {
+    id: '#EV-26-0010', namaKlien: 'Pocari Sweat Indonesia', jenis: 'Brand',
+    namaEvent: 'Pocari Sweat Run 2026', jenisEvent: 'Charity Run',
+    nilaiKontrak: 'Rp 180jt', nilaiNum: 180_000_000,
+    tglEvent: '15 Nov 2026', bulan: 'Nov', tahun: '2026',
+    tahapan: 'MOU', status: 'Aktif', pic: 'Emma',
+  },
+  {
+    id: '#EV-26-0009', namaKlien: 'PT. Bank Central Asia Tbk', jenis: 'Corporate',
+    namaEvent: 'BCA Fun Fit 2026', jenisEvent: 'Fun Run',
+    nilaiKontrak: 'Rp 55jt', nilaiNum: 55_000_000,
+    tglEvent: '03 Okt 2026', bulan: 'Okt', tahun: '2026',
+    tahapan: 'Quotation & LOI', status: 'Pending', pic: 'Rudi',
+  },
+  {
+    id: '#EV-26-0008', namaKlien: 'Kementerian Kesehatan RI', jenis: 'Government',
+    namaEvent: 'Gerak Indonesia Sehat 2026', jenisEvent: 'Mass Event',
+    nilaiKontrak: 'Rp 200jt', nilaiNum: 200_000_000,
+    tglEvent: '09 Agu 2026', bulan: 'Agu', tahun: '2026',
+    tahapan: 'Contract', status: 'Aktif', pic: 'Bagoes',
+  },
+  {
+    id: '#EV-26-0007', namaKlien: 'Yayasan Jantung Indonesia', jenis: 'Foundation',
+    namaEvent: 'Heart Health Run Jakarta', jenisEvent: 'Fun Run',
+    nilaiKontrak: 'Rp 75jt', nilaiNum: 75_000_000,
+    tglEvent: '30 Mei 2026', bulan: 'Mei', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Emma',
+  },
+  {
+    id: '#EV-26-0006', namaKlien: 'PT. Tokopedia Technology', jenis: 'Corporate',
+    namaEvent: 'Tokopedia Health Fest 2026', jenisEvent: 'HIIT Event',
+    nilaiKontrak: 'Rp 90jt', nilaiNum: 90_000_000,
+    tglEvent: '26 Sep 2026', bulan: 'Sep', tahun: '2026',
+    tahapan: 'MOU', status: 'Pending', pic: 'Bagoes',
+  },
+  {
+    id: '#EV-26-0005', namaKlien: 'Komunitas Sehat ID', jenis: 'Community',
+    namaEvent: 'Zumba Sabtu Ceria Vol.7', jenisEvent: 'Zumba',
+    nilaiKontrak: 'Rp 18jt', nilaiNum: 18_000_000,
+    tglEvent: '11 Agu 2026', bulan: 'Agu', tahun: '2026',
+    tahapan: 'Event Selesai', status: 'Selesai', pic: 'Dinda',
+  },
+  {
+    id: '#EV-26-0004', namaKlien: 'PT. Astra International Tbk', jenis: 'Corporate',
+    namaEvent: 'Astra Corporate Wellness Day 2026', jenisEvent: 'Corporate Wellness',
+    nilaiKontrak: 'Rp 150jt', nilaiNum: 150_000_000,
+    tglEvent: '20 Jul 2026', bulan: 'Jul', tahun: '2026',
+    tahapan: 'Contract', status: 'Aktif', pic: 'Emma',
+  },
+  {
     id: '#EV-26-0003', namaKlien: 'Yayasan Kanker Indonesia', jenis: 'Foundation',
     namaEvent: 'Health Run for Hope 2026', jenisEvent: 'Charity Run',
     nilaiKontrak: 'Rp 85jt', nilaiNum: 85_000_000,
@@ -264,7 +383,7 @@ export default function EventOrdersPage() {
       {/* ── Table ── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-x-auto w-full">
-          <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
+          <table className="w-full" style={{ minWidth: '1100px' }}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
@@ -281,7 +400,7 @@ export default function EventOrdersPage() {
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">
+                  <td colSpan={10} className="px-4 py-10 text-center text-xs text-gray-400">
                     Tidak ada data yang cocok dengan filter.
                   </td>
                 </tr>
@@ -291,16 +410,16 @@ export default function EventOrdersPage() {
                   onClick={() => navigate('/event/orders/' + order.id.replace('#', ''))}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                 >
-                  <td className="px-3 py-2.5 text-sm font-medium text-[#1E1C43] whitespace-nowrap">{order.id}</td>
-                  <td className="px-3 py-2.5 text-sm font-semibold text-gray-800 whitespace-nowrap">{order.namaKlien}</td>
+                  <td className="px-3 py-2.5 text-xs font-medium text-[#1E1C43] whitespace-nowrap">{order.id}</td>
+                  <td className="px-3 py-2.5 text-xs font-semibold text-gray-800 whitespace-nowrap">{order.namaKlien}</td>
                   <td className="px-3 py-2.5"><TipeBadge jenis={order.jenis} /></td>
-                  <td className="px-3 py-2.5 text-sm text-gray-700">{order.namaEvent}</td>
-                  <td className="px-3 py-2.5 text-sm text-gray-600">{order.jenisEvent}</td>
-                  <td className="px-3 py-2.5 text-sm text-gray-700 whitespace-nowrap">{order.nilaiKontrak}</td>
-                  <td className="px-3 py-2.5 text-sm text-gray-600 whitespace-nowrap">{order.tglEvent}</td>
+                  <td className="px-3 py-2.5 text-xs text-gray-700">{order.namaEvent}</td>
+                  <td className="px-3 py-2.5 text-xs text-gray-600">{order.jenisEvent}</td>
+                  <td className="px-3 py-2.5 text-xs text-gray-700 whitespace-nowrap">{order.nilaiKontrak}</td>
+                  <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">{order.tglEvent}</td>
                   <td className="px-3 py-2.5"><TahapanBadge tahapan={order.tahapan} /></td>
                   <td className="px-3 py-2.5"><StatusBadge status={order.status} /></td>
-                  <td className="px-3 py-2.5 text-sm text-gray-600">{order.pic}</td>
+                  <td className="px-3 py-2.5 text-xs text-gray-600">{order.pic}</td>
                 </tr>
               ))}
             </tbody>
