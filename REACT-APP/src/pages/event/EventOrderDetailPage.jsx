@@ -605,26 +605,26 @@ export default function EventOrderDetailPage() {
   ]
 
   const dummyKonsultasiRef = [
-    {
-      id: "KNS-26-0001",
-      leadId: "LE-0001",
-      namaEvent: "Fun Run Jakarta 2026",
-      tanggal: "2026-05-20",
-      lokasi: "GBK, Jakarta Selatan",
-      jumlahPeserta: "2.000",
-      peranEFM: "Main Organizer",
-      programKegiatan: ["Fun Run / Walk", "Warm-up & Stretching", "Cool-down"],
-    },
-    {
-      id: "KNS-26-0003",
-      leadId: "LE-0003",
-      namaEvent: "Yoga Festival Senayan 2026",
-      tanggal: "2026-06-10",
-      lokasi: "Lapangan Senayan, Jakarta Pusat",
-      jumlahPeserta: "500",
-      peranEFM: "Co-Organizer",
-      programKegiatan: ["Yoga Outdoor", "Pilates", "Zumba"],
-    },
+    { id: "KNS-26-0001", leadId: "LE-0001", namaEvent: "Hari Olahraga Nasional DKI", tanggal: "2026-07-15", lokasi: "Monas, Jakarta Pusat", jumlahPeserta: "5.000", peranEFM: "Main Organizer", programKegiatan: ["Mass Running", "Senam Massal", "Warm-up & Cool-down"] },
+    { id: "KNS-26-0002", leadId: "LE-0002", namaEvent: "Corporate Fun Run 2026", tanggal: "2026-06-01", lokasi: "Lapangan Senayan, Jakarta Pusat", jumlahPeserta: "300", peranEFM: "Co-Organizer", programKegiatan: ["Fun Run 5K", "Warm-up Bersama", "Lucky Draw"] },
+    { id: "KNS-26-0003", leadId: "LE-0003", namaEvent: "Health Run for Hope 2026", tanggal: "2026-05-10", lokasi: "GBK, Jakarta Selatan", jumlahPeserta: "1.500", peranEFM: "Main Organizer", programKegiatan: ["Charity Run 5K & 10K", "Yoga Outdoor", "Zumba"] },
+    { id: "KNS-26-0004", leadId: "LE-0004", namaEvent: "Astra Corporate Wellness Day 2026", tanggal: "2026-06-15", lokasi: "Wisma Argo Manunggal, Jakarta Selatan", jumlahPeserta: "800", peranEFM: "Main Organizer", programKegiatan: ["Senam Massal", "HIIT Circuit", "Nutrition Talk"] },
+    { id: "KNS-26-0005", leadId: "LE-0005", namaEvent: "Zumba Sabtu Ceria Vol.7", tanggal: "2026-07-01", lokasi: "Taman Literasi Martha Tiahahu, Jakarta Selatan", jumlahPeserta: "200", peranEFM: "Main Organizer", programKegiatan: ["Zumba", "Cool-down Stretching"] },
+    { id: "KNS-26-0006", leadId: "LE-0006", namaEvent: "Tokopedia Health Fest 2026", tanggal: "2026-08-20", lokasi: "Epiwalk Office Park, Jakarta Selatan", jumlahPeserta: "600", peranEFM: "Main Organizer", programKegiatan: ["HIIT Outdoor", "Fun Run 3K", "Health Screening Booth"] },
+    { id: "KNS-26-0007", leadId: "LE-0007", namaEvent: "Heart Health Run Jakarta", tanggal: "2026-04-20", lokasi: "Gelanggang Remaja, Jakarta Selatan", jumlahPeserta: "1.200", peranEFM: "Main Organizer", programKegiatan: ["Fun Run 5K", "Zumba", "Edukasi Kesehatan Jantung"] },
+    { id: "KNS-26-0008", leadId: "LE-0008", namaEvent: "Gerak Indonesia Sehat 2026", tanggal: "2026-06-30", lokasi: "Monas, Jakarta Pusat", jumlahPeserta: "10.000", peranEFM: "Main Organizer", programKegiatan: ["Senam Nusantara", "Fun Walk", "Pilates Massal"] },
+    { id: "KNS-26-0009", leadId: "LE-0009", namaEvent: "BCA Fun Fit 2026", tanggal: "2026-08-15", lokasi: "Pantai Karnaval, Ancol", jumlahPeserta: "500", peranEFM: "Co-Organizer", programKegiatan: ["Fun Run 5K", "Beach Workout", "Lucky Draw"] },
+    { id: "KNS-26-0010", leadId: "LE-0010", namaEvent: "Pocari Sweat Run 2026", tanggal: "2026-09-20", lokasi: "Ancol, Jakarta Utara", jumlahPeserta: "3.000", peranEFM: "Fitness Partner", programKegiatan: ["Fun Run 5K & 10K", "Hydration Station", "Post-Run Yoga"] },
+    { id: "KNS-26-0011", leadId: "LE-0011", namaEvent: "Sunday Yoga in the Park", tanggal: "2026-05-10", lokasi: "Taman Menteng, Jakarta Pusat", jumlahPeserta: "150", peranEFM: "Main Organizer", programKegiatan: ["Hatha Yoga", "Pranayama", "Meditation"] },
+    { id: "KNS-26-0012", leadId: "LE-0012", namaEvent: "Indofood Corporate Wellness Day", tanggal: "2026-08-01", lokasi: "Gedung Ariobimo, Jakarta Selatan", jumlahPeserta: "700", peranEFM: "Main Organizer", programKegiatan: ["Senam Massal", "Functional Fitness", "Health Talk"] },
+    { id: "KNS-26-0013", leadId: "LE-0013", namaEvent: "Jabar Bergerak 2026", tanggal: "2026-09-10", lokasi: "Lapangan Gasibu, Bandung", jumlahPeserta: "20.000", peranEFM: "Main Organizer", programKegiatan: ["Senam Massal", "Fun Walk", "HIIT Outdoor"] },
+    { id: "KNS-26-0014", leadId: "LE-0014", namaEvent: "Unilever Run for Health 2026", tanggal: "2026-09-15", lokasi: "Serpong, Tangerang Selatan", jumlahPeserta: "1.000", peranEFM: "Main Organizer", programKegiatan: ["Fun Run 5K", "Zumba", "Healthy Living Workshop"] },
+    { id: "KNS-26-0015", leadId: "LE-0015", namaEvent: "Walk for Nutrition 2026", tanggal: "2026-03-10", lokasi: "Bunderan HI, Jakarta Pusat", jumlahPeserta: "800", peranEFM: "Main Organizer", programKegiatan: ["Charity Walk 3K", "Edukasi Gizi", "Senam Anak"] },
+    { id: "KNS-26-0016", leadId: "LE-0016", namaEvent: "Nike Run Club Jakarta 2026", tanggal: "2026-10-01", lokasi: "GBK, Jakarta Selatan", jumlahPeserta: "2.500", peranEFM: "Fitness Partner", programKegiatan: ["Fun Run 5K & 10K", "Nike Training Session", "Photo Booth"] },
+    { id: "KNS-26-0017", leadId: "LE-0017", namaEvent: "Mandiri Marathon Charity 2026", tanggal: "2026-12-01", lokasi: "Monas, Jakarta Pusat", jumlahPeserta: "4.000", peranEFM: "Co-Organizer", programKegiatan: ["Marathon 10K & 21K", "Warm-up Massal", "Award Ceremony"] },
+    { id: "KNS-26-0018", leadId: "LE-0018", namaEvent: "Outdoor HIIT Blast Vol.3", tanggal: "2026-01-10", lokasi: "Lapangan Banteng, Jakarta Pusat", jumlahPeserta: "100", peranEFM: "Main Organizer", programKegiatan: ["HIIT Circuit", "Tabata", "Cool-down"] },
+    { id: "KNS-26-0019", leadId: "LE-0019", namaEvent: "Telkom Active Life 2026", tanggal: "2026-01-20", lokasi: "Graha Merah Putih, Jakarta Selatan", jumlahPeserta: "1.500", peranEFM: "Main Organizer", programKegiatan: ["Senam Massal", "Fun Run 5K", "Cycling Tour"] },
+    { id: "KNS-26-0020", leadId: "LE-0020", namaEvent: "Dharma Fun Run 2026", tanggal: "2026-03-01", lokasi: "Taman Mini Indonesia Indah, Jakarta Timur", jumlahPeserta: "600", peranEFM: "Main Organizer", programKegiatan: ["Fun Run 5K", "Family Walk", "Charity Auction"] },
   ]
   const konsultasiTerkait = order ? dummyKonsultasiRef.find((k) => k.id === order.konsultasiId) : null
 
@@ -681,21 +681,17 @@ export default function EventOrderDetailPage() {
     'Tidak Hadir': 'bg-red-50 text-red-600 border-red-200',
   }
 
-  const [harihPICs, setHarihPICs] = useState(
-    id === 'EV-26-0003' || id === 'EV-26-0002' ? [
-      { id: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', peran: 'Lead Instructor', pksStatus: 'Signed',    warna: '#E05945' },
-      { id: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  peran: 'Instructor',      pksStatus: 'Generated', warna: '#2980B9' },
-      { id: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', peran: 'Instructor',      pksStatus: 'Belum',     warna: '#27AE60' },
-    ] : []
-  )
+  const [harihPICs, setHarihPICs] = useState([
+    { id: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', peran: 'Lead Instructor', pksStatus: 'Signed',    warna: '#E05945' },
+    { id: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  peran: 'Instructor',      pksStatus: 'Generated', warna: '#2980B9' },
+    { id: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', peran: 'Instructor',      pksStatus: 'Belum',     warna: '#27AE60' },
+  ])
   const [absensiMode, setAbsensiMode] = useState('onsite')
-  const [harihAbsensi, setHarihAbsensi] = useState(
-    id === 'EV-26-0003' || id === 'EV-26-0002' ? [
-      { picId: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', status: 'Hadir',     checkIn: '05:45', catatan: '',          linkSent: false },
-      { picId: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  status: 'Hadir',     checkIn: '06:00', catatan: '',          linkSent: false },
-      { picId: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', status: 'Terlambat', checkIn: '06:35', catatan: 'Macet KS',  linkSent: false },
-    ] : []
-  )
+  const [harihAbsensi, setHarihAbsensi] = useState([
+    { picId: 'PIC-001', nama: 'Rudi Hartono', spesialisasi: 'Personal Trainer', status: 'Hadir',     checkIn: '05:45', catatan: '',         linkSent: false },
+    { picId: 'PIC-002', nama: 'Sari Dewi',    spesialisasi: 'Yoga Instructor',  status: 'Hadir',     checkIn: '06:00', catatan: '',         linkSent: false },
+    { picId: 'PIC-003', nama: 'Bima Prakoso', spesialisasi: 'Zumba Instructor', status: 'Terlambat', checkIn: '06:35', catatan: 'Macet KS', linkSent: false },
+  ])
   const [eventSelesai,          setEventSelesai]          = useState(false)
   const [showKonfirmasiSelesai, setShowKonfirmasiSelesai] = useState(false)
   const [showTambahPIC,         setShowTambahPIC]         = useState(false)
