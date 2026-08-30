@@ -550,43 +550,6 @@ export default function EventOrderDetailPage() {
   ])
   const [kegiatanDraft, setKegiatanDraft] = useState([])
 
-  /* ── Tab 2: Laporan Kunjungan ────────────────────────────────────────────── */
-  const [showFormLaporan, setShowFormLaporan] = useState(false)
-  const [showPromptAI, setShowPromptAI] = useState(false)
-  const [promptCopied, setPromptCopied] = useState(false)
-  const [laporanList, setLaporanList] = useState([
-    { id:1, tgl:'18 Jun 2026', pic:'Rudi Hartono', kondisi:'Baik',  jmlAlat:'Venue siap' },
-    { id:2, tgl:'25 Jun 2026', pic:'Rudi Hartono', kondisi:'Baik',  jmlAlat:'Gladi bersih' },
-  ])
-  const initAlatRows = [
-    { id:1, nama:'Stage / Panggung',      kondisi:'Baik',              rekomendasi:'-',                   vendor:'CV. Event Decoration'  },
-    { id:2, nama:'Sound System',          kondisi:'Baik',              rekomendasi:'-',                   vendor:'PT. Sound System Pro'  },
-    { id:3, nama:'Tenda & Shelter',       kondisi:'Baik',              rekomendasi:'-',                   vendor:'CV. Event Decoration'  },
-    { id:4, nama:'Toilet Portable',       kondisi:'Perlu Pengecekan',  rekomendasi:'Tambah unit toilet',  vendor:'Vendor Toilet'         },
-    { id:5, nama:'Meja & Kursi',          kondisi:'Baik',              rekomendasi:'-',                   vendor:'CV. Event Decoration'  },
-    { id:6, nama:'Peralatan Fitness',     kondisi:'Baik',              rekomendasi:'-',                   vendor:'PT. Gym Equipment'     },
-    { id:7, nama:'Parkir & Akses',        kondisi:'Baik',              rekomendasi:'-',                   vendor:'-'                     },
-    { id:8, nama:'Listrik & Genset',      kondisi:'Baik',              rekomendasi:'-',                   vendor:'CV. Electric Pro'      },
-  ]
-  const [lForm, setLForm] = useState({ tgl:'', pic:'', kondisiUmum:'Baik', catatan:'', alat: initAlatRows, foto:[] })
-
-  /* ── Tab 2: Laporan Insiden ──────────────────────────────────────────────── */
-  const [showFormInsiden, setShowFormInsiden] = useState(false)
-  const [insidenList, setInsidenList] = useState([
-    { id:1, tglJam:'25 Jun 2026 14:00', kategori:'Koordinasi',  deskripsi:'Perubahan rundown dari klien H-3', status:'Selesai' },
-  ])
-  const [iForm, setIForm] = useState({ tgl:'', jam:'', kategori:'Kerusakan Alat', lokasi:'', dilaporkan:'', statusAwal:'Baru', deskripsi:'', tindakan:'', foto:[] })
-
-  /* ── Tab 2: Log Aktivitas ────────────────────────────────────────────────── */
-  const LOG_DATA = [
-    { dot:'#F97316', teks:'Invoice INV-EV-26-0001 dikirim ke Yayasan Kanker Indonesia', waktu:'20 Jun 2026 08:00' },
-    { dot:'#10B981', teks:'Laporan kunjungan venue GBK disimpan — Rudi Hartono',       waktu:'18 Jun 2026 15:30' },
-    { dot:'#3B82F6', teks:'Status Contract diubah ke Signed',                          waktu:'10 Jun 2026 10:00' },
-    { dot:'#10B981', teks:'Contract EV-26-0003 diupload: contract-yayasan-kanker-final.pdf', waktu:'10 Jun 2026 09:45' },
-    { dot:'#F97316', teks:'DP 50% dikonfirmasi Lunas — Rp 42.500.000',                waktu:'5 Jun 2026 09:00' },
-    { dot:'#3B82F6', teks:'Status Quotation diubah ke Signed',                         waktu:'2 Jun 2026 14:00' },
-    { dot:'#10B981', teks:'Order #EV-26-0003 dibuat oleh Admin EFM',                   waktu:'1 Jun 2026 08:00' },
-  ]
 
   /* ── Tab 3: Operasional Lapangan ─────────────────────────────────────────── */
   const dummyPICs = [
@@ -813,8 +776,7 @@ export default function EventOrderDetailPage() {
   }
 
   function handleSimpanOrderBaru() {
-    const newId = 'EO-00' + (dummyEventOrders.length + 1)
-    navigate('/event/orders/' + newId)
+    navigate('/event/orders')
   }
 
   /* ── LOI data ────────────────────────────────────────────────────────────── */
@@ -893,11 +855,16 @@ export default function EventOrderDetailPage() {
   }
 
   const [logTab3, setLogTab3] = useState([
-    { id: 1, waktu: "2026-07-20 11:00", kategori: "kunjungan", nomorLaporan: "LK-001", teks: "Laporan kunjungan LK-001 dibuat oleh Rudi Hartono — Kondisi: Baik" },
-    { id: 2, waktu: "2026-07-15 09:00", kategori: "tim",       nomorLaporan: null,     teks: "CV. Race Management Pro ditambahkan sebagai Vendor Race Organizer" },
-    { id: 3, waktu: "2026-07-15 09:05", kategori: "tim",       nomorLaporan: null,     teks: "PT. Sound & Stage Indonesia ditambahkan sebagai Vendor Sound System" },
-    { id: 4, waktu: "2026-07-01 14:00", kategori: "jadwal",    nomorLaporan: null,     teks: "Jadwal Technical Meeting ditambahkan: 10 Agustus 2026" },
-    { id: 5, waktu: "2026-06-25 14:00", kategori: "insiden",   nomorLaporan: "INS-001", teks: "Insiden INS-001 dilaporkan: Koordinasi — Perubahan rundown dari klien H-3" },
+    { id: 1, waktu: "2026-06-28 18:00", kategori: "status",     nomorLaporan: null,      teks: "Event selesai — Rekap final diserahkan ke klien" },
+    { id: 2, waktu: "2026-06-25 14:00", kategori: "insiden",    nomorLaporan: "INS-001", teks: "Insiden INS-001 dilaporkan: Koordinasi — Perubahan rundown dari klien H-3" },
+    { id: 3, waktu: "2026-06-20 08:00", kategori: "pembayaran", nomorLaporan: null,      teks: "Invoice INV-EV-26-0001 dikirim ke Yayasan Kanker Indonesia" },
+    { id: 4, waktu: "2026-06-18 15:30", kategori: "kunjungan",  nomorLaporan: "LK-001", teks: "Laporan kunjungan venue GBK disimpan — Rudi Hartono" },
+    { id: 5, waktu: "2026-06-15 11:00", kategori: "tim",        nomorLaporan: null,      teks: "Technical Meeting selesai — Briefing tim EFM dan mitra" },
+    { id: 6, waktu: "2026-06-10 10:00", kategori: "status",     nomorLaporan: null,      teks: "Status Contract diubah ke Signed" },
+    { id: 7, waktu: "2026-06-10 09:45", kategori: "dokumen",    nomorLaporan: null,      teks: "Contract EV-26-0003 diupload: contract-yayasan-kanker-final.pdf" },
+    { id: 8, waktu: "2026-06-05 09:00", kategori: "pembayaran", nomorLaporan: null,      teks: "DP 50% dikonfirmasi Lunas — Rp 42.500.000" },
+    { id: 9, waktu: "2026-06-02 14:00", kategori: "status",     nomorLaporan: null,      teks: "Status Quotation diubah ke Signed" },
+    { id: 10, waktu: "2026-06-01 08:00", kategori: "tim",       nomorLaporan: null,      teks: "Order #EV-26-0003 dibuat oleh Admin EFM" },
   ])
 
   /* ── Render ──────────────────────────────────────────────────────────────── */
@@ -1045,10 +1012,14 @@ export default function EventOrderDetailPage() {
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     {[
-                      { label: 'Nama Klien',    value: infoDraft.namaKlien },
-                      { label: 'Jenis',          value: infoDraft.jenis },
-                      { label: 'Contact Person', value: infoDraft.contactPerson },
-                      { label: 'Telepon',        value: infoDraft.telepon },
+                      { label: 'Nama Klien',       value: infoDraft.namaKlien },
+                      { label: 'Jenis Klien',       value: infoDraft.jenis },
+                      { label: 'Nama Event',        value: order?.namaEvent },
+                      { label: 'Jenis Event',       value: order?.jenisEvent },
+                      { label: 'Peran EFM',         value: order?.peranEFM },
+                      { label: 'Estimasi Peserta',  value: konsultasiTerkait?.jumlahPeserta ? konsultasiTerkait.jumlahPeserta + ' orang' : null },
+                      { label: 'Contact Person',    value: infoDraft.contactPerson },
+                      { label: 'Telepon',           value: infoDraft.telepon },
                     ].map(({ label, value }) => (
                       <div key={label}>
                         <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</label>
@@ -1057,6 +1028,12 @@ export default function EventOrderDetailPage() {
                         </div>
                       </div>
                     ))}
+                    <div className="col-span-2">
+                      <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi Event</label>
+                      <div className="h-9 px-3 flex items-center rounded-lg bg-gray-50 border border-gray-200 text-sm text-gray-600 select-none">
+                        {order?.lokasiEvent || '—'}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -1623,7 +1600,17 @@ export default function EventOrderDetailPage() {
             </div>
 
             {!hasPS && (
-              <p className="text-sm text-gray-400 italic">Kontrak ini tidak menggunakan profit sharing.</p>
+              (order.peranEFM === 'Fitness Partner' || order.peranEFM === 'Co-Organizer') ? (
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+                  <span className="text-amber-500 mt-0.5">💡</span>
+                  <p className="text-xs text-amber-800">
+                    Peran EFM sebagai <strong>{order.peranEFM}</strong> umumnya memiliki kesepakatan profit sharing.
+                    Aktifkan toggle di atas jika kontrak ini mencakup bagi hasil.
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic">Kontrak ini tidak menggunakan profit sharing.</p>
+              )
             )}
 
             {hasPS && (
@@ -2156,15 +2143,21 @@ export default function EventOrderDetailPage() {
             </div>
             <div className="p-5">
               <div className="space-y-3">
-                {LOG_DATA.map((l, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: l.dot }} />
-                    <div className="flex-1">
-                      <p className="text-xs text-gray-700">{l.teks}</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">{l.waktu}</p>
+                {logTab3.map((l) => {
+                  const dotColor = {
+                    pembayaran: '#F97316', kunjungan: '#10B981', insiden: '#EF4444',
+                    dokumen: '#10B981', status: '#3B82F6', tim: '#8B5CF6', jadwal: '#6B7280',
+                  }[l.kategori] ?? '#3B82F6'
+                  return (
+                    <div key={l.id} className="flex items-start gap-3">
+                      <div className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0" style={{ backgroundColor: dotColor }} />
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-700">{l.teks}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{l.waktu}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             </div>
           </div>
@@ -3074,197 +3067,6 @@ export default function EventOrderDetailPage() {
 
       </div>{/* end px-6 py-6 */}
 
-      {/* ══ MODAL: Laporan Kunjungan ══════════════════════════════════════════ */}
-      {showFormLaporan && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8 px-4" style={{ background:'rgba(0,0,0,0.45)' }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl">
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-sm font-bold text-[#1E1C43]">Buat Laporan Kunjungan — {order.namaKlien}</h2>
-              <button onClick={() => setShowFormLaporan(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-            </div>
-
-            <div className="px-6 py-5 space-y-6">
-              {/* Section A */}
-              <div>
-                <p className="text-xs font-semibold text-[#1E1C43] mb-3">A. Info Kunjungan</p>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Kunjungan *</label>
-                    <input type="date" value={lForm.tgl} onChange={e => setLForm(p => ({...p, tgl:e.target.value}))} required
-                      className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">PIC yang Hadir *</label>
-                    <input value={lForm.pic} onChange={e => setLForm(p => ({...p, pic:e.target.value}))} placeholder="Nama PIC"
-                      className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Kondisi Umum Fasilitas</label>
-                    <div className="flex gap-4">
-                      {['Baik','Cukup','Perlu Perhatian'].map(opt => (
-                        <label key={opt} className="flex items-center gap-2 cursor-pointer">
-                          <input type="radio" name="kondisiUmum" value={opt} checked={lForm.kondisiUmum === opt}
-                            onChange={() => setLForm(p => ({...p, kondisiUmum:opt}))} className="accent-[#1E1C43]" />
-                          <span className="text-sm text-gray-700">{opt}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="col-span-2">
-                    <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan Umum</label>
-                    <textarea value={lForm.catatan} onChange={e => setLForm(p => ({...p, catatan:e.target.value}))} rows={2}
-                      className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] resize-none" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Section B — Checklist Alat */}
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <p className="text-xs font-semibold text-[#1E1C43]">B. Kondisi Alat & Fasilitas</p>
-                  <button onClick={() => setLForm(p => ({...p, alat:[...p.alat, {id:Date.now(), nama:'', kondisi:'Baik', rekomendasi:'-', vendor:'-'}]}))}
-                    className="flex items-center gap-1 text-[11px] font-semibold text-[#1E1C43] hover:text-[#E05945] transition-colors">
-                    <Plus size={11} /> Tambah Alat
-                  </button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        {['No','Nama Alat','Kondisi','Rekomendasi','Vendor',''].map(h => (
-                          <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-2 py-2">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lForm.alat.map((a, i) => {
-                        const kondisiCls = a.kondisi === 'Baik' ? 'border-green-300 text-green-700' : a.kondisi === 'Perlu Servis Segera' ? 'border-red-300 text-red-700' : 'border-yellow-300 text-yellow-700'
-                        return (
-                          <tr key={a.id} className="border-b border-gray-100">
-                            <td className="text-xs text-gray-400 px-2 py-2">{i+1}</td>
-                            <td className="px-2 py-2">
-                              <input value={a.nama} onChange={e => setLForm(p => ({...p, alat:p.alat.map((r,j)=>j===i?{...r,nama:e.target.value}:r)}))}
-                                className="w-full h-7 px-2 rounded border border-gray-200 text-xs outline-none focus:border-[#1E1C43]" />
-                            </td>
-                            <td className="px-2 py-2">
-                              <select value={a.kondisi} onChange={e => setLForm(p => ({...p, alat:p.alat.map((r,j)=>j===i?{...r,kondisi:e.target.value}:r)}))}
-                                className={`h-7 px-2 rounded border text-xs outline-none ${kondisiCls}`}>
-                                {['Baik','Perlu Perhatian','Perlu Servis Segera'].map(s => <option key={s}>{s}</option>)}
-                              </select>
-                            </td>
-                            <td className="px-2 py-2">
-                              <input value={a.rekomendasi} onChange={e => setLForm(p => ({...p, alat:p.alat.map((r,j)=>j===i?{...r,rekomendasi:e.target.value}:r)}))}
-                                className="w-full h-7 px-2 rounded border border-gray-200 text-xs outline-none focus:border-[#1E1C43]" />
-                            </td>
-                            <td className="px-2 py-2">
-                              <input value={a.vendor} onChange={e => setLForm(p => ({...p, alat:p.alat.map((r,j)=>j===i?{...r,vendor:e.target.value}:r)}))}
-                                className="w-28 h-7 px-2 rounded border border-gray-200 text-xs outline-none focus:border-[#1E1C43]" />
-                            </td>
-                            <td className="px-2 py-2">
-                              <button onClick={() => setLForm(p => ({...p, alat:p.alat.filter((_,j)=>j!==i)}))}
-                                className="text-gray-300 hover:text-red-500 transition-colors"><Trash2 size={12} /></button>
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Section C — Foto */}
-              <div>
-                <p className="text-xs font-semibold text-[#1E1C43] mb-2">C. Upload Foto (opsional, maks 3 file, 2MB each)</p>
-                <input type="file" accept=".jpg,.jpeg,.png" multiple
-                  onChange={e => setLForm(p => ({...p, foto: Array.from(e.target.files).slice(0,3)}))}
-                  className="text-xs text-gray-600" />
-                {lForm.foto.length > 0 && (
-                  <div className="mt-2 space-y-1">
-                    {lForm.foto.map((f,i) => (
-                      <p key={i} className="text-[11px] text-gray-500">📎 {f.name}</p>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Section D — Prompt AI */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden">
-                <button onClick={() => setShowPromptAI(p => !p)}
-                  className="flex items-center gap-2 text-xs text-[#1E1C43] font-medium w-full text-left px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
-                  🤖 Salin Prompt untuk Generate Laporan Profesional (Claude AI)
-                  <ChevronDown size={14} className={`ml-auto transition-transform ${showPromptAI ? 'rotate-180' : ''}`} />
-                </button>
-                {showPromptAI && (() => {
-                  const promptTemplate = `Kamu adalah konsultan fasilitas dan kebugaran profesional dari Essential Fitness Management (EFM). Berdasarkan data kunjungan berikut, buatkan laporan inspeksi fasilitas profesional dalam Bahasa Indonesia yang komprehensif.
-
-DATA KUNJUNGAN:
-Klien: ${order.namaKlien}
-Tanggal Kunjungan: ${lForm.tgl || '[belum diisi]'}
-PIC yang Hadir: ${lForm.pic || '[belum diisi]'}
-Kondisi Umum: ${lForm.kondisiUmum}
-
-KONDISI ALAT:
-${lForm.alat.map(a => `- ${a.nama}: ${a.kondisi} — Rekomendasi: ${a.rekomendasi}`).join('\n')}
-
-Catatan: ${lForm.catatan || '-'}
-
-STRUKTUR LAPORAN YANG DIBUTUHKAN:
-1. Executive Summary kondisi keseluruhan fasilitas
-2. Detail Temuan per Alat/Area
-3. Analisa Risiko (tinggi/sedang/rendah per temuan)
-4. Rekomendasi Tindakan Prioritas (paling mendesak dulu)
-5. Estimasi Dampak jika Tidak Ditangani
-6. Kesimpulan & Saran Profesional untuk Manajemen
-
-Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR Korporat.`
-                  return (
-                    <div className="bg-gray-50 border-t border-gray-200 p-4">
-                      <p className="text-[10px] text-gray-500 mb-2">
-                        Salin prompt ini → buka claude.ai → paste → dapatkan laporan profesional lengkap
-                      </p>
-                      <div className="bg-white border border-gray-200 rounded-lg p-3 text-xs font-mono whitespace-pre-wrap text-gray-700 max-h-48 overflow-y-auto mb-3">
-                        {promptTemplate}
-                      </div>
-                      <button
-                        onClick={() => navigator.clipboard.writeText(promptTemplate).then(() => { setPromptCopied(true); setTimeout(() => setPromptCopied(false), 2000) })}
-                        className={`flex items-center gap-1.5 h-8 px-4 rounded-lg text-xs font-semibold transition-colors ${promptCopied ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:opacity-90'}`}
-                      >
-                        {promptCopied ? '✓ Tersalin!' : '📋 Salin Prompt'}
-                      </button>
-                    </div>
-                  )
-                })()}
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-              <button onClick={() => window.print()}
-                className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
-                <Printer size={13} /> Export PDF
-              </button>
-              <div className="flex gap-2">
-                <button onClick={() => setShowFormLaporan(false)}
-                  className="h-9 px-4 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 transition-colors">
-                  Batal
-                </button>
-                <button onClick={() => {
-                  if (!lForm.tgl || !lForm.pic) return
-                  setLaporanList(p => [...p, { id: Date.now(), tgl: lForm.tgl, pic: lForm.pic, kondisi: lForm.kondisiUmum, jmlAlat: `${lForm.alat.length} alat` }])
-                  setShowFormLaporan(false)
-                  setLForm({ tgl:'', pic:'', kondisiUmum:'Baik', catatan:'', alat: initAlatRows, foto:[] })
-                }}
-                  className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90">
-                  💾 Simpan Laporan
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* ══ MODAL: Laporan Insiden ════════════════════════════════════════════ */}
       {/* ══ MODAL: LOI Preview ═══════════════════════════════════════════════ */}
       {showLOIPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
@@ -3547,102 +3349,6 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
               >
                 Tambahkan
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showFormInsiden && (
-        <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto py-8 px-4" style={{ background:'rgba(0,0,0,0.45)' }}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <h2 className="text-sm font-bold text-[#1E1C43]">Laporan Insiden — {order.namaKlien}</h2>
-              <button onClick={() => setShowFormInsiden(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-            </div>
-
-            <div className="px-6 py-5 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Kejadian *</label>
-                  <input type="date" value={iForm.tgl} onChange={e => setIForm(p => ({...p, tgl:e.target.value}))}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Kejadian *</label>
-                  <input type="time" value={iForm.jam} onChange={e => setIForm(p => ({...p, jam:e.target.value}))}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Kategori *</label>
-                  <select value={iForm.kategori} onChange={e => setIForm(p => ({...p, kategori:e.target.value}))}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]">
-                    {['Kerusakan Alat','Kecelakaan Pengguna','Gangguan Fasilitas','Keluhan Klien','Lainnya'].map(k => <option key={k}>{k}</option>)}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Lokasi di Fasilitas</label>
-                  <input value={iForm.lokasi} onChange={e => setIForm(p => ({...p, lokasi:e.target.value}))} placeholder="Area gym lantai 2"
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Dilaporkan Oleh</label>
-                  <input value={iForm.dilaporkan} onChange={e => setIForm(p => ({...p, dilaporkan:e.target.value}))}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]" />
-                </div>
-                <div>
-                  <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Status Awal</label>
-                  <select value={iForm.statusAwal} onChange={e => setIForm(p => ({...p, statusAwal:e.target.value}))}
-                    className="w-full h-9 px-3 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43]">
-                    {['Baru','Dalam Penanganan'].map(s => <option key={s}>{s}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Deskripsi Kejadian *</label>
-                <textarea value={iForm.deskripsi} onChange={e => setIForm(p => ({...p, deskripsi:e.target.value}))}
-                  placeholder="Jelaskan kejadian secara detail..." rows={3}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] resize-none" />
-              </div>
-              <div>
-                <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tindakan Awal</label>
-                <textarea value={iForm.tindakan} onChange={e => setIForm(p => ({...p, tindakan:e.target.value}))}
-                  placeholder="Tindakan yang sudah diambil saat kejadian..." rows={2}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm outline-none focus:border-[#1E1C43] resize-none" />
-              </div>
-              <div>
-                <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Upload Foto/Dokumentasi (maks 3 file)</label>
-                <input type="file" accept=".jpg,.jpeg,.png,.pdf" multiple
-                  onChange={e => setIForm(p => ({...p, foto: Array.from(e.target.files).slice(0,3)}))}
-                  className="text-xs text-gray-600" />
-                {iForm.foto.length > 0 && (
-                  <div className="mt-1 space-y-0.5">
-                    {iForm.foto.map((f,i) => <p key={i} className="text-[11px] text-gray-500">📎 {f.name}</p>)}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-              <button onClick={() => window.print()}
-                className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
-                <Printer size={13} /> Export PDF
-              </button>
-              <div className="flex gap-2">
-                <button onClick={() => setShowFormInsiden(false)}
-                  className="h-9 px-4 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50">
-                  Batal
-                </button>
-                <button onClick={() => {
-                  if (!iForm.tgl || !iForm.deskripsi) return
-                  const tglJam = `${iForm.tgl} ${iForm.jam}`
-                  setInsidenList(p => [...p, { id: Date.now(), tglJam, kategori: iForm.kategori, deskripsi: iForm.deskripsi, status: iForm.statusAwal }])
-                  setShowFormInsiden(false)
-                  setIForm({ tgl:'', jam:'', kategori:'Kerusakan Alat', lokasi:'', dilaporkan:'', statusAwal:'Baru', deskripsi:'', tindakan:'', foto:[] })
-                }}
-                  className="flex items-center gap-1.5 h-9 px-4 rounded-lg bg-red-600 text-white text-xs font-semibold hover:opacity-90">
-                  💾 Simpan Laporan
-                </button>
-              </div>
             </div>
           </div>
         </div>
