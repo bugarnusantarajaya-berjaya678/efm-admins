@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, ChevronRight, Plus, Trash2, Save } from 'lucide-react'
+import { ArrowLeft, Plus, Trash2, Save } from 'lucide-react'
 import { initLeads, getStoredLeads, LEADS_INIT } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
@@ -348,20 +348,14 @@ export default function EventOrderNewPage() {
 
         {/* ── Header Card ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-start justify-between gap-3 flex-wrap">
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-                <Save size={18} className="text-white" />
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+                <Save size={22} className="text-white" />
               </div>
               <div>
-                <nav className="flex items-center gap-1 text-[10px] text-gray-400 mb-0.5">
-                  <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">B2B Event</button>
-                  <ChevronRight size={10} className="text-gray-300" />
-                  <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-                  <ChevronRight size={10} className="text-gray-300" />
-                  <span className="text-[#1E1C43] font-medium">Order Baru</span>
-                </nav>
-                <h1 className="text-base font-bold text-[#1E1C43] leading-tight">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">B2B Event</p>
+                <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
                   {clientData.namaKlien || 'Order Baru'}
                 </h1>
                 <p className="text-xs text-gray-400 mt-0.5">
@@ -377,7 +371,7 @@ export default function EventOrderNewPage() {
             </div>
             <button
               onClick={() => navigate('/event/orders')}
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
               <ArrowLeft size={12} /> Kembali
             </button>
