@@ -852,11 +852,11 @@ function OrderEditModal({ order, onClose }) {
         <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors"
           >
             Tutup
           </button>
-          <button className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-[#1E1C43] hover:bg-[#2D2B5A] transition-colors">
+          <button className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#1E1C43] hover:bg-[#2D2B5A] transition-colors">
             Simpan Perubahan
           </button>
         </div>
@@ -918,13 +918,13 @@ function OrderEditModal({ order, onClose }) {
           <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
             <button
               onClick={() => setShowAddKegiatan(false)}
-              className="px-4 py-2 rounded-lg text-[13px] font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-[#1E1C43] border border-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors"
             >
               Batal
             </button>
             <button
               onClick={saveKg}
-              className="px-4 py-2 rounded-lg text-[13px] font-semibold text-white bg-[#1E1C43] hover:bg-[#2D2B5A] transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#1E1C43] hover:bg-[#2D2B5A] transition-colors"
             >
               Simpan Kegiatan
             </button>

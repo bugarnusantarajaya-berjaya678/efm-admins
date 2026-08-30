@@ -293,7 +293,7 @@ export default function B2BKalenderPage() {
           <FilterSelect value={filterTipe}  onChange={setFilterTipe}  options={TIPE_LIST} />
           <button
             onClick={() => { setFilterKlien('Semua Klien'); setFilterTipe('Semua Tipe') }}
-            className="h-9 flex items-center gap-1.5 px-3 rounded-lg border border-[#1E1C43] text-[13px] font-semibold text-[#1E1C43] hover:bg-[#1E1C43] hover:text-white transition-colors"
+            className="h-9 flex items-center gap-1.5 px-3 rounded-lg border border-gray-300 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
           >
             <RotateCcw size={13} /> Reset
           </button>

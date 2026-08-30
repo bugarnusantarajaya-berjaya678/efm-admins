@@ -170,8 +170,8 @@ function DetailModal({ doc, onClose, onSave }) {
 
           {/* Footer */}
           <div className="flex gap-3 justify-end px-6 py-4 border-t border-gray-100">
-            <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-text-muted hover:bg-gray-50">Batal</button>
-            <button onClick={handleSave} className="px-5 py-2 rounded-lg bg-accent text-white text-[13px] font-semibold hover:bg-accent-hover transition-colors">Simpan</button>
+            <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-text-muted hover:bg-gray-50">Batal</button>
+            <button onClick={handleSave} className="px-5 py-2 rounded-lg bg-accent text-white text-sm font-semibold hover:bg-accent-hover transition-colors">Simpan</button>
           </div>
         </div>
       </div>
@@ -249,8 +249,8 @@ function UploadModal({ onClose, onSave }) {
           </div>
         </div>
         <div className="flex gap-3 justify-end px-6 py-4 border-t border-gray-100">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-text-muted hover:bg-gray-50">Batal</button>
-          <button onClick={handleSubmit} className="px-4 py-2 rounded-lg bg-accent text-white text-[13px] font-semibold hover:bg-accent-hover">Buat Dokumen</button>
+          <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-300 text-sm font-semibold text-text-muted hover:bg-gray-50">Batal</button>
+          <button onClick={handleSubmit} className="px-4 py-2 rounded-lg bg-accent text-white text-sm font-semibold hover:bg-accent-hover">Buat Dokumen</button>
         </div>
       </div>
     </div>
