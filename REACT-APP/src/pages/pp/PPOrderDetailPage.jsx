@@ -2152,84 +2152,69 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 6: Fitness Assessment ── */}
+          {/* ── Section 6: Fitness Assessment (Related Records Panel) ── */}
           {(() => {
             const assessment = getAssessmentByOrderId(order.id)
-            if (!assessment) return (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Fitness Assessment</h3>
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-400 italic">Belum ada data fitness assessment untuk order ini.</p>
-                  <button
-                    onClick={() => navigate('/pp/screening/new', { state: { fromOrderId: order.id, leadId: order.leadId, namaKlien: order.namaKlien } })}
-                    className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1E1C43] text-white rounded-lg text-xs font-semibold hover:bg-[#2d2b5e] transition"
-                  >
-                    <Plus size={13} /> Buat Assessment
-                  </button>
-                </div>
-              </div>
-            )
-            const preTestDate = assessment.tanggalPreTest
+            const statusCls = assessment?.statusAssessment === 'Post-Test Selesai'
+              ? 'bg-green-50 text-green-700 border-green-200'
+              : assessment?.statusAssessment === 'Pre-Test Selesai'
+              ? 'bg-blue-50 text-blue-700 border-blue-200'
+              : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+            const preTestDate = assessment?.tanggalPreTest
               ? new Date(assessment.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
               : '—'
-            const statusColor = assessment.statusAssessment === 'Post-Test Selesai'
-              ? 'bg-green-100 text-green-700'
-              : assessment.statusAssessment === 'Pre-Test Selesai'
-              ? 'bg-blue-100 text-blue-700'
-              : 'bg-yellow-100 text-yellow-700'
             return (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                  <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                  <div>
                     <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Fitness Assessment</h3>
-                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full ${statusColor}`}>{assessment.statusAssessment}</span>
-                    {assessment.prevAssessmentId && (
-                      <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-purple-100 text-purple-700">
-                        Renewal · Pre-Test dari #{assessment.prevAssessmentId}
-                      </span>
-                    )}
+                    <p className="text-xs text-gray-400 pl-4 mt-0.5">Data screening & assessment klien untuk order ini</p>
                   </div>
-                  <button
-                    onClick={() => navigate('/pp/screening/' + assessment.id, { state: { fromOrderId: order.id } })}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition shrink-0"
-                  >
-                    <Eye size={12} /> Lihat Detail
-                  </button>
+                  {!assessment && (
+                    <button
+                      onClick={() => navigate('/pp/screening/new', { state: { fromOrderId: order.id, leadId: order.leadId, namaKlien: order.namaKlien } })}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition"
+                    >
+                      <Plus size={12} /> Buat Assessment
+                    </button>
+                  )}
                 </div>
                 <div className="p-5">
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 mb-4">
-                    {[
-                      ['ID Screening', assessment.id],
-                      ['Tanggal Pre-Test', preTestDate],
-                      ['FC / Screener', assessment.namaFC],
-                      ['Tinggi Badan', (assessment.tanita?.tinggiBadan_awal || '—') + (assessment.tanita?.tinggiBadan_awal ? ' cm' : '')],
-                      ['Berat Badan', (assessment.tanita?.totalBodyWeight_awal || '—') + (assessment.tanita?.totalBodyWeight_awal ? ' kg' : '')],
-                      ['BMI', assessment.tanita?.bodyMassIndex_awal || '—'],
-                    ].map(([lbl, val]) => (
-                      <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{lbl}</p>
-                        <p className="text-sm font-semibold text-[#1E1C43]">{val}</p>
+                  {!assessment ? (
+                    <p className="text-xs text-gray-400 italic text-center py-6">Belum ada data fitness assessment untuk order ini.</p>
+                  ) : (
+                    <button
+                      onClick={() => navigate('/pp/screening/' + assessment.id, { state: { fromOrderId: order.id } })}
+                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-1 flex-wrap">
+                          <span className="text-sm font-bold text-[#1E1C43]">{assessment.id}</span>
+                          {assessment.statusAssessment && (
+                            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>
+                              {assessment.statusAssessment}
+                            </span>
+                          )}
+                          {assessment.prevAssessmentId && (
+                            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                              Renewal · dari #{assessment.prevAssessmentId}
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-gray-500 mb-0.5">
+                          {preTestDate}
+                          {assessment.namaFC ? ` · ${assessment.namaFC}` : ''}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {[
+                            assessment.tanita?.tinggiBadan_awal     ? `${assessment.tanita.tinggiBadan_awal} cm`  : null,
+                            assessment.tanita?.totalBodyWeight_awal  ? `${assessment.tanita.totalBodyWeight_awal} kg` : null,
+                            assessment.tanita?.bodyMassIndex_awal    ? `BMI ${assessment.tanita.bodyMassIndex_awal}` : null,
+                          ].filter(Boolean).join(' · ')}
+                        </p>
                       </div>
-                    ))}
-                  </div>
-                  <div className="space-y-0">
-                    {[
-                      ['Target Program',    assessment.detailGoals],
-                      ['Kondisi Fisik Awal',assessment.ringkasan?.kondisiFisik],
-                      ['Riwayat Cedera',    assessment.ringkasan?.riwayatCedera],
-                      ['Obat-obatan Rutin', assessment.ringkasan?.obatanRutin],
-                    ].map(([lbl, val]) => (
-                      <div key={lbl} className="flex gap-3 py-2.5 border-b border-gray-100 last:border-0">
-                        <p className="text-xs text-gray-400 w-36 shrink-0">{lbl}</p>
-                        <p className="text-xs font-medium text-gray-700">{val || '—'}</p>
-                      </div>
-                    ))}
-                  </div>
-                  {assessment.ringkasan?.catatanScreening && (
-                    <div className="mt-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                      <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mb-1">Catatan Screening</p>
-                      <p className="text-xs text-blue-800 leading-relaxed">{assessment.ringkasan.catatanScreening}</p>
-                    </div>
+                      <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
+                    </button>
                   )}
                 </div>
               </div>
