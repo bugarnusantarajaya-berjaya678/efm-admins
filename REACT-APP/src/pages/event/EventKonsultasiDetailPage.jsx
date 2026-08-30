@@ -15,6 +15,11 @@ const ISI_PROGRAM_OPTS = [
 
 const PERAN_EFM_OPTS = ['Main Organizer', 'Co-Organizer', 'Fitness Consultant', 'Vendor']
 
+const JENIS_EVENT_OPTS = [
+  'Fun Run', 'Charity Run', 'Night Run', 'Corporate Sports Day', 'Corporate Wellness',
+  'Exhibition', 'Mass Event', 'HIIT Event', 'Yoga', 'Zumba', 'Lainnya',
+]
+
 const ANGGARAN_OPTS = [
   '< Rp 10 juta', 'Rp 10–25 juta', 'Rp 25–50 juta',
   'Rp 50–100 juta', 'Rp 100–250 juta', '> Rp 250 juta', 'Belum Diketahui',
@@ -589,13 +594,14 @@ export default function EventKonsultasiDetailPage() {
 
           <div>
             <FieldLabel>Jenis Event</FieldLabel>
-            <input
-              type="text"
+            <select
               value={detailEvent.jenisEvent}
               onChange={e => updateDetailEvent('jenisEvent', e.target.value)}
-              placeholder="Charity Run, Fun Run, Mass Event, Exhibition..."
-              className={inputCls}
-            />
+              className={selectCls}
+            >
+              <option value="">Pilih Jenis Event...</option>
+              {JENIS_EVENT_OPTS.map(j => <option key={j} value={j}>{j}</option>)}
+            </select>
           </div>
 
           <div>
