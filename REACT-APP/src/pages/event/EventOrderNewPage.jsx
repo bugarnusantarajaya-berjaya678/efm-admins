@@ -568,22 +568,25 @@ export default function EventOrderNewPage() {
                       key={key}
                       type="button"
                       onClick={() => toggleKategori(key)}
-                      className={[
-                        'text-left p-3 rounded-xl border-2 transition-all duration-150',
-                        checked
-                          ? 'border-[' + color + '] bg-[' + color + ']/5'
-                          : 'border-gray-200 bg-white hover:border-gray-300',
-                      ].join(' ')}
+                      className="text-left p-3 rounded-xl border-2 transition-all duration-150"
+                      style={checked
+                        ? { borderColor: color, backgroundColor: color + '0d' }
+                        : { borderColor: '#e5e7eb', backgroundColor: '#fff' }}
                     >
                       <div className="flex items-start gap-2">
-                        <div className={[
-                          'mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0',
-                          checked ? 'border-[' + color + '] bg-[' + color + ']' : 'border-gray-300',
-                        ].join(' ')}>
+                        <div
+                          className="mt-0.5 w-4 h-4 rounded border-2 flex items-center justify-center shrink-0"
+                          style={checked
+                            ? { borderColor: color, backgroundColor: color }
+                            : { borderColor: '#d1d5db' }}
+                        >
                           {checked && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                         </div>
                         <div>
-                          <p className={['text-[11px] font-semibold leading-tight', checked ? 'text-[' + color + ']' : 'text-gray-700'].join(' ')}>{label}</p>
+                          <p
+                            className="text-[11px] font-semibold leading-tight"
+                            style={checked ? { color } : { color: '#374151' }}
+                          >{label}</p>
                           <p className="text-[10px] text-gray-400 mt-0.5 leading-snug">{desc}</p>
                         </div>
                       </div>
