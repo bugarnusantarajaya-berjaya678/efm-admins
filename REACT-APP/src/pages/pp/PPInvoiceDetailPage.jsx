@@ -187,6 +187,7 @@ export default function PPInvoiceDetailPage() {
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
   function handleKirimWA() {
+    window.print()
     const cs = getCompanySettings()
     const msg = [
       `Halo *${invoice.sapaan} ${invoice.client}*,`,
