@@ -14,6 +14,16 @@ function formatRpShort(n) {
   return 'Rp ' + new Intl.NumberFormat('id-ID').format(n)
 }
 
+const AVATAR_COLORS = ['#1E1C43','#E05945','#2E86AB','#A23B72','#F18F01','#7B4F3A','#44BBA4','#6B4E71']
+function avatarColor(name) {
+  let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) & 0xff
+  return AVATAR_COLORS[h % AVATAR_COLORS.length]
+}
+function initials(name) {
+  const words = name.replace(/\./g, '').split(/\s+/).filter(Boolean)
+  return words.slice(0, 2).map(w => w[0]).join('').toUpperCase()
+}
+
 // ─── Dummy data ───────────────────────────────────────────────────────────────
 
 const ORDERS_DATA = [
@@ -382,9 +392,9 @@ export default function EventOrdersPage() {
 
       {/* ── Table ── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto w-full">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
           <table className="w-full" style={{ minWidth: '1100px' }}>
-            <thead>
+            <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
                   ['Order ID', 130], ['Nama Klien', 160], ['Jenis Klien', 110],
@@ -411,7 +421,15 @@ export default function EventOrdersPage() {
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                 >
                   <td className="px-3 py-2.5 text-xs font-medium text-[#1E1C43] whitespace-nowrap">{order.id}</td>
-                  <td className="px-3 py-2.5 text-xs font-semibold text-gray-800 whitespace-nowrap">{order.namaKlien}</td>
+                  <td className="px-3 py-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0"
+                        style={{ background: avatarColor(order.namaKlien) }}>
+                        {initials(order.namaKlien)}
+                      </div>
+                      <span className="text-xs font-semibold text-gray-800 whitespace-nowrap">{order.namaKlien}</span>
+                    </div>
+                  </td>
                   <td className="px-3 py-2.5"><TipeBadge jenis={order.jenis} /></td>
                   <td className="px-3 py-2.5 text-xs text-gray-700">{order.namaEvent}</td>
                   <td className="px-3 py-2.5 text-xs text-gray-600">{order.jenisEvent}</td>
