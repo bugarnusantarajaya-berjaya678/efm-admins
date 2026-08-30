@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag, ChevronDown } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
@@ -107,6 +107,7 @@ export default function PPInvoiceDetailPage() {
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
+  const [showWAMenu,    setShowWAMenu]    = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -290,18 +291,29 @@ export default function PPInvoiceDetailPage() {
                 <Edit size={13} /> Edit Invoice
               </button>
             )}
-            <button
-              onClick={handleKirimWA}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-              <MessageCircle size={13} /> Kirim WA
-            </button>
-            {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+            <div className="relative">
               <button
-                onClick={handleReminderWA}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-[#25D366] text-[#25D366] text-xs font-semibold rounded-lg hover:bg-[#25D366] hover:text-white transition-colors">
-                <MessageCircle size={13} /> Reminder WA
+                onClick={() => setShowWAMenu(p => !p)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
+                <MessageCircle size={13} /> Kirim WA <ChevronDown size={11} />
               </button>
-            )}
+              {showWAMenu && (
+                <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
+                  <button
+                    onClick={() => { handleKirimWA(); setShowWAMenu(false) }}
+                    className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                    <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice
+                  </button>
+                  {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                    <button
+                      onClick={() => { handleReminderWA(); setShowWAMenu(false) }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-50">
+                      <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
             <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
               <Download size={13} /> Download PDF
             </button>
@@ -542,27 +554,26 @@ export default function PPInvoiceDetailPage() {
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-gray-400 mt-3">Mohon cantumkan nomor invoice (<span className="font-semibold text-gray-600">{invoice.invNo}</span>) sebagai keterangan transfer.</p>
           </div>
         )}
 
-        {/* Catatan Invoice */}
-        <div className="px-8 py-4 border-t border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-          {editing ? (
-            <textarea
-              value={catatanDraft}
-              onChange={e => setCatatanDraft(e.target.value)}
-              placeholder="Tambahkan catatan untuk invoice ini..."
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
-            />
-          ) : invoice.catatan ? (
-            <p className="text-sm text-gray-600">{invoice.catatan}</p>
-          ) : (
-            <p className="text-sm text-gray-400 italic">Tidak ada catatan</p>
-          )}
-        </div>
+        {/* Catatan Invoice — hidden when empty and not editing */}
+        {(editing || invoice.catatan) && (
+          <div className="px-8 py-4 border-t border-gray-100">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
+            {editing ? (
+              <textarea
+                value={catatanDraft}
+                onChange={e => setCatatanDraft(e.target.value)}
+                placeholder="Tambahkan catatan untuk invoice ini..."
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
+              />
+            ) : (
+              <p className="text-sm text-gray-600">{invoice.catatan}</p>
+            )}
+          </div>
+        )}
 
         {/* Syarat & Ketentuan */}
         <div className="px-8 py-6 border-t border-gray-100">
