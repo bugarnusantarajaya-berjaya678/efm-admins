@@ -43,7 +43,7 @@ const PIPELINE_LINEAR = ['New', 'Approach', 'Konsultasi', 'Quotation', 'Closing'
 const PIPELINE_STAGES = [...PIPELINE_LINEAR, 'Lost']
 
 const SUMBER_OPTS    = ['Referral', 'Cold Email', 'LinkedIn', 'Instagram', 'Website', 'Walk-in', 'Lainnya']
-const JENIS_EVENT    = ['Fun Run', 'Charity Run', 'Night Run', 'Corporate Sports Day', 'Exhibition', 'Mass Event', 'Lainnya']
+const JENIS_EVENT    = ['Fun Run', 'Charity Run', 'Night Run', 'Corporate Sports Day', 'Corporate Wellness', 'Exhibition', 'Mass Event', 'HIIT Event', 'Yoga', 'Zumba', 'Lainnya']
 const TIPE_OPTS      = ['Corporate', 'Foundation', 'Government', 'Brand', 'Community', 'Private', 'Individual']
 const PIC_EFM_OPTS   = ['Bagoes', 'Emma']
 

@@ -1,7 +1,7 @@
 ﻿import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Plus, Trash2, Save } from 'lucide-react'
-import { initLeads, getStoredLeads, LEADS_INIT } from '../../data/eventLeadsStore'
+import { initLeads, getStoredLeads, updateStoredLead, LEADS_INIT } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
    Dummy Konsultasi Data
@@ -287,6 +287,13 @@ export default function EventOrderNewPage() {
     if (kategori.length === 0) {
       alert('Pilih minimal satu Kategori Layanan.')
       return
+    }
+    if (linkedLeadId) {
+      const lead = getStoredLeads().find(l => l.id === linkedLeadId)
+      if (lead) {
+        const newOrderId = 'EV-26-' + String(Date.now()).slice(-4).padStart(4, '0')
+        updateStoredLead(linkedLeadId, { orderIds: [...(lead.orderIds || []), newOrderId] })
+      }
     }
     navigate('/event/orders')
   }

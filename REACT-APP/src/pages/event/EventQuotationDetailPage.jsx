@@ -36,7 +36,7 @@ function Toast({ message, onClose }) {
 /* ════════════════════════════════
    PREVIEW DOKUMEN QUOTATION
 ════════════════════════════════ */
-function QuotationDocument({ quotation, subtotal, afterTax }) {
+function QuotationDocument({ quotation, subtotal, afterMgmt, afterTax }) {
   const co = getCompanySettings()
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden print:shadow-none">
@@ -114,10 +114,16 @@ function QuotationDocument({ quotation, subtotal, afterTax }) {
               <span className="text-gray-500">Subtotal</span>
               <span className="font-semibold text-[#1E1C43]">{formatRp(subtotal)}</span>
             </div>
+            {quotation.managementFee?.aktif && (
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">+ Management Fee ({quotation.managementFee.persen}%)</span>
+                <span className="text-gray-600">+{formatRp(afterMgmt - subtotal)}</span>
+              </div>
+            )}
             {quotation.pajak.map(p => (
               <div key={p.id} className="flex justify-between text-sm">
                 <span className="text-gray-500">{p.tipe === '-' ? '−' : '+'} {p.nama} ({p.persentase}%)</span>
-                <span className="text-gray-600">{p.tipe}{formatRp(subtotal * (p.persentase / 100))}</span>
+                <span className="text-gray-600">{p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}</span>
               </div>
             ))}
             <div className="border-t border-gray-200 pt-2 mt-1">
@@ -312,6 +318,7 @@ export default function EventQuotationDetailPage() {
       pajak: [
         { id: 1, nama: 'PPN', persentase: 11, tipe: '+' },
       ],
+      managementFee: { aktif: false, persen: 0 },
       nilaiSubtotal: 0,
       nilaiTotal: 0,
     }
@@ -321,10 +328,14 @@ export default function EventQuotationDetailPage() {
 
   /* ── Calculations ── */
   const subtotal = quotation.items.reduce((s, it) => s + (it.qty * it.harga), 0)
+  const mgmtFeeAmt = quotation.managementFee?.aktif
+    ? Math.round(subtotal * (quotation.managementFee.persen / 100))
+    : 0
+  const afterMgmt = subtotal + mgmtFeeAmt
   const afterTax = quotation.pajak.reduce((s, p) => {
-    const amt = subtotal * (p.persentase / 100)
+    const amt = afterMgmt * (p.persentase / 100)
     return p.tipe === '+' ? s + amt : s - amt
-  }, subtotal)
+  }, afterMgmt)
 
   /* ── Line item helpers ── */
   function updateItem(itemId, field, value) {
@@ -545,7 +556,7 @@ export default function EventQuotationDetailPage() {
 
         {/* ── Preview Dokumen ── */}
         {showPreview && !isNew && (
-          <QuotationDocument quotation={quotation} subtotal={subtotal} afterTax={afterTax} />
+          <QuotationDocument quotation={quotation} subtotal={subtotal} afterMgmt={afterMgmt} afterTax={afterTax} />
         )}
 
         {/* ── Info singkat KPI ── */}
@@ -648,6 +659,38 @@ export default function EventQuotationDetailPage() {
                   <span className="font-semibold text-[#1E1C43]">{formatRp(subtotal)}</span>
                 </div>
 
+                {/* Management Fee */}
+                <div className="flex justify-between text-sm items-center gap-2">
+                  <div className="flex items-center gap-2 flex-1">
+                    <input type="checkbox"
+                      checked={quotation.managementFee?.aktif ?? false}
+                      onChange={() => setQuotation(prev => ({
+                        ...prev,
+                        managementFee: { ...(prev.managementFee ?? { persen: 0 }), aktif: !prev.managementFee?.aktif }
+                      }))}
+                      disabled={!editing}
+                      className="w-3.5 h-3.5 accent-[#1E1C43]" />
+                    <span className="text-gray-500">Management Fee</span>
+                    {quotation.managementFee?.aktif && editing && (
+                      <input type="number" min={0} max={100}
+                        value={quotation.managementFee.persen}
+                        onChange={e => setQuotation(prev => ({
+                          ...prev,
+                          managementFee: { ...prev.managementFee, persen: Number(e.target.value) }
+                        }))}
+                        className="w-14 px-1.5 py-0.5 border border-gray-200 rounded text-xs text-right focus:outline-none" />
+                    )}
+                    {quotation.managementFee?.aktif && (
+                      <span className="text-xs text-gray-400">
+                        {editing ? '%' : `${quotation.managementFee.persen}%`}
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-medium text-gray-700">
+                    {quotation.managementFee?.aktif ? `+${formatRp(mgmtFeeAmt)}` : '—'}
+                  </span>
+                </div>
+
                 {quotation.pajak.map(p => (
                   <div key={p.id} className="flex justify-between text-sm items-center gap-2">
                     {editing ? (
@@ -666,7 +709,7 @@ export default function EventQuotationDetailPage() {
                           <button onClick={() => removePajak(p.id)} className="text-red-400 hover:text-red-600"><Trash2 size={12} /></button>
                         </div>
                         <span className="text-gray-500 w-28 text-right">
-                          {p.tipe}{formatRp(subtotal * (p.persentase / 100))}
+                          {p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}
                         </span>
                       </>
                     ) : (
