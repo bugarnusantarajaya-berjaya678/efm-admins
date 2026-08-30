@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag, ChevronDown } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
@@ -107,6 +107,7 @@ export default function PPInvoiceDetailPage() {
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
+  const [showWAMenu,    setShowWAMenu]    = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -254,84 +255,103 @@ export default function PPInvoiceDetailPage() {
     <div className="flex flex-col gap-4">
 
       {/* Page header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <ScrollText size={18} className="text-white" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Invoice Private Training</p>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Invoice #{invoice.invNo}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-xs text-gray-500">{invoice.client}</span>
-                <span className="text-gray-300 text-xs">·</span>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
-                  {STATUS_LABEL[invoice.status] || invoice.status}
-                </span>
-              </div>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 pt-5 pb-4">
+        {/* Row 1 — Identity */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+            <ScrollText size={16} className="text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice Private Training</p>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">Invoice #{invoice.invNo}</h1>
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span className="text-xs text-gray-500">{invoice.client}</span>
+              <span className="text-gray-300 text-xs">·</span>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
+                {STATUS_LABEL[invoice.status] || invoice.status}
+              </span>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {editing ? (
-              <>
-                <button onClick={saveEdit}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
-                  <CheckCircle size={13} /> Simpan
+          {/* Back button — top-right corner */}
+          <button
+            onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
+            <ArrowLeft size={13} /> {state?.fromOrderId ? `Order #${state.fromOrderId}` : 'Invoice'}
+          </button>
+        </div>
+
+        {/* Row 2 — Actions */}
+        <div className="flex items-center gap-2 flex-wrap border-t border-gray-100 pt-3">
+          {editing ? (
+            <>
+              <button onClick={saveEdit}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
+                <CheckCircle size={13} /> Simpan Perubahan
+              </button>
+              <button onClick={() => setEditing(false)}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                <X size={13} /> Batal
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Primary CTA */}
+              {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                <button
+                  onClick={() => setModal('markPaid')}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  <CheckCircle size={13} /> Konfirmasi Pembayaran
                 </button>
-                <button onClick={() => setEditing(false)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                  <X size={13} /> Batal
+              )}
+              {invoice.status === 'paid' && existingReceipt && (
+                <button
+                  onClick={() => navigate('/pp/receipt/' + existingReceipt.rcpNo, { state: { receipt: existingReceipt } })}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  <Receipt size={13} /> Lihat Receipt
                 </button>
-              </>
-            ) : (
+              )}
+              {invoice.status === 'paid' && !existingReceipt && (
+                <button
+                  onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
+                  <Plus size={13} /> Buat Receipt
+                </button>
+              )}
+
+              {/* Secondary actions */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowWAMenu(p => !p)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
+                  <MessageCircle size={13} /> Kirim WA <ChevronDown size={11} />
+                </button>
+                {showWAMenu && (
+                  <div className="absolute left-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
+                    <button
+                      onClick={() => { handleKirimWA(); setShowWAMenu(false) }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice
+                    </button>
+                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                      <button
+                        onClick={() => { handleReminderWA(); setShowWAMenu(false) }}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-50">
+                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => window.print()}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                <Download size={13} /> Download PDF
+              </button>
               <button onClick={startEdit}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                <Edit size={13} /> Edit Invoice
+                <Edit size={13} /> Edit
               </button>
-            )}
-            <button
-              onClick={handleKirimWA}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-              <MessageCircle size={13} /> Kirim WA
-            </button>
-            {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-              <button
-                onClick={handleReminderWA}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-[#25D366] text-[#25D366] text-xs font-semibold rounded-lg hover:bg-[#25D366] hover:text-white transition-colors">
-                <MessageCircle size={13} /> Reminder WA
-              </button>
-            )}
-            <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
-              <Download size={13} /> Download PDF
-            </button>
-            {invoice.status === 'paid' && existingReceipt && (
-              <button
-                onClick={() => navigate('/pp/receipt/' + existingReceipt.rcpNo, { state: { receipt: existingReceipt } })}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border-[1.5px] border-primary text-primary text-xs font-semibold rounded-lg hover:bg-primary hover:text-white transition-colors">
-                <Receipt size={13} /> Lihat Receipt
-              </button>
-            )}
-            {invoice.status === 'paid' && !existingReceipt && (
-              <button
-                onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
-                <Plus size={13} /> Buat Receipt
-              </button>
-            )}
-            {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-              <button
-                onClick={() => setModal('markPaid')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors">
-                <CheckCircle size={13} /> Konfirmasi Pembayaran
-              </button>
-            )}
-            <button
-              onClick={() => state?.fromOrderId ? navigate(`/pp/orders/${state.fromOrderId}`, { state: { activeTab: 'kontrak' } }) : navigate('/pp/invoice')}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
-              <ArrowLeft size={13} /> {state?.fromOrderId ? `Kembali ke Order #${state.fromOrderId}` : 'Kembali ke Invoice'}
-            </button>
-          </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -542,27 +562,26 @@ export default function PPInvoiceDetailPage() {
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-gray-400 mt-3">Mohon cantumkan nomor invoice (<span className="font-semibold text-gray-600">{invoice.invNo}</span>) sebagai keterangan transfer.</p>
           </div>
         )}
 
-        {/* Catatan Invoice */}
-        <div className="px-8 py-4 border-t border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-          {editing ? (
-            <textarea
-              value={catatanDraft}
-              onChange={e => setCatatanDraft(e.target.value)}
-              placeholder="Tambahkan catatan untuk invoice ini..."
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
-            />
-          ) : invoice.catatan ? (
-            <p className="text-sm text-gray-600">{invoice.catatan}</p>
-          ) : (
-            <p className="text-sm text-gray-400 italic">Tidak ada catatan</p>
-          )}
-        </div>
+        {/* Catatan Invoice — hidden when empty and not editing */}
+        {(editing || invoice.catatan) && (
+          <div className="px-8 py-4 border-t border-gray-100">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
+            {editing ? (
+              <textarea
+                value={catatanDraft}
+                onChange={e => setCatatanDraft(e.target.value)}
+                placeholder="Tambahkan catatan untuk invoice ini..."
+                rows={3}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
+              />
+            ) : (
+              <p className="text-sm text-gray-600">{invoice.catatan}</p>
+            )}
+          </div>
+        )}
 
         {/* Syarat & Ketentuan */}
         <div className="px-8 py-6 border-t border-gray-100">
