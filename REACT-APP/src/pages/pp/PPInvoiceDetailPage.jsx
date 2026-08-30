@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
@@ -27,6 +27,12 @@ function getSyaratList() {
     }
   } catch {}
   return getDefaultSyarat()
+}
+
+const validKodeDiskon = {
+  HEMAT10:   { label: 'Voucher Hemat 10%',    tipe: 'persen',  nilai: 10    },
+  HARBOLNAS: { label: 'Hari Belanja Nasional', tipe: 'persen',  nilai: 15    },
+  FLAT50K:   { label: 'Flat Diskon Spesial',  tipe: 'nominal', nilai: 50000 },
 }
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
@@ -96,6 +102,11 @@ export default function PPInvoiceDetailPage() {
   const [invoice, setInvoice] = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
   const [modal,   setModal]   = useState(null)
   const [cs]                  = useState(() => getCompanySettings())
+  const [editing,       setEditing]       = useState(false)
+  const [catatanDraft,  setCatatanDraft]  = useState('')
+  const [kodeInput,     setKodeInput]     = useState('')
+  const [diskonApplied, setDiskonApplied] = useState(null)
+  const [diskonError,   setDiskonError]   = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -117,7 +128,60 @@ export default function PPInvoiceDetailPage() {
   }
 
   const subtotalBase   = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (invoice.biayaLain || 0)
+  const promoDiskon    = invoice.promoVal || 0
+  const totalAkhir     = subtotalBase - promoDiskon
   const statusBadgeCls = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
+
+  function startEdit() {
+    setCatatanDraft(invoice.catatan || '')
+    const existingKode = invoice.promoKode || ''
+    setKodeInput(existingKode)
+    setDiskonApplied(existingKode && validKodeDiskon[existingKode]
+      ? { kode: existingKode, ...validKodeDiskon[existingKode] }
+      : null)
+    setDiskonError(false)
+    setEditing(true)
+  }
+
+  function applyKode() {
+    const kode = kodeInput.trim().toUpperCase()
+    if (validKodeDiskon[kode]) {
+      setDiskonApplied({ kode, ...validKodeDiskon[kode] })
+      setDiskonError(false)
+    } else {
+      setDiskonApplied(null)
+      setDiskonError(true)
+    }
+  }
+
+  function removeKode() {
+    setDiskonApplied(null)
+    setKodeInput('')
+    setDiskonError(false)
+  }
+
+  function saveEdit() {
+    const promoVal = diskonApplied
+      ? diskonApplied.tipe === 'persen'
+        ? Math.round(subtotalBase * diskonApplied.nilai / 100)
+        : diskonApplied.nilai
+      : 0
+    setInvoice(prev => ({
+      ...prev,
+      catatan:   catatanDraft,
+      promoKode: diskonApplied?.kode  || '',
+      promoType: diskonApplied?.tipe  || '',
+      promoVal,
+    }))
+    setEditing(false)
+  }
+
+  const editDiskonVal = diskonApplied
+    ? diskonApplied.tipe === 'persen'
+      ? Math.round(subtotalBase * diskonApplied.nilai / 100)
+      : diskonApplied.nilai
+    : 0
+  const editTotal = subtotalBase - editDiskonVal
   const syaratList     = getSyaratList()
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
@@ -209,6 +273,23 @@ export default function PPInvoiceDetailPage() {
             </div>
           </div>
           <div className="flex items-center gap-2 flex-wrap shrink-0">
+            {editing ? (
+              <>
+                <button onClick={saveEdit}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors">
+                  <CheckCircle size={13} /> Simpan
+                </button>
+                <button onClick={() => setEditing(false)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                  <X size={13} /> Batal
+                </button>
+              </>
+            ) : (
+              <button onClick={startEdit}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                <Edit size={13} /> Edit Invoice
+              </button>
+            )}
             <button
               onClick={handleKirimWA}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
@@ -373,9 +454,55 @@ export default function PPInvoiceDetailPage() {
             <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
           </div>
 
+          {/* Kode Diskon — edit mode */}
+          {editing && (
+            <div className="py-2 border-t border-gray-100 mt-1">
+              <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Diskon</p>
+              {diskonApplied ? (
+                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                  <div>
+                    <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
+                    <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
+                    <span className="text-xs font-bold text-green-700 ml-2">
+                      - {formatRp(editDiskonVal)}
+                    </span>
+                  </div>
+                  <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3">
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    value={kodeInput}
+                    onChange={e => { setKodeInput(e.target.value.toUpperCase()); setDiskonError(false) }}
+                    onKeyDown={e => e.key === 'Enter' && applyKode()}
+                    placeholder="Masukkan kode voucher"
+                    className={`flex-1 px-3 py-2 border rounded-lg text-xs outline-none focus:border-[#1E1C43] ${diskonError ? 'border-red-400' : 'border-gray-300'}`}
+                  />
+                  <button onClick={applyKode}
+                    className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:opacity-90 transition-colors">
+                    Terapkan
+                  </button>
+                </div>
+              )}
+              {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid atau tidak ditemukan.</p>}
+            </div>
+          )}
+
+          {/* Kode Diskon — read mode (if applied) */}
+          {!editing && promoDiskon > 0 && (
+            <div className="flex justify-between items-center py-1.5 text-sm border-t border-gray-100 mt-1">
+              <span className="text-green-600 flex items-center gap-1.5"><Tag size={12} /> Diskon ({invoice.promoKode})</span>
+              <span className="font-medium text-green-600">- {formatRp(promoDiskon)}</span>
+            </div>
+          )}
+
           <div className="mt-4 bg-[#1E1C43] rounded-xl px-6 py-4 flex justify-between items-center">
             <span className="text-white font-bold text-lg">Total Tagihan</span>
-            <span className="text-white font-bold text-lg">{formatRp(subtotalBase)}</span>
+            <span className="text-white font-bold text-lg">
+              {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
+            </span>
           </div>
 
           {invoice.status === 'paid' && (
@@ -422,7 +549,15 @@ export default function PPInvoiceDetailPage() {
         {/* Catatan Invoice */}
         <div className="px-8 py-4 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-          {invoice.catatan ? (
+          {editing ? (
+            <textarea
+              value={catatanDraft}
+              onChange={e => setCatatanDraft(e.target.value)}
+              placeholder="Tambahkan catatan untuk invoice ini..."
+              rows={3}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
+            />
+          ) : invoice.catatan ? (
             <p className="text-sm text-gray-600">{invoice.catatan}</p>
           ) : (
             <p className="text-sm text-gray-400 italic">Tidak ada catatan</p>
