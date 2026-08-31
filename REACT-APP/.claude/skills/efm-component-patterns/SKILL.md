@@ -1531,3 +1531,132 @@ const [toggles, setToggles] = useState({
 - Saat form dalam read-only mode (existing record, `!isEditing`), toggle tetap bisa diklik hanya jika ada nilai tersimpan — atau sembunyikan toggle dan tampilkan konten saja (bergantung UX halaman). Untuk form prototype dummy, wrapper `pointer-events-none` pada outer form sudah cukup
 - **Implementasi aktual:** `PPFitnessAssessmentPage.jsx` — sections Pengukuran Tubuh, Health Screening, dan Fitness Test (diimplementasi 2026-08-29)
 
+---
+
+## 14. Related Records Panel (Style B — Standar)
+
+Used for: menampilkan daftar entitas terkait (order, invoice, receipt, agreement, assessment) di dalam halaman detail — sebagai kartu ringkas yang bisa diklik untuk navigate ke halaman detail masing-masing record. Pola ini menggantikan tabel inline atau list button yang terlalu besar.
+
+**Kapan pakai:**
+- Section menampilkan satu atau beberapa record terkait yang sudah punya dedicated detail page
+- Field yang dibutuhkan sudah tersedia di halaman tujuan — tidak perlu duplikat semua info di sini
+- Section terasa "terlalu besar" relatif terhadap fungsinya
+
+### Wrapper panel
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  {/* Section header */}
+  <div className="flex items-center justify-between mb-3">
+    <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2">
+      <IconName size={14} /> Label Section
+    </h3>
+    {/* Optional: tombol aksi (misal: Buat Order, Buat Invoice) */}
+    <button
+      onClick={handleAction}
+      className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors"
+    >
+      <Plus size={10} /> Label
+    </button>
+  </div>
+
+  {/* Daftar kartu */}
+  <div className="flex flex-col gap-2">
+    {records.length === 0 ? (
+      <p className="text-xs text-gray-400 text-center py-6">Belum ada record.</p>
+    ) : (
+      records.map(r => (
+        <div key={r.id} onClick={...} className="...">
+          {/* kartu per record — lihat Style B di bawah */}
+        </div>
+      ))
+    )}
+  </div>
+</div>
+```
+
+### Style B — Satu kartu (template resmi)
+
+```jsx
+<div
+  onClick={() => navigate('/path/to/' + record.id, { state: { record } })}
+  className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+>
+  {/* Sisi kiri: icon + ID + info sekunder */}
+  <div className="flex items-center gap-3 min-w-0">
+    <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+      <IconName size={14} className="text-[#1E1C43]" />
+    </div>
+    <div className="min-w-0">
+      <p className="text-xs font-semibold text-[#1E1C43] truncate">#{record.id}</p>
+      <p className="text-[10px] text-gray-400 truncate">{infoSekunder}</p>
+    </div>
+  </div>
+
+  {/* Sisi kanan: nilai opsional + status badge + ExternalLink */}
+  <div className="flex items-center gap-2 shrink-0">
+    {/* Nilai moneter (opsional, jika relevan) */}
+    <span className="text-xs font-semibold text-[#1E1C43]">Rp {record.nilai.toLocaleString('id-ID')}</span>
+    {/* Status badge */}
+    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>
+      {statusLabel}
+    </span>
+    <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+  </div>
+</div>
+```
+
+### Status color map
+
+```js
+// Gunakan sesuai kebutuhan per entitas
+const statusColors = {
+  // Order PP
+  'Aktif':     'bg-green-50 text-green-700 border-green-200',
+  'Completed': 'bg-blue-50 text-blue-700 border-blue-200',
+  'Cancelled': 'bg-red-50 text-red-700 border-red-200',
+  // Invoice/Receipt
+  'Lunas':     'bg-green-50 text-green-700 border-green-200',
+  'Pending':   'bg-yellow-50 text-yellow-700 border-yellow-200',
+  'Overdue':   'bg-red-50 text-red-700 border-red-200',
+  'Draft':     'bg-gray-50 text-gray-500 border-gray-200',
+  // Agreement
+  'Aktif':     'bg-green-50 text-green-700 border-green-200',
+  'Pengajuan': 'bg-yellow-50 text-yellow-700 border-yellow-200',
+}
+```
+
+### Contoh info sekunder (baris kedua kartu)
+
+- **Order**: `"{paket} · Mulai {formatDate(tanggalMulai)}"`
+- **Invoice**: `"Jatuh tempo {formatDate(jatuhTempo)}"`
+- **Receipt**: `"{tanggal} · {metode}"`
+- **Agreement**: `"Berlaku {tanggalMulai} s/d {tanggalBerakhir}"`
+- **Fitness Assessment**: gabungkan data pengukuran singkat, misalnya `"BB {bb}kg · TB {tb}cm · {tanggal}"`
+
+### Aturan wajib
+
+- Selalu gunakan `div` + `onClick` — **jangan** `button` (Style A yang lama)
+- Padding kartu: `px-4 py-3` — **bukan** `p-3` atau `p-3.5`
+- Icon circle: `w-8 h-8 rounded-full bg-[#1E1C43]/10` — wajib ada, selalu di kiri
+- ID: `text-xs font-semibold text-[#1E1C43] truncate` — tampilkan dengan `#` prefix
+- Info sekunder: `text-[10px] text-gray-400 truncate`
+- Status badge: posisi kanan, sebelum ExternalLink — `text-[10px]`
+- ExternalLink: `size={13}`, default `text-gray-300`, hover `text-[#1E1C43]` via `group-hover`
+- Import `ExternalLink` dari `lucide-react` jika belum ada
+- **Jangan tampilkan chip/badge ID dokumen terkait di dalam panel ini** (misal: INV-PP-26-0007, RCP-PP-26-0007 di Riwayat Order) — arahkan admin ke detail page record terkait untuk melihat dokumen tersebut
+- Jika record terkait hanya satu: satu kartu sudah cukup, tidak perlu loop
+- Jika record terkait bisa lebih dari satu: loop semua dalam list `flex flex-col gap-2`
+- `border-l-4 border-yellow-400` pada wrapper panel (di luar `bg-white rounded-2xl`) sebagai visual cue ketika ada aksi pending (contoh: agreement dalam status pengajuan_masuk)
+- Jika section RRP menjadi terlalu kecil untuk tab tersendiri setelah konversi: gabungkan ke tab Overview/Kontrak sebagai card tersendiri — jangan pertahankan tab kosong hanya untuk satu kartu
+
+### Implementasi aktual
+
+| Halaman | Section | File |
+|---|---|---|
+| PP Order Detail | Agreement Klien | `PPOrderDetailPage.jsx` |
+| PP Order Detail | Invoice | `PPOrderDetailPage.jsx` |
+| PP Order Detail | Receipt | `PPOrderDetailPage.jsx` |
+| PP Order Detail | Fitness Assessment | `PPOrderDetailPage.jsx` |
+| PP Lead Detail | Riwayat Order (Tab 3) | `PPLeadDetailPage.jsx` |
+
