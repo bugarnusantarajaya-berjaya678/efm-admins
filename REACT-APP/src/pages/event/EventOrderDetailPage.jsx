@@ -1102,47 +1102,45 @@ export default function EventOrderDetailPage() {
         <div className="flex items-start justify-between gap-4 flex-wrap">
 
           {/* LEFT: Avatar + Info */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
             <div
               className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaEvent || order.namaKlien) }}
             >
               {getInitials(order.namaEvent || order.namaKlien)}
             </div>
-            <div>
+            <div className="min-w-0">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'EV-DRAFT' : order.id}</p>
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</h1>
               <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <Badge cls={tipeCls}>{tipeLabel}</Badge>
                 <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
+              </div>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <span className="text-[10px] text-gray-400">{order.namaKlien} · {order.tipeKlien || order.jenis}</span>
+                <span className="text-[10px] text-gray-300">|</span>
+                <span className="text-xs font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
+                <span className="text-[10px] text-gray-400">· PIC: {order.pic}</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Nilai Kontrak + Action buttons */}
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-              <p className="text-xl font-bold text-[#1E1C43]">{fmtRp(subtotal)}</p>
-              <p className="text-[10px] text-gray-400">PIC: {order.pic}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              {!isNew && (
-                <button
-                  onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
-                >
-                  <Edit2 size={12} /> Update Tahapan
-                </button>
-              )}
+          {/* RIGHT: Action buttons only (matches PP pattern) */}
+          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+            {!isNew && (
               <button
-                onClick={() => navigate('/event/orders')}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
               >
-                <ArrowLeft size={12} /> Kembali
+                <Edit2 size={12} /> Update Tahapan
               </button>
-            </div>
+            )}
+            <button
+              onClick={() => navigate('/event/orders')}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali
+            </button>
           </div>
         </div>
 
@@ -1192,7 +1190,7 @@ export default function EventOrderDetailPage() {
       </div>
 
       {/* Tab Bar */}
-      <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 overflow-x-auto">
+      <div className="flex flex-nowrap gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 overflow-x-auto">
         {[
           { key: 'keuangan',    label: 'Kontrak & Keuangan'  },
           { key: 'dokumen',     label: 'Dokumen Kerjasama'    },
@@ -1203,7 +1201,7 @@ export default function EventOrderDetailPage() {
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`shrink-0 px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
+            className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === tab.key
                 ? 'bg-[#1E1C43] text-white'
                 : 'text-gray-500 hover:text-[#1E1C43]'
