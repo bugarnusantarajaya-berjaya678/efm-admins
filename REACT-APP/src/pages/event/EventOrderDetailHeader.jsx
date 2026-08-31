@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Calendar, Edit2, ArrowLeft, X, Save } from 'lucide-react'
+import { Edit2, ArrowLeft, X, Save } from 'lucide-react'
 
 const STATUS_CLS = {
   Aktif:   'bg-green-100 text-green-700',
@@ -16,6 +16,21 @@ const TIPE_CLS_MAP = {
   Community:  'bg-blue-500 text-white',
   Private:    'bg-pink-500 text-white',
   Individual: 'bg-gray-400 text-white',
+}
+
+const AVATAR_COLORS = [
+  '#E05945', '#1E1C43', '#2563EB', '#7C3AED',
+  '#0891B2', '#059669', '#D97706', '#DC2626',
+]
+
+function getAvatarColor(name = '') {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
+function getInitials(name = '') {
+  return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')
 }
 
 function Badge({ children, cls }) {
@@ -64,62 +79,60 @@ function EventTahapanStepper({ currentTahapan }) {
 export default function EventOrderDetailHeader({ isNew, order, subtotal, tahapanState, onTahapanChange, onBack }) {
   const [editingTahapan,    setEditingTahapan]    = useState(false)
   const [newTahapanVal,     setNewTahapanVal]     = useState(tahapanState)
+  const [newTahapanTanggal, setNewTahapanTanggal] = useState('')
   const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
 
-  const tipeCls  = TIPE_CLS_MAP[order.jenis] ?? 'bg-blue-500 text-white'
-  const tipeLabel = order.jenis
+  const avatarName = order.namaKlien || order.namaEvent || ''
+  const tipeCls    = TIPE_CLS_MAP[order.jenis] ?? 'bg-blue-500 text-white'
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
-      <div className="flex items-center gap-2 flex-wrap">
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div className="flex items-start justify-between gap-4 flex-wrap">
 
-        {/* Icon */}
-        <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-          <Calendar size={16} className="text-white" />
-        </div>
-
-        {/* Identity */}
-        <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-            B2B Event · {isNew ? 'EV-DRAFT' : order.id}
-          </p>
-          <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">
-            {isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}
-          </h1>
-          <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-            <Badge cls={tipeCls}>{tipeLabel}</Badge>
-            <span className="text-gray-300 text-xs">·</span>
-            <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
-            <span className="text-gray-300 text-xs">·</span>
-            <span className="text-xs text-gray-500">{order.namaKlien}</span>
-            <span className="text-gray-300 text-xs">·</span>
-            <span className="text-xs font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
-            {order.pic && (
-              <>
-                <span className="text-gray-300 text-xs">·</span>
-                <span className="text-xs text-gray-400">PIC: {order.pic}</span>
-              </>
-            )}
+        {/* LEFT: Avatar + Info */}
+        <div className="flex items-center gap-4">
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+            style={{ background: getAvatarColor(avatarName) }}
+          >
+            {isNew ? 'EV' : getInitials(avatarName)}
+          </div>
+          <div>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+              {isNew ? 'EV-DRAFT' : order.id}
+            </p>
+            <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
+              {isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}
+            </h1>
+            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <Badge cls={tipeCls}>{order.jenis}</Badge>
+              <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
+              <span className="text-[10px] text-gray-400">{order.namaKlien}</span>
+              <span className="text-[10px] font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
+              {order.pic && (
+                <span className="text-[10px] text-gray-400">PIC: {order.pic}</span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Action buttons */}
-        {!isNew && (
+        {/* RIGHT: Action buttons */}
+        <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+          {!isNew && (
+            <button
+              onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
+            >
+              <Edit2 size={12} /> Update Tahapan
+            </button>
+          )}
           <button
-            onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+            onClick={onBack}
+            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
           >
-            <Edit2 size={13} /> Update Tahapan
+            <ArrowLeft size={12} /> Kembali
           </button>
-        )}
-
-        {/* Back button */}
-        <button
-          onClick={onBack}
-          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
-        >
-          <ArrowLeft size={13} /> Kembali
-        </button>
+        </div>
       </div>
 
       {/* Tahapan Stepper — full width below divider */}
@@ -144,19 +157,28 @@ export default function EventOrderDetailHeader({ isNew, order, subtotal, tahapan
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
                   <input
-                    type="text"
-                    value={newTahapanCatatan}
-                    onChange={e => setNewTahapanCatatan(e.target.value)}
-                    placeholder="Catatan perubahan tahapan..."
+                    type="date"
+                    value={newTahapanTanggal}
+                    onChange={e => setNewTahapanTanggal(e.target.value)}
                     className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]"
                   />
                 </div>
               </div>
+              <div>
+                <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                <input
+                  type="text"
+                  value={newTahapanCatatan}
+                  onChange={e => setNewTahapanCatatan(e.target.value)}
+                  placeholder="Catatan perubahan tahapan..."
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]"
+                />
+              </div>
               <div className="flex gap-2 justify-end pt-1">
                 <button
-                  onClick={() => setEditingTahapan(false)}
+                  onClick={() => { setEditingTahapan(false); setNewTahapanCatatan(''); setNewTahapanTanggal('') }}
                   className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors"
                 >
                   <X size={12} /> Batal
@@ -166,6 +188,7 @@ export default function EventOrderDetailHeader({ isNew, order, subtotal, tahapan
                     if (newTahapanVal && newTahapanVal !== tahapanState) onTahapanChange(newTahapanVal)
                     setEditingTahapan(false)
                     setNewTahapanCatatan('')
+                    setNewTahapanTanggal('')
                   }}
                   className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity"
                 >
