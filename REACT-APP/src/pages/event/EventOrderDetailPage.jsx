@@ -1128,7 +1128,7 @@ export default function EventOrderDetailPage() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-2 flex-shrink-0 sm:mt-0">
+          <div className="flex items-center gap-2 flex-shrink-0 self-start sm:mt-0">
             {!isNew && (
               <button
                 onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
@@ -3394,48 +3394,28 @@ export default function EventOrderDetailPage() {
         </div>
       )}
 
-      {/* Footer — sticky dalam scroll, bukan fixed */}
-      <div className="sticky bottom-0 bg-white border-t border-gray-100 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] px-6 py-3 mt-4 rounded-b-xl z-10">
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-gray-400">
-            {isNew ? (
-              infoDeal.namaKlien ? (
+      {/* Footer — hanya untuk mode new order */}
+      {isNew && (
+        <div className="sticky bottom-0 bg-white border-t border-gray-100 shadow-[0_-2px_8px_rgba(0,0,0,0.06)] px-6 py-3 mt-4 rounded-b-xl z-10">
+          <div className="flex items-center justify-between">
+            <div className="text-xs text-gray-400">
+              {infoDeal.namaKlien ? (
                 <span><span className="font-medium text-[#1E1C43]">{infoDeal.namaKlien}</span>{' · '}Order baru</span>
               ) : (
                 <span className="text-gray-300">Isi data order di atas</span>
-              )
-            ) : (
-              <span>
-                <span className="font-medium text-[#1E1C43]">{order.namaKlien}</span>
-                {' · '}{order.program}{' · '}
-                <span className={
-                  order.status === 'Aktif'   ? 'text-green-600 font-medium' :
-                  order.status === 'Pending' ? 'text-yellow-600 font-medium' :
-                                               'text-gray-500'
-                }>
-                  {order.status}
-                </span>
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-3">
-            {isNew ? (
-              <>
-                <button onClick={() => navigate('/event/orders')} className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                  <ArrowLeft size={13} /> Batal
-                </button>
-                <button onClick={handleSimpanOrderBaru} className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
-                  💾 Simpan & Buka Order
-                </button>
-              </>
-            ) : (
+              )}
+            </div>
+            <div className="flex items-center gap-3">
               <button onClick={() => navigate('/event/orders')} className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-sm font-medium px-4 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-                <ArrowLeft size={13} /> Kembali ke Orders
+                <ArrowLeft size={13} /> Batal
               </button>
-            )}
+              <button onClick={handleSimpanOrderBaru} className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+                💾 Simpan & Buka Order
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       </div>{/* end px-6 py-6 */}
 
