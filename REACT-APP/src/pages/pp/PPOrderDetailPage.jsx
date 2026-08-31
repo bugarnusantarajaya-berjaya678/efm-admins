@@ -81,9 +81,9 @@ const QUOTATION_STATUS_CLS = {
 }
 
 /* ── Tahapan stepper ─────────────────────────────────────────────────────── */
-const TAHAPAN_STEPS = ['Quotation', 'Agreement', 'Program Berjalan', 'Program Selesai']
-const TAHAPAN_ORDER = { 'Quotation': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
-const TAHAPAN_TO_STATUS = { 'Quotation': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
+const TAHAPAN_STEPS = ['Invoice', 'Agreement', 'Program Berjalan', 'Program Selesai']
+const TAHAPAN_ORDER = { 'Invoice': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
+const TAHAPAN_TO_STATUS = { 'Invoice': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
 
 
 /* ── Generate payment schedule ────────────────────────────────────────────── */
@@ -231,6 +231,35 @@ function ToggleSwitch({ checked, onChange }) {
     >
       <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
     </button>
+  )
+}
+
+function TahapanStepper({ currentTahapan }) {
+  const currentIdx = TAHAPAN_ORDER[currentTahapan] ?? 0
+  return (
+    <div className="flex items-start">
+      {TAHAPAN_STEPS.map((step, idx) => {
+        const isCompleted = idx < currentIdx
+        const isCurrent   = idx === currentIdx
+        return (
+          <div key={step} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                ${isCompleted ? 'bg-[#1E1C43] text-white' : isCurrent ? 'bg-[#E05945] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                {isCompleted ? '✓' : idx + 1}
+              </div>
+              <p className={`text-[10px] mt-1 text-center leading-tight
+                ${isCurrent ? 'font-bold text-[#E05945]' : isCompleted ? 'font-medium text-[#1E1C43]' : 'text-gray-400'}`}>
+                {step}
+              </p>
+            </div>
+            {idx < TAHAPAN_STEPS.length - 1 && (
+              <div className={`h-0.5 flex-1 -mt-4 ${isCompleted ? 'bg-[#1E1C43]' : 'bg-gray-200'}`} />
+            )}
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
@@ -469,7 +498,7 @@ export default function PPOrderDetailPage() {
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
-  const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Quotation')
+  const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Invoice')
   const [statusOrderState,      setStatusOrderState]      = useState(order?.statusOrder || 'Aktif')
   const [showTahapanModal,      setShowTahapanModal]      = useState(false)
   const [pendingTahapan,        setPendingTahapan]        = useState(null)
@@ -776,76 +805,50 @@ export default function PPOrderDetailPage() {
 
 
       {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-
-        {/* Mobile: column layout; sm+: row layout */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
 
           {/* LEFT: Avatar + Info */}
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            {/* Avatar circle */}
+          <div className="flex items-center gap-4">
             <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-sm sm:text-sm font-bold shrink-0"
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaKlien) }}
             >
               {getInitials(order.namaKlien)}
             </div>
-            <div className="min-w-0 flex-1">
+            <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'PP-DRAFT' : order.id}</p>
-              <h1 className="text-lg sm:text-xl font-bold text-[#1E1C43] leading-tight break-words">{isNew ? 'Order Baru' : order.namaKlien}</h1>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
                 <Badge cls={STATUS_CLS[statusOrderState] ?? 'bg-gray-100 text-gray-600'}>● {statusOrderState}</Badge>
                 <span className="text-[10px] text-gray-400">Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</span>
               </div>
-              {/* Stepper — connector lines hidden on mobile */}
-              <div className="flex items-center gap-1 mt-2.5 flex-wrap">
-                {TAHAPAN_STEPS.map((step, i) => {
-                  const orderIdx = TAHAPAN_ORDER[tahapanState] ?? 0
-                  const stepIdx  = TAHAPAN_ORDER[step] ?? i
-                  const isActive = stepIdx === orderIdx
-                  const isDone   = stepIdx < orderIdx
-                  return (
-                    <div key={step} className="flex items-center gap-1">
-                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                        isActive ? 'bg-[#E05945] text-white' : isDone ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {step}
-                      </span>
-                      {i < TAHAPAN_STEPS.length - 1 && <div className="hidden sm:block w-3 h-px bg-gray-300" />}
-                    </div>
-                  )
-                })}
-              </div>
             </div>
           </div>
 
-          {/* RIGHT: on mobile → row (buttons left, nilai kontrak right); sm+ → column aligned right */}
-          <div className="flex sm:flex-col items-start sm:items-end justify-between sm:justify-start gap-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              {!isNew && (
-                <button
-                  onClick={() => setShowTahapanModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-                >
-                  Ubah Tahapan
-                </button>
-              )}
+          {/* RIGHT: Action buttons only */}
+          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+            {!isNew && (
               <button
-                onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                onClick={() => setShowTahapanModal(true)}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
               >
-                <ArrowLeft size={12} /> Kembali
+                <Edit2 size={12} /> Ubah Tahapan
               </button>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-              <p className="text-xl font-bold text-[#1E1C43]">
-                {fmtRp(order.nilaiKontrak || subtotal)}
-              </p>
-              <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.picOpsEFM}</p>
-            </div>
+            )}
+            <button
+              onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali
+            </button>
           </div>
+        </div>
+
+        {/* Tahapan Stepper — full width below divider */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <TahapanStepper currentTahapan={tahapanState} />
         </div>
       </div>
 
@@ -2296,95 +2299,105 @@ export default function PPOrderDetailPage() {
       {activeTab === 'wa' && (
         <div className="space-y-4">
 
-          {/* Nomor Tujuan */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Nomor WhatsApp Klien</h3>
-            {orderCtx.noHP ? (
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2.5">
-                  <p className="text-xs text-gray-400 uppercase tracking-wide">Nomor HP</p>
-                  <p className="text-sm font-semibold text-gray-800 mt-0.5">{orderCtx.noHP}</p>
+          {/* Template Panel */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+              {orderCtx.paket && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Paket:</span>
+                  <span className="text-xs font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-2 py-0.5 rounded-full">{orderCtx.paket}</span>
                 </div>
-                <a
-                  href={`https://wa.me/62${(orderCtx.noHP).replace(/^0/, '').replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold transition-colors"
-                >
-                  <MessageCircle size={13} /> Buka WA
-                </a>
-              </div>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
-                <p className="text-xs text-yellow-700">Nomor HP klien belum tercatat di order ini. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Template Pesan */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Template Pesan</h3>
-              <button
-                onClick={() => setShowAllWaTemplates(p => !p)}
-                className="text-xs text-[#1E1C43] font-medium hover:underline"
-              >
-                {showAllWaTemplates ? 'Tampilkan lebih sedikit' : 'Lihat semua kategori'}
-              </button>
+              )}
             </div>
 
-            <div className="space-y-4">
-              {Object.entries(ORDER_WA_TEMPLATES)
-                .filter((_, idx) => showAllWaTemplates || idx < 2)
-                .map(([kategori, templates]) => (
-                <div key={kategori}>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{kategori}</p>
-                  <div className="space-y-2">
-                    {templates.map(tpl => (
-                      <OrderTemplateCard
-                        key={tpl.id}
-                        template={tpl}
-                        orderCtx={orderCtx}
-                        onKirim={handleKirimWA}
-                      />
-                    ))}
-                  </div>
+            {/* Nomor tujuan */}
+            {orderCtx.noHP ? (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={14} className="text-white" />
                 </div>
-              ))}
-              {!showAllWaTemplates && (
-                <button
-                  onClick={() => setShowAllWaTemplates(true)}
-                  className="w-full py-2 text-xs text-[#1E1C43] font-medium border border-dashed border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  + Lihat kategori lainnya (Reminder, Feedback)
-                </button>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {orderCtx.sapaan ? orderCtx.sapaan + ' ' : ''}{orderCtx.namaKlien} · {orderCtx.noHP}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-5">
+                <p className="text-xs text-yellow-700">Nomor HP klien belum tercatat. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
+              </div>
+            )}
+
+            {/* Template kategori utama */}
+            <div className="mb-4">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Template Jadwal &amp; Sesi
+              </p>
+              <div className="space-y-2">
+                {ORDER_WA_TEMPLATES['Jadwal & Sesi'].map(tpl => (
+                  <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
+                ))}
+              </div>
+            </div>
+
+            {/* Template lainnya (collapsible) */}
+            <div>
+              <button
+                onClick={() => setShowAllWaTemplates(p => !p)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                </svg>
+                {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+              </button>
+              {showAllWaTemplates && (
+                <div className="space-y-4 pt-1">
+                  {Object.entries(ORDER_WA_TEMPLATES)
+                    .filter(([kat]) => kat !== 'Jadwal & Sesi')
+                    .map(([kat, templates]) => (
+                      <div key={kat}>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Template {kat}</p>
+                        <div className="space-y-2">
+                          {templates.map(tpl => (
+                            <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
               )}
             </div>
           </div>
 
           {/* Log Pengiriman */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
-              <span className="text-xs text-gray-400">{waLog.length} pesan terkirim</span>
+              <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
             </div>
             {waLog.length === 0 ? (
-              <p className="text-xs text-gray-400 italic">Belum ada pesan yang dikirim melalui tab ini.</p>
+              <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk order ini.</p>
             ) : (
-              <div className="space-y-0 pl-4 relative">
-                {[...waLog].reverse().map((log, idx, arr) => (
-                  <div key={log.id} className="relative pb-3.5 last:pb-0">
-                    <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#25D366]" />
-                    {idx < arr.length - 1 && (
-                      <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />
-                    )}
-                    <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                      <p className="text-[10px] text-gray-400">{log.timestamp}</p>
-                      {log.kirimOleh && <p className="text-[10px] text-gray-500 font-medium">· {log.kirimOleh}</p>}
-                      <span className="text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded font-medium">{log.kategori}</span>
+              <div className="space-y-2">
+                {[...waLog].reverse().map((log, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                      <MessageCircle size={12} className="text-white" />
                     </div>
-                    <p className="text-xs text-gray-700 font-medium">{log.judul}</p>
-                    {log.nomorTujuan && <p className="text-[10px] text-gray-400 mt-0.5">→ {log.nomorTujuan}</p>}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                        <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-0.5">
+                        Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                        {log.kategori && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.kategori}</span>}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>

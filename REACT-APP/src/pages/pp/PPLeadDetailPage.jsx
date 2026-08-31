@@ -568,6 +568,11 @@ export default function PPLeadDetailPage() {
 
             {/* Action buttons */}
             <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+              <button
+                onClick={() => { setEditingPipeline(p => !p); setNewStage(lead.statusPipeline) }}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
+                <Edit2 size={12} /> Update Pipeline
+              </button>
               {lead.statusPipeline !== 'Lost' && (
                 <button
                   onClick={() => navigate('/pp/orders/new', {
@@ -583,6 +588,51 @@ export default function PPLeadDetailPage() {
                 <ArrowLeft size={12} /> Kembali
               </button>
             </div>
+          </div>
+
+          {/* Pipeline Stepper — always visible in header */}
+          <div className="mt-4 pt-4 border-t border-gray-100">
+            <PipelineStepper currentStage={lead.statusPipeline} />
+
+            {/* Edit form — expands inline when Update Pipeline clicked */}
+            {editingPipeline && (
+              <div className="border-t border-gray-100 pt-4 mt-3">
+                <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
+                      <select value={newStage} onChange={e => setNewStage(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                        {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+                      <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                    <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
+                      placeholder="Catatan perubahan status..."
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  </div>
+                  <div className="flex gap-2 justify-end pt-1">
+                    <button
+                      onClick={() => setEditingPipeline(false)}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                      <X size={12} /> Batal
+                    </button>
+                    <button
+                      onClick={handleUpdatePipeline}
+                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                      <Save size={12} /> Simpan
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -601,68 +651,10 @@ export default function PPLeadDetailPage() {
         </div>
 
         {/* ════════════════════════════════
-            TAB 1: INFO KLIEN (+ Pipeline)
+            TAB 1: INFO KLIEN
         ════════════════════════════════ */}
         {activeTab === 'info' && (
           <div className="space-y-4">
-
-            {/* Status Pipeline */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Status Pipeline</h3>
-                <div className="flex gap-2">
-                  {editingPipeline ? (
-                    <>
-                      <button
-                        onClick={handleUpdatePipeline}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                        <Save size={12} /> Simpan
-                      </button>
-                      <button
-                        onClick={() => setEditingPipeline(false)}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                        <X size={12} /> Batal
-                      </button>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => { setEditingPipeline(true); setNewStage(lead.statusPipeline) }}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                      <Edit2 size={12} /> Update Pipeline
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="px-5 py-5">
-                <PipelineStepper currentStage={lead.statusPipeline} />
-                {editingPipeline && (
-                  <div className="border-t border-gray-100 pt-4 mt-2">
-                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
-                          <select value={newStage} onChange={e => setNewStage(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                            {PIPELINE_STAGES.map(s => <option key={s} value={s}>{s}</option>)}
-                          </select>
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
-                          <input type="date" value={newStageTanggal} onChange={e => setNewStageTanggal(e.target.value)}
-                            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
-                        </div>
-                      </div>
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
-                        <input type="text" value={newStageCatatan} onChange={e => setNewStageCatatan(e.target.value)}
-                          placeholder="Catatan perubahan status..."
-                          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
 
             {/* Info Klien */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
