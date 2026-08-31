@@ -92,6 +92,7 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 **Preserving multi-tab / multi-section pages**
 - Several pages use a tab structure (e.g. Order Detail: Tab 1 Kontrak & Keuangan, Tab 2 Dokumen Kerjasama, Tab 3 Operasional Lapangan)
 - When a task only concerns one tab, never touch code belonging to other tabs, even if in the same file and technically adjacent
+- **Tab-merge decision after Related Records Panel conversion:** If converting a section to a Related Records Panel makes a tab too thin (e.g. the tab now only contains one small panel), merge that panel into the adjacent Overview/Kontrak tab as a standalone card — do not keep an almost-empty tab just to preserve tab count. Visual cue for pending-action panels: add `border-l-4 border-yellow-400` on the wrapper.
 
 **Reuse vs duplicate decision**
 - Default to duplicating structure/logic across files rather than extracting shared reusable components, UNLESS explicitly instructed to refactor into a shared component
