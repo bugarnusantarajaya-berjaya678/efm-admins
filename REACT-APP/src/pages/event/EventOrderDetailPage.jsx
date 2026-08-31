@@ -110,6 +110,45 @@ const PAY_STATUS_CLS = {
   'Jatuh Tempo':     'bg-red-100 text-red-600',
 }
 
+const AVATAR_COLORS = ['#4F46E5','#0891B2','#059669','#D97706','#DC2626','#7C3AED','#DB2777','#0284C7']
+function getInitials(name) { return (name || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() }
+function getAvatarColor(name) {
+  let hash = 0
+  for (const c of (name || '')) hash = (hash * 31 + c.charCodeAt(0)) & 0xFFFFFF
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length]
+}
+
+function EventTahapanStepper({ currentTahapan }) {
+  const steps = ['Quotation', 'LOI', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
+  const order = { 'Quotation': 0, 'LOI': 1, 'MOU': 2, 'Contract': 3, 'Event Running': 4, 'Event Selesai': 5 }
+  const currentIdx = order[currentTahapan] ?? 0
+  return (
+    <div className="flex items-start">
+      {steps.map((step, idx) => {
+        const isCompleted = idx < currentIdx
+        const isCurrent   = idx === currentIdx
+        return (
+          <div key={step} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                ${isCompleted ? 'bg-[#1E1C43] text-white' : isCurrent ? 'bg-[#E05945] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                {isCompleted ? '✓' : idx + 1}
+              </div>
+              <p className={`text-[10px] mt-1 text-center leading-tight
+                ${isCurrent ? 'font-bold text-[#E05945]' : isCompleted ? 'font-medium text-[#1E1C43]' : 'text-gray-400'}`}>
+                {step}
+              </p>
+            </div>
+            {idx < steps.length - 1 && (
+              <div className={`h-0.5 flex-1 -mt-4 ${isCompleted ? 'bg-[#1E1C43]' : 'bg-gray-200'}`} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function fmtRp(n) {
   return 'Rp ' + new Intl.NumberFormat('id-ID').format(n)
 }
@@ -775,6 +814,12 @@ export default function EventOrderDetailPage() {
   const [eventSelesai,          setEventSelesai]          = useState(false)
   const [showKonfirmasiSelesai, setShowKonfirmasiSelesai] = useState(false)
 
+  /* ── Tahapan (local state for header UI) ────────────────────────────────── */
+  const [tahapanState,      setTahapanState]      = useState(order?.tahapan || 'Quotation')
+  const [editingTahapan,    setEditingTahapan]    = useState(false)
+  const [newTahapanVal,     setNewTahapanVal]     = useState(order?.tahapan || 'Quotation')
+  const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
+
   /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
   const [waLog,              setWaLog]              = useState(() => {
     try {
@@ -792,7 +837,7 @@ export default function EventOrderDetailPage() {
     namaEvent:     order?.namaEvent       || '',
     jenisEvent:    order?.jenisEvent      || '',
     pic:           infoDeal.pic           || order?.pic           || '',
-    tahapan:       order?.tahapan         || '',
+    tahapan:       tahapanState,
   }
 
   useEffect(() => {
@@ -1053,85 +1098,115 @@ export default function EventOrderDetailPage() {
       )}
 
       {/* Header Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-5">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
 
-        {/* Baris 1: Breadcrumb + Kembali */}
-        <div className="flex items-center justify-between mb-5">
-          <nav className="flex items-center gap-1 text-xs text-gray-400">
-            <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Event Management</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <button onClick={() => navigate('/event/orders')} className="hover:text-[#1E1C43] transition-colors">Orders</button>
-            <ChevronRight size={12} className="text-gray-300" />
-            <span className="text-[#1E1C43] font-medium">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</span>
-          </nav>
-          <button
-            onClick={() => navigate('/event/orders')}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-          >
-            <ArrowLeft size={12} /> Kembali
-          </button>
+          {/* LEFT: Avatar + Info */}
+          <div className="flex items-center gap-4">
+            <div
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+              style={{ background: getAvatarColor(order.namaEvent || order.namaKlien) }}
+            >
+              {getInitials(order.namaEvent || order.namaKlien)}
+            </div>
+            <div>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'EV-DRAFT' : order.id}</p>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</h1>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <Badge cls={tipeCls}>{tipeLabel}</Badge>
+                <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
+                <span className="text-[10px] text-gray-400">{order.namaKlien} · {order.tipeKlien || order.jenis}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* RIGHT: Nilai Kontrak + Action buttons */}
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            <div className="text-right">
+              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
+              <p className="text-xl font-bold text-[#1E1C43]">{fmtRp(subtotal)}</p>
+              <p className="text-[10px] text-gray-400">PIC: {order.pic}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              {!isNew && (
+                <button
+                  onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
+                >
+                  <Edit2 size={12} /> Update Tahapan
+                </button>
+              )}
+              <button
+                onClick={() => navigate('/event/orders')}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+              >
+                <ArrowLeft size={12} /> Kembali
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Baris 2: Info + Total */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex flex-wrap items-center gap-2 mb-2">
-              <span className="text-[11px] font-mono bg-gray-100 text-gray-500 px-2 py-0.5 rounded">
-                {order.id}
-              </span>
-              <Badge cls={tipeCls}>{tipeLabel}</Badge>
-              <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>
-                ● {order.status}
-              </Badge>
-            </div>
-            <h1 className="text-2xl font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</h1>
-            <p className="text-sm text-gray-500 mt-0.5">
-              {order.namaKlien} &nbsp;·&nbsp; {order.tipeKlien || order.jenis}
-            </p>
-            {/* Horizontal stepper */}
-            <div className="flex items-center gap-1 mt-3 flex-wrap">
-              {TAHAPAN_STEPS.map((step, i) => {
-                const orderIdx   = TAHAPAN_ORDER[order.tahapan] ?? 0
-                const stepIdx    = TAHAPAN_ORDER[step] ?? i
-                const isActive   = stepIdx === orderIdx
-                const isDone     = stepIdx < orderIdx
-                return (
-                  <div key={step} className="flex items-center gap-1">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                      isActive ? 'bg-[#E05945] text-white' : isDone ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {step}
-                    </span>
-                    {i < TAHAPAN_STEPS.length - 1 && <div className="w-4 h-px bg-gray-300" />}
+        {/* Tahapan Stepper — full width below divider */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <EventTahapanStepper currentTahapan={tahapanState} />
+
+          {/* Inline edit form */}
+          {editingTahapan && (
+            <div className="border-t border-gray-100 pt-4 mt-3">
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tahapan Baru</label>
+                    <select value={newTahapanVal} onChange={e => setNewTahapanVal(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                      {['Quotation','LOI','MOU','Contract','Event Running','Event Selesai'].map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
                   </div>
-                )
-              })}
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                    <input type="text" value={newTahapanCatatan} onChange={e => setNewTahapanCatatan(e.target.value)}
+                      placeholder="Catatan perubahan tahapan..."
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end pt-1">
+                  <button
+                    onClick={() => setEditingTahapan(false)}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                    <X size={12} /> Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (newTahapanVal && newTahapanVal !== tahapanState) setTahapanState(newTahapanVal)
+                      setEditingTahapan(false)
+                      setNewTahapanCatatan('')
+                    }}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                    <Save size={12} /> Simpan
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="text-right shrink-0">
-            <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-            <p className="text-2xl font-bold text-[#1E1C43]">{fmtRp(subtotal)}</p>
-            <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.pic}</p>
-          </div>
+          )}
         </div>
       </div>
 
       {/* Tab Bar */}
-      <div className="flex overflow-x-auto border-b border-gray-200 mb-5">
+      <div className="flex gap-1 bg-white border border-gray-100 rounded-xl shadow-sm p-1 mb-5 overflow-x-auto">
         {[
-          { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
-          { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
-          { key: 'operasional', label: 'Operasional Lapangan'  },
-          { key: 'kelas',       label: 'Hari-H & PIC'          },
-          { key: 'wa',          label: 'Komunikasi WA'          },
+          { key: 'keuangan',    label: 'Kontrak & Keuangan'  },
+          { key: 'dokumen',     label: 'Dokumen Kerjasama'    },
+          { key: 'operasional', label: 'Operasional Lapangan' },
+          { key: 'kelas',       label: 'Hari-H & PIC'         },
+          { key: 'wa',          label: 'Komunikasi WA'         },
         ].map(tab => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`shrink-0 px-5 py-3 text-sm font-semibold border-b-2 transition-colors ${
+            className={`shrink-0 px-4 py-2 rounded-lg text-xs font-semibold transition-colors ${
               activeTab === tab.key
-                ? 'border-[#1E1C43] text-[#1E1C43]'
-                : 'border-transparent text-gray-400 hover:text-gray-600'
+                ? 'bg-[#1E1C43] text-white'
+                : 'text-gray-500 hover:text-[#1E1C43]'
             }`}
           >
             {tab.label}
