@@ -121,46 +121,65 @@ function generatePayRows(startStr, endStr, terms, nilaiNum) {
    WA Templates — Order Context
 ═══════════════════════════════════════ */
 const ORDER_WA_TEMPLATES = {
-  'Jadwal & Sesi': [
+  'Invoice': [
     {
-      id: 'owt-jdw-1', kategori: 'Jadwal & Sesi', judul: 'Konfirmasi Jadwal Latihan',
+      id: 'owt-inv-1', tahapan: 'Invoice', judul: 'Info Invoice Program',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nTerima kasih telah memilih program *${o.paket}* bersama EFM.\n\nInvoice untuk program Anda sudah kami siapkan. Mohon lakukan pembayaran sesuai nominal dan batas waktu yang tertera di invoice.\n\nJika ada pertanyaan mengenai tagihan atau metode pembayaran, silakan hubungi kami.\n\nTerima kasih 🙏`,
+    },
+    {
+      id: 'owt-inv-2', tahapan: 'Invoice', judul: 'Follow-up Pembayaran',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami ingin mengingatkan bahwa invoice untuk program *${o.paket}* Anda masih menunggu pembayaran.\n\nMohon segera lakukan pembayaran agar program dapat segera dijadwalkan.\n\nAda yang bisa kami bantu? 😊`,
+    },
+  ],
+  'Agreement': [
+    {
+      id: 'owt-agr-1', tahapan: 'Agreement', judul: 'Konfirmasi Pembayaran Diterima',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nPembayaran Anda untuk program *${o.paket}* telah kami terima dan dikonfirmasi ✅\n\nLangkah berikutnya adalah penandatanganan agreement program. Kami akan segera mengirimkan dokumen untuk ditandatangani.\n\nTerima kasih 🙏`,
+    },
+    {
+      id: 'owt-agr-2', tahapan: 'Agreement', judul: 'Reminder Tanda Tangan Agreement',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami mengingatkan bahwa dokumen agreement program *${o.paket}* sudah siap untuk ditandatangani.\n\nMohon luangkan waktu untuk menyelesaikan proses ini agar program latihan dapat segera dimulai 💪\n\nSilakan hubungi kami untuk jadwal penandatanganan. Terima kasih!`,
+    },
+  ],
+  'Program Berjalan': [
+    {
+      id: 'owt-prg-1', tahapan: 'Program Berjalan', judul: 'Konfirmasi Jadwal Latihan',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nSaya ${o.pic || 'tim EFM'} dari Essential Fitness Management.\n\nKami ingin mengkonfirmasi jadwal sesi latihan pribadi Anda dalam program *${o.paket}*.\n\nBisa kami minta konfirmasi jadwal yang paling nyaman untuk Anda minggu ini?\n\nTerima kasih 🙏`,
     },
     {
-      id: 'owt-jdw-2', kategori: 'Jadwal & Sesi', judul: 'Reminder Sesi Besok',
+      id: 'owt-prg-2', tahapan: 'Program Berjalan', judul: 'Reminder Sesi Besok',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien} 👋\n\nPengingatnya — sesi latihan Anda *besok* akan segera dimulai sesuai jadwal yang telah disepakati.\n\nMohon pastikan kondisi Anda fit dan siap. Jika ada perubahan, mohon konfirmasi sesegera mungkin ya.\n\nSampai jumpa besok! 💪`,
     },
-  ],
-  'Tagihan': [
     {
-      id: 'owt-tag-1', kategori: 'Tagihan', judul: 'Info Tagihan Program',
-      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nBerikut kami sampaikan informasi tagihan untuk program *${o.paket}* Anda.\n\nInvoice sudah kami siapkan. Mohon untuk melakukan pembayaran sesuai batas waktu yang tertera.\n\nJika ada pertanyaan mengenai tagihan, jangan ragu untuk menghubungi kami.\n\nTerima kasih 🙏`,
-    },
-    {
-      id: 'owt-tag-2', kategori: 'Tagihan', judul: 'Follow-up Pembayaran',
-      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami ingin mengingatkan bahwa tagihan untuk program *${o.paket}* Anda saat ini masih dalam status *menunggu pembayaran*.\n\nMohon segera lakukan pembayaran agar sesi latihan dapat terus berjalan lancar.\n\nTerima kasih atas perhatian dan kerjasamanya 🙏`,
-    },
-  ],
-  'Reminder': [
-    {
-      id: 'owt-rem-1', kategori: 'Reminder', judul: 'Reminder Setelah Absen',
+      id: 'owt-prg-3', tahapan: 'Program Berjalan', judul: 'Reminder Setelah Absen',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami perhatikan Anda melewatkan sesi latihan terakhir. Semoga semuanya baik-baik saja 😊\n\nYuk, segera jadwalkan ulang sesi Anda agar program *${o.paket}* tetap berjalan optimal.\n\nHubungi kami kapan saja untuk reschedule ya!`,
     },
     {
-      id: 'owt-rem-2', kategori: 'Reminder', judul: 'Reminder Sesi Hampir Habis',
-      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami ingin menginformasikan bahwa sesi dalam paket *${o.paket}* Anda hampir habis.\n\nJika ingin melanjutkan program, kami siap membantu menyiapkan paket perpanjangan yang sesuai.\n\nAda yang bisa kami bantu? 😊`,
-    },
-  ],
-  'Feedback': [
-    {
-      id: 'owt-fbk-1', kategori: 'Feedback', judul: 'Minta Feedback Progress',
+      id: 'owt-prg-4', tahapan: 'Program Berjalan', judul: 'Minta Feedback Progress',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien} 👋\n\nSudah beberapa waktu berjalan bersama program *${o.paket}*, kami ingin mendengar langsung dari Anda:\n\n• Bagaimana perkembangan yang dirasakan?\n• Ada hal yang ingin disesuaikan dari sesi latihan?\n• Apakah target Anda sudah mulai tercapai?\n\nFeedback Anda sangat berarti bagi kami. Terima kasih! 🙏`,
     },
+  ],
+  'Program Selesai': [
     {
-      id: 'owt-fbk-2', kategori: 'Feedback', judul: 'Kepuasan Layanan EFM',
+      id: 'owt-sel-1', tahapan: 'Program Selesai', judul: 'Selamat Program Selesai',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien}! 🎉\n\nSelamat — program *${o.paket}* Anda telah selesai! Kami bangga bisa menemani perjalanan fitness Anda.\n\nSemoga hasil latihan Anda terasa nyata dan memberikan manfaat jangka panjang 💪\n\nSampai jumpa di program berikutnya!`,
+    },
+    {
+      id: 'owt-sel-2', tahapan: 'Program Selesai', judul: 'Kepuasan Layanan EFM',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nTerima kasih telah mempercayakan program fitness Anda kepada Essential Fitness Management 💪\n\nKami ingin memastikan Anda puas dengan layanan yang diberikan. Apakah ada masukan atau saran yang bisa kami perbaiki?\n\nKepuasan Anda adalah prioritas utama kami. Salam sehat! 🙏`,
     },
+    {
+      id: 'owt-sel-3', tahapan: 'Program Selesai', judul: 'Tawaran Perpanjangan Program',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nProgram *${o.paket}* Anda sudah selesai — semoga hasilnya memuaskan! 🙏\n\nJika ${o.sapaan || ''} ${o.namaKlien} tertarik untuk melanjutkan atau mencoba program lainnya, kami siap membantu menyiapkan pilihan yang sesuai.\n\nSilakan hubungi kami untuk konsultasi lebih lanjut. Terima kasih!`,
+    },
   ],
+}
+
+const TAHAPAN_WA_CLS = {
+  'Invoice':          'bg-amber-100 text-amber-700',
+  'Agreement':        'bg-blue-100 text-blue-700',
+  'Program Berjalan': 'bg-green-100 text-green-700',
+  'Program Selesai':  'bg-gray-100 text-gray-500',
 }
 
 /* ═══════════════════════════════════════
@@ -292,6 +311,15 @@ function OrderTemplateCard({ template, orderCtx, onKirim }) {
         </div>
       </div>
     </div>
+  )
+}
+
+function TahapanBadge({ tahapan }) {
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${TAHAPAN_WA_CLS[tahapan] ?? 'bg-gray-100 text-gray-600'}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+      {tahapan}
+    </span>
   )
 }
 
@@ -558,6 +586,7 @@ export default function PPOrderDetailPage() {
     paket:     infoDeal.paket     || order?.paket || '',
     pic:       infoDeal.pic       || order?.picSalesEFM || '',
     noHP:      infoDeal.noHP      || infoDeal.noHPKlien || '',
+    tahapan:   tahapanState,
   }
 
   useEffect(() => {
@@ -575,7 +604,7 @@ export default function PPOrderDetailPage() {
       id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
       timestamp,
       judul: template.judul,
-      kategori: template.kategori,
+      tahapan: template.tahapan,
       kirimOleh: orderCtx.pic || 'Admin EFM',
       nomorTujuan: orderCtx.noHP,
     }])
@@ -2307,12 +2336,10 @@ export default function PPOrderDetailPage() {
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
-              {orderCtx.paket && (
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">Paket:</span>
-                  <span className="text-xs font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-2 py-0.5 rounded-full">{orderCtx.paket}</span>
-                </div>
-              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">Tahapan:</span>
+                <TahapanBadge tahapan={tahapanState} />
+              </div>
             </div>
 
             {/* Nomor tujuan */}
@@ -2334,19 +2361,22 @@ export default function PPOrderDetailPage() {
               </div>
             )}
 
-            {/* Template kategori utama */}
+            {/* Template untuk tahapan saat ini */}
             <div className="mb-4">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
-                Template Jadwal &amp; Sesi
+                Template untuk Tahapan Saat Ini: {tahapanState}
               </p>
               <div className="space-y-2">
-                {ORDER_WA_TEMPLATES['Jadwal & Sesi'].map(tpl => (
-                  <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
-                ))}
+                {(ORDER_WA_TEMPLATES[tahapanState] || []).length > 0
+                  ? (ORDER_WA_TEMPLATES[tahapanState] || []).map(tpl => (
+                      <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
+                    ))
+                  : <p className="text-xs text-gray-400 italic">Tidak ada template khusus untuk tahapan ini.</p>
+                }
               </div>
             </div>
 
-            {/* Template lainnya (collapsible) */}
+            {/* Template tahapan lain (collapsible) */}
             <div>
               <button
                 onClick={() => setShowAllWaTemplates(p => !p)}
@@ -2360,10 +2390,10 @@ export default function PPOrderDetailPage() {
               {showAllWaTemplates && (
                 <div className="space-y-4 pt-1">
                   {Object.entries(ORDER_WA_TEMPLATES)
-                    .filter(([kat]) => kat !== 'Jadwal & Sesi')
-                    .map(([kat, templates]) => (
-                      <div key={kat}>
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Template {kat}</p>
+                    .filter(([tahapan]) => tahapan !== tahapanState)
+                    .map(([tahapan, templates]) => (
+                      <div key={tahapan}>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tahapan: {tahapan}</p>
                         <div className="space-y-2">
                           {templates.map(tpl => (
                             <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
@@ -2399,7 +2429,7 @@ export default function PPOrderDetailPage() {
                       </div>
                       <p className="text-[10px] text-gray-500 mt-0.5">
                         Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
-                        {log.kategori && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.kategori}</span>}
+                        {log.tahapan && <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${TAHAPAN_WA_CLS[log.tahapan] ?? 'bg-gray-200 text-gray-500'}`}>{log.tahapan}</span>}
                       </p>
                     </div>
                   </div>

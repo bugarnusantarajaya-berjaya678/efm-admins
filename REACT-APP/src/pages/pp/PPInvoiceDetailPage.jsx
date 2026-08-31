@@ -5,6 +5,7 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
+import { getNoHpByOrderId } from '../../data/ppLeadsStore'
 
 function getDefaultSyarat() {
   const cs = getCompanySettings()
@@ -209,7 +210,11 @@ export default function PPInvoiceDetailPage() {
       `Terima kasih 🙏`,
       `_${cs.namaPerusahaan}_`,
     ].join('\n')
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+    const noHP = getNoHpByOrderId(invoice.orderId)
+    const waUrl = noHP
+      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
+      : `https://wa.me/?text=${encodeURIComponent(msg)}`
+    window.open(waUrl, '_blank')
   }
 
   function handleReminderWA() {
@@ -231,7 +236,11 @@ export default function PPInvoiceDetailPage() {
       `Jika ada pertanyaan, silakan hubungi kami. Terima kasih 🙏`,
       `_${cs.namaPerusahaan}_`,
     ].join('\n')
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+    const noHP = getNoHpByOrderId(invoice.orderId)
+    const waUrl = noHP
+      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
+      : `https://wa.me/?text=${encodeURIComponent(msg)}`
+    window.open(waUrl, '_blank')
   }
 
   function handleMarkPaid({ paidDate, payMethod }) {

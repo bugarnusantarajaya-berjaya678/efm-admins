@@ -139,3 +139,10 @@ export function addStoredLead(lead) {
 export function getNextLeadId() {
   return 'LP-' + String(_leads.length + 1).padStart(4, '0')
 }
+
+export function getNoHpByOrderId(orderId) {
+  const leadId = ORDER_TO_LEAD_ID[orderId]
+  if (!leadId) return null
+  const lead = _leads.find(l => l.id === leadId)
+  return lead?.noHp || null
+}

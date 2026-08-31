@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
+import { getNoHpByOrderId } from '../../data/ppLeadsStore'
+import { getCompanySettings } from '../../utils/companySettings'
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -118,12 +120,31 @@ export default function PPReceiptPage() {
 
   function reset() { setFBulan(''); setFTahun(''); setFWA(''); setFSearch(''); setPage(1) }
 
-  function handleResendWA(rcpNo) {
-    setReceipts(prev => prev.map(r => r.rcpNo === rcpNo
+  function handleResendWA(rcp) {
+    const cs = getCompanySettings()
+    const noHP = getNoHpByOrderId(rcp.orderId)
+    const msg = [
+      `Halo *${rcp.sapaan} ${rcp.client}*,`,
+      '',
+      `✅ Pembayaran Anda telah kami terima dan terkonfirmasi.`,
+      '',
+      `📄 *Receipt #${rcp.rcpNo}*`,
+      `📋 Ref. Invoice: ${rcp.invNo}`,
+      `📅 Tanggal Bayar: ${rcp.tglBayar}`,
+      `💳 Metode: ${rcp.metode}`,
+      `🏃 Program: ${rcp.paket}`,
+      `💰 Total: ${formatRp(rcp.total)}`,
+      '',
+      `Terima kasih telah mempercayakan program fitness Anda kepada *${cs.namaPerusahaan}*. Sampai jumpa di sesi latihan! 💪`,
+    ].join('\n')
+    const waUrl = noHP
+      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
+      : `https://wa.me/?text=${encodeURIComponent(msg)}`
+    window.open(waUrl, '_blank')
+    setReceipts(prev => prev.map(r => r.rcpNo === rcp.rcpNo
       ? { ...r, waStatus: 'sent', waTgl: new Date().toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }) }
       : r
     ))
-    alert(`Receipt ${rcpNo} berhasil dikirim via WhatsApp!`)
   }
 
   const start = (page - 1) * ROWS + 1
@@ -239,7 +260,7 @@ export default function PPReceiptPage() {
                         <Eye size={13} />
                       </button>
                       <button
-                        onClick={e => { e.stopPropagation(); handleResendWA(rcp.rcpNo) }}
+                        onClick={e => { e.stopPropagation(); handleResendWA(rcp) }}
                         className="w-7 h-7 rounded-lg flex items-center justify-center text-[#27AE60] border border-[#27AE60] bg-[#EAFAF1] hover:bg-[#27AE60] hover:text-white transition-colors"
                         title="Kirim WA"
                       >
