@@ -131,7 +131,11 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 ---
 
-## 3b. Full-Page Form / Detail Page — Header Card Standard
+## 3b. Full-Page Form / Sub-page — Header Card Standard
+
+> **Dua varian header card** ada di project ini — pilih berdasarkan tipe halaman:
+> - **Form / sub-page** (Fitness Assessment, Screening, Konsultasi Detail, Order New, dll): gunakan **ikon bulat navy** — pola di section ini.
+> - **Entity detail page** (Lead Detail, Order Detail): gunakan **initials avatar berwarna** — lihat `efm-component-patterns` Section 15.
 
 Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultasi Detail, Order New, dll). Ini adalah struktur WAJIB — jangan improvisasi dengan `flex-col sm:flex-row` atau variasi lain.
 
