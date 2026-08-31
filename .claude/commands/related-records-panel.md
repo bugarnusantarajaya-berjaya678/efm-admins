@@ -1,6 +1,17 @@
+---
+description: Konversi section di halaman detail menjadi kartu-kartu ringkas linked record yang bisa diklik, menggantikan tabel/section inline yang terlalu besar.
+---
+
 # Related Records Panel
 
 Ubah sebuah section di halaman detail menjadi **Related Records Panel** — tampilan ringkas berupa kartu-kartu linked record yang dapat diklik, menggantikan tabel atau section inline yang terlalu besar.
+
+**Cara pakai:** `/related-records-panel [nama file] — section "[nama section]"`
+
+**Contoh skenario:**
+- Section "Invoice & Pembayaran Klien" di Order Detail terlalu besar → dikonversi jadi kartu ringkas Invoice + Receipt
+- Section "Order Terkait" di Lead Detail → kartu link ke Order
+- Halaman B2B Order Detail punya section Quotation inline yang perlu dikompres jadi panel
 
 ## Target
 
