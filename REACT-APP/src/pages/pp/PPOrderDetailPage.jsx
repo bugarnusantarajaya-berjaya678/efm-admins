@@ -495,7 +495,6 @@ export default function PPOrderDetailPage() {
       { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
     ]
   })
-  const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
   const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Invoice')
@@ -917,7 +916,6 @@ export default function PPOrderDetailPage() {
           { key: 'keuangan',    label: 'Kontrak & Keuangan',   locked: false },
           { key: 'agreement',   label: 'Agreement Klien',       locked: isNew },
           { key: 'operasional', label: 'Operasional Lapangan', locked: isNew },
-          { key: 'log',         label: 'Log & Histori',         locked: isNew },
           { key: 'wa',          label: 'Komunikasi WA',         locked: isNew },
         ].map(tab => (
           <button
@@ -1551,6 +1549,46 @@ export default function PPOrderDetailPage() {
           })()}
 
 
+        {(() => {
+          const logs = logTab3PP.filter(l => ['status','keuangan'].includes(l.kategori))
+          return (
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Aktivitas</h3>
+                <span className="text-xs text-gray-400">{logs.length} entri</span>
+              </div>
+              <div className="p-5">
+                {logs.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic text-center py-4">Belum ada riwayat.</p>
+                ) : (
+                  <div className="space-y-0 pl-4 relative">
+                    {logs.map((l, idx, arr) => (
+                      <div key={l.id} className="relative pb-4 last:pb-0">
+                        <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
+                        {idx < arr.length - 1 && <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />}
+                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                          <p className="text-[10px] text-gray-400">{l.waktu}</p>
+                          {l.actor && <p className="text-[10px] text-gray-500 font-medium">· {l.actor}</p>}
+                          {l.nomorLaporan && (
+                            <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
+                              {l.nomorLaporan}
+                            </span>
+                          )}
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                            l.kategori === 'keuangan' ? 'bg-teal-50 text-teal-600'     :
+                            l.kategori === 'status'   ? 'bg-purple-50 text-purple-600' :
+                            'bg-gray-50 text-gray-500'
+                          }`}>{l.kategori}</span>
+                        </div>
+                        <p className="text-xs text-gray-700 leading-relaxed">{l.teks}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
 
         </>
       )}
@@ -1808,6 +1846,45 @@ export default function PPOrderDetailPage() {
                 </div>
               </div>
 
+            )
+          })()}
+
+          {(() => {
+            const logs = logTab3PP.filter(l => l.kategori === 'agreement')
+            return (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Aktivitas</h3>
+                  <span className="text-xs text-gray-400">{logs.length} entri</span>
+                </div>
+                <div className="p-5">
+                  {logs.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic text-center py-4">Belum ada riwayat.</p>
+                  ) : (
+                    <div className="space-y-0 pl-4 relative">
+                      {logs.map((l, idx, arr) => (
+                        <div key={l.id} className="relative pb-4 last:pb-0">
+                          <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
+                          {idx < arr.length - 1 && <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />}
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <p className="text-[10px] text-gray-400">{l.waktu}</p>
+                            {l.actor && <p className="text-[10px] text-gray-500 font-medium">· {l.actor}</p>}
+                            {l.nomorLaporan && (
+                              <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
+                                {l.nomorLaporan}
+                              </span>
+                            )}
+                            <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-indigo-50 text-indigo-600">
+                              {l.kategori}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-700 leading-relaxed">{l.teks}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             )
           })()}
         </div>
@@ -2282,73 +2359,48 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-        </div>
-      )}
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          TAB 4 — Log & Histori
-      ══════════════════════════════════════════════════════════════════════ */}
-      {activeTab === 'log' && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-          <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
-            <div>
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log & Histori</h3>
-              <p className="text-xs text-gray-400 mt-1 ml-3">
-                {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length} aktivitas tercatat
-              </p>
-            </div>
-            <select
-              value={logFilter3PP}
-              onChange={e => setLogFilter3PP(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 bg-white focus:outline-none focus:ring-1 focus:ring-[#1E1C43] w-full sm:w-auto"
-            >
-              {[
-                ['semua',       'Semua Kategori'],
-                ['status',      'Status'],
-                ['keuangan',    'Keuangan'],
-                ['agreement',   'Agreement'],
-                ['jadwal',      'Jadwal'],
-                ['absensi',     'Absensi'],
-                ['honorarium',  'Honorarium'],
-              ].map(([val, lbl]) => (
-                <option key={val} value={val}>{lbl}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-0 pl-4 relative">
-            {logTab3PP
-              .filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP)
-              .map((l, idx, arr) => (
-              <div key={l.id} className="relative pb-4 last:pb-0">
-                <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
-                {idx < arr.length - 1 && (
-                  <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />
-                )}
-                <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                  <p className="text-[10px] text-gray-400">{l.waktu}</p>
-                  {l.actor && <p className="text-[10px] text-gray-500 font-medium">· {l.actor}</p>}
-                  {l.nomorLaporan && (
-                    <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
-                      {l.nomorLaporan}
-                    </span>
-                  )}
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
-                    l.kategori === 'absensi'    ? 'bg-blue-50 text-blue-600'     :
-                    l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
-                    l.kategori === 'keuangan'   ? 'bg-teal-50 text-teal-600'     :
-                    l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
-                    l.kategori === 'agreement'  ? 'bg-indigo-50 text-indigo-600' :
-                    l.kategori === 'status'     ? 'bg-purple-50 text-purple-600' :
-                    'bg-gray-50 text-gray-500'
-                  }`}>{l.kategori}</span>
+          {(() => {
+            const logs = logTab3PP.filter(l => ['absensi','jadwal','honorarium'].includes(l.kategori))
+            return (
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Aktivitas</h3>
+                  <span className="text-xs text-gray-400">{logs.length} entri</span>
                 </div>
-                <p className="text-xs text-gray-700 leading-relaxed">{l.teks}</p>
+                <div className="p-5">
+                  {logs.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic text-center py-4">Belum ada riwayat.</p>
+                  ) : (
+                    <div className="space-y-0 pl-4 relative">
+                      {logs.map((l, idx, arr) => (
+                        <div key={l.id} className="relative pb-4 last:pb-0">
+                          <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
+                          {idx < arr.length - 1 && <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />}
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <p className="text-[10px] text-gray-400">{l.waktu}</p>
+                            {l.actor && <p className="text-[10px] text-gray-500 font-medium">· {l.actor}</p>}
+                            {l.nomorLaporan && (
+                              <span className="text-[10px] bg-[#1E1C43]/10 text-[#1E1C43] px-1.5 py-0.5 rounded font-mono">
+                                {l.nomorLaporan}
+                              </span>
+                            )}
+                            <span className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${
+                              l.kategori === 'absensi'    ? 'bg-blue-50 text-blue-600'     :
+                              l.kategori === 'jadwal'     ? 'bg-green-50 text-green-600'   :
+                              l.kategori === 'honorarium' ? 'bg-orange-50 text-orange-600' :
+                              'bg-gray-50 text-gray-500'
+                            }`}>{l.kategori}</span>
+                          </div>
+                          <p className="text-xs text-gray-700 leading-relaxed">{l.teks}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
-            {logTab3PP.filter(l => logFilter3PP === 'semua' || l.kategori === logFilter3PP).length === 0 && (
-              <p className="text-xs text-gray-400 italic pl-1">Belum ada log untuk filter ini.</p>
-            )}
-          </div>
+            )
+          })()}
+
         </div>
       )}
 
