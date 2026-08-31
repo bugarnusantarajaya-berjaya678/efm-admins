@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, ExternalLink, Phone, Mail } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, ExternalLink, Phone, Mail, MessageCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { initKonsultasi, getStoredKonsultasi, KONSULTASI_INIT } from '../../data/eventKonsultasiStore'
 import { initQuotations, getStoredQuotations, QUOTATIONS_INIT } from '../../data/eventQuotationsStore'
@@ -147,6 +147,84 @@ function PipelineStepper({ currentStage }) {
 }
 
 /* ═══════════════════════════════════════
+   WA Templates — Event Lead per Stage
+═══════════════════════════════════════ */
+const EVENT_LEAD_WA_TEMPLATES = {
+  'New & Approach': [
+    {
+      id: 'ev-tpl-new-1', stage: 'New', judul: 'Perkenalan Awal',
+      teks: (l) => `Halo, saya ${l.picEfm || 'tim EFM'} dari *Essential Fitness Management (EFM)*.\n\nKami mendapat informasi bahwa *${l.namaKlien}* mungkin tertarik dengan layanan event fitness kami.\n\nEFM menghadirkan berbagai event berkualitas seperti Zumba, Yoga, Fun Run, Corporate Wellness, dan lainnya. Boleh kami berbagi informasi lebih lanjut? 😊\n\nTerima kasih, ${l.namaKoordinator || 'Bapak/Ibu'}!`,
+    },
+    {
+      id: 'ev-tpl-new-2', stage: 'Approach', judul: 'Follow-up Approach',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*,\n\nSaya ${l.picEfm || 'tim EFM'} dari Essential Fitness Management.\n\nHanya ingin menindaklanjuti apakah ada kesempatan untuk mendiskusikan lebih lanjut event ${l.jenisEvent || 'fitness'} yang kami tawarkan.\n\nKami akan sangat senang menyesuaikan program sesuai kebutuhan dan budget *${l.namaKlien}*. Ada waktu untuk kita bicara? 🙏`,
+    },
+  ],
+  'Konsultasi & Quotation': [
+    {
+      id: 'ev-tpl-kns-1', stage: 'Konsultasi', judul: 'Konfirmasi Sesi Konsultasi',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*,\n\nMengkonfirmasi sesi konsultasi event *${l.jenisEvent || 'fitness'}* yang telah dijadwalkan.\n\n📅 Tanggal: [isi tanggal]\n⏰ Waktu: [isi waktu]\n📍 Media: [Zoom / Tatap Muka]\n\nSilakan hubungi kami jika ada perubahan jadwal. Terima kasih! 🙏`,
+    },
+    {
+      id: 'ev-tpl-quo-1', stage: 'Quotation', judul: 'Quotation Sudah Dikirim',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*,\n\nQuotation untuk event *${l.jenisEvent || 'fitness'}* sudah kami kirimkan.\n\nMohon ditinjau, dan jika ada pertanyaan atau ingin negosiasi, kami siap berdiskusi 😊\n\nTerima kasih atas kepercayaan *${l.namaKlien}*!`,
+    },
+  ],
+  'Closing': [
+    {
+      id: 'ev-tpl-cls-1', stage: 'Closing', judul: 'Konfirmasi Deal',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*! 🎉\n\nSenang sekali kita akan bekerja sama untuk event *${l.jenisEvent || 'fitness'}*!\n\nTim EFM akan segera memproses dokumen dan berkoordinasi untuk persiapan event. Kami pastikan semua berjalan sesuai harapan.\n\nTerima kasih telah memilih EFM! 💪`,
+    },
+    {
+      id: 'ev-tpl-cls-2', stage: 'Closing', judul: 'Follow-up Penandatanganan',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*,\n\nKami ingin menindaklanjuti proses penandatanganan dokumen kerjasama untuk event *${l.jenisEvent || 'fitness'}*.\n\nMohon konfirmasi ketersediaan waktu agar kami dapat segera memproses. Terima kasih 🙏`,
+    },
+  ],
+  'Converted & Setelah Event': [
+    {
+      id: 'ev-tpl-cvt-1', stage: 'Converted', judul: 'Selamat Bergabung',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*! 🎉\n\nOrder event *${l.jenisEvent || 'fitness'}* sudah kami konfirmasi. Tim EFM siap memberikan pengalaman event terbaik untuk *${l.namaKlien}*!\n\nKami akan segera menghubungi untuk koordinasi lebih lanjut. Sampai jumpa di hari-H! 💪`,
+    },
+    {
+      id: 'ev-tpl-cvt-2', stage: 'Converted', judul: 'Follow-up Pasca Event',
+      teks: (l) => `Halo ${l.namaKoordinator || 'Bapak/Ibu'} dari *${l.namaKlien}*,\n\nTerima kasih atas kepercayaan mengadakan event *${l.jenisEvent || 'fitness'}* bersama EFM! 🙏\n\nSemoga event berjalan sukses dan seluruh peserta puas. Kami sangat terbuka untuk menerima feedback, dan siap berkolaborasi lagi di masa mendatang! 😊`,
+    },
+  ],
+}
+
+function EventLeadTemplateCard({ template, ctx, onKirim }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const teks = template.teks(ctx)
+  return (
+    <div className="border border-gray-100 rounded-xl p-3.5 hover:border-gray-200 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{template.judul}</p>
+          {showPreview
+            ? <p className="text-xs text-gray-500 mt-1.5 whitespace-pre-line leading-relaxed">{teks}</p>
+            : <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{teks.substring(0, 70)}…</p>
+          }
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          <button
+            onClick={() => setShowPreview(p => !p)}
+            className="h-7 px-2.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {showPreview ? 'Tutup' : 'Preview'}
+          </button>
+          <button
+            onClick={() => onKirim(template)}
+            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-medium transition-colors"
+          >
+            <MessageCircle size={11} /> Kirim WA
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ═══════════════════════════════════════
    Main Page
 ═══════════════════════════════════════ */
 export default function EventLeadDetailPage() {
@@ -272,12 +350,53 @@ export default function EventLeadDetailPage() {
     showToast('✓ Catatan berhasil ditambahkan')
   }
 
+  /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
+  const [waLog, setWaLog] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`event-lead-wa-log-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return []
+  })
+  const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
+
+  const eventLeadCtx = {
+    namaKlien:      lead?.namaKlien      || '',
+    namaKoordinator:lead?.namaKoordinator|| '',
+    jenisEvent:     lead?.jenisEvent     || '',
+    picEfm:         lead?.picEfm        || '',
+    waKoordinator:  lead?.waKoordinator  || '',
+    stage:          lead?.stage          || '',
+  }
+
+  useEffect(() => {
+    try { localStorage.setItem(`event-lead-wa-log-${id}`, JSON.stringify(waLog)) } catch {}
+  }, [waLog, id])
+
+  function handleKirimWA(template) {
+    const teks = template.teks(eventLeadCtx)
+    const nomorBersih = (eventLeadCtx.waKoordinator || '').replace(/^0/, '').replace(/\D/g, '')
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(teks)}`, '_blank')
+    const now = new Date()
+    const timestamp = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    setWaLog(prev => [...prev, {
+      id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
+      timestamp,
+      judul: template.judul,
+      kategori: template.stage || template.kategori,
+      kirimOleh: eventLeadCtx.picEfm || 'Admin EFM',
+      nomorTujuan: eventLeadCtx.waKoordinator,
+    }])
+  }
+
   const TABS = [
     { key: 'info',       label: 'Info Klien'   },
     { key: 'konsultasi', label: 'Konsultasi'   },
     { key: 'quotation',  label: 'Quotation'    },
     { key: 'riwayat',    label: 'Riwayat'      },
     { key: 'log',        label: 'Log & Histori' },
+    { key: 'wa',         label: 'Komunikasi WA' },
   ]
 
   const leadKonsultasi = konsultasiAll.filter(k => k.leadId === lead.id)
@@ -813,6 +932,119 @@ export default function EventLeadDetailPage() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ══════════════════════════════════════════════════════════════════════
+            TAB 6: KOMUNIKASI WA
+        ══════════════════════════════════════════════════════════════════════ */}
+        {activeTab === 'wa' && (
+          <div className="space-y-4">
+
+            {/* Template Panel */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+                {eventLeadCtx.stage && (
+                  <span className="text-xs font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-2 py-0.5 rounded-full">
+                    Stage: {eventLeadCtx.stage}
+                  </span>
+                )}
+              </div>
+
+              {/* Nomor tujuan */}
+              {eventLeadCtx.waKoordinator ? (
+                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                  <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                    <MessageCircle size={14} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                    <p className="text-sm font-semibold text-gray-800">
+                      {eventLeadCtx.namaKoordinator ? eventLeadCtx.namaKoordinator + ' · ' : ''}{eventLeadCtx.namaKlien} · {eventLeadCtx.waKoordinator}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-5">
+                  <p className="text-xs text-yellow-700">No. WhatsApp koordinator belum tercatat. Lengkapi di tab Info Klien.</p>
+                </div>
+              )}
+
+              {/* Template kategori pertama */}
+              <div className="mb-4">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                  Template New &amp; Approach
+                </p>
+                <div className="space-y-2">
+                  {EVENT_LEAD_WA_TEMPLATES['New & Approach'].map(tpl => (
+                    <EventLeadTemplateCard key={tpl.id} template={tpl} ctx={eventLeadCtx} onKirim={handleKirimWA} />
+                  ))}
+                </div>
+              </div>
+
+              {/* Template lainnya (collapsible) */}
+              <div>
+                <button
+                  onClick={() => setShowAllWaTemplates(p => !p)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                  </svg>
+                  {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+                </button>
+                {showAllWaTemplates && (
+                  <div className="space-y-4 pt-1">
+                    {Object.entries(EVENT_LEAD_WA_TEMPLATES)
+                      .filter(([kat]) => kat !== 'New & Approach')
+                      .map(([kat, templates]) => (
+                        <div key={kat}>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Template {kat}</p>
+                          <div className="space-y-2">
+                            {templates.map(tpl => (
+                              <EventLeadTemplateCard key={tpl.id} template={tpl} ctx={eventLeadCtx} onKirim={handleKirimWA} />
+                            ))}
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Log Pengiriman */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
+                <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
+              </div>
+              {waLog.length === 0 ? (
+                <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk lead ini.</p>
+              ) : (
+                <div className="space-y-2">
+                  {[...waLog].reverse().map((log, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                      <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                        <MessageCircle size={12} className="text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                          <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
+                          Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                          {log.kategori && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.kategori}</span>}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 
