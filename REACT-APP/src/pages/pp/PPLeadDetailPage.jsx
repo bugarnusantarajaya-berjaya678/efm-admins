@@ -317,7 +317,7 @@ function PipelineStepper({ currentStage }) {
   const currentIdx = PIPELINE_LINEAR.indexOf(currentStage)
 
   return (
-    <div className="mb-6">
+    <div>
       {/* Stepper */}
       <div className="flex items-start">
         {PIPELINE_LINEAR.map((stage, idx) => {
@@ -326,7 +326,7 @@ function PipelineStepper({ currentStage }) {
           return (
             <div key={stage} className="flex items-center flex-1">
               <div className="flex flex-col items-center flex-1">
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0
                   ${isCompleted ? 'bg-[#1E1C43] text-white' : isCurrent ? 'bg-[#E05945] text-white' : 'bg-gray-100 text-gray-400'}`}>
                   {isCompleted ? '✓' : idx + 1}
                 </div>
