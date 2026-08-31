@@ -234,6 +234,35 @@ function ToggleSwitch({ checked, onChange }) {
   )
 }
 
+function TahapanStepper({ currentTahapan }) {
+  const currentIdx = TAHAPAN_ORDER[currentTahapan] ?? 0
+  return (
+    <div className="flex items-start">
+      {TAHAPAN_STEPS.map((step, idx) => {
+        const isCompleted = idx < currentIdx
+        const isCurrent   = idx === currentIdx
+        return (
+          <div key={step} className="flex items-center flex-1">
+            <div className="flex flex-col items-center flex-1">
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold shrink-0
+                ${isCompleted ? 'bg-[#1E1C43] text-white' : isCurrent ? 'bg-[#E05945] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                {isCompleted ? '✓' : idx + 1}
+              </div>
+              <p className={`text-[10px] mt-1 text-center leading-tight
+                ${isCurrent ? 'font-bold text-[#E05945]' : isCompleted ? 'font-medium text-[#1E1C43]' : 'text-gray-400'}`}>
+                {step}
+              </p>
+            </div>
+            {idx < TAHAPAN_STEPS.length - 1 && (
+              <div className={`h-0.5 flex-1 -mt-4 ${isCompleted ? 'bg-[#1E1C43]' : 'bg-gray-200'}`} />
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 function OrderTemplateCard({ template, orderCtx, onKirim }) {
   const [showPreview, setShowPreview] = useState(false)
   const teks = template.teks(orderCtx)
@@ -776,75 +805,54 @@ export default function PPOrderDetailPage() {
 
 
       {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-
-        {/* Mobile: column layout; sm+: row layout */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
 
           {/* LEFT: Avatar + Info */}
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            {/* Avatar circle */}
+          <div className="flex items-center gap-4">
             <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-white text-sm sm:text-sm font-bold shrink-0"
+              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
               style={{ background: getAvatarColor(order.namaKlien) }}
             >
               {getInitials(order.namaKlien)}
             </div>
-            <div className="min-w-0 flex-1">
+            <div>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'PP-DRAFT' : order.id}</p>
-              <h1 className="text-lg sm:text-xl font-bold text-[#1E1C43] leading-tight break-words">{isNew ? 'Order Baru' : order.namaKlien}</h1>
-              <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : order.namaKlien}</h1>
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                 <Badge cls="bg-purple-100 text-purple-700">{order.paket || '—'}</Badge>
                 <Badge cls={STATUS_CLS[statusOrderState] ?? 'bg-gray-100 text-gray-600'}>● {statusOrderState}</Badge>
                 <span className="text-[10px] text-gray-400">Mulai {order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—'}</span>
               </div>
-              {/* Stepper — connector lines hidden on mobile */}
-              <div className="flex items-center gap-1 mt-2.5 flex-wrap">
-                {TAHAPAN_STEPS.map((step, i) => {
-                  const orderIdx = TAHAPAN_ORDER[tahapanState] ?? 0
-                  const stepIdx  = TAHAPAN_ORDER[step] ?? i
-                  const isActive = stepIdx === orderIdx
-                  const isDone   = stepIdx < orderIdx
-                  return (
-                    <div key={step} className="flex items-center gap-1">
-                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
-                        isActive ? 'bg-[#E05945] text-white' : isDone ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {step}
-                      </span>
-                      {i < TAHAPAN_STEPS.length - 1 && <div className="hidden sm:block w-3 h-px bg-gray-300" />}
-                    </div>
-                  )
-                })}
-              </div>
             </div>
           </div>
 
-          {/* RIGHT: on mobile → row (buttons left, nilai kontrak right); sm+ → column aligned right */}
-          <div className="flex sm:flex-col items-start sm:items-end justify-between sm:justify-start gap-3">
-            <div className="flex items-center gap-2 flex-wrap">
-              {!isNew && (
-                <button
-                  onClick={() => setShowTahapanModal(true)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-                >
-                  Ubah Tahapan
-                </button>
-              )}
+          {/* RIGHT: Action buttons only */}
+          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+            {!isNew && (
               <button
-                onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
-                className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+                onClick={() => setShowTahapanModal(true)}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
               >
-                <ArrowLeft size={12} /> Kembali
+                <Edit2 size={12} /> Ubah Tahapan
               </button>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider">Nilai Kontrak</p>
-              <p className="text-xl font-bold text-[#1E1C43]">
-                {fmtRp(order.nilaiKontrak || subtotal)}
-              </p>
-              <p className="text-[10px] text-gray-400 mt-0.5">PIC: {order.picOpsEFM}</p>
-            </div>
+            )}
+            <button
+              onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali
+            </button>
+          </div>
+        </div>
+
+        {/* Tahapan Stepper — full width below divider */}
+        <div className="mt-4 pt-4 border-t border-gray-100">
+          <TahapanStepper currentTahapan={tahapanState} />
+          <div className="flex items-center gap-3 mt-2">
+            <span className="text-[10px] text-gray-400">PIC: {order.picOpsEFM}</span>
+            <span className="text-[10px] text-gray-300">·</span>
+            <span className="text-[10px] font-semibold text-[#1E1C43]">Nilai Kontrak: {fmtRp(order.nilaiKontrak || subtotal)}</span>
           </div>
         </div>
       </div>
