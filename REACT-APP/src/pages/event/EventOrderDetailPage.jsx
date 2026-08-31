@@ -17,16 +17,6 @@ const EVENT_ORDER_WA_TEMPLATES = {
       teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKami ingin menindaklanjuti penawaran untuk *${o.namaEvent || 'event fitness'}* yang sudah kami kirimkan sebelumnya.\n\nApakah ada pertanyaan atau hal yang perlu kami klarifikasi dari penawaran tersebut? Kami siap mendiskusikan lebih lanjut 😊\n\nTerima kasih`,
     },
   ],
-  'LOI': [
-    {
-      id: 'evowt-loi-1', tahapan: 'LOI', judul: 'Konfirmasi LOI Diterima',
-      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKabar baik! Kami mengkonfirmasi bahwa Letter of Intent (LOI) untuk *${o.namaEvent || 'event fitness'}* dari ${o.namaKlien} sudah kami terima.\n\nIni merupakan langkah awal yang baik untuk kerjasama kita. Tim kami akan segera memproses untuk tahap selanjutnya.\n\nTerima kasih atas kepercayaannya! 🙏`,
-    },
-    {
-      id: 'evowt-loi-2', tahapan: 'LOI', judul: 'Reminder Tanda Tangan LOI',
-      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nDokumen LOI untuk *${o.namaEvent || 'event fitness'}* sudah siap untuk ditandatangani.\n\nMohon luangkan waktu untuk menyelesaikan penandatanganan LOI agar proses kerjasama dapat dilanjutkan ke tahap berikutnya.\n\nSilakan hubungi kami untuk koordinasi lebih lanjut. Terima kasih!`,
-    },
-  ],
   'MOU': [
     {
       id: 'evowt-mou-1', tahapan: 'MOU', judul: 'Update Proses MOU',
@@ -75,7 +65,6 @@ const EVENT_ORDER_WA_TEMPLATES = {
 
 const TAHAPAN_WA_EV_CLS = {
   'Quotation':     'bg-amber-100 text-amber-700',
-  'LOI':           'bg-orange-100 text-orange-700',
   'MOU':           'bg-blue-100 text-blue-700',
   'Contract':      'bg-purple-100 text-purple-700',
   'Event Running': 'bg-green-100 text-green-700',
@@ -91,7 +80,6 @@ const PAY_STATUS_OPTS = ['Belum Ditagih','Invoice Terkirim','Lunas','Jatuh Tempo
 
 const TAHAPAN_CLS = {
   'Quotation':     'bg-amber-100 text-amber-700',
-  'LOI':           'bg-orange-100 text-orange-700',
   'MOU':           'bg-blue-100 text-blue-700',
   'Contract':      'bg-purple-100 text-purple-700',
   'Event Running': 'bg-green-100 text-green-700',
@@ -119,8 +107,8 @@ function getAvatarColor(name) {
 }
 
 function EventTahapanStepper({ currentTahapan }) {
-  const steps = ['Quotation', 'LOI', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
-  const order = { 'Quotation': 0, 'LOI': 1, 'MOU': 2, 'Contract': 3, 'Event Running': 4, 'Event Selesai': 5 }
+  const steps = ['Quotation', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
+  const order = { 'Quotation': 0, 'MOU': 1, 'Contract': 2, 'Event Running': 3, 'Event Selesai': 4 }
   const currentIdx = order[currentTahapan] ?? 0
   return (
     <div className="flex items-start">
@@ -490,8 +478,8 @@ const QUOTATION_STATUS_CLS = {
 }
 
 /* ── Tahapan stepper ─────────────────────────────────────────────────────── */
-const TAHAPAN_STEPS = ['Quotation', 'LOI', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
-const TAHAPAN_ORDER = { 'Quotation': 0, 'LOI': 1, 'MOU': 2, 'Contract': 3, 'Event Running': 4, 'Event Selesai': 5 }
+const TAHAPAN_STEPS = ['Quotation', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
+const TAHAPAN_ORDER = { 'Quotation': 0, 'MOU': 1, 'Contract': 2, 'Event Running': 3, 'Event Selesai': 4 }
 
 /* ── Generate payment schedule ────────────────────────────────────────────── */
 function generatePayRows(_startStr, _endStr, terms, nilaiNum) {
@@ -613,7 +601,7 @@ export default function EventOrderDetailPage() {
         telepon: fromState?.noHP || '',
         catatan: fromState?.rekomendasi || '',
         status: 'Draft',
-        tahapan: 'Quotation & LOI',
+        tahapan: 'Quotation',
         nilaiNum: 0,
         nilai: 'Rp 0',
         periode: '',
@@ -682,19 +670,15 @@ export default function EventOrderDetailPage() {
   const [psPersenDraft, setPsPersenDraft] = useState(15)
 
   /* ── Tab 2: Dokumen ─────────────────────────────────────────────────────── */
-  const [expandQ,   setExpandQ]   = useState(true)
   const [expandMOU, setExpandMOU] = useState(false)
   const [expandC,   setExpandC]   = useState(true)
   const [adaMOU,    setAdaMOU]    = useState(false)
   const [editingDoc, setEditingDoc] = useState(null) // null|'quotation'|'mou'|'contract'
 
-  const [qDoc, setQDoc] = useState({ status: 'Terkirim', signedFile: null, riwayat: [{ id:1, nama:'LOI-yayasan-kanker-indonesia.pdf', tanggal:'5 Jun 2026', status:'Terkirim' }] })
   const [mouDoc, setMouDoc] = useState({ status: 'Drafting', gdocsUrl: '', riwayat: [] })
   const [cDoc, setCDoc] = useState({ status: 'Signed', gdocsUrl: 'https://docs.google.com/document/d/xyz789', riwayat: [{ id:1, nama:'contract-yayasan-kanker-final.pdf', tgl:'10 Jun 2026', status:'Signed' }] })
-  const [qDraft, setQDraft]   = useState(null)
   const [mouDraft, setMouDraft] = useState(null)
   const [cDraft, setCDraft]   = useState(null)
-  const [showLOIPreview, setShowLOIPreview] = useState(false)
 
   /* ── Tab 2: Jadwal Kegiatan ──────────────────────────────────────────────── */
   const [editingJadwal, setEditingJadwal] = useState(null)
@@ -983,64 +967,6 @@ export default function EventOrderDetailPage() {
     navigate('/event/orders')
   }
 
-  /* ── LOI data ────────────────────────────────────────────────────────────── */
-  const loiData = {
-    namaKlien:      infoDeal.namaKlien      || 'PT. Maju Bersama',
-    jenis:          infoDeal.jenis          || 'Corporate',
-    programLayanan: infoDeal.program        || 'Corporate Wellness',
-    picKlien:       infoDeal.pic            || 'Admin EFM',
-    tanggalMulai:   infoDeal.tanggalMulai   || '2026-06-01',
-    tanggalSelesai: infoDeal.tanggalSelesai || '2027-06-01',
-    durasiKontrak: (() => {
-      if (!infoDeal.tanggalMulai || !infoDeal.tanggalSelesai) return '12'
-      const mulai   = new Date(infoDeal.tanggalMulai)
-      const selesai = new Date(infoDeal.tanggalSelesai)
-      return String(Math.round((selesai - mulai) / (1000 * 60 * 60 * 24 * 30)))
-    })(),
-    rincianLayanan: lineItems.length > 0 ? lineItems : [
-      { namaItem: 'Jasa Fitness Management Bulanan',  satuan: 'Bulan', jumlah: 1, rate: 11_280_000 },
-      { namaItem: 'Biaya Operasional & Transportasi', satuan: 'Bulan', jumlah: 1, rate:    720_000 },
-    ],
-    subtotal:       qCalc.sub              || 12_000_000,
-    nomorQuotation: quotationData.nomorQuotation || 'QUO/EFM/EVENT/2026/001',
-    totalPenawaran: qCalc.total            || 13_320_000,
-    nomorLOI: (() => {
-      const LOI_MAP = { 'EV-26-0001': 'LOI-EFM-EVENT-26-0001', 'EV-26-0002': 'LOI-EFM-EVENT-26-0002', 'EV-26-0003': 'LOI-EFM-EVENT-26-0003' }
-      return LOI_MAP[id] || `LOI-EFM-EVENT-26-${(id || '').slice(-4)}`
-    })(),
-    tanggalLOI: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-  }
-
-  function handleCopyLOI() {
-    const lines = [
-      loiData.nomorLOI,
-      '',
-      'Kepada YTH:',
-      loiData.namaKlien,
-      `Up: ${loiData.picKlien}`,
-      '',
-      'Dengan hormat,',
-      '',
-      `CV. Bugar Nusantara Jaya (Essential Fitness Management / EFM) menyampaikan Letter of Intent untuk kerjasama penyelenggaraan event olahraga & kebugaran bersama ${loiData.namaKlien}.`,
-      '',
-      `Nama Event      : ${loiData.programLayanan}`,
-      `Tanggal Event   : ${fmtDate(loiData.tanggalMulai)} s/d ${fmtDate(loiData.tanggalSelesai)}`,
-      `Estimasi Nilai  : ${fmtRp(loiData.subtotal)}`,
-      `Total Penawaran : ${fmtRp(loiData.totalPenawaran)} (sudah termasuk pajak)`,
-      `No. Quotation   : ${loiData.nomorQuotation}`,
-      '',
-      `Jakarta, ${loiData.tanggalLOI}`,
-      '',
-      'Hormat kami,',
-      'CV. Bugar Nusantara Jaya',
-      'Essential Fitness Management',
-      '',
-      'Bagoes Soeharto',
-      'Owner & Co-Founder',
-    ]
-    navigator.clipboard.writeText(lines.join('\n'))
-  }
-
   /* ── Tab 3 helpers ───────────────────────────────────────────────────────── */
   const formatWA = (wa) => wa.replace(/^0/, "62").replace(/\D/g, "")
 
@@ -1085,8 +1011,8 @@ export default function EventOrderDetailPage() {
   const tipeCls = TIPE_CLS_MAP[order.jenis] ?? 'bg-blue-500 text-white'
 
   return (
-    <div className="bg-[#F5F5F7] min-h-screen">
-      <div className="px-6 py-6">
+    <>
+      <div className="space-y-5">
 
       {/* Banner: new order from survei */}
       {isNew && fromState?.fromKonsultasi && (
@@ -1159,7 +1085,7 @@ export default function EventOrderDetailPage() {
                     <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tahapan Baru</label>
                     <select value={newTahapanVal} onChange={e => setNewTahapanVal(e.target.value)}
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
-                      {['Quotation','LOI','MOU','Contract','Event Running','Event Selesai'].map(s => <option key={s} value={s}>{s}</option>)}
+                      {['Quotation','MOU','Contract','Event Running','Event Selesai'].map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div>
@@ -1961,8 +1887,8 @@ export default function EventOrderDetailPage() {
       ══════════════════════════════════════════════════════════════════════ */}
       {activeTab === 'dokumen' && (() => {
         const getStepStatus = (stepKey) => {
-          const levelMap = { 'Quotation & LOI': 1, 'MOU': 2, 'Contract': 3, 'Event Running': 4, 'Aktif': 4, 'Selesai': 5 }
-          const stepIdx  = { quotation: 0, loi: 1, mou: 2, contract: 3, active: 4 }
+          const levelMap = { 'Quotation': 1, 'MOU': 2, 'Contract': 3, 'Event Running': 4, 'Aktif': 4, 'Selesai': 5 }
+          const stepIdx  = { quotation: 0, mou: 1, contract: 2, active: 3 }
           const cur = levelMap[order?.tahapan] ?? 0
           const lvl = stepIdx[stepKey] ?? 0
           if (cur > lvl) return 'completed'
@@ -1978,7 +1904,6 @@ export default function EventOrderDetailPage() {
             <div className="flex items-center">
               {[
                 { key: 'quotation', label: 'Quotation', icon: '📋' },
-                { key: 'loi',       label: 'LOI',       icon: '📝' },
                 { key: 'mou',       label: 'MOU',       icon: '🤝' },
                 { key: 'contract',  label: 'Kontrak',   icon: '📄' },
                 { key: 'active',    label: 'Aktif',     icon: '✅' },
@@ -2009,191 +1934,7 @@ export default function EventOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section 1: LOI (Letter of Intent) ────────────────────────── */}
-          {(() => {
-            const DOC_STATUS_OPTS = ['Draft', 'Terkirim', 'Disetujui', 'Ditolak']
-            const DOC_STATUS_CLS = {
-              Draft:     'bg-gray-100 text-gray-600',
-              Terkirim:  'bg-blue-100 text-blue-700',
-              Disetujui: 'bg-green-100 text-green-700',
-              Ditolak:   'bg-red-100 text-red-600',
-            }
-            const isEditing = editingDoc === 'loi'
-            const doc = isEditing ? qDraft : qDoc
-            return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold text-[#1E1C43]">LOI (Letter of Intent)</h3>
-                    <Badge cls={DOC_STATUS_CLS[qDoc.status] ?? 'bg-gray-100 text-gray-500'}>{qDoc.status}</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {isEditing ? (
-                      <>
-                        <button onClick={() => { setQDoc({ ...qDraft }); setEditingDoc(null) }}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90">
-                          <Save size={12} /> Simpan
-                        </button>
-                        <button onClick={() => setEditingDoc(null)}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50">
-                          <X size={12} /> Batal
-                        </button>
-                      </>
-                    ) : (
-                      <button onClick={() => { setQDraft({ ...qDoc }); setEditingDoc('loi') }}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors">
-                        <Edit2 size={12} /> Edit
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-5 space-y-4">
-                  {/* Generate LOI */}
-                  <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-                    <div>
-                      <p className="text-xs font-medium text-gray-700">Template LOI tersedia</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Auto-filled dari data Info Deal &amp; Quotation</p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setShowLOIPreview(true)}
-                      className="inline-flex items-center gap-2 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors">
-                      📄 Generate LOI
-                    </button>
-                  </div>
-
-                  {isEditing ? (
-                    /* ── EDIT MODE ── */
-                    <div className="space-y-4">
-                      {/* Status */}
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status LOI</label>
-                        <select
-                          value={qDraft.status || ''}
-                          onChange={e => setQDraft(p => ({ ...p, status: e.target.value }))}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] bg-white"
-                        >
-                          <option value="">-- Pilih Status --</option>
-                          {DOC_STATUS_OPTS.map(s => <option key={s}>{s}</option>)}
-                        </select>
-                      </div>
-
-                      {/* Upload LOI Bertanda Tangan */}
-                      <div>
-                        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Upload LOI Bertanda Tangan</label>
-                        <p className="text-[10px] text-gray-400 mb-2">Upload scan/foto LOI yang sudah ditandatangani oleh klien sebagai bukti persetujuan</p>
-                        <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
-                          <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                              <span className="text-lg">📎</span>
-                            </div>
-                            <div className="flex-1">
-                              <label className="cursor-pointer">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.jpg,.jpeg,.png"
-                                  className="hidden"
-                                  onChange={e => {
-                                    const file = e.target.files[0]
-                                    if (file) {
-                                      setQDraft(prev => ({
-                                        ...prev,
-                                        signedFile: {
-                                          nama: file.name,
-                                          tanggal: new Date().toLocaleDateString('id-ID'),
-                                          status: 'TTD Klien',
-                                        }
-                                      }))
-                                    }
-                                  }}
-                                />
-                                <span className="text-xs text-[#1E1C43] font-semibold hover:underline cursor-pointer">
-                                  Pilih file PDF atau gambar
-                                </span>
-                              </label>
-                              <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
-                            </div>
-                          </div>
-                          {qDraft.signedFile && (
-                            <div className="mt-3 flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                              <div className="flex items-center gap-2">
-                                <span className="text-green-600">✅</span>
-                                <span className="text-xs text-green-700 font-medium">{qDraft.signedFile.nama}</span>
-                              </div>
-                              <button
-                                onClick={() => setQDraft(prev => ({ ...prev, signedFile: null }))}
-                                className="text-gray-400 hover:text-red-400 text-xs"
-                              >
-                                × Hapus
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Riwayat File — read-only di edit mode */}
-                      {doc.riwayat && doc.riwayat.length > 0 && (
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Riwayat File</p>
-                          <div className="space-y-1.5">
-                            {doc.riwayat.map(r => (
-                              <div key={r.id} className="flex items-center justify-between bg-gray-50 rounded-lg px-3 py-2">
-                                <span className="text-xs text-gray-600">{r.nama}</span>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] text-gray-400">{r.tanggal}</span>
-                                  <Badge cls={r.status === 'TTD Klien' ? 'bg-green-100 text-green-700' : (DOC_STATUS_CLS[r.status] ?? 'bg-gray-100 text-gray-500')}>{r.status}</Badge>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    /* ── VIEW MODE ── */
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">Status</p>
-                          <Badge cls={DOC_STATUS_CLS[doc.status] ?? 'bg-gray-100 text-gray-500'}>{doc.status || '—'}</Badge>
-                        </div>
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">LOI Bertanda Tangan</p>
-                          {doc.signedFile ? (
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs text-green-600 font-semibold">✅ Sudah diupload</span>
-                              <span className="text-[10px] text-gray-400">{doc.signedFile.tanggal}</span>
-                            </div>
-                          ) : (
-                            <span className="text-xs text-gray-400 italic">Belum ada</span>
-                          )}
-                        </div>
-                      </div>
-
-                      {doc.riwayat && doc.riwayat.length > 0 && (
-                        <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wider font-semibold mb-2">Riwayat File</p>
-                          <div className="space-y-1.5">
-                            {doc.riwayat.map(r => (
-                              <div key={r.id} className="flex items-center gap-3 bg-gray-50 rounded-lg px-3 py-2">
-                                <span className="text-xs font-medium text-gray-700 flex-1">{r.nama}</span>
-                                <span className="text-[10px] text-gray-400">{r.tanggal}</span>
-                                <Badge cls={r.status === 'TTD Klien' ? 'bg-green-100 text-green-700' : (DOC_STATUS_CLS[r.status] ?? 'bg-gray-100 text-gray-500')}>{r.status}</Badge>
-                                <button className="h-6 w-6 flex items-center justify-center rounded text-gray-400 hover:text-[#1E1C43] transition-colors"><Download size={11} /></button>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* ── Section 2: MOU ────────────────────────────────────────────── */}
+          {/* ── Section 1: MOU ────────────────────────────────────────────── */}
           {(() => {
             const DOC_STATUS_OPTS = ['Drafting','On Review','Revision','Signed']
             const DOC_STATUS_CLS = { Signed:'bg-green-100 text-green-700', 'On Review':'bg-blue-100 text-blue-700', Drafting:'bg-gray-100 text-gray-500', Revision:'bg-yellow-100 text-yellow-700' }
@@ -3417,178 +3158,7 @@ export default function EventOrderDetailPage() {
         </div>
       )}
 
-      </div>{/* end px-6 py-6 */}
-
-      {/* ══ MODAL: LOI Preview ═══════════════════════════════════════════════ */}
-      {showLOIPreview && (
-        <div className="fixed inset-0 bg-black/50 flex items-start justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl my-8 overflow-hidden">
-
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-              <div>
-                <h3 className="text-sm font-semibold text-[#1E1C43]">Preview LOI</h3>
-                <p className="text-[10px] text-gray-400">{loiData.nomorLOI}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleCopyLOI}
-                  className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-1.5 rounded-lg hover:bg-gray-50">
-                  📋 Salin Teks
-                </button>
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#c94a38]">
-                  ⬇️ Download PDF
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowLOIPreview(false)}
-                  className="text-gray-400 hover:text-gray-600 ml-1">
-                  <X size={18} />
-                </button>
-              </div>
-            </div>
-
-            {/* ISI DOKUMEN LOI */}
-            <div
-              id="loi-print-area"
-              className="px-10 py-8 font-['Times_New_Roman',serif] text-gray-900 text-sm leading-relaxed">
-
-              {/* Kop Surat */}
-              <div className="text-center mb-6 pb-4 border-b-2 border-[#1E1C43]">
-                <div className="flex items-center justify-center gap-4 mb-3">
-                  {settings.logoPerusahaan ? (
-                    <img src={settings.logoPerusahaan} alt="EFM Logo" className="w-16 h-16 object-contain" />
-                  ) : (
-                    <div className="w-16 h-16 bg-[#1E1C43] rounded-full flex items-center justify-center shrink-0">
-                      <span className="text-white font-bold text-lg">EFM</span>
-                    </div>
-                  )}
-                  <div className="text-left">
-                    <p className="text-sm font-bold text-[#1E1C43] tracking-wide uppercase">
-                      {settings.namaPerusahaan || 'Essential Fitness Management'}
-                    </p>
-                    <p className="text-xs text-gray-600 mt-0.5">
-                      {settings.namaLegal || 'CV. Bugar Nusantara Jaya'}
-                    </p>
-                  </div>
-                </div>
-                <p className="text-[11px] text-gray-500">
-                  {settings.alamat || "Jl. Terogong Raya No. 18, Hampton's Park Apartment, Tower A, Cilandak Barat, Jakarta Selatan"}
-                </p>
-                <p className="text-[11px] text-gray-500 mt-0.5">
-                  📱 {settings.whatsapp || '+62 811-1992-0666'} &nbsp;|&nbsp; ✉️ {settings.email || 'essentialfitnessmanagement@gmail.com'} &nbsp;|&nbsp; 🌐 {settings.website || 'www.essentialfitnessmanagement.com'}
-                </p>
-              </div>
-
-              {/* Info Surat */}
-              <div className="mb-5">
-                <table className="text-xs">
-                  <tbody>
-                    <tr>
-                      <td className="pr-4 py-0.5 align-top w-32">No. Surat</td>
-                      <td className="pr-2 align-top">:</td>
-                      <td className="font-semibold">{loiData.nomorLOI}</td>
-                    </tr>
-                    <tr>
-                      <td className="pr-4 py-0.5 align-top">Perihal</td>
-                      <td className="pr-2 align-top">:</td>
-                      <td className="font-semibold">Letter of Intent — Penawaran Layanan Fitness &amp; Wellness Management</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Tujuan Surat */}
-              <div className="mb-5 text-xs">
-                <p className="font-semibold">Kepada YTH:</p>
-                <p className="font-bold text-sm mt-1">{loiData.namaKlien}</p>
-                <p>Up: {loiData.picKlien}</p>
-                <p>Di Tempat</p>
-              </div>
-
-              {/* Salam */}
-              <p className="mb-4 text-xs font-semibold">Dengan hormat,</p>
-
-              {/* Paragraf 1 */}
-              <p className="mb-4 text-xs text-justify">
-                Kami, <strong>CV. Bugar Nusantara Jaya (Essential Fitness Management / EFM)</strong> adalah perusahaan yang bergerak di bidang manajemen kebugaran <em>(fitness)</em>, olahraga <em>(sport)</em>, dan penanganan kesehatan <em>(wellness)</em> untuk individu, perusahaan, dan penyelenggaraan acara. Berdiri sejak tahun 2017, EFM telah melayani lebih dari 200 klien personal serta berbagai perusahaan dan institusi, di antaranya OJK, TELKOM, TELIN, AIA Insurance, dan PT. Suri Nusantara Jaya.
-              </p>
-
-              {/* Paragraf 2 */}
-              <p className="mb-4 text-xs text-justify">
-                Menindaklanjuti hasil survei lapangan yang telah kami lakukan, dengan ini kami menyatakan niat dan kesanggupan untuk menjalin kerjasama dengan <strong>{loiData.namaKlien}</strong> dalam bidang layanan kebugaran dan wellness.
-              </p>
-
-              {/* Tabel Ringkasan */}
-              <div className="mb-5">
-                <p className="text-xs font-semibold mb-2">Ringkasan Penawaran:</p>
-                <table className="w-full border-collapse text-xs">
-                  <tbody>
-                    {[
-                      ['Klien',             loiData.namaKlien],
-                      ['Jenis',             loiData.jenis],
-                      ['Program / Layanan', loiData.programLayanan],
-                      ['Rincian Layanan',   loiData.rincianLayanan.map(r => r.namaItem || r.item).join(', ')],
-                      ['Periode Kontrak',   `${fmtDate(loiData.tanggalMulai)} s/d ${fmtDate(loiData.tanggalSelesai)} (${loiData.durasiKontrak} bulan)`],
-                      ['Estimasi Nilai',    `${fmtRp(loiData.subtotal)} / bulan`],
-                      ['Total Penawaran',   `${fmtRp(loiData.totalPenawaran)} (sudah termasuk pajak)`],
-                      ['No. Quotation',     loiData.nomorQuotation],
-                    ].map(([label, value]) => (
-                      <tr key={label} className="border-b border-gray-100">
-                        <td className="py-1.5 pr-4 font-medium text-gray-600 w-40 align-top">{label}</td>
-                        <td className="py-1.5 pr-2 align-top w-4">:</td>
-                        <td className="py-1.5 text-gray-800">{value}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Lampiran */}
-              <p className="text-[11px] text-gray-500 italic mb-4">
-                Detail lengkap rincian layanan, harga, dan program terlampir dalam: Quotation No. {loiData.nomorQuotation} dan Laporan Hasil Survei.
-              </p>
-
-              {/* Paragraf 3 */}
-              <p className="mb-4 text-xs text-justify">
-                Kami berkomitmen menghadirkan program kebugaran yang terstruktur, profesional, dan disesuaikan dengan kebutuhan <strong>{loiData.namaKlien}</strong>, guna mendukung produktivitas dan kesejahteraan{' '}
-                {loiData.jenis === 'Corporate' || loiData.jenis === 'Corporate Event' ? 'karyawan' : 'penghuni'}.
-              </p>
-
-              {/* Paragraf 4 */}
-              <p className="mb-6 text-xs text-justify">
-                Sebagai langkah selanjutnya, kami mengundang Bapak/Ibu untuk mendiskusikan detail program dan menandatangani Perjanjian Kerjasama bersama kami.
-              </p>
-
-              {/* Penutup */}
-              <p className="mb-6 text-xs">
-                Demikian surat ini kami sampaikan. Atas perhatian dan kepercayaan Bapak/Ibu, kami ucapkan terima kasih.
-              </p>
-
-              {/* Kota & Tanggal */}
-              <p className="text-xs mb-6">Jakarta, {loiData.tanggalLOI}</p>
-
-              {/* Tanda Tangan */}
-              <div className="text-xs">
-                <p>Hormat kami,</p>
-                <p className="font-semibold mt-0.5">{settings.namaLegal || 'CV. Bugar Nusantara Jaya'}</p>
-                <p className="text-gray-500">{settings.namaPerusahaan || 'Essential Fitness Management'}</p>
-                {settings.tandaTanganCEO ? (
-                  <img src={settings.tandaTanganCEO} alt="Tanda Tangan" className="h-16 object-contain mt-2 mb-1" />
-                ) : (
-                  <div className="h-16 mt-2 mb-2" />
-                )}
-                <p className="font-bold underline">{settings.namaPenandatangan || 'Bagoes Soeharto'}</p>
-                <p>{settings.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </div>
 
       {/* ══ MODAL: Tambah Anggota Tim ════════════════════════════════════════════ */}
       {showTambahTim && (
@@ -4389,6 +3959,6 @@ export default function EventOrderDetailPage() {
         </div>
       )}
 
-    </div>
+    </>
   )
 }
