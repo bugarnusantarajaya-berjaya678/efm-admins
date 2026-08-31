@@ -81,9 +81,9 @@ const QUOTATION_STATUS_CLS = {
 }
 
 /* ── Tahapan stepper ─────────────────────────────────────────────────────── */
-const TAHAPAN_STEPS = ['Quotation', 'Agreement', 'Program Berjalan', 'Program Selesai']
-const TAHAPAN_ORDER = { 'Quotation': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
-const TAHAPAN_TO_STATUS = { 'Quotation': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
+const TAHAPAN_STEPS = ['Invoice', 'Agreement', 'Program Berjalan', 'Program Selesai']
+const TAHAPAN_ORDER = { 'Invoice': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
+const TAHAPAN_TO_STATUS = { 'Invoice': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
 
 
 /* ── Generate payment schedule ────────────────────────────────────────────── */
@@ -498,7 +498,7 @@ export default function PPOrderDetailPage() {
   const [logFilter3PP,          setLogFilter3PP]          = useState("semua")
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
-  const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Quotation')
+  const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Invoice')
   const [statusOrderState,      setStatusOrderState]      = useState(order?.statusOrder || 'Aktif')
   const [showTahapanModal,      setShowTahapanModal]      = useState(false)
   const [pendingTahapan,        setPendingTahapan]        = useState(null)
@@ -849,11 +849,6 @@ export default function PPOrderDetailPage() {
         {/* Tahapan Stepper — full width below divider */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <TahapanStepper currentTahapan={tahapanState} />
-          <div className="flex items-center gap-3 mt-2">
-            <span className="text-[10px] text-gray-400">PIC: {order.picOpsEFM}</span>
-            <span className="text-[10px] text-gray-300">·</span>
-            <span className="text-[10px] font-semibold text-[#1E1C43]">Nilai Kontrak: {fmtRp(order.nilaiKontrak || subtotal)}</span>
-          </div>
         </div>
       </div>
 
