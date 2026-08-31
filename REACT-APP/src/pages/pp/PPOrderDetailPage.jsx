@@ -2296,95 +2296,105 @@ export default function PPOrderDetailPage() {
       {activeTab === 'wa' && (
         <div className="space-y-4">
 
-          {/* Nomor Tujuan */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Nomor WhatsApp Klien</h3>
-            {orderCtx.noHP ? (
-              <div className="flex items-center gap-3">
-                <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2.5">
-                  <p className="text-xs text-gray-400 uppercase tracking-wide">Nomor HP</p>
-                  <p className="text-sm font-semibold text-gray-800 mt-0.5">{orderCtx.noHP}</p>
+          {/* Template Panel */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+              {orderCtx.paket && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Paket:</span>
+                  <span className="text-xs font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-2 py-0.5 rounded-full">{orderCtx.paket}</span>
                 </div>
-                <a
-                  href={`https://wa.me/62${(orderCtx.noHP).replace(/^0/, '').replace(/\D/g, '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold transition-colors"
-                >
-                  <MessageCircle size={13} /> Buka WA
-                </a>
-              </div>
-            ) : (
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
-                <p className="text-xs text-yellow-700">Nomor HP klien belum tercatat di order ini. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Template Pesan */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Template Pesan</h3>
-              <button
-                onClick={() => setShowAllWaTemplates(p => !p)}
-                className="text-xs text-[#1E1C43] font-medium hover:underline"
-              >
-                {showAllWaTemplates ? 'Tampilkan lebih sedikit' : 'Lihat semua kategori'}
-              </button>
+              )}
             </div>
 
-            <div className="space-y-4">
-              {Object.entries(ORDER_WA_TEMPLATES)
-                .filter((_, idx) => showAllWaTemplates || idx < 2)
-                .map(([kategori, templates]) => (
-                <div key={kategori}>
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{kategori}</p>
-                  <div className="space-y-2">
-                    {templates.map(tpl => (
-                      <OrderTemplateCard
-                        key={tpl.id}
-                        template={tpl}
-                        orderCtx={orderCtx}
-                        onKirim={handleKirimWA}
-                      />
-                    ))}
-                  </div>
+            {/* Nomor tujuan */}
+            {orderCtx.noHP ? (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={14} className="text-white" />
                 </div>
-              ))}
-              {!showAllWaTemplates && (
-                <button
-                  onClick={() => setShowAllWaTemplates(true)}
-                  className="w-full py-2 text-xs text-[#1E1C43] font-medium border border-dashed border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
-                >
-                  + Lihat kategori lainnya (Reminder, Feedback)
-                </button>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {orderCtx.sapaan ? orderCtx.sapaan + ' ' : ''}{orderCtx.namaKlien} · {orderCtx.noHP}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-5">
+                <p className="text-xs text-yellow-700">Nomor HP klien belum tercatat. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
+              </div>
+            )}
+
+            {/* Template kategori utama */}
+            <div className="mb-4">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Template Jadwal &amp; Sesi
+              </p>
+              <div className="space-y-2">
+                {ORDER_WA_TEMPLATES['Jadwal & Sesi'].map(tpl => (
+                  <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
+                ))}
+              </div>
+            </div>
+
+            {/* Template lainnya (collapsible) */}
+            <div>
+              <button
+                onClick={() => setShowAllWaTemplates(p => !p)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                </svg>
+                {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+              </button>
+              {showAllWaTemplates && (
+                <div className="space-y-4 pt-1">
+                  {Object.entries(ORDER_WA_TEMPLATES)
+                    .filter(([kat]) => kat !== 'Jadwal & Sesi')
+                    .map(([kat, templates]) => (
+                      <div key={kat}>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Template {kat}</p>
+                        <div className="space-y-2">
+                          {templates.map(tpl => (
+                            <OrderTemplateCard key={tpl.id} template={tpl} orderCtx={orderCtx} onKirim={handleKirimWA} />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
               )}
             </div>
           </div>
 
           {/* Log Pengiriman */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div className="flex items-center justify-between mb-3">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
-              <span className="text-xs text-gray-400">{waLog.length} pesan terkirim</span>
+              <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
             </div>
             {waLog.length === 0 ? (
-              <p className="text-xs text-gray-400 italic">Belum ada pesan yang dikirim melalui tab ini.</p>
+              <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk order ini.</p>
             ) : (
-              <div className="space-y-0 pl-4 relative">
-                {[...waLog].reverse().map((log, idx, arr) => (
-                  <div key={log.id} className="relative pb-3.5 last:pb-0">
-                    <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#25D366]" />
-                    {idx < arr.length - 1 && (
-                      <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />
-                    )}
-                    <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
-                      <p className="text-[10px] text-gray-400">{log.timestamp}</p>
-                      {log.kirimOleh && <p className="text-[10px] text-gray-500 font-medium">· {log.kirimOleh}</p>}
-                      <span className="text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded font-medium">{log.kategori}</span>
+              <div className="space-y-2">
+                {[...waLog].reverse().map((log, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                      <MessageCircle size={12} className="text-white" />
                     </div>
-                    <p className="text-xs text-gray-700 font-medium">{log.judul}</p>
-                    {log.nomorTujuan && <p className="text-[10px] text-gray-400 mt-0.5">→ {log.nomorTujuan}</p>}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                        <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-0.5">
+                        Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                        {log.kategori && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.kategori}</span>}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
