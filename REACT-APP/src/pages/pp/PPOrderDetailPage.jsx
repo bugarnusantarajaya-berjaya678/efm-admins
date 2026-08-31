@@ -500,8 +500,10 @@ export default function PPOrderDetailPage() {
   const [showTambahAbsensiManual, setShowTambahAbsensiManual] = useState(false)
   const [tahapanState,          setTahapanState]          = useState(order?.tahapan || 'Invoice')
   const [statusOrderState,      setStatusOrderState]      = useState(order?.statusOrder || 'Aktif')
-  const [showTahapanModal,      setShowTahapanModal]      = useState(false)
-  const [pendingTahapan,        setPendingTahapan]        = useState(null)
+  const [editingTahapan,        setEditingTahapan]        = useState(false)
+  const [newTahapanVal,         setNewTahapanVal]         = useState(tahapanState)
+  const [newTahapanTanggal,     setNewTahapanTanggal]     = useState('')
+  const [newTahapanCatatan,     setNewTahapanCatatan]     = useState('')
   const [rekapStatus,           setRekapStatus]           = useState('belum_diajukan')
   const [rekapCatatanTolak,     setRekapCatatanTolak]     = useState('')
   const [showTolakModal,        setShowTolakModal]        = useState(false)
@@ -831,10 +833,10 @@ export default function PPOrderDetailPage() {
           <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
             {!isNew && (
               <button
-                onClick={() => setShowTahapanModal(true)}
+                onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
               >
-                <Edit2 size={12} /> Ubah Tahapan
+                <Edit2 size={12} /> Update Tahapan
               </button>
             )}
             <button
@@ -849,6 +851,63 @@ export default function PPOrderDetailPage() {
         {/* Tahapan Stepper — full width below divider */}
         <div className="mt-4 pt-4 border-t border-gray-100">
           <TahapanStepper currentTahapan={tahapanState} />
+
+          {/* Inline edit form */}
+          {editingTahapan && (
+            <div className="border-t border-gray-100 pt-4 mt-3">
+              <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tahapan Baru</label>
+                    <select value={newTahapanVal} onChange={e => setNewTahapanVal(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+                      {TAHAPAN_STEPS.map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+                    <input type="date" value={newTahapanTanggal} onChange={e => setNewTahapanTanggal(e.target.value)}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+                  <input type="text" value={newTahapanCatatan} onChange={e => setNewTahapanCatatan(e.target.value)}
+                    placeholder="Catatan perubahan tahapan, kondisi deal, penawaran khusus..."
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                </div>
+                <div className="flex gap-2 justify-end pt-1">
+                  <button
+                    onClick={() => setEditingTahapan(false)}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+                    <X size={12} /> Batal
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!newTahapanVal || newTahapanVal === tahapanState) { setEditingTahapan(false); return }
+                      const prevTahapan = tahapanState
+                      const newStatus   = TAHAPAN_TO_STATUS[newTahapanVal] || statusOrderState
+                      setTahapanState(newTahapanVal)
+                      setStatusOrderState(newStatus)
+                      setLogTab3PP(prev => [{
+                        id: Date.now(),
+                        waktu: fmtLogWaktu(),
+                        actor: 'Admin EFM',
+                        kategori: 'status',
+                        nomorLaporan: order.id,
+                        teks: `Tahapan diubah: ${prevTahapan} → ${newTahapanVal} · Status: ${newStatus}${newTahapanCatatan ? ' — ' + newTahapanCatatan : ''}`
+                      }, ...prev])
+                      setEditingTahapan(false)
+                      setNewTahapanCatatan('')
+                      setNewTahapanTanggal('')
+                    }}
+                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+                    <Save size={12} /> Simpan
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -2681,98 +2740,6 @@ export default function PPOrderDetailPage() {
 
       </div>
 
-      {/* ── Modal Ubah Tahapan ──────────────────────────────────────────────────── */}
-      {showTahapanModal && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={() => { setShowTahapanModal(false); setPendingTahapan(null) }}
-        >
-          <div
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-sm flex flex-col"
-            onClick={e => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <h3 className="text-sm font-bold text-[#1E1C43]">Ubah Tahapan Order</h3>
-              <button
-                onClick={() => { setShowTahapanModal(false); setPendingTahapan(null) }}
-                className="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors"
-              >
-                <X size={15} />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="p-5 space-y-2">
-              <p className="text-xs text-gray-500 mb-3">Pilih tahapan baru untuk order ini:</p>
-              {TAHAPAN_STEPS.map(step => {
-                const isCurrent  = step === tahapanState
-                const isSelected = step === pendingTahapan
-                const stepIdx    = TAHAPAN_ORDER[step] ?? 0
-                const currIdx    = TAHAPAN_ORDER[tahapanState] ?? 0
-                const isPast     = stepIdx < currIdx
-                return (
-                  <button
-                    key={step}
-                    onClick={() => !isCurrent && setPendingTahapan(isSelected ? null : step)}
-                    disabled={isCurrent}
-                    className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
-                      isCurrent
-                        ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed'
-                        : isSelected
-                        ? 'bg-[#1E1C43] border-[#1E1C43] text-white'
-                        : 'bg-white border-gray-200 text-gray-700 hover:border-[#1E1C43]'
-                    }`}
-                  >
-                    <span>{step}</span>
-                    {isCurrent  && <span className="text-[10px] font-semibold bg-[#E05945] text-white px-2 py-0.5 rounded-full">Saat ini</span>}
-                    {isSelected && !isCurrent && <span className="text-[10px] font-semibold bg-white/20 text-white px-2 py-0.5 rounded-full">Dipilih</span>}
-                    {isPast && !isCurrent && !isSelected && <span className="text-[10px] text-gray-400">Sudah dilalui</span>}
-                  </button>
-                )
-              })}
-              {pendingTahapan && (
-                <div className="mt-1 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-xs text-blue-700">
-                  Status order akan otomatis berubah ke <span className="font-bold">{TAHAPAN_TO_STATUS[pendingTahapan]}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div className="flex justify-end gap-2 px-5 py-4 border-t border-gray-100">
-              <button
-                onClick={() => { setShowTahapanModal(false); setPendingTahapan(null) }}
-                className="px-4 py-2 text-xs font-semibold text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                Batal
-              </button>
-              <button
-                disabled={!pendingTahapan}
-                onClick={() => {
-                  if (!pendingTahapan) return
-                  const newStatus = TAHAPAN_TO_STATUS[pendingTahapan] || statusOrderState
-                  const prevTahapan = tahapanState
-                  setTahapanState(pendingTahapan)
-                  setStatusOrderState(newStatus)
-                  setLogTab3PP(prev => [{
-                    id: Date.now(),
-                    waktu: fmtLogWaktu(),
-                    actor: 'Admin EFM',
-                    kategori: 'status',
-                    nomorLaporan: order.id,
-                    teks: `Tahapan order diubah: ${prevTahapan} → ${pendingTahapan} · Status: ${newStatus}`
-                  }, ...prev])
-                  setPendingTahapan(null)
-                  setShowTahapanModal(false)
-                }}
-                className="px-4 py-2 text-xs font-bold text-white bg-[#1E1C43] rounded-lg hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                Konfirmasi Perubahan
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </>
   )
