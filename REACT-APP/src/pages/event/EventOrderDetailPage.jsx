@@ -978,7 +978,6 @@ export default function EventOrderDetailPage() {
       <EventOrderDetailHeader
         isNew={isNew}
         order={order}
-        subtotal={subtotal}
         tahapanState={tahapanState}
         onTahapanChange={val => setTahapanState(val)}
         onBack={() => navigate('/event/orders')}

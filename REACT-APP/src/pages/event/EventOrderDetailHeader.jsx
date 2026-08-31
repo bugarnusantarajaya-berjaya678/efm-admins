@@ -41,9 +41,6 @@ function Badge({ children, cls }) {
   )
 }
 
-function fmtRp(n) {
-  return 'Rp ' + new Intl.NumberFormat('id-ID').format(n)
-}
 
 function EventTahapanStepper({ currentTahapan }) {
   const steps = ['Quotation', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
@@ -76,7 +73,7 @@ function EventTahapanStepper({ currentTahapan }) {
   )
 }
 
-export default function EventOrderDetailHeader({ isNew, order, subtotal, tahapanState, onTahapanChange, onBack }) {
+export default function EventOrderDetailHeader({ isNew, order, tahapanState, onTahapanChange, onBack }) {
   const [editingTahapan,    setEditingTahapan]    = useState(false)
   const [newTahapanVal,     setNewTahapanVal]     = useState(tahapanState)
   const [newTahapanTanggal, setNewTahapanTanggal] = useState('')
@@ -108,7 +105,6 @@ export default function EventOrderDetailHeader({ isNew, order, subtotal, tahapan
               <Badge cls={tipeCls}>{order.jenis}</Badge>
               <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
               <span className="text-[10px] text-gray-400">{order.namaKlien}</span>
-              <span className="text-[10px] font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
               {order.pic && (
                 <span className="text-[10px] text-gray-400">PIC: {order.pic}</span>
               )}
