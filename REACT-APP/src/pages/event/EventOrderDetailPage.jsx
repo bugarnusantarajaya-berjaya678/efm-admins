@@ -2722,7 +2722,14 @@ export default function EventOrderDetailPage() {
                             abs.linkSent
                               ? <span className="text-xs text-green-600 font-medium">✓ Link Terkirim</span>
                               : <button
-                                  onClick={() => setHarihAbsensi(prev => prev.map(a => a.picId === abs.picId ? { ...a, linkSent: true } : a))}
+                                  onClick={() => {
+                                    const pic = timLapangan.find(t => t.id === abs.picId)
+                                    if (pic?.wa) {
+                                      const msg = `Halo *${abs.nama}*, berikut link absensi hari-H untuk event ini. Mohon konfirmasi kehadiran Anda. Terima kasih 🙏`
+                                      window.open(`https://wa.me/${formatWA(pic.wa)}?text=${encodeURIComponent(msg)}`, '_blank')
+                                    }
+                                    setHarihAbsensi(prev => prev.map(a => a.picId === abs.picId ? { ...a, linkSent: true } : a))
+                                  }}
                                   className="px-2.5 py-1.5 text-xs font-semibold bg-[#1E1C43] text-white rounded-lg hover:bg-[#2d2b5e] transition">
                                   Kirim Link WA
                                 </button>

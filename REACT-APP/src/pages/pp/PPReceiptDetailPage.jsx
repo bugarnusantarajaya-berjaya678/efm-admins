@@ -5,6 +5,7 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
+import { getNoHpByOrderId } from '../../data/ppLeadsStore'
 
 function QRPlaceholder({ label }) {
   return (
@@ -144,7 +145,11 @@ export default function PPReceiptDetailPage() {
       `Terima kasih telah mempercayakan program fitness Anda kepada kami. Selamat berlatih! 💪`,
       `_${cs.namaPerusahaan}_`,
     ].join('\n')
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank')
+    const noHP = getNoHpByOrderId(receipt.orderId)
+    const waUrl = noHP
+      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
+      : `https://wa.me/?text=${encodeURIComponent(msg)}`
+    window.open(waUrl, '_blank')
     setReceipt(prev => ({
       ...prev,
       waStatus: 'sent',

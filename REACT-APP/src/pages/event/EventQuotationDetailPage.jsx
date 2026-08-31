@@ -430,6 +430,22 @@ export default function EventQuotationDetailPage() {
   function handleKirim(email, waNum) {
     handleStatusChange('Terkirim')
     setShowKirimModal(false)
+    if (waNum) {
+      const msg = [
+        `Halo,`,
+        '',
+        `Berikut kami sampaikan *Quotation #${quotation.id}* untuk *${quotation.namaEvent || quotation.namaKlien}*.`,
+        '',
+        `📋 Quotation: #${quotation.id}`,
+        `📅 Tanggal: ${quotation.tanggalDibuat}`,
+        `⏰ Berlaku s/d: ${quotation.tanggalBerlaku || '—'}`,
+        `💰 Total: Rp ${(quotation.nilaiTotal || afterTax).toLocaleString('id-ID')}`,
+        '',
+        `Mohon konfirmasi penerimaan quotation ini. Terima kasih 🙏`,
+      ].join('\n')
+      const numClean = waNum.replace(/\D/g, '').replace(/^0/, '')
+      window.open(`https://wa.me/62${numClean}?text=${encodeURIComponent(msg)}`, '_blank')
+    }
     showToast(`✓ Quotation dikirim ke ${email}${waNum ? ' & WA ' + waNum : ''}`)
   }
 
