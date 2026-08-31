@@ -21,6 +21,12 @@ const INV_STYLE = {
   pending: 'bg-[#FEF9E7] text-[#D68910]',
   overdue: 'bg-[#FDEDEC] text-[#C0392B]',
 }
+const TAHAPAN_STYLE = {
+  'Invoice':          'bg-amber-50 text-amber-700 border border-amber-200',
+  'Agreement':        'bg-blue-50 text-blue-700 border border-blue-200',
+  'Program Berjalan': 'bg-green-50 text-green-700 border border-green-200',
+  'Program Selesai':  'bg-gray-100 text-gray-600 border border-gray-200',
+}
 
 // ─── Session Progress Bar ─────────────────────────────────────────────────────
 
@@ -554,22 +560,24 @@ export default function PPOrdersPage() {
       {/* Table */}
       <div className="bg-bg-surface rounded-xl border border-border shadow-sm overflow-hidden">
         <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
-          <table className="w-full text-sm min-w-[1100px]">
+          <table className="w-full text-sm min-w-[1450px]">
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th style={{minWidth:'130px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Order ID</th>
                 <th style={{minWidth:'160px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Nama Klien</th>
-                <th style={{minWidth:'160px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Paket</th>
-                <th style={{minWidth:'130px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">PIC</th>
-                <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Progress Sesi</th>
-                <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tgl. Mulai</th>
+                <th style={{minWidth:'150px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Paket</th>
+                <th style={{minWidth:'130px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Nilai Kontrak</th>
+                <th style={{minWidth:'145px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tahapan</th>
+                <th style={{minWidth:'130px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Progress Sesi</th>
+                <th style={{minWidth:'110px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tgl. Mulai</th>
                 <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status Order</th>
                 <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status Invoice</th>
+                <th style={{minWidth:'120px'}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">PIC</th>
               </tr>
             </thead>
             <tbody>
               {pageRows.length === 0 ? (
-                <tr><td colSpan={8} className="text-center py-12 text-text-muted text-sm">Tidak ada order yang sesuai filter.</td></tr>
+                <tr><td colSpan={10} className="text-center py-12 text-text-muted text-sm">Tidak ada order yang sesuai filter.</td></tr>
               ) : pageRows.map((order) => {
                 const isHighlighted = order.id === highlightId
                 return (
@@ -596,13 +604,19 @@ export default function PPOrdersPage() {
                     </div>
                   </td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{order.paket}</td>
-                  <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{order.pic}</td>
+                  <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{formatRp(order.harga)}</td>
+                  <td className="px-3 py-2.5">
+                    <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full whitespace-nowrap ${TAHAPAN_STYLE[order.tahapan] ?? 'bg-gray-100 text-gray-500 border border-gray-200'}`}>
+                      {order.tahapan || '—'}
+                    </span>
+                  </td>
                   <td className="px-3 py-2.5">
                     <SessionBar done={order.sesiDone} total={order.sesiTotal} statusOrder={order.statusOrder} />
                   </td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{order.tglMulai}</td>
                   <td className="px-3 py-2.5"><Badge type="order" status={order.statusOrder} /></td>
                   <td className="px-3 py-2.5"><Badge type="inv"   status={order.statusInv}   /></td>
+                  <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{order.pic}</td>
                 </tr>
               )})}
             </tbody>
