@@ -1660,3 +1660,178 @@ const statusColors = {
 | PP Order Detail | Fitness Assessment | `PPOrderDetailPage.jsx` |
 | PP Lead Detail | Riwayat Order (Tab 3) | `PPLeadDetailPage.jsx` |
 
+---
+
+## 15. Detail Page Header Pattern (Lead / Order Detail)
+
+Digunakan di semua halaman **entity detail** (Lead Detail, Order Detail) untuk semua modul (PP, B2B, Event). Berbeda dari Section 3b di `efm-design-standards` yang memakai ikon navy — di sini avatar menampilkan **initials berwarna** yang unik per entitas.
+
+> Panduan memilih pola: detail form/sub-page → Section 3b (navy icon); entity detail page (Lead/Order) → Section 15 ini (colored initials).
+
+### Avatar: Colored Initials
+
+```js
+const AVATAR_COLORS = [
+  '#E05945', '#1E1C43', '#2563EB', '#7C3AED',
+  '#0891B2', '#059669', '#D97706', '#DC2626',
+]
+
+function getAvatarColor(name = '') {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash)
+  return AVATAR_COLORS[Math.abs(hash) % AVATAR_COLORS.length]
+}
+
+function getInitials(name = '') {
+  return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase() ?? '').join('')
+}
+```
+
+```jsx
+<div
+  className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+  style={{ background: getAvatarColor(avatarName) }}
+>
+  {isNew ? 'XX' : getInitials(avatarName)}
+</div>
+```
+
+- `avatarName` = nama klien atau nama entitas utama (bukan nama event — prefer nama klien)
+- Mode `isNew`: tampilkan singkatan modul (misal `'EV'`, `'PP'`) sebagai fallback
+
+### Struktur Lengkap Header Card
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div className="flex items-start justify-between gap-4 flex-wrap">
+
+    {/* KIRI: Avatar + Info */}
+    <div className="flex items-center gap-4">
+      <div
+        className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+        style={{ background: getAvatarColor(avatarName) }}
+      >
+        {isNew ? 'EV' : getInitials(avatarName)}
+      </div>
+      <div>
+        {/* Eyebrow: ID dokumen saja — TANPA label modul atau status */}
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">
+          {isNew ? 'EV-DRAFT' : order.id}
+        </p>
+        {/* Judul: nama event/lead/entitas — text-lg, bukan text-xl atau text-base */}
+        <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
+          {isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}
+        </h1>
+        {/* Info row: badge + teks pendek — TANPA angka Rp */}
+        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+          <Badge cls={tipeCls}>{order.jenis}</Badge>
+          <Badge cls={STATUS_CLS[order.status]}>● {order.status}</Badge>
+          <span className="text-[10px] text-gray-400">{order.namaKlien}</span>
+          {order.pic && (
+            <span className="text-[10px] text-gray-400">PIC: {order.pic}</span>
+          )}
+        </div>
+      </div>
+    </div>
+
+    {/* KANAN: Tombol aksi */}
+    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+      {/* Tombol aksi utama: navy border dengan hover fill */}
+      {!isNew && (
+        <button
+          onClick={handleAction}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors"
+        >
+          <Edit2 size={12} /> Update Tahapan
+        </button>
+      )}
+      {/* Tombol Kembali: selalu gray secondary */}
+      <button
+        onClick={onBack}
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+      >
+        <ArrowLeft size={12} /> Kembali
+      </button>
+    </div>
+  </div>
+
+  {/* Stepper + optional edit form — di bawah divider */}
+  <div className="mt-4 pt-4 border-t border-gray-100">
+    {/* <StageStepper currentStage={...} /> */}
+    {/* edit form inline (opsional) */}
+  </div>
+</div>
+```
+
+### Inline Edit Form — Tahapan / Pipeline Update
+
+Form 3 field yang muncul di bawah stepper saat tombol "Update Tahapan" diklik:
+
+```jsx
+{editingTahapan && (
+  <div className="border-t border-gray-100 pt-4 mt-3">
+    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
+      {/* Field 1 + 2: grid 2 kolom */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tahapan Baru</label>
+          <select value={newTahapanVal} onChange={e => setNewTahapanVal(e.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]">
+            {TAHAPAN_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+        <div>
+          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal</label>
+          <input type="date" value={newTahapanTanggal} onChange={e => setNewTahapanTanggal(e.target.value)}
+            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+        </div>
+      </div>
+      {/* Field 3: full-width */}
+      <div>
+        <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan</label>
+        <input type="text" value={newTahapanCatatan} onChange={e => setNewTahapanCatatan(e.target.value)}
+          placeholder="Catatan perubahan tahapan..."
+          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+      </div>
+      {/* Buttons */}
+      <div className="flex gap-2 justify-end pt-1">
+        <button onClick={handleBatal}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
+          <X size={12} /> Batal
+        </button>
+        <button onClick={handleSimpan}
+          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
+          <Save size={12} /> Simpan
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+```
+
+**State yang dibutuhkan:**
+```js
+const [editingTahapan,    setEditingTahapan]    = useState(false)
+const [newTahapanVal,     setNewTahapanVal]     = useState(tahapanState)
+const [newTahapanTanggal, setNewTahapanTanggal] = useState('')
+const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
+```
+
+### Aturan Wajib
+
+- Info row header: **JANGAN tampilkan angka Rp subtotal** — finansial ditampilkan di list page dan section keuangan di dalam detail page, bukan di header
+- Eyebrow: ID dokumen saja (`order.id` / `lead.id`) — tanpa label "Order" atau "B2B Event"
+- Judul: `text-lg font-bold text-[#1E1C43]` — bukan `text-xl` atau `text-base`
+- Padding card: `p-5` — bukan `p-4` atau `p-6`
+- Tombol aksi utama: navy outline → navy filled on hover (`border border-[#1E1C43]` + `hover:bg-[#1E1C43] hover:text-white`) — BUKAN `bg-[#1E1C43]` langsung
+- Tombol Kembali: selalu gray secondary, `font-semibold`
+- Edit form batal: reset semua field form (tanggal, catatan) — bukan hanya close
+
+### Implementasi Aktual
+
+| Halaman | File |
+|---|---|
+| B2B Event Order Detail | `EventOrderDetailHeader.jsx` |
+| PP Order Detail | `PPOrderDetailPage.jsx` (inline, belum diekstrak) |
+| PP Lead Detail | `PPLeadDetailPage.jsx` (inline, belum diekstrak) |
+
