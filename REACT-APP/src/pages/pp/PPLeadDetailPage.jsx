@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload, Eye } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, ClipboardList, ChevronRight, FileText, Upload, Eye, MessageCircle } from 'lucide-react'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 import { getAllOrders } from '../../data/ppOrdersStore'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
@@ -144,6 +144,72 @@ const LEADS_FALLBACK = [
 
 
 
+/* ── WA Templates per pipeline stage ── */
+const WA_TEMPLATES = {
+  New: [
+    {
+      id: 'tpl-new-1', stage: 'New', judul: 'Perkenalan Awal',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, saya ${l.picEfm || 'tim EFM'} dari Essential Fitness Management (EFM). Kami menerima informasi bahwa ${l.sapaan || ''} ${l.nama} tertarik dengan program ${l.programDiminati || 'fitness'} kami.\n\nBoleh kami berbagi informasi lebih lanjut tentang program yang sesuai untuk Anda? 😊`,
+    },
+    {
+      id: 'tpl-new-2', stage: 'New', judul: 'Perkenalan — Via Referral',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, saya ${l.picEfm || 'tim EFM'} dari EFM. Kami mendapat rekomendasi dari klien kami bahwa ${l.sapaan || ''} ${l.nama} tertarik dengan program fitness.\n\nKami dengan senang hati akan membantu menemukan program yang tepat untuk Anda! 💪`,
+    },
+  ],
+  Approach: [
+    {
+      id: 'tpl-app-1', stage: 'Approach', judul: 'Follow-up Pertemuan',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, saya ${l.picEfm || 'tim EFM'} dari EFM. Hanya ingin menindaklanjuti percakapan kita sebelumnya.\n\nApakah ${l.sapaan || ''} ${l.nama} sudah sempat mempertimbangkan program ${l.programDiminati || 'fitness'} kami? Kami siap menjawab pertanyaan apapun 😊`,
+    },
+    {
+      id: 'tpl-app-2', stage: 'Approach', judul: 'Kirim Info Program',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Berikut info program ${l.programDiminati || 'fitness'} yang sesuai untuk Anda:\n\n🏋️ Program: ${l.programDiminati || '—'}\n📍 Lokasi: Studio EFM\n✅ Sudah termasuk: sesi bersama personal trainer berpengalaman\n\nAda pertanyaan? Kami siap membantu!`,
+    },
+  ],
+  Screening: [
+    {
+      id: 'tpl-scr-1', stage: 'Screening', judul: 'Konfirmasi Jadwal Screening',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, kami mengkonfirmasi jadwal sesi screening kesehatan Anda bersama tim EFM.\n\n📅 Tanggal: [isi tanggal]\n⏰ Waktu: [isi waktu]\n📍 Lokasi: Studio EFM\n\nMohon hadir 5–10 menit lebih awal. Sampai jumpa! 👋`,
+    },
+    {
+      id: 'tpl-scr-2', stage: 'Screening', judul: 'Reminder H-1 Screening',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Mengingatkan bahwa besok ada sesi screening kesehatan di EFM.\n\n⏰ Hadir tepat waktu\n🚫 Hindari makan berat 2 jam sebelum sesi\n💧 Pastikan hidrasi cukup\n\nSampai jumpa besok! 💪`,
+    },
+  ],
+  Invoicing: [
+    {
+      id: 'tpl-inv-1', stage: 'Invoicing', judul: 'Kirim Invoice',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, invoice untuk program ${l.programDiminati || 'fitness'} Anda sudah kami siapkan.\n\nSilakan konfirmasi ke kami untuk detail pembayaran atau metode transfer. Terima kasih atas kepercayaan Anda! 🙏`,
+    },
+    {
+      id: 'tpl-inv-2', stage: 'Invoicing', judul: 'Follow-up Pembayaran',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, kami hanya ingin mengingatkan tentang invoice program ${l.programDiminati || 'fitness'} yang sudah kami kirimkan.\n\nApakah ada pertanyaan mengenai metode pembayaran? Kami siap membantu 😊`,
+    },
+  ],
+  Closing: [
+    {
+      id: 'tpl-clo-1', stage: 'Closing', judul: 'Konfirmasi Deal',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Senang sekali mendengar kabar baik ini! 🎉\n\nKami mengkonfirmasi bahwa ${l.sapaan || ''} ${l.nama} bergabung dengan program ${l.programDiminati || 'fitness'} EFM. Tim kami akan segera memproses dan menghubungi untuk langkah selanjutnya.`,
+    },
+    {
+      id: 'tpl-clo-2', stage: 'Closing', judul: 'Reminder Tanda Tangan Agreement',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, kami mengingatkan untuk penandatanganan agreement program ${l.programDiminati || 'fitness'}.\n\nDokumen agreement sudah kami siapkan. Mohon konfirmasi waktu yang tepat. Terima kasih!`,
+    },
+  ],
+  Convert: [
+    {
+      id: 'tpl-cvt-1', stage: 'Convert', judul: 'Welcome — Selamat Bergabung',
+      teks: (l) => `Selamat datang di keluarga EFM, ${l.sapaan || ''} ${l.nama}! 🎉💪\n\nOrder program ${l.programDiminati || 'fitness'} Anda sudah kami proses. Tim kami akan segera menghubungi untuk pengaturan jadwal perdana.\n\nSelamat berlatih dan semangat mencapai target! 🏋️‍♀️`,
+    },
+  ],
+  Lost: [
+    {
+      id: 'tpl-lst-1', stage: 'Lost', judul: 'Pesan Perpisahan — Tetap Terhubung',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, terima kasih sudah meluangkan waktu bersama EFM.\n\nKami sangat menghargai perhatian Anda. Jika di masa mendatang ${l.sapaan || ''} ${l.nama} memiliki kesempatan untuk bergabung, kami selalu terbuka 😊\n\nSemoga sehat selalu!`,
+    },
+  ],
+}
+
 /* ── Catatan internal admin/FC per lead ── */
 const CATATAN_FC_DUMMY = {
   'LP-0001': [
@@ -212,6 +278,35 @@ function Toast({ message, onClose }) {
     <div className="fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 px-4 py-3 rounded-xl shadow-lg bg-green-600 text-white text-[13px] font-medium">
       {message}
       <button onClick={onClose} className="ml-1 text-white/70 hover:text-white"><X size={13} /></button>
+    </div>
+  )
+}
+
+/* ── WA Template Card ── */
+function TemplateCard({ template, lead, onKirim }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const teks = template.teks(lead)
+  return (
+    <div className="border border-gray-100 rounded-xl p-3.5 hover:border-gray-200 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{template.judul}</p>
+          {showPreview
+            ? <p className="text-xs text-gray-500 mt-1.5 whitespace-pre-line leading-relaxed">{teks}</p>
+            : <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{teks.substring(0, 70)}…</p>
+          }
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          <button onClick={() => setShowPreview(p => !p)}
+            className="h-7 px-2.5 rounded-lg border border-gray-200 text-[10px] font-medium text-gray-500 hover:bg-gray-50 transition-colors">
+            {showPreview ? 'Tutup' : 'Preview'}
+          </button>
+          <button onClick={() => onKirim(template)}
+            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-[10px] font-semibold transition-colors">
+            <MessageCircle size={11} /> Kirim WA
+          </button>
+        </div>
+      </div>
     </div>
   )
 }
@@ -311,6 +406,14 @@ export default function PPLeadDetailPage() {
   const [newCatatanGeneral, setNewCatatanGeneral] = useState('')
   const [newCatatanPerOrder, setNewCatatanPerOrder] = useState({})
   const [expandedOrderNotes, setExpandedOrderNotes] = useState({})
+  const [waLog, setWaLog] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`lead-wa-log-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return []
+  })
+  const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
 
   useEffect(() => {
     if (lead) setCrumbs(['Private Program', 'Leads', lead.nama])
@@ -326,6 +429,10 @@ export default function PPLeadDetailPage() {
   useEffect(() => {
     try { localStorage.setItem(`lead-catatan-${id}`, JSON.stringify(catatanInternalFC)) } catch {}
   }, [catatanInternalFC, id])
+
+  useEffect(() => {
+    try { localStorage.setItem(`lead-wa-log-${id}`, JSON.stringify(waLog)) } catch {}
+  }, [waLog, id])
 
   function showToast(msg) { setToast(msg); setTimeout(() => setToast(null), 3000) }
 
@@ -412,11 +519,27 @@ export default function PPLeadDetailPage() {
     showToast('✓ Catatan berhasil ditambahkan')
   }
 
+  function handleKirimWA(template) {
+    const teks = template.teks(lead)
+    const nomorBersih = (lead.noHp || '').replace(/^0/, '').replace(/\D/g, '')
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(teks)}`, '_blank')
+    const now = new Date()
+    const timestamp = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    setWaLog(prev => [...prev, {
+      id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
+      timestamp, judul: template.judul, stage: template.stage,
+      kirimOleh: lead.picEfm || 'Admin EFM', nomorTujuan: lead.noHp,
+    }])
+    showToast('✓ WA dibuka di tab baru')
+  }
+
   const TABS = [
     { key: 'info',      label: 'Info Klien'         },
     { key: 'kesehatan', label: 'Progres & Kesehatan' },
     { key: 'riwayat',   label: 'Riwayat'            },
     { key: 'log',       label: 'Log & Histori'       },
+    { key: 'wa',        label: 'Komunikasi WA'       },
   ]
 
   return (
@@ -1073,6 +1196,112 @@ export default function PPLeadDetailPage() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* ════════════════════════════════
+            TAB 5: KOMUNIKASI WA
+        ════════════════════════════════ */}
+        {activeTab === 'wa' && (
+          <div className="space-y-4">
+
+            {/* Template Panel */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Stage:</span>
+                  <StageBadge stage={lead.statusPipeline} />
+                </div>
+              </div>
+
+              {/* Nomor tujuan */}
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={14} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                  <p className="text-sm font-semibold text-gray-800">{lead.sapaan ? lead.sapaan + ' ' : ''}{lead.nama} · {lead.noHp}</p>
+                </div>
+              </div>
+
+              {/* Template untuk stage saat ini */}
+              <div className="mb-4">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                  Template untuk Stage Saat Ini: {lead.statusPipeline}
+                </p>
+                <div className="space-y-2">
+                  {(WA_TEMPLATES[lead.statusPipeline] || []).length > 0
+                    ? (WA_TEMPLATES[lead.statusPipeline] || []).map(tpl => (
+                        <TemplateCard key={tpl.id} template={tpl} lead={lead} onKirim={handleKirimWA} />
+                      ))
+                    : <p className="text-xs text-gray-400 italic">Tidak ada template khusus untuk stage ini.</p>
+                  }
+                </div>
+              </div>
+
+              {/* Template lainnya (collapsible) */}
+              <div>
+                <button
+                  onClick={() => setShowAllWaTemplates(p => !p)}
+                  className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                    {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                  </svg>
+                  {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+                </button>
+                {showAllWaTemplates && (
+                  <div className="space-y-4 pt-1">
+                    {Object.entries(WA_TEMPLATES)
+                      .filter(([stage]) => stage !== lead.statusPipeline)
+                      .map(([stage, templates]) => (
+                        <div key={stage}>
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Stage: {stage}</p>
+                          <div className="space-y-2">
+                            {templates.map(tpl => (
+                              <TemplateCard key={tpl.id} template={tpl} lead={lead} onKirim={handleKirimWA} />
+                            ))}
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Log Pengiriman */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
+                <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
+              </div>
+              {waLog.length === 0 ? (
+                <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk lead ini.</p>
+              ) : (
+                <div className="space-y-2">
+                  {[...waLog].reverse().map((log, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                      <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                        <MessageCircle size={12} className="text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                          <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                        </div>
+                        <p className="text-[10px] text-gray-500 mt-0.5">
+                          Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                          {log.stage && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.stage}</span>}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
           </div>
         )}
 
