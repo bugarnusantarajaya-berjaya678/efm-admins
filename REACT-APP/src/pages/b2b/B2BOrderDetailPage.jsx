@@ -1,7 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, MessageCircle } from 'lucide-react'
 
 /* ═══════════════════════════════════════
    Constants
@@ -140,6 +140,84 @@ const PAY_ROWS_BO001 = [
   { id: 10, periode: 'Apr 2027',  nominal: 12_000_000, status: 'Belum Ditagih',   tglBayar: '' },
   { id: 11, periode: 'Mei 2027',  nominal: 12_000_000, status: 'Belum Ditagih',   tglBayar: '' },
 ]
+
+/* ═══════════════════════════════════════
+   WA Templates — B2B Order Context
+═══════════════════════════════════════ */
+const B2B_ORDER_WA_TEMPLATES = {
+  'Penawaran & Kontrak': [
+    {
+      id: 'b2b-owt-ktr-1', kategori: 'Penawaran & Kontrak', judul: 'Follow-up Quotation',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}* dari *${o.namaKlien}*,\n\nTerima kasih atas waktu yang telah diberikan sebelumnya 🙏\n\nKami ingin menindaklanjuti penawaran *${o.program}* yang telah kami sampaikan sebelumnya. Apakah ada pertanyaan atau hal yang ingin didiskusikan lebih lanjut?\n\nKami siap menyesuaikan proposal sesuai kebutuhan perusahaan Anda.\n\nHormat kami,\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+    {
+      id: 'b2b-owt-ktr-2', kategori: 'Penawaran & Kontrak', judul: 'Konfirmasi LOI Diterima',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}*,\n\nKami sudah menerima LOI dari *${o.namaKlien}* dan sangat antusias untuk memulai kerjasama program *${o.program}* bersama Anda 🤝\n\nLangkah selanjutnya adalah penyusunan MOU dan Contract. Kami akan mengirimkan draft dalam waktu dekat.\n\nAda pertanyaan? Jangan ragu untuk menghubungi kami.\n\nHormat kami,\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+  ],
+  'Tagihan': [
+    {
+      id: 'b2b-owt-tag-1', kategori: 'Tagihan', judul: 'Notifikasi Invoice Bulanan',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}* dari *${o.namaKlien}*,\n\nBerikut kami informasikan bahwa invoice bulanan untuk program *${o.program}* telah kami siapkan.\n\nMohon dapat diproses pembayarannya sesuai ketentuan yang telah disepakati.\n\nJika ada pertanyaan mengenai tagihan, silakan hubungi kami langsung.\n\nTerima kasih atas kerjasamanya 🙏\n\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+    {
+      id: 'b2b-owt-tag-2', kategori: 'Tagihan', judul: 'Reminder Pembayaran',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}*,\n\nKami ingin mengingatkan bahwa tagihan bulanan untuk program *${o.program}* — *${o.namaKlien}* saat ini masih dalam proses.\n\nMohon dapat segera diproses agar layanan dapat terus berjalan tanpa gangguan.\n\nTerima kasih atas perhatiannya 🙏\n\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+  ],
+  'Kunjungan & Laporan': [
+    {
+      id: 'b2b-owt-kvj-1', kategori: 'Kunjungan & Laporan', judul: 'Jadwal Kunjungan Supervisor',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}* dari *${o.namaKlien}*,\n\nKami ingin mengkonfirmasi jadwal kunjungan supervisor EFM untuk monitoring program *${o.program}*.\n\nBisakah kami konfirmasi tanggal yang paling nyaman untuk tim Anda?\n\nTerima kasih 🙏\n\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+    {
+      id: 'b2b-owt-kvj-2', kategori: 'Kunjungan & Laporan', judul: 'Laporan Kunjungan Terkirim',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}*,\n\nTerima kasih atas sambutan hangat dari tim *${o.namaKlien}* pada kunjungan kami baru-baru ini 🙏\n\nLaporan kunjungan sudah kami siapkan dan dapat kami kirimkan jika diperlukan. Semoga program *${o.program}* terus berjalan dengan baik.\n\nSalam,\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+  ],
+  'Perpanjangan & Feedback': [
+    {
+      id: 'b2b-owt-prp-1', kategori: 'Perpanjangan & Feedback', judul: 'Penawaran Perpanjangan Kontrak',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}* dari *${o.namaKlien}* 👋\n\nKontrak program *${o.program}* akan segera berakhir. Kami sangat menghargai kerjasama yang telah terjalin selama ini.\n\nKami dengan senang hati menawarkan perpanjangan kontrak dengan kondisi yang dapat kita diskusikan bersama.\n\nApakah ada waktu untuk kita bicarakan lebih lanjut?\n\nSalam hangat,\n${o.pic || 'Tim EFM'}\n_Essential Fitness Management_`,
+    },
+    {
+      id: 'b2b-owt-prp-2', kategori: 'Perpanjangan & Feedback', judul: 'Minta Feedback Layanan',
+      teks: (o) => `Halo Bapak/Ibu *${o.contactPerson}*,\n\nKami ingin memastikan program *${o.program}* di *${o.namaKlien}* berjalan sesuai harapan 🙏\n\nMohon waktu sebentar untuk berbagi feedback:\n• Bagaimana kepuasan terhadap instruktur/trainer?\n• Apakah fasilitas dan layanan sudah memenuhi ekspektasi?\n• Ada saran yang ingin disampaikan?\n\nFeedback Anda sangat berarti bagi kami. Terima kasih!`,
+    },
+  ],
+}
+
+function B2BOrderTemplateCard({ template, ctx, onKirim }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const teks = template.teks(ctx)
+  return (
+    <div className="border border-gray-100 rounded-xl p-3.5 hover:border-gray-200 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{template.judul}</p>
+          {showPreview
+            ? <p className="text-xs text-gray-500 mt-1.5 whitespace-pre-line leading-relaxed">{teks}</p>
+            : <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{teks.substring(0, 70)}…</p>
+          }
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          <button
+            onClick={() => setShowPreview(p => !p)}
+            className="h-7 px-2.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {showPreview ? 'Tutup' : 'Preview'}
+          </button>
+          <button
+            onClick={() => onKirim(template)}
+            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-medium transition-colors"
+          >
+            <MessageCircle size={11} /> Kirim WA
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
 
 /* ═══════════════════════════════════════
    Small reusable components
@@ -625,6 +703,45 @@ export default function B2BOrderDetailPage() {
     { id: 6, waktu: "2025-01-20 09:05", kategori: "tim",       nomorLaporan: null,      teks: "PT. Gym Equipment Indonesia ditambahkan sebagai Vendor" },
   ])
 
+  /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
+  const [waLog, setWaLog] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`b2b-order-wa-log-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return []
+  })
+  const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
+
+  const b2bCtx = {
+    namaKlien:     infoDeal.namaKlien     || '',
+    contactPerson: infoDeal.contactPerson || '',
+    telepon:       infoDeal.telepon       || '',
+    program:       infoDeal.program       || order?.program || '',
+    pic:           infoDeal.pic           || order?.pic     || '',
+  }
+
+  useEffect(() => {
+    try { localStorage.setItem(`b2b-order-wa-log-${id}`, JSON.stringify(waLog)) } catch {}
+  }, [waLog, id])
+
+  function handleKirimWA(template) {
+    const teks = template.teks(b2bCtx)
+    const nomorBersih = (b2bCtx.telepon || '').replace(/^0/, '').replace(/\D/g, '')
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(teks)}`, '_blank')
+    const now = new Date()
+    const timestamp = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    setWaLog(prev => [...prev, {
+      id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
+      timestamp,
+      judul: template.judul,
+      kategori: template.kategori,
+      kirimOleh: b2bCtx.pic || 'Admin EFM',
+      nomorTujuan: b2bCtx.telepon,
+    }])
+  }
+
   /* ── Render ──────────────────────────────────────────────────────────────── */
   const tipeLabel = order.jenis
   const tipeCls   = order.jenis === 'Corporate' ? 'bg-[#1E1C43] text-white' : 'bg-blue-500 text-white'
@@ -715,6 +832,7 @@ export default function B2BOrderDetailPage() {
           { key: 'keuangan',    label: 'Kontrak & Keuangan'   },
           { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
           { key: 'operasional', label: 'Operasional Lapangan'  },
+          { key: 'wa',          label: 'Komunikasi WA'         },
         ].map(tab => (
           <button
             key={tab.key}
@@ -2255,6 +2373,120 @@ export default function B2BOrderDetailPage() {
                   </div>
                 ))}
             </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB 4 — Komunikasi WA
+      ══════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'wa' && (
+        <div className="space-y-4">
+
+          {/* Template Panel */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+              {b2bCtx.program && (
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-500">Program:</span>
+                  <span className="text-xs font-semibold text-[#1E1C43] bg-[#1E1C43]/10 px-2 py-0.5 rounded-full">{b2bCtx.program}</span>
+                </div>
+              )}
+            </div>
+
+            {/* Nomor tujuan */}
+            {b2bCtx.telepon ? (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={14} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {b2bCtx.contactPerson ? b2bCtx.contactPerson + ' · ' : ''}{b2bCtx.namaKlien} · {b2bCtx.telepon}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-5">
+                <p className="text-xs text-yellow-700">Nomor telepon klien belum tercatat. Lengkapi di tab Kontrak &amp; Keuangan → Info Deal.</p>
+              </div>
+            )}
+
+            {/* Template kategori utama */}
+            <div className="mb-4">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Template Penawaran &amp; Kontrak
+              </p>
+              <div className="space-y-2">
+                {B2B_ORDER_WA_TEMPLATES['Penawaran & Kontrak'].map(tpl => (
+                  <B2BOrderTemplateCard key={tpl.id} template={tpl} ctx={b2bCtx} onKirim={handleKirimWA} />
+                ))}
+              </div>
+            </div>
+
+            {/* Template lainnya (collapsible) */}
+            <div>
+              <button
+                onClick={() => setShowAllWaTemplates(p => !p)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                </svg>
+                {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+              </button>
+              {showAllWaTemplates && (
+                <div className="space-y-4 pt-1">
+                  {Object.entries(B2B_ORDER_WA_TEMPLATES)
+                    .filter(([kat]) => kat !== 'Penawaran & Kontrak')
+                    .map(([kat, templates]) => (
+                      <div key={kat}>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Template {kat}</p>
+                        <div className="space-y-2">
+                          {templates.map(tpl => (
+                            <B2BOrderTemplateCard key={tpl.id} template={tpl} ctx={b2bCtx} onKirim={handleKirimWA} />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Log Pengiriman */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
+              <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
+            </div>
+            {waLog.length === 0 ? (
+              <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk order ini.</p>
+            ) : (
+              <div className="space-y-2">
+                {[...waLog].reverse().map((log, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                      <MessageCircle size={12} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                        <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-0.5">
+                        Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                        {log.kategori && <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-gray-200 text-gray-500">{log.kategori}</span>}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
         </div>
