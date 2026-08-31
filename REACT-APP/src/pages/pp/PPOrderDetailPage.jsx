@@ -1,7 +1,7 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, XCircle, RotateCcw, Upload, Paperclip, Lock, MessageCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
@@ -118,6 +118,52 @@ function generatePayRows(startStr, endStr, terms, nilaiNum) {
 
 
 /* ═══════════════════════════════════════
+   WA Templates — Order Context
+═══════════════════════════════════════ */
+const ORDER_WA_TEMPLATES = {
+  'Jadwal & Sesi': [
+    {
+      id: 'owt-jdw-1', kategori: 'Jadwal & Sesi', judul: 'Konfirmasi Jadwal Latihan',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nSaya ${o.pic || 'tim EFM'} dari Essential Fitness Management.\n\nKami ingin mengkonfirmasi jadwal sesi latihan pribadi Anda dalam program *${o.paket}*.\n\nBisa kami minta konfirmasi jadwal yang paling nyaman untuk Anda minggu ini?\n\nTerima kasih 🙏`,
+    },
+    {
+      id: 'owt-jdw-2', kategori: 'Jadwal & Sesi', judul: 'Reminder Sesi Besok',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien} 👋\n\nPengingatnya — sesi latihan Anda *besok* akan segera dimulai sesuai jadwal yang telah disepakati.\n\nMohon pastikan kondisi Anda fit dan siap. Jika ada perubahan, mohon konfirmasi sesegera mungkin ya.\n\nSampai jumpa besok! 💪`,
+    },
+  ],
+  'Tagihan': [
+    {
+      id: 'owt-tag-1', kategori: 'Tagihan', judul: 'Info Tagihan Program',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nBerikut kami sampaikan informasi tagihan untuk program *${o.paket}* Anda.\n\nInvoice sudah kami siapkan. Mohon untuk melakukan pembayaran sesuai batas waktu yang tertera.\n\nJika ada pertanyaan mengenai tagihan, jangan ragu untuk menghubungi kami.\n\nTerima kasih 🙏`,
+    },
+    {
+      id: 'owt-tag-2', kategori: 'Tagihan', judul: 'Follow-up Pembayaran',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami ingin mengingatkan bahwa tagihan untuk program *${o.paket}* Anda saat ini masih dalam status *menunggu pembayaran*.\n\nMohon segera lakukan pembayaran agar sesi latihan dapat terus berjalan lancar.\n\nTerima kasih atas perhatian dan kerjasamanya 🙏`,
+    },
+  ],
+  'Reminder': [
+    {
+      id: 'owt-rem-1', kategori: 'Reminder', judul: 'Reminder Setelah Absen',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami perhatikan Anda melewatkan sesi latihan terakhir. Semoga semuanya baik-baik saja 😊\n\nYuk, segera jadwalkan ulang sesi Anda agar program *${o.paket}* tetap berjalan optimal.\n\nHubungi kami kapan saja untuk reschedule ya!`,
+    },
+    {
+      id: 'owt-rem-2', kategori: 'Reminder', judul: 'Reminder Sesi Hampir Habis',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami ingin menginformasikan bahwa sesi dalam paket *${o.paket}* Anda hampir habis.\n\nJika ingin melanjutkan program, kami siap membantu menyiapkan paket perpanjangan yang sesuai.\n\nAda yang bisa kami bantu? 😊`,
+    },
+  ],
+  'Feedback': [
+    {
+      id: 'owt-fbk-1', kategori: 'Feedback', judul: 'Minta Feedback Progress',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien} 👋\n\nSudah beberapa waktu berjalan bersama program *${o.paket}*, kami ingin mendengar langsung dari Anda:\n\n• Bagaimana perkembangan yang dirasakan?\n• Ada hal yang ingin disesuaikan dari sesi latihan?\n• Apakah target Anda sudah mulai tercapai?\n\nFeedback Anda sangat berarti bagi kami. Terima kasih! 🙏`,
+    },
+    {
+      id: 'owt-fbk-2', kategori: 'Feedback', judul: 'Kepuasan Layanan EFM',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nTerima kasih telah mempercayakan program fitness Anda kepada Essential Fitness Management 💪\n\nKami ingin memastikan Anda puas dengan layanan yang diberikan. Apakah ada masukan atau saran yang bisa kami perbaiki?\n\nKepuasan Anda adalah prioritas utama kami. Salam sehat! 🙏`,
+    },
+  ],
+}
+
+/* ═══════════════════════════════════════
    Small reusable components
 ═══════════════════════════════════════ */
 function Badge({ children, cls }) {
@@ -185,6 +231,38 @@ function ToggleSwitch({ checked, onChange }) {
     >
       <span className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${checked ? 'translate-x-4' : 'translate-x-0'}`} />
     </button>
+  )
+}
+
+function OrderTemplateCard({ template, orderCtx, onKirim }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const teks = template.teks(orderCtx)
+  return (
+    <div className="border border-gray-100 rounded-xl p-3.5 hover:border-gray-200 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{template.judul}</p>
+          {showPreview
+            ? <p className="text-xs text-gray-500 mt-1.5 whitespace-pre-line leading-relaxed">{teks}</p>
+            : <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{teks.substring(0, 70)}…</p>
+          }
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          <button
+            onClick={() => setShowPreview(p => !p)}
+            className="h-7 px-2.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {showPreview ? 'Tutup' : 'Preview'}
+          </button>
+          <button
+            onClick={() => onKirim(template)}
+            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-medium transition-colors"
+          >
+            <MessageCircle size={11} /> Kirim WA
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -434,6 +512,44 @@ export default function PPOrderDetailPage() {
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
   const formatRpPP = (val) => 'Rp ' + Math.round(val || 0).toLocaleString('id-ID')
 
+  /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
+  const [waLog,              setWaLog]              = useState(() => {
+    try {
+      const saved = localStorage.getItem(`order-wa-log-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return []
+  })
+  const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
+
+  const orderCtx = {
+    namaKlien: infoDeal.namaKlien || '',
+    sapaan:    infoDeal.sapaan    || '',
+    paket:     infoDeal.paket     || order?.paket || '',
+    pic:       infoDeal.pic       || order?.picSalesEFM || '',
+    noHP:      infoDeal.noHP      || infoDeal.noHPKlien || '',
+  }
+
+  useEffect(() => {
+    try { localStorage.setItem(`order-wa-log-${id}`, JSON.stringify(waLog)) } catch {}
+  }, [waLog, id])
+
+  function handleKirimWA(template) {
+    const teks = template.teks(orderCtx)
+    const nomorBersih = (orderCtx.noHP || '').replace(/^0/, '').replace(/\D/g, '')
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(teks)}`, '_blank')
+    const now = new Date()
+    const timestamp = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    setWaLog(prev => [...prev, {
+      id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
+      timestamp,
+      judul: template.judul,
+      kategori: template.kategori,
+      kirimOleh: orderCtx.pic || 'Admin EFM',
+      nomorTujuan: orderCtx.noHP,
+    }])
+  }
 
   useEffect(() => {
     const label = isNew ? 'Order Baru' : (order?.namaKlien || id)
@@ -740,6 +856,7 @@ export default function PPOrderDetailPage() {
           { key: 'agreement',   label: 'Agreement Klien',       locked: isNew },
           { key: 'operasional', label: 'Operasional Lapangan', locked: isNew },
           { key: 'log',         label: 'Log & Histori',         locked: isNew },
+          { key: 'wa',          label: 'Komunikasi WA',         locked: isNew },
         ].map(tab => (
           <button
             key={tab.key}
@@ -2170,6 +2287,110 @@ export default function PPOrderDetailPage() {
               <p className="text-xs text-gray-400 italic pl-1">Belum ada log untuk filter ini.</p>
             )}
           </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB 5 — Komunikasi WA
+      ══════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'wa' && (
+        <div className="space-y-4">
+
+          {/* Nomor Tujuan */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Nomor WhatsApp Klien</h3>
+            {orderCtx.noHP ? (
+              <div className="flex items-center gap-3">
+                <div className="flex-1 bg-gray-50 rounded-lg px-4 py-2.5">
+                  <p className="text-xs text-gray-400 uppercase tracking-wide">Nomor HP</p>
+                  <p className="text-sm font-semibold text-gray-800 mt-0.5">{orderCtx.noHP}</p>
+                </div>
+                <a
+                  href={`https://wa.me/62${(orderCtx.noHP).replace(/^0/, '').replace(/\D/g, '')}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 h-9 px-4 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold transition-colors"
+                >
+                  <MessageCircle size={13} /> Buka WA
+                </a>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-4 py-3">
+                <p className="text-xs text-yellow-700">Nomor HP klien belum tercatat di order ini. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
+              </div>
+            )}
+          </div>
+
+          {/* Template Pesan */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Template Pesan</h3>
+              <button
+                onClick={() => setShowAllWaTemplates(p => !p)}
+                className="text-xs text-[#1E1C43] font-medium hover:underline"
+              >
+                {showAllWaTemplates ? 'Tampilkan lebih sedikit' : 'Lihat semua kategori'}
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {Object.entries(ORDER_WA_TEMPLATES)
+                .filter((_, idx) => showAllWaTemplates || idx < 2)
+                .map(([kategori, templates]) => (
+                <div key={kategori}>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">{kategori}</p>
+                  <div className="space-y-2">
+                    {templates.map(tpl => (
+                      <OrderTemplateCard
+                        key={tpl.id}
+                        template={tpl}
+                        orderCtx={orderCtx}
+                        onKirim={handleKirimWA}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+              {!showAllWaTemplates && (
+                <button
+                  onClick={() => setShowAllWaTemplates(true)}
+                  className="w-full py-2 text-xs text-[#1E1C43] font-medium border border-dashed border-gray-200 rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  + Lihat kategori lainnya (Reminder, Feedback)
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Log Pengiriman */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
+              <span className="text-xs text-gray-400">{waLog.length} pesan terkirim</span>
+            </div>
+            {waLog.length === 0 ? (
+              <p className="text-xs text-gray-400 italic">Belum ada pesan yang dikirim melalui tab ini.</p>
+            ) : (
+              <div className="space-y-0 pl-4 relative">
+                {[...waLog].reverse().map((log, idx, arr) => (
+                  <div key={log.id} className="relative pb-3.5 last:pb-0">
+                    <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#25D366]" />
+                    {idx < arr.length - 1 && (
+                      <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />
+                    )}
+                    <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                      <p className="text-[10px] text-gray-400">{log.timestamp}</p>
+                      {log.kirimOleh && <p className="text-[10px] text-gray-500 font-medium">· {log.kirimOleh}</p>}
+                      <span className="text-[10px] bg-green-50 text-green-600 px-1.5 py-0.5 rounded font-medium">{log.kategori}</span>
+                    </div>
+                    <p className="text-xs text-gray-700 font-medium">{log.judul}</p>
+                    {log.nomorTujuan && <p className="text-[10px] text-gray-400 mt-0.5">→ {log.nomorTujuan}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       )}
 
