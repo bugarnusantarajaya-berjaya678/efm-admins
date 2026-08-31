@@ -820,6 +820,7 @@ export default function EventOrderDetailPage() {
   const [newTahapanVal,     setNewTahapanVal]     = useState(order?.tahapan || 'Quotation')
   const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
 
+
   /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
   const [waLog,              setWaLog]              = useState(() => {
     try {
