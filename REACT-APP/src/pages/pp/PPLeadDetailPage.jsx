@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ChevronRight, FileText, Upload, Eye, MessageCircle, ExternalLink } from 'lucide-react'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 import { getAllOrders } from '../../data/ppOrdersStore'
-import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -992,8 +991,6 @@ export default function PPLeadDetailPage() {
                       <p className="text-xs text-gray-400 text-center py-6">Belum ada order dari lead ini.</p>
                     ) : (
                       leadOrders.map(order => {
-                        const invoiceId = order.paymentTracking?.[0]?.invoiceId || null
-                        const receipt   = invoiceId ? getReceiptByInvNo(invoiceId) : null
                         const statusCls =
                           order.statusOrder === 'Aktif'     ? 'bg-green-50 text-green-700 border-green-200' :
                           order.statusOrder === 'Completed' ? 'bg-blue-50 text-blue-700 border-blue-200'   :
@@ -1005,44 +1002,25 @@ export default function PPLeadDetailPage() {
                           order.statusOrder === 'Cancelled' ? 'Dibatalkan' :
                           order.statusOrder
                         return (
-                          <div key={order.id}>
-                            <div
-                              onClick={() => navigate('/pp/orders/' + order.id, { state: { fromLeadId: lead.id } })}
-                              className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                                  <FileText size={14} className="text-[#1E1C43]" />
-                                </div>
-                                <div className="min-w-0">
-                                  <p className="text-xs font-semibold text-[#1E1C43] truncate">#{order.id}</p>
-                                  <p className="text-[10px] text-gray-400 truncate">{order.paket} · Mulai {formatFollowUp(order.tanggalMulai)}</p>
-                                </div>
+                          <div
+                            key={order.id}
+                            onClick={() => navigate('/pp/orders/' + order.id, { state: { fromLeadId: lead.id } })}
+                            className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                          >
+                            <div className="flex items-center gap-3 min-w-0">
+                              <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                                <FileText size={14} className="text-[#1E1C43]" />
                               </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <span className="text-xs font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span>
-                                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>{statusLabel}</span>
-                                <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                              <div className="min-w-0">
+                                <p className="text-xs font-semibold text-[#1E1C43] truncate">#{order.id}</p>
+                                <p className="text-[10px] text-gray-400 truncate">{order.paket} · Mulai {formatFollowUp(order.tanggalMulai)}</p>
                               </div>
                             </div>
-                            {(invoiceId || receipt) && (
-                              <div className="flex gap-1.5 mt-1.5 pl-4">
-                                {invoiceId && (
-                                  <button
-                                    onClick={() => navigate('/pp/invoice/' + invoiceId)}
-                                    className="flex items-center gap-1 h-6 px-2 rounded-lg border border-[#1E1C43]/30 text-[#1E1C43] text-[10px] font-medium hover:bg-[#1E1C43]/5 transition-colors">
-                                    <FileText size={9} /> {invoiceId}
-                                  </button>
-                                )}
-                                {receipt && (
-                                  <button
-                                    onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { receipt, fromOrderId: order.id } })}
-                                    className="flex items-center gap-1 h-6 px-2 rounded-lg border border-green-300 text-green-700 text-[10px] font-medium hover:bg-green-50 transition-colors">
-                                    <FileText size={9} /> {receipt.rcpNo}
-                                  </button>
-                                )}
-                              </div>
-                            )}
+                            <div className="flex items-center gap-2 shrink-0">
+                              <span className="text-xs font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span>
+                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>{statusLabel}</span>
+                              <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                            </div>
                           </div>
                         )
                       })
