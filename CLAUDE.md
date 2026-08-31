@@ -52,7 +52,15 @@ selalu dicek sebelum menulis atau mengedit kode:
 
    scrollable, photo preview popup, invoice template, activity log, 
 
-   pipeline/stage progress visual.
+   pipeline/stage progress visual, detail page header (Section 15).
+
+4. **efm-quick-task** — pattern prompt pendek untuk task berulang (clone 
+
+   halaman, fix UI, tambah field, update data, RRP, match PP standard). 
+
+   Cek skill ini ketika prompt terlihat singkat/terse — mapping ke 
+
+   workflow lengkap sudah ada di sana.
 
 Jangan menulis kode apapun di project ini tanpa mengecek ketiga skill 
 
