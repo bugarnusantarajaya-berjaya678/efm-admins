@@ -1,7 +1,86 @@
-﻿import { useState, useRef } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, FileText, Clock, Upload } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, Activity, ImageIcon, FileText, Clock, Upload, MessageCircle } from 'lucide-react'
+
+/* ═══════════════════════════════════════
+   WA Templates — Event Order Context
+═══════════════════════════════════════ */
+const EVENT_ORDER_WA_TEMPLATES = {
+  'Quotation': [
+    {
+      id: 'evowt-quo-1', tahapan: 'Quotation', judul: 'Kirim Penawaran Event',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nSaya ${o.pic || 'tim EFM'} dari Essential Fitness Management.\n\nTerima kasih atas kesempatan untuk berdiskusi mengenai *${o.namaEvent || o.jenisEvent || 'event fitness'}* bersama ${o.namaKlien}.\n\nKami sudah menyiapkan penawaran/quotation yang dapat segera kami kirimkan untuk direview. Apakah kami bisa menghubungi lebih lanjut untuk presentasi penawaran?\n\nTerima kasih 🙏`,
+    },
+    {
+      id: 'evowt-quo-2', tahapan: 'Quotation', judul: 'Follow-up Penawaran',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKami ingin menindaklanjuti penawaran untuk *${o.namaEvent || 'event fitness'}* yang sudah kami kirimkan sebelumnya.\n\nApakah ada pertanyaan atau hal yang perlu kami klarifikasi dari penawaran tersebut? Kami siap mendiskusikan lebih lanjut 😊\n\nTerima kasih`,
+    },
+  ],
+  'LOI': [
+    {
+      id: 'evowt-loi-1', tahapan: 'LOI', judul: 'Konfirmasi LOI Diterima',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKabar baik! Kami mengkonfirmasi bahwa Letter of Intent (LOI) untuk *${o.namaEvent || 'event fitness'}* dari ${o.namaKlien} sudah kami terima.\n\nIni merupakan langkah awal yang baik untuk kerjasama kita. Tim kami akan segera memproses untuk tahap selanjutnya.\n\nTerima kasih atas kepercayaannya! 🙏`,
+    },
+    {
+      id: 'evowt-loi-2', tahapan: 'LOI', judul: 'Reminder Tanda Tangan LOI',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nDokumen LOI untuk *${o.namaEvent || 'event fitness'}* sudah siap untuk ditandatangani.\n\nMohon luangkan waktu untuk menyelesaikan penandatanganan LOI agar proses kerjasama dapat dilanjutkan ke tahap berikutnya.\n\nSilakan hubungi kami untuk koordinasi lebih lanjut. Terima kasih!`,
+    },
+  ],
+  'MOU': [
+    {
+      id: 'evowt-mou-1', tahapan: 'MOU', judul: 'Update Proses MOU',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKami ingin memberikan update mengenai proses MOU untuk *${o.namaEvent || 'event fitness'}*.\n\nDokumen MOU saat ini sedang dalam proses finalisasi dari pihak kami. Kami akan segera menginformasikan begitu siap untuk ditandatangani.\n\nTerima kasih atas kesabarannya 🙏`,
+    },
+    {
+      id: 'evowt-mou-2', tahapan: 'MOU', judul: 'MOU Siap Ditandatangani',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nMOU untuk *${o.namaEvent || 'event fitness'}* sudah selesai disiapkan dan siap untuk ditandatangani oleh kedua belah pihak.\n\nMohon konfirmasi waktu yang paling tepat untuk proses penandatanganan. Terima kasih!`,
+    },
+  ],
+  'Contract': [
+    {
+      id: 'evowt-con-1', tahapan: 'Contract', judul: 'Konfirmasi Kontrak Aktif',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien}! 🎉\n\nKontrak untuk *${o.namaEvent || 'event fitness'}* sudah resmi aktif. Kami sangat antusias untuk menyelenggarakan event ini bersama ${o.namaKlien}!\n\nTim EFM akan segera menghubungi untuk koordinasi persiapan teknis event. Terima kasih atas kepercayaannya 🙏`,
+    },
+    {
+      id: 'evowt-con-2', tahapan: 'Contract', judul: 'Update Persiapan Teknis Event',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nKami ingin berkoordinasi mengenai persiapan teknis *${o.namaEvent || 'event fitness'}*:\n\n📋 Detail lokasi & layout\n🎵 Sound system & peralatan\n👥 Jumlah peserta yang dikonfirmasi\n⏰ Rundown acara\n\nDapat kami jadwalkan meeting koordinasi dalam waktu dekat? Terima kasih!`,
+    },
+  ],
+  'Event Running': [
+    {
+      id: 'evowt-run-1', tahapan: 'Event Running', judul: 'Update H-1 Event',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nMengingatkan bahwa *${o.namaEvent || 'event fitness'}* akan berlangsung *besok*! 🎉\n\nTim EFM sudah siap dan akan tiba di lokasi sesuai jadwal yang disepakati.\n\nAda hal yang perlu dikonfirmasi atau dipersiapkan terakhir? Silakan hubungi kami. Sampai besok! 💪`,
+    },
+    {
+      id: 'evowt-run-2', tahapan: 'Event Running', judul: 'Pesan Hari-H Event',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien}! Selamat hari-H *${o.namaEvent || 'event fitness'}*! 🎊\n\nTim EFM sudah siap di lokasi. Semoga event hari ini berjalan lancar dan semua peserta menikmati pengalaman fitness terbaik bersama kami! 💪\n\nSampai jumpa di lokasi!`,
+    },
+  ],
+  'Event Selesai': [
+    {
+      id: 'evowt-sel-1', tahapan: 'Event Selesai', judul: 'Ucapan Terima Kasih Post-Event',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien}! 🎉\n\nTerima kasih atas kepercayaan ${o.namaKlien} kepada EFM untuk menyelenggarakan *${o.namaEvent || 'event fitness'}*!\n\nKami berharap event berjalan sesuai harapan dan semua peserta puas dengan pengalaman yang diberikan.\n\nKami akan segera mengirimkan laporan penyelenggaraan. Salam sehat! 🙏`,
+    },
+    {
+      id: 'evowt-sel-2', tahapan: 'Event Selesai', judul: 'Follow-up Laporan & Pelunasan',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nLaporan penyelenggaraan *${o.namaEvent || 'event fitness'}* sudah kami siapkan.\n\nKami juga ingin mengingatkan mengenai proses pelunasan pembayaran sesuai kesepakatan di kontrak.\n\nSilakan konfirmasi jika ada pertanyaan. Terima kasih atas kerjasamanya! 🙏`,
+    },
+    {
+      id: 'evowt-sel-3', tahapan: 'Event Selesai', judul: 'Tawaran Event Berikutnya',
+      teks: (o) => `Halo ${o.contactPerson || o.namaKlien},\n\nSenang bisa bekerja sama di *${o.namaEvent || 'event fitness'}*. Semoga hasilnya memuaskan!\n\nJika ${o.namaKlien} berencana mengadakan event fitness serupa di masa mendatang, kami sangat terbuka untuk berdiskusi kembali.\n\nTerima kasih! Salam sehat dari tim EFM 💪`,
+    },
+  ],
+}
+
+const TAHAPAN_WA_EV_CLS = {
+  'Quotation':     'bg-amber-100 text-amber-700',
+  'LOI':           'bg-orange-100 text-orange-700',
+  'MOU':           'bg-blue-100 text-blue-700',
+  'Contract':      'bg-purple-100 text-purple-700',
+  'Event Running': 'bg-green-100 text-green-700',
+  'Event Selesai': 'bg-gray-100 text-gray-500',
+}
 
 /* ═══════════════════════════════════════
    Constants
@@ -38,6 +117,47 @@ function fmtDate(str) {
   if (!str) return '—'
   const d = new Date(str)
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+}
+
+function EventOrderTahapanBadge({ tahapan }) {
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${TAHAPAN_WA_EV_CLS[tahapan] ?? 'bg-gray-100 text-gray-600'}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
+      {tahapan}
+    </span>
+  )
+}
+
+function EventOrderTemplateCard({ template, ctx, onKirim }) {
+  const [showPreview, setShowPreview] = useState(false)
+  const teks = template.teks(ctx)
+  return (
+    <div className="border border-gray-100 rounded-xl p-3.5 hover:border-gray-200 transition-colors">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-gray-800">{template.judul}</p>
+          {showPreview
+            ? <p className="text-xs text-gray-500 mt-1.5 whitespace-pre-line leading-relaxed">{teks}</p>
+            : <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{teks.substring(0, 70)}…</p>
+          }
+        </div>
+        <div className="flex items-center gap-1.5 shrink-0 ml-2">
+          <button
+            onClick={() => setShowPreview(p => !p)}
+            className="h-7 px-2.5 rounded-lg border border-gray-200 text-xs font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+          >
+            {showPreview ? 'Tutup' : 'Preview'}
+          </button>
+          <button
+            onClick={() => onKirim(template)}
+            className="inline-flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-medium transition-colors"
+          >
+            <MessageCircle size={11} /> Kirim WA
+          </button>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 /* ═══════════════════════════════════════
@@ -654,6 +774,47 @@ export default function EventOrderDetailPage() {
   ])
   const [eventSelesai,          setEventSelesai]          = useState(false)
   const [showKonfirmasiSelesai, setShowKonfirmasiSelesai] = useState(false)
+
+  /* ── WA Komunikasi ───────────────────────────────────────────────────────── */
+  const [waLog,              setWaLog]              = useState(() => {
+    try {
+      const saved = localStorage.getItem(`event-order-wa-log-${id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {}
+    return []
+  })
+  const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
+
+  const orderEvCtx = {
+    namaKlien:     infoDeal.namaKlien     || order?.namaKlien     || '',
+    contactPerson: infoDeal.contactPerson || order?.contactPerson || '',
+    telepon:       infoDeal.telepon       || order?.telepon       || '',
+    namaEvent:     order?.namaEvent       || '',
+    jenisEvent:    order?.jenisEvent      || '',
+    pic:           infoDeal.pic           || order?.pic           || '',
+    tahapan:       order?.tahapan         || '',
+  }
+
+  useEffect(() => {
+    try { localStorage.setItem(`event-order-wa-log-${id}`, JSON.stringify(waLog)) } catch {}
+  }, [waLog, id])
+
+  function handleKirimWAEv(template) {
+    const teks = template.teks(orderEvCtx)
+    const nomorBersih = (orderEvCtx.telepon || '').replace(/^0/, '').replace(/\D/g, '')
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(teks)}`, '_blank')
+    const now = new Date()
+    const timestamp = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) +
+      ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
+    setWaLog(prev => [...prev, {
+      id: `WAL-${String(prev.length + 1).padStart(3, '0')}`,
+      timestamp,
+      judul: template.judul,
+      tahapan: template.tahapan,
+      kirimOleh: orderEvCtx.pic || 'Admin EFM',
+      nomorTujuan: orderEvCtx.telepon,
+    }])
+  }
   const [showTambahPIC,         setShowTambahPIC]         = useState(false)
   const [newPICForm,            setNewPICForm]            = useState({ picId: '', peran: '' })
   const [showAbsensiHModal,     setShowAbsensiHModal]     = useState(false)
@@ -962,6 +1123,7 @@ export default function EventOrderDetailPage() {
           { key: 'dokumen',     label: 'Dokumen Kerjasama'     },
           { key: 'operasional', label: 'Operasional Lapangan'  },
           { key: 'kelas',       label: 'Hari-H & PIC'          },
+          { key: 'wa',          label: 'Komunikasi WA'          },
         ].map(tab => (
           <button
             key={tab.key}
@@ -3039,6 +3201,121 @@ export default function EventOrderDetailPage() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════════════════════
+          TAB 5 — Komunikasi WA
+      ══════════════════════════════════════════════════════════════════════ */}
+      {activeTab === 'wa' && (
+        <div className="space-y-4">
+
+          {/* Template Panel */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Komunikasi WhatsApp</h3>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">Tahapan:</span>
+                <EventOrderTahapanBadge tahapan={orderEvCtx.tahapan} />
+              </div>
+            </div>
+
+            {/* Nomor tujuan */}
+            {orderEvCtx.telepon ? (
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl mb-5">
+                <div className="w-8 h-8 rounded-full bg-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle size={14} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Nomor Tujuan</p>
+                  <p className="text-sm font-semibold text-gray-800">
+                    {orderEvCtx.contactPerson || orderEvCtx.namaKlien} · {orderEvCtx.telepon}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 mb-5">
+                <p className="text-xs text-yellow-700">Nomor telepon contact person belum tercatat. Lengkapi di tab Kontrak & Keuangan → Info Deal.</p>
+              </div>
+            )}
+
+            {/* Template untuk tahapan saat ini */}
+            <div className="mb-4">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                Template untuk Tahapan Saat Ini: {orderEvCtx.tahapan}
+              </p>
+              <div className="space-y-2">
+                {(EVENT_ORDER_WA_TEMPLATES[orderEvCtx.tahapan] || []).length > 0
+                  ? (EVENT_ORDER_WA_TEMPLATES[orderEvCtx.tahapan] || []).map(tpl => (
+                      <EventOrderTemplateCard key={tpl.id} template={tpl} ctx={orderEvCtx} onKirim={handleKirimWAEv} />
+                    ))
+                  : <p className="text-xs text-gray-400 italic">Tidak ada template khusus untuk tahapan ini.</p>
+                }
+              </div>
+            </div>
+
+            {/* Template tahapan lain (collapsible) */}
+            <div>
+              <button
+                onClick={() => setShowAllWaTemplates(p => !p)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[#1E1C43] transition-colors mb-2"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {showAllWaTemplates ? <polyline points="18 15 12 9 6 15"/> : <polyline points="6 9 12 15 18 9"/>}
+                </svg>
+                {showAllWaTemplates ? 'Sembunyikan' : 'Lihat'} semua template
+              </button>
+              {showAllWaTemplates && (
+                <div className="space-y-4 pt-1">
+                  {Object.entries(EVENT_ORDER_WA_TEMPLATES)
+                    .filter(([tahapan]) => tahapan !== orderEvCtx.tahapan)
+                    .map(([tahapan, templates]) => (
+                      <div key={tahapan}>
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tahapan: {tahapan}</p>
+                        <div className="space-y-2">
+                          {templates.map(tpl => (
+                            <EventOrderTemplateCard key={tpl.id} template={tpl} ctx={orderEvCtx} onKirim={handleKirimWAEv} />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Log Pengiriman */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Log Pengiriman WA</h3>
+              <span className="text-xs text-gray-400">{waLog.length} terkirim</span>
+            </div>
+            {waLog.length === 0 ? (
+              <p className="text-xs text-gray-400 italic text-center py-4">Belum ada WA yang dikirim via EFM untuk order ini.</p>
+            ) : (
+              <div className="space-y-2">
+                {[...waLog].reverse().map((log, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 bg-gray-50 rounded-xl">
+                    <div className="w-7 h-7 rounded-full bg-[#25D366] flex items-center justify-center shrink-0 mt-0.5">
+                      <MessageCircle size={12} className="text-white" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs font-semibold text-gray-800">{log.judul}</p>
+                        <span className="text-[10px] text-gray-400 shrink-0">{log.timestamp}</span>
+                      </div>
+                      <p className="text-[10px] text-gray-500 mt-0.5">
+                        Dikirim oleh {log.kirimOleh} · ke {log.nomorTujuan}
+                        {log.tahapan && <span className={`ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-medium ${TAHAPAN_WA_EV_CLS[log.tahapan] ?? 'bg-gray-100 text-gray-500'}`}>{log.tahapan}</span>}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
         </div>
       )}
 
