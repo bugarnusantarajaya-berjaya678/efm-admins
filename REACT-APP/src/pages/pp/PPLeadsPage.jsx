@@ -62,6 +62,13 @@ function Toast({ message, onClose }) {
   )
 }
 
+function formatFollowUp(dateStr) {
+  if (!dateStr) return '—'
+  const [y, m, d] = dateStr.split('-')
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
+  return `${parseInt(d)} ${months[parseInt(m)-1]} ${y}`
+}
+
 function buildWANumber(raw = '') {
   const digits = raw.replace(/\D/g, '')
   if (digits.startsWith('62')) return digits
@@ -232,13 +239,13 @@ export default function PPLeadsPage() {
         {/* Table */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
-            <table className="w-full" style={{ minWidth: '1170px' }}>
+            <table className="w-full" style={{ minWidth: '1320px' }}>
               <thead className="sticky top-0 z-10">
                 <tr className="bg-gray-50 border-b border-gray-100">
                   {[
-                    ['Leads ID',110],['Nama',160],['Tipe',110],['No HP',130],
-                    ['Program Diminati',160],['Sumber',120],['PIC EFM',130],
-                    ['Status Pipeline',120],['Tanggal Masuk',120],
+                    ['Leads ID',110],['Nama',160],['Status Pipeline',120],['Tipe',110],
+                    ['Program Diminati',160],['Sumber',120],['Tgl. Follow Up',130],
+                    ['PIC',130],['No HP',130],['Tanggal Masuk',120],
                   ].map(([h, mw]) => (
                     <th key={h} style={{minWidth:mw}} className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                   ))}
@@ -246,7 +253,7 @@ export default function PPLeadsPage() {
               </thead>
               <tbody>
                 {pageRows.length === 0 ? (
-                  <tr><td colSpan={9} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
+                  <tr><td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data yang cocok dengan filter.</td></tr>
                 ) : pageRows.map(lead => (
                   <tr key={lead.id} onClick={() => navigate('/pp/leads/' + lead.id, { state: { lead } })}
                     className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
@@ -260,7 +267,14 @@ export default function PPLeadsPage() {
                         <span className="text-xs font-medium text-gray-900 whitespace-nowrap">{lead.nama}</span>
                       </div>
                     </td>
+                    <td className="px-3 py-2.5"><StageBadge stage={lead.statusPipeline} /></td>
                     <td className="px-3 py-2.5"><TipeBadge tipe={lead.tipe} /></td>
+                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.programDiminati}</td>
+                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.sumberLead}</td>
+                    <td className={`text-xs px-3 py-2.5 whitespace-nowrap ${lead.tanggalFollowUp ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
+                      {formatFollowUp(lead.tanggalFollowUp)}
+                    </td>
+                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.picEfm}</td>
                     <td className="px-3 py-2.5 whitespace-nowrap">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs text-gray-600">{lead.noHp}</span>
@@ -272,10 +286,6 @@ export default function PPLeadsPage() {
                         </button>
                       </div>
                     </td>
-                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.programDiminati}</td>
-                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.sumberLead}</td>
-                    <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.picEfm}</td>
-                    <td className="px-3 py-2.5"><StageBadge stage={lead.statusPipeline} /></td>
                     <td className="text-xs text-gray-600 px-3 py-2.5 whitespace-nowrap">{lead.tanggalMasuk}</td>
                   </tr>
                 ))}
