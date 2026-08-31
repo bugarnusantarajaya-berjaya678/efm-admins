@@ -41,7 +41,6 @@ function Badge({ children, cls }) {
   )
 }
 
-
 function EventTahapanStepper({ currentTahapan }) {
   const steps = ['Quotation', 'MOU', 'Contract', 'Event Running', 'Event Selesai']
   const order = { 'Quotation': 0, 'MOU': 1, 'Contract': 2, 'Event Running': 3, 'Event Selesai': 4 }
