@@ -1505,42 +1505,52 @@ export default function PPOrderDetailPage() {
                   )}
 
                   {/* Invoice Linked Record Card */}
-                  <button
+                  <div
                     onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
-                    className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group"
+                    className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
                   >
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-sm font-bold text-[#1E1C43]">{invoicePP.nomorInvoice}</span>
-                        <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${invCardBadgeCls}`}>
-                          {invoicePP.statusInvoice || 'Draft'}
-                        </span>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                        <FileText size={14} className="text-[#1E1C43]" />
                       </div>
-                      <p className="text-xs text-gray-500">
-                        {fmtDate(invoicePP.tanggal)} · Jatuh Tempo {fmtDate(invoicePP.jatuhTempo)} · {formatRpPP(subtotalPP)}
-                      </p>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-[#1E1C43] truncate">{invoicePP.nomorInvoice}</p>
+                        <p className="text-[10px] text-gray-400 truncate">
+                          {fmtDate(invoicePP.tanggal)} · Jatuh Tempo {fmtDate(invoicePP.jatuhTempo)} · {formatRpPP(subtotalPP)}
+                        </p>
+                      </div>
                     </div>
-                    <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
-                  </button>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${invCardBadgeCls}`}>
+                        {invoicePP.statusInvoice || 'Draft'}
+                      </span>
+                      <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                    </div>
+                  </div>
 
                   {/* Receipt Linked Record Card — visible after payment confirmed */}
                   {invoicePayStatus === 'sudah_bayar' && (
-                    <button
+                    <div
                       onClick={() => navigate(`/pp/receipt/${receiptId}`, { state: { fromOrderId: order.id } })}
-                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group"
+                      className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-sm font-bold text-[#1E1C43]">{receiptId}</span>
-                          <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full border bg-green-50 text-green-700 border-green-200">Lunas</span>
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                          <FileText size={14} className="text-[#1E1C43]" />
                         </div>
-                        <p className="text-xs text-gray-500">
-                          {konfirmasiPayForm.tglBayar ? `Dibayar ${fmtDate(konfirmasiPayForm.tglBayar)}` : 'Pembayaran terkonfirmasi'}
-                          {konfirmasiPayForm.metode ? ` · ${konfirmasiPayForm.metode}` : ''}
-                        </p>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-[#1E1C43] truncate">{receiptId}</p>
+                          <p className="text-[10px] text-gray-400 truncate">
+                            {konfirmasiPayForm.tglBayar ? `Dibayar ${fmtDate(konfirmasiPayForm.tglBayar)}` : 'Pembayaran terkonfirmasi'}
+                            {konfirmasiPayForm.metode ? ` · ${konfirmasiPayForm.metode}` : ''}
+                          </p>
+                        </div>
                       </div>
-                      <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
-                    </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-green-50 text-green-700 border-green-200">Lunas</span>
+                        <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
@@ -2165,38 +2175,41 @@ export default function PPOrderDetailPage() {
                   {!assessment ? (
                     <p className="text-xs text-gray-400 italic text-center py-6">Belum ada data fitness assessment untuk order ini.</p>
                   ) : (
-                    <button
+                    <div
                       onClick={() => navigate('/pp/screening/' + assessment.id, { state: { fromOrderId: order.id } })}
-                      className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group"
+                      className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
                     >
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className="text-sm font-bold text-[#1E1C43]">{assessment.id}</span>
-                          {assessment.statusAssessment && (
-                            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>
-                              {assessment.statusAssessment}
-                            </span>
-                          )}
-                          {assessment.prevAssessmentId && (
-                            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                              Renewal · dari #{assessment.prevAssessmentId}
-                            </span>
-                          )}
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                          <ClipboardList size={14} className="text-[#1E1C43]" />
                         </div>
-                        <p className="text-xs text-gray-500 mb-0.5">
-                          {preTestDate}
-                          {assessment.namaFC ? ` · ${assessment.namaFC}` : ''}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {[
-                            assessment.tanita?.tinggiBadan_awal     ? `${assessment.tanita.tinggiBadan_awal} cm`  : null,
-                            assessment.tanita?.totalBodyWeight_awal  ? `${assessment.tanita.totalBodyWeight_awal} kg` : null,
-                            assessment.tanita?.bodyMassIndex_awal    ? `BMI ${assessment.tanita.bodyMassIndex_awal}` : null,
-                          ].filter(Boolean).join(' · ')}
-                        </p>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-[#1E1C43] truncate">{assessment.id}</p>
+                          <p className="text-[10px] text-gray-400 truncate">
+                            {[
+                              preTestDate,
+                              assessment.namaFC || null,
+                              assessment.tanita?.tinggiBadan_awal    ? `${assessment.tanita.tinggiBadan_awal} cm`     : null,
+                              assessment.tanita?.totalBodyWeight_awal ? `${assessment.tanita.totalBodyWeight_awal} kg`  : null,
+                              assessment.tanita?.bodyMassIndex_awal   ? `BMI ${assessment.tanita.bodyMassIndex_awal}`  : null,
+                            ].filter(Boolean).join(' · ')}
+                          </p>
+                        </div>
                       </div>
-                      <ExternalLink size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
-                    </button>
+                      <div className="flex items-center gap-2 shrink-0">
+                        {assessment.prevAssessmentId && (
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-purple-50 text-purple-700 border-purple-200">
+                            Renewal
+                          </span>
+                        )}
+                        {assessment.statusAssessment && (
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>
+                            {assessment.statusAssessment}
+                          </span>
+                        )}
+                        <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
