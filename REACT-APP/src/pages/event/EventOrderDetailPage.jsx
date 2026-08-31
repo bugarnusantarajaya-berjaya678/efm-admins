@@ -1100,34 +1100,35 @@ export default function EventOrderDetailPage() {
 
       {/* Header Card */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
 
-          {/* LEFT: Avatar + Info */}
-          <div className="flex items-center gap-4 flex-1 min-w-0">
+        {/* Top row: Avatar+Info (left) | Buttons (right on desktop, below on mobile) */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+
+          {/* Avatar + Info */}
+          <div className="flex items-start gap-3 min-w-0">
             <div
-              className="w-12 h-12 rounded-full flex items-center justify-center text-white text-base font-bold shrink-0"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 mt-0.5"
               style={{ background: getAvatarColor(order.namaEvent || order.namaKlien) }}
             >
               {getInitials(order.namaEvent || order.namaKlien)}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{isNew ? 'EV-DRAFT' : order.id}</p>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</h1>
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+              <h1 className="text-base font-bold text-[#1E1C43] leading-snug">{isNew ? 'Order Baru' : (order.namaEvent || order.namaKlien)}</h1>
+              <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                 <Badge cls={tipeCls}>{tipeLabel}</Badge>
                 <Badge cls={STATUS_CLS[order.status] ?? 'bg-gray-100 text-gray-600'}>● {order.status}</Badge>
               </div>
-              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                <span className="text-[10px] text-gray-400">{order.namaKlien} · {order.tipeKlien || order.jenis}</span>
-                <span className="text-[10px] text-gray-300">|</span>
+              <p className="text-[10px] text-gray-400 mt-1">{order.namaKlien} · {order.tipeKlien || order.jenis}</p>
+              <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                 <span className="text-xs font-semibold text-[#1E1C43]">{fmtRp(subtotal)}</span>
                 <span className="text-[10px] text-gray-400">· PIC: {order.pic}</span>
               </div>
             </div>
           </div>
 
-          {/* RIGHT: Action buttons only (matches PP pattern) */}
-          <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2 flex-shrink-0 sm:mt-0">
             {!isNew && (
               <button
                 onClick={() => { setEditingTahapan(p => !p); setNewTahapanVal(tahapanState) }}
