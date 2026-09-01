@@ -684,14 +684,7 @@ export default function EventQuotationDetailPage() {
 
             {/* Syarat & Ketentuan */}
             <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Syarat &amp; Ketentuan</div>
-                <button
-                  onClick={() => navigate('/event/quotation')}
-                  className="text-[10px] text-[#1E1C43] hover:underline underline-offset-2 font-medium">
-                  Edit via Template Quotation →
-                </button>
-              </div>
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
               <ol className="list-decimal list-inside space-y-2">
                 {getTemplateSyarat().map((s, i) => (
                   <li key={i} className="text-sm text-gray-600">{s}</li>
