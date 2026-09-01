@@ -372,31 +372,19 @@ export default function PPInvoiceDetailPage() {
 
           <div className="text-right">
             <div className="text-4xl font-black tracking-widest uppercase">INVOICE</div>
-            <div className="text-sm text-gray-300 mt-1">No: {invoice.invNo}</div>
-            <div className="border-t border-white/20 my-2" />
+            <div className="text-sm text-gray-300 mt-1">{invoice.invNo}</div>
 
-            <div className="flex justify-end items-center gap-2 mb-1">
+            <div className="flex justify-end items-center gap-2 mb-1 mt-3">
               <span className="text-xs text-gray-400">Tanggal:</span>
               <span className="font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-end items-center gap-2 mb-1">
+            <div className="flex justify-end items-center gap-2 mb-3">
               <span className="text-xs text-gray-400">Jatuh Tempo:</span>
               <span className="font-semibold text-sm">{invoice.due}</span>
             </div>
 
-            <div className="flex justify-end items-center gap-2">
-              <span className="text-xs text-gray-400">Order ID:</span>
-              <button
-                onClick={() => navigate('/pp/orders/' + invoice.orderId)}
-                className="font-semibold text-sm hover:underline">
-                #{invoice.orderId}
-              </button>
-            </div>
-
-            <div className="border-t border-white/20 my-2" />
-
-            <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-1 ${statusBadgeCls}`}>
+            <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block ${statusBadgeCls}`}>
               {STATUS_LABEL[invoice.status]}
             </span>
           </div>
