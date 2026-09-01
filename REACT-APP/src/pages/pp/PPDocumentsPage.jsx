@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { FileText, ChevronLeft, ChevronRight, ChevronDown, CheckCircle, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, GripVertical, Pencil, X } from 'lucide-react'
+import { FileText, ChevronDown, CheckCircle, Check, Download, Search, ArrowLeft, Plus, Trash2, Save, RotateCcw, Settings, GripVertical, Pencil, X } from 'lucide-react'
 import { STATUS_LABEL, STATUS_CLS, PAKET_OPTS } from '../../data/ppDocumentsData'
 import { getAllDocs } from '../../data/ppDocumentsStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -22,14 +22,24 @@ function DocBadge({ status }) {
   )
 }
 
-function StatMini({ label, value, color }) {
-  const bCls = { yellow:'border-warning', green:'border-success', blue:'border-blue-400', navy:'border-border' }[color] || 'border-border'
-  const vCls = { yellow:'text-warning', green:'text-success', blue:'text-blue-600', navy:'text-text-primary' }[color] || 'text-text-primary'
+function StatMini({ label, value, sub, accent }) {
+  const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
   return (
     <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
       <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
       <div className={`text-xl font-bold ${vCls}`}>{value}</div>
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
     </div>
+  )
+}
+
+function PBtn({ children, active, onClick, disabled }) {
+  return (
+    <button onClick={onClick} disabled={disabled} className={`w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors disabled:opacity-35
+      ${active ? 'bg-primary text-white border-primary' : 'bg-white text-text-muted border-border hover:border-primary hover:text-primary'}`}>
+      {children}
+    </button>
   )
 }
 
@@ -688,7 +698,7 @@ function PreviewModal({ doc, onClose, onApprove, onSubmitSign }) {
 }
 
 /* ── Main Page ── */
-const ROWS_PER_PAGE = 8
+const ROWS_PER_PAGE = 10
 
 export default function PPDocumentsPage() {
   const navigate = useNavigate()
@@ -747,12 +757,13 @@ export default function PPDocumentsPage() {
     <div className="flex flex-col gap-4">
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <FileText size={20} className="text-white" />
             </div>
             <div>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">PP — Agreement</p>
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Agreement Klien</h1>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
@@ -760,7 +771,7 @@ export default function PPDocumentsPage() {
                   Paperless · Sign-on-Glass
                 </span>
               </div>
-              <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
+              <p className="text-xs text-gray-400 mt-1">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
             </div>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -792,10 +803,10 @@ export default function PPDocumentsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatMini label="Pending TTD" value={stats.pending} color="yellow" />
-        <StatMini label="Sudah TTD" value={stats.signed} color="green" />
-        <StatMini label="Menunggu Approval" value={stats.waiting} color="blue" />
-        <StatMini label="Total Agreement" value={stats.total} color="navy" />
+        <StatMini label="Pending TTD" value={stats.pending} accent="yellow" />
+        <StatMini label="Sudah TTD" value={stats.signed} accent="green" />
+        <StatMini label="Menunggu Approval" value={stats.waiting} accent="blue" />
+        <StatMini label="Total Agreement" value={stats.total} />
       </div>
 
       {/* Filters */}
@@ -843,7 +854,7 @@ export default function PPDocumentsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)', minHeight: '280px' }}>
           <table className="w-full text-[13px]" style={{ minWidth: '1540px' }}>
             <thead className="sticky top-0 z-10">
@@ -869,7 +880,7 @@ export default function PPDocumentsPage() {
                 <tr
                   key={d.id}
                   onClick={() => navigate('/pp/agreement/' + d.id)}
-                  className={`border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}`}
+                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
                 >
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.displayId}</td>
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{d.noReceipt}</td>
@@ -902,34 +913,22 @@ export default function PPDocumentsPage() {
         </div>
 
         {/* Pagination */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100">
-          <span className="text-[12px] text-text-muted">
-            Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} agreement
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+          <span className="text-xs text-text-muted">
+            {filtered.length === 0 ? 'Tidak ada agreement ditemukan' : `Menampilkan ${(safePage - 1) * ROWS_PER_PAGE + 1}–${Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari ${filtered.length} agreement`}
           </span>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setPage(p => Math.max(1, p - 1))}
-              disabled={safePage === 1}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 disabled:opacity-35 hover:bg-gray-50 transition-colors"
-            >
-              <ChevronLeft size={13} />
-            </button>
+          <div className="flex items-center gap-1.5">
+            <PBtn onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </PBtn>
             {paginationRange().map((p, i) =>
               p === '...'
-                ? <span key={`el-${i}`} className="px-1.5 text-text-muted text-[13px]">…</span>
-                : <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`w-7 h-7 rounded-lg text-[12px] font-semibold transition-colors ${safePage === p ? 'bg-[#1E1C43] text-white' : 'border border-gray-200 text-text-muted hover:bg-gray-50'}`}
-                  >{p}</button>
+                ? <span key={`el-${i}`} className="px-1 text-text-muted text-xs">…</span>
+                : <PBtn key={p} active={safePage === p} onClick={() => setPage(p)}>{p}</PBtn>
             )}
-            <button
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-              disabled={safePage === totalPages}
-              className="w-7 h-7 flex items-center justify-center rounded-lg border border-gray-200 disabled:opacity-35 hover:bg-gray-50 transition-colors"
-            >
-              <ChevronRight size={13} />
-            </button>
+            <PBtn onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </PBtn>
           </div>
         </div>
       </div>
