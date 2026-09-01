@@ -492,9 +492,9 @@ function Badge({ children, cls }) {
 
 function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-        <h3 className="text-sm font-semibold text-[#1E1C43]">{title}</h3>
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">{title}</h3>
         <div className="flex gap-2">
           {editing ? (
             <>
@@ -515,7 +515,7 @@ function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
             onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors"
               >
                 <Edit2 size={12} /> Edit
               </button>
@@ -1172,7 +1172,7 @@ export default function EventOrderDetailPage() {
             ) : (
               /* ── VIEW MODE ── */
               <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {[
                     ['Nama Klien',    order.namaKlien],
                     ['Tipe Klien',    order.tipeKlien || order.jenis],
@@ -1188,14 +1188,14 @@ export default function EventOrderDetailPage() {
                     ['Tgl Selesai Kontrak',fmtDate(infoDeal.tanggalSelesai)],
                     ['Nilai Kontrak (dari Quotation)', fmtRp(qCalc.total)],
                   ].map(([k, v]) => (
-                    <div key={k}>
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{k}</p>
-                      <p className={`text-sm text-gray-800 font-medium ${k.startsWith('Nilai Kontrak') ? 'text-[#1E1C43] text-base' : ''}`}>{v || '—'}</p>
+                    <div key={k} className="bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{k}</p>
+                      <p className={`text-sm font-semibold ${k.startsWith('Nilai Kontrak') ? 'text-[#1E1C43]' : 'text-gray-800'}`}>{v || '—'}</p>
                     </div>
                   ))}
                   {infoDeal.catatan && (
-                    <div className="col-span-2">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Catatan</p>
+                    <div className="col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
                       <p className="text-sm text-gray-700 italic">{infoDeal.catatan}</p>
                     </div>
                   )}
@@ -1203,27 +1203,29 @@ export default function EventOrderDetailPage() {
 
                 {/* Line items read */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-700 mb-2">Rincian Layanan</p>
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        {['No','Item Layanan','Satuan','Jumlah','Keterangan'].map(h => (
-                          <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-3 py-2">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {lineItems.map((li, i) => (
-                        <tr key={li.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5">{i + 1}</td>
-                          <td className="text-xs font-medium text-gray-800 px-3 py-2.5">{li.namaItem}</td>
-                          <td className="text-xs text-gray-600 px-3 py-2.5">{li.satuan}</td>
-                          <td className="text-xs text-gray-600 px-3 py-2.5 text-center">{li.jumlah}</td>
-                          <td className="text-xs text-gray-600 px-3 py-2.5">{li.keterangan || '—'}</td>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Rincian Layanan</p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          {['No','Item Layanan','Satuan','Jumlah','Keterangan'].map(h => (
+                            <th key={h} className="text-left text-xs font-semibold text-gray-400 uppercase tracking-wide px-3 py-2 whitespace-nowrap">{h}</th>
+                          ))}
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {lineItems.map((li, i) => (
+                          <tr key={li.id} className="border-b border-gray-100 hover:bg-gray-50">
+                            <td className="text-sm font-medium text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{i + 1}</td>
+                            <td className="text-sm font-semibold text-gray-800 px-3 py-2.5">{li.namaItem}</td>
+                            <td className="text-sm text-gray-700 px-3 py-2.5 whitespace-nowrap">{li.satuan}</td>
+                            <td className="text-sm text-gray-700 px-3 py-2.5 text-center whitespace-nowrap">{li.jumlah}</td>
+                            <td className="text-sm text-gray-700 px-3 py-2.5">{li.keterangan || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}
@@ -1235,12 +1237,12 @@ export default function EventOrderDetailPage() {
             const qd = isEditing ? quotationDraft : quotationData
             const calc = isEditing ? qCalcDraft : qCalc
             return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 mb-4">
-                <div className="px-5 py-3.5 border-b border-gray-100">
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
+                <div className="px-5 py-4 border-b border-gray-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="text-sm font-semibold text-[#1E1C43]">Quotation</h3>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Penawaran harga kepada klien — berdasarkan rincian layanan di atas</p>
+                      <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Quotation</h3>
+                      <p className="text-[10px] text-gray-400 mt-1 pl-4">Penawaran harga kepada klien — berdasarkan rincian layanan di atas</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge cls={QUOTATION_STATUS_CLS[quotationData.status] ?? 'bg-gray-100 text-gray-500'}>
@@ -1259,7 +1261,7 @@ export default function EventOrderDetailPage() {
                         </>
                       ) : (
                         <button onClick={() => startEdit('quotation')}
-                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-xs text-gray-600 hover:bg-gray-50 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors">
+                          className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
                           <Edit2 size={12} /> Edit
                         </button>
                       )}
