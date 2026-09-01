@@ -421,7 +421,7 @@ export default function PPInvoiceDetailPage() {
                   <tr>
                     <td className="px-2.5 py-2 border-b border-gray-100">
                       <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
-                      <div className="text-xs text-gray-500">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
+                      <div className="text-xs text-gray-500">PIC: {invoice.pic}</div>
                     </td>
                     <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
                     <td className="px-2.5 py-2 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
