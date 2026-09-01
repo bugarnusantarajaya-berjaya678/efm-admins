@@ -70,10 +70,6 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           </div>
           <div className="mt-3 space-y-1">
             <div className="flex items-center justify-end gap-3">
-              <span className="text-xs text-white/50">Tanggal Bayar</span>
-              <span className="text-xs font-semibold">{rcp.tglBayar}</span>
-            </div>
-            <div className="flex items-center justify-end gap-3">
               <span className="text-xs text-white/50">Ref. Invoice</span>
               <button onClick={() => onGoToInvoice(rcp.invNo)}
                 className="text-xs font-semibold hover:underline">{rcp.invNo}</button>
