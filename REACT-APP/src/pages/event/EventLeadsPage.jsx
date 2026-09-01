@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, MessageCircle } from 'lucide-react'
+import { Plus, Search, MessageCircle, FileText, ChevronDown, ClipboardList } from 'lucide-react'
 import { LEADS_INIT, initLeads, getStoredLeads } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
@@ -116,6 +116,16 @@ function LeadsPageBtn({ label, onClick, disabled, active }) {
 ═══════════════════════════════════════ */
 export default function EventLeadsPage() {
   const navigate = useNavigate()
+  const docMenuRef = useRef(null)
+  const [showDocMenu, setShowDocMenu] = useState(false)
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (docMenuRef.current && !docMenuRef.current.contains(e.target)) setShowDocMenu(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
 
   const [leads] = useState(() => { initLeads(LEADS_INIT); return getStoredLeads() })
   const [bulan,  setBulan]  = useState('')
@@ -161,12 +171,42 @@ export default function EventLeadsPage() {
             <h1 className="text-[22px] font-bold text-[#1E1C43]">Leads Event</h1>
             <p className="text-sm text-gray-500 mt-1">Kelola prospek klien Event — Corporate, Foundation, Government &amp; lainnya</p>
           </div>
-          <button
-            onClick={() => navigate('/event/leads/new')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
-          >
-            <Plus size={15} strokeWidth={2.5} /> Tambah Lead
-          </button>
+            <div className="flex items-center gap-2">
+            {/* Dokumen dropdown */}
+            <div className="relative" ref={docMenuRef}>
+              <button
+                onClick={() => setShowDocMenu(v => !v)}
+                className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                <FileText size={14} />
+                Dokumen
+                <ChevronDown size={13} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
+              </button>
+              {showDocMenu && (
+                <div className="absolute right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[170px]">
+                  {[
+                    { icon: ClipboardList, label: 'Konsultasi', path: '/event/konsultasi' },
+                    { icon: FileText,      label: 'Quotation',  path: '/event/quotation'  },
+                  ].map(({ icon: Icon, label, path }) => (
+                    <button
+                      key={path}
+                      onClick={() => { setShowDocMenu(false); navigate(path) }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <Icon size={14} className="text-gray-400" /> {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <button
+              onClick={() => navigate('/event/leads/new')}
+              className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
+            >
+              <Plus size={15} strokeWidth={2.5} /> Tambah Lead
+            </button>
+          </div>
         </div>
 
         {/* KPI Cards */}
