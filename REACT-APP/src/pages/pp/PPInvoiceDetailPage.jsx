@@ -391,23 +391,11 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Tagihan Kepada */}
-        <div className="px-6 sm:px-8 py-6 border-b border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
-          <div>
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
-            <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              Order ID: <button onClick={() => navigate('/pp/orders/' + invoice.orderId)} className="font-semibold text-[#1E1C43] hover:underline">#{invoice.orderId}</button>
-            </p>
-            {invoice.paket && <p className="text-xs text-gray-500 mt-0.5">Paket: <span className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</span></p>}
-            {invoice.pic   && <p className="text-xs text-gray-500 mt-0.5">PIC Pelatih: <span className="font-semibold text-[#1E1C43]">{invoice.pic}</span></p>}
-          </div>
-          {invoice.namaLatihan && (
-            <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100 text-right min-w-[160px]">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Program Latihan</div>
-              <div className="text-sm font-semibold text-[#1E1C43]">{invoice.namaLatihan}</div>
-              <div className="text-xs text-gray-500 mt-0.5">{invoice.sesi} Sesi</div>
-            </div>
-          )}
+        <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
+          <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
+          {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
+          {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
         </div>
 
         {/* Tabel Rincian Layanan */}
