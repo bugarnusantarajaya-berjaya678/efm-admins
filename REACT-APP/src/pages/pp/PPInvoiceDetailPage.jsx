@@ -540,9 +540,9 @@ export default function PPInvoiceDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
-                  <p className="text-sm font-bold text-[#1E1C43] font-mono">{b.rek}</p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">a.n. {b.an}</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">{b.rek}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">a.n. {b.an}</p>
                 </div>
               ))}
             </div>
