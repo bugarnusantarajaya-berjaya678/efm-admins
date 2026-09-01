@@ -757,13 +757,12 @@ export default function PPDocumentsPage() {
     <div className="flex flex-col gap-4">
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <FileText size={20} className="text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">PP — Agreement</p>
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Agreement Klien</h1>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]">
@@ -771,10 +770,10 @@ export default function PPDocumentsPage() {
                   Paperless · Sign-on-Glass
                 </span>
               </div>
-              <p className="text-xs text-gray-400 mt-1">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
+              <p className="text-sm text-text-muted mt-0.5">Kelola dokumen persetujuan dan kontrak klien Private Training</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative" ref={templateMenuRef}>
               <button
                 onClick={() => setShowTemplate(v => !v)}

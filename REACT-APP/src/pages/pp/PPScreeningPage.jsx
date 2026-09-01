@@ -88,18 +88,17 @@ export default function PPScreeningPage() {
 
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <ClipboardList size={20} className="text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">PP — Fitness Assessment</p>
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Fitness Assessment PP</h1>
-              <p className="text-xs text-gray-400 mt-1">Data pre-test &amp; post-test seluruh klien Private Program</p>
+              <p className="text-sm text-text-muted mt-0.5">Data pre-test &amp; post-test seluruh klien Private Program</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={() => navigate('/pp/screening/new')}
               className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
@@ -110,7 +109,7 @@ export default function PPScreeningPage() {
               onClick={() => navigate('/pp/orders')}
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
-              <ArrowLeft size={12} /> Kembali
+              <ArrowLeft size={12} /> Kembali ke PP Orders
             </button>
           </div>
         </div>

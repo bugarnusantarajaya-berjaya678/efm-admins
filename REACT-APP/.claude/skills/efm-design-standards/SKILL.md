@@ -133,11 +133,14 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 ## 3b. Full-Page Form / Sub-page — Header Card Standard
 
-> **Dua varian header card** ada di project ini — pilih berdasarkan tipe halaman:
-> - **Form / sub-page** (Fitness Assessment, Screening, Konsultasi Detail, Order New, dll): gunakan **ikon bulat navy** — pola di section ini.
+> **Tiga varian header card** ada di project ini — pilih berdasarkan tipe halaman:
+> - **List page** (Invoice list, Receipt list, Screening list, Documents list, dll): gunakan pola **Section 3c** — `flex-col sm:flex-row`, tanpa eyebrow label.
+> - **Form / sub-page** (Assessment Detail, Screening Detail, Konsultasi Detail, Order New, dll): gunakan **ikon bulat navy** — pola di section ini (3b).
 > - **Entity detail page** (Lead Detail, Order Detail): gunakan **initials avatar berwarna** — lihat `efm-component-patterns` Section 15.
 
-Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultasi Detail, Order New, dll). Ini adalah struktur WAJIB — jangan improvisasi dengan `flex-col sm:flex-row` atau variasi lain.
+⚠️ **Jangan gunakan pola 3b (eyebrow + `flex items-start`) untuk list page** — list page pakai pola 3c.
+
+Header card untuk semua sub-page forms (Assessment Detail, Screening Detail, Konsultasi Detail, Order New, dll). Ini adalah struktur WAJIB — jangan improvisasi dengan `flex-col sm:flex-row` atau variasi lain.
 
 ```jsx
 {/* Header Card — selalu full-bleed tanpa outer horizontal padding */}
@@ -183,6 +186,50 @@ Header card untuk semua sub-page forms (Fitness Assessment, Screening, Konsultas
 - Tombol Kembali: selalu gray secondary (`border border-gray-300 text-gray-600 hover:bg-gray-50`), BUKAN orange atau navy
 - `flex-wrap` pada outer: tombol turun ke baris baru di mobile, tidak menimpa judul
 - Ikon: `w-12 h-12 rounded-full bg-[#1E1C43] shrink-0` — lingkaran navy, JANGAN shrink
+
+---
+
+## 3c. List Page — Header Card Standard
+
+Pola untuk semua halaman **list** (Invoice, Receipt, Agreement, Screening, Orders, Leads, dll). Berbeda dari 3b: tidak ada eyebrow label, tombol pakai `flex-col sm:flex-row` bukan `flex-shrink-0`.
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
+    {/* Kiri: ikon bulat + judul + subtitle */}
+    <div className="flex items-center gap-4">
+      <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+        <IconName size={20} className="text-white" />
+      </div>
+      <div>
+        <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Judul Halaman</h1>
+        <p className="text-sm text-text-muted mt-0.5">Deskripsi singkat konten halaman</p>
+      </div>
+    </div>
+
+    {/* Kanan: tombol aksi (CTA + Kembali) */}
+    <div className="flex flex-col sm:flex-row gap-2">
+      <button className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+        <Plus size={13} /> Buat Baru
+      </button>
+      <button className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+        <ArrowLeft size={12} /> Kembali ke ...
+      </button>
+    </div>
+
+  </div>
+</div>
+```
+
+**Aturan wajib:**
+- Outer wrapper: `flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3` — JANGAN `flex items-start justify-between gap-4 flex-wrap`
+- **Tidak ada eyebrow label** (`<p className="text-[10px]...">`) di atas judul — eyebrow hanya di pola 3b
+- Subtitle: `text-sm text-text-muted mt-0.5` — bukan `text-xs text-gray-400`
+- Tombol kanan: `flex flex-col sm:flex-row gap-2` — di mobile tombol susun vertikal, di desktop horizontal
+- Ikon tetap: `w-12 h-12 rounded-full bg-[#1E1C43] shrink-0`
+- Tombol Kembali: selalu gray secondary, BUKAN orange
+- Jika ada tombol toggle (Template Invoice/Agreement), gunakan navy outline bukan orange
 
 ---
 
