@@ -199,6 +199,151 @@ Used for: full invoice pages (PPInvoicePage, B2BInvoicePage, EventInvoicePage) �
 
 ---
 
+**Body section card container (PP Invoice Detail — aturan wajib)**
+
+Setiap section body Invoice Detail (Tagihan Kepada, Rincian Layanan, Catatan, Syarat & Ketentuan, Cara Pembayaran) **harus dibungkus card container**:
+
+```jsx
+<div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+  {/* konten section */}
+</div>
+```
+
+Section label di atas card container:
+```jsx
+<p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Nama Section</p>
+```
+
+Jangan biarkan konten section float tanpa container — semua section pakai pattern ini, bukan border-t biasa.
+
+---
+
+**Cara Pembayaran — aturan font wajib**
+
+⚠️ DILARANG `font-mono` di seluruh project ini — semua teks wajib Poppins.
+
+| Elemen | Class wajib |
+|---|---|
+| Label bank (`Transfer BCA`) | `text-[10px] font-semibold text-gray-400 uppercase tracking-wide` |
+| Nomor rekening | `text-sm font-semibold text-[#1E1C43]` — BUKAN font-mono, BUKAN font-bold |
+| Nama pemilik (`a.n. ...`) | `text-xs text-gray-500` — BUKAN text-[11px] |
+
+```jsx
+<p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Transfer {bank}</p>
+<p className="text-sm font-semibold text-[#1E1C43]">{noRek}</p>
+<p className="text-xs text-gray-500 mt-0.5">a.n. {namaRek}</p>
+```
+
+---
+
+**Rincian Layanan table — kolom proporsional dengan tuple array**
+
+Gunakan array `[label, width]` (bukan array string biasa) agar lebar kolom bisa di-set per-header tanpa inline style terpisah. Tambahkan `tableLayout: 'fixed'` pada `<table>` supaya width persen benar-benar diterapkan:
+
+```jsx
+// PP: Deskripsi lebih lebar (32%), kolom angka lebih kecil
+{[
+  ['Deskripsi',    '32%'],
+  ['Harga Persesi','15%'],
+  ['Jumlah Sesi',  '10%'],
+  ['Harga Paket',  '16%'],
+  ['Diskon Paket', '14%'],
+  ['Total',        '13%'],
+].map(([h, w], i) => (
+  <th
+    key={h}
+    style={{ textAlign: i === 0 ? 'left' : 'right', width: w }}
+    className="px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider"
+  >
+    {h}
+  </th>
+))}
+```
+
+```jsx
+<table className="w-full" style={{ tableLayout: 'fixed' }}>
+```
+
+Aturan: Deskripsi selalu `text-left`, kolom angka `text-right`. Jangan biarkan Deskripsi terlalu sempit — alokasikan minimal 30–32% lebar tabel.
+
+---
+
+**Promo / Kode sistem — dua tipe berbeda**
+
+PP Invoice Detail mendukung dua tipe promo yang BERBEDA secara fundamental:
+
+| Tipe | `tipe` field | Effect harga | Visual (edit mode) | Visual (read mode) |
+|---|---|---|---|---|
+| **Diskon** | `'diskon'` | subTipe `persen` atau `nominal` → potong harga | Bubble hijau + nilai potongan | Baris di kalkulasi: `- Rp X.XXX` |
+| **Bonus** | `'bonus'` | Selalu Rp 0 (tidak mempengaruhi harga) | Bubble biru + keterangan | Gift icon di bawah subtotal |
+
+**Store:** `ppPromoStore.js` — `getPromoByKode(kode)` mengembalikan record promo. Field kunci: `{ kode, label, tipe, subTipe, nilai, aktif, keterangan }`.
+
+**Fungsi kalkulasi (wajib):**
+```js
+function calcDiskonVal(applied, base) {
+  if (!applied || applied.tipe !== 'diskon') return 0  // bonus selalu 0
+  return applied.subTipe === 'persen'
+    ? Math.round(base * applied.nilai / 100)
+    : applied.nilai
+}
+```
+
+**Edit mode — bubble diskon (hijau):**
+```jsx
+<div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+  <div>
+    <span className="text-xs font-semibold text-green-700">{kode}</span>
+    <span className="text-xs text-green-600 ml-2">— {label}</span>
+    <span className="text-xs font-bold text-green-700 ml-2">- {formatRp(diskonVal)}</span>
+  </div>
+  <button onClick={removeKode}><X size={14} className="text-green-500" /></button>
+</div>
+```
+
+**Edit mode — bubble bonus (biru):**
+```jsx
+<div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+  <div>
+    <span className="text-xs font-semibold text-blue-700">{kode}</span>
+    <span className="text-xs text-blue-600 ml-2">— {label}</span>
+    {keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{keterangan}</p>}
+  </div>
+  <button onClick={removeKode}><X size={14} className="text-blue-400" /></button>
+</div>
+```
+
+**Read mode — bonus display (di bawah subtotal, bukan di baris kalkulasi):**
+```jsx
+{invoice.promoKode && ['treatment','latihan','produk'].includes(invoice.promoType) && (() => {
+  const p = getPromoByKode(invoice.promoKode)
+  return (
+    <div className="flex items-start gap-2 py-2 border-t border-gray-100 mt-1">
+      <Gift size={13} className="text-blue-500 shrink-0 mt-0.5" />
+      <div>
+        <p className="text-xs font-semibold text-blue-700">{p?.label || invoice.promoKode}</p>
+        {p?.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{p.keterangan}</p>}
+      </div>
+    </div>
+  )
+})()}
+```
+
+**Input kode (default state saat belum ada kode):**
+```jsx
+<div className="flex gap-2">
+  <input
+    placeholder="Masukkan kode voucher atau bonus"
+    className="flex-1 text-xs border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43]"
+  />
+  <button className="px-3 py-2 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold">
+    Terapkan
+  </button>
+</div>
+```
+
+---
+
 ## 4. Activity Log Pattern (Filterable, Appendable)
 
 Used for: Log Aktivitas sections (Order detail, Leads detail, Operasional Lapangan)
