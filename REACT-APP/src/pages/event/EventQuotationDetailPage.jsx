@@ -405,13 +405,22 @@ export default function EventQuotationDetailPage() {
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
             {/* Navy header */}
-            <div className="bg-[#1E1C43] p-6 sm:p-8 grid grid-cols-2 gap-4 text-white">
+            <div className="bg-[#1E1C43] px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-2 gap-4 text-white">
               <div>
-                <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">EFM</p>
-                <p className="text-sm font-bold">{co.namaLegal}</p>
-                <p className="text-xs text-white/70 mt-1 leading-relaxed max-w-xs">{co.alamat}</p>
-                <p className="text-xs text-white/70 mt-1">{co.email}</p>
-                <p className="text-xs text-white/70">{co.telepon}</p>
+                <div className="flex items-start gap-3">
+                  {co.logoPerusahaan ? (
+                    <img src={co.logoPerusahaan} alt="EFM Logo" className="w-20 h-20 rounded-full object-contain shrink-0" />
+                  ) : (
+                    <img src="/logo.png" alt="EFM Logo" className="w-20 h-20 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+                  )}
+                  <div>
+                    <p className="text-base font-bold">{co.namaPerusahaan}</p>
+                    <p className="text-xs text-white/70 mt-0.5">{co.namaLegal}</p>
+                    <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{co.alamat}</p>
+                    <p className="text-xs text-white/70 mt-0.5">{co.email}</p>
+                    <p className="text-xs text-white/70 mt-0.5">{co.telepon}</p>
+                  </div>
+                </div>
               </div>
               <div className="text-right">
                 <p className="text-4xl font-black tracking-tight">QUOTATION</p>
