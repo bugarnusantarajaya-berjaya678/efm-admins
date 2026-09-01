@@ -391,9 +391,9 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Tagihan Kepada */}
-        <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Tagihan Kepada</div>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
             <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
             {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
             {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
@@ -401,8 +401,8 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Rincian Layanan */}
-        <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Rincian Layanan</div>
+        <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Rincian Layanan</div>
           <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
@@ -410,7 +410,7 @@ export default function PPInvoiceDetailPage() {
                   <tr>
                     {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
                       <th key={h}
-                        className="px-2.5 py-3 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
+                        className="px-2.5 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
                         style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
                         {h}
                       </th>
@@ -419,27 +419,27 @@ export default function PPInvoiceDetailPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="px-2.5 py-3 border-b border-gray-100">
+                    <td className="px-2.5 py-2 border-b border-gray-100">
                       <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
                       <div className="text-xs text-gray-500">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
                     </td>
-                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
-                    <td className="px-2.5 py-3 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
-                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPaket)}</td>
-                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-[#27AE60]">
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPaket)}</td>
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-[#27AE60]">
                       {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
                     </td>
-                    <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">
                       {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
                     </td>
                   </tr>
                   {invoice.biayaLain > 0 && (
                     <tr>
-                      <td className="px-2.5 py-3 border-b border-gray-100" colSpan={5}>
+                      <td className="px-2.5 py-2 border-b border-gray-100" colSpan={5}>
                         <div className="font-semibold text-[#1E1C43]">Biaya Tambahan</div>
                         <div className="text-xs text-gray-500">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
                       </td>
-                      <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">{formatRp(invoice.biayaLain)}</td>
+                      <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">{formatRp(invoice.biayaLain)}</td>
                     </tr>
                   )}
                 </tbody>
@@ -447,7 +447,7 @@ export default function PPInvoiceDetailPage() {
             </div>
 
             {/* Subtotal + Diskon di dalam card */}
-            <div className="px-4 py-3 border-t border-gray-200">
+            <div className="px-4 py-2 border-t border-gray-200">
               <div className="flex justify-between items-center py-1 text-sm">
                 <span className="text-gray-600">Subtotal</span>
                 <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
@@ -499,8 +499,8 @@ export default function PPInvoiceDetailPage() {
             </div>
 
             {/* Total Tagihan + paid confirmation di dalam card */}
-            <div className="px-4 pb-4">
-              <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
+            <div className="px-4 pb-3">
+              <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex justify-between items-center">
                 <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
                 <span className="text-base font-black text-[#E05945]">
                   {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
@@ -508,7 +508,7 @@ export default function PPInvoiceDetailPage() {
               </div>
 
               {invoice.status === 'paid' && (
-                <div className="mt-3 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-start gap-3">
+                <div className="mt-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-start gap-3">
                   <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — LUNAS</p>
@@ -535,8 +535,8 @@ export default function PPInvoiceDetailPage() {
 
         {/* Cara Pembayaran */}
         {invoice.status !== 'paid' && (
-          <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran</div>
+          <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Cara Pembayaran</div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
@@ -551,7 +551,7 @@ export default function PPInvoiceDetailPage() {
 
         {/* Catatan Invoice — hidden when empty and not editing */}
         {(editing || invoice.catatan) && (
-          <div className="px-8 py-4 border-t border-gray-100">
+          <div className="px-6 sm:px-8 py-3 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
             {editing ? (
               <textarea
@@ -568,9 +568,9 @@ export default function PPInvoiceDetailPage() {
         )}
 
         {/* Syarat & Ketentuan */}
-        <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Syarat &amp; Ketentuan</div>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
             <ol className="list-decimal list-inside space-y-2">
               {syaratList.map((item, idx) => (
                 <li key={idx} className="text-sm text-gray-600">{item}</li>
@@ -580,7 +580,7 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 sm:px-8 py-5 border-t border-gray-100 text-center">
+        <div className="px-6 sm:px-8 py-3 border-t border-gray-100 text-center">
           <p className="text-[10px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
         </div>
       </div>
