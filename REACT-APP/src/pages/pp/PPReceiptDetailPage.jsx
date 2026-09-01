@@ -28,7 +28,6 @@ function QRVerifikasi({ label, size = 72 }) {
         <rect x="13" y="20" width="6" height="2"/>
       </svg>
       <p className="text-[10px] font-semibold text-[#1E1C43] mt-1.5 text-center tracking-wide">{label}</p>
-      <p className="text-[9px] text-gray-400 mt-0.5 text-center">Tunjukkan setiap sesi</p>
     </div>
   )
 }
@@ -188,18 +187,10 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         </div>
       </div>
 
-      {/* Catatan */}
-      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</p>
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-          <p className="text-sm text-gray-400 italic">Tidak ada catatan.</p>
-        </div>
-      </div>
 
       {/* Footer */}
       <div className="px-6 sm:px-8 py-4 text-center space-y-1">
-        <p className="text-xs text-gray-400">Terima kasih telah mempercayakan program Anda kepada kami.</p>
-        <p className="text-xs text-gray-400">Simpan receipt ini sebagai bukti pembayaran yang sah.</p>
+        <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan receipt ini sebagai bukti pembayaran yang sah.</p>
         <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
       </div>
     </div>
