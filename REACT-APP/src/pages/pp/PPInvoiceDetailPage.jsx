@@ -568,13 +568,15 @@ export default function PPInvoiceDetailPage() {
         )}
 
         {/* Syarat & Ketentuan */}
-        <div className="px-8 py-6 border-t border-gray-100">
+        <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
-          <ol className="list-decimal list-inside space-y-2">
-            {syaratList.map((item, idx) => (
-              <li key={idx} className="text-sm text-gray-600">{item}</li>
-            ))}
-          </ol>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <ol className="list-decimal list-inside space-y-2">
+              {syaratList.map((item, idx) => (
+                <li key={idx} className="text-sm text-gray-600">{item}</li>
+              ))}
+            </ol>
+          </div>
         </div>
 
         {/* Footer */}
