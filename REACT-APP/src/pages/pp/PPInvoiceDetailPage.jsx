@@ -392,10 +392,12 @@ export default function PPInvoiceDetailPage() {
 
         {/* Tagihan Kepada */}
         <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
-          <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
-          {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
-          {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Tagihan Kepada</div>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
+            {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
+            {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
+          </div>
         </div>
 
         {/* Tabel Rincian Layanan */}
