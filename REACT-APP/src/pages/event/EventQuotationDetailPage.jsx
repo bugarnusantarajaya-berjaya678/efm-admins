@@ -1,11 +1,10 @@
 import { useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, Trash2, Send, Eye, EyeOff, Mail, MessageCircle, CheckCircle, RotateCcw, FileText } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, Trash2, Send, Mail, MessageCircle, CheckCircle, RotateCcw, FileText, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { initQuotations, getStoredQuotations, addStoredQuotation, updateStoredQuotation, getNextQuotationId, QUOTATIONS_INIT } from '../../data/eventQuotationsStore'
 import { getCompanySettings } from '../../utils/companySettings'
 
-/* ── Status badge ── */
 const STATUS_CLS = {
   Draft:     'bg-yellow-50 text-yellow-700 border-yellow-200',
   Terkirim:  'bg-blue-50 text-blue-700 border-blue-200',
@@ -33,140 +32,6 @@ function Toast({ message, onClose }) {
   )
 }
 
-/* ════════════════════════════════
-   PREVIEW DOKUMEN QUOTATION
-════════════════════════════════ */
-function QuotationDocument({ quotation, subtotal, afterMgmt, afterTax }) {
-  const co = getCompanySettings()
-  return (
-    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden print:shadow-none">
-      {/* Header navy */}
-      <div className="bg-[#1E1C43] p-6 grid grid-cols-2 gap-4 text-white">
-        <div>
-          <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">EFM</p>
-          <p className="text-sm font-bold">{co.namaLegal}</p>
-          <p className="text-xs text-white/70 mt-1 leading-relaxed max-w-xs">{co.alamat}</p>
-          <p className="text-xs text-white/70 mt-1">{co.email}</p>
-          <p className="text-xs text-white/70">{co.telepon}</p>
-        </div>
-        <div className="text-right">
-          <p className="text-4xl font-black tracking-tight">QUOTATION</p>
-          <p className="text-sm font-semibold mt-1 text-white/80">#{quotation.id}</p>
-          <div className="mt-3 space-y-0.5 text-xs text-white/70">
-            <p>Tanggal: <span className="text-white font-medium">{quotation.tanggalDibuat}</span></p>
-            <p>Berlaku s/d: <span className="text-white font-medium">{quotation.tanggalBerlaku || '—'}</span></p>
-          </div>
-          <div className="mt-2">
-            <span className={`px-2 py-1 text-xs rounded-full font-medium ${
-              quotation.status === 'Disetujui' ? 'bg-green-400 text-green-900' :
-              quotation.status === 'Terkirim'  ? 'bg-blue-300 text-blue-900' :
-              quotation.status === 'Revisi'    ? 'bg-red-300 text-red-900' :
-              'bg-yellow-400 text-yellow-900'
-            }`}>{quotation.status}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Ditujukan Kepada */}
-      <div className="px-6 pt-5 pb-4 border-b border-gray-100">
-        <p className="text-xs uppercase tracking-wide text-gray-400 mb-1">Ditujukan Kepada</p>
-        <p className="text-sm font-bold text-[#1E1C43]">{quotation.namaKlien}</p>
-        {quotation.namaEvent && (
-          <p className="text-sm text-gray-500 mt-0.5">{quotation.namaEvent}</p>
-        )}
-        {quotation.leadId && (
-          <p className="text-xs text-gray-400 mt-0.5">Lead: {quotation.leadId}</p>
-        )}
-      </div>
-
-      {/* Rincian Layanan */}
-      <div className="px-6 pt-4 pb-2">
-        <p className="text-xs uppercase tracking-wide text-gray-400 mb-3">Rincian Layanan</p>
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-200">
-              <th className="text-left pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Deskripsi</th>
-              <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Qty</th>
-              <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Satuan</th>
-              <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Harga Satuan</th>
-              <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            {quotation.items.map((it, i) => (
-              <tr key={it.id} className={i < quotation.items.length - 1 ? 'border-b border-gray-100' : ''}>
-                <td className="py-2.5 text-gray-700">{it.deskripsi}</td>
-                <td className="py-2.5 text-right px-3 text-gray-600">{it.qty}</td>
-                <td className="py-2.5 text-right px-3 text-gray-600">{it.satuan}</td>
-                <td className="py-2.5 text-right px-3 text-gray-600">{formatRp(it.harga)}</td>
-                <td className="py-2.5 text-right font-semibold text-[#1E1C43]">{formatRp(it.qty * it.harga)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Kalkulasi */}
-      <div className="px-6 py-4 border-t border-gray-100">
-        <div className="flex justify-end">
-          <div className="w-64 space-y-1.5">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Subtotal</span>
-              <span className="font-semibold text-[#1E1C43]">{formatRp(subtotal)}</span>
-            </div>
-            {quotation.managementFee?.aktif && (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">+ Management Fee ({quotation.managementFee.persen}%)</span>
-                <span className="text-gray-600">+{formatRp(afterMgmt - subtotal)}</span>
-              </div>
-            )}
-            {quotation.pajak.map(p => (
-              <div key={p.id} className="flex justify-between text-sm">
-                <span className="text-gray-500">{p.tipe === '-' ? '−' : '+'} {p.nama} ({p.persentase}%)</span>
-                <span className="text-gray-600">{p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}</span>
-              </div>
-            ))}
-            <div className="border-t border-gray-200 pt-2 mt-1">
-              <div className="flex justify-between items-center bg-[#1E1C43] rounded-lg px-3 py-2.5">
-                <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
-                <span className="text-base font-black text-[#E05945]">{formatRp(afterTax)}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Catatan */}
-      {quotation.catatan && (
-        <div className="px-6 py-4 border-t border-gray-100">
-          <p className="text-xs uppercase tracking-wide text-gray-400 mb-1.5">Catatan</p>
-          <p className="text-sm text-gray-700 leading-relaxed">{quotation.catatan}</p>
-        </div>
-      )}
-
-      {/* Syarat & Ketentuan */}
-      {(quotation.syaratKetentuan || DEFAULT_SYARAT).length > 0 && (
-        <div className="px-6 py-4 border-t border-gray-100">
-          <p className="text-xs uppercase tracking-wide text-gray-400 mb-2">Syarat & Ketentuan</p>
-          <ol className="list-decimal list-inside space-y-1">
-            {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
-              <li key={i} className="text-xs text-gray-600">{s}</li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      {/* Footer */}
-      <div className="px-6 py-4 border-t border-gray-100 text-center">
-        <p className="text-xs text-gray-400">Dokumen ini digenerate oleh sistem EFM V2</p>
-      </div>
-    </div>
-  )
-}
-
-/* ════════════════════════════════
-   MODAL KIRIM
-════════════════════════════════ */
 function KirimModal({ quotation, onClose, onKirim }) {
   const [email, setEmail] = useState('')
   const [waEnabled, setWaEnabled] = useState(false)
@@ -190,8 +55,6 @@ function KirimModal({ quotation, onClose, onKirim }) {
           <button onClick={onClose}><X size={20} className="text-gray-400" /></button>
         </div>
         <div className="overflow-y-auto flex-1 p-5 space-y-4">
-
-          {/* Email */}
           <div>
             <label className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1.5 flex items-center gap-1.5">
               <Mail size={12} /> Email Klien <span className="text-red-400">*</span>
@@ -204,8 +67,6 @@ function KirimModal({ quotation, onClose, onKirim }) {
               className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
             />
           </div>
-
-          {/* WA */}
           <div>
             <label className="flex items-center gap-2 cursor-pointer select-none mb-2">
               <input type="checkbox" checked={waEnabled} onChange={e => setWaEnabled(e.target.checked)}
@@ -224,8 +85,6 @@ function KirimModal({ quotation, onClose, onKirim }) {
               />
             )}
           </div>
-
-          {/* Lampiran info */}
           <div className="bg-gray-50 rounded-xl p-4">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1.5">
               <FileText size={12} /> Lampiran
@@ -263,20 +122,17 @@ function KirimModal({ quotation, onClose, onKirim }) {
   )
 }
 
-/* ════════════════════════════════
-   MAIN PAGE
-════════════════════════════════ */
 export default function EventQuotationDetailPage() {
   useBreadcrumb([
-    { label: 'Event', path: '/event/leads' },
+    { label: 'B2B Event', path: '/event/leads' },
     { label: 'Quotation', path: '/event/quotation' },
   ])
 
   const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const co = getCompanySettings()
   const [toast, setToast] = useState(null)
-  const [showPreview, setShowPreview] = useState(false)
   const [showKirimModal, setShowKirimModal] = useState(false)
 
   function showToast(msg) {
@@ -287,7 +143,6 @@ export default function EventQuotationDetailPage() {
   initQuotations(QUOTATIONS_INIT)
   const allQuotations = getStoredQuotations()
 
-  /* ── New quotation mode ── */
   const isNew = id === 'new' || !id
   const fromLead = location.state?.fromLead
   const leadId = location.state?.leadId || ''
@@ -295,7 +150,6 @@ export default function EventQuotationDetailPage() {
   const namaEvent = location.state?.namaEvent || ''
   const konsultasiId = location.state?.konsultasiId || ''
 
-  /* ── Existing quotation ── */
   const existing = !isNew ? allQuotations.find(q => q.id === id) : null
 
   const [quotation, setQuotation] = useState(() => {
@@ -326,7 +180,6 @@ export default function EventQuotationDetailPage() {
 
   const [editing, setEditing] = useState(isNew)
 
-  /* ── Calculations ── */
   const subtotal = quotation.items.reduce((s, it) => s + (it.qty * it.harga), 0)
   const mgmtFeeAmt = quotation.managementFee?.aktif
     ? Math.round(subtotal * (quotation.managementFee.persen / 100))
@@ -337,7 +190,6 @@ export default function EventQuotationDetailPage() {
     return p.tipe === '+' ? s + amt : s - amt
   }, afterMgmt)
 
-  /* ── Line item helpers ── */
   function updateItem(itemId, field, value) {
     setQuotation(prev => ({
       ...prev,
@@ -356,7 +208,6 @@ export default function EventQuotationDetailPage() {
     setQuotation(prev => ({ ...prev, items: prev.items.filter(it => it.id !== itemId) }))
   }
 
-  /* ── Pajak helpers ── */
   function updatePajak(pajakId, field, value) {
     setQuotation(prev => ({
       ...prev,
@@ -375,7 +226,6 @@ export default function EventQuotationDetailPage() {
     setQuotation(prev => ({ ...prev, pajak: prev.pajak.filter(p => p.id !== pajakId) }))
   }
 
-  /* ── Syarat & Ketentuan helpers ── */
   function updateSyarat(idx, value) {
     setQuotation(prev => {
       const arr = [...(prev.syaratKetentuan || DEFAULT_SYARAT)]
@@ -398,7 +248,6 @@ export default function EventQuotationDetailPage() {
     }))
   }
 
-  /* ── Save ── */
   function handleSave() {
     const saved = { ...quotation, nilaiSubtotal: subtotal, nilaiTotal: afterTax }
     if (isNew) {
@@ -416,7 +265,6 @@ export default function EventQuotationDetailPage() {
     }
   }
 
-  /* ── Status changes ── */
   function handleStatusChange(newStatus) {
     setQuotation(prev => {
       const updated = { ...prev, status: newStatus }
@@ -426,7 +274,6 @@ export default function EventQuotationDetailPage() {
     showToast(`✓ Status diubah ke ${newStatus}`)
   }
 
-  /* ── Kirim ── */
   function handleKirim(email, waNum) {
     handleStatusChange('Terkirim')
     setShowKirimModal(false)
@@ -449,7 +296,6 @@ export default function EventQuotationDetailPage() {
     showToast(`✓ Quotation dikirim ke ${email}${waNum ? ' & WA ' + waNum : ''}`)
   }
 
-  /* ── Buat Order ── */
   function handleBuatOrder() {
     navigate('/event/orders/new', {
       state: {
@@ -476,35 +322,52 @@ export default function EventQuotationDetailPage() {
 
   return (
     <>
-      <div className="space-y-5">
+      <div className="space-y-5 pb-24">
 
-        {/* ── Header card ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        {/* ── Page header card ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
           <div className="flex items-start justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">{quotation.id}</p>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{quotation.namaKlien}</h1>
-              <p className="text-xs text-gray-500 mt-0.5">{quotation.namaEvent}</p>
-              <div className="flex items-center gap-2 mt-2 flex-wrap">
-                <span className={`px-2 py-1 text-xs rounded-full font-medium border ${statusCls}`}>{quotation.status}</span>
-                <span className="text-xs text-gray-400">Dibuat {quotation.tanggalDibuat}</span>
-                {quotation.tanggalBerlaku && (
-                  <span className="text-xs text-gray-400">· Berlaku s/d {quotation.tanggalBerlaku}</span>
-                )}
+
+            {/* Left: icon + title */}
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0 mt-0.5">
+                <ScrollText size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Quotation B2B Event</p>
+                <h1 className="text-base font-bold text-[#1E1C43]">
+                  {isNew ? 'Buat Quotation Baru' : `Quotation #${quotation.id}`}
+                </h1>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  {quotation.namaKlien && (
+                    <span className="text-sm font-medium text-gray-700">{quotation.namaKlien}</span>
+                  )}
+                  {quotation.namaEvent && (
+                    <span className="text-xs text-gray-400">— {quotation.namaEvent}</span>
+                  )}
+                  {!isNew && (
+                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border ${statusCls}`}>
+                      {quotation.status}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 mt-1 flex-wrap">
+                  {quotation.picEFM && (
+                    <span className="text-[10px] text-gray-400">PIC: <span className="font-medium text-gray-500">{quotation.picEFM}</span></span>
+                  )}
+                  {quotation.leadId && (
+                    <span className="text-[10px] text-gray-400">Lead: <span className="font-medium text-gray-500">{quotation.leadId}</span></span>
+                  )}
+                  {quotation.konsultasiId && (
+                    <span className="text-[10px] text-gray-400">Konsultasi: <span className="font-medium text-gray-500">{quotation.konsultasiId}</span></span>
+                  )}
+                </div>
               </div>
             </div>
 
+            {/* Right: action buttons */}
             <div className="flex items-center gap-2 flex-wrap">
-              {/* Preview toggle */}
-              {!isNew && (
-                <button
-                  onClick={() => setShowPreview(p => !p)}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                  {showPreview ? <><EyeOff size={12} /> Tutup Preview</> : <><Eye size={12} /> Preview Dokumen</>}
-                </button>
-              )}
-
-              {/* Kirim — saat Draft atau Revisi */}
+              {/* Kirim — Draft or Revisi */}
               {!editing && !isNew && (quotation.status === 'Draft' || quotation.status === 'Revisi') && (
                 <button
                   onClick={() => setShowKirimModal(true)}
@@ -513,7 +376,7 @@ export default function EventQuotationDetailPage() {
                 </button>
               )}
 
-              {/* Status action saat Terkirim: Setujui | Revisi */}
+              {/* Terkirim: Setujui | Revisi */}
               {!editing && !isNew && quotation.status === 'Terkirim' && (
                 <>
                   <button
@@ -529,7 +392,7 @@ export default function EventQuotationDetailPage() {
                 </>
               )}
 
-              {/* Buat Order — hanya saat Disetujui */}
+              {/* Buat Order — Disetujui */}
               {!editing && !isNew && quotation.status === 'Disetujui' && (
                 <button
                   onClick={handleBuatOrder}
@@ -538,31 +401,9 @@ export default function EventQuotationDetailPage() {
                 </button>
               )}
 
-              {/* Edit / Simpan / Batal */}
-              {!editing && (
-                <button
-                  onClick={() => setEditing(true)}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] hover:opacity-90 text-white text-xs font-semibold transition-opacity">
-                  <Edit2 size={12} /> Edit
-                </button>
-              )}
-              {editing && (
-                <>
-                  <button onClick={handleSave}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                    <Save size={12} /> Simpan
-                  </button>
-                  {!isNew && (
-                    <button onClick={() => setEditing(false)}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                      <X size={12} /> Batal
-                    </button>
-                  )}
-                </>
-              )}
-
+              {/* Kembali */}
               <button
-                onClick={() => navigate(quotation.leadId ? `/event/leads/${quotation.leadId}` : '/event/leads')}
+                onClick={() => navigate(quotation.leadId ? `/event/leads/${quotation.leadId}` : '/event/quotation')}
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                 <ArrowLeft size={12} /> Kembali
               </button>
@@ -570,233 +411,351 @@ export default function EventQuotationDetailPage() {
           </div>
         </div>
 
-        {/* ── Preview Dokumen ── */}
-        {showPreview && !isNew && (
-          <QuotationDocument quotation={quotation} subtotal={subtotal} afterMgmt={afterMgmt} afterTax={afterTax} />
-        )}
+        {/* ── Document card ── */}
+        <div className="max-w-4xl mx-auto w-full">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
 
-        {/* ── Info singkat KPI ── */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'PIC EFM', value: quotation.picEFM },
-            { label: 'Lead ID', value: quotation.leadId || '-' },
-            { label: 'Konsultasi', value: quotation.konsultasiId || '-' },
-            { label: 'Total Tagihan', value: formatRp(afterTax) },
-          ].map(f => (
-            <div key={f.label} className="bg-white rounded-xl border border-gray-200 p-4">
-              <p className="text-xs uppercase tracking-wide text-gray-400">{f.label}</p>
-              <p className="text-sm font-semibold text-[#1E1C43] mt-1 truncate">{f.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* ── Rincian Layanan ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Rincian Layanan</h3>
-            {editing && (
-              <button onClick={addItem}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                <Plus size={12} /> Tambah Baris
-              </button>
-            )}
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full" style={{ minWidth: '700px' }}>
-              <thead>
-                <tr className="border-b border-gray-200">
-                  {['Deskripsi', 'Qty', 'Satuan', 'Harga Satuan', 'Total', editing ? '' : null].filter(Boolean).map(h => (
-                    <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {quotation.items.map(it => {
-                  const total = it.qty * it.harga
-                  return (
-                    <tr key={it.id} className="border-b border-gray-100 last:border-0">
-                      <td className="px-4 py-3">
-                        {editing ? (
-                          <input value={it.deskripsi} onChange={e => updateItem(it.id, 'deskripsi', e.target.value)}
-                            className="w-full px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:border-[#1E1C43]" />
-                        ) : (
-                          <span className="text-sm text-gray-700">{it.deskripsi}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editing ? (
-                          <input type="number" value={it.qty} onChange={e => updateItem(it.id, 'qty', Number(e.target.value))}
-                            className="w-16 px-2 py-1 border border-gray-200 rounded text-sm text-right focus:outline-none focus:border-[#1E1C43]" />
-                        ) : (
-                          <span className="text-sm text-gray-700">{it.qty}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editing ? (
-                          <input value={it.satuan} onChange={e => updateItem(it.id, 'satuan', e.target.value)}
-                            className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:border-[#1E1C43]" />
-                        ) : (
-                          <span className="text-sm text-gray-700">{it.satuan}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        {editing ? (
-                          <input type="number" value={it.harga} onChange={e => updateItem(it.id, 'harga', Number(e.target.value))}
-                            className="w-36 px-2 py-1 border border-gray-200 rounded text-sm text-right focus:outline-none focus:border-[#1E1C43]" />
-                        ) : (
-                          <span className="text-sm text-gray-700">{formatRp(it.harga)}</span>
-                        )}
-                      </td>
-                      <td className="px-4 py-3">
-                        <span className="text-sm font-semibold text-[#1E1C43]">{formatRp(total)}</span>
-                      </td>
-                      {editing && (
-                        <td className="px-4 py-3">
-                          <button onClick={() => removeItem(it.id)} className="text-red-400 hover:text-red-600 transition-colors">
-                            <Trash2 size={14} />
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          {/* ── Kalkulasi ── */}
-          <div className="px-5 py-4 border-t border-gray-100 space-y-2">
-            <div className="flex justify-end">
-              <div className="w-72 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500">Subtotal</span>
-                  <span className="font-semibold text-[#1E1C43]">{formatRp(subtotal)}</span>
+            {/* Navy header */}
+            <div className="bg-[#1E1C43] p-6 sm:p-8 grid grid-cols-2 gap-4 text-white">
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest text-white/60 mb-1">EFM</p>
+                <p className="text-sm font-bold">{co.namaLegal}</p>
+                <p className="text-xs text-white/70 mt-1 leading-relaxed max-w-xs">{co.alamat}</p>
+                <p className="text-xs text-white/70 mt-1">{co.email}</p>
+                <p className="text-xs text-white/70">{co.telepon}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-4xl font-black tracking-tight">QUOTATION</p>
+                <p className="text-sm font-semibold mt-1 text-white/80">#{quotation.id}</p>
+                <div className="mt-3 space-y-1.5 text-xs text-white/70">
+                  {editing ? (
+                    <>
+                      <div className="flex items-center justify-end gap-2">
+                        <span>Tanggal:</span>
+                        <input
+                          type="date"
+                          value={quotation.tanggalDibuat}
+                          onChange={e => setQuotation(prev => ({ ...prev, tanggalDibuat: e.target.value }))}
+                          className="bg-white/10 border border-white/20 rounded px-2 py-0.5 text-white text-xs focus:outline-none" />
+                      </div>
+                      <div className="flex items-center justify-end gap-2">
+                        <span>Berlaku s/d:</span>
+                        <input
+                          type="date"
+                          value={quotation.tanggalBerlaku}
+                          onChange={e => setQuotation(prev => ({ ...prev, tanggalBerlaku: e.target.value }))}
+                          className="bg-white/10 border border-white/20 rounded px-2 py-0.5 text-white text-xs focus:outline-none" />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <p>Tanggal: <span className="text-white font-medium">{quotation.tanggalDibuat}</span></p>
+                      <p>Berlaku s/d: <span className="text-white font-medium">{quotation.tanggalBerlaku || '—'}</span></p>
+                    </>
+                  )}
                 </div>
-
-                {/* Management Fee */}
-                <div className="flex justify-between text-sm items-center gap-2">
-                  <div className="flex items-center gap-2 flex-1">
-                    <input type="checkbox"
-                      checked={quotation.managementFee?.aktif ?? false}
-                      onChange={() => setQuotation(prev => ({
-                        ...prev,
-                        managementFee: { ...(prev.managementFee ?? { persen: 0 }), aktif: !prev.managementFee?.aktif }
-                      }))}
-                      disabled={!editing}
-                      className="w-3.5 h-3.5 accent-[#1E1C43]" />
-                    <span className="text-gray-500">Management Fee</span>
-                    {quotation.managementFee?.aktif && editing && (
-                      <input type="number" min={0} max={100}
-                        value={quotation.managementFee.persen}
-                        onChange={e => setQuotation(prev => ({
-                          ...prev,
-                          managementFee: { ...prev.managementFee, persen: Number(e.target.value) }
-                        }))}
-                        className="w-14 px-1.5 py-0.5 border border-gray-200 rounded text-xs text-right focus:outline-none" />
-                    )}
-                    {quotation.managementFee?.aktif && (
-                      <span className="text-xs text-gray-400">
-                        {editing ? '%' : `${quotation.managementFee.persen}%`}
-                      </span>
-                    )}
-                  </div>
-                  <span className="font-medium text-gray-700">
-                    {quotation.managementFee?.aktif ? `+${formatRp(mgmtFeeAmt)}` : '—'}
-                  </span>
-                </div>
-
-                {quotation.pajak.map(p => (
-                  <div key={p.id} className="flex justify-between text-sm items-center gap-2">
-                    {editing ? (
-                      <>
-                        <div className="flex items-center gap-1 flex-1">
-                          <select value={p.tipe} onChange={e => updatePajak(p.id, 'tipe', e.target.value)}
-                            className="px-1 py-0.5 border border-gray-200 rounded text-xs focus:outline-none">
-                            <option value="+">+</option>
-                            <option value="-">-</option>
-                          </select>
-                          <input value={p.nama} onChange={e => updatePajak(p.id, 'nama', e.target.value)}
-                            className="flex-1 px-1.5 py-0.5 border border-gray-200 rounded text-xs focus:outline-none" />
-                          <input type="number" value={p.persentase} onChange={e => updatePajak(p.id, 'persentase', Number(e.target.value))}
-                            className="w-14 px-1.5 py-0.5 border border-gray-200 rounded text-xs text-right focus:outline-none" />
-                          <span className="text-xs text-gray-400">%</span>
-                          <button onClick={() => removePajak(p.id)} className="text-red-400 hover:text-red-600"><Trash2 size={12} /></button>
-                        </div>
-                        <span className="text-gray-500 w-28 text-right">
-                          {p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-gray-500">{p.tipe === '-' ? '−' : '+'} {p.nama} ({p.persentase}%)</span>
-                        <span className="font-medium text-gray-700">{p.tipe}{formatRp(subtotal * (p.persentase / 100))}</span>
-                      </>
-                    )}
-                  </div>
-                ))}
-
-                {editing && (
-                  <button onClick={addPajak}
-                    className="text-xs text-[#E05945] hover:underline flex items-center gap-1">
-                    <Plus size={11} /> Tambah Pajak / Potongan
-                  </button>
-                )}
-
-                <div className="border-t border-gray-200 pt-2 flex justify-between items-center">
-                  <span className="text-sm font-bold text-[#1E1C43]">TOTAL TAGIHAN</span>
-                  <span className="text-lg font-bold text-[#E05945]">{formatRp(afterTax)}</span>
+                <div className="mt-3">
+                  <span className={`px-2 py-1 text-xs rounded-full font-medium ${
+                    quotation.status === 'Disetujui' ? 'bg-green-400 text-green-900' :
+                    quotation.status === 'Terkirim'  ? 'bg-blue-300 text-blue-900' :
+                    quotation.status === 'Revisi'    ? 'bg-red-300 text-red-900' :
+                    'bg-yellow-400 text-yellow-900'
+                  }`}>{quotation.status}</span>
                 </div>
               </div>
             </div>
+
+            {/* Ditujukan Kepada */}
+            <div className="px-6 sm:px-8 pt-6 pb-5 border-b border-gray-100">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Kepada</div>
+              {editing ? (
+                <div className="space-y-2">
+                  <input
+                    value={quotation.namaKlien}
+                    onChange={e => setQuotation(prev => ({ ...prev, namaKlien: e.target.value }))}
+                    placeholder="Nama klien / perusahaan"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm font-bold text-[#1E1C43] focus:outline-none focus:border-[#1E1C43]" />
+                  <input
+                    value={quotation.namaEvent}
+                    onChange={e => setQuotation(prev => ({ ...prev, namaEvent: e.target.value }))}
+                    placeholder="Nama event"
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43]" />
+                  <div className="flex gap-2">
+                    <input
+                      value={quotation.leadId}
+                      onChange={e => setQuotation(prev => ({ ...prev, leadId: e.target.value }))}
+                      placeholder="Lead ID (mis. LE-0001)"
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-500 focus:outline-none focus:border-[#1E1C43]" />
+                    <input
+                      value={quotation.picEFM}
+                      onChange={e => setQuotation(prev => ({ ...prev, picEFM: e.target.value }))}
+                      placeholder="PIC EFM"
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-500 focus:outline-none focus:border-[#1E1C43]" />
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-[18px] font-bold text-[#1E1C43]">{quotation.namaKlien}</p>
+                  {quotation.namaEvent && (
+                    <p className="text-sm text-gray-500 mt-0.5">{quotation.namaEvent}</p>
+                  )}
+                  {quotation.leadId && (
+                    <p className="text-xs text-gray-400 mt-1">Lead: {quotation.leadId}</p>
+                  )}
+                  {quotation.picEFM && (
+                    <p className="text-xs text-gray-400 mt-0.5">PIC EFM: {quotation.picEFM}</p>
+                  )}
+                </>
+              )}
+            </div>
+
+            {/* Rincian Layanan */}
+            <div className="px-6 sm:px-8 pt-6 pb-2">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Rincian Layanan</div>
+                {editing && (
+                  <button onClick={addItem}
+                    className="flex items-center gap-1 text-xs text-[#E05945] hover:underline font-medium">
+                    <Plus size={11} /> Tambah Baris
+                  </button>
+                )}
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm" style={{ minWidth: '580px' }}>
+                  <thead>
+                    <tr className="border-b border-gray-200">
+                      <th className="text-left pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Deskripsi</th>
+                      <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Qty</th>
+                      <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Satuan</th>
+                      <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap px-3">Harga Satuan</th>
+                      <th className="text-right pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">Total</th>
+                      {editing && <th className="pb-2 w-8"></th>}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {quotation.items.map((it, i) => {
+                      const total = it.qty * it.harga
+                      return (
+                        <tr key={it.id} className={i < quotation.items.length - 1 ? 'border-b border-gray-100' : ''}>
+                          <td className="py-2.5">
+                            {editing ? (
+                              <input value={it.deskripsi} onChange={e => updateItem(it.id, 'deskripsi', e.target.value)}
+                                className="w-full px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:border-[#1E1C43]" />
+                            ) : (
+                              <span className="text-gray-700">{it.deskripsi}</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-right">
+                            {editing ? (
+                              <input type="number" value={it.qty} onChange={e => updateItem(it.id, 'qty', Number(e.target.value))}
+                                className="w-16 px-2 py-1 border border-gray-200 rounded text-sm text-right focus:outline-none focus:border-[#1E1C43]" />
+                            ) : (
+                              <span className="text-gray-600">{it.qty}</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-right">
+                            {editing ? (
+                              <input value={it.satuan} onChange={e => updateItem(it.id, 'satuan', e.target.value)}
+                                className="w-24 px-2 py-1 border border-gray-200 rounded text-sm focus:outline-none focus:border-[#1E1C43]" />
+                            ) : (
+                              <span className="text-gray-600">{it.satuan}</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-right">
+                            {editing ? (
+                              <input type="number" value={it.harga} onChange={e => updateItem(it.id, 'harga', Number(e.target.value))}
+                                className="w-36 px-2 py-1 border border-gray-200 rounded text-sm text-right focus:outline-none focus:border-[#1E1C43]" />
+                            ) : (
+                              <span className="text-gray-600">{formatRp(it.harga)}</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 text-right">
+                            <span className="font-semibold text-[#1E1C43]">{formatRp(total)}</span>
+                          </td>
+                          {editing && (
+                            <td className="py-2.5 pl-2">
+                              <button onClick={() => removeItem(it.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                                <Trash2 size={13} />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Kalkulasi */}
+            <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+              <div className="flex justify-end">
+                <div className="w-72 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Subtotal</span>
+                    <span className="font-semibold text-[#1E1C43]">{formatRp(subtotal)}</span>
+                  </div>
+
+                  {/* Management Fee */}
+                  <div className="flex justify-between text-sm items-center gap-2">
+                    <div className="flex items-center gap-2 flex-1">
+                      <input type="checkbox"
+                        checked={quotation.managementFee?.aktif ?? false}
+                        onChange={() => setQuotation(prev => ({
+                          ...prev,
+                          managementFee: { ...(prev.managementFee ?? { persen: 0 }), aktif: !prev.managementFee?.aktif }
+                        }))}
+                        disabled={!editing}
+                        className="w-3.5 h-3.5 accent-[#1E1C43]" />
+                      <span className="text-gray-500">Management Fee</span>
+                      {quotation.managementFee?.aktif && editing && (
+                        <input type="number" min={0} max={100}
+                          value={quotation.managementFee.persen}
+                          onChange={e => setQuotation(prev => ({
+                            ...prev,
+                            managementFee: { ...prev.managementFee, persen: Number(e.target.value) }
+                          }))}
+                          className="w-14 px-1.5 py-0.5 border border-gray-200 rounded text-xs text-right focus:outline-none" />
+                      )}
+                      {quotation.managementFee?.aktif && (
+                        <span className="text-xs text-gray-400">
+                          {editing ? '%' : `${quotation.managementFee.persen}%`}
+                        </span>
+                      )}
+                    </div>
+                    <span className="font-medium text-gray-700">
+                      {quotation.managementFee?.aktif ? `+${formatRp(mgmtFeeAmt)}` : '—'}
+                    </span>
+                  </div>
+
+                  {/* Pajak */}
+                  {quotation.pajak.map(p => (
+                    <div key={p.id} className="flex justify-between text-sm items-center gap-2">
+                      {editing ? (
+                        <>
+                          <div className="flex items-center gap-1 flex-1">
+                            <select value={p.tipe} onChange={e => updatePajak(p.id, 'tipe', e.target.value)}
+                              className="px-1 py-0.5 border border-gray-200 rounded text-xs focus:outline-none">
+                              <option value="+">+</option>
+                              <option value="-">-</option>
+                            </select>
+                            <input value={p.nama} onChange={e => updatePajak(p.id, 'nama', e.target.value)}
+                              className="flex-1 px-1.5 py-0.5 border border-gray-200 rounded text-xs focus:outline-none" />
+                            <input type="number" value={p.persentase} onChange={e => updatePajak(p.id, 'persentase', Number(e.target.value))}
+                              className="w-14 px-1.5 py-0.5 border border-gray-200 rounded text-xs text-right focus:outline-none" />
+                            <span className="text-xs text-gray-400">%</span>
+                            <button onClick={() => removePajak(p.id)} className="text-red-400 hover:text-red-600"><Trash2 size={12} /></button>
+                          </div>
+                          <span className="text-gray-500 w-28 text-right">
+                            {p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-gray-500">{p.tipe === '-' ? '−' : '+'} {p.nama} ({p.persentase}%)</span>
+                          <span className="font-medium text-gray-700">{p.tipe}{formatRp(afterMgmt * (p.persentase / 100))}</span>
+                        </>
+                      )}
+                    </div>
+                  ))}
+
+                  {editing && (
+                    <button onClick={addPajak}
+                      className="text-xs text-[#E05945] hover:underline flex items-center gap-1">
+                      <Plus size={11} /> Tambah Pajak / Potongan
+                    </button>
+                  )}
+
+                  <div className="border-t border-gray-200 pt-2">
+                    <div className="flex justify-between items-center bg-[#1E1C43] rounded-xl px-3 py-2.5">
+                      <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
+                      <span className="text-base font-black text-[#E05945]">{formatRp(afterTax)}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Catatan */}
+            <div className="px-6 sm:px-8 py-5 border-t border-gray-100">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
+              {editing ? (
+                <textarea
+                  value={quotation.catatan}
+                  onChange={e => setQuotation(prev => ({ ...prev, catatan: e.target.value }))}
+                  placeholder="Catatan untuk klien..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none" />
+              ) : (
+                quotation.catatan
+                  ? <p className="text-sm text-gray-600 leading-relaxed">{quotation.catatan}</p>
+                  : <p className="text-sm text-gray-400 italic">Tidak ada catatan.</p>
+              )}
+            </div>
+
+            {/* Syarat & Ketentuan */}
+            <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
+              {editing ? (
+                <div className="space-y-2">
+                  {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <span className="text-xs text-gray-400 mt-2 w-4 shrink-0">{i + 1}.</span>
+                      <input value={s} onChange={e => updateSyarat(i, e.target.value)}
+                        className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]" />
+                      <button onClick={() => removeSyarat(i)} className="text-red-400 hover:text-red-600 mt-1.5 shrink-0">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ))}
+                  <button onClick={addSyarat}
+                    className="text-xs text-[#E05945] hover:underline flex items-center gap-1 mt-1">
+                    <Plus size={11} /> Tambah Baris
+                  </button>
+                </div>
+              ) : (
+                <ol className="list-decimal list-inside space-y-2">
+                  {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
+                    <li key={i} className="text-sm text-gray-600">{s}</li>
+                  ))}
+                </ol>
+              )}
+            </div>
+
+            {/* Document footer */}
+            <div className="px-6 sm:px-8 py-5 border-t border-gray-100 text-center">
+              <p className="text-[10px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
+            </div>
+
           </div>
         </div>
 
-        {/* ── Catatan ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Catatan</h3>
-          {editing ? (
-            <textarea rows={3} value={quotation.catatan}
-              onChange={e => setQuotation(prev => ({ ...prev, catatan: e.target.value }))}
-              placeholder="Catatan untuk klien..."
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
-          ) : (
-            <p className={`text-sm ${quotation.catatan ? 'text-gray-700' : 'text-gray-400 italic'}`}>
-              {quotation.catatan || 'Tidak ada catatan.'}
-            </p>
-          )}
-        </div>
+      </div>
 
-        {/* ── Syarat & Ketentuan ── */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Syarat &amp; Ketentuan</h3>
-          {editing ? (
-            <div className="space-y-2">
-              {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className="text-xs text-gray-400 mt-2 w-4 shrink-0">{i + 1}.</span>
-                  <input value={s} onChange={e => updateSyarat(i, e.target.value)}
-                    className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]" />
-                  <button onClick={() => removeSyarat(i)} className="text-red-400 hover:text-red-600 mt-1.5 shrink-0">
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-              <button onClick={addSyarat}
-                className="text-xs text-[#E05945] hover:underline flex items-center gap-1 mt-1">
-                <Plus size={11} /> Tambah Baris
+      {/* ── Sticky footer — Edit / Simpan / Batal ── */}
+      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 z-40">
+        {editing ? (
+          <>
+            {!isNew && (
+              <button
+                onClick={() => setEditing(false)}
+                className="border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+                Batal
               </button>
-            </div>
-          ) : (
-            <ol className="list-decimal list-inside space-y-1.5">
-              {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
-                <li key={i} className="text-sm text-gray-700">{s}</li>
-              ))}
-            </ol>
-          )}
-        </div>
-
+            )}
+            <button
+              onClick={handleSave}
+              className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+              <Save size={14} /> {isNew ? 'Buat Quotation' : 'Simpan Perubahan'}
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => setEditing(true)}
+            className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
+            <Edit2 size={14} /> Edit Quotation
+          </button>
+        )}
       </div>
 
       {/* ── Modal Kirim ── */}
