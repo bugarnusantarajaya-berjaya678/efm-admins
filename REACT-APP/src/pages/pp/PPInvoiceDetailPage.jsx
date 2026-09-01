@@ -400,101 +400,109 @@ export default function PPInvoiceDetailPage() {
           </div>
         </div>
 
-        {/* Tabel Rincian Layanan */}
-        <div className="px-8 pt-6 pb-2 overflow-x-auto">
-          <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
-            <thead>
-              <tr>
-                {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
-                  <th key={h}
-                    className="px-2.5 py-3 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
-                    style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td className="px-2.5 py-3 border-b border-gray-100">
-                  <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
-                  <div className="text-xs text-gray-500">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
-                </td>
-                <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
-                <td className="px-2.5 py-3 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
-                <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPaket)}</td>
-                <td className="px-2.5 py-3 border-b border-gray-100 text-right text-[#27AE60]">
-                  {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
-                </td>
-                <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">
-                  {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
-                </td>
-              </tr>
-              {invoice.biayaLain > 0 && (
-                <tr>
-                  <td className="px-2.5 py-3 border-b border-gray-100" colSpan={5}>
-                    <div className="font-semibold text-[#1E1C43]">Biaya Tambahan</div>
-                    <div className="text-xs text-gray-500">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
-                  </td>
-                  <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">{formatRp(invoice.biayaLain)}</td>
-                </tr>
+        {/* Rincian Layanan */}
+        <div className="px-6 sm:px-8 py-6 border-b border-gray-100">
+          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Rincian Layanan</div>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
+                      <th key={h}
+                        className="px-2.5 py-3 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
+                        style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="px-2.5 py-3 border-b border-gray-100">
+                      <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
+                      <div className="text-xs text-gray-500">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
+                    </td>
+                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
+                    <td className="px-2.5 py-3 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
+                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPaket)}</td>
+                    <td className="px-2.5 py-3 border-b border-gray-100 text-right text-[#27AE60]">
+                      {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
+                    </td>
+                    <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">
+                      {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
+                    </td>
+                  </tr>
+                  {invoice.biayaLain > 0 && (
+                    <tr>
+                      <td className="px-2.5 py-3 border-b border-gray-100" colSpan={5}>
+                        <div className="font-semibold text-[#1E1C43]">Biaya Tambahan</div>
+                        <div className="text-xs text-gray-500">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
+                      </td>
+                      <td className="px-2.5 py-3 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">{formatRp(invoice.biayaLain)}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Subtotal + Diskon di dalam card */}
+            <div className="px-4 py-3 border-t border-gray-200">
+              <div className="flex justify-between items-center py-1 text-sm">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
+              </div>
+
+              {/* Kode Diskon — edit mode */}
+              {editing && (
+                <div className="py-2 border-t border-gray-100 mt-1">
+                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Diskon</p>
+                  {diskonApplied ? (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                      <div>
+                        <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
+                        <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
+                        <span className="text-xs font-bold text-green-700 ml-2">
+                          - {formatRp(editDiskonVal)}
+                        </span>
+                      </div>
+                      <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        value={kodeInput}
+                        onChange={e => { setKodeInput(e.target.value.toUpperCase()); setDiskonError(false) }}
+                        onKeyDown={e => e.key === 'Enter' && applyKode()}
+                        placeholder="Masukkan kode voucher"
+                        className={`flex-1 px-3 py-2 border rounded-lg text-xs outline-none focus:border-[#1E1C43] ${diskonError ? 'border-red-400' : 'border-gray-300'}`}
+                      />
+                      <button onClick={applyKode}
+                        className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:opacity-90 transition-colors">
+                        Terapkan
+                      </button>
+                    </div>
+                  )}
+                  {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid atau tidak ditemukan.</p>}
+                </div>
               )}
-            </tbody>
-          </table>
+
+              {/* Kode Diskon — read mode (if applied) */}
+              {!editing && promoDiskon > 0 && (
+                <div className="flex justify-between items-center py-1 text-sm border-t border-gray-100 mt-1">
+                  <span className="text-green-600 flex items-center gap-1.5"><Tag size={12} /> Diskon ({invoice.promoKode})</span>
+                  <span className="font-medium text-green-600">- {formatRp(promoDiskon)}</span>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Kalkulasi */}
-        <div className="px-8 py-6 border-t border-gray-100">
-          <div className="flex justify-between items-center py-1.5 text-sm">
-            <span className="text-gray-600">Subtotal</span>
-            <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
-          </div>
-
-          {/* Kode Diskon — edit mode */}
-          {editing && (
-            <div className="py-2 border-t border-gray-100 mt-1">
-              <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Diskon</p>
-              {diskonApplied ? (
-                <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                  <div>
-                    <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
-                    <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
-                    <span className="text-xs font-bold text-green-700 ml-2">
-                      - {formatRp(editDiskonVal)}
-                    </span>
-                  </div>
-                  <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3">
-                    <X size={14} />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex gap-2">
-                  <input
-                    value={kodeInput}
-                    onChange={e => { setKodeInput(e.target.value.toUpperCase()); setDiskonError(false) }}
-                    onKeyDown={e => e.key === 'Enter' && applyKode()}
-                    placeholder="Masukkan kode voucher"
-                    className={`flex-1 px-3 py-2 border rounded-lg text-xs outline-none focus:border-[#1E1C43] ${diskonError ? 'border-red-400' : 'border-gray-300'}`}
-                  />
-                  <button onClick={applyKode}
-                    className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:opacity-90 transition-colors">
-                    Terapkan
-                  </button>
-                </div>
-              )}
-              {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid atau tidak ditemukan.</p>}
-            </div>
-          )}
-
-          {/* Kode Diskon — read mode (if applied) */}
-          {!editing && promoDiskon > 0 && (
-            <div className="flex justify-between items-center py-1.5 text-sm border-t border-gray-100 mt-1">
-              <span className="text-green-600 flex items-center gap-1.5"><Tag size={12} /> Diskon ({invoice.promoKode})</span>
-              <span className="font-medium text-green-600">- {formatRp(promoDiskon)}</span>
-            </div>
-          )}
-
-          <div className="mt-4 bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
+        {/* Total Tagihan */}
+        <div className="px-6 sm:px-8 pb-6 pt-6">
+          <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
             <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
             <span className="text-base font-black text-[#E05945]">
               {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
