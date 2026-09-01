@@ -300,3 +300,173 @@ const statusColors = {
   {statusLabel}
 </span>
 ```
+
+---
+
+## 5. Invoice & Receipt Document Standards
+
+### 5a. Status Label — WAJIB Bahasa Indonesia (PP, B2B, Event)
+
+Semua status invoice/receipt di seluruh modul harus konsisten berbahasa Indonesia. Sumber kebenaran di `ppInvoiceData.js` (`STATUS_LABEL`), pastikan filter dropdown, badge, dan label di semua halaman menggunakan mapping yang sama.
+
+| Key | Label UI |
+|---|---|
+| `paid` | `Lunas` |
+| `pending` | `Menunggu Pembayaran` |
+| `overdue` | `Jatuh Tempo` |
+| `draft` | `Draft` |
+
+⚠️ **Dilarang:** `'Paid'`, `'Awaiting Payment'`, `'Overdue'` (Inggris) — selalu ganti ke label Indonesia di atas.
+
+### 5b. Invoice/Receipt — Navy Header (kiri: info perusahaan)
+
+```jsx
+<div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-2 gap-4 text-white">
+  {/* Kiri — logo + info perusahaan */}
+  <div className="flex items-start gap-3">
+    {cs.logoPerusahaan ? (
+      <img src={cs.logoPerusahaan} alt="EFM Logo"
+        className="w-20 h-20 rounded-full object-contain shrink-0" />
+    ) : (
+      <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+        <span className="text-white font-black text-base">EFM</span>
+      </div>
+    )}
+    <div className="min-w-0">
+      <p className="text-base font-bold leading-snug">{cs.namaPerusahaan}</p>
+      <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
+      <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{cs.alamat}</p>
+      <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+      <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
+    </div>
+  </div>
+  {/* Kanan — lihat 5c/5d */}
+</div>
+```
+
+**Aturan wajib:**
+- Logo: `w-20 h-20 rounded-full object-contain shrink-0`
+- `namaPerusahaan`: `text-base font-bold` (bukan `text-sm`)
+- Sub-info: `text-xs text-white/70` (bukan `text-white/60`)
+- Selalu tampilkan: `namaPerusahaan`, `namaLegal`, `alamat`, `email`, `telepon`
+
+### 5c. Invoice — Header Kanan
+
+```jsx
+<div className="text-right">
+  <div className="text-4xl font-black tracking-widest uppercase">INVOICE</div>
+  <div className="text-sm text-gray-300 mt-0.5">{invoice.invNo}</div>
+
+  <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
+    <span className="text-xs text-gray-400">Tanggal:</span>
+    <span className="font-semibold text-sm">{invoice.tanggal}</span>
+  </div>
+  <div className="flex justify-end items-center gap-2 mb-0.5">
+    <span className="text-xs text-gray-400">Jatuh Tempo:</span>
+    <span className="font-semibold text-sm">{invoice.due}</span>
+  </div>
+
+  <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 ${statusBadgeCls}`}>
+    {STATUS_LABEL[invoice.status]}
+  </span>
+</div>
+```
+
+### 5d. Receipt — Header Kanan
+
+```jsx
+<div className="text-right">
+  <div className="text-4xl font-black tracking-widest uppercase">RECEIPT</div>
+  <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
+
+  <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
+    <span className="text-xs text-gray-400">Ref. Invoice</span>
+    <button onClick={() => onGoToInvoice(rcp.invNo)}
+      className="font-semibold text-sm hover:underline">{rcp.invNo}</button>
+  </div>
+  <div className="flex justify-end items-center gap-2 mb-0.5">
+    <span className="text-xs text-gray-400">Order ID</span>
+    <button onClick={() => onGoToOrder(rcp.orderId)}
+      className="font-semibold text-sm hover:underline">#{rcp.orderId}</button>
+  </div>
+
+  <span className="px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 bg-green-500">
+    LUNAS
+  </span>
+</div>
+```
+
+**Aturan wajib (berlaku Invoice & Receipt):**
+- Nomor dokumen di bawah judul: `text-sm text-gray-300` (bukan `text-xs`)
+- Meta rows (Tanggal, Ref. Invoice, dll): label `text-xs text-gray-400`, value `font-semibold text-sm`
+- Status badge di header navy: `px-4 py-1 rounded-full text-white text-sm font-semibold` — lebih besar dari badge tabel biasa
+- Page header `h1`: `Receipt #RCP-PP-27-0001` / `Invoice #INV-PP-27-0001` — selalu prefix `#` di judul page
+
+### 5e. Invoice/Receipt — Section Body (Divider Pattern)
+
+Body dokumen TIDAK menggunakan satu wrapper `space-y-5`. Setiap section adalah **full-bleed** dengan padding dan border sendiri:
+
+```jsx
+{/* Tiap section */}
+<div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+    Nama Section
+  </p>
+  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+    {/* isi */}
+  </div>
+</div>
+
+{/* Footer — section terakhir tanpa border-b */}
+<div className="px-6 sm:px-8 py-4 text-center space-y-1">
+  {/* footer */}
+</div>
+```
+
+⚠️ **Jangan** gunakan `<div className="px-6 sm:px-8 py-6 space-y-5">` sebagai wrapper body — ini pola lama yang tidak punya divider antar section.
+
+### 5f. Total Strip di Dalam Card (Invoice & Receipt)
+
+```jsx
+<div className="bg-[#1E1C43] px-4 py-2.5 flex items-center justify-between">
+  <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
+  <span className="text-base font-black text-white">{formatRp(total)}</span>
+</div>
+```
+
+**Aturan:**
+- Label: `text-xs font-bold text-white uppercase tracking-wide`
+- Angka: `text-base font-black text-white` — bukan orange, bukan `text-xl`
+- Padding: `py-2.5` (bukan `py-4`)
+
+### 5g. Receipt — Footer Copywriting
+
+```jsx
+<div className="px-6 sm:px-8 py-4 text-center space-y-1">
+  <p className="text-xs text-gray-400 leading-relaxed">
+    Terima kasih telah mempercayakan program Anda kepada kami.<br />
+    Simpan receipt ini sebagai bukti pembayaran yang sah.
+  </p>
+  <p className="text-xs font-semibold text-gray-500">
+    Powered by {cs.namaPerusahaan}
+  </p>
+  <p className="text-[10px] text-gray-400">
+    {cs.namaLegal}
+  </p>
+</div>
+```
+
+**Aturan:**
+- Teks pertama: "program Anda" — BUKAN "program fitness Anda" (EFM bukan hanya fitness)
+- Brand line: `Powered by {cs.namaPerusahaan}` — bukan hardcode nama, bukan "Profesional & Terpercaya"
+- Legal line: `{cs.namaLegal}` — selalu tampilkan nama legal badan usaha
+- HAPUS: "Dokumen ini digenerate oleh sistem EFM V2" — tidak perlu ditampilkan ke klien
+
+### 5h. Receipt — Barcode Absensi Sesi
+
+Barcode di receipt digunakan untuk **absensi pelatih/terapis per sesi**, bukan verifikasi pembayaran.
+
+- Judul section: `Barcode Absensi Sesi` — BUKAN "Kode Verifikasi Pembayaran"
+- Label kecil di bawah QR: "Tunjukkan setiap sesi" — BUKAN "Scan verifikasi"
+- Deskripsi: "Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung"
+- Size QR di section dedicated: `size={160}` (bukan default 72)
