@@ -6,6 +6,8 @@ import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
 import { getNoHpByOrderId } from '../../data/ppLeadsStore'
+import { getPromoByKode } from '../../data/ppPromoStore'
+import { Gift } from 'lucide-react'
 
 function getDefaultSyarat() {
   const cs = getCompanySettings()
@@ -30,10 +32,10 @@ function getSyaratList() {
   return getDefaultSyarat()
 }
 
-const validKodeDiskon = {
-  HEMAT10:   { label: 'Voucher Hemat 10%',    tipe: 'persen',  nilai: 10    },
-  HARBOLNAS: { label: 'Hari Belanja Nasional', tipe: 'persen',  nilai: 15    },
-  FLAT50K:   { label: 'Flat Diskon Spesial',  tipe: 'nominal', nilai: 50000 },
+function lookupKode(kode) {
+  const p = getPromoByKode(kode)
+  if (!p || !p.aktif) return null
+  return { label: p.label, tipe: p.tipe, subTipe: p.subTipe, nilai: p.nilai, keterangan: p.keterangan }
 }
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
@@ -138,17 +140,17 @@ export default function PPInvoiceDetailPage() {
     setCatatanDraft(invoice.catatan || '')
     const existingKode = invoice.promoKode || ''
     setKodeInput(existingKode)
-    setDiskonApplied(existingKode && validKodeDiskon[existingKode]
-      ? { kode: existingKode, ...validKodeDiskon[existingKode] }
-      : null)
+    const existing = existingKode ? lookupKode(existingKode) : null
+    setDiskonApplied(existing ? { kode: existingKode, ...existing } : null)
     setDiskonError(false)
     setEditing(true)
   }
 
   function applyKode() {
     const kode = kodeInput.trim().toUpperCase()
-    if (validKodeDiskon[kode]) {
-      setDiskonApplied({ kode, ...validKodeDiskon[kode] })
+    const found = lookupKode(kode)
+    if (found) {
+      setDiskonApplied({ kode, ...found })
       setDiskonError(false)
     } else {
       setDiskonApplied(null)
@@ -162,27 +164,26 @@ export default function PPInvoiceDetailPage() {
     setDiskonError(false)
   }
 
+  function calcDiskonVal(applied, base) {
+    if (!applied || applied.tipe !== 'diskon') return 0
+    return applied.subTipe === 'persen'
+      ? Math.round(base * applied.nilai / 100)
+      : applied.nilai
+  }
+
   function saveEdit() {
-    const promoVal = diskonApplied
-      ? diskonApplied.tipe === 'persen'
-        ? Math.round(subtotalBase * diskonApplied.nilai / 100)
-        : diskonApplied.nilai
-      : 0
+    const promoVal = calcDiskonVal(diskonApplied, subtotalBase)
     setInvoice(prev => ({
       ...prev,
-      catatan:   catatanDraft,
-      promoKode: diskonApplied?.kode  || '',
-      promoType: diskonApplied?.tipe  || '',
+      catatan:    catatanDraft,
+      promoKode:  diskonApplied?.kode     || '',
+      promoType:  diskonApplied?.subTipe  || '',
       promoVal,
     }))
     setEditing(false)
   }
 
-  const editDiskonVal = diskonApplied
-    ? diskonApplied.tipe === 'persen'
-      ? Math.round(subtotalBase * diskonApplied.nilai / 100)
-      : diskonApplied.nilai
-    : 0
+  const editDiskonVal = calcDiskonVal(diskonApplied, subtotalBase)
   const editTotal = subtotalBase - editDiskonVal
   const syaratList     = getSyaratList()
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
@@ -456,27 +457,34 @@ export default function PPInvoiceDetailPage() {
               {/* Kode Diskon — edit mode */}
               {editing && (
                 <div className="py-2 border-t border-gray-100 mt-1">
-                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Diskon</p>
+                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Promo</p>
                   {diskonApplied ? (
-                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                      <div>
-                        <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
-                        <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
-                        <span className="text-xs font-bold text-green-700 ml-2">
-                          - {formatRp(editDiskonVal)}
-                        </span>
+                    diskonApplied.tipe === 'diskon' ? (
+                      <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                        <div>
+                          <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
+                          <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
+                          <span className="text-xs font-bold text-green-700 ml-2">- {formatRp(editDiskonVal)}</span>
+                        </div>
+                        <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
                       </div>
-                      <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3">
-                        <X size={14} />
-                      </button>
-                    </div>
+                    ) : (
+                      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                        <div>
+                          <span className="text-xs font-semibold text-blue-700">{diskonApplied.kode}</span>
+                          <span className="text-xs text-blue-600 ml-2">— {diskonApplied.label}</span>
+                          {diskonApplied.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{diskonApplied.keterangan}</p>}
+                        </div>
+                        <button onClick={removeKode} className="text-blue-400 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
+                      </div>
+                    )
                   ) : (
                     <div className="flex gap-2">
                       <input
                         value={kodeInput}
                         onChange={e => { setKodeInput(e.target.value.toUpperCase()); setDiskonError(false) }}
                         onKeyDown={e => e.key === 'Enter' && applyKode()}
-                        placeholder="Masukkan kode voucher"
+                        placeholder="Masukkan kode voucher atau bonus"
                         className={`flex-1 px-3 py-2 border rounded-lg text-xs outline-none focus:border-[#1E1C43] ${diskonError ? 'border-red-400' : 'border-gray-300'}`}
                       />
                       <button onClick={applyKode}
@@ -485,17 +493,32 @@ export default function PPInvoiceDetailPage() {
                       </button>
                     </div>
                   )}
-                  {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid atau tidak ditemukan.</p>}
+                  {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid, tidak ditemukan, atau tidak aktif.</p>}
                 </div>
               )}
 
-              {/* Kode Diskon — read mode (if applied) */}
+              {/* Kode Diskon — read mode (diskon potong harga) */}
               {!editing && promoDiskon > 0 && (
                 <div className="flex justify-between items-center py-1 text-sm border-t border-gray-100 mt-1">
                   <span className="text-green-600 flex items-center gap-1.5"><Tag size={12} /> Diskon ({invoice.promoKode})</span>
                   <span className="font-medium text-green-600">- {formatRp(promoDiskon)}</span>
                 </div>
               )}
+
+              {/* Bonus promo — read mode (tidak potong harga) */}
+              {!editing && invoice.promoKode && ['treatment','latihan','produk'].includes(invoice.promoType) && (() => {
+                const p = getPromoByKode(invoice.promoKode)
+                return (
+                  <div className="flex items-start gap-2 py-2 border-t border-gray-100 mt-1">
+                    <Gift size={13} className="text-blue-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-semibold text-blue-700">{p?.label || invoice.promoKode}</p>
+                      {p?.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{p.keterangan}</p>}
+                    </div>
+                  </div>
+                )
+              })()}
+
             </div>
 
             {/* Total Tagihan + paid confirmation di dalam card */}
@@ -551,19 +574,21 @@ export default function PPInvoiceDetailPage() {
 
         {/* Catatan Invoice — hidden when empty and not editing */}
         {(editing || invoice.catatan) && (
-          <div className="px-6 sm:px-8 py-3 border-t border-gray-100">
+          <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-            {editing ? (
-              <textarea
-                value={catatanDraft}
-                onChange={e => setCatatanDraft(e.target.value)}
-                placeholder="Tambahkan catatan untuk invoice ini..."
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
-              />
-            ) : (
-              <p className="text-sm text-gray-600">{invoice.catatan}</p>
-            )}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+              {editing ? (
+                <textarea
+                  value={catatanDraft}
+                  onChange={e => setCatatanDraft(e.target.value)}
+                  placeholder="Tambahkan catatan untuk invoice ini..."
+                  rows={3}
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none bg-white"
+                />
+              ) : (
+                <p className="text-sm text-gray-600">{invoice.catatan}</p>
+              )}
+            </div>
           </div>
         )}
 

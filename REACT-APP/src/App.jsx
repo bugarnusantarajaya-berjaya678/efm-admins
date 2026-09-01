@@ -27,6 +27,7 @@ import PPLeadDetailPage from './pages/pp/PPLeadDetailPage'
 import PPLeadNewPage from './pages/pp/PPLeadNewPage'
 import PPProgramFormPage from './pages/pp/PPProgramFormPage'
 import PPJenisProgramPage from './pages/pp/PPJenisProgramPage'
+import PPPromoPage from './pages/pp/PPPromoPage'
 
 // B2B
 import B2BDashboardPage from './pages/b2b/B2BDashboardPage'
@@ -111,6 +112,7 @@ function AppRoutes() {
       <Route path="/pp/invoice/:id" element={<AppShell><PPInvoiceDetailPage /></AppShell>} />
       <Route path="/pp/receipt" element={<AppShell><PPReceiptPage /></AppShell>} />
       <Route path="/pp/receipt/:id" element={<AppShell><PPReceiptDetailPage /></AppShell>} />
+      <Route path="/pp/promo" element={<AppShell><PPPromoPage /></AppShell>} />
       <Route path="/pp/agreement/:id" element={<AppShell><PPAgreementDetailPage /></AppShell>} />
 
       {/* B2B Routes */}
