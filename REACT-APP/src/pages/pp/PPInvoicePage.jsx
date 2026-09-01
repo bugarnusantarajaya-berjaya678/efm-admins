@@ -333,9 +333,9 @@ export default function PPInvoicePage() {
             </select>
             <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors" value={fStatus} onChange={e => { setFStatus(e.target.value); setPage(1) }}>
               <option value="">Semua Status</option>
-              <option value="paid">Paid</option>
-              <option value="pending">Awaiting Payment</option>
-              <option value="overdue">Overdue</option>
+              <option value="paid">Lunas</option>
+              <option value="pending">Menunggu Pembayaran</option>
+              <option value="overdue">Jatuh Tempo</option>
               <option value="draft">Draft</option>
             </select>
             <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">

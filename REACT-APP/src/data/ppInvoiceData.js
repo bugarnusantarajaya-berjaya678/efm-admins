@@ -184,7 +184,7 @@ export const INVOICES_INIT = [
 ]
 
 export const STATUS_LABEL = {
-  paid: 'Paid', pending: 'Awaiting Payment', overdue: 'Overdue', draft: 'Draft',
+  paid: 'Lunas', pending: 'Menunggu Pembayaran', overdue: 'Jatuh Tempo', draft: 'Draft',
 }
 
 export const BULAN_OPTS = [
