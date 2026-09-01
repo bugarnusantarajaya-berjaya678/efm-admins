@@ -497,40 +497,40 @@ export default function PPInvoiceDetailPage() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
 
-        {/* Total Tagihan */}
-        <div className="px-6 sm:px-8 pb-6 pt-6">
-          <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
-            <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
-            <span className="text-base font-black text-[#E05945]">
-              {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
-            </span>
-          </div>
-
-          {invoice.status === 'paid' && (
-            <div className="mt-4 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-start gap-3">
-              <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — LUNAS</p>
-                <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
-                  {invoice.paidDate && (
-                    <>
-                      <p className="text-[11px] text-green-700 font-medium">Tanggal Lunas</p>
-                      <p className="text-[11px] text-green-800 font-semibold">{invoice.paidDate}</p>
-                    </>
-                  )}
-                  {invoice.payMethod && (
-                    <>
-                      <p className="text-[11px] text-green-700 font-medium">Metode Pembayaran</p>
-                      <p className="text-[11px] text-green-800 font-semibold">{invoice.payMethod}</p>
-                    </>
-                  )}
-                </div>
+            {/* Total Tagihan + paid confirmation di dalam card */}
+            <div className="px-4 pb-4">
+              <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center">
+                <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
+                <span className="text-base font-black text-[#E05945]">
+                  {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
+                </span>
               </div>
+
+              {invoice.status === 'paid' && (
+                <div className="mt-3 bg-green-50 border border-green-200 rounded-xl px-5 py-4 flex items-start gap-3">
+                  <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — LUNAS</p>
+                    <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
+                      {invoice.paidDate && (
+                        <>
+                          <p className="text-[11px] text-green-700 font-medium">Tanggal Lunas</p>
+                          <p className="text-[11px] text-green-800 font-semibold">{invoice.paidDate}</p>
+                        </>
+                      )}
+                      {invoice.payMethod && (
+                        <>
+                          <p className="text-[11px] text-green-700 font-medium">Metode Pembayaran</p>
+                          <p className="text-[11px] text-green-800 font-semibold">{invoice.payMethod}</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Cara Pembayaran */}
