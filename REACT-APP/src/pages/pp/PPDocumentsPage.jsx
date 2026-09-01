@@ -836,9 +836,9 @@ export default function PPDocumentsPage() {
         </div>
         <button
           onClick={() => { setFBulan(''); setFTahun(''); setFStatus(''); setFPaket(''); setFSearch('') }}
-          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
         >
-          Reset
+          <RotateCcw size={12} /> Reset
         </button>
       </div>
 
