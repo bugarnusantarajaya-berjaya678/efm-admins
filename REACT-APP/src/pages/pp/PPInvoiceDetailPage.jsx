@@ -408,10 +408,10 @@ export default function PPInvoiceDetailPage() {
               <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
+                    {[['Deskripsi','32%'],['Harga Persesi','15%'],['Jumlah Sesi','10%'],['Harga Paket','16%'],['Diskon Paket','14%'],['Total','13%']].map(([h, w], i) => (
                       <th key={h}
                         className="px-2.5 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
-                        style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
+                        style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right', width: w }}>
                         {h}
                       </th>
                     ))}
@@ -421,7 +421,7 @@ export default function PPInvoiceDetailPage() {
                   <tr>
                     <td className="px-2.5 py-2 border-b border-gray-100">
                       <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
-                      <div className="text-xs text-gray-500">{invoice.namaLatihan} · PIC: {invoice.pic}</div>
+                      <div className="text-xs text-gray-500">PIC: {invoice.pic}</div>
                     </td>
                     <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
                     <td className="px-2.5 py-2 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
@@ -502,7 +502,7 @@ export default function PPInvoiceDetailPage() {
             <div className="px-4 pb-3">
               <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex justify-between items-center">
                 <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
-                <span className="text-base font-black text-[#E05945]">
+                <span className="text-base font-black text-white">
                   {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
                 </span>
               </div>
@@ -540,9 +540,9 @@ export default function PPInvoiceDetailPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
-                  <p className="text-sm font-bold text-[#1E1C43] font-mono">{b.rek}</p>
-                  <p className="text-[11px] text-gray-500 mt-0.5">a.n. {b.an}</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">{b.rek}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">a.n. {b.an}</p>
                 </div>
               ))}
             </div>
