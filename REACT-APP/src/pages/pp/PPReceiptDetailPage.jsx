@@ -154,7 +154,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         {/* QR Verifikasi — section besar untuk pelatih */}
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Kode Verifikasi Pembayaran
+            Barcode Absensi Sesi
           </p>
           <div className="bg-gray-50 border border-gray-200 rounded-xl py-6 px-4 flex flex-col items-center">
             <QRVerifikasi label={rcp.rcpNo} size={160} />
