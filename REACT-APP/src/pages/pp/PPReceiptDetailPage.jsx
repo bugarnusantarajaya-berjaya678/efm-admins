@@ -49,17 +49,18 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         <div className="flex items-start gap-3">
           {cs.logoPerusahaan ? (
             <img src={cs.logoPerusahaan} alt="EFM Logo"
-              className="w-16 h-16 rounded-full object-contain shrink-0" />
+              className="w-20 h-20 rounded-full object-contain shrink-0" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center shrink-0">
+            <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center shrink-0">
               <span className="text-white font-black text-base">EFM</span>
             </div>
           )}
           <div className="min-w-0">
-            <p className="text-sm font-bold leading-snug">{cs.namaPerusahaan}</p>
-            <p className="text-xs text-white/60 mt-0.5">{cs.namaLegal}</p>
-            <p className="text-xs text-white/60 mt-1 leading-relaxed max-w-xs">{cs.alamat}</p>
-            <p className="text-xs text-white/60 mt-0.5">{cs.email}</p>
+            <p className="text-base font-bold leading-snug">{cs.namaPerusahaan}</p>
+            <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{cs.alamat}</p>
+            <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+            <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
           </div>
         </div>
 
