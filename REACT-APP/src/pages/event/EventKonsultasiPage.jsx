@@ -114,45 +114,42 @@ export default function EventKonsultasiPage() {
       </div>
 
       {/* Filter */}
-      <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fBulan} onChange={e => setFBulan(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Bulan</option>
           {Object.keys(BSHORT).map(o => <option key={o} value={o}>{o}</option>)}
         </select>
         <select value={fTahun} onChange={e => setFTahun(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tahun</option>
           <option>2026</option>
           <option>2025</option>
         </select>
         <select value={fJenis} onChange={e => setFJenis(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Jenis</option>
           <option>Corporate</option><option>Foundation</option>
           <option>Government</option><option>Brand</option>
           <option>Community</option><option>Private</option><option>Individual</option>
         </select>
         <select value={fHasil} onChange={e => setFHasil(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Hasil</option>
           <option value="lanjut">Lanjut</option>
           <option value="tidak_lanjut">Tidak Lanjut</option>
           <option value="pending">Pending</option>
         </select>
-        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
-          <div className="relative flex-1 sm:flex-none">
-            <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Cari nama perusahaan..."
-              className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] sm:min-w-[220px]" />
-          </div>
-          <button onClick={() => { setFBulan(''); setFTahun(''); setFJenis(''); setFHasil(''); setSearch('') }}
-            className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors flex-shrink-0">
-            <RotateCcw size={12} />
-            Reset
-          </button>
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Cari nama perusahaan..."
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
         </div>
+        <button onClick={() => { setFBulan(''); setFTahun(''); setFJenis(''); setFHasil(''); setSearch('') }}
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+          <RotateCcw size={12} /> Reset
+        </button>
       </div>
 
       {/* Table */}

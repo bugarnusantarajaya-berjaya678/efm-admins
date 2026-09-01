@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList, ChevronDown } from 'lucide-react'
+import { Plus, Printer, Search, X, CheckCircle, Receipt, FileText, ClipboardList, ChevronDown, RotateCcw } from 'lucide-react'
 import {
   ORDERS_INIT, STATUS_ORDER_LABEL, STATUS_INV_LABEL,
   PIC_OPTS, PAKET_OPTS, PAKET_HARGA, formatRp,
@@ -539,7 +539,7 @@ export default function PPOrdersPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={resetFilter} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
+        <button onClick={resetFilter} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       {/* Highlight banner */}

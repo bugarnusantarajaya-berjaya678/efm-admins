@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Layers } from 'lucide-react'
+import { Plus, Search, Layers, RotateCcw } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -139,7 +139,7 @@ export default function PPProgramDBPage() {
             onChange={e => setFSearch(e.target.value)}
           />
         </div>
-        <button onClick={reset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
+        <button onClick={reset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       {/* Table */}

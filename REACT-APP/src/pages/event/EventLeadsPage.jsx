@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, MessageCircle, FileText, ChevronDown, ClipboardList } from 'lucide-react'
+import { Plus, Search, MessageCircle, FileText, ChevronDown, ClipboardList, RotateCcw } from 'lucide-react'
 import { LEADS_INIT, initLeads, getStoredLeads } from '../../data/eventLeadsStore'
 
 /* ═══════════════════════════════════════
@@ -234,39 +234,39 @@ export default function EventLeadsPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+        <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
           <select value={bulan} onChange={e => setBulan(e.target.value)}
-            className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors">
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             <option value="">Semua Bulan</option>
             {BULAN_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
           </select>
           <select value={tahun} onChange={e => setTahun(e.target.value)}
-            className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors">
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             <option value="">Semua Tahun</option>
             <option value="2026">2026</option>
             <option value="2025">2025</option>
           </select>
           <select value={tipe} onChange={e => setTipe(e.target.value)}
-            className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors">
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             <option value="">Semua Tipe</option>
             <option>Corporate</option><option>Foundation</option><option>Government</option>
             <option>Brand</option><option>Community</option><option>Private</option><option>Individual</option>
           </select>
           <select value={stage} onChange={e => setStage(e.target.value)}
-            className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors">
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             <option value="">Semua Status</option>
             <option>New</option><option>Approach</option><option>Konsultasi</option>
             <option>Quotation</option><option>Closing</option><option>Converted</option><option>Lost</option>
           </select>
-          <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-            <Search size={14} className="text-gray-400 shrink-0" />
+          <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+            <Search size={14} className="text-text-muted shrink-0" />
             <input
-              className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400"
+              className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
               placeholder="Cari nama perusahaan..."
               value={search} onChange={e => setSearch(e.target.value)}
             />
           </div>
-          <button onClick={handleReset} className="px-3.5 py-[7px] border border-gray-200 text-gray-600 hover:bg-gray-50 text-xs font-semibold rounded-lg transition-colors shrink-0">Reset</button>
+          <button onClick={handleReset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
         </div>
 
         {/* Table */}

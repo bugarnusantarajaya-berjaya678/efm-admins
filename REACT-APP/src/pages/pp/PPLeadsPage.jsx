@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Plus, Search, MessageCircle } from 'lucide-react'
+import { X, Plus, Search, MessageCircle, RotateCcw } from 'lucide-react'
 import { getStoredLeads } from '../../data/ppLeadsStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -233,7 +233,7 @@ export default function PPLeadsPage() {
               placeholder="Cari nama klien..."
               value={search} onChange={e => setSearch(e.target.value)} />
           </div>
-          <button onClick={handleReset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
+          <button onClick={handleReset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
         </div>
 
         {/* Table */}

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt } from 'lucide-react'
+import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
 import { getNoHpByOrderId } from '../../data/ppLeadsStore'
@@ -209,7 +209,7 @@ export default function PPReceiptPage() {
             onChange={e => { setFSearch(e.target.value); setPage(1) }}
           />
         </div>
-        <button onClick={reset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
+        <button onClick={reset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       {/* Table */}

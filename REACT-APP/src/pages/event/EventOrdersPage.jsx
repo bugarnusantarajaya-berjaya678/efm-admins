@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, FileText, Receipt, ChevronDown } from 'lucide-react'
+import { Plus, Search, FileText, Receipt, ChevronDown, RotateCcw } from 'lucide-react'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -297,7 +297,7 @@ export default function EventOrdersPage() {
   const kpiPending = ORDERS_DATA.filter(o => !['Contract','Event Running','Event Selesai'].includes(o.tahapan) && !['Selesai','Batal'].includes(o.status)).length
   const kpiSelesai = ORDERS_DATA.filter(o => o.status === 'Selesai').length
 
-  const SELECT_CLS = 'px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors'
+  const SELECT_CLS = 'px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors'
 
   return (
     <div className="flex flex-col gap-4">
@@ -376,7 +376,7 @@ export default function EventOrdersPage() {
           <option value="">Semua Tahapan</option>
           {['Quotation & LOI','MOU','Contract','Event Running','Event Selesai'].map(t => <option key={t} value={t}>{t}</option>)}
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
           <input
             type="text" value={search}
@@ -385,9 +385,7 @@ export default function EventOrdersPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={handleReset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">
-          Reset
-        </button>
+        <button onClick={handleReset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       {/* ── Table ── */}
