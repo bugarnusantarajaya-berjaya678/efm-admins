@@ -1,10 +1,8 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, MessageCircle, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
+import { Search, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
-import { getNoHpByOrderId } from '../../data/ppLeadsStore'
-import { getCompanySettings } from '../../utils/companySettings'
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -120,33 +118,6 @@ export default function PPReceiptPage() {
 
   function reset() { setFBulan(''); setFTahun(''); setFWA(''); setFSearch(''); setPage(1) }
 
-  function handleResendWA(rcp) {
-    const cs = getCompanySettings()
-    const noHP = getNoHpByOrderId(rcp.orderId)
-    const msg = [
-      `Halo *${rcp.sapaan} ${rcp.client}*,`,
-      '',
-      `✅ Pembayaran Anda telah kami terima dan terkonfirmasi.`,
-      '',
-      `📄 *Receipt #${rcp.rcpNo}*`,
-      `📋 Ref. Invoice: ${rcp.invNo}`,
-      `📅 Tanggal Bayar: ${rcp.tglBayar}`,
-      `💳 Metode: ${rcp.metode}`,
-      `🏃 Program: ${rcp.paket}`,
-      `💰 Total: ${formatRp(rcp.total)}`,
-      '',
-      `Terima kasih telah mempercayakan program fitness Anda kepada *${cs.namaPerusahaan}*. Sampai jumpa di sesi latihan! 💪`,
-    ].join('\n')
-    const waUrl = noHP
-      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
-      : `https://wa.me/?text=${encodeURIComponent(msg)}`
-    window.open(waUrl, '_blank')
-    setReceipts(prev => prev.map(r => r.rcpNo === rcp.rcpNo
-      ? { ...r, waStatus: 'sent', waTgl: new Date().toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' }) }
-      : r
-    ))
-  }
-
   const start = (page - 1) * ROWS + 1
   const end   = Math.min(page * ROWS, filtered.length)
 
@@ -174,10 +145,10 @@ export default function PPReceiptPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatMini label="Total Receipt" value={receipts.length} sub="Semua receipt" />
-        <StatMini label="WA Sent"       value={sentCount}     sub="Notifikasi berhasil" accent="green" />
-        <StatMini label="Not Sent"      value={notSentCount}  sub="Belum dikirim"       accent="yellow" />
-        <StatMini label="Failed"        value={failedCount}   sub="Kirim ulang WA"      accent="red" />
+        <StatMini label="Total Receipt"   value={receipts.length} sub="Semua receipt" />
+        <StatMini label="WA Terkirim"    value={sentCount}       sub="Notifikasi berhasil" accent="green" />
+        <StatMini label="Belum Dikirim"  value={notSentCount}    sub="Belum dikirim"       accent="yellow" />
+        <StatMini label="Kirim Gagal"    value={failedCount}     sub="Perlu kirim ulang"   accent="red" />
       </div>
 
       {/* Filters */}
@@ -196,9 +167,9 @@ export default function PPReceiptPage() {
         <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
           value={fWA} onChange={e => { setFWA(e.target.value); setPage(1) }}>
           <option value="">Semua Status WA</option>
-          <option value="sent">Sent</option>
-          <option value="not-sent">Not Sent</option>
-          <option value="failed">Failed</option>
+          <option value="sent">Terkirim</option>
+          <option value="not-sent">Belum Dikirim</option>
+          <option value="failed">Gagal</option>
         </select>
         <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
@@ -227,12 +198,11 @@ export default function PPReceiptPage() {
                 <th style={{minWidth:'120px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Tgl Bayar</th>
                 <th style={{minWidth:'130px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
                 <th style={{minWidth:'120px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Status WA</th>
-                <th style={{minWidth:'100px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">Aksi</th>
               </tr>
             </thead>
             <tbody>
               {slice.length === 0 ? (
-                <tr><td colSpan={10} className="py-10 text-center text-sm text-text-muted">Tidak ada data receipt ditemukan</td></tr>
+                <tr><td colSpan={9} className="py-10 text-center text-sm text-text-muted">Tidak ada data receipt ditemukan</td></tr>
               ) : slice.map(rcp => (
                 <tr key={rcp.rcpNo} onClick={() => navigate('/pp/receipt/' + rcp.rcpNo, { state: { receipt: rcp } })}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
@@ -250,24 +220,6 @@ export default function PPReceiptPage() {
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{rcp.tglBayar}</td>
                   <td className="text-xs font-semibold text-gray-600 px-3 py-2.5 whitespace-nowrap">{formatRp(rcp.total)}</td>
                   <td className="px-3 py-2.5"><WABadge status={rcp.waStatus} /></td>
-                  <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        onClick={e => { e.stopPropagation(); navigate('/pp/receipt/' + rcp.rcpNo, { state: { receipt: rcp } }) }}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-[#2980B9] border border-[#2980B9] bg-[#EBF5FB] hover:bg-[#2980B9] hover:text-white transition-colors"
-                        title="Lihat Detail"
-                      >
-                        <Eye size={13} />
-                      </button>
-                      <button
-                        onClick={e => { e.stopPropagation(); handleResendWA(rcp) }}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center text-[#27AE60] border border-[#27AE60] bg-[#EAFAF1] hover:bg-[#27AE60] hover:text-white transition-colors"
-                        title="Kirim WA"
-                      >
-                        <MessageCircle size={13} />
-                      </button>
-                    </div>
-                  </td>
                 </tr>
               ))}
             </tbody>
