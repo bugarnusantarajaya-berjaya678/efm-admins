@@ -354,39 +354,42 @@ export default function PPInvoiceDetailPage() {
       <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
-        <div className="bg-[#1E1C43] rounded-t-2xl p-6 sm:p-8 flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-start">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" className="w-16 h-16 rounded-full object-cover shrink-0" alt="EFM Logo" />
+        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-2 gap-4 text-white">
+          <div className="flex items-start gap-3">
+            {cs.logoPerusahaan ? (
+              <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-20 h-20 rounded-full object-contain shrink-0" />
+            ) : (
+              <img src="/logo.png" alt="EFM Logo" className="w-20 h-20 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+            )}
             <div>
-              <div className="text-white font-bold text-sm leading-snug">{cs.namaPerusahaan}</div>
-              <div className="text-white/60 text-[10.5px] mt-1 leading-relaxed">
-                {cs.namaLegal}<br/>
-                {cs.alamat}<br/>
-                {cs.email}
-              </div>
+              <p className="text-base font-bold">{cs.namaPerusahaan}</p>
+              <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{cs.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+              <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
             </div>
           </div>
 
-          <div className="sm:text-right">
-            <div className="text-4xl font-black text-white tracking-widest uppercase">INVOICE</div>
+          <div className="text-right">
+            <div className="text-4xl font-black tracking-widest uppercase">INVOICE</div>
             <div className="text-sm text-gray-300 mt-1">No: {invoice.invNo}</div>
             <div className="border-t border-white/20 my-2" />
 
-            <div className="flex justify-start sm:justify-end items-center gap-2 mb-1">
+            <div className="flex justify-end items-center gap-2 mb-1">
               <span className="text-xs text-gray-400">Tanggal:</span>
-              <span className="text-white font-semibold text-sm">{invoice.tanggal}</span>
+              <span className="font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-start sm:justify-end items-center gap-2 mb-1">
+            <div className="flex justify-end items-center gap-2 mb-1">
               <span className="text-xs text-gray-400">Jatuh Tempo:</span>
-              <span className="text-white font-semibold text-sm">{invoice.due}</span>
+              <span className="font-semibold text-sm">{invoice.due}</span>
             </div>
 
-            <div className="flex justify-start sm:justify-end items-center gap-2">
+            <div className="flex justify-end items-center gap-2">
               <span className="text-xs text-gray-400">Order ID:</span>
               <button
                 onClick={() => navigate('/pp/orders/' + invoice.orderId)}
-                className="text-white font-semibold text-sm hover:underline">
+                className="font-semibold text-sm hover:underline">
                 #{invoice.orderId}
               </button>
             </div>
