@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, FileText, Search, RotateCcw } from 'lucide-react'
+import { Plus, FileText, Search, RotateCcw, ScrollText } from 'lucide-react'
 import { initQuotations, getStoredQuotations, QUOTATIONS_INIT } from '../../data/eventQuotationsStore'
 
 const ROWS_PER_PAGE = 10
@@ -89,20 +89,27 @@ export default function EventQuotationPage() {
   const BULAN_OPTS = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
 
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1E1C43]">Quotation Event</h1>
-          <p className="text-[13px] text-gray-500 mt-1">Database seluruh penawaran harga B2B Event</p>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ScrollText size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Quotation B2B Event</h1>
+              <p className="text-sm text-gray-500 mt-0.5">Database seluruh penawaran harga B2B Event</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigate('/event/quotation/new')}
+            className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors shrink-0"
+          >
+            <Plus size={15} strokeWidth={2.5} /> Buat Quotation
+          </button>
         </div>
-        <button
-          onClick={() => navigate('/event/quotation/new')}
-          className="inline-flex items-center gap-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
-        >
-          <Plus size={15} strokeWidth={2.5} /> Buat Quotation
-        </button>
       </div>
 
       {/* KPI Cards */}
@@ -162,13 +169,13 @@ export default function EventQuotationPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 overflow-hidden">
-        <div className="overflow-x-auto w-full rounded-xl">
-          <table className="w-full border-collapse" style={{ minWidth: '960px' }}>
-            <thead>
-              <tr>
+      <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 340px)', minHeight: '280px' }}>
+          <table className="w-full text-sm" style={{ minWidth: '960px' }}>
+            <thead className="sticky top-0 z-10">
+              <tr className="bg-gray-50 border-b border-gray-100">
                 {['No. Quotation','Klien','Nama Event','Lead','Konsultasi Asal','Tgl Dibuat','Berlaku s/d','Nilai Total','Status','PIC'].map(h => (
-                  <th key={h} className="bg-gray-50 px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -211,7 +218,7 @@ export default function EventQuotationPage() {
             </tbody>
           </table>
         </div>
-        <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
+        <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-200">
           <p className="text-xs text-gray-500">
             Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} quotation
           </p>
