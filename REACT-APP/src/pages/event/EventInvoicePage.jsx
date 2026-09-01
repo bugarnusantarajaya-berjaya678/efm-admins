@@ -411,19 +411,19 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
             {selectedOrderId && sourceOrder && (
               <>
                 {/* A. Header Invoice */}
-                <div className="bg-[#1E1C43] rounded-xl px-6 py-5 flex justify-between items-start gap-6">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                      {settings.logoPerusahaan ? (
-                        <img src={settings.logoPerusahaan} alt="EFM Logo" className="w-full h-full object-contain p-0.5" />
-                      ) : (
-                        <span className="text-white font-bold text-sm">EFM</span>
-                      )}
-                    </div>
+                <div className="bg-[#1E1C43] rounded-xl px-6 py-4 sm:px-8 sm:py-5 flex justify-between items-start gap-6">
+                  <div className="flex items-start gap-3">
+                    {settings.logoPerusahaan ? (
+                      <img src={settings.logoPerusahaan} alt="EFM Logo" className="w-20 h-20 rounded-full object-contain shrink-0" />
+                    ) : (
+                      <img src="/logo.png" alt="EFM Logo" className="w-20 h-20 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+                    )}
                     <div>
-                      <p className="text-white font-bold text-[14px]">{settings.namaPerusahaan || efmCompanySettings.namaPerusahaan}</p>
-                      <p className="text-white/60 text-[11px]">{settings.namaLegal || efmCompanySettings.namaLegal}</p>
-                      <p className="text-white/60 text-[11px]">{settings.alamat || efmCompanySettings.alamat}</p>
+                      <p className="text-base font-bold text-white">{settings.namaPerusahaan || efmCompanySettings.namaPerusahaan}</p>
+                      <p className="text-xs text-white/70 mt-0.5">{settings.namaLegal || efmCompanySettings.namaLegal}</p>
+                      <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{settings.alamat || efmCompanySettings.alamat}</p>
+                      <p className="text-xs text-white/70 mt-0.5">{settings.email || efmCompanySettings.email}</p>
+                      <p className="text-xs text-white/70 mt-0.5">{settings.telepon || efmCompanySettings.telepon}</p>
                     </div>
                   </div>
                   <div className="text-right shrink-0">
@@ -660,19 +660,19 @@ function InvoiceModal({ inv, initialEdit = false, prefill = null, onClose, onSta
           <div ref={printRef} className="overflow-y-auto px-6 py-6 space-y-7" style={{ maxHeight: '74vh' }}>
 
             {/* ── Invoice Header ── */}
-            <div className="bg-[#1E1C43] rounded-xl px-6 py-5 flex justify-between items-start gap-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center shrink-0 overflow-hidden">
-                  {settings.logoPerusahaan ? (
-                    <img src={settings.logoPerusahaan} alt="EFM Logo" className="w-full h-full object-contain p-0.5" />
-                  ) : (
-                    <span className="text-white font-bold text-sm">EFM</span>
-                  )}
-                </div>
+            <div className="bg-[#1E1C43] rounded-xl px-6 py-4 sm:px-8 sm:py-5 flex justify-between items-start gap-6">
+              <div className="flex items-start gap-3">
+                {settings.logoPerusahaan ? (
+                  <img src={settings.logoPerusahaan} alt="EFM Logo" className="w-20 h-20 rounded-full object-contain shrink-0" />
+                ) : (
+                  <img src="/logo.png" alt="EFM Logo" className="w-20 h-20 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+                )}
                 <div>
-                  <p className="text-white font-bold text-[14px]">{settings.namaPerusahaan || 'Essential Fitness Management'}</p>
-                  <p className="text-white/60 text-[11px]">{settings.namaLegal || 'CV. Bugar Nusantara Jaya'}</p>
-                  <p className="text-white/60 text-[11px]">{settings.alamat || 'Jl. Terogong Raya No.18, Jakarta Selatan'}</p>
+                  <p className="text-base font-bold text-white">{settings.namaPerusahaan || 'Essential Fitness Management'}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{settings.namaLegal || 'CV. Bugar Nusantara Jaya'}</p>
+                  <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{settings.alamat || 'Jl. Terogong Raya No.18, Jakarta Selatan'}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{settings.email || efmCompanySettings.email}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{settings.telepon || efmCompanySettings.telepon}</p>
                 </div>
               </div>
               <div className="text-right shrink-0">
