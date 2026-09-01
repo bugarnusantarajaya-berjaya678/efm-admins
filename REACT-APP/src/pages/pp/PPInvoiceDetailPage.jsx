@@ -605,8 +605,12 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 sm:px-8 py-3 border-t border-gray-100 text-center">
-          <p className="text-[10px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
+        <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+          <p className="text-xs text-gray-400 leading-relaxed">
+            Terima kasih atas kepercayaan Anda. Harap selesaikan pembayaran sesuai tenggat waktu yang tertera.
+          </p>
+          <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}</p>
+          <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
         </div>
       </div>
 
