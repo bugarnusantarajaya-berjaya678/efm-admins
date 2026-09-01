@@ -88,7 +88,7 @@ const INV_CLS = {
   overdue: 'bg-red-50 text-red-500',
 }
 const ORDER_LBL = { active: 'Aktif', completed: 'Selesai', cancelled: 'Batal' }
-const INV_LBL   = { paid: 'Lunas', pending: 'Pending', overdue: 'Overdue' }
+const INV_LBL   = { paid: 'Lunas', pending: 'Menunggu Pembayaran', overdue: 'Jatuh Tempo' }
 
 const formatRp = (n) => 'Rp ' + n.toLocaleString('id-ID')
 

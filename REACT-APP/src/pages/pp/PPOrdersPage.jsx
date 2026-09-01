@@ -209,9 +209,9 @@ function DetailDrawer({ order, onClose, onStatusChange }) {
                   onChange={(e) => setNewStatus(e.target.value)}
                   className="px-3 py-1.5 border border-border rounded-lg text-xs font-semibold text-text-primary outline-none focus:border-primary font-[Poppins]"
                 >
-                  <option value="paid">Paid</option>
-                  <option value="pending">Awaiting Payment</option>
-                  <option value="overdue">Overdue</option>
+                  <option value="paid">Lunas</option>
+                  <option value="pending">Menunggu Pembayaran</option>
+                  <option value="overdue">Jatuh Tempo</option>
                 </select>
               </div>
             </div>
@@ -521,7 +521,7 @@ export default function PPOrdersPage() {
         </select>
         {[
           { value: filterStatus, set: (v) => { setFilterStatus(v); setPage(1) }, opts: [['','Status Order'],['active','Active'],['completed','Completed'],['cancelled','Cancelled']] },
-          { value: filterInv,    set: (v) => { setFilterInv(v);    setPage(1) }, opts: [['','Status Invoice'],['paid','Paid'],['pending','Awaiting Payment'],['overdue','Overdue']] },
+          { value: filterInv,    set: (v) => { setFilterInv(v);    setPage(1) }, opts: [['','Status Invoice'],['paid','Lunas'],['pending','Menunggu Pembayaran'],['overdue','Jatuh Tempo']] },
           { value: filterPIC,    set: (v) => { setFilterPIC(v);    setPage(1) }, opts: [['','Semua PIC'],    ...PIC_OPTS.map((p) => [p,p])] },
           { value: filterPaket,  set: (v) => { setFilterPaket(v);  setPage(1) }, opts: [['','Semua Paket'],  ...PAKET_OPTS.map((p) => [p,p])] },
         ].map((f, i) => (
