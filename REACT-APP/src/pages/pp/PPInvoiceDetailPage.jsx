@@ -551,19 +551,21 @@ export default function PPInvoiceDetailPage() {
 
         {/* Catatan Invoice — hidden when empty and not editing */}
         {(editing || invoice.catatan) && (
-          <div className="px-6 sm:px-8 py-3 border-t border-gray-100">
+          <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-            {editing ? (
-              <textarea
-                value={catatanDraft}
-                onChange={e => setCatatanDraft(e.target.value)}
-                placeholder="Tambahkan catatan untuk invoice ini..."
-                rows={3}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none"
-              />
-            ) : (
-              <p className="text-sm text-gray-600">{invoice.catatan}</p>
-            )}
+            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+              {editing ? (
+                <textarea
+                  value={catatanDraft}
+                  onChange={e => setCatatanDraft(e.target.value)}
+                  placeholder="Tambahkan catatan untuk invoice ini..."
+                  rows={3}
+                  className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none bg-white"
+                />
+              ) : (
+                <p className="text-sm text-gray-600">{invoice.catatan}</p>
+              )}
+            </div>
           </div>
         )}
 
