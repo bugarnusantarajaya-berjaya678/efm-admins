@@ -318,6 +318,8 @@ Semua status invoice/receipt di seluruh modul harus konsisten berbahasa Indonesi
 
 ⚠️ **Dilarang:** `'Paid'`, `'Awaiting Payment'`, `'Overdue'` (Inggris) — selalu ganti ke label Indonesia di atas.
 
+⚠️ **Penulisan `Lunas`**: selalu *title case* (`Lunas`), BUKAN all-caps (`LUNAS`) — berlaku di badge document header, teks konfirmasi, label field, dan semua UI. All-caps `LUNAS` adalah pola lama yang sudah dihapus.
+
 ### 5b. Invoice/Receipt — Navy Header (kiri: info perusahaan)
 
 ```jsx
@@ -391,7 +393,7 @@ Semua status invoice/receipt di seluruh modul harus konsisten berbahasa Indonesi
   </div>
 
   <span className="px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 bg-green-500">
-    LUNAS
+    Lunas
   </span>
 </div>
 ```
@@ -439,27 +441,30 @@ Body dokumen TIDAK menggunakan satu wrapper `space-y-5`. Setiap section adalah *
 - Angka: `text-base font-black text-white` — bukan orange, bukan `text-xl`
 - Padding: `py-2.5` (bukan `py-4`)
 
-### 5g. Receipt — Footer Copywriting
+### 5g. Invoice & Receipt — Footer Copywriting
 
+Footer dokumen selalu **2 baris**: satu kalimat kontekstual + satu baris brand.
+
+**Invoice footer:**
+```jsx
+<div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+  <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Harap selesaikan pembayaran sesuai tenggat waktu yang tertera.</p>
+  <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
+</div>
+```
+
+**Receipt footer:**
 ```jsx
 <div className="px-6 sm:px-8 py-4 text-center space-y-1">
-  <p className="text-xs text-gray-400 leading-relaxed">
-    Terima kasih telah mempercayakan program Anda kepada kami.<br />
-    Simpan receipt ini sebagai bukti pembayaran yang sah.
-  </p>
-  <p className="text-xs font-semibold text-gray-500">
-    Powered by {cs.namaPerusahaan}
-  </p>
-  <p className="text-[10px] text-gray-400">
-    {cs.namaLegal}
-  </p>
+  <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan receipt ini sebagai bukti pembayaran yang sah.</p>
+  <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
 </div>
 ```
 
 **Aturan:**
-- Teks pertama: "program Anda" — BUKAN "program fitness Anda" (EFM bukan hanya fitness)
-- Brand line: `Powered by {cs.namaPerusahaan}` — bukan hardcode nama, bukan "Profesional & Terpercaya"
-- Legal line: `{cs.namaLegal}` — selalu tampilkan nama legal badan usaha
+- Selalu 2 baris — satu kalimat pesan + satu baris `Powered by`
+- Brand + legal digabung satu baris: `Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}` — BUKAN 2 baris terpisah
+- BUKAN "program fitness Anda" — cukup "kepercayaan Anda" (EFM bukan hanya fitness)
 - HAPUS: "Dokumen ini digenerate oleh sistem EFM V2" — tidak perlu ditampilkan ke klien
 
 ### 5h. Receipt — Barcode Absensi Sesi
@@ -467,6 +472,20 @@ Body dokumen TIDAK menggunakan satu wrapper `space-y-5`. Setiap section adalah *
 Barcode di receipt digunakan untuk **absensi pelatih/terapis per sesi**, bukan verifikasi pembayaran.
 
 - Judul section: `Barcode Absensi Sesi` — BUKAN "Kode Verifikasi Pembayaran"
-- Label kecil di bawah QR: "Tunjukkan setiap sesi" — BUKAN "Scan verifikasi"
-- Deskripsi: "Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung"
+- Label di bawah QR: hanya nomor receipt (`{rcp.rcpNo}`) — `text-[10px] font-semibold text-[#1E1C43] mt-1.5 text-center tracking-wide`
+- TIDAK ADA sub-label "Tunjukkan setiap sesi" di bawah nomor — redundant, sudah ada deskripsi di section
+- Deskripsi di dalam card: "Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung"
 - Size QR di section dedicated: `size={160}` (bukan default 72)
+
+### 5i. Receipt — Sections yang Ada (Urutan Wajib)
+
+Receipt body berisi section-section berikut (urutan ini wajib, jangan tambah section baru tanpa konfirmasi):
+
+1. **Tagihan Kepada** — info klien
+2. **Rincian Program** — paket, sesi, harga
+3. **Total strip** (navy bar di dalam card Rincian Program)
+4. **Detail Pembayaran** — tanggal bayar, metode
+5. **Barcode Absensi Sesi** — QR/barcode untuk absensi
+6. **Footer** — 2 baris (lihat 5g)
+
+⚠️ **TIDAK ADA section "Catatan"** di receipt — section ini sudah dihapus. Jika perlu catatan, tampilkan di Invoice bukan Receipt.
