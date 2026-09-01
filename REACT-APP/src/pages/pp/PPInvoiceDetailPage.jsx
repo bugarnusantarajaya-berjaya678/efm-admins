@@ -502,7 +502,7 @@ export default function PPInvoiceDetailPage() {
             <div className="px-4 pb-3">
               <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex justify-between items-center">
                 <span className="text-xs font-bold text-white uppercase tracking-wide">Total Tagihan</span>
-                <span className="text-base font-black text-[#E05945]">
+                <span className="text-base font-black text-white">
                   {editing ? formatRp(editTotal) : formatRp(totalAkhir)}
                 </span>
               </div>
