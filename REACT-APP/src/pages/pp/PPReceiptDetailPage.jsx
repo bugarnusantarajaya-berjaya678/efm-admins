@@ -87,132 +87,127 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         </div>
       </div>
 
-      {/* Body */}
-      <div className="px-6 sm:px-8 py-6 space-y-5">
-
-        {/* Informasi Pembayaran — 4-col single row */}
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Informasi Pembayaran
-          </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4">
-              {[
-                ['Nama Klien',     rcp.client],
-                ['Metode Bayar',   rcp.metode],
-                ['Tgl Pembayaran', rcp.tglBayar],
-                ['PIC Pelatih',    rcp.pic],
-              ].map(([l, v]) => (
-                <div key={l}>
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Rincian Program + Total strip */}
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Rincian Program
-          </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-            <table className="w-full" style={{ tableLayout: 'fixed' }}>
-              <thead>
-                <tr className="border-b border-gray-200">
-                  {[['Program / Layanan','55%'],['Jumlah Sesi','20%'],['Total Bayar','25%']].map(([h,w],i) => (
-                    <th key={h}
-                      style={{ width: w, textAlign: i === 0 ? 'left' : 'right' }}
-                      className="px-4 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td className="px-4 py-3.5">
-                    <p className="text-sm font-semibold text-[#1E1C43]">{rcp.paket}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">Sesi Personal Training EFM</p>
-                  </td>
-                  <td className="px-4 py-3.5 text-sm text-right text-gray-600">{sesi} sesi</td>
-                  <td className="px-4 py-3.5 text-sm font-semibold text-right text-[#1E1C43]">
-                    {formatRp(rcp.total)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            {/* Total strip — navy bottom of card */}
-            <div className="bg-[#1E1C43] px-4 py-2.5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wide">Total Pembayaran Diterima</span>
-              <span className="text-base font-black text-white">{formatRp(rcp.total)}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* QR Verifikasi — section besar untuk pelatih */}
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Barcode Absensi Sesi
-          </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl py-6 px-4 flex flex-col items-center">
-            <QRVerifikasi label={rcp.rcpNo} size={160} />
-            <p className="text-xs text-gray-400 mt-3 text-center">
-              Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung
-            </p>
-          </div>
-        </div>
-
-        {/* Detail Pembayaran Diterima */}
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-            Detail Pembayaran Diterima
-          </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                <CheckCircle2 size={16} className="text-green-600" />
+      {/* Informasi Pembayaran */}
+      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          Informasi Pembayaran
+        </p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4">
+            {[
+              ['Nama Klien',     rcp.client],
+              ['Metode Bayar',   rcp.metode],
+              ['Tgl Pembayaran', rcp.tglBayar],
+              ['PIC Pelatih',    rcp.pic],
+            ].map(([l, v]) => (
+              <div key={l}>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
+                <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[#1E1C43]">{rcp.metode}</p>
-                {matchedBank ? (
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    {matchedBank.rek} · a.n. {matchedBank.an}
-                  </p>
-                ) : (
-                  <p className="text-xs text-gray-400 mt-0.5">Pembayaran diterima langsung</p>
-                )}
-              </div>
-              <span className="px-2 py-1 rounded-full text-[10px] font-semibold bg-green-50 text-green-700 border border-green-200 shrink-0">
-                Terkonfirmasi
-              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Rincian Program + Total strip */}
+      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          Rincian Program
+        </p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+          <table className="w-full" style={{ tableLayout: 'fixed' }}>
+            <thead>
+              <tr className="border-b border-gray-200">
+                {[['Program / Layanan','55%'],['Jumlah Sesi','20%'],['Total Bayar','25%']].map(([h,w],i) => (
+                  <th key={h}
+                    style={{ width: w, textAlign: i === 0 ? 'left' : 'right' }}
+                    className="px-4 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td className="px-4 py-3.5">
+                  <p className="text-sm font-semibold text-[#1E1C43]">{rcp.paket}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">Sesi Personal Training EFM</p>
+                </td>
+                <td className="px-4 py-3.5 text-sm text-right text-gray-600">{sesi} sesi</td>
+                <td className="px-4 py-3.5 text-sm font-semibold text-right text-[#1E1C43]">
+                  {formatRp(rcp.total)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          {/* Total strip — navy bottom of card */}
+          <div className="bg-[#1E1C43] px-4 py-2.5 flex items-center justify-between">
+            <span className="text-xs font-bold text-white uppercase tracking-wide">Total Pembayaran Diterima</span>
+            <span className="text-base font-black text-white">{formatRp(rcp.total)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Barcode Absensi Sesi */}
+      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          Barcode Absensi Sesi
+        </p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl py-6 px-4 flex flex-col items-center">
+          <QRVerifikasi label={rcp.rcpNo} size={160} />
+          <p className="text-xs text-gray-400 mt-3 text-center">
+            Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung
+          </p>
+        </div>
+      </div>
+
+      {/* Detail Pembayaran Diterima */}
+      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+          Detail Pembayaran Diterima
+        </p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
+              <CheckCircle2 size={16} className="text-green-600" />
             </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-[#1E1C43]">{rcp.metode}</p>
+              {matchedBank ? (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {matchedBank.rek} · a.n. {matchedBank.an}
+                </p>
+              ) : (
+                <p className="text-xs text-gray-400 mt-0.5">Pembayaran diterima langsung</p>
+              )}
+            </div>
+            <span className="px-2 py-1 rounded-full text-[10px] font-semibold bg-green-50 text-green-700 border border-green-200 shrink-0">
+              Terkonfirmasi
+            </span>
           </div>
         </div>
+      </div>
 
-        {/* Catatan */}
-        <div>
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-            <p className="text-sm text-gray-400 italic">Tidak ada catatan.</p>
-          </div>
+      {/* Catatan */}
+      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</p>
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+          <p className="text-sm text-gray-400 italic">Tidak ada catatan.</p>
         </div>
+      </div>
 
-        {/* Footer */}
-        <div className="pt-3 border-t border-dashed border-gray-200 text-center space-y-1">
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Terima kasih telah mempercayakan program Anda kepada kami.<br />
-            Simpan receipt ini sebagai bukti pembayaran yang sah.
-          </p>
-          <p className="text-xs font-semibold text-gray-500">
-            Powered by {cs.namaPerusahaan}
-          </p>
-          <p className="text-[10px] text-gray-400">
-            {cs.namaLegal}
-          </p>
-        </div>
-
+      {/* Footer */}
+      <div className="px-6 sm:px-8 py-4 text-center space-y-1">
+        <p className="text-xs text-gray-400 leading-relaxed">
+          Terima kasih telah mempercayakan program Anda kepada kami.<br />
+          Simpan receipt ini sebagai bukti pembayaran yang sah.
+        </p>
+        <p className="text-xs font-semibold text-gray-500">
+          Powered by {cs.namaPerusahaan}
+        </p>
+        <p className="text-[10px] text-gray-400">
+          {cs.namaLegal}
+        </p>
       </div>
     </div>
   )
