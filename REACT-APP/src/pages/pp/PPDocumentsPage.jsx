@@ -827,7 +827,7 @@ export default function PPDocumentsPage() {
           <option value="signed">Sudah TTD</option>
           <option value="pending">Pending TTD</option>
           <option value="waiting_approval">Menunggu Approval</option>
-          <option value="expired">Expired</option>
+          <option value="expired">Kadaluarsa</option>
         </select>
         <select value={fPaket} onChange={e => setFPaket(e.target.value)}
           className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
