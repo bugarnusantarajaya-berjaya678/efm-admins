@@ -144,13 +144,9 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
               </tbody>
             </table>
             {/* Total strip — navy bottom of card */}
-            <div className="bg-[#1E1C43] px-4 py-4 flex items-center justify-between">
-              <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wide">
-                Total Pembayaran Diterima
-              </p>
-              <div className="text-right">
-                <p className="text-xl font-bold text-white">{formatRp(rcp.total)}</p>
-              </div>
+            <div className="bg-[#1E1C43] px-4 py-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold text-white uppercase tracking-wide">Total Pembayaran Diterima</span>
+              <span className="text-base font-black text-white">{formatRp(rcp.total)}</span>
             </div>
           </div>
         </div>
