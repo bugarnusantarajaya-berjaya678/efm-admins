@@ -408,10 +408,10 @@ export default function PPInvoiceDetailPage() {
               <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    {['Deskripsi','Harga Persesi','Jumlah Sesi','Harga Paket','Diskon Paket','Total'].map((h, i) => (
+                    {[['Deskripsi','32%'],['Harga Persesi','15%'],['Jumlah Sesi','10%'],['Harga Paket','16%'],['Diskon Paket','14%'],['Total','13%']].map(([h, w], i) => (
                       <th key={h}
                         className="px-2.5 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
-                        style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right' }}>
+                        style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right', width: w }}>
                         {h}
                       </th>
                     ))}
