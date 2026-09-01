@@ -534,7 +534,7 @@ export default function PPInvoiceDetailPage() {
                 <div className="mt-2 bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-start gap-3">
                   <CheckCircle size={18} className="text-green-600 shrink-0 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — LUNAS</p>
+                    <p className="text-sm font-bold text-green-800">Pembayaran Telah Dikonfirmasi — Lunas</p>
                     <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1">
                       {invoice.paidDate && (
                         <>

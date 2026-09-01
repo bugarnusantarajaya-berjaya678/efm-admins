@@ -81,7 +81,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           </div>
 
           <span className="px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 bg-green-500">
-            LUNAS
+            Lunas
           </span>
         </div>
       </div>
@@ -282,7 +282,7 @@ export default function PPReceiptDetailPage() {
               <span className="text-xs text-gray-500">{receipt.client}</span>
               <span className="text-gray-300 text-xs">·</span>
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-green-500">
-                LUNAS
+                Lunas
               </span>
               {waSent && (
                 <>
