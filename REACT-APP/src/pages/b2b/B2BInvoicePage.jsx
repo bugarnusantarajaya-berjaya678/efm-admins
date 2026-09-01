@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, Eye, Download, ArrowLeft, CheckCircle, Pencil, Trash2, Plus } from 'lucide-react'
+import { Search, Eye, Download, ArrowLeft, CheckCircle, Pencil, Trash2, Plus, RotateCcw } from 'lucide-react'
 
 /* ─── Helpers ─── */
 function formatRp(n) {
@@ -655,8 +655,8 @@ export default function B2BInvoicePage() {
         <StatMini label="Overdue"          value={overdueCount}  sub="⚠️ Lewat jatuh tempo"  accent="red" />
       </div>
 
-      <div className="bg-white border border-gray-100 rounded-xl shadow-sm px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
-        <select className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] hover:border-gray-300 transition-colors"
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+        <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
           value={fStatus} onChange={e => { setFStatus(e.target.value); setPage(1) }}>
           <option value="">Semua Status</option>
           <option value="Lunas">Lunas</option>
@@ -664,13 +664,13 @@ export default function B2BInvoicePage() {
           <option value="Sebagian">Sebagian</option>
           <option value="Overdue">Overdue</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={14} className="text-gray-400 shrink-0" />
-          <input className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400"
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
+          <input className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
             placeholder="Cari invoice, perusahaan, program..."
             value={fSearch} onChange={e => { setFSearch(e.target.value); setPage(1) }} />
         </div>
-        <button onClick={reset} className="px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">Reset</button>
+        <button onClick={reset} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       <div className="bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden">

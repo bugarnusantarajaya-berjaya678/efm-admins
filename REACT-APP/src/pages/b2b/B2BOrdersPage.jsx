@@ -1043,71 +1043,63 @@ export default function B2BOrdersPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          {/* Baris 1: Dropdowns */}
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <select value={bulan} onChange={e => setBulan(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
-              <option value="">Semua Bulan</option>
-              <option value="Jan">Januari</option>
-              <option value="Feb">Februari</option>
-              <option value="Mar">Maret</option>
-              <option value="Apr">April</option>
-              <option value="Mei">Mei</option>
-              <option value="Jun">Juni</option>
-              <option value="Jul">Juli</option>
-              <option value="Agu">Agustus</option>
-              <option value="Sep">September</option>
-              <option value="Okt">Oktober</option>
-              <option value="Nov">November</option>
-              <option value="Des">Desember</option>
-            </select>
-            <select value={tahun} onChange={e => setTahun(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
-              <option value="">Semua Tahun</option>
-              <option value="2026">2026</option>
-              <option value="2025">2025</option>
-              <option value="2024">2024</option>
-            </select>
-            <select value={tipe} onChange={e => setTipe(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
-              <option value="">Semua Tipe</option>
-              <option value="Corporate">Corporate</option>
-              <option value="Apartment">Apartment</option>
-              <option value="Residence">Residence</option>
-            </select>
-            <select value={statusF} onChange={e => setStatusF(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
-              <option value="">Semua Status</option>
-              <option value="Aktif">Aktif</option>
-              <option value="Pending">Pending</option>
-              <option value="Selesai">Selesai</option>
-              <option value="Batal">Batal</option>
-            </select>
-            <select value={tahapanF} onChange={e => setTahapanF(e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] cursor-pointer min-w-0">
-              <option value="">Semua Tahapan</option>
-              <option value="Quotation & LOI">Quotation &amp; LOI</option>
-              <option value="MOU">MOU</option>
-              <option value="Contract">Contract</option>
-              <option value="Class in Progress">Class in Progress</option>
-            </select>
-            <div style={{ minWidth: '72px' }} />
+        <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+          <select value={bulan} onChange={e => setBulan(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Bulan</option>
+            <option value="Jan">Januari</option>
+            <option value="Feb">Februari</option>
+            <option value="Mar">Maret</option>
+            <option value="Apr">April</option>
+            <option value="Mei">Mei</option>
+            <option value="Jun">Juni</option>
+            <option value="Jul">Juli</option>
+            <option value="Agu">Agustus</option>
+            <option value="Sep">September</option>
+            <option value="Okt">Oktober</option>
+            <option value="Nov">November</option>
+            <option value="Des">Desember</option>
+          </select>
+          <select value={tahun} onChange={e => setTahun(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tahun</option>
+            <option value="2026">2026</option>
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+          </select>
+          <select value={tipe} onChange={e => setTipe(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tipe</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Apartment">Apartment</option>
+            <option value="Residence">Residence</option>
+          </select>
+          <select value={statusF} onChange={e => setStatusF(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Status</option>
+            <option value="Aktif">Aktif</option>
+            <option value="Pending">Pending</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Batal">Batal</option>
+          </select>
+          <select value={tahapanF} onChange={e => setTahapanF(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tahapan</option>
+            <option value="Quotation & LOI">Quotation &amp; LOI</option>
+            <option value="MOU">MOU</option>
+            <option value="Contract">Contract</option>
+            <option value="Class in Progress">Class in Progress</option>
+          </select>
+          <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+            <Search size={14} className="text-text-muted shrink-0" />
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Cari nama klien atau Order ID..."
+              className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
           </div>
-          {/* Baris 2: Search + Reset */}
-          <div className="flex items-center gap-2">
-            <div className="relative flex-1">
-              <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                placeholder="Cari nama klien atau Order ID..."
-                className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43]" />
-            </div>
-            <button onClick={handleReset}
-              className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 transition-colors whitespace-nowrap flex-shrink-0">
-              <RotateCcw size={12} />
-              Reset
-            </button>
-          </div>
+          <button onClick={handleReset}
+            className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+            <RotateCcw size={12} /> Reset
+          </button>
         </div>
 
         {/* Table */}

@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Plus, Search, Eye, Download, X, Upload, ExternalLink, FileText, CheckCircle, Folder } from 'lucide-react'
+import { Plus, Search, Eye, Download, X, Upload, ExternalLink, FileText, CheckCircle, Folder, RotateCcw } from 'lucide-react'
 import { B2B_DOCS_INIT, DOC_STATUS_CLS, DOC_STATUS_LABEL } from '../../data/b2bData'
 
 const JENIS_DOC_OPTS = ['Kontrak', 'MOU', 'LOI']
@@ -374,9 +374,10 @@ export default function B2BDocumentsPage() {
             />
             {fSearch && <button onClick={() => { setFSearch(''); setPage(1) }}><X size={13} className="text-text-muted" /></button>}
           </div>
-          {(fStatus || fSearch || activeTab !== 'Semua') && (
-            <button onClick={() => { setFStatus(''); setFSearch(''); setActiveTab('Semua'); setPage(1) }} className="text-[12px] text-accent font-semibold hover:underline whitespace-nowrap">Reset</button>
-          )}
+          <button onClick={() => { setFStatus(''); setFSearch(''); setActiveTab('Semua'); setPage(1) }}
+            className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+            <RotateCcw size={12} /> Reset
+          </button>
         </div>
 
         <div className="overflow-x-auto">

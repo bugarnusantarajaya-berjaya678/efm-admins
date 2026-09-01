@@ -399,42 +399,37 @@ export default function B2BReceiptPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-          <div className="flex items-center gap-3 flex-wrap">
-            <select value={bulan} onChange={e => setBulan(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Bulan</option>
-              {BULAN_OPTS.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-            <select value={tahun} onChange={e => setTahun(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Tahun</option>
-              {TAHUN_OPTS.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-            <select value={jenis} onChange={e => setJenis(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[130px] cursor-pointer">
-              <option value="">Semua Jenis</option>
-              <option>Corporate</option><option>Apartment</option>
-            </select>
-            <select value={filterMetode} onChange={e => setFilterMetode(e.target.value)}
-              className="border border-gray-200 rounded-lg px-3 py-2 text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[150px] cursor-pointer">
-              <option value="">Semua Metode</option>
-              <option>Transfer Bank</option><option>Cash</option>
-            </select>
-            <div className="flex items-center gap-3 ml-auto">
-              <div className="relative">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-                  placeholder="Cari klien, No Receipt, Order ID..."
-                  className="pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] min-w-[220px]" />
-              </div>
-              <button onClick={handleReset}
-                className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors">
-                <RotateCcw size={12} />
-                Reset
-              </button>
-            </div>
+        <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+          <select value={bulan} onChange={e => setBulan(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Bulan</option>
+            {BULAN_OPTS.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
+          </select>
+          <select value={tahun} onChange={e => setTahun(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Tahun</option>
+            {TAHUN_OPTS.slice(1).map(o => <option key={o} value={o}>{o}</option>)}
+          </select>
+          <select value={jenis} onChange={e => setJenis(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Jenis</option>
+            <option>Corporate</option><option>Apartment</option>
+          </select>
+          <select value={filterMetode} onChange={e => setFilterMetode(e.target.value)}
+            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            <option value="">Semua Metode</option>
+            <option>Transfer Bank</option><option>Cash</option>
+          </select>
+          <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+            <Search size={14} className="text-text-muted shrink-0" />
+            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Cari klien, No Receipt, Order ID..."
+              className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
           </div>
+          <button onClick={handleReset}
+            className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+            <RotateCcw size={12} /> Reset
+          </button>
         </div>
 
         {/* Order filter banner */}
