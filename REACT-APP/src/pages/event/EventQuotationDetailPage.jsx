@@ -392,7 +392,7 @@ export default function EventQuotationDetailPage() {
 
               {/* Kembali */}
               <button
-                onClick={() => navigate(quotation.leadId ? `/event/leads/${quotation.leadId}` : '/event/quotation')}
+                onClick={() => navigate(fromLead && leadId ? `/event/leads/${leadId}` : '/event/quotation')}
                 className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                 <ArrowLeft size={12} /> Kembali
               </button>
