@@ -226,26 +226,15 @@ export default function EventQuotationDetailPage() {
     setQuotation(prev => ({ ...prev, pajak: prev.pajak.filter(p => p.id !== pajakId) }))
   }
 
-  function updateSyarat(idx, value) {
-    setQuotation(prev => {
-      const arr = [...(prev.syaratKetentuan || DEFAULT_SYARAT)]
-      arr[idx] = value
-      return { ...prev, syaratKetentuan: arr }
-    })
-  }
-
-  function addSyarat() {
-    setQuotation(prev => ({
-      ...prev,
-      syaratKetentuan: [...(prev.syaratKetentuan || DEFAULT_SYARAT), ''],
-    }))
-  }
-
-  function removeSyarat(idx) {
-    setQuotation(prev => ({
-      ...prev,
-      syaratKetentuan: (prev.syaratKetentuan || DEFAULT_SYARAT).filter((_, i) => i !== idx),
-    }))
+  function getTemplateSyarat() {
+    try {
+      const saved = localStorage.getItem('efmQuotationTemplate')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+      }
+    } catch {}
+    return quotation.syaratKetentuan || DEFAULT_SYARAT
   }
 
   function handleSave() {
@@ -695,31 +684,19 @@ export default function EventQuotationDetailPage() {
 
             {/* Syarat & Ketentuan */}
             <div className="px-6 sm:px-8 py-6 border-t border-gray-100">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Syarat &amp; Ketentuan</div>
-              {editing ? (
-                <div className="space-y-2">
-                  {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
-                    <div key={i} className="flex items-start gap-2">
-                      <span className="text-xs text-gray-400 mt-2 w-4 shrink-0">{i + 1}.</span>
-                      <input value={s} onChange={e => updateSyarat(i, e.target.value)}
-                        className="flex-1 px-2 py-1.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]" />
-                      <button onClick={() => removeSyarat(i)} className="text-red-400 hover:text-red-600 mt-1.5 shrink-0">
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                  <button onClick={addSyarat}
-                    className="text-xs text-[#E05945] hover:underline flex items-center gap-1 mt-1">
-                    <Plus size={11} /> Tambah Baris
-                  </button>
-                </div>
-              ) : (
-                <ol className="list-decimal list-inside space-y-2">
-                  {(quotation.syaratKetentuan || DEFAULT_SYARAT).map((s, i) => (
-                    <li key={i} className="text-sm text-gray-600">{s}</li>
-                  ))}
-                </ol>
-              )}
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Syarat &amp; Ketentuan</div>
+                <button
+                  onClick={() => navigate('/event/quotation')}
+                  className="text-[10px] text-[#1E1C43] hover:underline underline-offset-2 font-medium">
+                  Edit via Template Quotation →
+                </button>
+              </div>
+              <ol className="list-decimal list-inside space-y-2">
+                {getTemplateSyarat().map((s, i) => (
+                  <li key={i} className="text-sm text-gray-600">{s}</li>
+                ))}
+              </ol>
             </div>
 
             {/* Document footer */}
