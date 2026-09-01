@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FileText, Search, RotateCcw, ScrollText, ArrowLeft, Settings, ChevronDown, GripVertical, Save, Trash2, Pencil, X, Plus } from 'lucide-react'
+import { FileText, Search, RotateCcw, ScrollText, ArrowLeft, Settings, ChevronDown, ChevronLeft, ChevronRight, GripVertical, Save, Trash2, Pencil, X, Plus } from 'lucide-react'
 import { initQuotations, getStoredQuotations, QUOTATIONS_INIT } from '../../data/eventQuotationsStore'
 import { getCompanySettings } from '../../utils/companySettings'
 
-const ROWS_PER_PAGE = 10
+const ROWS_PER_PAGE = 8
 
 const STATUS_CFG = {
   Draft:      { cls: 'bg-gray-100 text-gray-600 border-gray-200'        },
@@ -35,7 +35,7 @@ function StatusBadge({ status }) {
   )
 }
 
-function PBtn({ label, onClick, disabled, active }) {
+function PBtn({ onClick, disabled, active, children }) {
   return (
     <button onClick={onClick} disabled={disabled}
       className={[
@@ -44,7 +44,7 @@ function PBtn({ label, onClick, disabled, active }) {
         disabled ? 'opacity-35 cursor-not-allowed border-gray-200 text-gray-400' : '',
         !active && !disabled ? 'border-gray-200 text-gray-600 hover:border-[#1E1C43] hover:text-[#1E1C43]' : '',
       ].join(' ')}>
-      {label}
+      {children}
     </button>
   )
 }
@@ -357,21 +357,21 @@ export default function EventQuotationPage() {
               <option>2025</option>
             </select>
             <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
-              <div className="relative flex-1 sm:flex-none">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
+                <Search size={13} className="text-gray-400 shrink-0" />
                 <input type="text" value={search} onChange={e => setSearch(e.target.value)}
                   placeholder="Cari klien, event, atau ID..."
-                  className="w-full pl-8 pr-4 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-[#1E1C43] sm:min-w-[240px]" />
+                  className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400 sm:min-w-[200px]" />
               </div>
               <button onClick={() => { setFStatus(''); setFBulan(''); setFTahun(''); setSearch('') }}
-                className="inline-flex items-center gap-1.5 border border-gray-200 text-gray-600 text-xs px-3 py-2 rounded-lg bg-white hover:bg-gray-50 hover:border-gray-300 transition-colors flex-shrink-0">
+                className="inline-flex items-center gap-1.5 bg-[#1E1C43] text-white text-xs px-3 py-2 rounded-lg hover:bg-[#2d2b5c] transition-colors flex-shrink-0">
                 <RotateCcw size={12} /> Reset
               </button>
             </div>
           </div>
 
           {/* Table */}
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
             <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 360px)', minHeight: '280px' }}>
               <table className="w-full text-sm" style={{ minWidth: '960px' }}>
                 <thead className="sticky top-0 z-10">
@@ -386,10 +386,10 @@ export default function EventQuotationPage() {
                     <tr>
                       <td colSpan={10} className="px-4 py-10 text-center text-sm text-gray-400">Tidak ada data quotation.</td>
                     </tr>
-                  ) : pageRows.map(q => (
+                  ) : pageRows.map((q, idx) => (
                     <tr key={q.id}
                       onClick={() => navigate('/event/quotation/' + q.id)}
-                      className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150 cursor-pointer">
+                      className={`border-b border-gray-100 hover:bg-blue-50/40 transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-[#FAFAFA]' : ''}`}>
                       <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
                           <FileText size={12} className="text-gray-400 shrink-0" />
@@ -425,11 +425,28 @@ export default function EventQuotationPage() {
                 Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} quotation
               </p>
               <div className="flex items-center gap-1">
-                <PBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1} />
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                  <PBtn key={p} label={p} onClick={() => setPage(p)} active={p === safePage} />
-                ))}
-                <PBtn label="›" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} />
+                <PBtn onClick={() => setPage(p => Math.max(1, p - 1))} disabled={safePage === 1}>
+                  <ChevronLeft size={14} />
+                </PBtn>
+                {(() => {
+                  const pages = []
+                  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <PBtn key={p} onClick={() => setPage(p)} active={p === safePage}>{p}</PBtn>
+                  ))
+                  pages.push(1)
+                  if (safePage > 3) pages.push('...')
+                  for (let p = Math.max(2, safePage - 1); p <= Math.min(totalPages - 1, safePage + 1); p++) pages.push(p)
+                  if (safePage < totalPages - 2) pages.push('...')
+                  pages.push(totalPages)
+                  return pages.map((p, i) => p === '...' ? (
+                    <span key={`e${i}`} className="w-8 h-8 flex items-center justify-center text-xs text-gray-400">…</span>
+                  ) : (
+                    <PBtn key={p} onClick={() => setPage(p)} active={p === safePage}>{p}</PBtn>
+                  ))
+                })()}
+                <PBtn onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages}>
+                  <ChevronRight size={14} />
+                </PBtn>
               </div>
             </div>
           </div>
