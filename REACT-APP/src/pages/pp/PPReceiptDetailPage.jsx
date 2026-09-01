@@ -65,28 +65,25 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         </div>
 
         {/* Kanan — RECEIPT title + nomor + meta */}
-        <div className="text-right flex flex-col justify-between">
-          <div>
-            <div className="text-4xl font-black tracking-widest uppercase">RECEIPT</div>
-            <div className="text-xs text-white/60 mt-1">{rcp.rcpNo}</div>
+        <div className="text-right">
+          <div className="text-4xl font-black tracking-widest uppercase">RECEIPT</div>
+          <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
+
+          <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
+            <span className="text-xs text-gray-400">Ref. Invoice</span>
+            <button onClick={() => onGoToInvoice(rcp.invNo)}
+              className="font-semibold text-sm hover:underline">{rcp.invNo}</button>
           </div>
-          <div className="mt-3 space-y-1">
-            <div className="flex items-center justify-end gap-3">
-              <span className="text-xs text-white/50">Ref. Invoice</span>
-              <button onClick={() => onGoToInvoice(rcp.invNo)}
-                className="text-xs font-semibold hover:underline">{rcp.invNo}</button>
-            </div>
-            <div className="flex items-center justify-end gap-3">
-              <span className="text-xs text-white/50">Order ID</span>
-              <button onClick={() => onGoToOrder(rcp.orderId)}
-                className="text-xs font-semibold hover:underline">#{rcp.orderId}</button>
-            </div>
-            <div className="pt-1">
-              <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white tracking-wide">
-                LUNAS
-              </span>
-            </div>
+
+          <div className="flex justify-end items-center gap-2 mb-0.5">
+            <span className="text-xs text-gray-400">Order ID</span>
+            <button onClick={() => onGoToOrder(rcp.orderId)}
+              className="font-semibold text-sm hover:underline">#{rcp.orderId}</button>
           </div>
+
+          <span className="px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 bg-green-500">
+            LUNAS
+          </span>
         </div>
       </div>
 
