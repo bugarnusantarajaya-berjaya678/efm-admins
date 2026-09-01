@@ -372,19 +372,19 @@ export default function PPInvoiceDetailPage() {
 
           <div className="text-right">
             <div className="text-4xl font-black tracking-widest uppercase">INVOICE</div>
-            <div className="text-sm text-gray-300 mt-1">{invoice.invNo}</div>
+            <div className="text-sm text-gray-300 mt-0.5">{invoice.invNo}</div>
 
-            <div className="flex justify-end items-center gap-2 mb-1 mt-3">
+            <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
               <span className="text-xs text-gray-400">Tanggal:</span>
               <span className="font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-end items-center gap-2 mb-3">
+            <div className="flex justify-end items-center gap-2 mb-0.5">
               <span className="text-xs text-gray-400">Jatuh Tempo:</span>
               <span className="font-semibold text-sm">{invoice.due}</span>
             </div>
 
-            <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block ${statusBadgeCls}`}>
+            <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 ${statusBadgeCls}`}>
               {STATUS_LABEL[invoice.status]}
             </span>
           </div>
