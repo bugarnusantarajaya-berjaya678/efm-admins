@@ -7,11 +7,12 @@ import { getAllReceipts } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
 import { getNoHpByOrderId } from '../../data/ppLeadsStore'
 
-function QRVerifikasi({ label }) {
+function QRVerifikasi({ label, size = 72 }) {
   return (
     <div className="flex flex-col items-center justify-center py-2">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"
-        className="w-[72px] h-[72px] text-[#1E1C43]">
+        style={{ width: size, height: size }}
+        className="text-[#1E1C43]">
         <rect x="2" y="2" width="9" height="9" rx="1"/>
         <rect x="3.5" y="3.5" width="6" height="6" rx=".5" fill="currentColor" opacity=".15"/>
         <rect x="13" y="2" width="9" height="9" rx="1"/>
@@ -91,13 +92,13 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       {/* Body */}
       <div className="px-6 sm:px-8 py-6 space-y-5">
 
-        {/* Informasi Pembayaran — 2-col info + QR kanan */}
+        {/* Informasi Pembayaran — 4-col single row */}
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
             Informasi Pembayaran
           </p>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 flex gap-6">
-            <div className="grid grid-cols-2 gap-x-8 gap-y-4 flex-1">
+          <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-4">
               {[
                 ['Nama Klien',     rcp.client],
                 ['Metode Bayar',   rcp.metode],
@@ -110,13 +111,10 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
                 </div>
               ))}
             </div>
-            <div className="shrink-0 flex items-center justify-center border-l border-gray-200 pl-6">
-              <QRVerifikasi label={rcp.rcpNo} />
-            </div>
           </div>
         </div>
 
-        {/* Rincian Program */}
+        {/* Rincian Program + Total strip */}
         <div>
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
             Rincian Program
@@ -147,17 +145,29 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
                 </tr>
               </tbody>
             </table>
+            {/* Total strip — navy bottom of card */}
+            <div className="bg-[#1E1C43] px-4 py-4 flex items-center justify-between">
+              <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wide">
+                Total Pembayaran Diterima
+              </p>
+              <div className="text-right">
+                <p className="text-xl font-bold text-[#E05945]">{formatRp(rcp.total)}</p>
+                <p className="text-[10px] text-white/40 mt-0.5">✓ Pembayaran telah dikonfirmasi</p>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Total Pembayaran */}
-        <div className="flex justify-end">
-          <div className="bg-[#1E1C43] rounded-xl px-6 py-4 text-right min-w-[260px]">
-            <p className="text-[10px] font-semibold text-white/50 uppercase tracking-wide mb-1">
-              Total Pembayaran Diterima
+        {/* QR Verifikasi — section besar untuk pelatih */}
+        <div>
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+            Kode Verifikasi Pembayaran
+          </p>
+          <div className="bg-gray-50 border border-gray-200 rounded-xl py-6 px-4 flex flex-col items-center">
+            <QRVerifikasi label={rcp.rcpNo} size={160} />
+            <p className="text-xs text-gray-400 mt-3 text-center">
+              Pelatih dapat scan kode ini untuk verifikasi pembayaran klien
             </p>
-            <p className="text-2xl font-bold text-[#E05945]">{formatRp(rcp.total)}</p>
-            <p className="text-[10px] text-white/40 mt-1">✓ Pembayaran telah dikonfirmasi</p>
           </div>
         </div>
 
