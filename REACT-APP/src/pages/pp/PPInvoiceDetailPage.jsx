@@ -606,11 +606,8 @@ export default function PPInvoiceDetailPage() {
 
         {/* Footer */}
         <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
-          <p className="text-xs text-gray-400 leading-relaxed">
-            Terima kasih atas kepercayaan Anda. Harap selesaikan pembayaran sesuai tenggat waktu yang tertera.
-          </p>
-          <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}</p>
-          <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
+          <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Harap selesaikan pembayaran sesuai tenggat waktu yang tertera.</p>
+          <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
         </div>
       </div>
 
