@@ -28,7 +28,7 @@ function QRVerifikasi({ label, size = 72 }) {
         <rect x="13" y="20" width="6" height="2"/>
       </svg>
       <p className="text-[10px] font-semibold text-[#1E1C43] mt-1.5 text-center tracking-wide">{label}</p>
-      <p className="text-[9px] text-gray-400 mt-0.5 text-center">Scan verifikasi</p>
+      <p className="text-[9px] text-gray-400 mt-0.5 text-center">Tunjukkan setiap sesi</p>
     </div>
   )
 }
@@ -151,8 +151,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
                 Total Pembayaran Diterima
               </p>
               <div className="text-right">
-                <p className="text-xl font-bold text-[#E05945]">{formatRp(rcp.total)}</p>
-                <p className="text-[10px] text-white/40 mt-0.5">✓ Pembayaran telah dikonfirmasi</p>
+                <p className="text-xl font-bold text-white">{formatRp(rcp.total)}</p>
               </div>
             </div>
           </div>
@@ -166,7 +165,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           <div className="bg-gray-50 border border-gray-200 rounded-xl py-6 px-4 flex flex-col items-center">
             <QRVerifikasi label={rcp.rcpNo} size={160} />
             <p className="text-xs text-gray-400 mt-3 text-center">
-              Pelatih dapat scan kode ini untuk verifikasi pembayaran klien
+              Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung
             </p>
           </div>
         </div>
