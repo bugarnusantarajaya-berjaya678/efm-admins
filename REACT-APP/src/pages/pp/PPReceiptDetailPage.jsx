@@ -209,14 +209,14 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         {/* Footer */}
         <div className="pt-3 border-t border-dashed border-gray-200 text-center space-y-1">
           <p className="text-xs text-gray-400 leading-relaxed">
-            Terima kasih telah mempercayakan program fitness Anda kepada kami.<br />
+            Terima kasih telah mempercayakan program Anda kepada kami.<br />
             Simpan receipt ini sebagai bukti pembayaran yang sah.
           </p>
           <p className="text-xs font-semibold text-gray-500">
-            {cs.namaPerusahaan} — Profesional &amp; Terpercaya
+            Powered by {cs.namaPerusahaan}
           </p>
-          <p className="text-[10px] text-gray-300 pt-1">
-            Dokumen ini digenerate oleh sistem EFM V2
+          <p className="text-[10px] text-gray-400">
+            {cs.namaLegal}
           </p>
         </div>
 
@@ -305,7 +305,7 @@ export default function PPReceiptDetailPage() {
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               Receipt Pembayaran PP
             </p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">{receipt.rcpNo}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">Receipt #{receipt.rcpNo}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{receipt.client}</span>
               <span className="text-gray-300 text-xs">·</span>
