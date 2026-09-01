@@ -317,8 +317,8 @@ export default function PPInvoicePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <StatMini label="Total Invoice"  value={invoices.length} sub="Bulan ini" />
             <StatMini label="Belum Dibayar"  value={pendingCount}    sub="Perlu follow up"      accent="orange" />
-            <StatMini label="Paid"           value={paidCount}       sub="✅ Terbayar"           accent="green" />
-            <StatMini label="Overdue"        value={overdueCount}    sub="⚠️ Lewat Jatuh Tempo"  accent="red" />
+            <StatMini label="Lunas"          value={paidCount}       sub="Sudah dibayar"        accent="green" />
+            <StatMini label="Jatuh Tempo"    value={overdueCount}    sub="Lewat jatuh tempo"    accent="red" />
           </div>
 
           <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
