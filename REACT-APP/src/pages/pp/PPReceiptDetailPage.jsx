@@ -162,9 +162,8 @@ export default function PPReceiptDetailPage() {
   return (
     <div className="flex flex-col gap-4">
       {/* Page Header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 pt-5 pb-4">
-        {/* Row 1 — Identity */}
-        <div className="flex items-center gap-3 mb-4">
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
             <Receipt size={16} className="text-white" />
           </div>
@@ -179,24 +178,19 @@ export default function PPReceiptDetailPage() {
               </span>
             </div>
           </div>
-          {/* Back button — always goes to Order Detail */}
+          <button
+            onClick={handleResendWA}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+            <MessageCircle size={13} /> Kirim WA
+          </button>
+          <button onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
+            <Download size={13} /> Download PDF
+          </button>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
             <ArrowLeft size={13} /> Order #{backOrderId}
-          </button>
-        </div>
-
-        {/* Row 2 — Actions */}
-        <div className="flex items-center gap-2 flex-wrap border-t border-gray-100 pt-3">
-          <button
-            onClick={handleResendWA}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-            <MessageCircle size={13} /> Kirim WA
-          </button>
-          <button onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-            <Download size={13} /> Download PDF
           </button>
         </div>
       </div>
