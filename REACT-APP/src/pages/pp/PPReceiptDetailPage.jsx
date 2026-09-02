@@ -223,7 +223,7 @@ export default function PPReceiptDetailPage() {
               ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } })
               : navigate('/pp/receipt')
             }
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
             <ArrowLeft size={13} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Receipt'}
           </button>
         </div>
@@ -309,7 +309,7 @@ export default function PPReceiptDetailPage() {
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
-            <ArrowLeft size={13} /> Order #{backOrderId}
+            <ArrowLeft size={13} /> Kembali ke Order #{backOrderId}
           </button>
         </div>
       </div>
