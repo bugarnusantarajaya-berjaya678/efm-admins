@@ -228,9 +228,9 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Document footer */}
-      <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-1">
-        <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
-        <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
+      <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
+        <p className="text-[9px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-[9px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
