@@ -3,7 +3,6 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
@@ -1924,77 +1923,6 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 6: Fitness Assessment (Related Records Panel) ── */}
-          {(() => {
-            const assessment = getAssessmentByOrderId(order.id)
-            const statusCls = assessment?.statusAssessment === 'Post-Test Selesai'
-              ? 'bg-green-50 text-green-700 border-green-200'
-              : assessment?.statusAssessment === 'Pre-Test Selesai'
-              ? 'bg-blue-50 text-blue-700 border-blue-200'
-              : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-            const preTestDate = assessment?.tanggalPreTest
-              ? new Date(assessment.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-              : '—'
-            return (
-              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Fitness Assessment</h3>
-                    <p className="text-xs text-gray-400 pl-4 mt-0.5">Data screening & assessment klien untuk order ini</p>
-                  </div>
-                  {!assessment && (
-                    <button
-                      onClick={() => navigate('/pp/screening/new', { state: { fromOrderId: order.id, leadId: order.leadId, namaKlien: order.namaKlien } })}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition"
-                    >
-                      <Plus size={12} /> Buat Assessment
-                    </button>
-                  )}
-                </div>
-                <div className="p-5">
-                  {!assessment ? (
-                    <p className="text-xs text-gray-400 italic text-center py-6">Belum ada data fitness assessment untuk order ini.</p>
-                  ) : (
-                    <div
-                      onClick={() => navigate('/pp/screening/' + assessment.id, { state: { fromOrderId: order.id } })}
-                      className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                          <ClipboardList size={14} className="text-[#1E1C43]" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-[#1E1C43] truncate">{assessment.id}</p>
-                          <p className="text-[10px] text-gray-400 truncate">
-                            {[
-                              preTestDate,
-                              assessment.namaFC || null,
-                              assessment.tanita?.tinggiBadan_awal    ? `${assessment.tanita.tinggiBadan_awal} cm`     : null,
-                              assessment.tanita?.totalBodyWeight_awal ? `${assessment.tanita.totalBodyWeight_awal} kg`  : null,
-                              assessment.tanita?.bodyMassIndex_awal   ? `BMI ${assessment.tanita.bodyMassIndex_awal}`  : null,
-                            ].filter(Boolean).join(' · ')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {assessment.prevAssessmentId && (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-purple-50 text-purple-700 border-purple-200">
-                            Renewal
-                          </span>
-                        )}
-                        {assessment.statusAssessment && (
-                          <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>
-                            {assessment.statusAssessment}
-                          </span>
-                        )}
-                        <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })()}
 
           {/* ── Section 7: Catatan Progres Pelatih ── */}
           {(() => {
