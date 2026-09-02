@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Info } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
+import { getStoredLeads, getLeadHealthById } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -589,6 +590,26 @@ export default function PPFitnessAssessmentPage() {
     setCrumbs(['Private Program', 'Kesehatan', isNew ? 'Baru' : id])
     return () => setCrumbs(null)
   }, [isNew, id])
+
+  // Auto-fill dari data leads saat buat assessment baru
+  useEffect(() => {
+    if (!isNew || !leadId) return
+    const leads = getStoredLeads()
+    const lead = leads.find(l => l.id === leadId)
+    if (lead) {
+      if (lead.nama) setNamaKlien(lead.nama)
+      if (lead.picEfm) setNamaFC(lead.picEfm)
+      if (lead.programDiminati) setProgramLatihan(lead.programDiminati)
+    }
+    const health = getLeadHealthById(leadId)
+    if (health?.sudahDiisi) {
+      if (health.tujuanProgram) setDetailGoals(health.tujuanProgram)
+      if (health.kondisiSaatIni) setKondisiFisik(health.kondisiSaatIni)
+      if (health.riwayatCedera) setRiwayatCedera(health.riwayatCedera)
+      if (health.obatanRutin) setObatanRutin(health.obatanRutin)
+      if (health.catatanCs) setCatatanScreening(health.catatanCs)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="bg-[#F5F5F7] min-h-screen pb-24">
