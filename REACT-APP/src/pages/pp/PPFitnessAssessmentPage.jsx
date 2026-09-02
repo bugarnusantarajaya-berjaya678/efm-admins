@@ -659,30 +659,28 @@ export default function PPFitnessAssessmentPage() {
     <div className="bg-[#F5F5F7] min-h-screen pb-24">
 
       {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-6">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <Activity size={22} className="text-white" />
-            </div>
-            <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Fitness Assessment PP</p>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">
-                {isNew ? 'Assessment Baru' : id}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                {isNew ? (
-                  <span className="text-xs text-gray-400">Isi data assessment klien baru</span>
-                ) : (
-                  <>
-                    <span className="text-xs text-gray-500">{existing?.namaKlien || '—'}</span>
-                    <span className="text-gray-300 text-xs">·</span>
-                    <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
-                      {statusLabel}
-                    </span>
-                  </>
-                )}
-              </div>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 mb-6">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+            <Activity size={16} className="text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Fitness Assessment PP</p>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">
+              {isNew ? 'Assessment Baru' : id}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 mt-0.5">
+              {isNew ? (
+                <span className="text-xs text-gray-400">Isi data assessment klien baru</span>
+              ) : (
+                <>
+                  <span className="text-xs text-gray-500">{existing?.namaKlien || '—'}</span>
+                  <span className="text-gray-300 text-xs">·</span>
+                  <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                    {statusLabel}
+                  </span>
+                </>
+              )}
             </div>
           </div>
           <button
