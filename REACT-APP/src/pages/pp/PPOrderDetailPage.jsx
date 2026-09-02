@@ -6,7 +6,8 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { getDocByOrderId, updateDoc as updateAgrDoc } from '../../data/ppDocumentsStore'
-import { addReceipt } from '../../data/ppReceiptStore'
+import { addReceipt, getReceiptByOrderId } from '../../data/ppReceiptStore'
+import { INVOICES_INIT } from '../../data/ppInvoiceData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { PIC_DB } from '../../data/ppProgramDBData'
 
@@ -363,6 +364,8 @@ export default function PPOrderDetailPage() {
 
   const agrDoc = getDocByOrderId(order?.id)
   const agrNomor = agrDoc?.id || (order?.id ? 'AGR-' + order.id : 'AGR-PP')
+  const linkedInv = !isNew ? (INVOICES_INIT.find(i => i.orderId === order?.id) ?? null) : null
+  const linkedRcp = !isNew ? (getReceiptByOrderId(order?.id) ?? null) : null
 
   /* ── Section state ───────────────────────────────────────────────────────── */
   const [activeTab, setActiveTab] = useState(fromState?.defaultTab || 'keuangan')
@@ -977,6 +980,71 @@ export default function PPOrderDetailPage() {
       {activeTab === 'keuangan' && (
         <>
 
+
+          {/* ── Dokumen & Tahapan Shortcuts ── */}
+          {!isNew && (() => {
+            const INV_STATUS = { paid: { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' }, pending: { label: 'Menunggu', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, overdue: { label: 'Jatuh Tempo', cls: 'bg-red-50 text-red-700 border-red-200' } }
+            const AGR_STATUS = { signed: { label: 'Ditandatangani', cls: 'bg-green-50 text-green-700 border-green-200' }, waiting_approval: { label: 'Menunggu TTD', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, expired: { label: 'Kadaluarsa', cls: 'bg-gray-50 text-gray-500 border-gray-200' } }
+            const tahapan = [
+              {
+                step: 1, label: 'Invoice',
+                docId: linkedInv?.invNo ?? null,
+                badge: linkedInv ? (INV_STATUS[linkedInv.status] ?? { label: linkedInv.status, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
+                onClick: linkedInv ? () => navigate('/pp/invoice/' + linkedInv.invNo, { state: { fromOrderId: order.id } }) : null,
+              },
+              {
+                step: 2, label: 'Agreement',
+                docId: agrDoc?.id ?? null,
+                badge: agrDoc ? (AGR_STATUS[agrDoc.statusTtd] ?? { label: agrDoc.statusTtd, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
+                onClick: agrDoc ? () => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } }) : null,
+              },
+              {
+                step: 3, label: 'Program Berjalan',
+                docId: order.id,
+                badge: { label: 'Anda di sini', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
+                onClick: null,
+              },
+              {
+                step: 4, label: 'Program Selesai',
+                docId: linkedRcp?.rcpNo ?? null,
+                badge: linkedRcp ? { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' } : null,
+                onClick: linkedRcp ? () => navigate('/pp/receipt/' + linkedRcp.rcpNo, { state: { fromOrderId: order.id } }) : null,
+              },
+            ]
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Dokumen & Tahapan</h3>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {tahapan.map(({ step, label, docId, badge, onClick }) => (
+                    <div
+                      key={step}
+                      onClick={onClick ?? undefined}
+                      className={`flex flex-col gap-2 p-3 rounded-xl border transition-colors
+                        ${onClick ? 'border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer group' : 'border-dashed border-gray-200 bg-white'}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0
+                          ${docId ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-400'}`}>
+                          {step}
+                        </div>
+                        {onClick && <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{label}</p>
+                        <p className={`text-xs font-semibold truncate leading-tight ${docId ? 'text-[#1E1C43]' : 'text-gray-300'}`}>
+                          {docId ?? '—'}
+                        </p>
+                      </div>
+                      {badge
+                        ? <span className={`self-start px-2 py-0.5 rounded-full text-[10px] font-medium border ${badge.cls}`}>{badge.label}</span>
+                        : <span className="self-start text-[10px] text-gray-300 italic">Belum tersedia</span>
+                      }
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
 
           {/* ── Card: Data Klien ── */}
           {!isNew && (
