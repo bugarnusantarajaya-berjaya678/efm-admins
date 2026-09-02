@@ -110,7 +110,9 @@ export default function PPInvoiceDetailPage() {
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
-  const [showWAMenu,    setShowWAMenu]    = useState(false)
+  const [showAksiMenu,  setShowAksiMenu]  = useState(false)
+  const [waStatus,      setWaStatus]      = useState(null)
+  const [waTgl,         setWaTgl]         = useState(null)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -189,7 +191,6 @@ export default function PPInvoiceDetailPage() {
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
   function handleKirimWA() {
-    window.print()
     const cs = getCompanySettings()
     const msg = [
       `Halo *${invoice.sapaan} ${invoice.client}*,`,
@@ -216,6 +217,9 @@ export default function PPInvoiceDetailPage() {
       ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
       : `https://wa.me/?text=${encodeURIComponent(msg)}`
     window.open(waUrl, '_blank')
+    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setWaStatus('sent')
+    setWaTgl(tgl)
   }
 
   function handleReminderWA() {
@@ -242,6 +246,9 @@ export default function PPInvoiceDetailPage() {
       ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
       : `https://wa.me/?text=${encodeURIComponent(msg)}`
     window.open(waUrl, '_blank')
+    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setWaStatus('sent')
+    setWaTgl(tgl)
   }
 
   function handleMarkPaid({ paidDate, payMethod }) {
@@ -280,6 +287,11 @@ export default function PPInvoiceDetailPage() {
               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
                 {STATUS_LABEL[invoice.status] || invoice.status}
               </span>
+              {waStatus === 'sent' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+                  <MessageCircle size={9} /> WA Terkirim · {waTgl}
+                </span>
+              )}
             </div>
           </div>
 
@@ -309,36 +321,36 @@ export default function PPInvoiceDetailPage() {
                 </button>
               )}
 
-              {/* WA dropdown */}
+              {/* Aksi dropdown — Kirim WA + Download PDF */}
               <div className="relative shrink-0">
                 <button
-                  onClick={() => setShowWAMenu(p => !p)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-                  <MessageCircle size={13} /> Kirim WA <ChevronDown size={11} />
+                  onClick={() => setShowAksiMenu(p => !p)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+                  Aksi <ChevronDown size={11} />
                 </button>
-                {showWAMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
+                {showAksiMenu && (
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[180px]">
                     <button
-                      onClick={() => { handleKirimWA(); setShowWAMenu(false) }}
+                      onClick={() => { handleKirimWA(); setShowAksiMenu(false) }}
                       className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice
+                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice (WA)
                     </button>
                     {(invoice.status === 'pending' || invoice.status === 'overdue') && (
                       <button
-                        onClick={() => { handleReminderWA(); setShowWAMenu(false) }}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-50">
-                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder
+                        onClick={() => { handleReminderWA(); setShowAksiMenu(false) }}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder (WA)
                       </button>
                     )}
+                    <div className="border-t border-gray-100 my-1" />
+                    <button
+                      onClick={() => { window.print(); setShowAksiMenu(false) }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                      <Download size={12} className="text-gray-400" /> Download PDF
+                    </button>
                   </div>
                 )}
               </div>
-
-              {/* Download PDF */}
-              <button onClick={() => window.print()}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
-                <Download size={13} /> Download PDF
-              </button>
             </>
           )}
 
