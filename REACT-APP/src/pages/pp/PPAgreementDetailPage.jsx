@@ -156,8 +156,8 @@ function AgreementDoc({ doc }) {
               <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.telepon}</div>
@@ -165,12 +165,12 @@ function AgreementDoc({ doc }) {
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'white', letterSpacing: 1.5, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', letterSpacing: 2, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
         </div>
       </div>
 
