@@ -670,24 +670,6 @@ export default function PPFitnessAssessmentPage() {
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
 
-      {/* ── REFERENSI STAGE 1 ── */}
-      {leadId && (
-        <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
-          <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-            <span className="text-[10px] font-bold text-blue-600">i</span>
-          </div>
-          <div className="flex-1">
-            <p className="text-xs font-semibold text-blue-700">Informasi Kesehatan Awal sudah direkam di Lead</p>
-            <p className="text-xs text-blue-600 mt-0.5">Gunakan sebagai referensi saat mengisi PAR-Q, Goals, dan Riwayat Cedera di bawah.</p>
-          </div>
-          <button
-            onClick={() => navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })}
-            className="shrink-0 text-[10px] font-semibold text-blue-700 hover:underline whitespace-nowrap">
-            Lihat →
-          </button>
-        </div>
-      )}
-
       {/* ── PERSONAL DETAIL (always shown) ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
