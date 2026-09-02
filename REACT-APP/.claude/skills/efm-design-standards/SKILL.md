@@ -92,10 +92,13 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - ID columns: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap` — WAJIB semibold navy, berlaku untuk SEMUA kolom ID: No. Invoice, No. Receipt, No. Agreement, Order ID, Lead ID, dsb.
 - Amount/angka: `text-xs font-semibold text-gray-600`
 
-**KPI cards**
+**KPI cards / Stat cards (list page)**
 - Big number: `text-2xl font-bold text-[#1E1C43]`
 - Label: `text-xs uppercase tracking-wide text-gray-400`
 - Container: `bg-white rounded-xl border border-gray-200 p-4`
+
+⚠️ **Wajib Bahasa Indonesia:** semua nilai `label` dan `sub` di stat card HARUS dalam Bahasa Indonesia — TIDAK boleh Inggris (`"Paid"` → `"Lunas"`, `"Overdue"` → `"Jatuh Tempo"`, `"Expired"` → `"Kadaluarsa"`, dll).
+⚠️ **Dilarang emoji** di nilai `sub` — cukup teks deskriptif singkat (bukan `"✅ Terbayar"`, tapi `"Sudah dibayar"`).
 
 **Document headers** (Invoice/Receipt titles)
 - `text-4xl font-black` — ONLY place this scale/weight is used, ever
@@ -274,33 +277,54 @@ Ini mencegah kolom "Nama Klien" di Invoice berbeda lebar dengan "Nama Klien" di 
 
 ## 4. Component Patterns
 
-### Table Wrapper (always use this structure)
+### Table Wrapper — List Page (gunakan pola ini untuk semua halaman list)
+
+List pages menggunakan **CSS token classes** (bukan literal Tailwind colors), dengan sticky `<thead>` dan `maxHeight` agar tabel scroll di dalam viewport:
+
 ```jsx
-<div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-  <table className="w-full" style={{ minWidth: '1000px' }}>
-    <thead>
-      <tr className="border-b border-gray-200">
-        <th className="text-left px-4 py-3 text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">
-          Column Name
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition">
-        <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
-          Data
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div className="bg-bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+  <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 360px)', minHeight: '280px' }}>
+    <table className="w-full text-sm" style={{ minWidth: '1000px' }}>
+      <thead className="sticky top-0 z-10">
+        <tr className="bg-gray-50 border-b border-gray-100">
+          <th style={{minWidth:'160px'}} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
+            Column Name
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-150">
+          <td className="px-3 py-2.5 text-xs text-gray-600 whitespace-nowrap">
+            Data
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  {/* Pagination footer */}
+  <div className="px-4 py-3 border-t border-border flex items-center justify-between">
+    <span className="text-xs text-text-muted">Menampilkan X–Y dari Z</span>
+    {/* PBtn controls */}
+  </div>
 </div>
 ```
-- `minWidth` scales with column count/content, typical 1000px–1600px
-- ID columns: `whitespace-nowrap text-sm font-medium text-[#1E1C43]`
-- Name/important columns: `text-sm font-semibold text-gray-800`
-- Regular data: `text-sm text-gray-700`
-- Every clickable row: `hover:bg-gray-50 cursor-pointer transition`
-- Never omit the `overflow-x-auto` wrapper
+
+**Token classes wajib (list page):**
+- Wrapper: `bg-bg-surface border border-border` — BUKAN `bg-white border-gray-200`
+- Inner scroll: `overflow-auto` dengan `maxHeight: 'calc(100vh - 360px)'` dan `minHeight: '280px'`
+- `<thead>`: `sticky top-0 z-10`
+- Pagination footer: `border-t border-border`
+
+**Teks per kolom:**
+- Header `<th>`: `text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap`
+- Data `<td>`: `text-xs text-gray-600 whitespace-nowrap`
+- ID columns: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap`
+- Nama/penting: `text-xs font-medium text-gray-900 whitespace-nowrap`
+
+**Pagination standar:**
+- `ROWS = 10` per halaman (bukan 8, bukan 15)
+- Teks footer: `"Menampilkan {start}–{end} dari {total} [entitas]"` — Bahasa Indonesia
+- Gunakan komponen `PBtn` (`w-8 h-8 rounded-lg text-xs font-semibold`) dengan SVG arrow prev/next + nomor halaman
 
 ### Filter Bar
 ```jsx
@@ -316,6 +340,9 @@ Ini mencegah kolom "Nama Klien" di Invoice berbeda lebar dengan "Nama Klien" di 
   </div>
 </div>
 ```
+
+⚠️ **Semua `<option>` di filter dropdown WAJIB Bahasa Indonesia** — tidak boleh Inggris. Contoh: `Expired` → `Kadaluarsa`, `Sent` → `Terkirim`, `Failed` → `Gagal`, `Draft` → `Draft`.
+⚠️ **Placeholder teks search** juga harus Indonesia: "Cari nama klien, ID...", bukan "Search...".
 
 ### Modal
 - Outer: `fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4`
