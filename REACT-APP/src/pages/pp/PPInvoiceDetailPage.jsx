@@ -110,7 +110,6 @@ export default function PPInvoiceDetailPage() {
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
-  const [showWAMenu,    setShowWAMenu]    = useState(false)
   const [showAksiMenu,  setShowAksiMenu]  = useState(false)
 
   useEffect(() => {
@@ -310,40 +309,28 @@ export default function PPInvoiceDetailPage() {
                 </button>
               )}
 
-              {/* WA dropdown */}
+              {/* Aksi dropdown — Kirim WA + Download PDF */}
               <div className="relative shrink-0">
                 <button
-                  onClick={() => { setShowAksiMenu(false); setShowWAMenu(p => !p) }}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors">
-                  <MessageCircle size={13} /> Kirim WA <ChevronDown size={11} />
-                </button>
-                {showWAMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
-                    <button
-                      onClick={() => { handleKirimWA(); setShowWAMenu(false) }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice
-                    </button>
-                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                      <button
-                        onClick={() => { handleReminderWA(); setShowWAMenu(false) }}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors border-t border-gray-50">
-                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Aksi dropdown */}
-              <div className="relative shrink-0">
-                <button
-                  onClick={() => { setShowWAMenu(false); setShowAksiMenu(p => !p) }}
+                  onClick={() => setShowAksiMenu(p => !p)}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
                   Aksi <ChevronDown size={11} />
                 </button>
                 {showAksiMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[160px]">
+                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[180px]">
+                    <button
+                      onClick={() => { handleKirimWA(); setShowAksiMenu(false) }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice (WA)
+                    </button>
+                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
+                      <button
+                        onClick={() => { handleReminderWA(); setShowAksiMenu(false) }}
+                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder (WA)
+                      </button>
+                    )}
+                    <div className="border-t border-gray-100 my-1" />
                     <button
                       onClick={() => { window.print(); setShowAksiMenu(false) }}
                       className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
