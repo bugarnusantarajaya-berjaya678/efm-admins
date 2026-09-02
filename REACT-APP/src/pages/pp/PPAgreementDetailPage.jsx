@@ -190,8 +190,8 @@ function AgreementDoc({ doc }) {
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
-              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-[13px] font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
@@ -208,7 +208,7 @@ function AgreementDoc({ doc }) {
         <div className="grid grid-cols-2 gap-5">
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
-            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">EFM</div>
+            <div className="text-xs font-bold text-[#1E1C43] mb-2">EFM</div>
             <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
               {company.tandaTanganCEO
                 ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
@@ -219,7 +219,7 @@ function AgreementDoc({ doc }) {
           </div>
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Kedua</div>
-            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">Klien</div>
+            <div className="text-xs font-bold text-[#1E1C43] mb-2">Klien</div>
             <ClientSig status={doc.statusTtd} />
             <div className="text-xs text-[#1E1C43] font-semibold">{doc.namaKlien}</div>
             <div className="mt-0.5">{sigMeta()}</div>
@@ -229,8 +229,8 @@ function AgreementDoc({ doc }) {
 
       {/* Document footer */}
       <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
-        <p className="text-[9px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
-        <p className="text-[9px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
+        <p className="text-[10px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-[10px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
