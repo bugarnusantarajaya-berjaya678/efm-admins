@@ -870,8 +870,7 @@ export default function PPFitnessAssessmentPage() {
           <div>
             <label className={labelCls}>Obatan / Suplemen Rutin</label>
             <input
-              className={leadsLocked ? readOnlyCls : inputCls}
-              readOnly={leadsLocked}
+              className={inputCls}
               value={obatanRutin}
               onChange={e => setObatanRutin(e.target.value)}
               placeholder="Obat atau suplemen yang dikonsumsi..."
