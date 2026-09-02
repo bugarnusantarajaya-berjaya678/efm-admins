@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown } from 'lucide-react'
+import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
@@ -320,6 +320,11 @@ export default function PPReceiptDetailPage() {
               </div>
             )}
           </div>
+          <button
+            onClick={() => navigate('/pp/invoice/' + receipt.invNo, { state: { fromOrderId: receipt.orderId } })}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
+            <ScrollText size={13} /> Lihat Invoice
+          </button>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">

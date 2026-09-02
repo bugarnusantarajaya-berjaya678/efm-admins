@@ -254,19 +254,6 @@ export default function PPInvoiceDetailPage() {
   function handleMarkPaid({ paidDate, payMethod }) {
     setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
     setModal(null)
-    navigate('/pp/receipt', {
-      state: {
-        createNew: true,
-        prefill: {
-          invNo: invoice.invNo,
-          orderId: invoice.orderId,
-          client: invoice.client,
-          paket: invoice.paket,
-          pic: invoice.pic,
-          total: subtotalBase,
-        }
-      }
-    })
   }
 
   return (
