@@ -129,6 +129,8 @@ function AgreementDoc({ doc }) {
     ['Alamat',         doc.alamat || '—'],
     ['Order ID',       '#' + doc.orderId],
     ['Paket Dipilih',  doc.paket],
+    ['Masa Berlaku',   doc.masaBerlaku || '—'],
+    ['Nama Pelatih',   doc.pic || '—'],
     ['Tanggal Dibuat', doc.tglDibuat],
   ]
 
@@ -158,6 +160,7 @@ function AgreementDoc({ doc }) {
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.telepon}</div>
             </div>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16 }}>
@@ -225,8 +228,9 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Document footer */}
-      <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center">
-        <p className="text-[9px] text-gray-300">Dokumen ini digenerate oleh sistem EFM V2</p>
+      <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-1">
+        <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
@@ -283,7 +287,7 @@ export default function PPAgreementDetailPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Agreement Klien</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">{doc.displayId}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">#{doc.displayId}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{doc.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
@@ -294,10 +298,9 @@ export default function PPAgreementDetailPage() {
           {doc.statusTtd === 'waiting_approval' && (
             <button
               onClick={handleApprove}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
-              style={{ background: '#2980B9' }}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
             >
-              <CheckCircle size={13} /> Approve
+              <CheckCircle size={13} /> Approve Agreement
             </button>
           )}
           <button
