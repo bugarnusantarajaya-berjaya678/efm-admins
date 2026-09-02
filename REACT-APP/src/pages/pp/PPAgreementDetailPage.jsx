@@ -318,7 +318,7 @@ export default function PPAgreementDetailPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[600px] w-full">
+      <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
         {/* Admin-only status notice — bukan form TTD klien */}
