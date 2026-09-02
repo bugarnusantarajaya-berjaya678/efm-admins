@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2, Activity } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText, Heart } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
-import { getStoredLeads, getLeadHealthById } from '../../data/ppLeadsStore'
+import { getStoredLeads, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -470,8 +470,9 @@ export default function PPFitnessAssessmentPage() {
 
   // Section Toggles
   const [toggles, setToggles] = useState(
-    existing?.toggles || { bodyMeasurement: false, healthScreening: false, fitnessTest: false }
+    existing?.toggles || { kesehatan: false, bodyMeasurement: false, healthScreening: false, fitnessTest: false }
   )
+  const [leadDokumen, setLeadDokumen] = useState([])
 
   // For new renewal assessments, adopt _akhir from prevSource as _awal baseline
   const adoptedTanita = isNew && prevSource ? adoptAkhirAsAwal(prevSource.tanita) : {}
@@ -591,8 +592,12 @@ export default function PPFitnessAssessmentPage() {
     return () => setCrumbs(null)
   }, [isNew, id])
 
-  // Auto-fill dari data leads saat buat assessment baru
+  // Auto-fill dari data leads saat buat assessment baru + load dokumen untuk semua mode
   useEffect(() => {
+    const effectLeadId = leadId || existing?.leadId
+    if (effectLeadId) {
+      setLeadDokumen(getLeadDocumentsById(effectLeadId))
+    }
     if (!isNew || !leadId) return
     const leads = getStoredLeads()
     const lead = leads.find(l => l.id === leadId)
@@ -640,6 +645,12 @@ export default function PPFitnessAssessmentPage() {
             </div>
           </div>
           <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0"
+          >
+            <Download size={13} /> Download PDF
+          </button>
+          <button
             onClick={() => handleBack()}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
           >
@@ -667,18 +678,6 @@ export default function PPFitnessAssessmentPage() {
         </div>
       )}
 
-      {/* Info: Frekuensi Pengukuran */}
-      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-4">
-        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-          <Info size={11} className="text-blue-600" />
-        </div>
-        <div>
-          <p className="text-xs font-semibold text-blue-700">Pengukuran Melekat pada Leads, Bukan Order</p>
-          <p className="text-xs text-blue-600 mt-0.5 leading-relaxed">
-            Frekuensi pengukuran di lapangan bervariasi — bisa 1x/bulan atau hingga 3x/bulan tergantung kebutuhan klien dan program. Karena itu assessment tidak diikat ke satu order spesifik, melainkan melekat pada <span className="font-semibold">leads klien</span> sebagai rekam medis yang berkelanjutan sepanjang periode program.
-          </p>
-        </div>
-      </div>
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
@@ -869,6 +868,60 @@ export default function PPFitnessAssessmentPage() {
             />
           </div>
         </div>
+      </div>
+
+      {/* ── INFORMASI KESEHATAN AWAL ── */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
+            <Heart size={14} className="text-[#E05945]" /> Informasi Kesehatan Awal
+          </h2>
+          <ToggleSwitch checked={toggles.kesehatan} onChange={v => setToggles(p => ({ ...p, kesehatan: v }))} />
+        </div>
+        {toggles.kesehatan && (
+          <div className="mt-4 space-y-3">
+            <p className="text-[10px] text-gray-400 italic">Data read-only dari profil klien di leads. Edit melalui halaman Leads → Tab Progres &amp; Kesehatan.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                ['Kondisi Fisik Saat Ini', kondisiFisik],
+                ['Riwayat Cedera', riwayatCedera],
+                ['Tujuan / Goals Program', detailGoals],
+                ['Obatan / Suplemen Rutin', obatanRutin],
+              ].map(([label, val]) => (
+                <div key={label} className="bg-gray-50 rounded-xl border border-gray-100 px-4 py-3">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                  <p className="text-sm text-gray-700 whitespace-pre-wrap">{val || <span className="text-gray-300 italic">Belum diisi</span>}</p>
+                </div>
+              ))}
+            </div>
+            {catatanScreening ? (
+              <div className="bg-gray-50 rounded-xl border border-gray-100 px-4 py-3">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Catatan CS / Screening</p>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">{catatanScreening}</p>
+              </div>
+            ) : null}
+            {/* Dokumen Kesehatan */}
+            <div className="bg-gray-50 rounded-xl border border-gray-100 px-4 py-3">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Dokumen Kesehatan</p>
+              {leadDokumen.length === 0 ? (
+                <p className="text-xs text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {leadDokumen.map(dok => (
+                    <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-white border border-gray-100">
+                      <FileText size={14} className="text-gray-400 shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
+                        <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
+                      </div>
+                      <span className="text-[10px] text-[#1E1C43] font-semibold shrink-0">Lihat</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── BODY MEASUREMENT ── */}

@@ -30,6 +30,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: 'Klien aktif, follow up responsif, siap mulai kapan saja',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0013': {
     kondisiSaatIni: 'Aktif berolahraga ringan, ingin meningkatkan massa otot dan stamina keseluruhan',
@@ -38,6 +39,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: 'Klien serius dan disiplin, preferensi jadwal pagi hari',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0014': {
     kondisiSaatIni: 'Kurang aktif berolahraga, mudah lelah, ingin meningkatkan kebugaran umum',
@@ -46,6 +48,7 @@ let _healthStore = {
     obatanRutin: 'Suplemen vitamin D harian',
     catatanCs: 'Klien pemula, perlu pendekatan bertahap dan motivasi ekstra',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0003': {
     kondisiSaatIni: 'Kurang aktif beberapa bulan terakhir, ingin meningkatkan daya tahan',
@@ -54,6 +57,9 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: 'Jadwal weekend lebih fleksibel',
     sudahDiisi: true,
+    dokumenKesehatan: [
+      { id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' },
+    ],
   },
   'LP-0015': {
     kondisiSaatIni: 'Kondisi umum baik, aktif jalan kaki, ingin lebih bugar secara keseluruhan',
@@ -62,6 +68,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: '',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0016': {
     kondisiSaatIni: 'Gaya hidup sedentary, sering duduk lama di kantor, keluhan nyeri punggung ringan',
@@ -70,6 +77,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: 'Perlu program yang memperhatikan kondisi lower back',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0017': {
     kondisiSaatIni: 'Aktif berolahraga ringan (zumba), ingin program lebih terstruktur',
@@ -78,6 +86,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: '',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
   'LP-0012': {
     kondisiSaatIni: 'Kurang aktif, tidak ada keluhan khusus',
@@ -86,6 +95,7 @@ let _healthStore = {
     obatanRutin: '-',
     catatanCs: 'Sudah bayar DP, siap mulai',
     sudahDiisi: true,
+    dokumenKesehatan: [],
   },
 }
 
@@ -97,6 +107,10 @@ export function getLeadHealthByOrderId(orderId) {
 
 export function getLeadHealthById(leadId) {
   return _healthStore[leadId] ? { leadId, ..._healthStore[leadId] } : null
+}
+
+export function getLeadDocumentsById(leadId) {
+  return _healthStore[leadId]?.dokumenKesehatan || []
 }
 
 export function updateLeadHealth(leadId, patch) {
