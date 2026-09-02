@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown, ScrollText } from 'lucide-react'
+import { ArrowLeft, Download, Receipt, CheckCircle2, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
-import { getNoHpByOrderId } from '../../data/ppLeadsStore'
 
 function QRVerifikasi({ label, size = 72 }) {
   return (
@@ -206,8 +205,6 @@ export default function PPReceiptDetailPage() {
   const [receipt, setReceipt] = useState(
     state?.receipt || getAllReceipts().find(r => r.rcpNo === id) || null
   )
-  const [showAksiMenu, setShowAksiMenu] = useState(false)
-
   useEffect(() => {
     setCrumbs(['Private Program', 'Receipt', receipt ? '#' + receipt.rcpNo : id])
     return () => setCrumbs(null)
@@ -233,37 +230,7 @@ export default function PPReceiptDetailPage() {
     )
   }
 
-  function handleResendWA() {
-    const cs = getCompanySettings()
-    const msg = [
-      `Halo *${receipt.sapaan} ${receipt.client}*,`,
-      '',
-      `Pembayaran Anda telah kami terima & dikonfirmasi ✅`,
-      '',
-      `📄 *Receipt #${receipt.rcpNo}*`,
-      `📋 Ref. Invoice: ${receipt.invNo}`,
-      `📅 Tanggal Bayar: ${receipt.tglBayar}`,
-      `💳 Metode: ${receipt.metode}`,
-      `🏃 Program: ${receipt.paket}`,
-      `💰 Total: ${formatRp(receipt.total)}`,
-      '',
-      `Terima kasih telah mempercayakan program fitness Anda kepada kami. Selamat berlatih! 💪`,
-      `_${cs.namaPerusahaan}_`,
-    ].join('\n')
-    const noHP = getNoHpByOrderId(receipt.orderId)
-    const waUrl = noHP
-      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
-      : `https://wa.me/?text=${encodeURIComponent(msg)}`
-    window.open(waUrl, '_blank')
-    setReceipt(prev => ({
-      ...prev,
-      waStatus: 'sent',
-      waTgl: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
-    }))
-  }
-
   const backOrderId = fromOrderId || receipt.orderId
-  const waSent = receipt.waStatus === 'sent'
 
   return (
     <div className="flex flex-col gap-4 pb-8">
@@ -285,15 +252,6 @@ export default function PPReceiptDetailPage() {
               <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white bg-green-500">
                 Lunas
               </span>
-              {waSent && (
-                <>
-                  <span className="text-gray-300 text-xs">·</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-green-50 text-green-700 border border-green-200">
-                    <MessageCircle size={9} />
-                    WA Terkirim{receipt.waTgl ? ` · ${receipt.waTgl}` : ''}
-                  </span>
-                </>
-              )}
             </div>
           </div>
 
@@ -304,29 +262,12 @@ export default function PPReceiptDetailPage() {
             <ScrollText size={13} /> Lihat Invoice
           </button>
 
-          {/* Aksi dropdown — Kirim WA + Download PDF */}
-          <div className="relative shrink-0">
-            <button
-              onClick={() => setShowAksiMenu(p => !p)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-              Aksi <ChevronDown size={11} />
-            </button>
-            {showAksiMenu && (
-              <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[180px]">
-                <button
-                  onClick={() => { handleResendWA(); setShowAksiMenu(false) }}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                  <MessageCircle size={12} className="text-[#25D366]" /> {waSent ? 'Kirim Ulang WA' : 'Kirim Receipt (WA)'}
-                </button>
-                <div className="border-t border-gray-100 my-1" />
-                <button
-                  onClick={() => { window.print(); setShowAksiMenu(false) }}
-                  className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                  <Download size={12} className="text-gray-400" /> Download PDF
-                </button>
-              </div>
-            )}
-          </div>
+          {/* Download PDF */}
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
+            <Download size={13} /> Download PDF
+          </button>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">

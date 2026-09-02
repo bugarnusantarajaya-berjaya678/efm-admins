@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, MessageCircle, ScrollText, Receipt, Plus, Edit, X, Tag, ChevronDown } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
-import { getNoHpByOrderId } from '../../data/ppLeadsStore'
 import { getPromoByKode } from '../../data/ppPromoStore'
 import { Gift } from 'lucide-react'
 
@@ -110,10 +109,6 @@ export default function PPInvoiceDetailPage() {
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
-  const [showAksiMenu,  setShowAksiMenu]  = useState(false)
-  const [waStatus,      setWaStatus]      = useState(null)
-  const [waTgl,         setWaTgl]         = useState(null)
-
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
     return () => setCrumbs(null)
@@ -190,67 +185,6 @@ export default function PPInvoiceDetailPage() {
   const syaratList     = getSyaratList()
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
-  function handleKirimWA() {
-    const cs = getCompanySettings()
-    const msg = [
-      `Halo *${invoice.sapaan} ${invoice.client}*,`,
-      '',
-      `Berikut kami sampaikan invoice untuk program Private Training Anda di *${cs.namaPerusahaan}* 🏋️`,
-      '',
-      `📋 *Invoice #${invoice.invNo}*`,
-      `📅 Tanggal: ${invoice.tanggal}`,
-      `⏰ Jatuh Tempo: ${invoice.due}`,
-      `🏃 Program: Private Training — ${invoice.paket}`,
-      `👤 Pelatih: ${invoice.pic}`,
-      `💰 Total: ${formatRp(subtotalBase)}`,
-      '',
-      `Mohon lakukan pembayaran sebelum tanggal jatuh tempo ke:`,
-      `🏦 ${cs.namaBank}: ${cs.nomorRekening} a.n. ${cs.atasNamaRekening}`,
-      '',
-      `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
-      '',
-      `Terima kasih 🙏`,
-      `_${cs.namaPerusahaan}_`,
-    ].join('\n')
-    const noHP = getNoHpByOrderId(invoice.orderId)
-    const waUrl = noHP
-      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
-      : `https://wa.me/?text=${encodeURIComponent(msg)}`
-    window.open(waUrl, '_blank')
-    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-    setWaStatus('sent')
-    setWaTgl(tgl)
-  }
-
-  function handleReminderWA() {
-    const cs = getCompanySettings()
-    const msg = [
-      `Halo *${invoice.sapaan} ${invoice.client}*,`,
-      '',
-      `Kami ingin mengingatkan bahwa invoice berikut masih belum terbayar:`,
-      '',
-      `📋 *Invoice #${invoice.invNo}*`,
-      `⏰ Jatuh Tempo: ${invoice.due}`,
-      `💰 Total: ${formatRp(subtotalBase)}`,
-      '',
-      `Mohon segera lakukan pembayaran ke:`,
-      `🏦 ${cs.namaBank}: ${cs.nomorRekening} a.n. ${cs.atasNamaRekening}`,
-      '',
-      `Cantumkan nomor invoice *(${invoice.invNo})* sebagai keterangan transfer.`,
-      '',
-      `Jika ada pertanyaan, silakan hubungi kami. Terima kasih 🙏`,
-      `_${cs.namaPerusahaan}_`,
-    ].join('\n')
-    const noHP = getNoHpByOrderId(invoice.orderId)
-    const waUrl = noHP
-      ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
-      : `https://wa.me/?text=${encodeURIComponent(msg)}`
-    window.open(waUrl, '_blank')
-    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-    setWaStatus('sent')
-    setWaTgl(tgl)
-  }
-
   function handleMarkPaid({ paidDate, payMethod }) {
     setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
     setModal(null)
@@ -274,11 +208,6 @@ export default function PPInvoiceDetailPage() {
               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
                 {STATUS_LABEL[invoice.status] || invoice.status}
               </span>
-              {waStatus === 'sent' && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
-                  <MessageCircle size={9} /> WA Terkirim · {waTgl}
-                </span>
-              )}
             </div>
           </div>
 
@@ -308,36 +237,12 @@ export default function PPInvoiceDetailPage() {
                 </button>
               )}
 
-              {/* Aksi dropdown — Kirim WA + Download PDF */}
-              <div className="relative shrink-0">
-                <button
-                  onClick={() => setShowAksiMenu(p => !p)}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
-                  Aksi <ChevronDown size={11} />
-                </button>
-                {showAksiMenu && (
-                  <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[180px]">
-                    <button
-                      onClick={() => { handleKirimWA(); setShowAksiMenu(false) }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                      <MessageCircle size={12} className="text-[#25D366]" /> Kirim Invoice (WA)
-                    </button>
-                    {(invoice.status === 'pending' || invoice.status === 'overdue') && (
-                      <button
-                        onClick={() => { handleReminderWA(); setShowAksiMenu(false) }}
-                        className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                        <MessageCircle size={12} className="text-orange-400" /> Kirim Reminder (WA)
-                      </button>
-                    )}
-                    <div className="border-t border-gray-100 my-1" />
-                    <button
-                      onClick={() => { window.print(); setShowAksiMenu(false) }}
-                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
-                      <Download size={12} className="text-gray-400" /> Download PDF
-                    </button>
-                  </div>
-                )}
-              </div>
+              {/* Download PDF */}
+              <button
+                onClick={() => window.print()}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
+                <Download size={13} /> Download PDF
+              </button>
             </>
           )}
 
