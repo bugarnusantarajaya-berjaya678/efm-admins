@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
-import { getStoredLeads, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
+import { getStoredLeads, getLeadById, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -460,6 +460,9 @@ export default function PPFitnessAssessmentPage() {
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
   const [namaKlien, setNamaKlien] = useState(existing?.namaKlien || prefill.namaKlien || '')
+  const [noHpKlien, setNoHpKlien] = useState(existing?.noHpKlien || '')
+  const [tipeKlien, setTipeKlien] = useState(existing?.tipeKlien || '')
+  const [sapaanKlien, setSapaanKlien] = useState(existing?.sapaanKlien || '')
   const [usia, setUsia] = useState(existing?.usia || '')
   const [jenisKelamin, setJenisKelamin] = useState(existing?.jenisKelamin || '')
   const [tipeBadan, setTipeBadan] = useState(existing?.tipeBadan || '')
@@ -550,7 +553,8 @@ export default function PPFitnessAssessmentPage() {
     const payload = {
       leadId: leadId || existing?.leadId || null,
       prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
-      noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien, usia, jenisKelamin, tipeBadan,
+      noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien,
+      noHpKlien, tipeKlien, sapaanKlien, usia, jenisKelamin, tipeBadan,
       detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
       statusAssessment: newStatus,
       tanita, tanita_catatan_awal: tanitaCatatanAwal, tanita_catatan_akhir: tanitaCatatanAkhir,
@@ -596,15 +600,27 @@ export default function PPFitnessAssessmentPage() {
     const effectLeadId = leadId || existing?.leadId
     if (effectLeadId) {
       setLeadDokumen(getLeadDocumentsById(effectLeadId))
+      // Auto-fill lead profile fields (read-only in form) — applies for both new and existing
+      const lead = getLeadById(effectLeadId)
+      if (lead) {
+        if (!existing?.noIdProgram) setNoIdProgram(effectLeadId)
+        setNamaKlien(lead.nama || '')
+        setNamaFC(lead.picEfm || '')
+        setProgramLatihan(lead.programDiminati || '')
+        setNoHpKlien(lead.noHp || '')
+        setTipeKlien(lead.tipe || '')
+        setSapaanKlien(lead.sapaan || '')
+        setJenisKelamin(lead.jenisKelamin || '')
+        // Calculate age from tanggalLahir
+        if (lead.tanggalLahir) {
+          const d = new Date(lead.tanggalLahir)
+          const today = new Date()
+          const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+          setUsia(String(age))
+        }
+      }
     }
     if (!isNew || !leadId) return
-    const leads = getStoredLeads()
-    const lead = leads.find(l => l.id === leadId)
-    if (lead) {
-      if (lead.nama) setNamaKlien(lead.nama)
-      if (lead.picEfm) setNamaFC(lead.picEfm)
-      if (lead.programDiminati) setProgramLatihan(lead.programDiminati)
-    }
     const health = getLeadHealthById(leadId)
     if (health?.sudahDiisi) {
       if (health.tujuanProgram) setDetailGoals(health.tujuanProgram)
@@ -681,46 +697,76 @@ export default function PPFitnessAssessmentPage() {
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
 
-      {/* ── PERSONAL DETAIL (always shown) ── */}
+      {/* ── DATA KLIEN & PROGRAM ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">
+        <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-5">
           Data Klien & Program
         </h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+        {/* Sub-grup 1: Data Klien (read-only, dari leads) */}
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
           <div>
-            <label className={labelCls}>Referensi Program</label>
-            <input className={inputCls} value={noIdProgram} onChange={e => setNoIdProgram(e.target.value)} placeholder="Mis. LP-0001 / PP-26-0001" />
+            <label className={labelCls}>Referensi Lead</label>
+            <input className={readOnlyCls} value={noIdProgram} readOnly />
           </div>
+          <div>
+            <label className={labelCls}>Sapaan</label>
+            <input className={readOnlyCls} value={sapaanKlien} readOnly />
+          </div>
+          <div className="col-span-2">
+            <label className={labelCls}>Nama Klien</label>
+            <input className={readOnlyCls} value={namaKlien} readOnly />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
+          <div>
+            <label className={labelCls}>Tipe Klien</label>
+            <input className={readOnlyCls} value={tipeKlien} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>Jenis Kelamin</label>
+            <input className={readOnlyCls} value={jenisKelamin} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>Usia</label>
+            <input className={readOnlyCls} value={usia ? `${usia} tahun` : ''} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>No HP / WhatsApp</label>
+            <input className={readOnlyCls} value={noHpKlien} readOnly />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
+          <div>
+            <label className={labelCls}>Program Diminati</label>
+            <input className={readOnlyCls} value={programLatihan} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>Goals Klien</label>
+            <input className={readOnlyCls} value={detailGoals} readOnly />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+          <div className="col-span-2">
+            <label className={labelCls}>PIC EFM / FC</label>
+            <input className={readOnlyCls} value={namaFC} readOnly />
+          </div>
+        </div>
+        {(leadId || existing?.leadId) && (
+          <p className="text-[10px] text-gray-400 italic mb-5">Data klien diambil otomatis dari leads. Edit melalui halaman Leads → Tab Info Klien.</p>
+        )}
+
+        {/* Sub-grup 2: Data Program & Assessment (editable) */}
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Program & Assessment</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
           <div>
             <label className={labelCls}>Cabang / Wilayah</label>
             <input className={inputCls} value={cabangWilayah} onChange={e => setCabangWilayah(e.target.value)} placeholder="Jakarta Selatan" />
           </div>
           <div>
-            <label className={labelCls}>Nama FC</label>
-            <input className={inputCls} value={namaFC} onChange={e => setNamaFC(e.target.value)} placeholder="Fitness Consultant" />
-          </div>
-          <div>
             <label className={labelCls}>Nama Pelatih</label>
             <input className={inputCls} value={namaPelatih} onChange={e => setNamaPelatih(e.target.value)} placeholder="Personal Trainer" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-          <div>
-            <label className={labelCls}>Nama Klien</label>
-            <input className={inputCls} value={namaKlien} onChange={e => setNamaKlien(e.target.value)} placeholder="Nama lengkap" />
-          </div>
-          <div>
-            <label className={labelCls}>Usia</label>
-            <input className={inputCls} value={usia} onChange={e => setUsia(e.target.value)} placeholder="tahun" />
-          </div>
-          <div>
-            <label className={labelCls}>Jenis Kelamin</label>
-            <select className={inputCls} value={jenisKelamin} onChange={e => setJenisKelamin(e.target.value)}>
-              <option value="">Pilih...</option>
-              <option value="Laki-laki">Laki-laki</option>
-              <option value="Perempuan">Perempuan</option>
-            </select>
           </div>
           <div>
             <label className={labelCls}>Tipe Badan</label>
@@ -732,17 +778,7 @@ export default function PPFitnessAssessmentPage() {
             </select>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className={labelCls}>Program Latihan</label>
-            <input className={inputCls} value={programLatihan} onChange={e => setProgramLatihan(e.target.value)} placeholder="Misal: 12 Sesi - Pro (Fatloss)" />
-          </div>
-          <div>
-            <label className={labelCls}>Detail Goals Klien</label>
-            <input className={inputCls} value={detailGoals} onChange={e => setDetailGoals(e.target.value)} placeholder="Deskripsi tujuan klien" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
             <label className={labelCls}>Tanggal Pre-Test</label>
             <input type="date" className={inputCls} value={tanggalPreTest} onChange={e => setTanggalPreTest(e.target.value)} />

@@ -42,6 +42,7 @@ const SUMBER_OPTS      = ['Website','Referral','Meta Ads','Google Ads','Walk-in'
 const LEADS_FALLBACK = [
   {
     id: 'LP-0001', sapaan: 'Pak', nama: 'James Wilson', tipe: 'Personal',
+    jenisKelamin: 'Laki-laki', tanggalLahir: '1985-03-15',
     noHp: '081234567890', sumberLead: 'Website', picEfm: 'Sarah Jenkins',
     programDiminati: '12 Sesi - Pro', emailUmum: 'james.wilson@email.com',
     catatanAwal: 'Tertarik program fatloss, sudah follow up 2x',
@@ -58,6 +59,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0002', sapaan: 'Kak', nama: 'Dewi Ayu', tipe: 'Personal',
+    jenisKelamin: 'Perempuan', tanggalLahir: '1993-07-22',
     noHp: '087766554433', sumberLead: 'Referral', picEfm: 'Marcus Chen',
     programDiminati: 'Tennis', emailUmum: 'dewi.ayu@email.com',
     catatanAwal: 'Direferensikan oleh klien lama',
@@ -70,6 +72,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0003', sapaan: 'Pak', nama: 'Budi & Rina Santoso', tipe: 'Couple',
+    jenisKelamin: '', tanggalLahir: '',
     noHp: '085678901234', sumberLead: 'Walk-in', picEfm: 'Sarah Jenkins',
     programDiminati: '12 Sesi - Pro', emailUmum: 'budi.santoso@email.com',
     catatanAwal: 'Datang langsung ke lokasi, tertarik program couple',
@@ -82,6 +85,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0004', sapaan: 'Mas', nama: 'Rian Maulana (Group Tennis)', tipe: 'Group',
+    jenisKelamin: 'Laki-laki', tanggalLahir: '1990-11-08',
     noHp: '087712345678', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
     programDiminati: 'Tennis Group', emailUmum: 'rian.maulana@email.com',
     catatanAwal: 'Mau daftar grup 4 orang untuk tennis',
@@ -93,6 +97,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0005', sapaan: 'Kak', nama: 'Anita Kumar', tipe: 'Personal',
+    jenisKelamin: 'Perempuan', tanggalLahir: '1988-05-30',
     noHp: '081298765432', sumberLead: 'Meta Ads', picEfm: 'Sarah Jenkins',
     programDiminati: 'Fatloss & Bodyshape', emailUmum: 'anita.kumar@email.com',
     catatanAwal: 'Tertarik program fatloss',
@@ -106,6 +111,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0006', sapaan: 'Kak', nama: 'Emily Chen', tipe: 'Personal',
+    jenisKelamin: 'Perempuan', tanggalLahir: '1991-09-14',
     noHp: '082345678901', sumberLead: 'Instagram', picEfm: 'Marcus Chen',
     programDiminati: '4 Sesi - Starter', emailUmum: 'emily@email.com',
     catatanAwal: 'Tertarik program starter, fokus kebugaran umum',
@@ -120,6 +126,7 @@ const LEADS_FALLBACK = [
   },
   {
     id: 'LP-0007', sapaan: 'Kak', nama: 'Sari Dewi Lestari', tipe: 'Personal',
+    jenisKelamin: 'Perempuan', tanggalLahir: '1994-02-10',
     noHp: '087811223344', sumberLead: 'Referral', picEfm: 'Dian Kartika',
     programDiminati: '8 Sesi - Basic', emailUmum: 'sari.dewi@email.com',
     catatanAwal: 'Tertarik muscle toning, direferensikan oleh teman',
@@ -418,6 +425,7 @@ export default function PPLeadDetailPage() {
       nama: 'Nama Klien', noHp: 'No HP / WhatsApp', emailUmum: 'Email',
       tipe: 'Tipe Klien', programDiminati: 'Program Diminati',
       sumberLead: 'Sumber Lead', picEfm: 'PIC EFM',
+      jenisKelamin: 'Jenis Kelamin', tanggalLahir: 'Tanggal Lahir',
       tanggalFollowUp: 'Tanggal Follow Up', catatanAwal: 'Catatan',
     }
     const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
@@ -617,6 +625,15 @@ export default function PPLeadDetailPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     <InfoField label="Sapaan">{lead.sapaan || '—'}</InfoField>
                     <InfoField label="Nama Klien">{lead.nama || '—'}</InfoField>
+                    <InfoField label="Jenis Kelamin">{lead.jenisKelamin || '—'}</InfoField>
+                    <InfoField label="Tanggal Lahir">
+                      {lead.tanggalLahir ? (() => {
+                        const d = new Date(lead.tanggalLahir)
+                        const today = new Date()
+                        const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+                        return `${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} (${age} tahun)`
+                      })() : '—'}
+                    </InfoField>
                     <InfoField label="No HP / WhatsApp">
                       <a href={`https://wa.me/62${lead.noHp.replace(/^0/, '')}`} target="_blank" rel="noopener noreferrer"
                         className="text-[#1E1C43] hover:underline">
@@ -659,6 +676,20 @@ export default function PPLeadDetailPage() {
                       </label>
                       <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.jenisKelamin || ''} onChange={e => setEditForm(p => ({ ...p, jenisKelamin: e.target.value }))}>
+                        <option value="">Pilih...</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Lahir</label>
+                      <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tanggalLahir || ''} onChange={e => setEditForm(p => ({ ...p, tanggalLahir: e.target.value || '' }))} />
                     </div>
                     <div>
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
