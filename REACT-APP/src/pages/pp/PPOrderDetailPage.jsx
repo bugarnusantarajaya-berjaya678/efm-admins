@@ -140,6 +140,10 @@ const ORDER_WA_TEMPLATES = {
       id: 'owt-agr-2', tahapan: 'Agreement', judul: 'Reminder Tanda Tangan Agreement',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nKami mengingatkan bahwa dokumen agreement program *${o.paket}* sudah siap untuk ditandatangani.\n\nMohon luangkan waktu untuk menyelesaikan proses ini agar program latihan dapat segera dimulai 💪\n\nSilakan hubungi kami untuk jadwal penandatanganan. Terima kasih!`,
     },
+    {
+      id: 'owt-agr-3', tahapan: 'Agreement', judul: 'Kirim Agreement — Dokumen Ditandatangani',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien}! 🎉\n\nAgreement program *${o.paket}* Anda sudah resmi ditandatangani dan berlaku.\n\nSimpan dokumen agreement ini sebagai bukti perjanjian resmi bersama EFM. Tim kami akan segera menghubungi untuk pengaturan jadwal perdana.\n\nSelamat berlatih dan semangat mencapai target! 💪\n— Tim EFM`,
+    },
   ],
   'Program Berjalan': [
     {
@@ -161,15 +165,19 @@ const ORDER_WA_TEMPLATES = {
   ],
   'Program Selesai': [
     {
-      id: 'owt-sel-1', tahapan: 'Program Selesai', judul: 'Selamat Program Selesai',
+      id: 'owt-sel-1', tahapan: 'Program Selesai', judul: 'Kirim Receipt — Bukti Pembayaran',
+      teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien}! 🎉\n\nProgram *${o.paket}* Anda telah selesai sepenuhnya.\n\nBerikut dokumen resmi Anda:\n📄 Agreement: ${o.noAgreement || '[No. Agreement]'}\n🧾 Receipt: ${o.noReceipt || '[No. Receipt]'}\n\nSimpan dokumen ini sebagai bukti perjanjian dan pembayaran yang sah bersama EFM.\n\nTerima kasih atas kepercayaan Anda. Semoga hasil latihan memberikan manfaat jangka panjang! 💪\n— Tim EFM`,
+    },
+    {
+      id: 'owt-sel-2', tahapan: 'Program Selesai', judul: 'Selamat Program Selesai',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien}! 🎉\n\nSelamat — program *${o.paket}* Anda telah selesai! Kami bangga bisa menemani perjalanan fitness Anda.\n\nSemoga hasil latihan Anda terasa nyata dan memberikan manfaat jangka panjang 💪\n\nSampai jumpa di program berikutnya!`,
     },
     {
-      id: 'owt-sel-2', tahapan: 'Program Selesai', judul: 'Kepuasan Layanan EFM',
+      id: 'owt-sel-3', tahapan: 'Program Selesai', judul: 'Kepuasan Layanan EFM',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nTerima kasih telah mempercayakan program fitness Anda kepada Essential Fitness Management 💪\n\nKami ingin memastikan Anda puas dengan layanan yang diberikan. Apakah ada masukan atau saran yang bisa kami perbaiki?\n\nKepuasan Anda adalah prioritas utama kami. Salam sehat! 🙏`,
     },
     {
-      id: 'owt-sel-3', tahapan: 'Program Selesai', judul: 'Tawaran Perpanjangan Program',
+      id: 'owt-sel-4', tahapan: 'Program Selesai', judul: 'Tawaran Perpanjangan Program',
       teks: (o) => `Halo ${o.sapaan || ''} ${o.namaKlien},\n\nProgram *${o.paket}* Anda sudah selesai — semoga hasilnya memuaskan! 🙏\n\nJika ${o.sapaan || ''} ${o.namaKlien} tertarik untuk melanjutkan atau mencoba program lainnya, kami siap membantu menyiapkan pilihan yang sesuai.\n\nSilakan hubungi kami untuk konsultasi lebih lanjut. Terima kasih!`,
     },
   ],
