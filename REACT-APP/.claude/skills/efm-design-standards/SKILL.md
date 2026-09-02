@@ -136,12 +136,14 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 ## 3b. Full-Page Form / Sub-page — Header Card Standard
 
-> **Tiga varian header card** ada di project ini — pilih berdasarkan tipe halaman:
+> **Empat varian header card** ada di project ini — pilih berdasarkan tipe halaman:
 > - **List page** (Invoice list, Receipt list, Screening list, Documents list, dll): gunakan pola **Section 3c** — `flex-col sm:flex-row`, tanpa eyebrow label.
 > - **Form / sub-page** (Assessment Detail, Screening Detail, Konsultasi Detail, Order New, dll): gunakan **ikon bulat navy** — pola di section ini (3b).
 > - **Entity detail page** (Lead Detail, Order Detail): gunakan **initials avatar berwarna** — lihat `efm-component-patterns` Section 15.
+> - **Document detail page** (Invoice Detail, Receipt Detail, Agreement Detail): gunakan **pola flat single-row** — lihat Section 3d.
 
 ⚠️ **Jangan gunakan pola 3b (eyebrow + `flex items-start`) untuk list page** — list page pakai pola 3c.
+⚠️ **Document detail page** (Invoice/Receipt/Agreement) bukan "entity detail" — gunakan pola 3d (flat row, ikon `w-10`, judul `text-base`), bukan 3b (ikon `w-12`, judul `text-lg`).
 
 Header card untuk semua sub-page forms (Assessment Detail, Screening Detail, Konsultasi Detail, Order New, dll). Ini adalah struktur WAJIB — jangan improvisasi dengan `flex-col sm:flex-row` atau variasi lain.
 
@@ -233,6 +235,88 @@ Pola untuk semua halaman **list** (Invoice, Receipt, Agreement, Screening, Order
 - Ikon tetap: `w-12 h-12 rounded-full bg-[#1E1C43] shrink-0`
 - Tombol Kembali: selalu gray secondary, BUKAN orange
 - Jika ada tombol toggle (Template Invoice/Agreement), gunakan navy outline bukan orange
+
+---
+
+## 3d. Document Detail Page — Header Card Standard
+
+Pola untuk **halaman detail dokumen** (Invoice Detail, Receipt Detail, Agreement Detail) — berbeda dari entity detail (Lead/Order) dan sub-page form. Header ini lebih kompak: single flat row, ikon lebih kecil, judul lebih kecil, tombol aksi langsung dalam row yang sama.
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+  <div className="flex items-center gap-2 flex-wrap">
+
+    {/* Ikon bulat kecil navy */}
+    <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+      <IconName size={16} className="text-white" />
+    </div>
+
+    {/* Judul + meta info */}
+    <div className="min-w-0 flex-1">
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+        Tipe Dokumen (mis. "Invoice Klien" / "Agreement Klien")
+      </p>
+      <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">
+        {doc.displayId}  {/* mis. INV-PP-27-0001 */}
+      </h1>
+      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+        <span className="text-xs text-gray-500">{doc.namaKlien}</span>
+        <span className="text-gray-300 text-xs">·</span>
+        <StatusBadge />
+      </div>
+    </div>
+
+    {/* Tombol aksi — langsung di row yang sama, bukan di div terpisah */}
+    <button
+      onClick={handleBack}
+      className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
+    >
+      <ArrowLeft size={13} /> Kembali ke ...
+    </button>
+    {/* Tombol aksi lain (Edit, Download) jika ada, tambahkan di sini */}
+
+  </div>
+</div>
+```
+
+**Perbedaan kunci dari pola 3b:**
+| | 3b (Sub-page form) | 3d (Document detail) |
+|---|---|---|
+| Layout | `flex items-start justify-between gap-4 flex-wrap` | `flex items-center gap-2 flex-wrap` |
+| Ikon | `w-12 h-12`, `size={18–22}` | `w-10 h-10`, `size={16}` |
+| Judul | `text-lg font-bold` | `text-base font-bold truncate` |
+| Tombol | dalam wrapper `div` terpisah di kanan | langsung dalam row yang sama |
+| Padding | `p-5` | `px-5 py-4` |
+
+**Aturan wajib:**
+- Ikon: `w-10 h-10 rounded-full bg-[#1E1C43] shrink-0` — LEBIH KECIL dari 3b (yang `w-12`)
+- Judul: `text-base font-bold text-[#1E1C43] truncate` — selalu `truncate` agar tidak overflow jika ID panjang
+- Eyebrow label: TETAP ada di 3d (beda dari 3c list page) — menunjukkan tipe dokumen
+- Tombol kembali: LANGSUNG dalam flex row utama (bukan `div justify-between` terpisah)
+- Padding card: `px-5 py-4` (bukan `p-5` seperti 3b)
+
+### Aturan Label Tombol "Kembali" — Document Detail Page
+
+| Tujuan navigasi | Label tombol |
+|---|---|
+| Kembali ke halaman list Orders global | `Kembali ke Order` |
+| Kembali ke order spesifik (fromOrderId tersedia) | `Kembali ke Order #PP-27-0001` |
+| Kembali ke halaman list Invoice | `Kembali ke Invoice` |
+| Kembali ke halaman list Agreement/Documents | `Kembali ke Daftar Agreement` |
+| Kembali ke halaman list Screening | `Kembali ke Screening` |
+| Kembali ke Lead (leadId tersedia) | `Kembali ke Lead` |
+
+**Pola implementasi (ternary dinamis):**
+```jsx
+// Jika ada fromOrderId:
+{fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Invoice'}
+
+// Jika bisa dari order atau list:
+{fromOrderId ? `Kembali ke Order #${fromOrderId}` : leadId ? 'Kembali ke Lead' : 'Kembali ke Screening'}
+```
+
+⚠️ **Selalu prefix "Kembali ke"** — BUKAN label pendek seperti `"Order #X"` atau `"Invoice"` saja.
+⚠️ **Back button style di document detail**: `border-gray-200 text-gray-500 font-medium` — LEBIH TERANG dari pola lama (`border-gray-300 text-gray-600 font-semibold`).
 
 ---
 
