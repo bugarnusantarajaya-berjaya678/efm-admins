@@ -23,26 +23,22 @@ const STAGE_CLS = {
   New:         'bg-gray-100 text-gray-600',
   Approach:    'bg-blue-100 text-blue-600',
   Screening:   'bg-purple-100 text-purple-600',
-  Invoicing:   'bg-yellow-100 text-yellow-700',
   Closing:     'bg-orange-100 text-orange-600',
-  Convert:     'bg-green-100 text-green-700',
   Lost:        'bg-red-100 text-red-600',
   'Edit Data': 'bg-indigo-50 text-indigo-600',
 }
 
 const STAGE_BORDER = {
-  Convert:     'border-green-400',
   Lost:        'border-red-400',
   Closing:     'border-orange-400',
-  Invoicing:   'border-yellow-400',
   Screening:   'border-purple-400',
   Approach:    'border-blue-400',
   New:         'border-gray-300',
   'Edit Data': 'border-indigo-300',
 }
 
-const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert', 'Lost']
-const PIPELINE_LINEAR  = ['New', 'Approach', 'Screening', 'Invoicing', 'Closing', 'Convert']
+const PIPELINE_STAGES  = ['New', 'Approach', 'Screening', 'Closing', 'Lost']
+const PIPELINE_LINEAR  = ['New', 'Approach', 'Screening', 'Closing']
 const SUMBER_OPTS      = ['Website','Referral','Meta Ads','Google Ads','Walk-in','Instagram','LinkedIn','Lainnya']
 
 /* ── Fallback static data (for direct URL access) ── */
@@ -52,13 +48,12 @@ const LEADS_FALLBACK = [
     noHp: '081234567890', sumberLead: 'Website', picEfm: 'Sarah Jenkins',
     programDiminati: '12 Sesi - Pro', emailUmum: 'james.wilson@email.com',
     catatanAwal: 'Tertarik program fatloss, sudah follow up 2x',
-    statusPipeline: 'Convert', orderId: 'PP-26-0013',
+    statusPipeline: 'Closing', orderId: 'PP-26-0013',
     tanggalMasuk: '20 Okt 2026', tanggalFollowUp: null,
-    catatan: 'Sudah convert ke Order PP-26-0013',
+    catatan: 'Order PP-26-0013 sudah dibuat',
     logAktivitas: [
-      { status: 'Convert',   oleh: 'Sarah Jenkins', tanggal: '20 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0013' },
-      { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '18 Okt 2026', catatan: 'Klien setuju paket 12 sesi' },
-      { status: 'Invoicing', oleh: 'Sarah Jenkins', tanggal: '16 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '20 Okt 2026', catatan: 'Order berhasil dibuat — PP-26-0013' },
+      { status: 'Closing',   oleh: 'Sarah Jenkins', tanggal: '18 Okt 2026', catatan: 'Klien setuju paket 12 sesi, deal dikonfirmasi' },
       { status: 'Screening', oleh: 'Sarah Jenkins', tanggal: '14 Okt 2026', catatan: 'Screening kesehatan selesai, BMI normal' },
       { status: 'Approach',  oleh: 'Sarah Jenkins', tanggal: '12 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
       { status: 'New',       oleh: 'Sarah Jenkins', tanggal: '10 Okt 2026', catatan: 'Lead masuk dari form website' },
@@ -117,12 +112,11 @@ const LEADS_FALLBACK = [
     noHp: '082345678901', sumberLead: 'Instagram', picEfm: 'Marcus Chen',
     programDiminati: '4 Sesi - Starter', emailUmum: 'emily@email.com',
     catatanAwal: 'Tertarik program starter, fokus kebugaran umum',
-    statusPipeline: 'Convert', orderId: 'PP-26-0012',
+    statusPipeline: 'Closing', orderId: 'PP-26-0012',
     tanggalMasuk: '15 Okt 2026', tanggalFollowUp: null,
-    catatan: 'Sudah convert ke Order PP-26-0012',
+    catatan: 'Order PP-26-0012 sudah dibuat',
     logAktivitas: [
-      { status: 'Convert',   oleh: 'Marcus Chen', tanggal: '18 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0012' },
-      { status: 'Invoicing', oleh: 'Marcus Chen', tanggal: '16 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Closing',   oleh: 'Marcus Chen', tanggal: '18 Okt 2026', catatan: 'Order berhasil dibuat — PP-26-0012' },
       { status: 'Approach',  oleh: 'Marcus Chen', tanggal: '15 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
       { status: 'New',       oleh: 'Marcus Chen', tanggal: '15 Okt 2026', catatan: 'Lead masuk dari Instagram' },
     ],
@@ -132,12 +126,11 @@ const LEADS_FALLBACK = [
     noHp: '087811223344', sumberLead: 'Referral', picEfm: 'Dian Kartika',
     programDiminati: '8 Sesi - Basic', emailUmum: 'sari.dewi@email.com',
     catatanAwal: 'Tertarik muscle toning, direferensikan oleh teman',
-    statusPipeline: 'Convert', orderId: 'PP-26-0021',
+    statusPipeline: 'Closing', orderId: 'PP-26-0021',
     tanggalMasuk: '28 Okt 2026', tanggalFollowUp: null,
-    catatan: 'Sudah convert ke Order PP-26-0021',
+    catatan: 'Order PP-26-0021 sudah dibuat',
     logAktivitas: [
-      { status: 'Convert',   oleh: 'Dian Kartika', tanggal: '30 Okt 2026', catatan: 'Order berhasil dibuat, PP-26-0021' },
-      { status: 'Invoicing', oleh: 'Dian Kartika', tanggal: '29 Okt 2026', catatan: 'Invoice dikirim, menunggu pembayaran' },
+      { status: 'Closing',   oleh: 'Dian Kartika', tanggal: '30 Okt 2026', catatan: 'Order berhasil dibuat — PP-26-0021' },
       { status: 'Approach',  oleh: 'Dian Kartika', tanggal: '28 Okt 2026', catatan: 'Follow up via WhatsApp, klien tertarik' },
       { status: 'New',       oleh: 'Dian Kartika', tanggal: '28 Okt 2026', catatan: 'Lead masuk dari referral' },
     ],
@@ -178,34 +171,14 @@ const WA_TEMPLATES = {
       teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Mengingatkan bahwa besok ada sesi screening kesehatan di EFM.\n\n⏰ Hadir tepat waktu\n🚫 Hindari makan berat 2 jam sebelum sesi\n💧 Pastikan hidrasi cukup\n\nSampai jumpa besok! 💪`,
     },
   ],
-  Invoicing: [
-    {
-      id: 'tpl-inv-1', stage: 'Invoicing', judul: 'Kirim Invoice',
-      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, invoice untuk program ${l.programDiminati || 'fitness'} Anda sudah kami siapkan.\n\nSilakan konfirmasi ke kami untuk detail pembayaran atau metode transfer. Terima kasih atas kepercayaan Anda! 🙏`,
-    },
-    {
-      id: 'tpl-inv-2', stage: 'Invoicing', judul: 'Follow-up Pembayaran',
-      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, kami hanya ingin mengingatkan tentang invoice program ${l.programDiminati || 'fitness'} yang sudah kami kirimkan.\n\nApakah ada pertanyaan mengenai metode pembayaran? Kami siap membantu 😊`,
-    },
-  ],
   Closing: [
     {
-      id: 'tpl-clo-1', stage: 'Closing', judul: 'Konfirmasi Deal',
-      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Senang sekali mendengar kabar baik ini! 🎉\n\nKami mengkonfirmasi bahwa ${l.sapaan || ''} ${l.nama} bergabung dengan program ${l.programDiminati || 'fitness'} EFM. Tim kami akan segera memproses dan menghubungi untuk langkah selanjutnya.`,
+      id: 'tpl-clo-1', stage: 'Closing', judul: 'Konfirmasi Deal — Anda Bergabung!',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! Senang sekali mendengar kabar baik ini! 🎉\n\nKami mengkonfirmasi bahwa ${l.sapaan || ''} ${l.nama} resmi bergabung dengan program *${l.programDiminati || 'fitness'}* EFM.\n\nTim kami akan segera memproses order dan mengirimkan invoice untuk langkah selanjutnya 🙏`,
     },
     {
-      id: 'tpl-clo-2', stage: 'Closing', judul: 'Reminder Tanda Tangan Agreement',
-      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}, kami mengingatkan untuk penandatanganan agreement program ${l.programDiminati || 'fitness'}.\n\nDokumen agreement sudah kami siapkan. Mohon konfirmasi waktu yang tepat. Terima kasih!`,
-    },
-  ],
-  Convert: [
-    {
-      id: 'tpl-cvt-1', stage: 'Convert', judul: 'Welcome — Selamat Bergabung',
-      teks: (l) => `Selamat datang di keluarga EFM, ${l.sapaan || ''} ${l.nama}! 🎉💪\n\nOrder program ${l.programDiminati || 'fitness'} Anda sudah kami proses. Tim kami akan segera menghubungi untuk pengaturan jadwal perdana.\n\nSelamat berlatih dan semangat mencapai target! 🏋️‍♀️`,
-    },
-    {
-      id: 'tpl-cvt-2', stage: 'Convert', judul: 'Kirim Agreement & Receipt — Dokumen Signed',
-      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! 🎉\n\nAgreement program ${l.programDiminati || 'fitness'} Anda sudah ditandatangani dan resmi berlaku.\n\nBerikut dokumen resmi Anda:\n📄 Agreement: [No. Agreement]\n🧾 Receipt: [No. Receipt]\n\nSimpan dokumen ini sebagai bukti perjanjian dan pembayaran yang sah bersama EFM. Jika ada pertanyaan, kami siap membantu.\n\nSelamat berlatih dan semangat mencapai target! 💪\n— Tim EFM`,
+      id: 'tpl-clo-2', stage: 'Closing', judul: 'Info Langkah Berikutnya',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama},\n\nTerima kasih telah memilih program *${l.programDiminati || 'fitness'}* bersama EFM! 💪\n\nBerikut langkah selanjutnya setelah deal ini:\n1️⃣ Tim kami akan membuat invoice resmi\n2️⃣ Setelah pembayaran, agreement disiapkan untuk ditandatangani\n3️⃣ Program latihan segera dijadwalkan\n\nNantikan konfirmasi dari kami. Sampai jumpa!`,
     },
   ],
   Lost: [
