@@ -783,12 +783,10 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Tanggal Pre-Test</label>
             <input type="date" className={inputCls} value={tanggalPreTest} onChange={e => setTanggalPreTest(e.target.value)} />
           </div>
-          {!isNew && (
-            <div>
-              <label className={labelCls}>Tanggal Post-Test</label>
-              <input type="date" className={inputCls} value={tanggalPostTest} onChange={e => setTanggalPostTest(e.target.value)} />
-            </div>
-          )}
+          <div>
+            <label className={labelCls}>Tanggal Post-Test</label>
+            <input type="date" className={inputCls} value={tanggalPostTest} onChange={e => setTanggalPostTest(e.target.value)} />
+          </div>
         </div>
       </div>
 
