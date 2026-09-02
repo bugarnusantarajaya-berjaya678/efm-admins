@@ -200,6 +200,10 @@ const WA_TEMPLATES = {
       id: 'tpl-cvt-1', stage: 'Convert', judul: 'Welcome — Selamat Bergabung',
       teks: (l) => `Selamat datang di keluarga EFM, ${l.sapaan || ''} ${l.nama}! 🎉💪\n\nOrder program ${l.programDiminati || 'fitness'} Anda sudah kami proses. Tim kami akan segera menghubungi untuk pengaturan jadwal perdana.\n\nSelamat berlatih dan semangat mencapai target! 🏋️‍♀️`,
     },
+    {
+      id: 'tpl-cvt-2', stage: 'Convert', judul: 'Kirim Agreement & Receipt — Dokumen Signed',
+      teks: (l) => `Halo ${l.sapaan || ''} ${l.nama}! 🎉\n\nAgreement program ${l.programDiminati || 'fitness'} Anda sudah ditandatangani dan resmi berlaku.\n\nBerikut dokumen resmi Anda:\n📄 Agreement: [No. Agreement]\n🧾 Receipt: [No. Receipt]\n\nSimpan dokumen ini sebagai bukti perjanjian dan pembayaran yang sah bersama EFM. Jika ada pertanyaan, kami siap membantu.\n\nSelamat berlatih dan semangat mencapai target! 💪\n— Tim EFM`,
+    },
   ],
   Lost: [
     {
