@@ -156,8 +156,8 @@ function AgreementDoc({ doc }) {
               <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
             <div style={{ minWidth: 0 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
               <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.telepon}</div>
@@ -165,12 +165,12 @@ function AgreementDoc({ doc }) {
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16 }}>
             <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
         <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, color: 'white', letterSpacing: 1.5, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
+          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', letterSpacing: 2, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
         </div>
       </div>
 
@@ -179,23 +179,23 @@ function AgreementDoc({ doc }) {
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
-            <div className="text-[12px] font-bold text-[#1E1C43] break-words break-all">{val}</div>
+            <div className="text-sm font-bold text-[#1E1C43] break-words break-all">{val}</div>
           </div>
         ))}
       </div>
 
       {/* Syarat & Ketentuan */}
       <div className="mb-6 px-6">
-        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
+        <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
-              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-[13px] font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
-                <li key={i} className="text-[11px] leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
+                <li key={i} className="text-[13px] leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
           </div>
@@ -204,24 +204,24 @@ function AgreementDoc({ doc }) {
 
       {/* Tanda Tangan */}
       <div className="border-t border-gray-200 pt-5 px-6 pb-6">
-        <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-4 text-center">Tanda Tangan Para Pihak</div>
+        <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4 text-center">Tanda Tangan Para Pihak</div>
         <div className="grid grid-cols-2 gap-5">
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
-            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">EFM</div>
+            <div className="text-xs font-bold text-[#1E1C43] mb-2">EFM</div>
             <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
               {company.tandaTanganCEO
                 ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
                 : <EfmSig />}
             </div>
-            <div className="text-[11px] text-[#1E1C43] font-semibold">{company.namaPenandatangan || 'Manajemen EFM'}</div>
+            <div className="text-xs text-[#1E1C43] font-semibold">{company.namaPenandatangan || 'Manajemen EFM'}</div>
             <div className="text-[10px] text-text-muted">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</div>
           </div>
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Kedua</div>
-            <div className="text-[10px] font-bold text-[#1E1C43] mb-2">Klien</div>
+            <div className="text-xs font-bold text-[#1E1C43] mb-2">Klien</div>
             <ClientSig status={doc.statusTtd} />
-            <div className="text-[11px] text-[#1E1C43] font-semibold">{doc.namaKlien}</div>
+            <div className="text-xs text-[#1E1C43] font-semibold">{doc.namaKlien}</div>
             <div className="mt-0.5">{sigMeta()}</div>
           </div>
         </div>
@@ -229,8 +229,8 @@ function AgreementDoc({ doc }) {
 
       {/* Document footer */}
       <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
-        <p className="text-[9px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
-        <p className="text-[9px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
+        <p className="text-[10px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-[10px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
@@ -318,7 +318,7 @@ export default function PPAgreementDetailPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-border overflow-hidden max-w-[600px] w-full">
+      <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
         {/* Admin-only status notice — bukan form TTD klien */}
