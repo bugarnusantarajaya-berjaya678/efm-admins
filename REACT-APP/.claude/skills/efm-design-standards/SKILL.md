@@ -257,7 +257,7 @@ Pola untuk **halaman detail dokumen** (Invoice Detail, Receipt Detail, Agreement
         Tipe Dokumen (mis. "Invoice Klien" / "Agreement Klien")
       </p>
       <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">
-        {doc.displayId}  {/* mis. INV-PP-27-0001 */}
+        #{doc.displayId}  {/* mis. #INV-PP-27-0001 — TANPA prefix tipe ("Invoice", "Receipt", dll) */}
       </h1>
       <div className="flex items-center gap-2 mt-0.5 flex-wrap">
         <span className="text-xs text-gray-500">{doc.namaKlien}</span>
@@ -290,8 +290,9 @@ Pola untuk **halaman detail dokumen** (Invoice Detail, Receipt Detail, Agreement
 
 **Aturan wajib:**
 - Ikon: `w-10 h-10 rounded-full bg-[#1E1C43] shrink-0` — LEBIH KECIL dari 3b (yang `w-12`)
-- Judul: `text-base font-bold text-[#1E1C43] truncate` — selalu `truncate` agar tidak overflow jika ID panjang
-- Eyebrow label: TETAP ada di 3d (beda dari 3c list page) — menunjukkan tipe dokumen
+- Judul `h1`: **hanya ID dokumen dengan prefix `#`** — mis. `#INV-PP-27-0001`, `#RCP-PP-27-0001`, `#AGR-PP-27-0001`
+- ⚠️ **Dilarang mengulangi tipe dokumen di `h1`** — tipe sudah ada di eyebrow label. BUKAN `"Invoice #INV-PP-27-0001"`, cukup `"#INV-PP-27-0001"`.
+- Eyebrow label: TETAP ada di 3d (beda dari 3c list page) — menunjukkan tipe dokumen (mis. "Invoice Private Training", "Receipt Klien", "Agreement Klien")
 - Tombol kembali: LANGSUNG dalam flex row utama (bukan `div justify-between` terpisah)
 - Padding card: `px-5 py-4` (bukan `p-5` seperti 3b)
 
