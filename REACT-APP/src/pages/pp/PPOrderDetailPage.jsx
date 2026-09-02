@@ -985,6 +985,8 @@ export default function PPOrderDetailPage() {
           {!isNew && (() => {
             const INV_STATUS = { paid: { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' }, pending: { label: 'Menunggu', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, overdue: { label: 'Jatuh Tempo', cls: 'bg-red-50 text-red-700 border-red-200' } }
             const AGR_STATUS = { signed: { label: 'Ditandatangani', cls: 'bg-green-50 text-green-700 border-green-200' }, waiting_approval: { label: 'Menunggu TTD', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, expired: { label: 'Kadaluarsa', cls: 'bg-gray-50 text-gray-500 border-gray-200' } }
+            const ASS_STATUS = { 'Post-Test Selesai': { label: 'Post-Test Selesai', cls: 'bg-green-50 text-green-700 border-green-200' }, 'Pre-Test Selesai': { label: 'Pre-Test Selesai', cls: 'bg-blue-50 text-blue-700 border-blue-200' } }
+            const panelAssessment = getAssessmentByOrderId(order?.id)
             const tahapan = [
               {
                 step: 1, label: 'Invoice',
@@ -993,22 +995,22 @@ export default function PPOrderDetailPage() {
                 onClick: linkedInv ? () => navigate('/pp/invoice/' + linkedInv.invNo, { state: { fromOrderId: order.id } }) : null,
               },
               {
-                step: 2, label: 'Agreement',
-                docId: agrDoc?.id ?? null,
-                badge: agrDoc ? (AGR_STATUS[agrDoc.statusTtd] ?? { label: agrDoc.statusTtd, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
-                onClick: agrDoc ? () => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } }) : null,
-              },
-              {
-                step: 3, label: 'Program Berjalan',
-                docId: order.id,
-                badge: { label: 'Anda di sini', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-                onClick: null,
-              },
-              {
-                step: 4, label: 'Program Selesai',
+                step: 2, label: 'Receipt',
                 docId: linkedRcp?.rcpNo ?? null,
                 badge: linkedRcp ? { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' } : null,
                 onClick: linkedRcp ? () => navigate('/pp/receipt/' + linkedRcp.rcpNo, { state: { fromOrderId: order.id } }) : null,
+              },
+              {
+                step: 3, label: 'Fitness Assessment',
+                docId: panelAssessment?.id ?? null,
+                badge: panelAssessment?.statusAssessment ? (ASS_STATUS[panelAssessment.statusAssessment] ?? { label: panelAssessment.statusAssessment, cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }) : null,
+                onClick: panelAssessment ? () => navigate('/pp/screening/' + panelAssessment.id, { state: { fromOrderId: order.id } }) : null,
+              },
+              {
+                step: 4, label: 'Agreement',
+                docId: agrDoc?.id ?? null,
+                badge: agrDoc ? (AGR_STATUS[agrDoc.statusTtd] ?? { label: agrDoc.statusTtd, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
+                onClick: agrDoc ? () => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } }) : null,
               },
             ]
             return (
