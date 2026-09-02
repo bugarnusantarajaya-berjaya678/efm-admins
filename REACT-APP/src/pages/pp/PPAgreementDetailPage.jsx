@@ -315,6 +315,15 @@ export default function PPAgreementDetailPage() {
             </div>
           </div>
 
+          {doc.statusTtd === 'signed' && (
+            <button
+              onClick={handleKirimWA}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold transition-colors shrink-0"
+            >
+              <MessageCircle size={13} /> {waStatus === 'sent' ? 'Kirim Ulang WA' : 'Kirim WA'}
+            </button>
+          )}
+
           {doc.statusTtd === 'waiting_approval' && (
             <button
               onClick={handleApprove}
