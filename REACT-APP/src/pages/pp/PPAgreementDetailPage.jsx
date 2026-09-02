@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, MessageCircle, ExternalLink, Receipt } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
+import { getReceiptByRcpNo } from '../../data/ppReceiptStore'
 import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
 import { getCompanySettings } from '../../utils/companySettings'
 
@@ -244,6 +245,8 @@ export default function PPAgreementDetailPage() {
   const { setCrumbs } = useBreadcrumb()
 
   const [doc, setDoc] = useState(() => getDocById(id))
+  const [waStatus, setWaStatus] = useState(null)
+  const [waTgl, setWaTgl]       = useState(null)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Agreement', doc ? doc.displayId : id])
@@ -277,6 +280,17 @@ export default function PPAgreementDetailPage() {
     setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd }))
   }
 
+  const handleKirimWA = () => {
+    const nama = doc.namaPanggilan || doc.namaKlien
+    const tgl  = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    const nomorBersih = (doc.noWa || '').replace(/^0/, '').replace(/\D/g, '')
+    const receiptInfo = doc.noReceipt && doc.noReceipt !== '—' ? `\n🧾 Receipt: ${doc.noReceipt}` : ''
+    const msg = `Halo ${nama}! 🎉\n\nAgreement program ${doc.paket} Anda sudah ditandatangani dan resmi berlaku.\n\nBerikut dokumen resmi Anda:\n📄 Agreement: ${doc.displayId}${receiptInfo}\n\nSimpan dokumen ini sebagai bukti perjanjian dan pembayaran yang sah bersama EFM.\n\nSelamat berlatih dan semangat mencapai target! 💪\n— Tim EFM`
+    window.open(`https://wa.me/62${nomorBersih}?text=${encodeURIComponent(msg)}`, '_blank')
+    setWaStatus('sent')
+    setWaTgl(tgl)
+  }
+
   return (
     <div className="flex flex-col gap-4">
       {/* Page header */}
@@ -292,8 +306,22 @@ export default function PPAgreementDetailPage() {
               <span className="text-xs text-gray-500">{doc.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
               <DocBadge status={doc.statusTtd} />
+              {waStatus === 'sent' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+                  <MessageCircle size={9} /> WA Terkirim · {waTgl}
+                </span>
+              )}
             </div>
           </div>
+
+          {doc.statusTtd === 'signed' && (
+            <button
+              onClick={handleKirimWA}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold transition-colors shrink-0"
+            >
+              <MessageCircle size={13} /> {waStatus === 'sent' ? 'Kirim Ulang WA' : 'Kirim WA'}
+            </button>
+          )}
 
           {doc.statusTtd === 'waiting_approval' && (
             <button
@@ -346,6 +374,53 @@ export default function PPAgreementDetailPage() {
           </div>
         )}
       </div>
+
+      {/* ── Related Records Panel — Receipt terkait ── */}
+      {(() => {
+        const receipt = doc.noReceipt && doc.noReceipt !== '—' ? getReceiptByRcpNo(doc.noReceipt) : null
+        const receiptStatusCls = {
+          sent:       'bg-green-50 text-green-700 border-green-200',
+          'not-sent': 'bg-gray-50 text-gray-500 border-gray-200',
+        }
+        const receiptStatusLabel = { sent: 'WA Terkirim', 'not-sent': 'Belum Kirim WA' }
+        return (
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2 mb-3">
+                <Receipt size={14} /> Dokumen Terkait — Receipt
+              </h3>
+              <div className="flex flex-col gap-2">
+                {receipt ? (
+                  <div
+                    onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { fromAgreementId: doc.id } })}
+                    className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                        <Receipt size={14} className="text-[#1E1C43]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-[#1E1C43] truncate">{receipt.rcpNo}</p>
+                        <p className="text-[10px] text-gray-400 truncate">{receipt.client} · {receipt.tglBayar} · Rp {receipt.total?.toLocaleString('id-ID')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${receiptStatusCls[receipt.waStatus] || receiptStatusCls['not-sent']}`}>
+                        {receiptStatusLabel[receipt.waStatus] || receipt.waStatus}
+                      </span>
+                      <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-400 text-center py-4 italic">
+                    {doc.noReceipt && doc.noReceipt !== '—' ? `Receipt ${doc.noReceipt} tidak ditemukan.` : 'Belum ada receipt yang terhubung.'}
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })()}
     </div>
   )
 }
