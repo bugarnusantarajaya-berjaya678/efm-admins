@@ -111,6 +111,8 @@ export default function PPInvoiceDetailPage() {
   const [diskonApplied, setDiskonApplied] = useState(null)
   const [diskonError,   setDiskonError]   = useState(false)
   const [showAksiMenu,  setShowAksiMenu]  = useState(false)
+  const [waStatus,      setWaStatus]      = useState(null)
+  const [waTgl,         setWaTgl]         = useState(null)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
@@ -189,7 +191,6 @@ export default function PPInvoiceDetailPage() {
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
   function handleKirimWA() {
-    window.print()
     const cs = getCompanySettings()
     const msg = [
       `Halo *${invoice.sapaan} ${invoice.client}*,`,
@@ -216,6 +217,9 @@ export default function PPInvoiceDetailPage() {
       ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
       : `https://wa.me/?text=${encodeURIComponent(msg)}`
     window.open(waUrl, '_blank')
+    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setWaStatus('sent')
+    setWaTgl(tgl)
   }
 
   function handleReminderWA() {
@@ -242,6 +246,9 @@ export default function PPInvoiceDetailPage() {
       ? `https://wa.me/62${noHP.replace(/\D/g, '').replace(/^0/, '')}?text=${encodeURIComponent(msg)}`
       : `https://wa.me/?text=${encodeURIComponent(msg)}`
     window.open(waUrl, '_blank')
+    const tgl = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    setWaStatus('sent')
+    setWaTgl(tgl)
   }
 
   function handleMarkPaid({ paidDate, payMethod }) {
@@ -280,6 +287,11 @@ export default function PPInvoiceDetailPage() {
               <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
                 {STATUS_LABEL[invoice.status] || invoice.status}
               </span>
+              {waStatus === 'sent' && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">
+                  <MessageCircle size={9} /> WA Terkirim · {waTgl}
+                </span>
+              )}
             </div>
           </div>
 
