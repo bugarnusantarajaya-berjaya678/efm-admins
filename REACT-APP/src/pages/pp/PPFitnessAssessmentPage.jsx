@@ -687,9 +687,10 @@ export default function PPFitnessAssessmentPage() {
           </div>
           <button
             onClick={() => handleBack()}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors flex-shrink-0"
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
           >
-            <ArrowLeft size={12} /> Kembali
+            <ArrowLeft size={13} />
+            {fromOrderId ? `Kembali ke Order #${fromOrderId}` : leadId ? 'Kembali ke Lead' : 'Kembali ke Screening'}
           </button>
         </div>
       </div>
