@@ -678,18 +678,6 @@ export default function PPFitnessAssessmentPage() {
         </div>
       )}
 
-      {/* Info: Frekuensi Pengukuran */}
-      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-4">
-        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
-          <Info size={11} className="text-blue-600" />
-        </div>
-        <div>
-          <p className="text-xs font-semibold text-blue-700">Pengukuran Melekat pada Leads, Bukan Order</p>
-          <p className="text-xs text-blue-600 mt-0.5 leading-relaxed">
-            Frekuensi pengukuran di lapangan bervariasi — bisa 1x/bulan atau hingga 3x/bulan tergantung kebutuhan klien dan program. Karena itu assessment tidak diikat ke satu order spesifik, melainkan melekat pada <span className="font-semibold">leads klien</span> sebagai rekam medis yang berkelanjutan sepanjang periode program.
-          </p>
-        </div>
-      </div>
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
