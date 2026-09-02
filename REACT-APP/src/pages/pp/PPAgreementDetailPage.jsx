@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, MessageCircle, ExternalLink, Receipt } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, MessageCircle, ExternalLink, Receipt, ChevronDown } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { getReceiptByRcpNo } from '../../data/ppReceiptStore'
@@ -245,8 +245,9 @@ export default function PPAgreementDetailPage() {
   const { setCrumbs } = useBreadcrumb()
 
   const [doc, setDoc] = useState(() => getDocById(id))
-  const [waStatus, setWaStatus] = useState(null)
-  const [waTgl, setWaTgl]       = useState(null)
+  const [waStatus,     setWaStatus]     = useState(null)
+  const [waTgl,        setWaTgl]        = useState(null)
+  const [showAksiMenu, setShowAksiMenu] = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Agreement', doc ? doc.displayId : id])
@@ -331,12 +332,34 @@ export default function PPAgreementDetailPage() {
               <CheckCircle size={13} /> Approve Agreement
             </button>
           )}
-          <button
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0"
-          >
-            <Download size={13} /> Download PDF
-          </button>
+
+          {/* Aksi dropdown — Kirim WA (kondisional) + Download PDF */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowAksiMenu(p => !p)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+              Aksi <ChevronDown size={11} />
+            </button>
+            {showAksiMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[200px]">
+                {doc.statusTtd === 'signed' && (
+                  <>
+                    <button
+                      onClick={() => { handleKirimWA(); setShowAksiMenu(false) }}
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                      <MessageCircle size={12} className="text-[#25D366]" /> {waStatus === 'sent' ? 'Kirim Ulang WA' : 'Kirim Agreement (WA)'}
+                    </button>
+                    <div className="border-t border-gray-100 my-1" />
+                  </>
+                )}
+                <button
+                  onClick={() => { window.print(); setShowAksiMenu(false) }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Download size={12} className="text-gray-400" /> Download PDF
+                </button>
+              </div>
+            )}
+          </div>
           <button
             onClick={handleBack}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
