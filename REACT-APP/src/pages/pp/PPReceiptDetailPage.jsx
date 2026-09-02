@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown } from 'lucide-react'
+import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
@@ -296,6 +296,13 @@ export default function PPReceiptDetailPage() {
               )}
             </div>
           </div>
+
+          {/* Lihat Invoice — primary action */}
+          <button
+            onClick={() => navigate('/pp/invoice/' + receipt.invNo, { state: { fromOrderId: receipt.orderId } })}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+            <ScrollText size={13} /> Lihat Invoice
+          </button>
 
           {/* Aksi dropdown — Kirim WA + Download PDF */}
           <div className="relative shrink-0">
