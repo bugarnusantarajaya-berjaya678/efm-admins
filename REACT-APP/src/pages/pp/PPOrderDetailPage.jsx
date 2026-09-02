@@ -993,28 +993,22 @@ export default function PPOrderDetailPage() {
                 onClick: linkedInv ? () => navigate('/pp/invoice/' + linkedInv.invNo, { state: { fromOrderId: order.id } }) : null,
               },
               {
-                step: 2, label: 'Agreement',
-                docId: agrDoc?.id ?? null,
-                badge: agrDoc ? (AGR_STATUS[agrDoc.statusTtd] ?? { label: agrDoc.statusTtd, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
-                onClick: agrDoc ? () => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } }) : null,
-              },
-              {
-                step: 3, label: 'Program Berjalan',
-                docId: order.id,
-                badge: { label: 'Anda di sini', cls: 'bg-blue-50 text-blue-700 border-blue-200' },
-                onClick: null,
-              },
-              {
-                step: 4, label: 'Program Selesai',
+                step: 2, label: 'Receipt',
                 docId: linkedRcp?.rcpNo ?? null,
                 badge: linkedRcp ? { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' } : null,
                 onClick: linkedRcp ? () => navigate('/pp/receipt/' + linkedRcp.rcpNo, { state: { fromOrderId: order.id } }) : null,
+              },
+              {
+                step: 3, label: 'Agreement',
+                docId: agrDoc?.id ?? null,
+                badge: agrDoc ? (AGR_STATUS[agrDoc.statusTtd] ?? { label: agrDoc.statusTtd, cls: 'bg-gray-50 text-gray-500 border-gray-200' }) : null,
+                onClick: agrDoc ? () => navigate('/pp/agreement/' + agrDoc.id, { state: { fromOrderId: order.id } }) : null,
               },
             ]
             return (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 mb-4">
                 <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Dokumen & Tahapan</h3>
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                   {tahapan.map(({ step, label, docId, badge, onClick }) => (
                     <div
                       key={step}
