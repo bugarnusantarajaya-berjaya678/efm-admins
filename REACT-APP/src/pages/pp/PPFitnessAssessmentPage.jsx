@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText, Heart } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { getStoredLeads, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
@@ -515,7 +515,7 @@ export default function PPFitnessAssessmentPage() {
   const [enduranceCatatanAwal, setEnduranceCatatanAwal] = useState(existing?.endurance_catatan_awal || '')
   const [enduranceCatatanAkhir, setEnduranceCatatanAkhir] = useState(existing?.endurance_catatan_akhir || '')
 
-  // Ringkasan Klien state
+  // State for Informasi Kesehatan Awal toggle (auto-filled from leads, read-only display)
   const [kondisiFisik, setKondisiFisik] = useState(existing?.ringkasan?.kondisiFisik || '')
   const [riwayatCedera, setRiwayatCedera] = useState(existing?.ringkasan?.riwayatCedera || '')
   const [obatanRutin, setObatanRutin] = useState(existing?.ringkasan?.obatanRutin || '')
@@ -553,7 +553,6 @@ export default function PPFitnessAssessmentPage() {
       noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien, usia, jenisKelamin, tipeBadan,
       detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
       statusAssessment: newStatus,
-      ringkasan: { kondisiFisik, riwayatCedera, obatanRutin, catatanScreening },
       tanita, tanita_catatan_awal: tanitaCatatanAwal, tanita_catatan_akhir: tanitaCatatanAkhir,
       girths, girths_catatan_awal: girthsCatatanAwal, girths_catatan_akhir: girthsCatatanAkhir,
       parq, parq_catatan_awal: parqCatatanAwal, parq_catatan_akhir: parqCatatanAkhir,
@@ -757,124 +756,11 @@ export default function PPFitnessAssessmentPage() {
         </div>
       </div>
 
-      {/* ── RINGKASAN KLIEN ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-center gap-3 mb-4">
-          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
-            Ringkasan Klien
-          </h2>
-        </div>
-
-        {/* Progress Order Sebelumnya — hanya untuk renewal */}
-        {isRenewal && prevSource && (() => {
-          const src = prevSource
-          const t = src.tanita || {}
-          const g = src.girths || {}
-          const metrics = [
-            { label: 'Berat Badan',       unit: 'kg',    awal: t.totalBodyWeight_awal, akhir: t.totalBodyWeight_akhir, lowerIsBetter: true  },
-            { label: 'Body Fat',           unit: '%',     awal: t.totalBodyFat_awal,    akhir: t.totalBodyFat_akhir,    lowerIsBetter: true  },
-            { label: 'Visceral Fat',       unit: '',      awal: t.visceralFat_awal,     akhir: t.visceralFat_akhir,     lowerIsBetter: true  },
-            { label: 'BMI',                unit: 'kg/m²', awal: t.bodyMassIndex_awal,   akhir: t.bodyMassIndex_akhir,   lowerIsBetter: true  },
-            { label: 'Massa Otot',         unit: 'kg',    awal: t.muscleMas_awal,       akhir: t.muscleMas_akhir,       lowerIsBetter: false },
-            { label: 'Lingkar Pinggang',   unit: 'cm',    awal: g.waist_awal,           akhir: g.waist_akhir,           lowerIsBetter: true  },
-          ]
-          return (
-            <div className="mb-5">
-              <div className="flex items-center gap-2 mb-3">
-                <p className="text-sm font-semibold text-purple-700">Progress Order Sebelumnya</p>
-                <span className="px-2 py-0.5 text-[10px] font-medium bg-purple-100 text-purple-600 rounded-full">
-                  #{prevSource.id} · {src.noIdProgram}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
-                {metrics.map(m => {
-                  const awalNum = parseFloat(m.awal)
-                  const akhirNum = parseFloat(m.akhir)
-                  const hasDelta = !isNaN(awalNum) && !isNaN(akhirNum) && m.akhir !== ''
-                  const delta = hasDelta ? (akhirNum - awalNum) : null
-                  const improved = hasDelta && (m.lowerIsBetter ? delta < 0 : delta > 0)
-                  return (
-                    <div key={m.label} className="bg-purple-50 rounded-xl p-3 border border-purple-100">
-                      <p className="text-[10px] uppercase tracking-wide text-purple-400 font-semibold leading-tight">{m.label}</p>
-                      <div className="mt-1.5 flex items-baseline gap-1">
-                        <span className="text-sm font-bold text-purple-900">{m.akhir || '—'}</span>
-                        {m.unit && m.akhir && <span className="text-[10px] text-purple-400">{m.unit}</span>}
-                      </div>
-                      {hasDelta && delta !== 0 && (
-                        <p className={`text-[10px] mt-0.5 font-semibold ${improved ? 'text-green-600' : 'text-red-500'}`}>
-                          {delta > 0 ? '+' : ''}{parseFloat(delta.toFixed(1))}{m.unit ? ' ' + m.unit : ''}
-                        </p>
-                      )}
-                      {hasDelta && delta === 0 && (
-                        <p className="text-[10px] mt-0.5 text-gray-400">Tidak berubah</p>
-                      )}
-                      {!m.akhir && <p className="text-[10px] mt-0.5 text-gray-300 italic">Post-test —</p>}
-                    </div>
-                  )
-                })}
-              </div>
-              {src.ringkasan?.catatanScreening && (
-                <div className="bg-purple-50/60 rounded-lg px-4 py-3 border border-purple-100">
-                  <p className="text-[10px] uppercase tracking-wide text-purple-400 font-semibold mb-1">Catatan Trainer (Program Sebelumnya)</p>
-                  <p className="text-xs text-purple-800 leading-relaxed">{src.ringkasan.catatanScreening}</p>
-                </div>
-              )}
-              <div className="mt-4 border-t border-gray-100" />
-            </div>
-          )
-        })()}
-
-        {/* Standard ringkasan fields */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className={labelCls}>Kondisi Fisik Umum</label>
-            <textarea
-              rows={2}
-              className={`${inputCls} resize-none`}
-              value={kondisiFisik}
-              onChange={e => setKondisiFisik(e.target.value)}
-              placeholder="Deskripsi kondisi fisik klien..."
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Riwayat Cedera</label>
-            <textarea
-              rows={2}
-              className={`${inputCls} resize-none`}
-              value={riwayatCedera}
-              onChange={e => setRiwayatCedera(e.target.value)}
-              placeholder="Riwayat cedera yang relevan..."
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className={labelCls}>Obatan / Suplemen Rutin</label>
-            <input
-              className={inputCls}
-              value={obatanRutin}
-              onChange={e => setObatanRutin(e.target.value)}
-              placeholder="Obat atau suplemen yang dikonsumsi..."
-            />
-          </div>
-          <div>
-            <label className={labelCls}>Catatan Screening</label>
-            <textarea
-              rows={2}
-              className={`${inputCls} resize-none`}
-              value={catatanScreening}
-              onChange={e => setCatatanScreening(e.target.value)}
-              placeholder="Catatan trainer / fitness consultant..."
-            />
-          </div>
-        </div>
-      </div>
-
       {/* ── INFORMASI KESEHATAN AWAL ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 flex items-center gap-2">
-            <Heart size={14} className="text-[#E05945]" /> Informasi Kesehatan Awal
+          <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
+            Informasi Kesehatan Awal
           </h2>
           <ToggleSwitch checked={toggles.kesehatan} onChange={v => setToggles(p => ({ ...p, kesehatan: v }))} />
         </div>
