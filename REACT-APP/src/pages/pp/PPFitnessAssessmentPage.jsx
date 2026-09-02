@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2, Link2, Activity } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Info } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
-import { ORDERS_INIT } from '../../data/ppOrdersData'
-import { PROGRAMS_INIT, PIC_DB } from '../../data/ppProgramDBData'
-import { getLeadHealthByOrderId } from '../../data/ppLeadsStore'
+import { getStoredLeads, getLeadHealthById } from '../../data/ppLeadsStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -431,7 +429,6 @@ export default function PPFitnessAssessmentPage() {
   const location = useLocation()
   const isNew = id === 'new'
   const leadId = location.state?.leadId || null
-  const fromOrderId = location.state?.fromOrderId || null
   const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
@@ -457,48 +454,8 @@ export default function PPFitnessAssessmentPage() {
     return null
   })()
 
-  // Order picker (only for new assessments opened without fromOrderId)
-  const [pickerOrderId, setPickerOrderId] = useState(fromOrderId || '')
-  const [pickerLeadHealth, setPickerLeadHealth] = useState(null)
-  const [showOrderSelector, setShowOrderSelector] = useState(false)
-  const [orderSearch, setOrderSearch] = useState('')
-
-  function handleOrderPick(orderId) {
-    setPickerOrderId(orderId)
-    if (!orderId) { setPickerLeadHealth(null); return }
-    const o = ORDERS_INIT.find(x => x.id === orderId)
-    if (!o) return
-
-    // ── Data Klien & Program ──
-    setNoIdProgram(o.id)
-    setNamaKlien(o.klien)
-    setNamaFC(o.pic)
-
-    // Cari trainer dari program DB berdasarkan paket
-    const prog = PROGRAMS_INIT.find(p => p.namaPaket === o.paket)
-    const trainerName = prog ? (PIC_DB[prog.picId]?.fullname || o.pic) : o.pic
-    setNamaPelatih(trainerName)
-    setProgramLatihan(prog ? `${prog.namaLatihan} — ${o.paket}` : o.paket)
-
-    // ── Data kesehatan dari leads store ──
-    const health = getLeadHealthByOrderId(orderId)
-    setPickerLeadHealth(health)
-    if (health?.sudahDiisi) {
-      setDetailGoals(health.tujuanProgram || '')
-      setKondisiFisik(health.kondisiSaatIni || '')
-      setRiwayatCedera(health.riwayatCedera || '')
-      setObatanRutin(health.obatanRutin || '')
-      setCatatanScreening(health.catatanCs || '')
-    }
-  }
-
-  // Auto-fill saat form dibuka langsung dari order detail (fromOrderId sudah set)
-  useEffect(() => {
-    if (isNew && fromOrderId) handleOrderPick(fromOrderId)
-  }, []) // eslint-disable-line
-
   // Personal Detail
-  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || fromOrderId || prefill.orderId || '')
+  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
@@ -575,9 +532,7 @@ export default function PPFitnessAssessmentPage() {
   const statusLabel = existing?.statusAssessment || 'Draft'
 
   const handleBack = () => {
-    if (fromOrderId) {
-      navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
-    } else if (leadId) {
+    if (leadId) {
       navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
     } else {
       navigate('/pp/screening')
@@ -593,7 +548,6 @@ export default function PPFitnessAssessmentPage() {
 
     const payload = {
       leadId: leadId || existing?.leadId || null,
-      orderId: pickerOrderId || fromOrderId || noIdProgram || existing?.orderId || null,
       prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
       noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien, usia, jenisKelamin, tipeBadan,
       detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
@@ -613,11 +567,7 @@ export default function PPFitnessAssessmentPage() {
     if (isNew) {
       const newId = getNextAssessmentId()
       addAssessment(newId, payload)
-      if (fromOrderId) {
-        navigate(`/pp/orders/${fromOrderId}`, { state: { defaultTab: 'operasional' } })
-      } else if (pickerOrderId) {
-        navigate(`/pp/orders/${pickerOrderId}`, { state: { defaultTab: 'operasional' } })
-      } else if (leadId) {
+      if (leadId) {
         navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
       } else {
         navigate('/pp/screening')
@@ -635,25 +585,31 @@ export default function PPFitnessAssessmentPage() {
   const inputCls = "w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white"
   const readOnlyCls = "w-full text-sm border border-gray-100 rounded-lg px-3 py-2 bg-gray-50 text-gray-500 cursor-not-allowed"
   const labelCls = "text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block"
-  const filteredOrders = orderSearch
-    ? ORDERS_INIT.filter(o =>
-        o.klien.toLowerCase().includes(orderSearch.toLowerCase()) ||
-        o.id.toLowerCase().includes(orderSearch.toLowerCase()) ||
-        (o.paket || '').toLowerCase().includes(orderSearch.toLowerCase())
-      )
-    : ORDERS_INIT
-  const selectedOrder = ORDERS_INIT.find(o => o.id === pickerOrderId)
-
-  // Lock order-linked fields whenever there is a valid order connected (new or existing)
-  const linkedOrderId = isNew ? (pickerOrderId || fromOrderId) : (existing?.orderId || '')
-  const orderInStore = linkedOrderId ? ORDERS_INIT.find(o => o.id === linkedOrderId) : null
-  const orderLocked = !!orderInStore
-  const leadsLocked = isNew && !!pickerLeadHealth?.sudahDiisi
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Kesehatan', isNew ? 'Baru' : id])
     return () => setCrumbs(null)
   }, [isNew, id])
+
+  // Auto-fill dari data leads saat buat assessment baru
+  useEffect(() => {
+    if (!isNew || !leadId) return
+    const leads = getStoredLeads()
+    const lead = leads.find(l => l.id === leadId)
+    if (lead) {
+      if (lead.nama) setNamaKlien(lead.nama)
+      if (lead.picEfm) setNamaFC(lead.picEfm)
+      if (lead.programDiminati) setProgramLatihan(lead.programDiminati)
+    }
+    const health = getLeadHealthById(leadId)
+    if (health?.sudahDiisi) {
+      if (health.tujuanProgram) setDetailGoals(health.tujuanProgram)
+      if (health.kondisiSaatIni) setKondisiFisik(health.kondisiSaatIni)
+      if (health.riwayatCedera) setRiwayatCedera(health.riwayatCedera)
+      if (health.obatanRutin) setObatanRutin(health.obatanRutin)
+      if (health.catatanCs) setCatatanScreening(health.catatanCs)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="bg-[#F5F5F7] min-h-screen pb-24">
@@ -688,7 +644,7 @@ export default function PPFitnessAssessmentPage() {
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
           >
             <ArrowLeft size={13} />
-            {fromOrderId ? `Kembali ke Order #${fromOrderId}` : leadId ? 'Kembali ke Lead' : 'Kembali ke Screening'}
+            {leadId ? 'Kembali ke Lead' : 'Kembali ke Screening'}
           </button>
         </div>
       </div>
@@ -703,13 +659,26 @@ export default function PPFitnessAssessmentPage() {
             </p>
             <p className="text-xs text-purple-600 mt-0.5">
               {isNew
-                ? <>Semua nilai <span className="font-semibold">Tes Awal</span> diadopsi otomatis dari Post-Test assessment <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien} · Order #{prevSource.orderId}. Nilai ini menjadi baseline awal untuk program baru ini.</>
-                : <>Assessment ini merupakan renewal dari <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien} · Order #{prevSource.orderId}.</>
+                ? <>Semua nilai <span className="font-semibold">Tes Awal</span> diadopsi otomatis dari Post-Test assessment <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien}. Nilai ini menjadi baseline awal untuk sesi pengukuran baru ini.</>
+                : <>Assessment ini merupakan renewal dari <span className="font-semibold">#{prevSource.id}</span> · {prevSource.namaKlien}.</>
               }
             </p>
           </div>
         </div>
       )}
+
+      {/* Info: Frekuensi Pengukuran */}
+      <div className="flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3 mb-4">
+        <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5">
+          <Info size={11} className="text-blue-600" />
+        </div>
+        <div>
+          <p className="text-xs font-semibold text-blue-700">Pengukuran Melekat pada Leads, Bukan Order</p>
+          <p className="text-xs text-blue-600 mt-0.5 leading-relaxed">
+            Frekuensi pengukuran di lapangan bervariasi — bisa 1x/bulan atau hingga 3x/bulan tergantung kebutuhan klien dan program. Karena itu assessment tidak diikat ke satu order spesifik, melainkan melekat pada <span className="font-semibold">leads klien</span> sebagai rekam medis yang berkelanjutan sepanjang periode program.
+          </p>
+        </div>
+      </div>
 
       {/* Content wrapper — non-interactive when not editing */}
       <div className={`space-y-4 ${!isEditing ? 'pointer-events-none select-none opacity-80' : ''}`}>
@@ -738,130 +707,10 @@ export default function PPFitnessAssessmentPage() {
           Data Klien & Program
         </h2>
 
-        {/* Indikator koneksi order — existing assessment */}
-        {!isNew && existing?.orderId && (
-          <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
-            <Link2 size={13} className="text-green-600 shrink-0" />
-            <p className="text-[11px] font-medium text-green-700 flex-1">
-              Terhubung ke Order <span className="font-bold">#{existing.orderId}</span>{orderLocked ? ' — data klien dikunci.' : '.'}
-            </p>
-            <button
-              onClick={() => navigate(`/pp/orders/${existing.orderId}`, { state: { defaultTab: 'operasional' } })}
-              className="text-[11px] font-semibold text-green-700 hover:underline shrink-0"
-            >
-              Lihat Order →
-            </button>
-          </div>
-        )}
-
-        {/* Indikator koneksi order — form baru dari order detail (picker disembunyikan) */}
-        {isNew && fromOrderId && (
-          <div className="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-green-50 border border-green-100">
-            <Link2 size={13} className="text-green-600 shrink-0" />
-            <p className="text-[11px] font-medium text-green-700">
-              Terhubung ke Order <span className="font-bold">#{fromOrderId}</span> — Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
-            </p>
-          </div>
-        )}
-
-        {/* Order picker — hanya tampil saat form baru dibuka dari /pp/screening (bukan dari order detail) */}
-        {isNew && !fromOrderId && (
-          <div className="mb-5">
-            {pickerOrderId ? (
-              <div className="p-4 rounded-xl border-2 border-green-200 bg-green-50 flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    <span>✅</span>
-                    <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">#{pickerOrderId}</span>
-                    <span className="text-sm font-bold text-green-800">{selectedOrder?.klien}</span>
-                  </div>
-                  <p className="text-xs text-green-700">{selectedOrder?.paket}</p>
-                  <div className="mt-1.5 space-y-0.5">
-                    <p className="text-[11px] text-green-600 font-medium">
-                      ✓ Nama Klien, FC, Pelatih & Program Latihan sudah di-auto-fill dan dikunci.
-                    </p>
-                    {pickerLeadHealth?.sudahDiisi ? (
-                      <p className="text-[11px] text-blue-700 font-medium">
-                        ✓ Data kesehatan dari leads ditemukan — Detail Goals & Ringkasan Klien sudah di-auto-fill.
-                      </p>
-                    ) : pickerLeadHealth ? (
-                      <p className="text-[11px] text-yellow-700 font-medium">
-                        ⚠ Informasi kesehatan di leads belum diisi — isi manual di bagian Ringkasan Klien.
-                      </p>
-                    ) : null}
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => { handleOrderPick(''); setShowOrderSelector(false) }}
-                  className="text-xs text-gray-500 hover:text-red-500 transition-colors flex-shrink-0 ml-4 whitespace-nowrap"
-                >
-                  × Ganti Order
-                </button>
-              </div>
-            ) : (
-              <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
-                <div className="flex items-center gap-2 mb-1.5">
-                  <Link2 size={13} className="text-[#1E1C43]" />
-                  <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Link ke Order Klien</p>
-                </div>
-                <p className="text-[11px] text-gray-500 mb-3">
-                  Pilih nomor order agar assessment ini terhubung ke klien yang tepat dan muncul di halaman detail order.
-                </p>
-                <div className="relative">
-                  <button
-                    type="button"
-                    onClick={() => setShowOrderSelector(p => !p)}
-                    className="w-full flex items-center justify-between border border-gray-300 rounded-lg px-4 py-2.5 text-xs text-gray-500 hover:border-gray-400 bg-white transition-colors text-left"
-                  >
-                    <span>Pilih dari daftar order...</span>
-                    <span className="text-gray-400 ml-2">{showOrderSelector ? '▲' : '▼'}</span>
-                  </button>
-
-                  {showOrderSelector && (
-                    <div className="absolute bottom-full left-0 right-0 mb-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20">
-                      <div className="p-2 border-b border-gray-100">
-                        <input
-                          type="text"
-                          value={orderSearch}
-                          onChange={e => setOrderSearch(e.target.value)}
-                          placeholder="Cari nama klien, ID order, atau paket..."
-                          className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#1E1C43]"
-                          autoFocus
-                        />
-                      </div>
-                      <div className="max-h-52 overflow-y-auto">
-                        {filteredOrders.length === 0 ? (
-                          <p className="text-xs text-gray-400 text-center py-4">Tidak ada order ditemukan</p>
-                        ) : filteredOrders.map(o => (
-                          <button
-                            key={o.id}
-                            type="button"
-                            onClick={() => { handleOrderPick(o.id); setShowOrderSelector(false); setOrderSearch('') }}
-                            className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-50 text-left border-b border-gray-100 last:border-0 transition-colors"
-                          >
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-semibold text-[#1E1C43] whitespace-nowrap">#{o.id}</span>
-                                <span className="text-xs font-medium text-gray-800 truncate">{o.klien}</span>
-                              </div>
-                              <p className="text-[10px] text-gray-400 mt-0.5">{o.paket}</p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
-            <label className={labelCls}>No. ID Program</label>
-            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={noIdProgram} onChange={e => setNoIdProgram(e.target.value)} placeholder="PP-26-0001" />
+            <label className={labelCls}>Referensi Program</label>
+            <input className={inputCls} value={noIdProgram} onChange={e => setNoIdProgram(e.target.value)} placeholder="Mis. LP-0001 / PP-26-0001" />
           </div>
           <div>
             <label className={labelCls}>Cabang / Wilayah</label>
@@ -869,17 +718,17 @@ export default function PPFitnessAssessmentPage() {
           </div>
           <div>
             <label className={labelCls}>Nama FC</label>
-            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaFC} onChange={e => setNamaFC(e.target.value)} placeholder="Fitness Consultant" />
+            <input className={inputCls} value={namaFC} onChange={e => setNamaFC(e.target.value)} placeholder="Fitness Consultant" />
           </div>
           <div>
             <label className={labelCls}>Nama Pelatih</label>
-            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaPelatih} onChange={e => setNamaPelatih(e.target.value)} placeholder="Personal Trainer" />
+            <input className={inputCls} value={namaPelatih} onChange={e => setNamaPelatih(e.target.value)} placeholder="Personal Trainer" />
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
           <div>
             <label className={labelCls}>Nama Klien</label>
-            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={namaKlien} onChange={e => setNamaKlien(e.target.value)} placeholder="Nama lengkap" />
+            <input className={inputCls} value={namaKlien} onChange={e => setNamaKlien(e.target.value)} placeholder="Nama lengkap" />
           </div>
           <div>
             <label className={labelCls}>Usia</label>
@@ -906,11 +755,11 @@ export default function PPFitnessAssessmentPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label className={labelCls}>Program Latihan</label>
-            <input className={orderLocked ? readOnlyCls : inputCls} readOnly={orderLocked} value={programLatihan} onChange={e => setProgramLatihan(e.target.value)} placeholder="Misal: 12 Sesi - Pro (Fatloss)" />
+            <input className={inputCls} value={programLatihan} onChange={e => setProgramLatihan(e.target.value)} placeholder="Misal: 12 Sesi - Pro (Fatloss)" />
           </div>
           <div>
             <label className={labelCls}>Detail Goals Klien</label>
-            <input className={leadsLocked ? readOnlyCls : inputCls} readOnly={leadsLocked} value={detailGoals} onChange={e => setDetailGoals(e.target.value)} placeholder="Deskripsi tujuan klien" />
+            <input className={inputCls} value={detailGoals} onChange={e => setDetailGoals(e.target.value)} placeholder="Deskripsi tujuan klien" />
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -933,11 +782,6 @@ export default function PPFitnessAssessmentPage() {
           <h2 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">
             Ringkasan Klien
           </h2>
-          {isNew && pickerLeadHealth?.sudahDiisi && (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-              <Link2 size={10} /> Data dari Leads
-            </span>
-          )}
         </div>
 
         {/* Progress Order Sebelumnya — hanya untuk renewal */}
@@ -1005,8 +849,7 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Kondisi Fisik Umum</label>
             <textarea
               rows={2}
-              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
-              readOnly={leadsLocked}
+              className={`${inputCls} resize-none`}
               value={kondisiFisik}
               onChange={e => setKondisiFisik(e.target.value)}
               placeholder="Deskripsi kondisi fisik klien..."
@@ -1016,8 +859,7 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Riwayat Cedera</label>
             <textarea
               rows={2}
-              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
-              readOnly={leadsLocked}
+              className={`${inputCls} resize-none`}
               value={riwayatCedera}
               onChange={e => setRiwayatCedera(e.target.value)}
               placeholder="Riwayat cedera yang relevan..."
@@ -1039,8 +881,7 @@ export default function PPFitnessAssessmentPage() {
             <label className={labelCls}>Catatan Screening</label>
             <textarea
               rows={2}
-              className={`${leadsLocked ? readOnlyCls : inputCls} resize-none`}
-              readOnly={leadsLocked}
+              className={`${inputCls} resize-none`}
               value={catatanScreening}
               onChange={e => setCatatanScreening(e.target.value)}
               placeholder="Catatan trainer / fitness consultant..."
