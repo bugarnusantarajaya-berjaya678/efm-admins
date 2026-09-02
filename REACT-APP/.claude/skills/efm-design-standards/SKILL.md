@@ -296,6 +296,20 @@ Pola untuk **halaman detail dokumen** (Invoice Detail, Receipt Detail, Agreement
 - Tombol kembali: LANGSUNG dalam flex row utama (bukan `div justify-between` terpisah)
 - Padding card: `px-5 py-4` (bukan `p-5` seperti 3b)
 
+### Aturan Warna Tombol di Header Document Detail Page
+
+Tombol-tombol di dalam header card Section 3d mengikuti aturan warna global (lihat Section 3), dengan catatan khusus:
+
+| Tombol | Warna yang benar | Contoh class |
+|---|---|---|
+| Kembali ke ... | Gray secondary | `border border-gray-200 text-gray-500 font-medium` |
+| Download PDF | Gray secondary | `border border-gray-300 text-gray-600 font-semibold` |
+| Edit | Gray secondary | `border border-gray-300 text-gray-600 font-semibold` |
+| Konfirmasi Pembayaran / Approve | CTA — green/orange | `bg-[#27AE60] text-white` atau `bg-[#E05945] text-white` |
+
+⚠️ **Download PDF BUKAN tombol navy** — meskipun terlihat "penting", ia adalah aksi navigasi/ekspor, bukan CTA bisnis. Selalu gunakan gray secondary.
+⚠️ **Jangan gunakan `bg-[#1E1C43]` (navy) untuk Download PDF atau Edit** di header document detail — navy hanya untuk Save/submit di form dan modal.
+
 ### Aturan Label Tombol "Kembali" — Document Detail Page
 
 | Tujuan navigasi | Label tombol |
