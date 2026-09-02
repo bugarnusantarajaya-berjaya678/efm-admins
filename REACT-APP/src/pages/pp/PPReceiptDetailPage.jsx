@@ -297,6 +297,13 @@ export default function PPReceiptDetailPage() {
             </div>
           </div>
 
+          {/* Lihat Invoice — primary action */}
+          <button
+            onClick={() => navigate('/pp/invoice/' + receipt.invNo, { state: { fromOrderId: receipt.orderId } })}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+            <ScrollText size={13} /> Lihat Invoice
+          </button>
+
           {/* Aksi dropdown — Kirim WA + Download PDF */}
           <div className="relative shrink-0">
             <button
@@ -320,11 +327,6 @@ export default function PPReceiptDetailPage() {
               </div>
             )}
           </div>
-          <button
-            onClick={() => navigate('/pp/invoice/' + receipt.invNo, { state: { fromOrderId: receipt.orderId } })}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
-            <ScrollText size={13} /> Lihat Invoice
-          </button>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
