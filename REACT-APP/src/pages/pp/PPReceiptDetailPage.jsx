@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, MessageCircle, Download, Receipt, CheckCircle2, ChevronDown } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
@@ -206,6 +206,7 @@ export default function PPReceiptDetailPage() {
   const [receipt, setReceipt] = useState(
     state?.receipt || getAllReceipts().find(r => r.rcpNo === id) || null
   )
+  const [showAksiMenu, setShowAksiMenu] = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Receipt', receipt ? '#' + receipt.rcpNo : id])
@@ -296,16 +297,29 @@ export default function PPReceiptDetailPage() {
             </div>
           </div>
 
-          <button
-            onClick={handleResendWA}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
-            <MessageCircle size={13} /> {waSent ? 'Kirim Ulang WA' : 'Kirim WA'}
-          </button>
-          <button
-            onClick={() => window.print()}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
-            <Download size={13} /> Download PDF
-          </button>
+          {/* Aksi dropdown — Kirim WA + Download PDF */}
+          <div className="relative shrink-0">
+            <button
+              onClick={() => setShowAksiMenu(p => !p)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+              Aksi <ChevronDown size={11} />
+            </button>
+            {showAksiMenu && (
+              <div className="absolute right-0 top-full mt-1 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-20 min-w-[180px]">
+                <button
+                  onClick={() => { handleResendWA(); setShowAksiMenu(false) }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                  <MessageCircle size={12} className="text-[#25D366]" /> {waSent ? 'Kirim Ulang WA' : 'Kirim Receipt (WA)'}
+                </button>
+                <div className="border-t border-gray-100 my-1" />
+                <button
+                  onClick={() => { window.print(); setShowAksiMenu(false) }}
+                  className="w-full flex items-center gap-2 px-3 py-2.5 text-xs text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Download size={12} className="text-gray-400" /> Download PDF
+                </button>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId, { state: { activeTab: 'kontrak' } })}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
