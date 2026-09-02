@@ -6,7 +6,7 @@ import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAssessmentByOrderId } from '../../data/ppAssessmentsStore'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { getDocByOrderId, updateDoc as updateAgrDoc } from '../../data/ppDocumentsStore'
-import { addReceipt, getReceiptByOrderId } from '../../data/ppReceiptStore'
+import { getReceiptByOrderId } from '../../data/ppReceiptStore'
 import { INVOICES_INIT } from '../../data/ppInvoiceData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { PIC_DB } from '../../data/ppProgramDBData'
@@ -547,35 +547,6 @@ export default function PPOrderDetailPage() {
   const [showTolakModal,        setShowTolakModal]        = useState(false)
   const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
   const [honorariumBuktiBayar,   setHonorariumBuktiBayar]   = useState(null)
-  const [invoicePayStatus,        setInvoicePayStatus]        = useState(() => {
-    const pt = order?.paymentTracking?.[0]
-    if (!pt) return 'belum_bayar'
-    return pt.status === 'Lunas' ? 'sudah_bayar' : pt.status === 'Terlambat' ? 'overdue' : 'belum_bayar'
-  })
-  const [showKonfirmasiPayModal,  setShowKonfirmasiPayModal]  = useState(false)
-  const [konfirmasiPayForm,       setKonfirmasiPayForm]       = useState(() => {
-    const pt = order?.paymentTracking?.[0]
-    if (pt?.status === 'Lunas' && pt.tglBayar) {
-      return { tglBayar: pt.tglBayar, metode: 'Transfer Bank', namaBukti: '' }
-    }
-    return { tglBayar: '', metode: 'Transfer Bank', namaBukti: '' }
-  })
-
-  const [invoicePP, setInvoicePP] = useState(() => {
-    const pt = order?.paymentTracking?.[0]
-    const invId = pt?.invoiceId || (order?.id && order.id !== 'BARU' ? `INV-${order.id}` : '')
-    const tgl = order?.tanggalMulai || ''
-    const jatuhTempo = tgl
-      ? new Date(new Date(tgl).getTime() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-      : ''
-    return {
-      nomorInvoice: invId,
-      tanggal: tgl,
-      jatuhTempo,
-      catatanInvoice: '',
-      statusInvoice: pt?.status === 'Lunas' ? 'Lunas' : 'Draft',
-    }
-  })
   const [rincianDraft,          setRincianDraft]          = useState(order?.rincianLayanan || [])
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
@@ -1551,110 +1522,6 @@ export default function PPOrderDetailPage() {
             </div>
           </div>
 
-          {/* ── Section: Invoice & Pembayaran Klien ── */}
-          {(() => {
-            const isOverdue = invoicePP.jatuhTempo && new Date(invoicePP.jatuhTempo) < new Date() && invoicePayStatus !== 'sudah_bayar'
-            const daysLeft  = invoicePP.jatuhTempo ? Math.ceil((new Date(invoicePP.jatuhTempo) - new Date()) / (1000*60*60*24)) : null
-            const receiptId = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
-            const headerBadgeCls = invoicePayStatus === 'sudah_bayar'
-              ? 'bg-green-100 text-green-700'
-              : isOverdue ? 'bg-red-100 text-red-700'
-              : 'bg-yellow-100 text-yellow-700'
-            const invCardBadgeCls = invoicePP.statusInvoice === 'Lunas'
-              ? 'bg-green-50 text-green-700 border-green-200'
-              : isOverdue ? 'bg-red-50 text-red-700 border-red-200'
-              : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-
-            return (
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 mb-4">
-                <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 flex-wrap gap-2">
-                  <div>
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Invoice & Pembayaran Klien</h3>
-                    <p className="text-xs text-gray-400 pl-4 mt-0.5">Dokumen tagihan & bukti pembayaran untuk order ini</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${headerBadgeCls}`}>
-                      {invoicePayStatus === 'sudah_bayar' ? '✓ Lunas' : isOverdue ? '⚠ Overdue' : 'Belum Bayar'}
-                    </span>
-                    {invoicePayStatus !== 'sudah_bayar' && (
-                      <button
-                        onClick={() => setShowKonfirmasiPayModal(true)}
-                        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-colors">
-                        <CheckCircle size={12} /> Konfirmasi Pembayaran
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-5 space-y-3">
-                  {/* Overdue / approaching warning */}
-                  {isOverdue && (
-                    <div className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-                      <AlertTriangle size={14} className="text-red-500 shrink-0 mt-0.5" />
-                      <p className="text-xs text-red-700 font-medium">
-                        Invoice melewati jatuh tempo ({fmtDate(invoicePP.jatuhTempo)}) — segera hubungi klien untuk konfirmasi pembayaran.
-                      </p>
-                    </div>
-                  )}
-                  {!isOverdue && daysLeft !== null && daysLeft <= 3 && invoicePayStatus !== 'sudah_bayar' && (
-                    <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
-                      <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-                      <p className="text-xs text-yellow-700 font-medium">Jatuh tempo dalam {daysLeft} hari ({fmtDate(invoicePP.jatuhTempo)})</p>
-                    </div>
-                  )}
-
-                  {/* Invoice Linked Record Card */}
-                  <div
-                    onClick={() => navigate(`/pp/invoice/${invoicePP.nomorInvoice}`, { state: { fromOrderId: order.id, fromOrderName: order.namaKlien } })}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                        <FileText size={14} className="text-[#1E1C43]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-[#1E1C43] truncate">{invoicePP.nomorInvoice}</p>
-                        <p className="text-[10px] text-gray-400 truncate">
-                          {fmtDate(invoicePP.tanggal)} · Jatuh Tempo {fmtDate(invoicePP.jatuhTempo)} · {formatRpPP(subtotalPP)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${invCardBadgeCls}`}>
-                        {invoicePP.statusInvoice || 'Draft'}
-                      </span>
-                      <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                    </div>
-                  </div>
-
-                  {/* Receipt Linked Record Card — visible after payment confirmed */}
-                  {invoicePayStatus === 'sudah_bayar' && (
-                    <div
-                      onClick={() => navigate(`/pp/receipt/${receiptId}`, { state: { fromOrderId: order.id } })}
-                      className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                    >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                          <FileText size={14} className="text-[#1E1C43]" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-[#1E1C43] truncate">{receiptId}</p>
-                          <p className="text-[10px] text-gray-400 truncate">
-                            {konfirmasiPayForm.tglBayar ? `Dibayar ${fmtDate(konfirmasiPayForm.tglBayar)}` : 'Pembayaran terkonfirmasi'}
-                            {konfirmasiPayForm.metode ? ` · ${konfirmasiPayForm.metode}` : ''}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-medium border bg-green-50 text-green-700 border-green-200">Lunas</span>
-                        <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )
-          })()}
 
         {/* ── Section: Agreement Klien ── */}
         {(() => {
@@ -2589,122 +2456,6 @@ export default function PPOrderDetailPage() {
         </div>
       )}
 
-      {/* ── Modal Konfirmasi Pembayaran Klien ────────────────────────────────── */}
-      {showKonfirmasiPayModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowKonfirmasiPayModal(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between p-5 border-b border-gray-100 flex-shrink-0">
-              <div>
-                <h3 className="text-sm font-bold text-[#1E1C43]">Konfirmasi Pembayaran Klien</h3>
-                <p className="text-xs text-gray-400 mt-0.5">Upload bukti transfer / struk pembayaran dari klien</p>
-              </div>
-              <button onClick={() => setShowKonfirmasiPayModal(false)} className="text-gray-400 hover:text-gray-600 transition">
-                <X size={18} />
-              </button>
-            </div>
-            <div className="p-5 space-y-4 overflow-y-auto flex-1">
-              <div className="bg-gray-50 rounded-xl px-4 py-3 flex justify-between items-center">
-                <p className="text-xs text-gray-500">Total Tagihan</p>
-                <p className="text-sm font-bold text-[#1E1C43]">{formatRpPP(subtotalPP)}</p>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tanggal Bayar *</label>
-                  <input
-                    type="date"
-                    value={konfirmasiPayForm.tglBayar}
-                    onChange={e => setKonfirmasiPayForm(p => ({ ...p, tglBayar: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Metode Pembayaran</label>
-                  <select
-                    value={konfirmasiPayForm.metode}
-                    onChange={e => setKonfirmasiPayForm(p => ({ ...p, metode: e.target.value }))}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]"
-                  >
-                    {['Transfer Bank', 'Cash', 'QRIS', 'Kartu Debit', 'Kartu Kredit'].map(m => (
-                      <option key={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-gray-600 mb-1.5">Upload Bukti Pembayaran</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
-                  <label className="cursor-pointer flex items-center gap-3">
-                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                      <span className="text-lg">📎</span>
-                    </div>
-                    <div className="flex-1">
-                      <input
-                        type="file"
-                        accept=".pdf,.jpg,.jpeg,.png"
-                        className="hidden"
-                        onChange={e => {
-                          const file = e.target.files[0]
-                          if (file) setKonfirmasiPayForm(p => ({ ...p, namaBukti: file.name }))
-                        }}
-                      />
-                      <span className="text-xs text-[#1E1C43] font-semibold hover:underline">
-                        {konfirmasiPayForm.namaBukti || 'Pilih file PDF atau gambar'}
-                      </span>
-                      <p className="text-[10px] text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
-                    </div>
-                  </label>
-                  {konfirmasiPayForm.namaBukti && (
-                    <div className="mt-2 flex items-center gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                      <CheckCircle size={13} className="text-green-600 shrink-0" />
-                      <span className="text-xs text-green-700 font-medium">{konfirmasiPayForm.namaBukti}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-3 p-5 border-t border-gray-100 flex-shrink-0">
-              <button
-                onClick={() => setShowKonfirmasiPayModal(false)}
-                className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-gray-50 transition"
-              >
-                Batal
-              </button>
-              <button
-                disabled={!konfirmasiPayForm.tglBayar}
-                onClick={() => {
-                  setInvoicePayStatus('sudah_bayar')
-                  setInvoicePP(p => ({ ...p, statusInvoice: 'Lunas' }))
-                  setShowKonfirmasiPayModal(false)
-                  const rcpNo = invoicePP.nomorInvoice.replace('INV-', 'RCP-')
-                  addReceipt({
-                    rcpNo,
-                    invNo: invoicePP.nomorInvoice,
-                    orderId: order.id,
-                    client: order.namaKlien,
-                    initials: (order.namaKlien || '').split(' ').slice(0, 2).map(n => n[0].toUpperCase()).join(''),
-                    color: '#2980B9',
-                    paket: order.paket,
-                    pic: order.picOpsEFM,
-                    tglBayar: fmtDate(konfirmasiPayForm.tglBayar),
-                    metode: konfirmasiPayForm.metode,
-                    total: subtotalPP,
-                    waStatus: 'not-sent',
-                    waTgl: null,
-                  })
-                  setLogTab3PP(prev => [{
-                    id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
-                    kategori: 'keuangan', nomorLaporan: invoicePP.nomorInvoice,
-                    teks: `Pembayaran klien ${invoicePP.nomorInvoice} dikonfirmasi Lunas — ${konfirmasiPayForm.metode} · ${fmtDate(konfirmasiPayForm.tglBayar)}`
-                  }, ...prev])
-                }}
-                className="flex-1 bg-[#1E1C43] text-white rounded-xl py-2.5 text-xs font-semibold hover:bg-[#2d2b5e] transition disabled:opacity-40"
-              >
-                Konfirmasi Lunas
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Modal Tambah Absensi Manual ───────────────────────────────────────── */}
       {showTambahAbsensiManual && (
