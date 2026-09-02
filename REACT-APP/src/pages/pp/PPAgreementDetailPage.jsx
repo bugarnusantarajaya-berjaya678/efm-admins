@@ -275,51 +275,43 @@ export default function PPAgreementDetailPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Header Card */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-
-          {/* LEFT: icon + info */}
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <FileText size={18} className="text-white" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Agreement Klien</p>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">{doc.displayId}</h1>
-              <div className="flex flex-wrap items-center gap-2 mt-1">
-                <span className="text-xs text-gray-500">{doc.namaKlien}</span>
-                <span className="text-gray-300 text-xs">·</span>
-                <DocBadge status={doc.statusTtd} />
-              </div>
+      {/* Page header */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+            <FileText size={16} className="text-white" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Agreement Klien</p>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">{doc.displayId}</h1>
+            <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+              <span className="text-xs text-gray-500">{doc.namaKlien}</span>
+              <span className="text-gray-300 text-xs">·</span>
+              <DocBadge status={doc.statusTtd} />
             </div>
           </div>
 
-          {/* RIGHT: action buttons */}
-          <div className="flex items-center gap-2 flex-wrap shrink-0">
-            {doc.statusTtd === 'waiting_approval' && (
-              <button
-                onClick={handleApprove}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-white text-xs font-semibold rounded-lg transition-colors"
-                style={{ background: '#2980B9' }}
-              >
-                <CheckCircle size={13} /> Approve
-              </button>
-            )}
+          {doc.statusTtd === 'waiting_approval' && (
             <button
-              onClick={() => window.print()}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors"
+              onClick={handleApprove}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
+              style={{ background: '#2980B9' }}
             >
-              <Download size={13} /> Download PDF
+              <CheckCircle size={13} /> Approve
             </button>
-            <button
-              onClick={handleBack}
-              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
-            >
-              <ArrowLeft size={13} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Daftar Agreement'}
-            </button>
-          </div>
-
+          )}
+          <button
+            onClick={() => window.print()}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
+          >
+            <Download size={13} /> Download PDF
+          </button>
+          <button
+            onClick={handleBack}
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
+          >
+            <ArrowLeft size={13} /> {fromOrderId ? `Order #${fromOrderId}` : 'Daftar Agreement'}
+          </button>
         </div>
       </div>
 
