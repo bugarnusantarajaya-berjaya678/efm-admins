@@ -476,6 +476,7 @@ export default function PPFitnessAssessmentPage() {
   const [tanggalMasuk, setTanggalMasuk] = useState(existing?.tanggalMasuk || '')
   const [tanggalFollowUp, setTanggalFollowUp] = useState(existing?.tanggalFollowUp || '')
   const [catatanKlien, setCatatanKlien] = useState(existing?.catatanKlien || '')
+  const [alamatKlien, setAlamatKlien] = useState(existing?.alamatKlien || '')
 
   // Section Toggles
   const [toggles, setToggles] = useState(
@@ -621,6 +622,7 @@ export default function PPFitnessAssessmentPage() {
         setTanggalMasuk(lead.tanggalMasuk || '')
         setTanggalFollowUp(lead.tanggalFollowUp || '')
         setCatatanKlien(lead.catatan || lead.catatanAwal || '')
+        setAlamatKlien(lead.alamat || '')
         if (lead.tanggalLahir) {
           const d = new Date(lead.tanggalLahir)
           const today = new Date()
@@ -736,7 +738,7 @@ export default function PPFitnessAssessmentPage() {
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
           <div>
-            <label className={labelCls}>Tipe Klien</label>
+            <label className={labelCls}>Tipe</label>
             <input className={readOnlyCls} value={tipeKlien} readOnly />
           </div>
           <div>
@@ -762,6 +764,12 @@ export default function PPFitnessAssessmentPage() {
             <input className={readOnlyCls} value={sumberLead} readOnly />
           </div>
         </div>
+        {alamatKlien && (
+          <div className="mb-1">
+            <label className={labelCls}>Alamat</label>
+            <input className={readOnlyCls} value={alamatKlien} readOnly />
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
           <div>
             <label className={labelCls}>Program Diminati</label>
@@ -772,14 +780,10 @@ export default function PPFitnessAssessmentPage() {
             <input className={readOnlyCls} value={detailGoals} readOnly />
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
-          <div className="col-span-2">
-            <label className={labelCls}>PIC EFM / FC</label>
-            <input className={readOnlyCls} value={namaFC} readOnly />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-1">
           <div>
-            <label className={labelCls}>Tanggal Masuk</label>
-            <input className={readOnlyCls} value={tanggalMasuk} readOnly />
+            <label className={labelCls}>PIC EFM</label>
+            <input className={readOnlyCls} value={namaFC} readOnly />
           </div>
           <div>
             <label className={labelCls}>Follow Up Berikutnya</label>
