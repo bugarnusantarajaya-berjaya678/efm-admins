@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
-import { ArrowLeft, Edit2, Save, X, Plus, ChevronRight, FileText, Upload, Eye, MessageCircle, ExternalLink, Download } from 'lucide-react'
+import { ArrowLeft, Edit2, Save, X, Plus, ChevronRight, FileText, Upload, Eye, MessageCircle, ExternalLink, Download, ChevronDown, User } from 'lucide-react'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 import { getAllOrders } from '../../data/ppOrdersStore'
+import { getKlienByLeadId, updateKlienHealth } from '../../data/ppKlienStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -354,23 +355,10 @@ export default function PPLeadDetailPage() {
   const [newStageTanggal, setNewStageTanggal] = useState(new Date().toISOString().split('T')[0])
   const [newStageCatatan, setNewStageCatatan] = useState('')
   const [toast, setToast]           = useState(null)
-  const [infoKesehatan, setInfoKesehatan] = useState({
-    kondisiSaatIni: id === 'LP-0001' ? 'Mengeluhkan lemak berlebih di area perut dan pinggul, tidak ada nyeri sendi' :
-                    id === 'LP-0003' ? 'Budi: nyeri bahu kanan. Rina: kondisi prima, ingin lebih bugar' : '',
-    riwayatCedera: id === 'LP-0001' ? 'Tidak ada riwayat cedera serius' :
-                   id === 'LP-0003' ? 'Budi: pernah dislokasi bahu kanan (2024), sudah pulih. Rina: tidak ada' : '',
-    tujuanProgram: id === 'LP-0001' ? 'Fatloss 8–10 kg, perbaiki postur, tingkatkan stamina kardio' :
-                   id === 'LP-0003' ? 'Program couple, keduanya ingin lebih aktif dan sehat bersama' : '',
-    obatanRutin: id === 'LP-0001' || id === 'LP-0003' ? '-' : '',
-    catatanCs: id === 'LP-0001' ? 'Klien aktif, follow up responsif, siap mulai kapan saja' :
-               id === 'LP-0003' ? 'Couple program, jadwal weekend lebih fleksibel' : '',
-    sudahDiisi: id === 'LP-0001' || id === 'LP-0003',
-  })
-  const [editingInfoKesehatan, setEditingInfoKesehatan] = useState(false)
-  const [editInfoForm, setEditInfoForm]   = useState({})
-  const [dokumenKesehatan, setDokumenKesehatan] = useState(
-    id === 'LP-0003' ? [{ id: 'DOK-001', nama: 'Surat Dokter - Budi Santoso.pdf', tipe: 'Surat Dokter', tanggal: '5 Okt 2026' }] : []
-  )
+  const [klienList, setKlienList] = useState(() => getKlienByLeadId(id))
+  const [expandedKlien, setExpandedKlien] = useState({})
+  const [editingKlienHealth, setEditingKlienHealth] = useState(null)
+  const [editKlienHealthForm, setEditKlienHealthForm] = useState({})
   const [waLog, setWaLog] = useState(() => {
     try {
       const saved = localStorage.getItem(`lead-wa-log-${id}`)
@@ -408,11 +396,6 @@ export default function PPLeadDetailPage() {
       </div>
     )
   }
-
-  const leadAssessments = Object.entries(getAllAssessments())
-    .filter(([, a]) => a.leadId === lead.id)
-    .map(([id, a]) => ({ id, ...a }))
-    .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
 
   /* ── Edit info handlers ── */
   function handleStartEdit() { setEditForm({ ...lead }); setIsEditMode(true) }
@@ -596,10 +579,10 @@ export default function PPLeadDetailPage() {
         {activeTab === 'overview' && (
           <div className="space-y-4">
 
-            {/* Info Klien */}
+            {/* Info Pendaftar */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Pendaftar</h3>
                 {!isEditMode ? (
                   <button onClick={handleStartEdit}
                     className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
@@ -756,180 +739,259 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
-            {/* ── Informasi Kesehatan Awal ── */}
+            {/* ── Info Klien ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div>
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Informasi Kesehatan Awal</h3>
-                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Dikumpulkan via WA sebelum pembayaran</p>
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
+                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Orang yang berlatih — bisa sama atau berbeda dari pendaftar</p>
                 </div>
-                {!editingInfoKesehatan ? (
-                  <button
-                    onClick={() => { setEditInfoForm({ ...infoKesehatan }); setEditingInfoKesehatan(true) }}
-                    className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                    <Edit2 size={12} /> Edit
-                  </button>
-                ) : (
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => {
-                        setInfoKesehatan({ ...editInfoForm, sudahDiisi: true })
-                        setEditingInfoKesehatan(false)
-                        showToast('✓ Informasi kesehatan berhasil disimpan')
-                      }}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
-                      <Save size={12} /> Simpan
-                    </button>
-                    <button
-                      onClick={() => { setEditingInfoKesehatan(false); setEditInfoForm({}) }}
-                      className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                      <X size={12} /> Batal
-                    </button>
-                  </div>
-                )}
+                <span className="text-xs text-gray-400 font-medium">{klienList.length} klien</span>
               </div>
-              <div className="p-5">
-                {!infoKesehatan.sudahDiisi && !editingInfoKesehatan && (
-                  <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
-                    <p className="text-xs text-yellow-700 font-medium">Informasi kesehatan awal belum diisi. Klik Edit untuk mengisi data hasil screening via WhatsApp.</p>
-                  </div>
-                )}
-                {!editingInfoKesehatan ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Kondisi & Keluhan Saat Ini</p>
-                      <p className="text-sm text-gray-700">{infoKesehatan.kondisiSaatIni || <span className="text-gray-400 italic">Belum diisi</span>}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Riwayat Cedera / Penyakit</p>
-                      <p className="text-sm text-gray-700">{infoKesehatan.riwayatCedera || <span className="text-gray-400 italic">Belum diisi</span>}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan / Goals Program</p>
-                      <p className="text-sm text-gray-700">{infoKesehatan.tujuanProgram || <span className="text-gray-400 italic">Belum diisi</span>}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Obat-obatan Rutin</p>
-                      <p className="text-sm text-gray-700">{infoKesehatan.obatanRutin || <span className="text-gray-400 italic">Tidak ada</span>}</p>
-                    </div>
-                    {infoKesehatan.catatanCs && (
-                      <div className="col-span-1 md:col-span-2 bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan CS / Admin</p>
-                        <p className="text-sm text-gray-700">{infoKesehatan.catatanCs}</p>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Kondisi & Keluhan Saat Ini</label>
-                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                        value={editInfoForm.kondisiSaatIni || ''} onChange={e => setEditInfoForm(p => ({ ...p, kondisiSaatIni: e.target.value }))}
-                        placeholder="Deskripsikan kondisi dan keluhan klien..." />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Riwayat Cedera / Penyakit</label>
-                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                        value={editInfoForm.riwayatCedera || ''} onChange={e => setEditInfoForm(p => ({ ...p, riwayatCedera: e.target.value }))}
-                        placeholder="Riwayat cedera atau penyakit sebelumnya..." />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tujuan / Goals Program</label>
-                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editInfoForm.tujuanProgram || ''} onChange={e => setEditInfoForm(p => ({ ...p, tujuanProgram: e.target.value }))}
-                        placeholder="Tujuan mengikuti program..." />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Obat-obatan Rutin</label>
-                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editInfoForm.obatanRutin || ''} onChange={e => setEditInfoForm(p => ({ ...p, obatanRutin: e.target.value }))}
-                        placeholder="Tidak ada / nama obat..." />
-                    </div>
-                    <div className="col-span-1 md:col-span-2">
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan CS / Admin</label>
-                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
-                        value={editInfoForm.catatanCs || ''} onChange={e => setEditInfoForm(p => ({ ...p, catatanCs: e.target.value }))}
-                        placeholder="Catatan tambahan dari CS..." />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
 
-            {/* ── Dokumen Kesehatan ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Dokumen Kesehatan</h3>
-                <button
-                  onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
-                  <Upload size={12} /> Upload Dokumen
-                </button>
-              </div>
               <div className="p-5">
-                {dokumenKesehatan.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
+                {klienList.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic text-center py-6">Belum ada data klien terhubung ke lead ini.</p>
                 ) : (
-                  <div className="space-y-1.5">
-                    {dokumenKesehatan.map(dok => (
-                      <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                        <FileText size={14} className="text-gray-400 shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
-                          <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
-                        </div>
-                        <button className="text-[10px] text-[#1E1C43] font-semibold hover:underline shrink-0">Lihat</button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
+                  <div className="space-y-3">
+                    {klienList.map(klien => {
+                      const isExpanded = !!expandedKlien[klien.id]
+                      const isEditingHealth = editingKlienHealth === klien.id
+                      const ik = klien.infoKesehatan || {}
+                      const klienAssessments = Object.entries(getAllAssessments())
+                        .filter(([, a]) => a.klienId === klien.id)
+                        .map(([aid, a]) => ({ id: aid, ...a }))
+                        .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
 
-            {/* ── Riwayat Fitness Assessment ── */}
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <div>
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Fitness Assessment</h3>
-                  <p className="text-xs text-gray-400 pl-4 mt-0.5">Pre-test & post-test dari semua order klien ini</p>
-                </div>
-                <button
-                  onClick={() => navigate('/pp/screening/new', { state: { leadId: lead.id, namaKlien: lead.nama } })}
-                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                  <Plus size={12} /> Buat Assessment
-                </button>
-              </div>
-              <div className="p-5">
-                {leadAssessments.length === 0 ? (
-                  <p className="text-xs text-gray-400 italic text-center py-6">Belum ada fitness assessment untuk klien ini.</p>
-                ) : (
-                  <div className="space-y-2">
-                    {leadAssessments.map(a => {
-                      const statusCls =
-                        a.statusAssessment === 'Post-Test Selesai' ? 'bg-green-50 text-green-700 border-green-200' :
-                        a.statusAssessment === 'Pre-Test Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
-                        'bg-yellow-50 text-yellow-700 border-yellow-200'
                       return (
-                        <button
-                          key={a.id}
-                          onClick={() => navigate('/pp/screening/' + a.id)}
-                          className="w-full flex items-center justify-between p-3.5 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-sm font-bold text-[#1E1C43]">{a.id}</span>
-                              {a.prevAssessmentId && (
-                                <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">Renewal</span>
-                              )}
-                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{a.statusAssessment || 'Draft'}</span>
+                        <div key={klien.id} className="border border-gray-100 rounded-xl overflow-hidden">
+                          {/* Klien header row — clickable to expand */}
+                          <button
+                            onClick={() => setExpandedKlien(prev => ({ ...prev, [klien.id]: !prev[klien.id] }))}
+                            className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors text-left">
+                            <div className="flex items-center gap-3">
+                              <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                                <User size={14} className="text-[#1E1C43]" />
+                              </div>
+                              <div>
+                                <p className="text-xs font-semibold text-[#1E1C43]">{klien.id} — {klien.nama}</p>
+                                <p className="text-[10px] text-gray-400">
+                                  {klien.jenisKelamin || '—'} · {klien.tanggalLahir ? (() => {
+                                    const d = new Date(klien.tanggalLahir)
+                                    const today = new Date()
+                                    const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+                                    return `${age} tahun`
+                                  })() : '—'}
+                                  {ik.sudahDiisi ? ' · Kesehatan ✓' : ' · Kesehatan belum diisi'}
+                                </p>
+                              </div>
                             </div>
-                            <p className="text-xs text-gray-500">
-                              {a.tanggalPreTest ? new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
-                              {a.orderId ? ` · Order #${a.orderId}` : ''}
-                              {a.namaFC ? ` · FC: ${a.namaFC}` : ''}
-                            </p>
-                          </div>
-                          <Eye size={14} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-3 shrink-0" />
-                        </button>
+                            <ChevronDown size={14} className={`text-gray-400 transition-transform shrink-0 ${isExpanded ? 'rotate-180' : ''}`} />
+                          </button>
+
+                          {/* Expanded content */}
+                          {isExpanded && (
+                            <div className="px-4 py-4 space-y-4 border-t border-gray-100">
+
+                              {/* Demografi klien */}
+                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div className="bg-gray-50 rounded-lg p-3">
+                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama</p>
+                                  <p className="text-xs font-semibold text-gray-800">{klien.nama}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-3">
+                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No HP</p>
+                                  <p className="text-xs font-semibold text-gray-800">{klien.noHp || '—'}</p>
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-3">
+                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
+                                  <p className="text-xs font-semibold text-gray-800 truncate">{klien.email || '—'}</p>
+                                </div>
+                              </div>
+
+                              {/* Informasi Kesehatan */}
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-xs font-bold text-[#1E1C43]">Informasi Kesehatan Awal</p>
+                                  {!isEditingHealth ? (
+                                    <button
+                                      onClick={() => {
+                                        setEditingKlienHealth(klien.id)
+                                        setEditKlienHealthForm({ ...ik })
+                                      }}
+                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors">
+                                      <Edit2 size={10} /> Edit
+                                    </button>
+                                  ) : (
+                                    <div className="flex gap-1.5">
+                                      <button
+                                        onClick={() => {
+                                          updateKlienHealth(klien.id, editKlienHealthForm)
+                                          setKlienList(prev => prev.map(k =>
+                                            k.id === klien.id
+                                              ? { ...k, infoKesehatan: { ...(k.infoKesehatan || {}), ...editKlienHealthForm, sudahDiisi: true } }
+                                              : k
+                                          ))
+                                          setEditingKlienHealth(null)
+                                          setEditKlienHealthForm({})
+                                          showToast('✓ Info kesehatan ' + klien.nama + ' disimpan')
+                                        }}
+                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition-opacity">
+                                        <Save size={10} /> Simpan
+                                      </button>
+                                      <button
+                                        onClick={() => { setEditingKlienHealth(null); setEditKlienHealthForm({}) }}
+                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-medium hover:bg-gray-50 transition-colors">
+                                        <X size={10} /> Batal
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {!ik.sudahDiisi && !isEditingHealth && (
+                                  <div className="mb-2 p-2.5 bg-yellow-50 rounded-lg border border-yellow-100">
+                                    <p className="text-[10px] text-yellow-700 font-medium">Belum diisi — klik Edit untuk mengisi data kesehatan klien ini.</p>
+                                  </div>
+                                )}
+
+                                {!isEditingHealth ? (
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Kondisi & Keluhan Saat Ini</p>
+                                      <p className="text-xs text-gray-700">{ik.kondisiSaatIni || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Riwayat Cedera / Penyakit</p>
+                                      <p className="text-xs text-gray-700">{ik.riwayatCedera || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan / Goals Program</p>
+                                      <p className="text-xs text-gray-700">{ik.tujuanProgram || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-lg p-3">
+                                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Obat-obatan Rutin</p>
+                                      <p className="text-xs text-gray-700">{ik.obatanRutin || <span className="text-gray-400 italic">Tidak ada</span>}</p>
+                                    </div>
+                                    {ik.catatanCs && (
+                                      <div className="col-span-1 md:col-span-2 bg-gray-50 rounded-lg p-3">
+                                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan CS / Admin</p>
+                                        <p className="text-xs text-gray-700">{ik.catatanCs}</p>
+                                      </div>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <div>
+                                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Kondisi & Keluhan Saat Ini</label>
+                                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                                        value={editKlienHealthForm.kondisiSaatIni || ''} onChange={e => setEditKlienHealthForm(p => ({ ...p, kondisiSaatIni: e.target.value }))}
+                                        placeholder="Deskripsikan kondisi dan keluhan klien..." />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Riwayat Cedera / Penyakit</label>
+                                      <textarea rows={3} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                                        value={editKlienHealthForm.riwayatCedera || ''} onChange={e => setEditKlienHealthForm(p => ({ ...p, riwayatCedera: e.target.value }))}
+                                        placeholder="Riwayat cedera atau penyakit sebelumnya..." />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tujuan / Goals Program</label>
+                                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                        value={editKlienHealthForm.tujuanProgram || ''} onChange={e => setEditKlienHealthForm(p => ({ ...p, tujuanProgram: e.target.value }))}
+                                        placeholder="Tujuan mengikuti program..." />
+                                    </div>
+                                    <div>
+                                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Obat-obatan Rutin</label>
+                                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                        value={editKlienHealthForm.obatanRutin || ''} onChange={e => setEditKlienHealthForm(p => ({ ...p, obatanRutin: e.target.value }))}
+                                        placeholder="Tidak ada / nama obat..." />
+                                    </div>
+                                    <div className="col-span-1 md:col-span-2">
+                                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Catatan CS / Admin</label>
+                                      <textarea rows={2} className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43] resize-none"
+                                        value={editKlienHealthForm.catatanCs || ''} onChange={e => setEditKlienHealthForm(p => ({ ...p, catatanCs: e.target.value }))}
+                                        placeholder="Catatan tambahan dari CS..." />
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Dokumen Kesehatan */}
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-xs font-bold text-[#1E1C43]">Dokumen Kesehatan</p>
+                                  <button
+                                    onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
+                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
+                                    <Upload size={10} /> Upload
+                                  </button>
+                                </div>
+                                {(klien.dokumenKesehatan || []).length === 0 ? (
+                                  <p className="text-[10px] text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
+                                ) : (
+                                  <div className="space-y-1.5">
+                                    {(klien.dokumenKesehatan || []).map(dok => (
+                                      <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                                        <FileText size={13} className="text-gray-400 shrink-0" />
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-[10px] font-medium text-gray-700 truncate">{dok.nama}</p>
+                                          <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
+                                        </div>
+                                        <button className="text-[10px] text-[#1E1C43] font-semibold hover:underline shrink-0">Lihat</button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Riwayat Fitness Assessment */}
+                              <div>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="text-xs font-bold text-[#1E1C43]">Riwayat Fitness Assessment</p>
+                                  <button
+                                    onClick={() => navigate('/pp/screening/new', { state: { klienId: klien.id, leadId: lead.id, namaKlien: klien.nama } })}
+                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors">
+                                    <Plus size={10} /> Buat Assessment
+                                  </button>
+                                </div>
+                                {klienAssessments.length === 0 ? (
+                                  <p className="text-[10px] text-gray-400 italic text-center py-3">Belum ada fitness assessment untuk klien ini.</p>
+                                ) : (
+                                  <div className="space-y-1.5">
+                                    {klienAssessments.map(a => {
+                                      const statusCls =
+                                        a.statusAssessment === 'Post-Test Selesai' ? 'bg-green-50 text-green-700 border-green-200' :
+                                        a.statusAssessment === 'Pre-Test Selesai'  ? 'bg-blue-50 text-blue-700 border-blue-200'   :
+                                        'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                      return (
+                                        <button
+                                          key={a.id}
+                                          onClick={() => navigate('/pp/screening/' + a.id)}
+                                          className="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
+                                          <div className="flex-1">
+                                            <div className="flex items-center gap-2 mb-0.5">
+                                              <span className="text-xs font-bold text-[#1E1C43]">{a.id}</span>
+                                              {a.prevAssessmentId && (
+                                                <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">Renewal</span>
+                                              )}
+                                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{a.statusAssessment || 'Draft'}</span>
+                                            </div>
+                                            <p className="text-[10px] text-gray-500">
+                                              {a.tanggalPreTest ? new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
+                                              {a.orderId ? ` · Order #${a.orderId}` : ''}
+                                              {a.namaFC ? ` · FC: ${a.namaFC}` : ''}
+                                            </p>
+                                          </div>
+                                          <Eye size={13} className="text-gray-400 group-hover:text-[#1E1C43] transition-colors ml-2 shrink-0" />
+                                        </button>
+                                      )
+                                    })}
+                                  </div>
+                                )}
+                              </div>
+
+                            </div>
+                          )}
+                        </div>
                       )
                     })}
                   </div>
