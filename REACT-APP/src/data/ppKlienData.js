@@ -370,7 +370,7 @@ export const KLIEN_INIT = [
     },
   },
 
-  // ─── Klien orphan: Sari Dewi Lestari (Order PP-26-0021, belum ada lead) ──
+  // ─── Klien orphan: Sari Dewi Lestari (Order PP-26-0021, lead LP-0018) ──
   {
     id: 'KL-0016',
     nama: 'Sari Dewi Lestari',
@@ -380,7 +380,7 @@ export const KLIEN_INIT = [
     noHp: '081399887766',
     email: 'sari.dewi@email.com',
     alamat: 'Jl. Thamrin No. 18, Menteng, Jakarta Pusat',
-    leadId: null,
+    leadId: 'LP-0018',
     assessmentIds: ['SCR-26-0002'],
     orderIds: ['PP-26-0021'],
     infoKesehatan: {
@@ -394,7 +394,7 @@ export const KLIEN_INIT = [
     },
   },
 
-  // ─── Klien orphan: Rina Kusuma (Order PP-26-0007, data lama sebelum sistem lead) ─
+  // ─── Klien: Rina Kusuma (Order PP-26-0007, lead LP-0015) ─
   {
     id: 'KL-0017',
     nama: 'Rina Kusuma',
@@ -404,7 +404,7 @@ export const KLIEN_INIT = [
     noHp: '082112233445',
     email: 'rina.kusuma@email.com',
     alamat: 'Jl. Gandaria Tengah No. 7, Kebayoran Baru, Jakarta Selatan',
-    leadId: null,
+    leadId: 'LP-0015',
     assessmentIds: [],
     orderIds: ['PP-26-0007'],
     infoKesehatan: {
@@ -418,7 +418,7 @@ export const KLIEN_INIT = [
     },
   },
 
-  // ─── Klien orphan: Hendra Wijaya (Order PP-26-0006, data lama sebelum sistem lead) ─
+  // ─── Klien: Hendra Wijaya (Order PP-26-0006, lead LP-0016) ─
   {
     id: 'KL-0018',
     nama: 'Hendra Wijaya',
@@ -428,7 +428,7 @@ export const KLIEN_INIT = [
     noHp: '081677889900',
     email: 'hendra.wijaya@email.com',
     alamat: 'Jl. Senayan No. 5, Tanah Abang, Jakarta Pusat',
-    leadId: null,
+    leadId: 'LP-0016',
     assessmentIds: [],
     orderIds: ['PP-26-0006'],
     infoKesehatan: {
@@ -442,7 +442,7 @@ export const KLIEN_INIT = [
     },
   },
 
-  // ─── Klien orphan: Dewi Anggraini (Order PP-26-0005, data lama sebelum sistem lead) ─
+  // ─── Klien: Dewi Anggraini (Order PP-26-0005, lead LP-0017) ─
   {
     id: 'KL-0019',
     nama: 'Dewi Anggraini',
@@ -452,7 +452,7 @@ export const KLIEN_INIT = [
     noHp: '087855443322',
     email: 'dewi.anggraini@email.com',
     alamat: 'Jl. Melawai Raya No. 12, Blok M, Jakarta Selatan',
-    leadId: null,
+    leadId: 'LP-0017',
     assessmentIds: [],
     orderIds: ['PP-26-0005'],
     infoKesehatan: {
