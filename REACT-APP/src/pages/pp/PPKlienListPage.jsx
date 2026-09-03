@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { Search, RotateCcw, AlertCircle } from 'lucide-react'
 import { getStoredKlien } from '../../data/ppKlienStore'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
-import { useBreadcrumb } from '../../context/BreadcrumbContext'
 
 /* ═══════════════════════════════════════
    Constants
@@ -77,14 +76,13 @@ function PaginBtn({ label, onClick, disabled, active }) {
 ═══════════════════════════════════════ */
 export default function PPKlienListPage() {
   const navigate = useNavigate()
-  const { setCrumbs } = useBreadcrumb()
 
   /* Build assessment count per klienId once */
   const [klienAll] = useState(() => getStoredKlien())
   const [assessmentMap] = useState(() => {
     const map = {}
     Object.values(getAllAssessments()).forEach(a => {
-      if (a.klienId) map[a.klienId] = (map[a.klienId] || 0) + 1
+      if (a && a.klienId) map[a.klienId] = (map[a.klienId] || 0) + 1
     })
     return map
   })
@@ -94,13 +92,7 @@ export default function PPKlienListPage() {
   const [filterStatus, setFilterStatus] = useState('')
   const [page,         setPage]         = useState(1)
 
-  useEffect(() => {
-    setCrumbs([
-      { label: 'Private Program', path: '/pp/dashboard' },
-      { label: 'Bank Data Klien' },
-    ])
-  }, [])
-
+  // routeLabels in Topbar already handles '/pp/klien' breadcrumb — no setCrumbs needed
   useEffect(() => { setPage(1) }, [search, filterJK, filterStatus])
 
   const filtered = useMemo(() =>
