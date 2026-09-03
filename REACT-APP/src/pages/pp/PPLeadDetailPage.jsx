@@ -746,35 +746,6 @@ export default function PPLeadDetailPage() {
               </div>
             </div>
 
-
-          {/* Riwayat Aktivitas */}
-          {(lead.logAktivitas || []).length > 0 && (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
-              <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Aktivitas</h3>
-                <span className="text-xs text-gray-400">{(lead.logAktivitas || []).length} entri</span>
-              </div>
-              <div className="p-5">
-                <div className="space-y-0 pl-4 relative">
-                  {[...(lead.logAktivitas || [])].reverse().map((log, i, arr) => (
-                    <div key={i} className="relative pb-4 last:pb-0">
-                      <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
-                      {i < arr.length - 1 && <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />}
-                      <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                        <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
-                          {log.status}
-                        </span>
-                        {log.oleh && <span className="text-[10px] text-gray-500 font-medium">· {log.oleh}</span>}
-                        <span className="text-[10px] text-gray-400">· {log.tanggal}</span>
-                      </div>
-                      <p className="text-xs text-gray-700 leading-relaxed break-words">{log.catatan}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
             {/* ── Informasi Kesehatan Awal ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -955,6 +926,34 @@ export default function PPLeadDetailPage() {
                 )}
               </div>
             </div>
+
+            {/* Riwayat Aktivitas */}
+            {(lead.logAktivitas || []).length > 0 && (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+                <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Riwayat Aktivitas</h3>
+                  <span className="text-xs text-gray-400">{(lead.logAktivitas || []).length} entri</span>
+                </div>
+                <div className="p-5">
+                  <div className="space-y-0 pl-4 relative">
+                    {[...(lead.logAktivitas || [])].reverse().map((log, i, arr) => (
+                      <div key={i} className="relative pb-4 last:pb-0">
+                        <div className="absolute -left-4 top-1.5 w-2 h-2 rounded-full bg-[#E05945]" />
+                        {i < arr.length - 1 && <div className="absolute -left-[13px] top-3 w-px bottom-0 bg-gray-200" />}
+                        <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${STAGE_CLS[log.status] ?? 'bg-gray-100 text-gray-600'}`}>
+                            {log.status}
+                          </span>
+                          {log.oleh && <span className="text-[10px] text-gray-500 font-medium">· {log.oleh}</span>}
+                          <span className="text-[10px] text-gray-400">· {log.tanggal}</span>
+                        </div>
+                        <p className="text-xs text-gray-700 leading-relaxed break-words">{log.catatan}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         )}
