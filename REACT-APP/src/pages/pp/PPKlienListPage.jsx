@@ -124,7 +124,7 @@ export default function PPKlienListPage() {
   function handleReset() { setSearch(''); setFilterJK(''); setFilterStatus(''); setPage(1) }
 
   function handleRowClick(klien) {
-    if (klien.leadId) navigate(`/pp/leads/${klien.leadId}`, { state: { defaultTab: 'overview' } })
+    navigate(`/pp/klien/${klien.id}`)
   }
 
   return (
@@ -218,10 +218,7 @@ export default function PPKlienListPage() {
                   <tr
                     key={klien.id}
                     onClick={() => handleRowClick(klien)}
-                    className={[
-                      'border-b border-gray-100 transition-colors duration-150',
-                      isOrphan ? 'cursor-default' : 'hover:bg-blue-50/30 cursor-pointer',
-                    ].join(' ')}
+                    className="border-b border-gray-100 transition-colors duration-150 hover:bg-blue-50/30 cursor-pointer"
                   >
                     {/* Klien ID */}
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
