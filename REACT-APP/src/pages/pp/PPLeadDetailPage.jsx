@@ -828,7 +828,7 @@ export default function PPLeadDetailPage() {
                                       {!isEditingProfile ? (
                                         <button
                                           onClick={() => { setEditingKlienProfile(klien.id); setEditKlienProfileForm({ nama: klien.nama, sapaan: klien.sapaan || 'Kak', jenisKelamin: klien.jenisKelamin || '', tanggalLahir: klien.tanggalLahir || '', noHp: klien.noHp || '', email: klien.email || '' }) }}
-                                          className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
+                                          className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                                           <Edit2 size={10} /> Edit
                                         </button>
                                       ) : (
@@ -842,12 +842,12 @@ export default function PPLeadDetailPage() {
                                               setEditKlienProfileForm({})
                                               showToast('✓ Profil ' + editKlienProfileForm.nama + ' disimpan')
                                             }}
-                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition-opacity">
+                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
                                             <Save size={10} /> Simpan
                                           </button>
                                           <button
                                             onClick={() => { setEditingKlienProfile(null); setEditKlienProfileForm({}) }}
-                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-medium hover:bg-gray-50 transition-colors">
+                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                                             <X size={10} /> Batal
                                           </button>
                                         </div>
@@ -937,7 +937,7 @@ export default function PPLeadDetailPage() {
                                         setEditingKlienHealth(klien.id)
                                         setEditKlienHealthForm({ ...ik })
                                       }}
-                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
+                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                                       <Edit2 size={10} /> Edit
                                     </button>
                                   ) : (
@@ -954,12 +954,12 @@ export default function PPLeadDetailPage() {
                                           setEditKlienHealthForm({})
                                           showToast('✓ Info kesehatan ' + klien.nama + ' disimpan')
                                         }}
-                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition-opacity">
+                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
                                         <Save size={10} /> Simpan
                                       </button>
                                       <button
                                         onClick={() => { setEditingKlienHealth(null); setEditKlienHealthForm({}) }}
-                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-medium hover:bg-gray-50 transition-colors">
+                                        className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
                                         <X size={10} /> Batal
                                       </button>
                                     </div>
@@ -976,24 +976,24 @@ export default function PPLeadDetailPage() {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                     <div className="bg-gray-50 rounded-lg p-3">
                                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Kondisi & Keluhan Saat Ini</p>
-                                      <p className="text-xs text-gray-700">{ik.kondisiSaatIni || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                      <p className="text-xs font-semibold text-gray-700">{ik.kondisiSaatIni || <span className="text-gray-400 italic font-normal">Belum diisi</span>}</p>
                                     </div>
                                     <div className="bg-gray-50 rounded-lg p-3">
                                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Riwayat Cedera / Penyakit</p>
-                                      <p className="text-xs text-gray-700">{ik.riwayatCedera || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                      <p className="text-xs font-semibold text-gray-700">{ik.riwayatCedera || <span className="text-gray-400 italic font-normal">Belum diisi</span>}</p>
                                     </div>
                                     <div className="bg-gray-50 rounded-lg p-3">
                                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tujuan / Goals Program</p>
-                                      <p className="text-xs text-gray-700">{ik.tujuanProgram || <span className="text-gray-400 italic">Belum diisi</span>}</p>
+                                      <p className="text-xs font-semibold text-gray-700">{ik.tujuanProgram || <span className="text-gray-400 italic font-normal">Belum diisi</span>}</p>
                                     </div>
                                     <div className="bg-gray-50 rounded-lg p-3">
                                       <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Obat-obatan Rutin</p>
-                                      <p className="text-xs text-gray-700">{ik.obatanRutin || <span className="text-gray-400 italic">Tidak ada</span>}</p>
+                                      <p className="text-xs font-semibold text-gray-700">{ik.obatanRutin || <span className="text-gray-400 italic font-normal">Tidak ada</span>}</p>
                                     </div>
                                     {ik.catatanCs && (
                                       <div className="col-span-1 md:col-span-2 bg-gray-50 rounded-lg p-3">
                                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan CS / Admin</p>
-                                        <p className="text-xs text-gray-700">{ik.catatanCs}</p>
+                                        <p className="text-xs font-semibold text-gray-700">{ik.catatanCs}</p>
                                       </div>
                                     )}
                                   </div>
@@ -1039,7 +1039,7 @@ export default function PPLeadDetailPage() {
                                   <p className="text-xs font-bold text-[#1E1C43]">Dokumen Kesehatan</p>
                                   <button
                                     onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
-                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
+                                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                                     <Upload size={10} /> Upload
                                   </button>
                                 </div>
@@ -1089,9 +1089,9 @@ export default function PPLeadDetailPage() {
                                             <div className="flex items-center gap-2 mb-0.5">
                                               <span className="text-xs font-bold text-[#1E1C43]">{a.id}</span>
                                               {a.prevAssessmentId && (
-                                                <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">Renewal</span>
+                                                <span className="px-1.5 py-0.5 text-xs font-medium rounded-full bg-purple-50 text-purple-700 border border-purple-200">Renewal</span>
                                               )}
-                                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{a.statusAssessment || 'Draft'}</span>
+                                              <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full border ${statusCls}`}>{a.statusAssessment || 'Draft'}</span>
                                             </div>
                                             <p className="text-[10px] text-gray-500">
                                               {a.tanggalPreTest ? new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '—'}
@@ -1205,7 +1205,7 @@ export default function PPLeadDetailPage() {
                             </div>
                             <div className="flex items-center gap-2 shrink-0">
                               <span className="text-xs font-semibold text-[#1E1C43]">Rp {order.nilaiKontrak.toLocaleString('id-ID')}</span>
-                              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${statusCls}`}>{statusLabel}</span>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${statusCls}`}>{statusLabel}</span>
                               <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
                             </div>
                           </div>
