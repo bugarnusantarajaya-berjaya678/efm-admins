@@ -832,6 +832,8 @@ export default function PPLeadDetailPage() {
                                               setEditingKlienProfile(null)
                                               setEditKlienProfileForm({})
                                               showToast('✓ Profil ' + editKlienProfileForm.nama + ' disimpan')
+                                              const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                                              setLead(prev => ({ ...prev, logAktivitas: [...(prev.logAktivitas || []), { status: 'Edit Data', tanggal: today, oleh: lead.picEfm || 'Admin EFM', catatan: 'Profil klien ' + editKlienProfileForm.nama + ' diperbarui' }] }))
                                             }}
                                             className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
                                             <Save size={10} /> Simpan
@@ -944,6 +946,8 @@ export default function PPLeadDetailPage() {
                                           setEditingKlienHealth(null)
                                           setEditKlienHealthForm({})
                                           showToast('✓ Info kesehatan ' + klien.nama + ' disimpan')
+                                          const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                                          setLead(prev => ({ ...prev, logAktivitas: [...(prev.logAktivitas || []), { status: 'Edit Data', tanggal: today, oleh: lead.picEfm || 'Admin EFM', catatan: 'Informasi kesehatan klien ' + klien.nama + ' diperbarui' }] }))
                                         }}
                                         className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition-opacity">
                                         <Save size={10} /> Simpan
@@ -1429,6 +1433,8 @@ export default function PPLeadDetailPage() {
                   }])
                   setShowAddKlienModal(false)
                   showToast('✓ Klien ' + addKlienForm.nama.trim() + ' berhasil ditambahkan')
+                  const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+                  setLead(prev => ({ ...prev, logAktivitas: [...(prev.logAktivitas || []), { status: 'Edit Data', tanggal: today, oleh: lead.picEfm || 'Admin EFM', catatan: 'Klien baru ditambahkan: ' + addKlienForm.nama.trim() }] }))
                 }}
                 className="px-5 py-2 rounded-lg bg-[#1E1C43] hover:opacity-90 text-white text-sm font-semibold transition-opacity">
                 Simpan Klien
