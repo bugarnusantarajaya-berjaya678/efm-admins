@@ -652,6 +652,12 @@ export default function PPLeadDetailPage() {
                     <InfoField label="Follow Up Berikutnya">
                       {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
                     </InfoField>
+                    {lead.alamat && (
+                      <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Alamat</p>
+                        <p className="text-sm text-gray-700">{lead.alamat}</p>
+                      </div>
+                    )}
                     {(lead.catatan || lead.catatanAwal) && (
                       <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
@@ -706,6 +712,11 @@ export default function PPLeadDetailPage() {
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
                       <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.emailUmum || ''} onChange={e => setEditForm(p => ({ ...p, emailUmum: e.target.value }))} />
+                    </div>
+                    <div className="col-span-full">
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Alamat</label>
+                      <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.alamat || ''} onChange={e => setEditForm(p => ({ ...p, alamat: e.target.value }))} placeholder="Jl. ..." />
                     </div>
                     <div>
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sumber Lead</label>
