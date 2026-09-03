@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
-import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2 } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2, User } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
+import { getKlienByLeadId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
 import { PIC_DB } from '../../data/ppProgramDBData';
 
@@ -59,6 +60,7 @@ export default function PPOrderNewPage() {
   const [klienLatihan, setKlienLatihan] = useState({
     nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki'
   });
+  const [selectedKlienId, setSelectedKlienId] = useState(null);
   const [samadenganPendaftar, setSamadenganPendaftar] = useState(false);
 
   // Section 3: Program & Paket
@@ -94,7 +96,8 @@ export default function PPOrderNewPage() {
       email: lead.emailPendaftar || lead.email,
       hubunganDenganKlien: 'Diri Sendiri'
     });
-    setKlienLatihan(prev => ({ ...prev, nama: lead.nama, noHP: lead.noHP }));
+    setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' });
+    setSelectedKlienId(null);
     setSelectedLeadId(lead.id);
   };
 
@@ -204,6 +207,7 @@ export default function PPOrderNewPage() {
     addOrder({
       id: newId,
       leadId: selectedLeadId || null,
+      klienId: selectedKlienId || null,
       programId: selectedPaket?.id || null,
       namaKlien: pendaftar.nama,
       sapaan: pendaftar.sapaan,
@@ -314,8 +318,9 @@ export default function PPOrderNewPage() {
                       type="button"
                       onClick={() => {
                         setSelectedLeadId(null)
+                        setSelectedKlienId(null)
                         setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
-                        setKlienLatihan(prev => ({ ...prev, nama: '', noHP: '' }))
+                        setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' })
                         setPendaftarDropdownOpen(false)
                         setPendaftarSearch('')
                       }}
@@ -453,62 +458,140 @@ export default function PPOrderNewPage() {
               <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien Latihan</h3>
               <span className="text-xs text-gray-400">— orang yang actual latihan</span>
             </div>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={samadenganPendaftar}
-                onChange={e => {
-                  setSamadenganPendaftar(e.target.checked);
-                  if (e.target.checked) {
-                    setKlienLatihan(prev => ({
-                      ...prev,
-                      nama: pendaftar.nama,
-                      noHP: pendaftar.noHP,
-                    }));
-                  }
-                }}
-                className="w-4 h-4 accent-[#1E1C43]" />
-              <span className="text-xs text-gray-600">Sama dengan data pendaftar</span>
-            </label>
+            {/* Only show "Sama" toggle when no lead / no store-klien available */}
+            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0) && (
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" checked={samadenganPendaftar}
+                  onChange={e => {
+                    setSamadenganPendaftar(e.target.checked);
+                    if (e.target.checked) {
+                      setKlienLatihan(prev => ({ ...prev, nama: pendaftar.nama, noHP: pendaftar.noHP }));
+                    }
+                  }}
+                  className="w-4 h-4 accent-[#1E1C43]" />
+                <span className="text-xs text-gray-600">Sama dengan data pendaftar</span>
+              </label>
+            )}
           </div>
           <div className="space-y-3">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
-                <input type="text" value={klienLatihan.nama}
-                  onChange={e => setKlienLatihan({ ...klienLatihan, nama: e.target.value })}
-                  disabled={samadenganPendaftar}
-                  placeholder="Nama lengkap klien yang latihan"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
-              </div>
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP Klien</label>
-                <input type="text" value={klienLatihan.noHP}
-                  onChange={e => setKlienLatihan({ ...klienLatihan, noHP: e.target.value })}
-                  disabled={samadenganPendaftar}
-                  placeholder="08xxxxxxxxxx"
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
-                <div className="relative">
-                  <input type="number" value={klienLatihan.usia}
-                    onChange={e => setKlienLatihan({ ...klienLatihan, usia: e.target.value })}
-                    placeholder="0"
-                    className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16" />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">tahun</span>
+            {/* Klien picker — shown when lead is selected and has klien in store */}
+            {selectedLeadId && (() => {
+              const leadKlienList = getKlienByLeadId(selectedLeadId)
+              if (leadKlienList.length === 0) return null
+              return selectedKlienId ? (
+                /* Klien selected card */
+                <div className="rounded-xl border-2 border-green-200 bg-green-50 px-4 py-3 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span>✅</span>
+                      <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">{selectedKlienId}</span>
+                      <span className="text-sm font-bold text-green-800">{klienLatihan.nama}</span>
+                    </div>
+                    <p className="text-xs text-green-700">
+                      {klienLatihan.noHP ? `${klienLatihan.noHP} · ` : ''}{klienLatihan.jenisKelamin}{klienLatihan.usia ? ` · ${klienLatihan.usia} tahun` : ''}
+                    </p>
+                  </div>
+                  <button type="button"
+                    onClick={() => {
+                      setSelectedKlienId(null)
+                      setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' })
+                    }}
+                    className="text-xs text-gray-500 hover:text-red-500 transition-colors whitespace-nowrap shrink-0 px-2 py-1 rounded-lg border border-gray-200 bg-white hover:border-red-200">
+                    × Ganti Klien
+                  </button>
                 </div>
-              </div>
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
-                <select value={klienLatihan.jenisKelamin}
-                  onChange={e => setKlienLatihan({ ...klienLatihan, jenisKelamin: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
-                  <option>Laki-laki</option>
-                  <option>Perempuan</option>
-                </select>
-              </div>
-            </div>
+              ) : (
+                /* Klien picker list */
+                <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
+                  <div className="flex items-center gap-2 mb-1.5">
+                    <User size={13} className="text-[#1E1C43]" />
+                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Klien Latihan</p>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mb-3">
+                    Pilih klien dari data yang sudah terdaftar untuk lead ini
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {leadKlienList.map(k => {
+                      const usiaTahun = k.tanggalLahir ? (() => {
+                        const d = new Date(k.tanggalLahir)
+                        const today = new Date()
+                        return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+                      })() : null
+                      return (
+                        <button key={k.id} type="button"
+                          onClick={() => {
+                            setSelectedKlienId(k.id)
+                            setKlienLatihan({
+                              nama: k.nama,
+                              noHP: k.noHp || '',
+                              usia: usiaTahun !== null ? String(usiaTahun) : '',
+                              jenisKelamin: k.jenisKelamin || 'Laki-laki',
+                            })
+                          }}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:border-[#1E1C43] hover:bg-blue-50 transition-colors text-left">
+                          <div className="w-7 h-7 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                            <User size={12} className="text-[#1E1C43]" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-semibold text-[#1E1C43]">{k.id} — {k.nama}</p>
+                            <p className="text-[10px] text-gray-400">
+                              {k.jenisKelamin || '—'}{usiaTahun !== null ? ` · ${usiaTahun} tahun` : ''}{k.noHp ? ` · ${k.noHp}` : ''}
+                            </p>
+                          </div>
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* Free-text fields: shown when no lead / no store-klien / klien selected (read-only) */}
+            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0 || selectedKlienId) && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
+                    <input type="text" value={klienLatihan.nama}
+                      onChange={e => setKlienLatihan({ ...klienLatihan, nama: e.target.value })}
+                      disabled={samadenganPendaftar || !!selectedKlienId}
+                      placeholder="Nama lengkap klien yang latihan"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP Klien</label>
+                    <input type="text" value={klienLatihan.noHP}
+                      onChange={e => setKlienLatihan({ ...klienLatihan, noHP: e.target.value })}
+                      disabled={samadenganPendaftar || !!selectedKlienId}
+                      placeholder="08xxxxxxxxxx"
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
+                    <div className="relative">
+                      <input type="number" value={klienLatihan.usia}
+                        onChange={e => setKlienLatihan({ ...klienLatihan, usia: e.target.value })}
+                        disabled={!!selectedKlienId}
+                        placeholder="0"
+                        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16 disabled:bg-gray-50 disabled:text-gray-400" />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">tahun</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
+                    <select value={klienLatihan.jenisKelamin}
+                      onChange={e => setKlienLatihan({ ...klienLatihan, jenisKelamin: e.target.value })}
+                      disabled={!!selectedKlienId}
+                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400">
+                      <option>Laki-laki</option>
+                      <option>Perempuan</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
