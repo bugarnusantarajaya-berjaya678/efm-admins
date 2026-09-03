@@ -470,6 +470,12 @@ export default function PPFitnessAssessmentPage() {
   const [programLatihan, setProgramLatihan] = useState(existing?.programLatihan || '')
   const [tanggalPreTest, setTanggalPreTest] = useState(existing?.tanggalPreTest || '')
   const [tanggalPostTest, setTanggalPostTest] = useState(existing?.tanggalPostTest || '')
+  const [emailKlien, setEmailKlien] = useState(existing?.emailKlien || '')
+  const [tanggalLahirStr, setTanggalLahirStr] = useState(existing?.tanggalLahirStr || '')
+  const [sumberLead, setSumberLead] = useState(existing?.sumberLead || '')
+  const [tanggalMasuk, setTanggalMasuk] = useState(existing?.tanggalMasuk || '')
+  const [tanggalFollowUp, setTanggalFollowUp] = useState(existing?.tanggalFollowUp || '')
+  const [catatanKlien, setCatatanKlien] = useState(existing?.catatanKlien || '')
 
   // Section Toggles
   const [toggles, setToggles] = useState(
@@ -610,11 +616,17 @@ export default function PPFitnessAssessmentPage() {
         setTipeKlien(lead.tipe || '')
         setSapaanKlien(lead.sapaan || '')
         setJenisKelamin(lead.jenisKelamin || '')
+        setEmailKlien(lead.emailUmum || '')
+        setSumberLead(lead.sumberLead || '')
+        setTanggalMasuk(lead.tanggalMasuk || '')
+        setTanggalFollowUp(lead.tanggalFollowUp || '')
+        setCatatanKlien(lead.catatan || lead.catatanAwal || '')
         if (lead.tanggalLahir) {
           const d = new Date(lead.tanggalLahir)
           const today = new Date()
           const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
           setUsia(String(age))
+          setTanggalLahirStr(`${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} (${age} tahun)`)
         }
         // Auto-fill health info untuk assessment baru
         if (isNew) {
@@ -732,12 +744,22 @@ export default function PPFitnessAssessmentPage() {
             <input className={readOnlyCls} value={jenisKelamin} readOnly />
           </div>
           <div>
-            <label className={labelCls}>Usia</label>
-            <input className={readOnlyCls} value={usia ? `${usia} tahun` : ''} readOnly />
+            <label className={labelCls}>Tanggal Lahir</label>
+            <input className={readOnlyCls} value={tanggalLahirStr || (usia ? `${usia} tahun` : '')} readOnly />
           </div>
           <div>
             <label className={labelCls}>No HP / WhatsApp</label>
             <input className={readOnlyCls} value={noHpKlien} readOnly />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
+          <div>
+            <label className={labelCls}>Email</label>
+            <input className={readOnlyCls} value={emailKlien} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>Sumber Lead</label>
+            <input className={readOnlyCls} value={sumberLead} readOnly />
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
@@ -750,12 +772,27 @@ export default function PPFitnessAssessmentPage() {
             <input className={readOnlyCls} value={detailGoals} readOnly />
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
           <div className="col-span-2">
             <label className={labelCls}>PIC EFM / FC</label>
             <input className={readOnlyCls} value={namaFC} readOnly />
           </div>
+          <div>
+            <label className={labelCls}>Tanggal Masuk</label>
+            <input className={readOnlyCls} value={tanggalMasuk} readOnly />
+          </div>
+          <div>
+            <label className={labelCls}>Follow Up Berikutnya</label>
+            <input className={readOnlyCls} value={tanggalFollowUp} readOnly />
+          </div>
         </div>
+        {catatanKlien && (
+          <div className="mb-1">
+            <label className={labelCls}>Catatan</label>
+            <textarea className={`${readOnlyCls} resize-none`} rows={2} value={catatanKlien} readOnly />
+          </div>
+        )}
+        <div className="mb-4" />
         {(leadId || existing?.leadId) && (
           <p className="text-[10px] text-gray-400 italic mb-5">Data klien diambil otomatis dari leads. Edit melalui halaman Leads → Tab Info Klien.</p>
         )}
