@@ -624,6 +624,7 @@ export default function PPLeadDetailPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                     <InfoField label="Sapaan">{lead.sapaan || '—'}</InfoField>
                     <InfoField label="Nama Klien">{lead.nama || '—'}</InfoField>
+                    <InfoField label="Tipe">{lead.tipe}</InfoField>
                     <InfoField label="Jenis Kelamin">{lead.jenisKelamin || '—'}</InfoField>
                     <InfoField label="Tanggal Lahir">
                       {lead.tanggalLahir ? (() => {
@@ -644,20 +645,18 @@ export default function PPLeadDetailPage() {
                         ? <a href={`mailto:${lead.emailUmum}`} className="text-[#1E1C43] hover:underline">{lead.emailUmum}</a>
                         : <span className="text-gray-400 italic">—</span>}
                     </InfoField>
-                    <InfoField label="Tipe Klien">{lead.tipe}</InfoField>
-                    <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
-                    <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
-                    <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
-                    <InfoField label="Tanggal Masuk">{lead.tanggalMasuk || '—'}</InfoField>
-                    <InfoField label="Follow Up Berikutnya">
-                      {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
-                    </InfoField>
                     {lead.alamat && (
                       <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Alamat</p>
                         <p className="text-sm text-gray-700">{lead.alamat}</p>
                       </div>
                     )}
+                    <InfoField label="Sumber Lead">{lead.sumberLead || '—'}</InfoField>
+                    <InfoField label="Program Diminati">{lead.programDiminati || '—'}</InfoField>
+                    <InfoField label="PIC EFM">{lead.picEfm || '—'}</InfoField>
+                    <InfoField label="Follow Up Berikutnya">
+                      {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
+                    </InfoField>
                     {(lead.catatan || lead.catatanAwal) && (
                       <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
@@ -683,6 +682,13 @@ export default function PPLeadDetailPage() {
                         value={editForm.nama || ''} onChange={e => setEditForm(p => ({ ...p, nama: e.target.value }))} />
                     </div>
                     <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
+                        <option>Personal</option><option>Group</option><option>Couple</option>
+                      </select>
+                    </div>
+                    <div>
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</label>
                       <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.jenisKelamin || ''} onChange={e => setEditForm(p => ({ ...p, jenisKelamin: e.target.value }))}>
@@ -697,14 +703,7 @@ export default function PPLeadDetailPage() {
                         value={editForm.tanggalLahir || ''} onChange={e => setEditForm(p => ({ ...p, tanggalLahir: e.target.value || '' }))} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tipe <span className="text-red-500">*</span></label>
-                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
-                        value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
-                        <option>Personal</option><option>Group</option><option>Couple</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP <span className="text-red-500">*</span></label>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP / WhatsApp <span className="text-red-500">*</span></label>
                       <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.noHp || ''} onChange={e => setEditForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
                     </div>
@@ -743,7 +742,7 @@ export default function PPLeadDetailPage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Follow Up</label>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Follow Up Berikutnya</label>
                       <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.tanggalFollowUp || ''} onChange={e => setEditForm(p => ({ ...p, tanggalFollowUp: e.target.value || null }))} />
                     </div>
