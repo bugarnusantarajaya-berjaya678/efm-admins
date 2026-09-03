@@ -60,7 +60,7 @@ export default function PPOrderNewPage() {
   const [klienLatihan, setKlienLatihan] = useState({
     nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki'
   });
-  const [selectedKlienId, setSelectedKlienId] = useState(null);
+  const [selectedKlienIds, setSelectedKlienIds] = useState([]);
   const [samadenganPendaftar, setSamadenganPendaftar] = useState(false);
 
   // Section 3: Program & Paket
@@ -97,7 +97,7 @@ export default function PPOrderNewPage() {
       hubunganDenganKlien: 'Diri Sendiri'
     });
     setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' });
-    setSelectedKlienId(null);
+    setSelectedKlienIds([]);
     setSelectedLeadId(lead.id);
   };
 
@@ -207,17 +207,49 @@ export default function PPOrderNewPage() {
     addOrder({
       id: newId,
       leadId: selectedLeadId || null,
-      klienId: selectedKlienId || null,
+      klienIds: selectedKlienIds,
       programId: selectedPaket?.id || null,
       namaKlien: pendaftar.nama,
       sapaan: pendaftar.sapaan,
       noHP: pendaftar.noHP,
       email: pendaftar.email,
       hubunganKlien: pendaftar.hubunganDenganKlien,
-      namaKlienLatihan: klienLatihan.nama,
-      noHPKlien: klienLatihan.noHP,
-      usiaKlien: klienLatihan.usia ? parseInt(klienLatihan.usia, 10) : null,
-      jenisKelaminKlien: klienLatihan.jenisKelamin,
+      namaKlienLatihan: (() => {
+        if (selectedKlienIds.length > 0 && selectedLeadId) {
+          const allK = getKlienByLeadId(selectedLeadId)
+          const names = selectedKlienIds.map(id => allK.find(k => k.id === id)?.nama).filter(Boolean)
+          return names.join(' & ') || klienLatihan.nama
+        }
+        return klienLatihan.nama
+      })(),
+      noHPKlien: (() => {
+        if (selectedKlienIds.length > 0 && selectedLeadId) {
+          const allK = getKlienByLeadId(selectedLeadId)
+          const first = allK.find(k => k.id === selectedKlienIds[0])
+          return first?.noHp || klienLatihan.noHP
+        }
+        return klienLatihan.noHP
+      })(),
+      usiaKlien: (() => {
+        if (selectedKlienIds.length === 1 && selectedLeadId) {
+          const allK = getKlienByLeadId(selectedLeadId)
+          const k = allK.find(kl => kl.id === selectedKlienIds[0])
+          if (k?.tanggalLahir) {
+            const d = new Date(k.tanggalLahir)
+            const today = new Date()
+            return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+          }
+        }
+        return klienLatihan.usia ? parseInt(klienLatihan.usia, 10) : null
+      })(),
+      jenisKelaminKlien: (() => {
+        if (selectedKlienIds.length === 1 && selectedLeadId) {
+          const allK = getKlienByLeadId(selectedLeadId)
+          const k = allK.find(kl => kl.id === selectedKlienIds[0])
+          return k?.jenisKelamin || klienLatihan.jenisKelamin
+        }
+        return selectedKlienIds.length > 1 ? '' : klienLatihan.jenisKelamin
+      })(),
       paket: selectedPaket?.namaPaket || '',
       picSalesEFM: selectedPaket?.pic?.nama || '',
       picOpsEFM: selectedPaket?.pic?.nama || '',
@@ -248,6 +280,27 @@ export default function PPOrderNewPage() {
     : allLeads;
 
   const tanggalBerakhir = calcTanggalBerakhir();
+
+  // Resolved klien display values (for the disabled free-text fields when klien(s) selected)
+  const resolvedKlienDisplay = (() => {
+    if (selectedKlienIds.length === 0 || !selectedLeadId) return null
+    const allK = getKlienByLeadId(selectedLeadId)
+    const selected = selectedKlienIds.map(id => allK.find(k => k.id === id)).filter(Boolean)
+    if (!selected.length) return null
+    const namaJoined = selected.map(k => k.nama).join(' & ')
+    const first = selected[0]
+    const usiaTahun = first?.tanggalLahir ? (() => {
+      const d = new Date(first.tanggalLahir)
+      const today = new Date()
+      return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+    })() : null
+    return {
+      nama: namaJoined,
+      noHP: selected.length === 1 ? (first.noHp || '') : '(beragam)',
+      usia: selected.length === 1 && usiaTahun !== null ? String(usiaTahun) : '',
+      jenisKelamin: selected.length === 1 ? (first.jenisKelamin || '') : '',
+    }
+  })()
 
   const filteredPaket = programSearch
     ? paketList.filter(p =>
@@ -318,7 +371,7 @@ export default function PPOrderNewPage() {
                       type="button"
                       onClick={() => {
                         setSelectedLeadId(null)
-                        setSelectedKlienId(null)
+                        setSelectedKlienIds([])
                         setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
                         setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' })
                         setPendaftarDropdownOpen(false)
@@ -459,7 +512,7 @@ export default function PPOrderNewPage() {
               <span className="text-xs text-gray-400">— orang yang actual latihan</span>
             </div>
             {/* Only show "Sama" toggle when no lead / no store-klien available */}
-            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0) && (
+            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0) && selectedKlienIds.length === 0 && (
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={samadenganPendaftar}
                   onChange={e => {
@@ -474,41 +527,25 @@ export default function PPOrderNewPage() {
             )}
           </div>
           <div className="space-y-3">
-            {/* Klien picker — shown when lead is selected and has klien in store */}
+            {/* Klien picker — multi-select, shown when lead is selected and has klien in store */}
             {selectedLeadId && (() => {
               const leadKlienList = getKlienByLeadId(selectedLeadId)
               if (leadKlienList.length === 0) return null
-              return selectedKlienId ? (
-                /* Klien selected card */
-                <div className="rounded-xl border-2 border-green-200 bg-green-50 px-4 py-3 flex items-center justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span>✅</span>
-                      <span className="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded-full">{selectedKlienId}</span>
-                      <span className="text-sm font-bold text-green-800">{klienLatihan.nama}</span>
-                    </div>
-                    <p className="text-xs text-green-700">
-                      {klienLatihan.noHP ? `${klienLatihan.noHP} · ` : ''}{klienLatihan.jenisKelamin}{klienLatihan.usia ? ` · ${klienLatihan.usia} tahun` : ''}
-                    </p>
-                  </div>
-                  <button type="button"
-                    onClick={() => {
-                      setSelectedKlienId(null)
-                      setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' })
-                    }}
-                    className="text-xs text-gray-500 hover:text-red-500 transition-colors whitespace-nowrap shrink-0 px-2 py-1 rounded-lg border border-gray-200 bg-white hover:border-red-200">
-                    × Ganti Klien
-                  </button>
-                </div>
-              ) : (
-                /* Klien picker list */
+              return (
                 <div className="p-4 rounded-xl border border-gray-200 bg-[#F5F5F7]">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    <User size={13} className="text-[#1E1C43]" />
-                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Klien Latihan</p>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <User size={13} className="text-[#1E1C43]" />
+                      <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pilih Klien Latihan</p>
+                    </div>
+                    {selectedKlienIds.length > 0 && (
+                      <span className="text-[10px] font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                        {selectedKlienIds.length} klien dipilih
+                      </span>
+                    )}
                   </div>
                   <p className="text-[11px] text-gray-500 mb-3">
-                    Pilih klien dari data yang sudah terdaftar untuk lead ini
+                    Pilih satu atau lebih klien — untuk couple/grup, centang semua klien yang ikut latihan
                   </p>
                   <div className="flex flex-col gap-2">
                     {leadKlienList.map(k => {
@@ -517,27 +554,43 @@ export default function PPOrderNewPage() {
                         const today = new Date()
                         return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
                       })() : null
+                      const isChecked = selectedKlienIds.includes(k.id)
                       return (
                         <button key={k.id} type="button"
                           onClick={() => {
-                            setSelectedKlienId(k.id)
-                            setKlienLatihan({
-                              nama: k.nama,
-                              noHP: k.noHp || '',
-                              usia: usiaTahun !== null ? String(usiaTahun) : '',
-                              jenisKelamin: k.jenisKelamin || 'Laki-laki',
-                            })
+                            setSelectedKlienIds(prev =>
+                              prev.includes(k.id)
+                                ? prev.filter(id => id !== k.id)
+                                : [...prev, k.id]
+                            )
                           }}
-                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl border border-gray-200 bg-white hover:border-[#1E1C43] hover:bg-blue-50 transition-colors text-left">
+                          className={`flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-colors text-left ${
+                            isChecked
+                              ? 'border-green-300 bg-green-50'
+                              : 'border-gray-200 bg-white hover:border-[#1E1C43] hover:bg-blue-50'
+                          }`}>
+                          {/* Checkbox visual */}
+                          <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
+                            isChecked ? 'bg-[#1E1C43] border-[#1E1C43]' : 'border-gray-300 bg-white'
+                          }`}>
+                            {isChecked && (
+                              <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                                <path d="M1 4l2.5 2.5L9 1" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                              </svg>
+                            )}
+                          </div>
                           <div className="w-7 h-7 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
                             <User size={12} className="text-[#1E1C43]" />
                           </div>
-                          <div>
-                            <p className="text-xs font-semibold text-[#1E1C43]">{k.id} — {k.nama}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-xs font-semibold ${isChecked ? 'text-green-800' : 'text-[#1E1C43]'}`}>{k.id} — {k.nama}</p>
                             <p className="text-[10px] text-gray-400">
                               {k.jenisKelamin || '—'}{usiaTahun !== null ? ` · ${usiaTahun} tahun` : ''}{k.noHp ? ` · ${k.noHp}` : ''}
                             </p>
                           </div>
+                          {isChecked && (
+                            <span className="text-[10px] font-semibold text-green-600 shrink-0">✓ Dipilih</span>
+                          )}
                         </button>
                       )
                     })}
@@ -546,23 +599,23 @@ export default function PPOrderNewPage() {
               )
             })()}
 
-            {/* Free-text fields: shown when no lead / no store-klien / klien selected (read-only) */}
-            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0 || selectedKlienId) && (
+            {/* Free-text fields: shown when no lead / no store-klien / klien(s) selected (read-only) */}
+            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0 || selectedKlienIds.length > 0) && (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
-                    <input type="text" value={klienLatihan.nama}
+                    <input type="text" value={resolvedKlienDisplay?.nama ?? klienLatihan.nama}
                       onChange={e => setKlienLatihan({ ...klienLatihan, nama: e.target.value })}
-                      disabled={samadenganPendaftar || !!selectedKlienId}
+                      disabled={samadenganPendaftar || selectedKlienIds.length > 0}
                       placeholder="Nama lengkap klien yang latihan"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
                   </div>
                   <div>
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP Klien</label>
-                    <input type="text" value={klienLatihan.noHP}
+                    <input type="text" value={resolvedKlienDisplay?.noHP ?? klienLatihan.noHP}
                       onChange={e => setKlienLatihan({ ...klienLatihan, noHP: e.target.value })}
-                      disabled={samadenganPendaftar || !!selectedKlienId}
+                      disabled={samadenganPendaftar || selectedKlienIds.length > 0}
                       placeholder="08xxxxxxxxxx"
                       className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
                   </div>
@@ -571,9 +624,9 @@ export default function PPOrderNewPage() {
                   <div>
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
                     <div className="relative">
-                      <input type="number" value={klienLatihan.usia}
+                      <input type="number" value={resolvedKlienDisplay?.usia ?? klienLatihan.usia}
                         onChange={e => setKlienLatihan({ ...klienLatihan, usia: e.target.value })}
-                        disabled={!!selectedKlienId}
+                        disabled={selectedKlienIds.length > 0}
                         placeholder="0"
                         className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16 disabled:bg-gray-50 disabled:text-gray-400" />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">tahun</span>
@@ -581,9 +634,9 @@ export default function PPOrderNewPage() {
                   </div>
                   <div>
                     <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
-                    <select value={klienLatihan.jenisKelamin}
+                    <select value={resolvedKlienDisplay?.jenisKelamin ?? klienLatihan.jenisKelamin}
                       onChange={e => setKlienLatihan({ ...klienLatihan, jenisKelamin: e.target.value })}
-                      disabled={!!selectedKlienId}
+                      disabled={selectedKlienIds.length > 0}
                       className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400">
                       <option>Laki-laki</option>
                       <option>Perempuan</option>
