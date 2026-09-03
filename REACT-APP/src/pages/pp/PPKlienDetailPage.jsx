@@ -387,7 +387,7 @@ export default function PPKlienDetailPage() {
                 {orders.map(ord => (
                   <RelatedCard
                     key={ord.id}
-                    onClick={() => navigate(`/pp/orders/${ord.id}`)}
+                    onClick={() => navigate(`/pp/orders/${ord.id}`, { state: { fromKlienId: klien.id } })}
                     left={
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
