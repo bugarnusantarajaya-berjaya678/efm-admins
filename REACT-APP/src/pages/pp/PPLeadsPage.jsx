@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Plus, Search, MessageCircle, RotateCcw } from 'lucide-react'
+import { X, Plus, Search, MessageCircle, RotateCcw, Users } from 'lucide-react'
 import { getStoredLeads } from '../../data/ppLeadsStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -187,6 +187,12 @@ export default function PPLeadsPage() {
             <p className="text-sm text-text-muted mt-1">Kelola prospek klien Private Program</p>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigate('/pp/klien')}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <Users size={14} /> Klien
+            </button>
             <button
               onClick={() => navigate('/pp/leads/new')}
               className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"

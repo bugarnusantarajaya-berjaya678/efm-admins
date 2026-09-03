@@ -138,7 +138,7 @@ export default function PPKlienListPage() {
               <Users size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Bank Data Klien</h1>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Klien</h1>
               <p className="text-sm text-text-muted mt-0.5">Daftar global semua klien Private Program</p>
             </div>
           </div>

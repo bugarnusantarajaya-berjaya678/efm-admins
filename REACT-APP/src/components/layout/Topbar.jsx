@@ -15,7 +15,7 @@ const routeLabels = {
   '/pp/leads':          ['Private Program', 'Leads'],
   '/pp/orders':         ['Private Program', 'Orders'],
   '/pp/program-db':                  ['Private Program', 'Program Database'],
-  '/pp/klien':          ['Private Program', 'Bank Data Klien'],
+  '/pp/klien':          ['Private Program', 'Klien'],
   '/pp/screening':      ['Private Program', 'Screening Klien'],
   '/pp/documents':      ['Private Program', 'Dokumen'],
   '/pp/invoice':        ['Private Program', 'Invoice'],
