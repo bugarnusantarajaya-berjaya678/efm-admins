@@ -851,10 +851,14 @@ export default function PPOrderDetailPage() {
               </button>
             )}
             <button
-              onClick={() => fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) : navigate('/pp/orders')}
+              onClick={() =>
+                fromState?.fromLeadId ? navigate('/pp/leads/' + fromState.fromLeadId) :
+                fromState?.fromKlienId ? navigate('/pp/klien/' + fromState.fromKlienId) :
+                navigate('/pp/orders')
+              }
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
-              <ArrowLeft size={12} /> Kembali
+              <ArrowLeft size={12} /> {fromState?.fromLeadId ? 'Kembali ke Lead' : fromState?.fromKlienId ? 'Kembali ke Klien' : 'Kembali'}
             </button>
           </div>
         </div>

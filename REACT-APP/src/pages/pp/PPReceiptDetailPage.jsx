@@ -279,7 +279,7 @@ export default function PPReceiptDetailPage() {
       <ReceiptDocument
         rcp={receipt}
         onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
-        onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo)}
+        onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo, { state: { fromOrderId: receipt.orderId } })}
       />
     </div>
   )
