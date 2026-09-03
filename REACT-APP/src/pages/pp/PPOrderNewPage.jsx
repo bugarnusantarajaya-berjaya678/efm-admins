@@ -825,7 +825,7 @@ export default function PPOrderNewPage() {
           {/* Right: action buttons */}
           <div className="flex items-center gap-3 ml-auto">
             <button onClick={handleSimpanOrder}
-              disabled={!pendaftar.nama || !klienLatihan.nama || !selectedPaket}
+              disabled={!pendaftar.nama || !selectedPaket}
               className="px-6 py-2.5 bg-[#1E1C43] text-white rounded-xl text-sm font-semibold hover:bg-[#2d2b5e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
               Simpan & Buat Order →
             </button>
