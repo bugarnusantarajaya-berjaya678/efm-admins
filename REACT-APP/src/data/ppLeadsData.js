@@ -16,6 +16,7 @@ export const LEADS_INIT = [
   { id: 'LP-0015', sapaan: 'Kak', nama: 'Rina Kusuma',     noHp: '086789012345',   sumber: 'Walk-in',    sumberIcon: '🚶', program: '4 Sesi - Starter',       status: 'closed-won',  tanggal: '3 Okt 2026',  email: 'rina.kusuma@email.com',    catatan: 'Sudah convert ke Order PP-26-0007' },
   { id: 'LP-0016', sapaan: 'Mas', nama: 'Hendra Wijaya',   noHp: '087890123456',   sumber: 'Website',    sumberIcon: '🌐', program: '24 Sesi - Elite',        status: 'closed-won',  tanggal: '28 Sep 2026', email: 'hendra.wijaya@email.com',  catatan: 'Sudah convert ke Order PP-26-0006' },
   { id: 'LP-0017', sapaan: 'Kak', nama: 'Dewi Rahayu',     noHp: '088901234567',   sumber: 'Referral',   sumberIcon: '👥', program: '8 Sesi - Base',          status: 'closed-won',  tanggal: '22 Sep 2026', email: 'dewi.rahayu@email.com',    catatan: 'Sudah convert ke Order PP-26-0005' },
+  { id: 'LP-0018', sapaan: 'Kak', nama: 'Sari Dewi Lestari', noHp: '081399887766', sumber: 'Referral',   sumberIcon: '👥', program: '8 Sesi - Base',          status: 'closed-won',  tanggal: '20 Okt 2026', email: 'sari.dewi@email.com',      catatan: 'Sudah convert ke Order PP-26-0021' },
 ]
 
 export const STATUS_LABEL = {

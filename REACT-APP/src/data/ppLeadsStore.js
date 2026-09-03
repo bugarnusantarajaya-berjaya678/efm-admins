@@ -6,8 +6,6 @@
  */
 
 // Maps PP Order ID → Lead ID (pendaftar)
-// LP-0015/0016/0017 = pseudo-IDs untuk klien orphan (data lama, tidak ada lead di LEADS_INIT)
-// Dipertahankan untuk backward compat _healthStore dan getLeadHealthByOrderId
 export const ORDER_TO_LEAD_ID = {
   'PP-26-0013': 'LP-0001',  // James Wilson
   'PP-27-0001': 'LP-0001',  // James Wilson (renewal)
@@ -15,9 +13,10 @@ export const ORDER_TO_LEAD_ID = {
   'PP-26-0011': 'LP-0013',  // Robert Taylor
   'PP-26-0010': 'LP-0014',  // Anita Suryani
   'PP-26-0008': 'LP-0003',  // Budi Santoso (couple)
-  'PP-26-0007': 'LP-0015',  // Rina Kusuma (pseudo-ID, orphan klien)
-  'PP-26-0006': 'LP-0016',  // Hendra Wijaya (pseudo-ID, orphan klien)
-  'PP-26-0005': 'LP-0017',  // Dewi Anggraini (pseudo-ID, orphan klien)
+  'PP-26-0021': 'LP-0018',  // Sari Dewi Lestari
+  'PP-26-0007': 'LP-0015',  // Rina Kusuma
+  'PP-26-0006': 'LP-0016',  // Hendra Wijaya
+  'PP-26-0005': 'LP-0017',  // Dewi Anggraini
   'PP-26-0004': 'LP-0007',  // Kevin Hartanto
   'PP-26-0003': 'LP-0012',  // Fiona Santika
   'PP-26-0002': 'LP-0009',  // Ahmad Fauzi
@@ -91,6 +90,15 @@ let _healthStore = {
     sudahDiisi: true,
     dokumenKesehatan: [],
   },
+  'LP-0018': {
+    kondisiSaatIni: 'Normal, kebugaran sedang',
+    riwayatCedera: 'Tidak ada',
+    tujuanProgram: 'Pembentukan otot dan peningkatan kebugaran umum',
+    obatanRutin: 'Tidak ada',
+    catatanCs: 'Klien termotivasi untuk pembentukan tubuh',
+    sudahDiisi: true,
+    dokumenKesehatan: [],
+  },
   'LP-0012': {
     kondisiSaatIni: 'Kurang aktif, tidak ada keluhan khusus',
     riwayatCedera: 'Tidak ada',
@@ -136,6 +144,10 @@ const LEADS_INIT = [
   { id:'LP-0012', nama:'Fiona Santika',         sapaan:'Kak', tipe:'Personal', noHp:'081988776655', jenisKelamin:'Perempuan', tanggalLahir:'1996-03-28', sumberLead:'Referral',   picEfm:'Sarah Jenkins', programDiminati:'Tennis',              emailUmum:'fiona.santika@email.com', alamat:'Jl. Ragunan No. 21, Pasar Minggu, Jakarta Selatan', catatanAwal:'Referral dari teman, minat yoga dan tenis',           statusPipeline:'Convert',  orderId:'PP-26-0003', tanggalMasuk:'15 Agu 2026', tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0003', klienIds:['KL-0013'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Sarah Jenkins',tanggal:'22 Agu 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Sarah Jenkins',tanggal:'15 Agu 2026',catatan:'Lead masuk dari referral'}]},
   { id:'LP-0013', nama:'Robert Taylor',         sapaan:'Pak', tipe:'Personal', noHp:'081567890123', jenisKelamin:'Laki-laki', tanggalLahir:'1979-01-17', sumberLead:'Website',    picEfm:'Marcus Chen',   programDiminati:'12 Sesi - Pro',       emailUmum:'robert.taylor@email.com', alamat:'Jl. Brawijaya No. 15, Kebayoran Baru, Jakarta Selatan', catatanAwal:'Expat, mencari personal trainer profesional',         statusPipeline:'Convert',  orderId:'PP-26-0011', tanggalMasuk:'22 Sep 2026', tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0011', klienIds:['KL-0014'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Marcus Chen',tanggal:'28 Sep 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Marcus Chen',tanggal:'22 Sep 2026',catatan:'Lead dari form website'}]},
   { id:'LP-0014', nama:'Anita Suryani',         sapaan:'Kak', tipe:'Personal', noHp:'085599887766', jenisKelamin:'Perempuan', tanggalLahir:'1990-10-02', sumberLead:'Meta Ads',    picEfm:'Sarah Jenkins', programDiminati:'Fatloss & Bodyshape', emailUmum:'anita.suryani@email.com', alamat:'Jl. Fatmawati No. 33, Cilandak, Jakarta Selatan', catatanAwal:'Tertarik fatloss, target 5 kg dalam 2 bulan',         statusPipeline:'Convert',  orderId:'PP-26-0010', tanggalMasuk:'1 Okt 2026',  tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0010', klienIds:['KL-0015'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Sarah Jenkins',tanggal:'8 Okt 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Sarah Jenkins',tanggal:'1 Okt 2026',catatan:'Lead masuk dari Meta Ads'}]},
+  { id:'LP-0015', nama:'Rina Kusuma',           sapaan:'Kak', tipe:'Personal', noHp:'086789012345', jenisKelamin:'Perempuan', tanggalLahir:'1994-03-17', sumberLead:'Walk-in',    picEfm:'Sarah Jenkins', programDiminati:'4 Sesi - Starter',    emailUmum:'rina.kusuma@email.com', alamat:'Jl. Gandaria Tengah No. 7, Kebayoran Baru, Jakarta Selatan', catatanAwal:'Datang langsung, tertarik paket starter',            statusPipeline:'Convert',  orderId:'PP-26-0007', tanggalMasuk:'3 Okt 2026',  tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0007', klienIds:['KL-0017'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Sarah Jenkins',tanggal:'10 Okt 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Sarah Jenkins',tanggal:'3 Okt 2026',catatan:'Walk-in langsung ke lokasi'}]},
+  { id:'LP-0016', nama:'Hendra Wijaya',         sapaan:'Mas', tipe:'Personal', noHp:'087890123456', jenisKelamin:'Laki-laki', tanggalLahir:'1986-11-30', sumberLead:'Website',    picEfm:'Marcus Chen',   programDiminati:'24 Sesi - Elite',     emailUmum:'hendra.wijaya@email.com', alamat:'Jl. Senayan No. 5, Tanah Abang, Jakarta Pusat', catatanAwal:'Submit form website, tertarik paket elite jangka panjang', statusPipeline:'Convert', orderId:'PP-26-0006', tanggalMasuk:'28 Sep 2026', tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0006', klienIds:['KL-0018'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Marcus Chen',tanggal:'5 Okt 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Marcus Chen',tanggal:'28 Sep 2026',catatan:'Lead dari form website'}]},
+  { id:'LP-0017', nama:'Dewi Rahayu',           sapaan:'Kak', tipe:'Personal', noHp:'088901234567', jenisKelamin:'Perempuan', tanggalLahir:'1992-07-04', sumberLead:'Referral',   picEfm:'Sarah Jenkins', programDiminati:'8 Sesi - Base',       emailUmum:'dewi.rahayu@email.com', alamat:'Jl. Melawai Raya No. 12, Blok M, Jakarta Selatan', catatanAwal:'Referral dari teman yang sudah jadi klien',          statusPipeline:'Convert',  orderId:'PP-26-0005', tanggalMasuk:'22 Sep 2026', tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0005', klienIds:['KL-0019'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Sarah Jenkins',tanggal:'29 Sep 2026',catatan:'Order berhasil dibuat'},{status:'New',oleh:'Sarah Jenkins',tanggal:'22 Sep 2026',catatan:'Lead masuk dari referral'}]},
+  { id:'LP-0018', nama:'Sari Dewi Lestari',     sapaan:'Kak', tipe:'Personal', noHp:'081399887766', jenisKelamin:'Perempuan', tanggalLahir:'1998-05-12', sumberLead:'Referral',   picEfm:'Sarah Jenkins', programDiminati:'8 Sesi - Base',       emailUmum:'sari.dewi@email.com', alamat:'Jl. Thamrin No. 18, Menteng, Jakarta Pusat', catatanAwal:'Referral dari teman gym, tertarik pembentukan otot', statusPipeline:'Convert',  orderId:'PP-26-0021', tanggalMasuk:'20 Okt 2026', tanggalFollowUp:null, catatan:'Sudah convert ke Order PP-26-0021', klienIds:['KL-0016'], hubunganDenganKlien: 'Diri Sendiri', logAktivitas:[{status:'Convert',oleh:'Sarah Jenkins',tanggal:'27 Okt 2026',catatan:'Order berhasil dibuat'},{status:'Closing',oleh:'Sarah Jenkins',tanggal:'25 Okt 2026',catatan:'Klien setuju paket 8 sesi Base'},{status:'Screening',oleh:'Sarah Jenkins',tanggal:'23 Okt 2026',catatan:'Screening kesehatan selesai'},{status:'New',oleh:'Sarah Jenkins',tanggal:'20 Okt 2026',catatan:'Lead masuk dari referral teman'}]},
 ]
 
 let _leads = LEADS_INIT.map(l => ({ ...l }))
