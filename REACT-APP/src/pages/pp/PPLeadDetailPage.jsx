@@ -937,7 +937,7 @@ export default function PPLeadDetailPage() {
                                         setEditingKlienHealth(klien.id)
                                         setEditKlienHealthForm({ ...ik })
                                       }}
-                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors">
+                                      className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
                                       <Edit2 size={10} /> Edit
                                     </button>
                                   ) : (
