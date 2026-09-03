@@ -537,7 +537,7 @@ export default function PPFitnessAssessmentPage() {
 
   const handleBack = () => {
     if (leadId) {
-      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
+      navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'overview' } })
     } else {
       navigate('/pp/screening')
     }
@@ -572,7 +572,7 @@ export default function PPFitnessAssessmentPage() {
       const newId = getNextAssessmentId()
       addAssessment(newId, payload)
       if (leadId) {
-        navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'kesehatan' } })
+        navigate(`/pp/leads/${leadId}`, { state: { defaultTab: 'overview' } })
       } else {
         navigate('/pp/screening')
       }
@@ -600,7 +600,6 @@ export default function PPFitnessAssessmentPage() {
     const effectLeadId = leadId || existing?.leadId
     if (effectLeadId) {
       setLeadDokumen(getLeadDocumentsById(effectLeadId))
-      // Auto-fill lead profile fields (read-only in form) — applies for both new and existing
       const lead = getLeadById(effectLeadId)
       if (lead) {
         if (!existing?.noIdProgram) setNoIdProgram(effectLeadId)
@@ -611,23 +610,27 @@ export default function PPFitnessAssessmentPage() {
         setTipeKlien(lead.tipe || '')
         setSapaanKlien(lead.sapaan || '')
         setJenisKelamin(lead.jenisKelamin || '')
-        // Calculate age from tanggalLahir
         if (lead.tanggalLahir) {
           const d = new Date(lead.tanggalLahir)
           const today = new Date()
           const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
           setUsia(String(age))
         }
+        // Auto-fill health info untuk assessment baru
+        if (isNew) {
+          const health = getLeadHealthById(effectLeadId)
+          if (health?.sudahDiisi) {
+            if (health.tujuanProgram) setDetailGoals(health.tujuanProgram)
+            else if (lead.catatanAwal) setDetailGoals(lead.catatanAwal)
+            if (health.kondisiSaatIni) setKondisiFisik(health.kondisiSaatIni)
+            if (health.riwayatCedera) setRiwayatCedera(health.riwayatCedera)
+            if (health.obatanRutin) setObatanRutin(health.obatanRutin)
+            if (health.catatanCs) setCatatanScreening(health.catatanCs)
+          } else if (lead.catatanAwal) {
+            setDetailGoals(lead.catatanAwal)
+          }
+        }
       }
-    }
-    if (!isNew || !leadId) return
-    const health = getLeadHealthById(leadId)
-    if (health?.sudahDiisi) {
-      if (health.tujuanProgram) setDetailGoals(health.tujuanProgram)
-      if (health.kondisiSaatIni) setKondisiFisik(health.kondisiSaatIni)
-      if (health.riwayatCedera) setRiwayatCedera(health.riwayatCedera)
-      if (health.obatanRutin) setObatanRutin(health.obatanRutin)
-      if (health.catatanCs) setCatatanScreening(health.catatanCs)
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -800,7 +803,7 @@ export default function PPFitnessAssessmentPage() {
         </div>
         {toggles.kesehatan && (
           <div className="mt-4 space-y-3">
-            <p className="text-[10px] text-gray-400 italic">Data read-only dari profil klien di leads. Edit melalui halaman Leads → Tab Progres &amp; Kesehatan.</p>
+            <p className="text-[10px] text-gray-400 italic">Data read-only dari profil klien di leads. Edit melalui halaman Leads → Tab Overview.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {[
                 ['Kondisi Fisik Saat Ini', kondisiFisik],
