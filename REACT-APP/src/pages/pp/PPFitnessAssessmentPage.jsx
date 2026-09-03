@@ -756,46 +756,14 @@ export default function PPFitnessAssessmentPage() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
           <div>
-            <label className={labelCls}>Email</label>
-            <input className={readOnlyCls} value={emailKlien} readOnly />
-          </div>
-          <div>
-            <label className={labelCls}>Sumber Lead</label>
-            <input className={readOnlyCls} value={sumberLead} readOnly />
-          </div>
-        </div>
-        {alamatKlien && (
-          <div className="mb-1">
-            <label className={labelCls}>Alamat</label>
-            <input className={readOnlyCls} value={alamatKlien} readOnly />
-          </div>
-        )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-1">
-          <div>
             <label className={labelCls}>Program Diminati</label>
             <input className={readOnlyCls} value={programLatihan} readOnly />
           </div>
           <div>
-            <label className={labelCls}>Goals Klien</label>
-            <input className={readOnlyCls} value={detailGoals} readOnly />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-1">
-          <div>
             <label className={labelCls}>PIC EFM</label>
             <input className={readOnlyCls} value={namaFC} readOnly />
           </div>
-          <div>
-            <label className={labelCls}>Follow Up Berikutnya</label>
-            <input className={readOnlyCls} value={tanggalFollowUp} readOnly />
-          </div>
         </div>
-        {catatanKlien && (
-          <div className="mb-1">
-            <label className={labelCls}>Catatan</label>
-            <textarea className={`${readOnlyCls} resize-none`} rows={2} value={catatanKlien} readOnly />
-          </div>
-        )}
         <div className="mb-4" />
         {(leadId || existing?.leadId) && (
           <p className="text-[10px] text-gray-400 italic mb-5">Data klien diambil otomatis dari leads. Edit melalui halaman Leads → Tab Info Klien.</p>
