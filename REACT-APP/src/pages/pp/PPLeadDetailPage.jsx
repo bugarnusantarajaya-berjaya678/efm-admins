@@ -1083,7 +1083,7 @@ export default function PPLeadDetailPage() {
                                       return (
                                         <button
                                           key={a.id}
-                                          onClick={() => navigate('/pp/screening/' + a.id)}
+                                          onClick={() => navigate('/pp/screening/' + a.id, { state: { leadId: lead.id } })}
                                           className="w-full flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:bg-gray-50 hover:border-[#1E1C43] transition-colors text-left group">
                                           <div className="flex-1">
                                             <div className="flex items-center gap-2 mb-0.5">
