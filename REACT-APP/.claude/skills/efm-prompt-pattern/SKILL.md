@@ -94,6 +94,11 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - When a task only concerns one tab, never touch code belonging to other tabs, even if in the same file and technically adjacent
 - **Tab-merge decision after Related Records Panel conversion:** If converting a section to a Related Records Panel makes a tab too thin (e.g. the tab now only contains one small panel), merge that panel into the adjacent Overview/Kontrak tab as a standalone card — do not keep an almost-empty tab just to preserve tab count. Visual cue for pending-action panels: add `border-l-4 border-yellow-400` on the wrapper.
 
+**No duplicate CTA buttons across header and tabs**
+- Jika sebuah CTA (mis. "Buat Order", "Buat Invoice") sudah ada di dalam tab/section tertentu di badan halaman, JANGAN duplikat tombol yang sama di header action row halaman
+- Duplikat membingungkan — user tidak tahu mana yang canonical, dan dua tombol dengan aksi identik di satu halaman adalah code smell
+- Cara cek: sebelum menambahkan CTA ke header, baca semua tab/section di halaman tersebut untuk memastikan aksi yang sama belum ada di tempat lain
+
 **Reuse vs duplicate decision**
 - Default to duplicating structure/logic across files rather than extracting shared reusable components, UNLESS explicitly instructed to refactor into a shared component
 - Reasoning: this project prioritizes shipping working UI quickly with dummy data first; component extraction is a deliberate later "polish" pass, not a default choice during feature-building
