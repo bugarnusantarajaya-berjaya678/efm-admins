@@ -657,12 +657,6 @@ export default function PPLeadDetailPage() {
                     <InfoField label="Follow Up Berikutnya">
                       {formatFollowUp(lead.tanggalFollowUp) || <span className="text-gray-400 italic">Tidak ada jadwal</span>}
                     </InfoField>
-                    {lead.alamat && (
-                      <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Alamat</p>
-                        <p className="text-sm text-gray-700">{lead.alamat}</p>
-                      </div>
-                    )}
                     {(lead.catatan || lead.catatanAwal) && (
                       <div className="col-span-1 sm:col-span-2 md:col-span-3 bg-gray-50 rounded-lg p-3">
                         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan</p>
