@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, RotateCcw, AlertCircle, Users } from 'lucide-react'
+import { Search, RotateCcw, AlertCircle, Users, ArrowLeft } from 'lucide-react'
 import { getStoredKlien } from '../../data/ppKlienStore'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 
@@ -141,6 +141,14 @@ export default function PPKlienListPage() {
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Klien</h1>
               <p className="text-sm text-text-muted mt-0.5">Daftar global semua klien Private Program</p>
             </div>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => navigate('/pp/leads')}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali ke PP Leads
+            </button>
           </div>
         </div>
       </div>
