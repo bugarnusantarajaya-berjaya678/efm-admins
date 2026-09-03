@@ -4,6 +4,7 @@ import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText } fro
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { getStoredLeads, getLeadById, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
+import { getKlienById } from '../../data/ppKlienStore'
 
 // ─── Field Definitions ──────────────────────────────────────────────────────
 
@@ -429,6 +430,7 @@ export default function PPFitnessAssessmentPage() {
   const location = useLocation()
   const isNew = id === 'new'
   const leadId = location.state?.leadId || null
+  const klienId = location.state?.klienId || null
   const { setCrumbs } = useBreadcrumb()
 
   const prefill = location.state || {}
@@ -443,9 +445,12 @@ export default function PPFitnessAssessmentPage() {
       const src = _allAssessments[existing.prevAssessmentId]
       return src ? { id: existing.prevAssessmentId, ...src } : null
     }
-    if (isNew && leadId) {
+    if (isNew && (klienId || leadId)) {
       const entries = Object.entries(_allAssessments)
-        .filter(([, a]) => a.leadId === leadId && a.statusAssessment === 'Post-Test Selesai')
+        .filter(([, a]) => {
+          const matchKlien = klienId ? a.klienId === klienId : a.leadId === leadId
+          return matchKlien && a.statusAssessment === 'Post-Test Selesai'
+        })
       if (!entries.length) return null
       entries.sort((a, b) => (b[1].tanggalPostTest || '').localeCompare(a[1].tanggalPostTest || ''))
       const [key, data] = entries[0]
@@ -559,6 +564,7 @@ export default function PPFitnessAssessmentPage() {
 
     const payload = {
       leadId: leadId || existing?.leadId || null,
+      klienId: klienId || existing?.klienId || null,
       prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
       noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien,
       noHpKlien, tipeKlien, sapaanKlien, usia, jenisKelamin, tipeBadan,
@@ -602,34 +608,66 @@ export default function PPFitnessAssessmentPage() {
     return () => setCrumbs(null)
   }, [isNew, id])
 
-  // Auto-fill dari data leads saat buat assessment baru + load dokumen untuk semua mode
+  // Auto-fill dari data klien/leads saat buat assessment baru + load dokumen untuk semua mode
   useEffect(() => {
     const effectLeadId = leadId || existing?.leadId
+    const effectKlienId = klienId || existing?.klienId
+
+    // Load dokumen dari lead
     if (effectLeadId) {
       setLeadDokumen(getLeadDocumentsById(effectLeadId))
-      const lead = getLeadById(effectLeadId)
-      if (lead) {
-        if (!existing?.noIdProgram) setNoIdProgram(effectLeadId)
-        setNamaKlien(lead.nama || '')
-        setNamaFC(lead.picEfm || '')
-        setProgramLatihan(lead.programDiminati || '')
-        setNoHpKlien(lead.noHp || '')
-        setTipeKlien(lead.tipe || '')
-        setSapaanKlien(lead.sapaan || '')
-        setJenisKelamin(lead.jenisKelamin || '')
-        setEmailKlien(lead.emailUmum || '')
-        setSumberLead(lead.sumberLead || '')
-        setTanggalMasuk(lead.tanggalMasuk || '')
-        setTanggalFollowUp(lead.tanggalFollowUp || '')
-        setCatatanKlien(lead.catatan || lead.catatanAwal || '')
-        setAlamatKlien(lead.alamat || '')
-        if (lead.tanggalLahir) {
-          const d = new Date(lead.tanggalLahir)
+    }
+
+    // Auto-fill personal info: prefer klien data when klienId available
+    if (effectKlienId) {
+      const klien = getKlienById(effectKlienId)
+      if (klien) {
+        setNamaKlien(klien.nama || '')
+        setNoHpKlien(klien.noHp || '')
+        setSapaanKlien(klien.sapaan || '')
+        setJenisKelamin(klien.jenisKelamin || '')
+        setEmailKlien(klien.email || '')
+        setAlamatKlien(klien.alamat || '')
+        if (klien.tanggalLahir) {
+          const d = new Date(klien.tanggalLahir)
           const today = new Date()
           const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
           setUsia(String(age))
           setTanggalLahirStr(`${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} (${age} tahun)`)
         }
+      }
+    }
+
+    // Auto-fill lead-level fields (picEfm, sumberLead, tanggal, program, catatan, dll)
+    if (effectLeadId) {
+      const lead = getLeadById(effectLeadId)
+      if (lead) {
+        if (!existing?.noIdProgram) setNoIdProgram(effectLeadId)
+        setNamaFC(lead.picEfm || '')
+        setProgramLatihan(lead.programDiminati || '')
+        setTipeKlien(lead.tipe || '')
+        setSumberLead(lead.sumberLead || '')
+        setTanggalMasuk(lead.tanggalMasuk || '')
+        setTanggalFollowUp(lead.tanggalFollowUp || '')
+        setCatatanKlien(lead.catatan || lead.catatanAwal || '')
+
+        // If no klienId, fill personal info from lead as fallback
+        if (!effectKlienId) {
+          setNamaKlien(lead.nama || '')
+          setNoHpKlien(lead.noHp || '')
+          setSapaanKlien(lead.sapaan || '')
+          setJenisKelamin(lead.jenisKelamin || '')
+          setEmailKlien(lead.emailUmum || '')
+          setAlamatKlien(lead.alamat || '')
+          if (lead.tanggalLahir) {
+            const d = new Date(lead.tanggalLahir)
+            const today = new Date()
+            const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+            setUsia(String(age))
+            setTanggalLahirStr(`${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} (${age} tahun)`)
+          }
+        }
+
         // Auto-fill health info untuk assessment baru
         if (isNew) {
           const health = getLeadHealthById(effectLeadId)
