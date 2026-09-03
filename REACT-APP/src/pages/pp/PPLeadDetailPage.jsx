@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { ArrowLeft, Edit2, Save, X, Plus, ChevronRight, FileText, Upload, Eye, MessageCircle, ExternalLink, Download, ChevronDown, User } from 'lucide-react'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 import { getAllOrders } from '../../data/ppOrdersStore'
-import { getKlienByLeadId, updateKlienHealth } from '../../data/ppKlienStore'
+import { getKlienByLeadId, updateKlienHealth, updateKlien, addStoredKlien, getNextKlienId } from '../../data/ppKlienStore'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -359,6 +359,11 @@ export default function PPLeadDetailPage() {
   const [expandedKlien, setExpandedKlien] = useState({})
   const [editingKlienHealth, setEditingKlienHealth] = useState(null)
   const [editKlienHealthForm, setEditKlienHealthForm] = useState({})
+  const [editingKlienProfile, setEditingKlienProfile] = useState(null)
+  const [editKlienProfileForm, setEditKlienProfileForm] = useState({})
+  const [showAddKlienModal, setShowAddKlienModal] = useState(false)
+  const [addKlienForm, setAddKlienForm] = useState({ sapaan: 'Kak', nama: '', jenisKelamin: '', tanggalLahir: '', noHp: '', email: '' })
+  const [addKlienError, setAddKlienError] = useState('')
   const [waLog, setWaLog] = useState(() => {
     try {
       const saved = localStorage.getItem(`lead-wa-log-${id}`)
@@ -759,7 +764,14 @@ export default function PPLeadDetailPage() {
                   <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Info Klien</h3>
                   <p className="text-xs text-gray-400 pl-4 mt-0.5">Orang yang berlatih — bisa sama atau berbeda dari pendaftar</p>
                 </div>
-                <span className="text-xs text-gray-400 font-medium">{klienList.length} klien</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400 font-medium">{klienList.length} klien</span>
+                  <button
+                    onClick={() => { setAddKlienForm({ sapaan: 'Kak', nama: '', jenisKelamin: '', tanggalLahir: '', noHp: '', email: '' }); setAddKlienError(''); setShowAddKlienModal(true) }}
+                    className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors">
+                    <Plus size={11} /> Tambah Klien
+                  </button>
+                </div>
               </div>
 
               <div className="p-5">
@@ -807,20 +819,113 @@ export default function PPLeadDetailPage() {
                             <div className="px-4 py-4 space-y-4 border-t border-gray-100">
 
                               {/* Demografi klien */}
-                              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <div className="bg-gray-50 rounded-lg p-3">
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama</p>
-                                  <p className="text-xs font-semibold text-gray-800">{klien.nama}</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-3">
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No HP</p>
-                                  <p className="text-xs font-semibold text-gray-800">{klien.noHp || '—'}</p>
-                                </div>
-                                <div className="bg-gray-50 rounded-lg p-3">
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
-                                  <p className="text-xs font-semibold text-gray-800 truncate">{klien.email || '—'}</p>
-                                </div>
-                              </div>
+                              {(() => {
+                                const isEditingProfile = editingKlienProfile === klien.id
+                                return (
+                                  <div>
+                                    <div className="flex items-center justify-between mb-2">
+                                      <p className="text-xs font-bold text-[#1E1C43]">Profil Klien</p>
+                                      {!isEditingProfile ? (
+                                        <button
+                                          onClick={() => { setEditingKlienProfile(klien.id); setEditKlienProfileForm({ nama: klien.nama, sapaan: klien.sapaan || 'Kak', jenisKelamin: klien.jenisKelamin || '', tanggalLahir: klien.tanggalLahir || '', noHp: klien.noHp || '', email: klien.email || '' }) }}
+                                          className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-semibold hover:bg-gray-50 transition-colors">
+                                          <Edit2 size={10} /> Edit
+                                        </button>
+                                      ) : (
+                                        <div className="flex gap-1.5">
+                                          <button
+                                            onClick={() => {
+                                              if (!editKlienProfileForm.nama.trim()) return
+                                              updateKlien(klien.id, editKlienProfileForm)
+                                              setKlienList(prev => prev.map(k => k.id === klien.id ? { ...k, ...editKlienProfileForm } : k))
+                                              setEditingKlienProfile(null)
+                                              setEditKlienProfileForm({})
+                                              showToast('✓ Profil ' + editKlienProfileForm.nama + ' disimpan')
+                                            }}
+                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#1E1C43] text-white text-[10px] font-semibold hover:opacity-90 transition-opacity">
+                                            <Save size={10} /> Simpan
+                                          </button>
+                                          <button
+                                            onClick={() => { setEditingKlienProfile(null); setEditKlienProfileForm({}) }}
+                                            className="flex items-center gap-1 h-7 px-2.5 rounded-lg border border-gray-200 text-gray-600 text-[10px] font-medium hover:bg-gray-50 transition-colors">
+                                            <X size={10} /> Batal
+                                          </button>
+                                        </div>
+                                      )}
+                                    </div>
+                                    {!isEditingProfile ? (
+                                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Nama</p>
+                                          <p className="text-xs font-semibold text-gray-800">{klien.sapaan ? klien.sapaan + ' ' : ''}{klien.nama}</p>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">No HP</p>
+                                          <p className="text-xs font-semibold text-gray-800">{klien.noHp || '—'}</p>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
+                                          <p className="text-xs font-semibold text-gray-800 truncate">{klien.email || '—'}</p>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
+                                          <p className="text-xs font-semibold text-gray-800">{klien.jenisKelamin || '—'}</p>
+                                        </div>
+                                        <div className="bg-gray-50 rounded-lg p-3">
+                                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Tanggal Lahir</p>
+                                          <p className="text-xs font-semibold text-gray-800">
+                                            {klien.tanggalLahir ? (() => {
+                                              const d = new Date(klien.tanggalLahir)
+                                              const today = new Date()
+                                              const age = today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+                                              return `${d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })} (${age} tahun)`
+                                            })() : '—'}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sapaan</label>
+                                          <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.sapaan || 'Kak'} onChange={e => setEditKlienProfileForm(p => ({ ...p, sapaan: e.target.value }))}>
+                                            {['Kak','Mas','Mbak','Pak','Bu'].map(s => <option key={s}>{s}</option>)}
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Nama Klien <span className="text-red-500">*</span></label>
+                                          <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.nama || ''} onChange={e => setEditKlienProfileForm(p => ({ ...p, nama: e.target.value }))} />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</label>
+                                          <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.jenisKelamin || ''} onChange={e => setEditKlienProfileForm(p => ({ ...p, jenisKelamin: e.target.value }))}>
+                                            <option value="">Pilih...</option>
+                                            <option>Laki-laki</option>
+                                            <option>Perempuan</option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Lahir</label>
+                                          <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.tanggalLahir || ''} onChange={e => setEditKlienProfileForm(p => ({ ...p, tanggalLahir: e.target.value }))} />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP</label>
+                                          <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.noHp || ''} onChange={e => setEditKlienProfileForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
+                                        </div>
+                                        <div>
+                                          <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                                          <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                                            value={editKlienProfileForm.email || ''} onChange={e => setEditKlienProfileForm(p => ({ ...p, email: e.target.value }))} />
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                )
+                              })()}
 
                               {/* Informasi Kesehatan */}
                               <div>
@@ -1225,6 +1330,122 @@ export default function PPLeadDetailPage() {
       </div>
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
+
+      {/* ── Modal Tambah Klien ── */}
+      {showAddKlienModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowAddKlienModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="text-sm font-bold text-[#1E1C43]">Tambah Klien</h3>
+                <p className="text-[10px] text-gray-400 mt-0.5">Tambah orang yang berlatih ke lead {lead.id}</p>
+              </div>
+              <button onClick={() => setShowAddKlienModal(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="overflow-y-auto flex-1 p-5 space-y-3">
+              {addKlienError && (
+                <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">{addKlienError}</p>
+              )}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sapaan</label>
+                  <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.sapaan} onChange={e => setAddKlienForm(p => ({ ...p, sapaan: e.target.value }))}>
+                    {['Kak','Mas','Mbak','Pak','Bu'].map(s => <option key={s}>{s}</option>)}
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                    Nama Klien <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.nama}
+                    onChange={e => { setAddKlienForm(p => ({ ...p, nama: e.target.value })); setAddKlienError('') }}
+                    placeholder="Nama lengkap klien"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Jenis Kelamin</label>
+                  <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.jenisKelamin} onChange={e => setAddKlienForm(p => ({ ...p, jenisKelamin: e.target.value }))}>
+                    <option value="">Pilih...</option>
+                    <option>Laki-laki</option>
+                    <option>Perempuan</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tanggal Lahir</label>
+                  <input type="date" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.tanggalLahir} onChange={e => setAddKlienForm(p => ({ ...p, tanggalLahir: e.target.value }))} />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">No HP</label>
+                  <input className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.noHp} onChange={e => setAddKlienForm(p => ({ ...p, noHp: e.target.value }))} placeholder="08xx-xxxx-xxxx" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Email</label>
+                  <input type="email" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                    value={addKlienForm.email} onChange={e => setAddKlienForm(p => ({ ...p, email: e.target.value }))} />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex-shrink-0 flex items-center justify-end gap-2 px-5 py-4 border-t border-gray-100">
+              <button
+                onClick={() => setShowAddKlienModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
+                Batal
+              </button>
+              <button
+                onClick={() => {
+                  if (!addKlienForm.nama.trim()) { setAddKlienError('Nama klien wajib diisi'); return }
+                  const newKlienId = getNextKlienId()
+                  addStoredKlien({
+                    id: newKlienId,
+                    leadId: id,
+                    sapaan: addKlienForm.sapaan,
+                    nama: addKlienForm.nama.trim(),
+                    jenisKelamin: addKlienForm.jenisKelamin,
+                    tanggalLahir: addKlienForm.tanggalLahir,
+                    noHp: addKlienForm.noHp.trim(),
+                    email: addKlienForm.email.trim(),
+                    infoKesehatan: { sudahDiisi: false },
+                  })
+                  setKlienList(prev => [...prev, {
+                    id: newKlienId,
+                    leadId: id,
+                    sapaan: addKlienForm.sapaan,
+                    nama: addKlienForm.nama.trim(),
+                    jenisKelamin: addKlienForm.jenisKelamin,
+                    tanggalLahir: addKlienForm.tanggalLahir,
+                    noHp: addKlienForm.noHp.trim(),
+                    email: addKlienForm.email.trim(),
+                    infoKesehatan: { sudahDiisi: false },
+                  }])
+                  setShowAddKlienModal(false)
+                  showToast('✓ Klien ' + addKlienForm.nama.trim() + ' berhasil ditambahkan')
+                }}
+                className="px-5 py-2 rounded-lg bg-[#1E1C43] hover:opacity-90 text-white text-sm font-semibold transition-opacity">
+                Simpan Klien
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }
