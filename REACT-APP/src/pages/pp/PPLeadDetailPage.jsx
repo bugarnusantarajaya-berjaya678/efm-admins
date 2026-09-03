@@ -501,15 +501,6 @@ export default function PPLeadDetailPage() {
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
                 <Edit2 size={12} /> Update Pipeline
               </button>
-              {lead.statusPipeline !== 'Lost' && (
-                <button
-                  onClick={() => navigate('/pp/orders/new', {
-                    state: { namaKlien: lead.nama, paket: lead.programDiminati, leadId: lead.id },
-                  })}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
-                  <Plus size={13} /> Buat Order
-                </button>
-              )}
               <button
                 onClick={() => state?.fromOrderId ? navigate('/pp/orders/' + state.fromOrderId) : navigate('/pp/leads')}
                 className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
