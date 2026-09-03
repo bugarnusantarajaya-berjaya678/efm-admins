@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, RotateCcw, AlertCircle } from 'lucide-react'
 import { getStoredKlien } from '../../data/ppKlienStore'
@@ -93,6 +93,7 @@ export default function PPKlienListPage() {
   const [page,         setPage]         = useState(1)
 
   // routeLabels in Topbar already handles '/pp/klien' breadcrumb — no setCrumbs needed
+  useEffect(() => { setPage(1) }, [search, filterJK, filterStatus])
 
   const filtered = useMemo(() =>
     klienAll
