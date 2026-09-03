@@ -105,6 +105,15 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 **Badges:** `text-xs font-medium`, `px-2 py-1 rounded-full`
 
+⚠️ **DILARANG `text-[10px]` untuk badge dan tombol inline** — selalu gunakan `text-xs`:
+- Badge status di dalam tabel, kartu, atau modal: `text-xs font-medium rounded-full` — BUKAN `text-[10px] font-medium`
+- Tombol Edit/Simpan/Batal/Upload yang berada di dalam nested sub-section card: `text-xs` — BUKAN `text-[10px]`
+- `text-[10px]` hanya boleh dipakai untuk **field label** (label di atas input) dan **table header** (`<th>`), tidak untuk nilai/konten apapun
+
+**Nested sub-section info card (field di dalam kartu klien, kartu kesehatan, dsb.)**
+- Nilai field: `text-xs font-semibold text-gray-700` — WAJIB `font-semibold`, bukan `text-gray-600` tanpa semibold
+- Italic fallback placeholder (mis. "Belum diisi"): tambahkan `font-normal` eksplisit ke `<span>` italic supaya tidak ikut bold dari parent — contoh: `<span className="italic text-gray-400 font-normal">Belum diisi</span>`
+
 **Buttons — Warna & Ukuran**
 
 ### Aturan Warna Tombol (FINAL — berlaku semua modul PP, B2B, Event)

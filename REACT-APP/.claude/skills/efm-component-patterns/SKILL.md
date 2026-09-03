@@ -383,6 +383,36 @@ const [logList, setLogList] = useState([
 
 **Rule learned from this project:** do NOT create a mini activity log per individual card/item (e.g. a separate small log inside each incident report card) — always consolidate into ONE shared log per page, filterable by category. Multiple mini-logs fragment the audit trail and were removed in a past revision.
 
+**In-page action integration pattern (append dari aksi lain di halaman yang sama)**
+
+Ketika sebuah tombol "Simpan" di luar section Log Aktivitas menyimpan perubahan data, tambahkan juga append ke `logAktivitas` di dalam handler yang sama — JANGAN hanya `showToast`:
+
+```js
+// Di dalam handleSimpan / onClick Simpan:
+const today = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+setLead(prev => ({
+  ...prev,
+  // ...perubahan data lainnya,
+  logAktivitas: [
+    ...(prev.logAktivitas || []),
+    {
+      status: 'Edit Data',
+      tanggal: today,
+      oleh: lead.picEfm || 'Admin EFM',
+      catatan: 'Deskripsi aksi yang dilakukan (mis. "Profil klien Ahmad diperbarui")'
+    }
+  ]
+}))
+```
+
+**Aksi yang WAJIB terintegrasi ke logAktivitas:**
+- Edit Profil Klien → simpan → append `"Profil klien [nama] diperbarui"`
+- Edit Informasi Kesehatan → simpan → append `"Informasi kesehatan klien [nama] diperbarui"`
+- Tambah Klien (modal) → simpan → append `"Klien baru ditambahkan: [nama]"`
+- Update status pipeline → sudah otomatis via `handleUpdatePipeline`
+
+**Catatan penting:** `waLog` (Tab WA) adalah state TERPISAH dari `logAktivitas` (Tab Riwayat Aktivitas) — jangan merge keduanya. WA log hanya mencatat pesan WA yang dikirim, bukan aksi edit data.
+
 ---
 
 ## 5. Pipeline / Stage Progress Visual
@@ -1045,6 +1075,7 @@ Used for: navigasi bolak-balik antara halaman detail yang saling terkait (Order 
 | Order Detail → Lead Detail | `{ fromOrderId: order.id }` | PPLeadDetailPage: `state?.fromOrderId` |
 | Lead Detail → Order Detail | `{ fromLeadId: lead.id }` | PPOrderDetailPage: `fromState?.fromLeadId` |
 | Order Detail → FA page (via Context Banner) | `{ defaultTab: 'kesehatan', fromOrderId: order.id }` | PPLeadDetailPage |
+| Klien Detail → halaman terkait | `{ fromKlienId: klien.id }` | Halaman tujuan: `state?.fromKlienId` |
 
 ### Tombol di Order Detail header
 
