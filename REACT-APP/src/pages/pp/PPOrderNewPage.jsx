@@ -9,9 +9,6 @@ import { getKlienByLeadId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
 import { PIC_DB } from '../../data/ppProgramDBData';
 
-const SAPAAN_OPTS = ['Kak', 'Mas', 'Mbak', 'Pak', 'Bu']
-
-
 function toPaket(p) {
   const pic = PIC_DB[p.picId] || {};
   return {
@@ -57,11 +54,7 @@ export default function PPOrderNewPage() {
   });
 
   // Section 2: Data Klien Latihan
-  const [klienLatihan, setKlienLatihan] = useState({
-    nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki'
-  });
   const [selectedKlienIds, setSelectedKlienIds] = useState([]);
-  const [samadenganPendaftar, setSamadenganPendaftar] = useState(false);
 
   // Section 3: Program & Paket
   const [selectedPaket, setSelectedPaket] = useState(null);
@@ -94,9 +87,8 @@ export default function PPOrderNewPage() {
       sapaan: lead.sapaan || 'Kak',
       noHP: lead.hpPendaftar || lead.noHP,
       email: lead.emailPendaftar || lead.email,
-      hubunganDenganKlien: 'Diri Sendiri'
+      hubunganDenganKlien: lead.hubunganDenganKlien || 'Diri Sendiri'
     });
-    setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' });
     setSelectedKlienIds([]);
     setSelectedLeadId(lead.id);
   };
@@ -218,17 +210,17 @@ export default function PPOrderNewPage() {
         if (selectedKlienIds.length > 0 && selectedLeadId) {
           const allK = getKlienByLeadId(selectedLeadId)
           const names = selectedKlienIds.map(id => allK.find(k => k.id === id)?.nama).filter(Boolean)
-          return names.join(' & ') || klienLatihan.nama
+          return names.join(' & ')
         }
-        return klienLatihan.nama
+        return ''
       })(),
       noHPKlien: (() => {
         if (selectedKlienIds.length > 0 && selectedLeadId) {
           const allK = getKlienByLeadId(selectedLeadId)
           const first = allK.find(k => k.id === selectedKlienIds[0])
-          return first?.noHp || klienLatihan.noHP
+          return first?.noHp || ''
         }
-        return klienLatihan.noHP
+        return ''
       })(),
       usiaKlien: (() => {
         if (selectedKlienIds.length === 1 && selectedLeadId) {
@@ -240,15 +232,15 @@ export default function PPOrderNewPage() {
             return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
           }
         }
-        return klienLatihan.usia ? parseInt(klienLatihan.usia, 10) : null
+        return null
       })(),
       jenisKelaminKlien: (() => {
         if (selectedKlienIds.length === 1 && selectedLeadId) {
           const allK = getKlienByLeadId(selectedLeadId)
           const k = allK.find(kl => kl.id === selectedKlienIds[0])
-          return k?.jenisKelamin || klienLatihan.jenisKelamin
+          return k?.jenisKelamin || ''
         }
-        return selectedKlienIds.length > 1 ? '' : klienLatihan.jenisKelamin
+        return ''
       })(),
       paket: selectedPaket?.namaPaket || '',
       picSalesEFM: selectedPaket?.pic?.nama || '',
@@ -280,27 +272,6 @@ export default function PPOrderNewPage() {
     : allLeads;
 
   const tanggalBerakhir = calcTanggalBerakhir();
-
-  // Resolved klien display values (for the disabled free-text fields when klien(s) selected)
-  const resolvedKlienDisplay = (() => {
-    if (selectedKlienIds.length === 0 || !selectedLeadId) return null
-    const allK = getKlienByLeadId(selectedLeadId)
-    const selected = selectedKlienIds.map(id => allK.find(k => k.id === id)).filter(Boolean)
-    if (!selected.length) return null
-    const namaJoined = selected.map(k => k.nama).join(' & ')
-    const first = selected[0]
-    const usiaTahun = first?.tanggalLahir ? (() => {
-      const d = new Date(first.tanggalLahir)
-      const today = new Date()
-      return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
-    })() : null
-    return {
-      nama: namaJoined,
-      noHP: selected.length === 1 ? (first.noHp || '') : '(beragam)',
-      usia: selected.length === 1 && usiaTahun !== null ? String(usiaTahun) : '',
-      jenisKelamin: selected.length === 1 ? (first.jenisKelamin || '') : '',
-    }
-  })()
 
   const filteredPaket = programSearch
     ? paketList.filter(p =>
@@ -372,8 +343,7 @@ export default function PPOrderNewPage() {
                       onClick={() => {
                         setSelectedLeadId(null)
                         setSelectedKlienIds([])
-                        setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: 'Diri Sendiri' })
-                        setKlienLatihan({ nama: '', noHP: '', usia: '', jenisKelamin: 'Laki-laki' })
+                        setPendaftar({ nama: '', sapaan: 'Kak', noHP: '', email: '', hubunganDenganKlien: '' })
                         setPendaftarDropdownOpen(false)
                         setPendaftarSearch('')
                       }}
@@ -464,41 +434,15 @@ export default function PPOrderNewPage() {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Email</p>
-                  {pendaftar.email
-                    ? <p className="text-sm font-semibold text-gray-800">{pendaftar.email}</p>
-                    : <p className="text-sm text-gray-400 italic">— pilih leads terlebih dahulu</p>
-                  }
-                </div>
-                <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
+            <div>
+              <div className="bg-gray-50 rounded-lg p-3">
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hubungan dengan Klien</p>
+                {pendaftar.hubunganDenganKlien
+                  ? <p className="text-sm font-semibold text-gray-800">{pendaftar.hubunganDenganKlien}</p>
+                  : <p className="text-sm text-gray-400 italic">— pilih leads terlebih dahulu</p>
+                }
               </div>
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Hubungan dengan Klien</label>
-                <select value={pendaftar.hubunganDenganKlien}
-                  onChange={e => setPendaftar({ ...pendaftar, hubunganDenganKlien: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
-                  <option>Diri Sendiri</option>
-                  <option>Orang Tua</option>
-                  <option>Pasangan</option>
-                  <option>Anak</option>
-                  <option>Saudara</option>
-                  <option>Lainnya</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div>
-                <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Sapaan</label>
-                <select value={pendaftar.sapaan}
-                  onChange={e => setPendaftar({ ...pendaftar, sapaan: e.target.value })}
-                  className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43]">
-                  {SAPAAN_OPTS.map(s => <option key={s}>{s}</option>)}
-                </select>
-                <p className="text-xs text-gray-400 mt-1">Digunakan pada pesan WA & dokumen</p>
-              </div>
+              <p className="text-xs text-gray-400 mt-1">Otomatis dari data leads</p>
             </div>
 
           </div>
@@ -506,25 +450,9 @@ export default function PPOrderNewPage() {
 
         {/* ── SECTION 2: Data Klien Latihan ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien Latihan</h3>
-              <span className="text-xs text-gray-400">— orang yang actual latihan</span>
-            </div>
-            {/* Only show "Sama" toggle when no lead / no store-klien available */}
-            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0) && selectedKlienIds.length === 0 && (
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="checkbox" checked={samadenganPendaftar}
-                  onChange={e => {
-                    setSamadenganPendaftar(e.target.checked);
-                    if (e.target.checked) {
-                      setKlienLatihan(prev => ({ ...prev, nama: pendaftar.nama, noHP: pendaftar.noHP }));
-                    }
-                  }}
-                  className="w-4 h-4 accent-[#1E1C43]" />
-                <span className="text-xs text-gray-600">Sama dengan data pendaftar</span>
-              </label>
-            )}
+          <div className="flex items-center gap-2 mb-4">
+            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien Latihan</h3>
+            <span className="text-xs text-gray-400">— orang yang actual latihan</span>
           </div>
           <div className="space-y-3">
             {/* Klien picker — multi-select, shown when lead is selected and has klien in store */}
@@ -599,51 +527,12 @@ export default function PPOrderNewPage() {
               )
             })()}
 
-            {/* Free-text fields: shown when no lead / no store-klien / klien(s) selected (read-only) */}
-            {(!selectedLeadId || getKlienByLeadId(selectedLeadId).length === 0 || selectedKlienIds.length > 0) && (
-              <>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Klien Latihan *</label>
-                    <input type="text" value={resolvedKlienDisplay?.nama ?? klienLatihan.nama}
-                      onChange={e => setKlienLatihan({ ...klienLatihan, nama: e.target.value })}
-                      disabled={samadenganPendaftar || selectedKlienIds.length > 0}
-                      placeholder="Nama lengkap klien yang latihan"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP Klien</label>
-                    <input type="text" value={resolvedKlienDisplay?.noHP ?? klienLatihan.noHP}
-                      onChange={e => setKlienLatihan({ ...klienLatihan, noHP: e.target.value })}
-                      disabled={samadenganPendaftar || selectedKlienIds.length > 0}
-                      placeholder="08xxxxxxxxxx"
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Usia</label>
-                    <div className="relative">
-                      <input type="number" value={resolvedKlienDisplay?.usia ?? klienLatihan.usia}
-                        onChange={e => setKlienLatihan({ ...klienLatihan, usia: e.target.value })}
-                        disabled={selectedKlienIds.length > 0}
-                        placeholder="0"
-                        className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] pr-16 disabled:bg-gray-50 disabled:text-gray-400" />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">tahun</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
-                    <select value={resolvedKlienDisplay?.jenisKelamin ?? klienLatihan.jenisKelamin}
-                      onChange={e => setKlienLatihan({ ...klienLatihan, jenisKelamin: e.target.value })}
-                      disabled={selectedKlienIds.length > 0}
-                      className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] disabled:bg-gray-50 disabled:text-gray-400">
-                      <option>Laki-laki</option>
-                      <option>Perempuan</option>
-                    </select>
-                  </div>
-                </div>
-              </>
+            {/* If no lead selected or lead has no klien in store, show a prompt */}
+            {!selectedLeadId && (
+              <p className="text-xs text-gray-400 italic text-center py-4">Pilih lead pendaftar terlebih dahulu untuk melihat data klien.</p>
+            )}
+            {selectedLeadId && getKlienByLeadId(selectedLeadId).length === 0 && (
+              <p className="text-xs text-gray-400 italic text-center py-4">Lead ini belum memiliki data klien terdaftar.</p>
             )}
           </div>
         </div>

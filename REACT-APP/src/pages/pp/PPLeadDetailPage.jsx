@@ -608,6 +608,7 @@ export default function PPLeadDetailPage() {
                     <InfoField label="Sapaan">{lead.sapaan || '—'}</InfoField>
                     <InfoField label="Nama Klien">{lead.nama || '—'}</InfoField>
                     <InfoField label="Tipe">{lead.tipe}</InfoField>
+                    <InfoField label="Hubungan dengan Klien">{lead.hubunganDenganKlien || 'Diri Sendiri'}</InfoField>
                     <InfoField label="Jenis Kelamin">{lead.jenisKelamin || '—'}</InfoField>
                     <InfoField label="Tanggal Lahir">
                       {lead.tanggalLahir ? (() => {
@@ -669,6 +670,18 @@ export default function PPLeadDetailPage() {
                       <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
                         value={editForm.tipe || ''} onChange={e => setEditForm(p => ({ ...p, tipe: e.target.value }))}>
                         <option>Personal</option><option>Group</option><option>Couple</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Hubungan dengan Klien</label>
+                      <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                        value={editForm.hubunganDenganKlien || 'Diri Sendiri'} onChange={e => setEditForm(p => ({ ...p, hubunganDenganKlien: e.target.value }))}>
+                        <option>Diri Sendiri</option>
+                        <option>Orang Tua</option>
+                        <option>Pasangan</option>
+                        <option>Anak</option>
+                        <option>Saudara</option>
+                        <option>Lainnya</option>
                       </select>
                     </div>
                     <div>
