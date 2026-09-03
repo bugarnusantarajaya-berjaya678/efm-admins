@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, RotateCcw, AlertCircle } from 'lucide-react'
+import { Search, RotateCcw, AlertCircle, Users } from 'lucide-react'
 import { getStoredKlien } from '../../data/ppKlienStore'
 import { getAllAssessments } from '../../data/ppAssessmentsStore'
 
@@ -46,13 +46,13 @@ function formatTanggal(dateStr) {
    Small components
 ═══════════════════════════════════════ */
 function StatMini({ label, value, sub, accent }) {
-  const bCls = { orange:'border-[#E05945]', green:'border-green-400', red:'border-red-400', blue:'border-blue-400' }[accent] || 'border-gray-200'
-  const vCls = { orange:'text-[#E05945]', green:'text-green-600', red:'text-red-500', blue:'text-blue-600' }[accent] || 'text-[#1E1C43]'
+  const bCls = { orange: 'border-accent', green: 'border-success', red: 'border-danger', blue: 'border-blue-400' }[accent] || 'border-border'
+  const vCls = { orange: 'text-accent', green: 'text-success', red: 'text-danger', blue: 'text-blue-600' }[accent] || 'text-text-primary'
   return (
-    <div className={`bg-white rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
-      <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{label}</div>
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
+      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
       <div className={`text-xl font-bold ${vCls}`}>{value}</div>
-      {sub && <div className="text-[11px] text-gray-400 mt-0.5">{sub}</div>}
+      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
     </div>
   )
 }
@@ -62,9 +62,9 @@ function PaginBtn({ label, onClick, disabled, active }) {
     <button onClick={onClick} disabled={disabled}
       className={[
         'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold border transition-colors',
-        active   ? 'bg-[#1E1C43] text-white border-[#1E1C43]'                                       : '',
-        disabled ? 'opacity-35 cursor-not-allowed border-gray-200 text-gray-400'                    : '',
-        !active && !disabled ? 'border-gray-200 text-gray-600 hover:border-[#1E1C43] hover:text-[#1E1C43]' : '',
+        active   ? 'bg-primary text-white border-primary'                                       : '',
+        disabled ? 'opacity-35 cursor-not-allowed border-border text-text-muted'                : '',
+        !active && !disabled ? 'border-border text-text-muted hover:border-primary hover:text-primary' : '',
       ].join(' ')}>
       {label}
     </button>
@@ -128,13 +128,20 @@ export default function PPKlienListPage() {
   }
 
   return (
-    <div className="space-y-5">
+    <div className="flex flex-col gap-4">
 
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-[22px] font-bold text-[#1E1C43]">Bank Data Klien</h1>
-          <p className="text-sm text-gray-500 mt-1">Daftar global semua klien Private Program</p>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <Users size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Bank Data Klien</h1>
+              <p className="text-sm text-text-muted mt-0.5">Daftar global semua klien Private Program</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -147,11 +154,11 @@ export default function PPKlienListPage() {
       </div>
 
       {/* Filter Bar */}
-      <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={14} className="text-gray-400 shrink-0" />
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input
-            className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400"
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
             placeholder="Cari nama klien..."
             value={search}
             onChange={e => setSearch(e.target.value)}
@@ -160,7 +167,7 @@ export default function PPKlienListPage() {
         <select
           value={filterJK}
           onChange={e => setFilterJK(e.target.value)}
-          className="px-3 py-[7px] border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors"
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua JK</option>
           <option value="Laki-laki">Laki-laki</option>
@@ -169,7 +176,7 @@ export default function PPKlienListPage() {
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
-          className="px-3 py-[7px] border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors"
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua Status</option>
           <option value="punya-lead">Punya Lead</option>
@@ -178,16 +185,16 @@ export default function PPKlienListPage() {
         </select>
         <button
           onClick={handleReset}
-          className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
         >
           <RotateCcw size={12} /> Reset
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
-          <table className="w-full" style={{ minWidth: '1100px' }}>
+      <div className="bg-bg-surface border border-border rounded-xl shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 360px)', minHeight: '280px' }}>
+          <table className="w-full text-sm" style={{ minWidth: '1100px' }}>
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
@@ -205,7 +212,7 @@ export default function PPKlienListPage() {
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-sm text-gray-400">
+                  <td colSpan={8} className="px-4 py-10 text-center text-sm text-text-muted">
                     Tidak ada data yang cocok dengan filter.
                   </td>
                 </tr>
@@ -218,7 +225,7 @@ export default function PPKlienListPage() {
                   <tr
                     key={klien.id}
                     onClick={() => handleRowClick(klien)}
-                    className="border-b border-gray-100 transition-colors duration-150 hover:bg-blue-50/30 cursor-pointer"
+                    className="border-b border-gray-100 transition-colors duration-150 hover:bg-gray-50 cursor-pointer"
                   >
                     {/* Klien ID */}
                     <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">
@@ -309,11 +316,11 @@ export default function PPKlienListPage() {
         </div>
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-t border-gray-100">
-          <p className="text-xs text-gray-400">
-            Menampilkan {filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–{Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari {filtered.length} klien
-          </p>
-          <div className="flex items-center gap-1">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+          <span className="text-xs text-text-muted">
+            {filtered.length === 0 ? 'Tidak ada klien ditemukan' : `Menampilkan ${filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–${Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari ${filtered.length} klien`}
+          </span>
+          <div className="flex items-center gap-1.5">
             <PaginBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))}         disabled={safePage === 1} />
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
               <PaginBtn key={p} label={p} onClick={() => setPage(p)} active={p === safePage} />
