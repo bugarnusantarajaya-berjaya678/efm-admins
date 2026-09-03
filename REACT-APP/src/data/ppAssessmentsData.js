@@ -26,6 +26,7 @@ export const PP_ASSESSMENTS = {
   // ════════════════════════════════════════════════════════════════════════
   'SCR-26-0001': {
     leadId: 'LP-0001',
+    klienId: 'KL-0001',
     orderId: 'PP-26-0013',
     prevAssessmentId: null,
 
@@ -154,6 +155,7 @@ export const PP_ASSESSMENTS = {
   // ════════════════════════════════════════════════════════════════════════
   'SCR-27-0001': {
     leadId: 'LP-0001',
+    klienId: 'KL-0001',
     orderId: 'PP-27-0001',
     prevAssessmentId: 'SCR-26-0001',
 
@@ -268,7 +270,8 @@ export const PP_ASSESSMENTS = {
   // SCR-26-0002  —  Sari Dewi Lestari  |  Order #PP-26-0021
   // ════════════════════════════════════════════════════════════════════════
   'SCR-26-0002': {
-    leadId: 'LP-0007',
+    leadId: 'LP-0007',   // backward compat — leadId incorrect (LP-0007 = Kevin Hartanto); klienId is authoritative
+    klienId: 'KL-0016',  // Sari Dewi Lestari
     orderId: 'PP-26-0021',
     prevAssessmentId: null,
 
