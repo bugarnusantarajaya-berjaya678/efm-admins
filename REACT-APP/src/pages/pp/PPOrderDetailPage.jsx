@@ -4,6 +4,8 @@ import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
+import { getKlienById } from '../../data/ppKlienStore'
+import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
 import { INVOICES_INIT } from '../../data/ppInvoiceData'
@@ -399,6 +401,14 @@ export default function PPOrderDetailPage() {
   const [infoDraft, setInfoDraft] = useState(initInfo)
 
   const ppPrograms = getStoredPrograms().map(toPaket)
+
+  // Integrated klien data — order baru punya klienIds linked ke ppKlienStore
+  const hasKlienIds = (order?.klienIds?.length ?? 0) > 0
+  const resolvedKlienList = hasKlienIds
+    ? (order.klienIds || []).map(id => getKlienById(id)).filter(Boolean)
+    : []
+  const liveLead = order?.leadId ? getLeadById(order.leadId) : null
+  const liveHubungan = liveLead?.hubunganDenganKlien || infoDeal.hubunganKlien || 'Diri Sendiri'
 
   const initProgram = ppPrograms.find(p => p.id === (order?.programId || ''))
   const [programSearch, setProgramSearch] = useState(
@@ -1006,22 +1016,25 @@ export default function PPOrderDetailPage() {
                 <div className="flex items-center gap-2">
                   <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien</h3>
                   <span className="flex items-center gap-1 text-[10px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded">
-                    <Lock size={9} /> Nama &amp; Kontak dari Leads
+                    <Lock size={9} /> {hasKlienIds ? 'Data dari Klien Store' : 'Nama & Kontak dari Leads'}
                   </span>
                 </div>
-                {editingSection === 'dataKlienTambahan' ? (
-                  <div className="flex gap-2">
-                    <button onClick={cancelEdit} className="h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50">Batal</button>
-                    <button onClick={saveDataKlienTambahan} className="h-8 px-3 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold">Simpan</button>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => startEdit('dataKlienTambahan')}
-                    disabled={!!editingSection && editingSection !== 'dataKlienTambahan'}
-                    className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    Edit Info Tambahan
-                  </button>
+                {/* Edit button hanya untuk order lama (tanpa klienIds) */}
+                {!hasKlienIds && (
+                  editingSection === 'dataKlienTambahan' ? (
+                    <div className="flex gap-2">
+                      <button onClick={cancelEdit} className="h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50">Batal</button>
+                      <button onClick={saveDataKlienTambahan} className="h-8 px-3 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-xs font-semibold">Simpan</button>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => startEdit('dataKlienTambahan')}
+                      disabled={!!editingSection && editingSection !== 'dataKlienTambahan'}
+                      className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+                    >
+                      Edit Info Tambahan
+                    </button>
+                  )
                 )}
               </div>
               <div className="p-5">
@@ -1042,10 +1055,12 @@ export default function PPOrderDetailPage() {
                         <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
                       </div>
                     ))}
-                    {/* Editable: Hub. dengan Klien */}
+                    {/* Hub. dengan Klien — live dari lead jika hasKlienIds, editable jika lama */}
                     <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Hub. dengan Klien</p>
-                      {editingSection === 'dataKlienTambahan' ? (
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                        {hasKlienIds && <Lock size={9} className="text-gray-300" />} Hub. dengan Klien
+                      </p>
+                      {!hasKlienIds && editingSection === 'dataKlienTambahan' ? (
                         <select
                           value={infoDraft?.hubunganKlien || ''}
                           onChange={e => setInfoDraft(d => ({ ...d, hubunganKlien: e.target.value }))}
@@ -1056,60 +1071,111 @@ export default function PPOrderDetailPage() {
                           ))}
                         </select>
                       ) : (
-                        <p className="text-sm font-semibold text-gray-800">{infoDeal.hubunganKlien || '—'}</p>
+                        <p className="text-sm font-semibold text-gray-800">{liveHubungan}</p>
                       )}
                     </div>
                   </div>
                 </div>
+
                 {/* Klien Latihan */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Klien Latihan</p>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                      { label: 'Nama Klien',   val: infoDeal.namaKlienLatihan },
-                      { label: 'No. HP Klien', val: infoDeal.noHPKlien        },
-                    ].map(({ label, val }) => (
-                      <div key={label} className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <Lock size={9} className="text-gray-300" /> {label}
-                        </p>
-                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                    Klien Latihan {hasKlienIds && <span className="text-[10px] font-normal normal-case text-gray-400">— data live dari Klien Store</span>}
+                  </p>
+
+                  {hasKlienIds ? (
+                    /* ── Integrated view: kartu per-klien dari ppKlienStore ── */
+                    <div className="flex flex-col gap-2">
+                      {resolvedKlienList.length === 0 ? (
+                        <p className="text-xs text-gray-400 italic text-center py-4">Data klien tidak ditemukan di store.</p>
+                      ) : (
+                        resolvedKlienList.map(k => {
+                          const usiaTahun = k.tanggalLahir ? (() => {
+                            const d = new Date(k.tanggalLahir)
+                            const today = new Date()
+                            return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
+                          })() : null
+                          return (
+                            <div key={k.id} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                              {[
+                                { label: 'ID Klien',      val: k.id },
+                                { label: 'Nama Klien',    val: k.nama },
+                                { label: 'No. HP',        val: k.noHp },
+                                { label: 'Jenis Kelamin', val: k.jenisKelamin || '—' },
+                              ].map(({ label, val }) => (
+                                <div key={label} className="bg-gray-50 rounded-lg p-3">
+                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    <Lock size={9} className="text-gray-300" /> {label}
+                                  </p>
+                                  <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                                </div>
+                              ))}
+                              <div className="bg-gray-50 rounded-lg p-3">
+                                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                  <Lock size={9} className="text-gray-300" /> Usia
+                                </p>
+                                <p className="text-sm font-semibold text-gray-800">{usiaTahun !== null ? usiaTahun + ' tahun' : '—'}</p>
+                              </div>
+                            </div>
+                          )
+                        })
+                      )}
+                    </div>
+                  ) : (
+                    /* ── Legacy view: flat fields dari order (order lama) ── */
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                      {[
+                        { label: 'Nama Klien',   val: infoDeal.namaKlienLatihan },
+                        { label: 'No. HP Klien', val: infoDeal.noHPKlien        },
+                      ].map(({ label, val }) => (
+                        <div key={label} className="bg-gray-50 rounded-lg p-3">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
+                            <Lock size={9} className="text-gray-300" /> {label}
+                          </p>
+                          <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                        </div>
+                      ))}
+                      {/* Editable: Usia */}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
+                        {editingSection === 'dataKlienTambahan' ? (
+                          <input
+                            type="number" min="1" max="99"
+                            value={infoDraft?.usiaKlien || ''}
+                            onChange={e => setInfoDraft(d => ({ ...d, usiaKlien: e.target.value }))}
+                            className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                          />
+                        ) : (
+                          <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
+                        )}
                       </div>
-                    ))}
-                    {/* Editable: Usia */}
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Usia</p>
-                      {editingSection === 'dataKlienTambahan' ? (
-                        <input
-                          type="number" min="1" max="99"
-                          value={infoDraft?.usiaKlien || ''}
-                          onChange={e => setInfoDraft(d => ({ ...d, usiaKlien: e.target.value }))}
-                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
-                        />
-                      ) : (
-                        <p className="text-sm font-semibold text-gray-800">{infoDeal.usiaKlien ? infoDeal.usiaKlien + ' tahun' : '—'}</p>
-                      )}
+                      {/* Editable: Jenis Kelamin */}
+                      <div className="bg-gray-50 rounded-lg p-3">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
+                        {editingSection === 'dataKlienTambahan' ? (
+                          <select
+                            value={infoDraft?.jenisKelaminKlien || ''}
+                            onChange={e => setInfoDraft(d => ({ ...d, jenisKelaminKlien: e.target.value }))}
+                            className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
+                          >
+                            {['Laki-laki','Perempuan'].map(o => <option key={o}>{o}</option>)}
+                          </select>
+                        ) : (
+                          <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
+                        )}
+                      </div>
                     </div>
-                    {/* Editable: Jenis Kelamin */}
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jenis Kelamin</p>
-                      {editingSection === 'dataKlienTambahan' ? (
-                        <select
-                          value={infoDraft?.jenisKelaminKlien || ''}
-                          onChange={e => setInfoDraft(d => ({ ...d, jenisKelaminKlien: e.target.value }))}
-                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
-                        >
-                          {['Laki-laki','Perempuan'].map(o => <option key={o}>{o}</option>)}
-                        </select>
-                      ) : (
-                        <p className="text-sm font-semibold text-gray-800">{infoDeal.jenisKelaminKlien || '—'}</p>
-                      )}
-                    </div>
-                  </div>
+                  )}
                 </div>
+
                 <div className="mt-4 flex items-start gap-1.5 bg-blue-50 border border-blue-200 rounded-lg px-3 py-2.5">
                   <Info size={11} className="text-blue-500 mt-0.5 shrink-0" />
-                  <p className="text-xs text-blue-700">Sapaan, Nama, No. HP, dan Email dikunci karena bersumber dari data Leads. Hubungan dengan Klien, Usia, dan Jenis Kelamin dapat diubah jika ada kesalahan input.</p>
+                  <p className="text-xs text-blue-700">
+                    {hasKlienIds
+                      ? 'Data klien diambil langsung dari Klien Store — untuk mengubah, edit melalui halaman Lead / Klien.'
+                      : 'Sapaan, Nama, No. HP, dan Email dikunci karena bersumber dari data Leads. Hubungan dengan Klien, Usia, dan Jenis Kelamin dapat diubah jika ada kesalahan input.'
+                    }
+                  </p>
                 </div>
               </div>
             </div>
