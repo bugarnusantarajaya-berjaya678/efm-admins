@@ -163,7 +163,7 @@ export default function PPKlienListPage() {
 
       {/* Filter Bar */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
           <input
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
@@ -175,7 +175,7 @@ export default function PPKlienListPage() {
         <select
           value={filterJK}
           onChange={e => setFilterJK(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
+          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua JK</option>
           <option value="Laki-laki">Laki-laki</option>
@@ -184,7 +184,7 @@ export default function PPKlienListPage() {
         <select
           value={filterStatus}
           onChange={e => setFilterStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
+          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors"
         >
           <option value="">Semua Status</option>
           <option value="punya-lead">Punya Lead</option>
@@ -193,7 +193,7 @@ export default function PPKlienListPage() {
         </select>
         <button
           onClick={handleReset}
-          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
+          className="px-3.5 py-2 bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
         >
           <RotateCcw size={12} /> Reset
         </button>
@@ -208,7 +208,7 @@ export default function PPKlienListPage() {
                 {[
                   ['Klien ID', 120], ['Nama Klien', 200], ['Jenis Kelamin', 130],
                   ['Tgl. Lahir / Usia', 160], ['No HP', 140],
-                  ['Lead Terkait', 130], ['Assessment', 130], ['Status', 110],
+                  ['Lead Terkait', 130], ['Assessment', 130],
                 ].map(([h, mw]) => (
                   <th key={h} style={{ minWidth: mw }}
                     className="text-left px-3 py-2.5 text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">
@@ -220,7 +220,7 @@ export default function PPKlienListPage() {
             <tbody>
               {pageRows.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-sm text-text-muted">
+                  <td colSpan={7} className="px-4 py-10 text-center text-sm text-text-muted">
                     Tidak ada data yang cocok dengan filter.
                   </td>
                 </tr>
@@ -297,23 +297,10 @@ export default function PPKlienListPage() {
                     <td className="px-3 py-2.5 whitespace-nowrap">
                       {asmCount > 0 ? (
                         <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
-                          {asmCount} assessment
+                          {asmCount}×
                         </span>
                       ) : (
                         <span className="text-xs text-gray-400">—</span>
-                      )}
-                    </td>
-
-                    {/* Status */}
-                    <td className="px-3 py-2.5 whitespace-nowrap">
-                      {isOrphan ? (
-                        <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-amber-50 text-amber-700 border border-amber-200">
-                          Orphan
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                          Aktif
-                        </span>
                       )}
                     </td>
                   </tr>

@@ -66,6 +66,11 @@ const routeLinkedCrumbs = {
     { label: 'Orders', path: '/pp/orders' },
     { label: 'Assessment' },
   ],
+  '/pp/klien': [
+    { label: 'Private Program', path: '/pp/dashboard' },
+    { label: 'Leads', path: '/pp/leads' },
+    { label: 'Klien' },
+  ],
 }
 
 /* ── Dummy notifications ─────────────────────────────────────────────────── */
