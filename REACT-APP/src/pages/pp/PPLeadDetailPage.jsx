@@ -346,7 +346,7 @@ export default function PPLeadDetailPage() {
     } catch {}
     return initial
   })
-  const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'info')
+  const [activeTab, setActiveTab]   = useState(state?.defaultTab || 'overview')
   const [isEditMode, setIsEditMode] = useState(false)
   const [editForm, setEditForm]     = useState({})
   const [editingPipeline, setEditingPipeline] = useState(false)
@@ -477,10 +477,9 @@ export default function PPLeadDetailPage() {
   }
 
   const TABS = [
-    { key: 'info',      label: 'Info Klien'         },
-    { key: 'kesehatan', label: 'Progres & Kesehatan' },
-    { key: 'riwayat',   label: 'Riwayat'            },
-    { key: 'wa',        label: 'Komunikasi WA'       },
+    { key: 'overview',  label: 'Overview'      },
+    { key: 'riwayat',   label: 'Riwayat'       },
+    { key: 'wa',        label: 'Komunikasi WA' },
   ]
 
   return (
@@ -592,9 +591,9 @@ export default function PPLeadDetailPage() {
         </div>
 
         {/* ════════════════════════════════
-            TAB 1: INFO KLIEN
+            TAB 1: OVERVIEW
         ════════════════════════════════ */}
-        {activeTab === 'info' && (
+        {activeTab === 'overview' && (
           <div className="space-y-4">
 
             {/* Info Klien */}
@@ -776,16 +775,7 @@ export default function PPLeadDetailPage() {
             </div>
           )}
 
-          </div>
-        )}
-
-        {/* ════════════════════════════════
-            TAB 2: KESEHATAN
-        ════════════════════════════════ */}
-        {activeTab === 'kesehatan' && (
-          <div className="space-y-4">
-
-            {/* ── Section 1: Informasi Kesehatan Awal ── */}
+            {/* ── Informasi Kesehatan Awal ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div>
@@ -817,14 +807,12 @@ export default function PPLeadDetailPage() {
                   </div>
                 )}
               </div>
-
               <div className="p-5">
                 {!infoKesehatan.sudahDiisi && !editingInfoKesehatan && (
                   <div className="mb-4 p-3 bg-yellow-50 rounded-lg border border-yellow-100">
                     <p className="text-xs text-yellow-700 font-medium">Informasi kesehatan awal belum diisi. Klik Edit untuk mengisi data hasil screening via WhatsApp.</p>
                   </div>
                 )}
-
                 {!editingInfoKesehatan ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div className="bg-gray-50 rounded-lg p-3">
@@ -884,38 +872,40 @@ export default function PPLeadDetailPage() {
                     </div>
                   </div>
                 )}
-
-                {/* Dokumen Kesehatan */}
-                <div className="mt-5 pt-4 border-t border-gray-100">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wide">Dokumen Kesehatan</p>
-                    <button
-                      onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
-                      className="flex items-center gap-1.5 h-7 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-medium hover:bg-gray-50 transition-colors">
-                      <Upload size={11} /> Upload Dokumen
-                    </button>
-                  </div>
-                  {dokumenKesehatan.length === 0 ? (
-                    <p className="text-xs text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
-                  ) : (
-                    <div className="space-y-1.5">
-                      {dokumenKesehatan.map(dok => (
-                        <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
-                          <FileText size={14} className="text-gray-400 shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
-                            <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
-                          </div>
-                          <button className="text-[10px] text-[#1E1C43] font-semibold hover:underline shrink-0">Lihat</button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
 
-            {/* ── Section 2: Riwayat Fitness Assessment ── */}
+            {/* ── Dokumen Kesehatan ── */}
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Dokumen Kesehatan</h3>
+                <button
+                  onClick={() => showToast('Fitur upload akan tersedia setelah koneksi backend')}
+                  className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                  <Upload size={12} /> Upload Dokumen
+                </button>
+              </div>
+              <div className="p-5">
+                {dokumenKesehatan.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic">Belum ada dokumen (MRI, rontgen, surat dokter, hasil lab)</p>
+                ) : (
+                  <div className="space-y-1.5">
+                    {dokumenKesehatan.map(dok => (
+                      <div key={dok.id} className="flex items-center gap-2.5 p-2.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors">
+                        <FileText size={14} className="text-gray-400 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-gray-700 truncate">{dok.nama}</p>
+                          <p className="text-[10px] text-gray-400">{dok.tipe} · {dok.tanggal}</p>
+                        </div>
+                        <button className="text-[10px] text-[#1E1C43] font-semibold hover:underline shrink-0">Lihat</button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ── Riwayat Fitness Assessment ── */}
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm">
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div>
@@ -970,7 +960,7 @@ export default function PPLeadDetailPage() {
         )}
 
         {/* ════════════════════════════════
-            TAB 3: RIWAYAT
+            TAB 2: RIWAYAT
         ════════════════════════════════ */}
         {activeTab === 'riwayat' && (
           <div className="space-y-4">
@@ -1043,7 +1033,7 @@ export default function PPLeadDetailPage() {
 
 
         {/* ════════════════════════════════
-            TAB 5: KOMUNIKASI WA
+            TAB 3: KOMUNIKASI WA
         ════════════════════════════════ */}
         {activeTab === 'wa' && (
           <div className="space-y-4">
