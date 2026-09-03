@@ -114,7 +114,7 @@ export default function PPKlienDetailPage() {
 
   useEffect(() => {
     const k = getKlienById(id)
-    setCrumbs(['Private Program', 'Klien', k ? k.nama : id])
+    setCrumbs(['Private Program', 'Leads', 'Klien', k ? k.nama : id])
     return () => setCrumbs(null)
   }, [id])
   const [editMode, setEditMode] = useState(false)
