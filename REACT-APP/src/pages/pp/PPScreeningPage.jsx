@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, ChevronRight, RotateCcw, ArrowLeft, ClipboardList } from 'lucide-react';
+import { Search, ChevronRight, RotateCcw, ArrowLeft, ClipboardList } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 
 const statusColor = {
@@ -100,16 +100,10 @@ export default function PPScreeningPage() {
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
             <button
-              onClick={() => navigate('/pp/screening/new')}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
-            >
-              <Plus size={13} /> Buat Assessment
-            </button>
-            <button
               onClick={() => navigate('/pp/orders')}
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
             >
-              <ArrowLeft size={12} /> Kembali
+              <ArrowLeft size={12} /> Kembali ke PP Orders
             </button>
           </div>
         </div>
