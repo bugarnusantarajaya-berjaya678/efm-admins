@@ -9,12 +9,10 @@ import {
 } from 'lucide-react'
 
 const PP_SUB = [
-  { label: 'Dashboard',      path: '/pp/dashboard'  },
-  { label: 'Leads',          path: '/pp/leads'      },
-  { label: 'Orders',         path: '/pp/orders'     },
-  { label: 'Klien',          path: '/pp/klien'      },
-  { label: 'Program DB',     path: '/pp/program-db' },
-  { label: 'Promo',          path: '/pp/promo'      },
+  { label: 'Dashboard',  path: '/pp/dashboard'  },
+  { label: 'Leads',      path: '/pp/leads'      },
+  { label: 'Orders',     path: '/pp/orders'     },
+  { label: 'Program DB', path: '/pp/program-db' },
 ]
 
 const B2B_SUB = [
