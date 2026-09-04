@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Gift, Percent, DollarSign } from 'lucide-react'
+import { Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Gift, Percent, DollarSign, Search } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllPromo, addPromo, updatePromo, deletePromo, toggleAktif } from '../../data/ppPromoStore'
 import { TIPE_LABEL, SUBTIPE_LABEL, SUBTIPE_OPTS_DISKON, SUBTIPE_OPTS_BONUS } from '../../data/ppPromoData'
@@ -220,35 +220,36 @@ export default function PPPromoPage() {
     <div className="flex flex-col gap-4">
       {/* Header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <Tag size={22} className="text-white" />
+              <Tag size={20} className="text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-0.5">Private Program</p>
               <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Promo &amp; Diskon</h1>
-              <p className="text-xs text-gray-400 mt-1">Kelola kode promo yang dapat digunakan di Invoice PP</p>
+              <p className="text-sm text-gray-400 mt-0.5">Kelola kode promo yang dapat digunakan di Invoice PP</p>
             </div>
           </div>
-          <button onClick={() => { setEditTarget(null); setModal('add') }}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] text-white hover:opacity-90 transition-colors">
-            <Plus size={15} /> Tambah Promo
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button onClick={() => { setEditTarget(null); setModal('add') }}
+              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
+              <Plus size={13} /> Tambah Promo
+            </button>
+          </div>
         </div>
       </div>
 
       {/* KPI */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {[
           { label: 'Total Promo',    val: list.length,  sub: 'semua jenis' },
           { label: 'Diskon',         val: totalDiskon,  sub: 'potong harga' },
           { label: 'Bonus / Free',   val: totalBonus,   sub: 'tidak potong harga' },
         ].map(k => (
-          <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-4">
-            <p className="text-xs uppercase tracking-wide text-gray-400">{k.label}</p>
-            <p className="text-2xl font-bold text-[#1E1C43] mt-1">{k.val}</p>
-            <p className="text-[10px] text-gray-400 mt-0.5">{k.sub}</p>
+          <div key={k.label} className="bg-white rounded-xl border border-gray-200 px-4 py-3">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">{k.label}</p>
+            <p className="text-2xl font-bold text-[#1E1C43]">{k.val}</p>
+            <p className="text-[11px] text-gray-400 mt-0.5">{k.sub}</p>
           </div>
         ))}
       </div>
@@ -263,16 +264,20 @@ export default function PPPromoPage() {
             </button>
           ))}
         </div>
-        <input value={search} onChange={e => setSearch(e.target.value)}
-          placeholder="Cari kode / nama promo..."
-          className="ml-auto w-52 text-xs border border-gray-200 rounded-lg px-3 py-1.5 outline-none focus:border-[#1E1C43]" />
+        <div className="ml-auto flex items-center gap-2 min-w-[200px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
+          <Search size={13} className="text-gray-400 shrink-0" />
+          <input value={search} onChange={e => setSearch(e.target.value)}
+            placeholder="Cari kode / nama promo..."
+            className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400" />
+        </div>
       </div>
 
       {/* Tabel */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 380px)', minHeight: '240px' }}>
         <table className="w-full" style={{ minWidth: '700px' }}>
-          <thead>
-            <tr className="border-b border-gray-200">
+          <thead className="sticky top-0 z-10">
+            <tr className="bg-gray-50 border-b border-gray-100">
               {[['Kode Promo',140],['Nama / Deskripsi',200],['Tipe',110],['Nilai / Benefit',160],['Status',100],['Aksi',100]].map(([h, mw]) => (
                 <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
               ))}
@@ -338,6 +343,7 @@ export default function PPPromoPage() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Info banner */}
