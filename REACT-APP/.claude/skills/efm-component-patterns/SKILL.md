@@ -2011,3 +2011,96 @@ const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
 | PP Order Detail | `PPOrderDetailPage.jsx` (inline, belum diekstrak) |
 | PP Lead Detail | `PPLeadDetailPage.jsx` (inline, belum diekstrak) |
 
+---
+
+## 14. Toggle Status Entity — Aktif / Nonaktif
+
+Pola standar untuk menampilkan dan mengubah status **aktif/nonaktif** sebuah entitas. Berlaku untuk semua halaman list yang memiliki kolom status biner (aktif ↔ nonaktif).
+
+### Dua konteks pemakaian
+
+| Konteks | Kapan dipakai | Ukuran toggle |
+|---|---|---|
+| **Inline table row** | Kolom status di tabel list — klik langsung flip status | `size={18}` |
+| **Modal / form** | Field status di dalam modal add/edit | `size={28}` |
+
+### Pattern A — Inline table row (STANDAR UTAMA)
+
+```jsx
+// Import yang dibutuhkan
+import { ToggleLeft, ToggleRight } from 'lucide-react'
+
+// Di dalam <td> kolom status:
+<td className="px-3 py-2.5">
+  <button
+    onClick={() => handleToggleAktif(item.id)}
+    className="flex items-center gap-1.5 group"
+    title={item.aktif ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'}
+  >
+    {item.aktif
+      ? <ToggleRight size={18} className="text-[#1E1C43] shrink-0" />
+      : <ToggleLeft  size={18} className="text-gray-300 shrink-0"  />}
+    <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+      item.aktif
+        ? 'bg-green-50 text-green-700 border-green-200'
+        : 'bg-gray-50 text-gray-500 border-gray-200'
+    }`}>
+      {item.aktif ? 'Aktif' : 'Nonaktif'}
+    </span>
+  </button>
+</td>
+```
+
+**Handler (ubah status di store):**
+```js
+function handleToggleAktif(id) {
+  updateStoredItem(id, { aktif: !list.find(x => x.id === id).aktif })
+  setList(getStoredItems()) // refresh dari store
+}
+```
+
+### Pattern B — Modal / form field
+
+```jsx
+<div className="flex items-center gap-3">
+  <button
+    onClick={() => setForm(f => ({ ...f, aktif: !f.aktif }))}
+    className="shrink-0"
+  >
+    {form.aktif
+      ? <ToggleRight size={28} className="text-[#1E1C43]" />
+      : <ToggleLeft  size={28} className="text-gray-300"  />}
+  </button>
+  <div>
+    <p className="text-xs font-semibold text-gray-700">
+      {form.aktif ? 'Aktif' : 'Nonaktif'}
+    </p>
+    <p className="text-[10px] text-gray-400 mt-0.5">
+      {form.aktif ? 'Dapat digunakan' : 'Tidak aktif — tidak bisa dipakai'}
+    </p>
+  </div>
+</div>
+```
+
+### Aturan wajib
+
+- **Import**: `ToggleLeft, ToggleRight` dari `lucide-react` — SELALU keduanya sekaligus
+- **Warna aktif**: `text-[#1E1C43]` (navy) — BUKAN hijau, BUKAN orange
+- **Warna nonaktif**: `text-gray-300`
+- **Badge warna**: ikuti status/semantic color dari `efm-design-standards`:
+  - Aktif → `bg-green-50 text-green-700 border-green-200`
+  - Nonaktif → `bg-gray-50 text-gray-500 border-gray-200`
+- **DILARANG** menampilkan status hanya sebagai plain badge tanpa toggle di halaman yang memiliki entitas config/master data (Program, Promo, Jenis, dll)
+- **Pengecualian**: entity operasional yang status-nya berubah melalui workflow bisnis (Order, Lead, Invoice) → gunakan badge saja, ubah status melalui tombol aksi eksplisit atau modal
+
+### Halaman yang sudah pakai standar ini
+
+| Halaman | Status |
+|---|---|
+| `PPPromoPage.jsx` | ✓ Sudah — inline toggle + badge |
+| `PPProgramDBPage.jsx` | ✓ Sudah — inline toggle + badge (field `status`: `'aktif'` / `'inactive'`) |
+| `OPSMitraPage.jsx` | ✓ Sudah — toggle di card grid (bukan tabel), local state dari `mitraList` |
+| `OPSPICPage.jsx` | ⚠️ SKIP — status 3-pilihan (aktif/cuti/nonaktif), binary toggle tidak berlaku |
+
+**Catatan OPSMitraPage (card grid):** karena layout card bukan tabel, toggle dipasang di dalam card komponen dan aksi `e.stopPropagation()` diperlukan agar klik toggle tidak bubble ke handler card parent. Pola toggle tetap sama secara visual.
+
