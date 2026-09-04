@@ -197,7 +197,7 @@ const TAHAPAN_WA_CLS = {
 ═══════════════════════════════════════ */
 function Badge({ children, cls }) {
   return (
-    <span className={`inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>
+    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>
       {children}
     </span>
   )
@@ -326,7 +326,7 @@ function OrderTemplateCard({ template, orderCtx, onKirim }) {
 
 function TahapanBadge({ tahapan }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${TAHAPAN_WA_CLS[tahapan] ?? 'bg-gray-100 text-gray-600'}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${TAHAPAN_WA_CLS[tahapan] ?? 'bg-gray-100 text-gray-600'}`}>
       <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
       {tahapan}
     </span>
@@ -1006,7 +1006,7 @@ export default function PPOrderDetailPage() {
                         </p>
                       </div>
                       {badge
-                        ? <span className={`self-start px-2 py-0.5 rounded-full text-[10px] font-medium border ${badge.cls}`}>{badge.label}</span>
+                        ? <span className={`self-start px-2 py-0.5 rounded-full text-xs font-medium border ${badge.cls}`}>{badge.label}</span>
                         : <span className="self-start text-[10px] text-gray-300 italic">Belum tersedia</span>
                       }
                     </div>
