@@ -30,7 +30,7 @@ export const DOCS_INIT = [
     detailPesanan: '24 Sesi Private Training - Paket Elite',
     orderId: 'PP-26-0011', paket: '24 Sesi - Elite', masaBerlaku: '90 Hari',
     noReceipt: '—', refInvoice: 'INV-PP-26-0011', pic: 'Elena Rodriguez',
-    tglDibuat: '18 Okt 2026', statusTtd: 'waiting_approval', tglTtd: '20 Okt 2026',
+    tglDibuat: '18 Okt 2026', statusTtd: 'waiting-approval', tglTtd: '20 Okt 2026',
   },
   {
     id: 'AGR-PP-26-0004', displayId: 'AGR-PP-26-0004',
@@ -74,7 +74,7 @@ export const DOCS_INIT = [
     detailPesanan: '24 Sesi Private Training - Paket Elite',
     orderId: 'PP-26-0006', paket: '24 Sesi - Elite', masaBerlaku: '90 Hari',
     noReceipt: '—', refInvoice: 'INV-PP-26-0006', pic: 'Sarah Jenkins',
-    tglDibuat: '1 Okt 2026', statusTtd: 'waiting_approval', tglTtd: '3 Okt 2026',
+    tglDibuat: '1 Okt 2026', statusTtd: 'waiting-approval', tglTtd: '3 Okt 2026',
   },
   {
     id: 'AGR-PP-26-0008', displayId: 'AGR-PP-26-0008',
@@ -93,14 +93,14 @@ export const STATUS_LABEL = {
   signed: 'Signed',
   pending: 'Pending TTD',
   expired: 'Expired',
-  waiting_approval: 'Waiting Approval',
+  'waiting-approval': 'Waiting Approval',
 }
 
 export const STATUS_CLS = {
   signed: 'bg-[#EAFAF1] text-[#1E8449] border border-[#A9DFBF]',
   pending: 'bg-[#FEF9E7] text-[#B7770D] border border-[#FAD7A0]',
   expired: 'bg-[#FDEDEC] text-[#C0392B] border border-[#F5B7B1]',
-  waiting_approval: 'bg-[#EBF5FB] text-[#1A5276] border border-[#AED6F1]',
+  'waiting-approval': 'bg-[#EBF5FB] text-[#1A5276] border border-[#AED6F1]',
 }
 
 export const PAKET_OPTS = [

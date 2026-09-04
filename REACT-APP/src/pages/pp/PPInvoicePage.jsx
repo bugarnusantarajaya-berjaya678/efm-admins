@@ -15,7 +15,7 @@ const INV_STYLE = {
 function InvBadge({ status }) {
   const s = INV_STYLE[status] || INV_STYLE.draft
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium ${s.cls}`}>
+    <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium ${s.cls}`}>
       <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: s.dot }} />
       {STATUS_LABEL[status] || status}
     </span>

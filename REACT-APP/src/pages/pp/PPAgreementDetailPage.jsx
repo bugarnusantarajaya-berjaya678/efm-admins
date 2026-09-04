@@ -44,7 +44,7 @@ function ClientSig({ status }) {
       </div>
     )
   }
-  if (status === 'waiting_approval') {
+  if (status === 'waiting-approval') {
     return (
       <div className="h-[72px] border border-[#AED6F1] rounded-xl flex items-center justify-center bg-[#EBF5FB] mb-2">
         <svg viewBox="0 0 160 48" width="120" height="36">
@@ -138,7 +138,7 @@ function AgreementDoc({ doc }) {
   const sigMeta = () => {
     if (doc.statusTtd === 'signed')
       return <span className="text-[#27AE60] text-[10px]">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
-    if (doc.statusTtd === 'waiting_approval')
+    if (doc.statusTtd === 'waiting-approval')
       return <span className="text-[#2980B9] text-[10px]">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
     if (doc.statusTtd === 'expired')
       return <span className="text-[#C0392B] text-[10px]">Expired — {doc.tglDibuat}</span>
@@ -297,7 +297,7 @@ export default function PPAgreementDetailPage() {
             </div>
           </div>
 
-          {doc.statusTtd === 'waiting_approval' && (
+          {doc.statusTtd === 'waiting-approval' && (
             <button
               onClick={handleApprove}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
@@ -337,7 +337,7 @@ export default function PPAgreementDetailPage() {
           </div>
         )}
 
-        {doc.statusTtd === 'waiting_approval' && (
+        {doc.statusTtd === 'waiting-approval' && (
           <div className="px-5 pb-5 pt-2">
             <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3.5">
               <AlertCircle size={16} className="text-blue-600 shrink-0 mt-0.5" />
