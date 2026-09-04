@@ -747,3 +747,64 @@ Receipt body berisi section-section berikut (urutan ini wajib, jangan tambah sec
 6. **Footer** — 2 baris (lihat 5g)
 
 ⚠️ **TIDAK ADA section "Catatan"** di receipt — section ini sudah dihapus. Jika perlu catatan, tampilkan di Invoice bukan Receipt.
+
+---
+
+## 6. Sidebar Navigation — Aturan Item per Modul
+
+### 6a. Prinsip Dasar: Entitas vs Sub-Dokumen
+
+⚠️ **Recurring mistake**: menambahkan sub-dokumen (Invoice, Receipt, Agreement) sebagai item sidebar — ini SALAH. Hanya entitas first-class yang boleh masuk sidebar modul.
+
+**Masuk sidebar (`*_SUB` array):**
+- Entitas yang berdiri sendiri sebagai first-class entity: Dashboard, Leads, Orders
+- Halaman konfigurasi/referensi: Klien (PP), Program DB (PP), Promo (PP), Survei (B2B), Kalender (B2B/Event)
+- Halaman yang tidak punya "parent natural" — bisa diakses langsung tanpa konteks order tertentu
+
+**TIDAK masuk sidebar:**
+- Invoice — sub-dokumen dari Order, diakses dari Order Detail
+- Receipt — sub-dokumen dari Order, diakses dari Order Detail
+- Agreement / LOI — sub-dokumen dari Order, diakses dari Order Detail
+- Semua halaman yang secara alami berada di dalam konteks satu order spesifik
+
+### 6b. Struktur Sidebar per Modul (FINAL)
+
+```js
+// PP — 6 item
+const PP_SUB = [
+  { label: 'Dashboard',  path: '/pp/dashboard'  },
+  { label: 'Leads',      path: '/pp/leads'      },
+  { label: 'Orders',     path: '/pp/orders'     },
+  { label: 'Klien',      path: '/pp/klien'      },
+  { label: 'Program DB', path: '/pp/program-db' },
+  { label: 'Promo',      path: '/pp/promo'      },
+]
+
+// B2B — 5 item
+const B2B_SUB = [
+  { label: 'Dashboard', path: '/b2b/dashboard' },
+  { label: 'Leads',     path: '/b2b/leads'     },
+  { label: 'Survei',    path: '/b2b/survei'    },
+  { label: 'Orders',    path: '/b2b/orders'    },
+  { label: 'Kalender',  path: '/b2b/kalender'  },
+]
+
+// B2B Event — 4 item
+const EVENT_SUB = [
+  { label: 'Dashboard', path: '/event/dashboard' },
+  { label: 'Leads',     path: '/event/leads'     },
+  { label: 'Orders',    path: '/event/orders'    },
+  { label: 'Kalender',  path: '/event/kalender'  },
+]
+```
+
+⚠️ **Jangan tambah item ke array ini tanpa konfirmasi** — khususnya jika item yang akan ditambahkan adalah sub-dokumen dari Order (Invoice, Receipt, Agreement, dll).
+
+### 6c. Aturan Highlight Sidebar
+
+Saat halaman sub-dokumen (Invoice, Receipt, Agreement) dibuka melalui navigasi dari Order Detail:
+- **Yang harus highlight**: item Orders di sidebar (karena konteksnya masih dalam alur Order)
+- **Caranya**: pastikan route sub-dokumen dimulai dengan `/pp/orders/` atau navigasi dari Order menggunakan path yang prefix-nya match ke `/pp/orders`
+- Jangan fix "tidak ada highlight" dengan menambah sub-dokumen ke `*_SUB` array — itu solusi yang salah
+
+Jika halaman Invoice/Receipt/Agreement memiliki route standalone (`/pp/invoice`, `/pp/receipt`) yang tidak berawalan `/pp/orders/`, highlight sidebar akan hilang — dan solusi yang benar adalah **menerima kondisi ini** (tidak perlu highlight saat di halaman cross-order list view), bukan menambahnya ke sidebar.
