@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, Plus, Search, Users, Building2, Info, Phone, Mail, MapPin } from 'lucide-react'
+import { X, Plus, Search, Users, Building2, Info, Phone, Mail, MapPin, ToggleLeft, ToggleRight } from 'lucide-react'
 import { mitraList, mitraStats } from '../../data/opsData'
 
 const EMOJI_BG = ['#EBF5FB', '#EAFAF1', '#FEF9E7', '#F5EEF8', '#FEF3E2', '#E8F8F5']
@@ -147,7 +147,7 @@ function AddMitraModal({ onClose }) {
   )
 }
 
-function MitraCard({ mitra, idx, onDetail }) {
+function MitraCard({ mitra, idx, onDetail, onToggle }) {
   return (
     <div className="bg-white rounded-2xl border-[1.5px] border-gray-200 p-[22px] flex gap-4 items-start hover:shadow-md transition-shadow cursor-pointer">
       {/* Emoji icon */}
@@ -159,7 +159,22 @@ function MitraCard({ mitra, idx, onDetail }) {
       <div className="flex-1 min-w-0">
         <h3 className="text-[15px] font-bold text-text-primary truncate">{mitra.nama}</h3>
         <p className="text-[12px] text-text-muted mb-2">{mitra.kategori}</p>
-        <StatusBadge status={mitra.status} />
+        <button
+          onClick={e => { e.stopPropagation(); onToggle(mitra.id) }}
+          className="flex items-center gap-1.5"
+          title={mitra.status === 'aktif' ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'}
+        >
+          {mitra.status === 'aktif'
+            ? <ToggleRight size={18} className="text-[#1E1C43] shrink-0" />
+            : <ToggleLeft  size={18} className="text-gray-300 shrink-0"  />}
+          <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+            mitra.status === 'aktif'
+              ? 'bg-green-50 text-green-700 border-green-200'
+              : 'bg-gray-50 text-gray-500 border-gray-200'
+          }`}>
+            {mitra.status === 'aktif' ? 'Aktif' : 'Nonaktif'}
+          </span>
+        </button>
 
         {/* Contact info */}
         <div className="flex flex-col gap-1.5 mt-3 mb-3.5">
@@ -195,13 +210,20 @@ function MitraCard({ mitra, idx, onDetail }) {
 }
 
 export default function OPSMitraPage() {
+  const [list, setList] = useState(() => [...mitraList])
   const [kategoriFilter, setKategoriFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [search, setSearch] = useState('')
   const [selectedMitra, setSelectedMitra] = useState(null)
   const [showAdd, setShowAdd] = useState(false)
 
-  const filtered = mitraList.filter(m => {
+  function handleToggleAktif(id) {
+    setList(prev => prev.map(m =>
+      m.id === id ? { ...m, status: m.status === 'aktif' ? 'nonaktif' : 'aktif' } : m
+    ))
+  }
+
+  const filtered = list.filter(m => {
     if (kategoriFilter && kategoriFilter !== 'Semua Kategori' && m.kategori !== kategoriFilter) return false
     if (statusFilter && m.status !== statusFilter) return false
     if (search && !m.nama.toLowerCase().includes(search.toLowerCase()) && !m.kategori.toLowerCase().includes(search.toLowerCase())) return false
@@ -285,7 +307,7 @@ export default function OPSMitraPage() {
       {/* Grid */}
       <div className="grid grid-cols-2 gap-5">
         {filtered.map((mitra, i) => (
-          <MitraCard key={mitra.id} mitra={mitra} idx={i} onDetail={setSelectedMitra} />
+          <MitraCard key={mitra.id} mitra={mitra} idx={i} onDetail={setSelectedMitra} onToggle={handleToggleAktif} />
         ))}
         {filtered.length === 0 && (
           <div className="col-span-2 bg-white rounded-2xl border-[1.5px] border-gray-200 px-6 py-12 text-center text-[13px] text-text-muted">

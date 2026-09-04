@@ -1,8 +1,8 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Layers, RotateCcw, ChevronDown, Tag } from 'lucide-react'
+import { Plus, Search, Layers, RotateCcw, ChevronDown, Tag, ToggleLeft, ToggleRight } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
-import { getStoredPrograms } from '../../data/ppProgramStore'
+import { getStoredPrograms, updateStoredProgram } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
 
 const ROWS = 10
@@ -43,7 +43,7 @@ function PBtn({ children, active, onClick }) {
 
 export default function PPProgramDBPage() {
   const navigate = useNavigate()
-  const [programs] = useState(() => getStoredPrograms())
+  const [programs, setPrograms] = useState(() => getStoredPrograms())
   const [showMenu, setShowMenu] = useState(false)
   const menuRef = useRef(null)
   const [fStatus, setFStatus] = useState('')
@@ -87,6 +87,14 @@ export default function PPProgramDBPage() {
   const maxHarga = prices.length ? formatRp(Math.max(...prices)) : '—'
 
   function reset() { setFStatus(''); setFJenis(''); setFPIC(''); setFSearch('') }
+
+  function handleToggleAktif(id) {
+    const current = programs.find(x => x.id === id)
+    if (!current) return
+    const newStatus = current.status === 'aktif' ? 'inactive' : 'aktif'
+    updateStoredProgram(id, { status: newStatus })
+    setPrograms(getStoredPrograms())
+  }
 
   const start = (page - 1) * ROWS + 1
   const end   = Math.min(page * ROWS, filtered.length)
@@ -223,7 +231,24 @@ export default function PPProgramDBPage() {
                     </td>
                     <td className="text-xs font-semibold text-gray-500 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.biayaSesiPIC)}</td>
                     <td className="text-xs font-bold text-[#1E1C43] px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.harga)}</td>
-                    <td className="px-3 py-2.5 text-center"><Badge status={p.status} /></td>
+                    <td className="px-3 py-2.5">
+                      <button
+                        onClick={() => handleToggleAktif(p.id)}
+                        className="flex items-center gap-1.5"
+                        title={p.status === 'aktif' ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'}
+                      >
+                        {p.status === 'aktif'
+                          ? <ToggleRight size={18} className="text-[#1E1C43] shrink-0" />
+                          : <ToggleLeft  size={18} className="text-gray-300 shrink-0"  />}
+                        <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full whitespace-nowrap ${
+                          p.status === 'aktif'
+                            ? 'bg-green-50 text-green-700 border-green-200'
+                            : 'bg-gray-50 text-gray-500 border-gray-200'
+                        }`}>
+                          {p.status === 'aktif' ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                      </button>
+                    </td>
                   </tr>
                 )
               })}
