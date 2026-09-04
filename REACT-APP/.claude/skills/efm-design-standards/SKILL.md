@@ -145,8 +145,9 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 
 ## 3b. Full-Page Form / Sub-page — Header Card Standard
 
-> **Empat varian header card** ada di project ini — pilih berdasarkan tipe halaman:
-> - **List page** (Invoice list, Receipt list, Screening list, Documents list, dll): gunakan pola **Section 3c** — `flex-col sm:flex-row`, tanpa eyebrow label.
+> **Lima varian header** ada di project ini — pilih berdasarkan tipe halaman:
+> - **First-class entity list page** (Leads, Orders, ProgramDB, dll — berdiri sendiri, akses dari sidebar): gunakan **Tier 1 telanjang** — lihat Section 3c, tanpa card, `text-[22px]`, tidak ada tombol Kembali.
+> - **Sub-document list page** (Invoice list, Receipt list, Screening list, Documents list — turunan dari order/lead): gunakan **Tier 2 pola 3c** — `flex-col sm:flex-row`, ada card, ada tombol Kembali.
 > - **Form / sub-page** (Assessment Detail, Screening Detail, Konsultasi Detail, Order New, dll): gunakan **ikon bulat navy** — pola di section ini (3b).
 > - **Entity detail page** (Lead Detail, Order Detail): gunakan **initials avatar berwarna** — lihat `efm-component-patterns` Section 15.
 > - **Document detail page** (Invoice Detail, Receipt Detail, Agreement Detail): gunakan **pola flat single-row** — lihat Section 3d.
@@ -205,7 +206,57 @@ Header card untuk semua sub-page forms (Assessment Detail, Screening Detail, Kon
 
 ## 3c. List Page — Header Card Standard
 
-Pola untuk semua halaman **list** (Invoice, Receipt, Agreement, Screening, Orders, Leads, dll). Berbeda dari 3b: tidak ada eyebrow label, tombol pakai `flex-col sm:flex-row` bukan `flex-shrink-0`.
+### Dua Tier Header untuk List Page
+
+Tidak semua list page menggunakan header yang sama. Ada **2 tier** berdasarkan apakah halaman adalah "first-class entity" atau "sub-document":
+
+| Tier | Kapan digunakan | Contoh halaman |
+|---|---|---|
+| **Tier 1 — Telanjang (First-class entity)** | Entitas berdiri sendiri, tidak punya parent natural, akses langsung dari sidebar | PPLeadsPage, PPOrdersPage, PPProgramDBPage |
+| **Tier 2 — Pola 3c (Sub-document list)** | Daftar dokumen turunan dari suatu order/lead, ada back button ke parent | PPInvoicePage, PPReceiptPage, PPDocumentsPage |
+
+**Cara cepat menentukan tier:** Apakah halaman ini punya parent alami (mis. "semua invoice dari order X")? → Tier 2. Apakah halaman ini berdiri sendiri tanpa parent? → Tier 1.
+
+---
+
+### Tier 1 — Telanjang (First-class Entity)
+
+Header **tanpa card wrapper**, langsung di atas konten. Dipakai untuk entitas first-class yang akses langsung dari sidebar menu.
+
+```jsx
+{/* Telanjang — tanpa card */}
+<div className="flex flex-wrap items-start justify-between gap-3">
+  <div>
+    <h1 className="text-[22px] font-bold text-text-primary leading-tight">
+      Nama Halaman
+    </h1>
+    <p className="text-sm text-text-muted mt-1">Deskripsi singkat konten halaman</p>
+  </div>
+
+  {/* Kanan: tombol CTA utama (tidak ada tombol Kembali — tidak punya parent) */}
+  <div className="flex items-center gap-2">
+    <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-sm font-semibold transition-colors">
+      <Plus size={14} /> Tambah Baru
+    </button>
+  </div>
+</div>
+```
+
+**Aturan Tier 1:**
+- Tidak ada card wrapper (`bg-white rounded-2xl ...`) — header langsung inline di halaman
+- Tidak ada ikon bulat navy — bukan fitur first-class entity header
+- Judul: `text-[22px] font-bold text-text-primary` — LEBIH BESAR dari pola 3c (`text-lg`)
+- **Tidak ada tombol Kembali** — first-class entity tidak punya parent natural
+- Subtitle: `text-sm text-text-muted mt-1`
+- Outer wrapper: `flex flex-wrap items-start justify-between gap-3`
+
+---
+
+### Tier 2 — Pola 3c (Sub-document List)
+
+Pola untuk list halaman **dokumen turunan** (Invoice, Receipt, Agreement, Screening, dll). Ada card wrapper, ikon navy, dan tombol Kembali ke parent.
+
+Berbeda dari 3b: tidak ada eyebrow label, tombol pakai `flex-col sm:flex-row` bukan `flex-shrink-0`.
 
 ```jsx
 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
