@@ -409,7 +409,7 @@ function ClientSig({ status, tglTtd, namaKlien }) {
       </div>
     )
   }
-  if (status === 'waiting_approval') {
+  if (status === 'waiting-approval') {
     return (
       <div className="h-[72px] border border-[#AED6F1] rounded-xl flex items-center justify-center bg-[#EBF5FB] mb-2">
         <svg viewBox="0 0 160 48" width="120" height="36">
@@ -466,7 +466,7 @@ function AgreementDoc({ doc }) {
   const sigMeta = () => {
     if (doc.statusTtd === 'signed')
       return <span className="text-[#27AE60] text-[10px]">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
-    if (doc.statusTtd === 'waiting_approval')
+    if (doc.statusTtd === 'waiting-approval')
       return <span className="text-[#2980B9] text-[10px]">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
     if (doc.statusTtd === 'expired')
       return <span className="text-[#C0392B] text-[10px]">Expired — {doc.tglDibuat}</span>
@@ -670,7 +670,7 @@ function PreviewModal({ doc, onClose, onApprove, onSubmitSign }) {
             <button onClick={onClose} className="px-4 py-2 rounded-lg border border-gray-200 text-[13px] font-semibold text-text-muted hover:bg-gray-50 transition-colors">
               Tutup
             </button>
-            {doc.statusTtd === 'waiting_approval' && (
+            {doc.statusTtd === 'waiting-approval' && (
               <button
                 onClick={() => onApprove(doc.id)}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-semibold text-white transition-colors"
@@ -738,7 +738,7 @@ export default function PPDocumentsPage() {
   const stats = useMemo(() => ({
     pending:  docs.filter(d => d.statusTtd === 'pending').length,
     signed:   docs.filter(d => d.statusTtd === 'signed').length,
-    waiting:  docs.filter(d => d.statusTtd === 'waiting_approval').length,
+    waiting:  docs.filter(d => d.statusTtd === 'waiting-approval').length,
     total:    docs.length,
   }), [docs])
 
@@ -826,7 +826,7 @@ export default function PPDocumentsPage() {
           <option value="">Semua Status</option>
           <option value="signed">Sudah TTD</option>
           <option value="pending">Pending TTD</option>
-          <option value="waiting_approval">Menunggu Approval</option>
+          <option value="waiting-approval">Menunggu Approval</option>
           <option value="expired">Kadaluarsa</option>
         </select>
         <select value={fPaket} onChange={e => setFPaket(e.target.value)}
