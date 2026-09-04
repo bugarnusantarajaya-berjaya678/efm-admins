@@ -1046,53 +1046,30 @@ export default function PPOrderDetailPage() {
                 )}
               </div>
               <div className="p-5">
-                {/* Pendaftar */}
+                {/* Pendaftar — RRP card → Lead Detail */}
                 <div className="mb-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pendaftar</p>
-                    {order?.leadId && (
-                      <button
-                        onClick={() => navigate('/pp/leads/' + order.leadId)}
-                        className="flex items-center gap-1 text-xs text-[#1E1C43] hover:text-[#E05945] transition-colors"
-                      >
-                        Lihat Lead <ExternalLink size={11} />
-                      </button>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {[
-                      { label: 'Sapaan',         val: infoDeal.sapaan    },
-                      { label: 'Nama Pendaftar', val: infoDeal.namaKlien },
-                      { label: 'No. HP',         val: infoDeal.noHP      },
-                      { label: 'Email',          val: infoDeal.email     },
-                    ].map(({ label, val }) => (
-                      <div key={label} className="bg-gray-50 rounded-lg p-3">
-                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                          <Lock size={9} className="text-gray-300" /> {label}
-                        </p>
-                        <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendaftar</p>
+                  {order?.leadId ? (
+                    <div
+                      onClick={() => navigate('/pp/leads/' + order.leadId)}
+                      className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                          <Users size={14} className="text-[#1E1C43]" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-[#1E1C43] truncate">{order.leadId} — {infoDeal.namaKlien}</p>
+                          <p className="text-[10px] text-gray-400 truncate">
+                            {[infoDeal.noHP, infoDeal.email].filter(Boolean).join(' · ')}
+                          </p>
+                        </div>
                       </div>
-                    ))}
-                    {/* Hub. dengan Klien — live dari lead jika hasKlienIds, editable jika lama */}
-                    <div className="bg-gray-50 rounded-lg p-3">
-                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                        {hasKlienIds && <Lock size={9} className="text-gray-300" />} Hub. dengan Klien
-                      </p>
-                      {!hasKlienIds && editingSection === 'dataKlienTambahan' ? (
-                        <select
-                          value={infoDraft?.hubunganKlien || ''}
-                          onChange={e => setInfoDraft(d => ({ ...d, hubunganKlien: e.target.value }))}
-                          className="w-full text-sm border border-gray-200 rounded px-2 py-1 focus:outline-none focus:border-[#1E1C43] bg-white"
-                        >
-                          {['Diri Sendiri','Orang Tua','Pasangan','Anak','Saudara','Lainnya'].map(o => (
-                            <option key={o}>{o}</option>
-                          ))}
-                        </select>
-                      ) : (
-                        <p className="text-sm font-semibold text-gray-800">{liveHubungan}</p>
-                      )}
+                      <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
                     </div>
-                  </div>
+                  ) : (
+                    <p className="text-xs text-gray-400 italic">Data lead tidak tersedia.</p>
+                  )}
                 </div>
 
                 {/* Klien Latihan */}
