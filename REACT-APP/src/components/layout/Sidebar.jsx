@@ -12,8 +12,6 @@ const PP_SUB = [
   { label: 'Dashboard',      path: '/pp/dashboard'  },
   { label: 'Leads',          path: '/pp/leads'      },
   { label: 'Orders',         path: '/pp/orders'     },
-  { label: 'Invoice',        path: '/pp/invoice'    },
-  { label: 'Receipt',        path: '/pp/receipt'    },
   { label: 'Klien',          path: '/pp/klien'      },
   { label: 'Program DB',     path: '/pp/program-db' },
   { label: 'Promo',          path: '/pp/promo'      },
