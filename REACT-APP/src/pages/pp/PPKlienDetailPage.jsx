@@ -40,12 +40,11 @@ function formatTanggal(dateStr) {
 }
 
 const ORDER_STATUS_CLS = {
-  active:    'bg-blue-50 text-blue-700 border-blue-200',
-  completed: 'bg-green-50 text-green-700 border-green-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
-  pending:   'bg-yellow-50 text-yellow-700 border-yellow-200',
+  'Aktif':     'bg-blue-50 text-blue-700 border-blue-200',
+  'Completed': 'bg-green-50 text-green-700 border-green-200',
+  'Cancelled': 'bg-red-50 text-red-700 border-red-200',
 }
-const ORDER_STATUS_LABEL = { active: 'Aktif', completed: 'Selesai', cancelled: 'Dibatalkan', pending: 'Pending' }
+const ORDER_STATUS_LABEL = { 'Aktif': 'Aktif', 'Completed': 'Selesai', 'Cancelled': 'Dibatalkan' }
 
 const LEAD_STATUS_CLS = {
   'closed-won':  'bg-green-50 text-green-700 border-green-200',
@@ -233,7 +232,7 @@ export default function PPKlienDetailPage() {
                     <span className="text-xs text-gray-400">{usia} tahun</span>
                   </>
                 )}
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${isOrphan ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
+                <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${isOrphan ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-blue-50 text-blue-700 border-blue-200'}`}>
                   {isOrphan ? 'Orphan' : 'Aktif'}
                 </span>
               </div>
@@ -362,7 +361,7 @@ export default function PPKlienDetailPage() {
                   </div>
                 }
                 right={
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${LEAD_STATUS_CLS[lead.status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${LEAD_STATUS_CLS[lead.status] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                     {LEAD_STATUS_LABEL[lead.status] || lead.status}
                   </span>
                 }
@@ -372,7 +371,7 @@ export default function PPKlienDetailPage() {
                 <AlertTriangle size={14} className="text-amber-500 shrink-0" />
                 <div>
                   <p className="text-xs font-semibold text-amber-700">Klien Orphan</p>
-                  <p className="text-[10px] text-amber-600 mt-0.5">Tidak terhubung ke lead manapun</p>
+                  <p className="text-xs text-amber-600 mt-0.5">Tidak terhubung ke lead manapun</p>
                 </div>
               </div>
             )}
@@ -400,7 +399,7 @@ export default function PPKlienDetailPage() {
                       </div>
                     }
                     right={
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${ORDER_STATUS_CLS[ord.statusOrder] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${ORDER_STATUS_CLS[ord.statusOrder] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                         {ORDER_STATUS_LABEL[ord.statusOrder] || ord.statusOrder}
                       </span>
                     }
