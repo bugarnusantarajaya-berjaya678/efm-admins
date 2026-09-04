@@ -766,18 +766,18 @@ Receipt body berisi section-section berikut (urutan ini wajib, jangan tambah sec
 - Receipt — sub-dokumen dari Order, diakses dari Order Detail
 - Agreement / LOI — sub-dokumen dari Order, diakses dari Order Detail
 - Klien (PP) — diakses dari Lead Detail atau Order Detail
-- Promo (PP) — diakses dari dalam halaman Invoice
 - Semua halaman yang secara alami berada di dalam konteks satu order/lead spesifik
 
 ### 6b. Struktur Sidebar per Modul (FINAL)
 
 ```js
-// PP — 4 item
+// PP — 5 item
 const PP_SUB = [
-  { label: 'Dashboard',  path: '/pp/dashboard'  },
-  { label: 'Leads',      path: '/pp/leads'      },
-  { label: 'Orders',     path: '/pp/orders'     },
-  { label: 'Program DB', path: '/pp/program-db' },
+  { label: 'Dashboard',  path: '/pp/dashboard'                                        },
+  { label: 'Leads',      path: '/pp/leads',      also: ['/pp/klien']                  },
+  { label: 'Orders',     path: '/pp/orders',     also: ['/pp/invoice', '/pp/receipt'] },
+  { label: 'Promo',      path: '/pp/promo'                                            },
+  { label: 'Program DB', path: '/pp/program-db'                                       },
 ]
 
 // B2B — 5 item
@@ -804,7 +804,8 @@ const EVENT_SUB = [
 
 Saat halaman sub-dokumen (Invoice, Receipt, Agreement) dibuka melalui navigasi dari Order Detail:
 - **Yang harus highlight**: item Orders di sidebar (karena konteksnya masih dalam alur Order)
-- **Caranya**: pastikan route sub-dokumen dimulai dengan `/pp/orders/` atau navigasi dari Order menggunakan path yang prefix-nya match ke `/pp/orders`
+- **Caranya**: tambahkan path ke `also[]` di entry Orders: `also: ['/pp/invoice', '/pp/receipt']`
 - Jangan fix "tidak ada highlight" dengan menambah sub-dokumen ke `*_SUB` array — itu solusi yang salah
+- **Promo** sudah punya entry sendiri di sidebar (`/pp/promo`) — TIDAK perlu ada di `also[]` Orders
 
 Jika halaman Invoice/Receipt/Agreement memiliki route standalone (`/pp/invoice`, `/pp/receipt`) yang tidak berawalan `/pp/orders/`, highlight sidebar akan hilang — dan solusi yang benar adalah **menerima kondisi ini** (tidak perlu highlight saat di halaman cross-order list view), bukan menambahnya ke sidebar.
