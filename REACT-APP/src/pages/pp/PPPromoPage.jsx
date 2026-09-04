@@ -43,7 +43,7 @@ function KuotaDisplay({ p }) {
   const pct   = Math.round((p.jumlahPemakaian / p.maxPemakaian) * 100)
   return (
     <div>
-      <span className={`text-xs font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
+      <span className={`text-sm font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
         {p.jumlahPemakaian}/{p.maxPemakaian}
       </span>
       {habis && (
@@ -163,7 +163,7 @@ export default function PPPromoPage() {
           <option value="aktif">Aktif</option>
           <option value="nonaktif">Nonaktif / Expired</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
           <Search size={13} className="text-gray-400 shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari kode / nama promo..."
@@ -191,7 +191,7 @@ export default function PPPromoPage() {
                   ['Status',          110],
                   ['Aksi',            100],
                 ].map(([h, mw]) => (
-                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
@@ -235,7 +235,7 @@ export default function PPPromoPage() {
 
                     {/* Nama + periode */}
                     <td className="px-3 py-3">
-                      <p className="text-xs font-medium text-gray-900">{p.label}</p>
+                      <p className="text-sm font-semibold text-gray-800">{p.label}</p>
                       {p.keterangan && <p className="text-[10px] text-gray-400 mt-0.5 truncate max-w-[190px]">{p.keterangan}</p>}
                       {periodeStr && (
                         <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
@@ -259,12 +259,12 @@ export default function PPPromoPage() {
                     {/* Nilai / Benefit */}
                     <td className="px-3 py-3">
                       {p.tipe === 'diskon' ? (
-                        <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
+                        <span className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                           <Icon size={11} className="text-gray-400" />
                           {p.subTipe === 'persen' ? `${p.nilai}%` : `Rp ${(p.nilai || 0).toLocaleString('id-ID')}`}
                         </span>
                       ) : (
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
                           <Gift size={11} className="text-blue-400" />
                           {SUBTIPE_LABEL[p.subTipe]}
                         </span>
@@ -274,12 +274,12 @@ export default function PPPromoPage() {
                     {/* Program */}
                     <td className="px-3 py-3">
                       {p.programIds === null ? (
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <span className="text-sm text-gray-400 flex items-center gap-1">
                           <Unlock size={11} className="text-gray-300 shrink-0" /> Semua
                         </span>
                       ) : (
                         <span
-                          className="text-xs font-medium text-blue-600 flex items-center gap-1 cursor-default"
+                          className="text-sm font-medium text-blue-600 flex items-center gap-1 cursor-default"
                           title={p.programIds.join(', ')}
                         >
                           <Lock size={11} className="text-blue-400 shrink-0" />
