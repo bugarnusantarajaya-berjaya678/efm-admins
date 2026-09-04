@@ -487,22 +487,46 @@ List pages menggunakan **CSS token classes** (bukan literal Tailwind colors), de
 - Gunakan komponen `PBtn` (`w-8 h-8 rounded-lg text-xs font-semibold`) dengan SVG arrow prev/next + nomor halaman
 
 ### Filter Bar
+
+**Urutan elemen wajib (kiri → kanan):** select dropdowns → search input → reset button
+
 ```jsx
-<div className="bg-white rounded-xl shadow-sm p-4 mb-4">
-  <div className="flex gap-3 mb-3">
-    <select className="flex-1 ...">...</select>
-    <select className="flex-1 ...">...</select>
-    <div style={{ width: '72px' }}></div>
+<div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+  {/* 1. Select dropdowns (kiri) */}
+  <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+    <option value="">Semua Status</option>
+    {/* ... */}
+  </select>
+  <select className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+    <option value="">Semua Jenis</option>
+    {/* ... */}
+  </select>
+
+  {/* 2. Search input (mengisi sisa ruang, flex-1) */}
+  <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+    <Search size={14} className="text-text-muted shrink-0" />
+    <input
+      className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
+      placeholder="Cari nama, ID..."
+    />
   </div>
-  <div className="flex gap-3">
-    <input className="flex-1 ..." placeholder="Cari..." />
-    <button className="px-4 py-2 border border-gray-300 rounded-lg text-sm text-gray-600">Reset</button>
-  </div>
+
+  {/* 3. Reset button (paling kanan) */}
+  <button className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+    <RotateCcw size={12} /> Reset
+  </button>
 </div>
 ```
 
+**Aturan urutan:**
+- Selects selalu di kiri — jangan diletakkan di kanan search
+- Search input pakai `flex-1 min-w-[200px]` supaya mengisi ruang tersisa
+- Reset selalu paling kanan dengan `shrink-0` supaya tidak mengecil
+- Container: `bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap`
+
 ⚠️ **Semua `<option>` di filter dropdown WAJIB Bahasa Indonesia** — tidak boleh Inggris. Contoh: `Expired` → `Kadaluarsa`, `Sent` → `Terkirim`, `Failed` → `Gagal`, `Draft` → `Draft`.
 ⚠️ **Placeholder teks search** juga harus Indonesia: "Cari nama klien, ID...", bukan "Search...".
+⚠️ **Jangan balik urutan** — search SETELAH selects, reset PALING KANAN. Ini sudah diterapkan di semua halaman list (PPProgramDBPage, PPOrdersPage, PPLeadsPage, PPKlienListPage, dll).
 
 ### Modal
 - Outer: `fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4`

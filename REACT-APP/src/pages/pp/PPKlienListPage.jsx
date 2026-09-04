@@ -158,15 +158,6 @@ export default function PPKlienListPage() {
 
       {/* Filter Bar */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
-          <Search size={14} className="text-text-muted shrink-0" />
-          <input
-            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
-            placeholder="Cari nama klien..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
         <select
           value={filterJK}
           onChange={e => setFilterJK(e.target.value)}
@@ -186,6 +177,15 @@ export default function PPKlienListPage() {
           <option value="orphan">Orphan (tanpa lead)</option>
           <option value="punya-assessment">Punya Assessment</option>
         </select>
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
+          <input
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
+            placeholder="Cari nama klien..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </div>
         <button
           onClick={handleReset}
           className="px-3.5 py-2 bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"
