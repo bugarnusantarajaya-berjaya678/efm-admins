@@ -104,7 +104,7 @@ export default function PPProgramDBPage() {
           <div className="relative" ref={menuRef}>
             <button
               onClick={() => setShowMenu(v => !v)}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               <Layers size={14} />
               Pengaturan

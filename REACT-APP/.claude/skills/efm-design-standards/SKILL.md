@@ -134,6 +134,7 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 | Konteks | Class dasar (tambahkan warna sesuai tipe) |
 |---|---|
 | **Header page** — action row di kanan atas halaman | `flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition-colors` |
+| **Header page** — tombol dropdown navigasi (mis. Dokumen, Pengaturan) | Tombol sama persis: `h-8 px-3 text-xs font-semibold` + ChevronDown `size={12}`. Dropdown panel: `absolute top-full mt-1.5 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-30`. Item: `w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors`. Divider antar item: `<div className="border-t border-gray-100" />`. ⚠️ Selalu pakai divider antar item — dropdown tanpa divider tidak konsisten. |
 | **List page** — tombol Buat/Tambah Baru | `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
 | **Modal footer** — Batal / Simpan | `px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
 | **Section CTA standalone** — Konfirmasi, Kirim | `flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors` |
