@@ -4,7 +4,7 @@ import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
-import { getKlienById } from '../../data/ppKlienStore'
+import { getKlienById, getKlienByOrderId } from '../../data/ppKlienStore'
 import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
@@ -402,11 +402,12 @@ export default function PPOrderDetailPage() {
 
   const ppPrograms = getStoredPrograms().map(toPaket)
 
-  // Integrated klien data — order baru punya klienIds linked ke ppKlienStore
-  const hasKlienIds = (order?.klienIds?.length ?? 0) > 0
-  const resolvedKlienList = hasKlienIds
-    ? (order.klienIds || []).map(id => getKlienById(id)).filter(Boolean)
-    : []
+  // Integrated klien data — lookup via ORDER_TO_KLIEN_ID map, fallback ke klienIds field
+  const _klienFromMap = getKlienByOrderId(id)
+  const resolvedKlienList = _klienFromMap
+    ? [_klienFromMap]
+    : (order?.klienIds || []).map(kId => getKlienById(kId)).filter(Boolean)
+  const hasKlienIds = resolvedKlienList.length > 0
   const liveLead = order?.leadId ? getLeadById(order.leadId) : null
   const liveHubungan = liveLead?.hubunganDenganKlien || infoDeal.hubunganKlien || 'Diri Sendiri'
 
