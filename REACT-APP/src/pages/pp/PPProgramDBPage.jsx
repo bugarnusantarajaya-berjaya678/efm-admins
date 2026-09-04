@@ -1,6 +1,6 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Layers, RotateCcw } from 'lucide-react'
+import { Plus, Search, Layers, RotateCcw, ChevronDown, Tag } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -44,6 +44,8 @@ function PBtn({ children, active, onClick }) {
 export default function PPProgramDBPage() {
   const navigate = useNavigate()
   const [programs] = useState(() => getStoredPrograms())
+  const [showMenu, setShowMenu] = useState(false)
+  const menuRef = useRef(null)
   const [fStatus, setFStatus] = useState('')
   const [fJenis,  setFJenis]  = useState('')
   const [fPIC,    setFPIC]    = useState('')
@@ -68,6 +70,14 @@ export default function PPProgramDBPage() {
 
   useEffect(() => { setPage(1) }, [fStatus, fJenis, fPIC, fSearch])
 
+  useEffect(() => {
+    function handleClick(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) setShowMenu(false)
+    }
+    if (showMenu) document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [showMenu])
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS))
   const slice = filtered.slice((page - 1) * ROWS, page * ROWS)
 
@@ -90,13 +100,36 @@ export default function PPProgramDBPage() {
           <p className="text-sm text-text-muted mt-1">Kelola paket program, harga, dan penugasan PIC trainer</p>
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <button
-            onClick={() => navigate('/pp/program-db/jenis')}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-          >
-            <Layers size={14} />
-            Jenis Program
-          </button>
+          {/* Dropdown: Jenis Program & Promo */}
+          <div className="relative" ref={menuRef}>
+            <button
+              onClick={() => setShowMenu(v => !v)}
+              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <Layers size={14} />
+              Pengaturan
+              <ChevronDown size={13} className={`transition-transform ${showMenu ? 'rotate-180' : ''}`} />
+            </button>
+            {showMenu && (
+              <div className="absolute right-0 top-full mt-1.5 w-48 bg-white rounded-xl border border-gray-200 shadow-lg z-30 overflow-hidden">
+                <button
+                  onClick={() => { setShowMenu(false); navigate('/pp/program-db/jenis') }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Layers size={14} className="text-gray-400" />
+                  Jenis Program
+                </button>
+                <div className="border-t border-gray-100" />
+                <button
+                  onClick={() => { setShowMenu(false); navigate('/pp/promo') }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <Tag size={14} className="text-gray-400" />
+                  Promo &amp; Diskon
+                </button>
+              </div>
+            )}
+          </div>
           <button
             onClick={() => navigate('/pp/program-db/new')}
             className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-lg transition-colors"
