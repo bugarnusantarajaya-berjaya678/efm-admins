@@ -165,28 +165,29 @@ export default function PPOrdersPage() {
           <div className="relative" ref={docMenuRef}>
             <button
               onClick={() => setShowDocMenu(v => !v)}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
             >
               <FileText size={14} />
               Dokumen
               <ChevronDown size={12} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
             </button>
             {showDocMenu && (
-              <div className="absolute left-0 sm:left-auto sm:right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
-                {[
-                  { icon: FileText,      label: 'Invoice',    path: '/pp/invoice' },
-                  { icon: Receipt,       label: 'Receipt',    path: '/pp/receipt' },
-                  { icon: FileText,      label: 'Agreement',  path: '/pp/documents' },
-                  { icon: ClipboardList, label: 'Assessment', path: '/pp/screening' },
-                ].map(({ icon: Icon, label, path }) => (
-                  <button
-                    key={path}
-                    onClick={() => { setShowDocMenu(false); navigate(path) }}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <Icon size={14} className="text-gray-400" /> {label}
-                  </button>
-                ))}
+              <div className="absolute left-0 sm:left-auto sm:right-0 top-full mt-1.5 z-20 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden w-48">
+                <button onClick={() => { setShowDocMenu(false); navigate('/pp/invoice') }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <FileText size={14} className="text-gray-400" /> Invoice
+                </button>
+                <div className="border-t border-gray-100" />
+                <button onClick={() => { setShowDocMenu(false); navigate('/pp/receipt') }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <Receipt size={14} className="text-gray-400" /> Receipt
+                </button>
+                <div className="border-t border-gray-100" />
+                <button onClick={() => { setShowDocMenu(false); navigate('/pp/documents') }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <FileText size={14} className="text-gray-400" /> Agreement
+                </button>
+                <div className="border-t border-gray-100" />
+                <button onClick={() => { setShowDocMenu(false); navigate('/pp/screening') }} className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                  <ClipboardList size={14} className="text-gray-400" /> Assessment
+                </button>
               </div>
             )}
           </div>
