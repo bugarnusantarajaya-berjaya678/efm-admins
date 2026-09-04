@@ -7,7 +7,7 @@ import { getAllAssessments } from '../../data/ppAssessmentsStore'
 /* ═══════════════════════════════════════
    Constants
 ═══════════════════════════════════════ */
-const ROWS_PER_PAGE = 15
+const ROWS = 10
 
 const JK_CLS = {
   'Laki-laki': 'bg-blue-50 text-blue-700 border-blue-200',
@@ -57,16 +57,11 @@ function StatMini({ label, value, sub, accent }) {
   )
 }
 
-function PaginBtn({ label, onClick, disabled, active }) {
+function PBtn({ children, active, onClick }) {
   return (
-    <button onClick={onClick} disabled={disabled}
-      className={[
-        'w-8 h-8 flex items-center justify-center rounded-lg text-xs font-semibold border transition-colors',
-        active   ? 'bg-primary text-white border-primary'                                       : '',
-        disabled ? 'opacity-35 cursor-not-allowed border-border text-text-muted'                : '',
-        !active && !disabled ? 'border-border text-text-muted hover:border-primary hover:text-primary' : '',
-      ].join(' ')}>
-      {label}
+    <button onClick={onClick} className={`w-8 h-8 rounded-lg text-xs font-semibold flex items-center justify-center border transition-colors
+      ${active ? 'bg-primary text-white border-primary' : 'bg-white text-text-muted border-border hover:border-primary hover:text-primary'}`}>
+      {children}
     </button>
   )
 }
@@ -112,9 +107,9 @@ export default function PPKlienListPage() {
       })
   , [klienAll, search, filterJK, filterStatus, assessmentMap])
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS_PER_PAGE))
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ROWS))
   const safePage   = Math.min(page, totalPages)
-  const pageRows   = filtered.slice((safePage - 1) * ROWS_PER_PAGE, safePage * ROWS_PER_PAGE)
+  const pageRows   = filtered.slice((safePage - 1) * ROWS, safePage * ROWS)
 
   const kpiTotal      = klienAll.length
   const kpiPunyaLead  = klienAll.filter(k =>  k.leadId).length
@@ -262,7 +257,7 @@ export default function PPKlienListPage() {
                     {/* Jenis Kelamin */}
                     <td className="px-3 py-2.5">
                       {klien.jenisKelamin ? (
-                        <span className={`px-2 py-0.5 text-[10px] font-medium rounded-full border ${JK_CLS[klien.jenisKelamin] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full border ${JK_CLS[klien.jenisKelamin] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                           {klien.jenisKelamin}
                         </span>
                       ) : <span className="text-xs text-gray-400">—</span>}
@@ -288,7 +283,7 @@ export default function PPKlienListPage() {
                       ) : (
                         <div className="flex items-center gap-1">
                           <AlertCircle size={12} className="text-amber-500 shrink-0" />
-                          <span className="text-[10px] text-amber-600 font-medium">Orphan</span>
+                          <span className="text-xs text-amber-600 font-medium">Orphan</span>
                         </div>
                       )}
                     </td>
@@ -296,7 +291,7 @@ export default function PPKlienListPage() {
                     {/* Assessment Count */}
                     <td className="px-3 py-2.5 whitespace-nowrap">
                       {asmCount > 0 ? (
-                        <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
+                        <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-green-50 text-green-700 border border-green-200">
                           {asmCount}×
                         </span>
                       ) : (
@@ -313,14 +308,18 @@ export default function PPKlienListPage() {
         {/* Pagination Footer */}
         <div className="flex items-center justify-between px-4 py-3 border-t border-border">
           <span className="text-xs text-text-muted">
-            {filtered.length === 0 ? 'Tidak ada klien ditemukan' : `Menampilkan ${filtered.length === 0 ? 0 : (safePage - 1) * ROWS_PER_PAGE + 1}–${Math.min(safePage * ROWS_PER_PAGE, filtered.length)} dari ${filtered.length} klien`}
+            {filtered.length === 0 ? 'Tidak ada klien ditemukan' : `Menampilkan ${filtered.length === 0 ? 0 : (safePage - 1) * ROWS + 1}–${Math.min(safePage * ROWS, filtered.length)} dari ${filtered.length} klien`}
           </span>
           <div className="flex items-center gap-1.5">
-            <PaginBtn label="‹" onClick={() => setPage(p => Math.max(1, p - 1))}         disabled={safePage === 1} />
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-              <PaginBtn key={p} label={p} onClick={() => setPage(p)} active={p === safePage} />
+            <PBtn onClick={() => setPage(p => Math.max(1, p - 1))}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
+            </PBtn>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(n => (
+              <PBtn key={n} active={n === safePage} onClick={() => setPage(n)}>{n}</PBtn>
             ))}
-            <PaginBtn label="›" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={safePage === totalPages} />
+            <PBtn onClick={() => setPage(p => Math.min(totalPages, p + 1))}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </PBtn>
           </div>
         </div>
       </div>
