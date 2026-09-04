@@ -41,7 +41,7 @@ function SessionBar({ done, total, statusOrder }) {
       <div className="h-[5px] bg-border rounded-full w-28 overflow-hidden">
         <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: barColor }} />
       </div>
-      <span className="text-[11px] text-text-muted">{done}/{total} sesi</span>
+      <span className="text-xs text-text-muted">{done}/{total} sesi</span>
     </div>
   )
 }
@@ -64,7 +64,7 @@ function Badge({ type, status }) {
   const style = type === 'order' ? ORDER_STYLE[status] : INV_STYLE[status]
   const label = type === 'order' ? STATUS_ORDER_LABEL[status] : STATUS_INV_LABEL[status]
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium whitespace-nowrap ${style ?? ''}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${style ?? ''}`}>
       <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />{label}
     </span>
   )
@@ -455,66 +455,73 @@ export default function PPOrdersPage() {
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <div className="flex items-start justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-[22px] font-bold text-text-primary">Private Training Orders</h1>
-          <p className="text-sm text-text-muted mt-1">Kelola semua order klien private training</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="relative" ref={docMenuRef}>
-            <button
-              onClick={() => setShowDocMenu(v => !v)}
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg text-sm font-medium text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
-            >
-              <FileText size={14} />
-              Dokumen
-              <ChevronDown size={13} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
-            </button>
-            {showDocMenu && (
-              <div className="absolute left-0 sm:left-auto sm:right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
-                {[
-                  { icon: FileText,     label: 'Invoice',    path: '/pp/invoice' },
-                  { icon: Receipt,      label: 'Receipt',    path: '/pp/receipt' },
-                  { icon: FileText,     label: 'Agreement',  path: '/pp/documents' },
-                  { icon: ClipboardList, label: 'Assessment', path: '/pp/screening' },
-                ].map(({ icon: Icon, label, path }) => (
-                  <button
-                    key={path}
-                    onClick={() => { setShowDocMenu(false); navigate(path) }}
-                    className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <Icon size={14} className="text-gray-400" /> {label}
-                  </button>
-                ))}
-              </div>
-            )}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+              <ClipboardList size={20} className="text-white" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Orders Private Training</h1>
+              <p className="text-sm text-text-muted mt-0.5">Kelola semua order klien private training</p>
+            </div>
           </div>
-          <button
-            onClick={() => navigate('/pp/orders/new')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-accent hover:bg-accent-hover transition-colors"
-          >
-            <Plus size={15} strokeWidth={2.5} /> Tambah Order
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="relative" ref={docMenuRef}>
+              <button
+                onClick={() => setShowDocMenu(v => !v)}
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-gray-600 border border-gray-300 hover:bg-gray-50 transition-colors"
+              >
+                <FileText size={13} />
+                Dokumen
+                <ChevronDown size={12} className={`transition-transform duration-200 ${showDocMenu ? 'rotate-180' : ''}`} />
+              </button>
+              {showDocMenu && (
+                <div className="absolute left-0 sm:left-auto sm:right-0 top-10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg py-1 min-w-[168px]">
+                  {[
+                    { icon: FileText,      label: 'Invoice',    path: '/pp/invoice' },
+                    { icon: Receipt,       label: 'Receipt',    path: '/pp/receipt' },
+                    { icon: FileText,      label: 'Agreement',  path: '/pp/documents' },
+                    { icon: ClipboardList, label: 'Assessment', path: '/pp/screening' },
+                  ].map(({ icon: Icon, label, path }) => (
+                    <button
+                      key={path}
+                      onClick={() => { setShowDocMenu(false); navigate(path) }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                    >
+                      <Icon size={14} className="text-gray-400" /> {label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <button
+              onClick={() => navigate('/pp/orders/new')}
+              className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#E05945] hover:bg-[#c94a38] transition-colors"
+            >
+              <Plus size={15} strokeWidth={2.5} /> Tambah Order
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatMini label="Total Orders" value={total}     accent="orange" />
-        <StatMini label="Active"       value={active}    />
-        <StatMini label="Completed"    value={completed} accent="green"  />
-        <StatMini label="Cancelled"    value={cancelled} accent="red"    />
+        <StatMini label="Total Order" value={total}     accent="orange" />
+        <StatMini label="Aktif"       value={active}    />
+        <StatMini label="Selesai"     value={completed} accent="green"  />
+        <StatMini label="Dibatalkan"  value={cancelled} accent="red"    />
       </div>
 
       {/* Filter bar */}
       <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={filterBulan} onChange={e => { setFilterBulan(e.target.value); setPage(1) }}
-          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Bulan</option>
           {['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'].map(b => <option key={b}>{b}</option>)}
         </select>
         <select value={filterTahun} onChange={e => { setFilterTahun(e.target.value); setPage(1) }}
-          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tahun</option>
           <option value="2025">2025</option>
           <option value="2026">2026</option>
@@ -526,11 +533,11 @@ export default function PPOrdersPage() {
           { value: filterPaket,  set: (v) => { setFilterPaket(v);  setPage(1) }, opts: [['','Semua Paket'],  ...PAKET_OPTS.map((p) => [p,p])] },
         ].map((f, i) => (
           <select key={i} value={f.value} onChange={(e) => f.set(e.target.value)}
-            className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+            className="px-3 py-2 border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
             {f.opts.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         ))}
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-2 focus-within:border-primary focus-within:bg-white transition-colors">
           <Search size={14} className="text-text-muted shrink-0" />
           <input
             type="text" value={search}
@@ -539,7 +546,7 @@ export default function PPOrdersPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted"
           />
         </div>
-        <button onClick={resetFilter} className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
+        <button onClick={resetFilter} className="px-3.5 py-2 bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5"><RotateCcw size={12} /> Reset</button>
       </div>
 
       {/* Highlight banner */}
