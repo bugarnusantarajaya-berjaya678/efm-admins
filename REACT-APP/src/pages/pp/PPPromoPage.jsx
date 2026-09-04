@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Gift,
   Percent, DollarSign, Search, RotateCcw, Calendar, Lock, Unlock,
@@ -506,14 +507,13 @@ function fmtTgl(iso) {
 }
 
 export default function PPPromoPage() {
+  const navigate = useNavigate()
   const { setCrumbs } = useBreadcrumb()
   const [list, setList]     = useState(() => getAllPromo())
   const [fTipe,   setFTipe]   = useState('')
   const [fStatus, setFStatus] = useState('')
   const [fTema,   setFTema]   = useState('')
   const [search,  setSearch]  = useState('')
-  const [modal,     setModal]     = useState(null)
-  const [editTarget, setEditTarget] = useState(null)
   const [confirmDel, setConfirmDel] = useState(null)
 
   useEffect(() => {
@@ -522,17 +522,6 @@ export default function PPPromoPage() {
   }, [])
 
   function refresh() { setList(getAllPromo()) }
-
-  function handleAdd(data) {
-    const ok = addPromo(data)
-    if (!ok) { alert('Kode sudah ada.'); return }
-    refresh(); setModal(null)
-  }
-
-  function handleEdit(data) {
-    updatePromo(data.kode, data)
-    refresh(); setModal(null); setEditTarget(null)
-  }
 
   function handleDelete() {
     deletePromo(confirmDel)
@@ -562,8 +551,6 @@ export default function PPPromoPage() {
   const totalTematik = list.filter(p => p.tema).length
   const totalAktif   = list.filter(p => getEffectiveStatus(p) === 'aktif').length
 
-  const existingKodes = list.map(p => p.kode)
-
   return (
     <div className="flex flex-col gap-4">
 
@@ -574,7 +561,7 @@ export default function PPPromoPage() {
           <p className="text-sm text-gray-500 mt-1">Kelola kode promo yang dapat digunakan di Order &amp; Invoice PP</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={() => { setEditTarget(null); setModal('add') }}
+          <button onClick={() => navigate('/pp/promo/new')}
             className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
             <Plus size={14} /> Tambah Promo
           </button>
@@ -774,7 +761,7 @@ export default function PPPromoPage() {
                     {/* Aksi */}
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-1.5">
-                        <button onClick={() => { setEditTarget(p); setModal('edit') }}
+                        <button onClick={() => navigate(`/pp/promo/${p.kode}`)}
                           className="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1">
                           <Pencil size={11} /> Edit
                         </button>
@@ -805,16 +792,6 @@ export default function PPPromoPage() {
           </p>
         </div>
       </div>
-
-      {/* ── Modal tambah / edit ── */}
-      {(modal === 'add' || modal === 'edit') && (
-        <PromoModal
-          initial={modal === 'edit' ? editTarget : null}
-          existingKodes={existingKodes}
-          onSave={modal === 'edit' ? handleEdit : handleAdd}
-          onClose={() => { setModal(null); setEditTarget(null) }}
-        />
-      )}
 
       {/* ── Konfirmasi hapus ── */}
       {confirmDel && (
