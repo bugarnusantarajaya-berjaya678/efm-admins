@@ -568,23 +568,16 @@ export default function PPPromoPage() {
     <div className="flex flex-col gap-4">
 
       {/* ── Header ── */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
-              <Tag size={20} className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-lg font-bold text-[#1E1C43] leading-tight">Promo &amp; Diskon</h1>
-              <p className="text-sm text-gray-400 mt-0.5">Kelola kode promo yang dapat digunakan di Order &amp; Invoice PP</p>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <button onClick={() => { setEditTarget(null); setModal('add') }}
-              className="flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
-              <Plus size={13} /> Tambah Promo
-            </button>
-          </div>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-[22px] font-bold text-[#1E1C43] leading-tight">Promo &amp; Diskon</h1>
+          <p className="text-sm text-gray-500 mt-1">Kelola kode promo yang dapat digunakan di Order &amp; Invoice PP</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button onClick={() => { setEditTarget(null); setModal('add') }}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
+            <Plus size={14} /> Tambah Promo
+          </button>
         </div>
       </div>
 
@@ -613,19 +606,19 @@ export default function PPPromoPage() {
       {/* ── Filter + Search ── */}
       <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fTipe} onChange={e => setFTipe(e.target.value)}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
           <option value="">Semua Tipe</option>
           <option value="diskon">Diskon</option>
           <option value="bonus">Bonus / Free</option>
         </select>
         <select value={fTema} onChange={e => setFTema(e.target.value)}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
           <option value="">Semua Tema</option>
           <option value="tematik">Tematik</option>
           <option value="biasa">Biasa</option>
         </select>
         <select value={fStatus} onChange={e => setFStatus(e.target.value)}
-          className="px-3 py-2 border border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
           <option value="">Semua Status</option>
           <option value="aktif">Aktif</option>
           <option value="nonaktif">Nonaktif / Expired</option>
@@ -637,7 +630,7 @@ export default function PPPromoPage() {
             className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400" />
         </div>
         <button onClick={reset}
-          className="px-3 py-2 bg-[#1E1C43] hover:opacity-90 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+          className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
           <RotateCcw size={12} /> Reset
         </button>
       </div>
@@ -693,7 +686,7 @@ export default function PPPromoPage() {
                       <span className="text-xs font-semibold text-[#1E1C43] font-mono tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{p.kode}</span>
                       {p.tema && (
                         <div className="mt-1">
-                          <span className={`text-[10px] font-medium border px-1.5 py-0.5 rounded-full ${TEMA_WARNA_CLS[p.tema.warna] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                          <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full ${TEMA_WARNA_CLS[p.tema.warna] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
                             {p.tema.icon} {p.tema.nama}
                           </span>
                         </div>
@@ -713,7 +706,7 @@ export default function PPPromoPage() {
 
                     {/* Tipe */}
                     <td className="px-3 py-3">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${TIPE_CLS[p.tipe]}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${TIPE_CLS[p.tipe]}`}>
                         {p.tipe === 'diskon' ? '💸 ' : '🎁 '}{TIPE_LABEL[p.tipe]}
                       </span>
                       {p.benefitBonus && (
