@@ -74,7 +74,7 @@ function getAvatarColor(name) {
 ═══════════════════════════════════════ */
 function TipeBadge({ tipe }) {
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${TIPE_CLS[tipe] ?? 'bg-gray-100 text-gray-600'}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${TIPE_CLS[tipe] ?? 'bg-gray-100 text-gray-600'}`}>
       {tipe}
     </span>
   )
@@ -82,7 +82,7 @@ function TipeBadge({ tipe }) {
 
 function StageBadge({ stage }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium ${STAGE_CLS[stage] ?? 'bg-gray-100 text-gray-600'}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${STAGE_CLS[stage] ?? 'bg-gray-100 text-gray-600'}`}>
       <span className="w-1.5 h-1.5 rounded-full bg-current shrink-0" />
       {stage}
     </span>
@@ -748,7 +748,7 @@ export default function EventLeadDetailPage() {
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-sm font-bold text-[#1E1C43]">{k.id}</span>
                             {k.hasil && (
-                              <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${hasilCls}`}>{hasilLabel}</span>
+                              <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full border ${hasilCls}`}>{hasilLabel}</span>
                             )}
                           </div>
                           <p className="text-xs text-gray-500">{k.tanggal}</p>
@@ -800,7 +800,7 @@ export default function EventLeadDetailPage() {
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-0.5">
                             <span className="text-sm font-bold text-[#1E1C43]">{q.id}</span>
-                            <span className={`px-1.5 py-0.5 text-[10px] font-medium rounded-full border ${statusCls}`}>{q.status}</span>
+                            <span className={`px-1.5 py-0.5 text-xs font-medium rounded-full border ${statusCls}`}>{q.status}</span>
                           </div>
                           <p className="text-xs text-gray-500">{q.tanggalDibuat} · Berlaku s/d {q.tanggalBerlaku || '—'}</p>
                           {q.namaEvent && <p className="text-xs text-gray-600 mt-0.5">{q.namaEvent}</p>}

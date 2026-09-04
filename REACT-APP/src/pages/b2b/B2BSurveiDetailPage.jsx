@@ -470,7 +470,7 @@ export default function B2BSurveiDetailPage() {
                     { label: 'Fasilitas', done: Object.values(areas).some(Boolean) },
                     { label: 'Program',   done: programList.some(p => p.jenisKelas) },
                   ].map(({ label, done }) => (
-                    <span key={label} className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                    <span key={label} className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                       done ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'
                     }`}>
                       {label} {done ? '✓' : '○'}
