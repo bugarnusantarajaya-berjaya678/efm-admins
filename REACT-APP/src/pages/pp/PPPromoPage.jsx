@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, Gift,
+  Tag, Plus, ToggleLeft, ToggleRight, Gift,
   Percent, DollarSign, Search, RotateCcw, Calendar, Lock, Unlock,
   Sparkles, Info,
 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { getAllPromo, deletePromo, toggleAktif } from '../../data/ppPromoStore'
+import { getAllPromo, toggleAktif } from '../../data/ppPromoStore'
 import { TIPE_LABEL, SUBTIPE_LABEL, TEMA_WARNA_CLS } from '../../data/ppPromoData'
 
 const SUBTIPE_ICON = {
@@ -43,7 +43,7 @@ function KuotaDisplay({ p }) {
   const pct   = Math.round((p.jumlahPemakaian / p.maxPemakaian) * 100)
   return (
     <div>
-      <span className={`text-xs font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
+      <span className={`text-sm font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
         {p.jumlahPemakaian}/{p.maxPemakaian}
       </span>
       {habis && (
@@ -67,19 +67,12 @@ export default function PPPromoPage() {
   const [fStatus, setFStatus] = useState('')
   const [fTema,   setFTema]   = useState('')
   const [search,  setSearch]  = useState('')
-  const [confirmDel, setConfirmDel] = useState(null)
-
   useEffect(() => {
     setCrumbs(['Private Program', 'Promo & Diskon'])
     return () => setCrumbs(null)
   }, [])
 
   function refresh() { setList(getAllPromo()) }
-
-  function handleDelete() {
-    deletePromo(confirmDel)
-    refresh(); setConfirmDel(null)
-  }
 
   function handleToggle(kode) {
     toggleAktif(kode); refresh()
@@ -163,7 +156,7 @@ export default function PPPromoPage() {
           <option value="aktif">Aktif</option>
           <option value="nonaktif">Nonaktif / Expired</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
           <Search size={13} className="text-gray-400 shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari kode / nama promo..."
@@ -178,26 +171,25 @@ export default function PPPromoPage() {
       {/* ── Tabel ── */}
       <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
         <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '240px' }}>
-          <table className="w-full" style={{ minWidth: '920px' }}>
+          <table className="w-full" style={{ minWidth: '880px' }}>
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
-                  ['Kode Promo',     150],
-                  ['Nama / Deskripsi', 210],
-                  ['Tipe',           110],
-                  ['Nilai / Benefit', 150],
-                  ['Program',         110],
-                  ['Kuota',            90],
-                  ['Status',          110],
-                  ['Aksi',            100],
+                  ['Kode Promo',      160],
+                  ['Nama / Deskripsi', 220],
+                  ['Tipe',            130],
+                  ['Nilai / Benefit', 140],
+                  ['Program',         120],
+                  ['Kuota',           110],
+                  ['Status',          150],
                 ].map(([h, mw]) => (
-                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {filtered.length === 0 && (
-                <tr><td colSpan={8} className="text-center py-12 text-xs text-gray-400">Tidak ada data promo.</td></tr>
+                <tr><td colSpan={7} className="text-center py-12 text-xs text-gray-400">Tidak ada data promo.</td></tr>
               )}
               {filtered.map(p => {
                 const Icon = SUBTIPE_ICON[p.subTipe] || Tag
@@ -219,7 +211,7 @@ export default function PPPromoPage() {
                   : null
 
                 return (
-                  <tr key={p.kode} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                  <tr key={p.kode} onClick={() => navigate(`/pp/promo/${p.kode}`)} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
 
                     {/* Kode + tema badge */}
                     <td className="px-3 py-3">
@@ -235,7 +227,7 @@ export default function PPPromoPage() {
 
                     {/* Nama + periode */}
                     <td className="px-3 py-3">
-                      <p className="text-xs font-medium text-gray-900">{p.label}</p>
+                      <p className="text-sm font-semibold text-gray-800">{p.label}</p>
                       {p.keterangan && <p className="text-[10px] text-gray-400 mt-0.5 truncate max-w-[190px]">{p.keterangan}</p>}
                       {periodeStr && (
                         <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
@@ -259,12 +251,12 @@ export default function PPPromoPage() {
                     {/* Nilai / Benefit */}
                     <td className="px-3 py-3">
                       {p.tipe === 'diskon' ? (
-                        <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
+                        <span className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                           <Icon size={11} className="text-gray-400" />
                           {p.subTipe === 'persen' ? `${p.nilai}%` : `Rp ${(p.nilai || 0).toLocaleString('id-ID')}`}
                         </span>
                       ) : (
-                        <span className="text-xs text-gray-500 flex items-center gap-1">
+                        <span className="text-sm text-gray-500 flex items-center gap-1">
                           <Gift size={11} className="text-blue-400" />
                           {SUBTIPE_LABEL[p.subTipe]}
                         </span>
@@ -274,12 +266,12 @@ export default function PPPromoPage() {
                     {/* Program */}
                     <td className="px-3 py-3">
                       {p.programIds === null ? (
-                        <span className="text-xs text-gray-400 flex items-center gap-1">
+                        <span className="text-sm text-gray-400 flex items-center gap-1">
                           <Unlock size={11} className="text-gray-300 shrink-0" /> Semua
                         </span>
                       ) : (
                         <span
-                          className="text-xs font-medium text-blue-600 flex items-center gap-1 cursor-default"
+                          className="text-sm font-medium text-blue-600 flex items-center gap-1 cursor-default"
                           title={p.programIds.join(', ')}
                         >
                           <Lock size={11} className="text-blue-400 shrink-0" />
@@ -297,7 +289,7 @@ export default function PPPromoPage() {
                     {/* Status toggle */}
                     <td className="px-3 py-3">
                       <div className="flex flex-col gap-1">
-                        <button onClick={() => handleToggle(p.kode)} className="flex items-center gap-1.5">
+                        <button onClick={e => { e.stopPropagation(); handleToggle(p.kode) }} className="flex items-center gap-1.5">
                           {p.aktif
                             ? <ToggleRight size={18} className="text-[#1E1C43] shrink-0" />
                             : <ToggleLeft  size={18} className="text-gray-300 shrink-0" />}
@@ -311,19 +303,6 @@ export default function PPPromoPage() {
                       </div>
                     </td>
 
-                    {/* Aksi */}
-                    <td className="px-3 py-3">
-                      <div className="flex items-center gap-1.5">
-                        <button onClick={() => navigate(`/pp/promo/${p.kode}`)}
-                          className="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-gray-100 transition-colors flex items-center gap-1">
-                          <Pencil size={11} /> Edit
-                        </button>
-                        <button onClick={() => setConfirmDel(p.kode)}
-                          className="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-red-100 text-red-500 hover:bg-red-50 transition-colors flex items-center gap-1">
-                          <Trash2 size={11} /> Hapus
-                        </button>
-                      </div>
-                    </td>
                   </tr>
                 )
               })}
@@ -346,21 +325,6 @@ export default function PPPromoPage() {
         </div>
       </div>
 
-      {/* ── Konfirmasi hapus ── */}
-      {confirmDel && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setConfirmDel(null)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6" onClick={e => e.stopPropagation()}>
-            <p className="text-sm font-bold text-[#1E1C43] mb-1">Hapus kode promo?</p>
-            <p className="text-xs text-gray-500 mb-4">
-              Kode <span className="font-semibold text-gray-700">{confirmDel}</span> akan dihapus permanen. Order &amp; invoice yang sudah menggunakan kode ini tidak terpengaruh.
-            </p>
-            <div className="flex justify-end gap-2">
-              <button onClick={() => setConfirmDel(null)} className="px-4 py-2 rounded-lg text-sm font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50">Batal</button>
-              <button onClick={handleDelete} className="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white hover:bg-red-700">Hapus</button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
