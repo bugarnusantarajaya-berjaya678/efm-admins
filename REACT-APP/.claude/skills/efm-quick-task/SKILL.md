@@ -147,7 +147,49 @@ update skill: catat keputusan tidak pakai Rp di header
 
 ---
 
-## Pattern 8 — Buat Halaman Baru (dari nol)
+## Pattern 8 — Cek / Analisis (tanpa edit)
+
+**Trigger:** `cek: [komponen/pola] di [scope]`
+
+**Contoh:**
+```
+cek: tombol header di semua modul PP
+cek: urutan filter bar di PPKlienListPage vs halaman lain
+cek: badge status di EventLeadsPage
+```
+
+**Workflow yang dijalankan:**
+1. Grep atau baca file terdampak
+2. Bandingkan dengan pattern standar di skill
+3. Buat ringkasan perbedaan yang ditemukan
+4. **TIDAK langsung fix** — lapor temuan saja, tanya apakah mau dilanjutkan
+
+**Aturan penting:** `cek:` adalah analysis-only mode. Claude tidak boleh langsung edit setelah analisis tanpa konfirmasi eksplisit dari pengguna. Setelah laporan, tunggu instruksi: fix / skip / update skill.
+
+---
+
+## Pattern 9 — Pindahkan Elemen UI
+
+**Trigger:** `pindahkan [elemen] dari [lokasi asal] ke [lokasi tujuan]`
+
+**Contoh:**
+```
+pindahkan PP Promo dari sidebar ke dropdown Pengaturan di PPProgramDBPage
+pindahkan tombol Tambah Lead dari footer ke header PPLeadsPage
+```
+
+**Workflow yang dijalankan:**
+1. Baca file asal (hapus elemen dari sana)
+2. Baca file tujuan (tambahkan elemen di sana, sesuaikan styling)
+3. Kalau asal dan tujuan adalah file yang sama → satu read, satu edit
+4. Verifikasi tidak ada referensi sisa di file asal
+5. Build + push + PR
+
+**Catatan:** kalau elemen dipindahkan dari sidebar (Sidebar.jsx) ke halaman lain, baca dua file secara terpisah — jangan asumsi struktur Sidebar tanpa membacanya.
+
+---
+
+## Pattern 10 — Buat Halaman Baru (dari nol)
 
 **Trigger:** `buat [NamaHalaman] untuk modul [PP/B2B/Event]`
 
@@ -172,17 +214,28 @@ clone PPReceiptPage ke Event, route /event/receipt/:id
 ```
 ↑ Claude tahu: baca file, adaptasi modul, daftarkan route, build, push, PR, tanya merge.
 
-**Tambahkan hanya kalau berbeda dari default:**
+**Scope modifier — override default dengan flag pendek:**
+
+| Flag | Artinya |
+|---|---|
+| `--no-pr` | Jangan buat PR, cukup push branch |
+| `--no-push` | Jangan push, cukup build dan lapor |
+| `--no-merge-prompt` | Selesai tanpa tanya konfirmasi merge |
+| `--analysis-only` | Sama dengan Pattern `cek:` — baca dan lapor, jangan edit |
+
+Contoh penggunaan:
 ```
-clone PPReceiptPage ke Event, route /event/receipt/:id
-— skip PR, langsung lapor saja
+fix: tombol Kembali di EventOrderDetail tidak navigate --no-pr
+clone PPReceiptPage ke Event, route /event/receipt/:id --no-merge-prompt
 ```
 
-**Kombinasi pattern juga oke:**
+**Kombinasi pattern dengan `+`:**
 ```
 match PP: header card di EventLeadDetailPage
 + tambah field koordinator ke section bawahnya
 ```
+
+Boleh chain 2 pattern dalam satu prompt. Lebih dari 2 → Claude akan rekomendasikan chunking terlebih dahulu.
 
 ---
 
