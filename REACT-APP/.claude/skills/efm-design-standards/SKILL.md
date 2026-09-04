@@ -757,27 +757,27 @@ Receipt body berisi section-section berikut (urutan ini wajib, jangan tambah sec
 ⚠️ **Recurring mistake**: menambahkan sub-dokumen (Invoice, Receipt, Agreement) sebagai item sidebar — ini SALAH. Hanya entitas first-class yang boleh masuk sidebar modul.
 
 **Masuk sidebar (`*_SUB` array):**
-- Entitas yang berdiri sendiri sebagai first-class entity: Dashboard, Leads, Orders
-- Halaman konfigurasi/referensi: Klien (PP), Program DB (PP), Promo (PP), Survei (B2B), Kalender (B2B/Event)
-- Halaman yang tidak punya "parent natural" — bisa diakses langsung tanpa konteks order tertentu
+- Entitas workflow utama: Dashboard, Leads, Orders
+- Halaman referensi teknis yang tidak punya parent natural: Program DB (PP), Survei (B2B), Kalender (B2B/Event)
+- Prinsip: **seminimal mungkin** — hanya halaman yang benar-benar tidak bisa diakses dari alur navigasi lain
 
 **TIDAK masuk sidebar:**
 - Invoice — sub-dokumen dari Order, diakses dari Order Detail
 - Receipt — sub-dokumen dari Order, diakses dari Order Detail
 - Agreement / LOI — sub-dokumen dari Order, diakses dari Order Detail
-- Semua halaman yang secara alami berada di dalam konteks satu order spesifik
+- Klien (PP) — diakses dari Lead Detail atau Order Detail
+- Promo (PP) — diakses dari dalam halaman Invoice
+- Semua halaman yang secara alami berada di dalam konteks satu order/lead spesifik
 
 ### 6b. Struktur Sidebar per Modul (FINAL)
 
 ```js
-// PP — 6 item
+// PP — 4 item
 const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
   { label: 'Leads',      path: '/pp/leads'      },
   { label: 'Orders',     path: '/pp/orders'     },
-  { label: 'Klien',      path: '/pp/klien'      },
   { label: 'Program DB', path: '/pp/program-db' },
-  { label: 'Promo',      path: '/pp/promo'      },
 ]
 
 // B2B — 5 item
