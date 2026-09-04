@@ -2017,6 +2017,16 @@ const [newTahapanCatatan, setNewTahapanCatatan] = useState('')
 
 Pola standar untuk menampilkan dan mengubah status **aktif/nonaktif** sebuah entitas. Berlaku untuk semua halaman list yang memiliki kolom status biner (aktif ↔ nonaktif).
 
+### Dua jenis toggle di project ini — JANGAN tertukar
+
+| Jenis | Komponen | Dipakai untuk | File contoh |
+|---|---|---|---|
+| **Toggle Status Entitas** | `ToggleLeft`/`ToggleRight` dari lucide-react | Flip status data master (aktif ↔ nonaktif) — ada badge teks di samping | `PPPromoPage`, `PPProgramDBPage`, `OPSMitraPage` |
+| **Toggle Section Form** | Custom `ToggleSwitch` (pill HTML) | Show/hide section form — expand/collapse UI, bukan perubahan data status | `PPFitnessAssessmentPage` |
+
+⚠️ **Jangan gunakan lucide ToggleLeft/ToggleRight untuk expand/collapse section form** — itu fungsi UI, bukan status data.
+⚠️ **Jangan gunakan custom pill toggle untuk status entitas** — tidak ada badge teks, tidak konsisten dengan halaman lain.
+
 ### Dua konteks pemakaian
 
 | Konteks | Kapan dipakai | Ukuran toggle |
@@ -2087,9 +2097,12 @@ function handleToggleAktif(id) {
 - **Import**: `ToggleLeft, ToggleRight` dari `lucide-react` — SELALU keduanya sekaligus
 - **Warna aktif**: `text-[#1E1C43]` (navy) — BUKAN hijau, BUKAN orange
 - **Warna nonaktif**: `text-gray-300`
-- **Badge warna**: ikuti status/semantic color dari `efm-design-standards`:
+- **Badge warna** — ikuti persis, jangan improvisasi:
   - Aktif → `bg-green-50 text-green-700 border-green-200`
-  - Nonaktif → `bg-gray-50 text-gray-500 border-gray-200`
+  - Nonaktif → `bg-gray-50 text-gray-500 border-gray-200` — BUKAN `bg-gray-100 text-gray-400` (lebih gelap, tidak sesuai standar)
+- **Label teks** — WAJIB tanpa tanda hubung:
+  - ✓ `'Aktif'` dan `'Nonaktif'`
+  - ✗ `'Non-Aktif'` — dilarang, tidak konsisten
 - **DILARANG** menampilkan status hanya sebagai plain badge tanpa toggle di halaman yang memiliki entitas config/master data (Program, Promo, Jenis, dll)
 - **Pengecualian**: entity operasional yang status-nya berubah melalui workflow bisnis (Order, Lead, Invoice) → gunakan badge saja, ubah status melalui tombol aksi eksplisit atau modal
 
