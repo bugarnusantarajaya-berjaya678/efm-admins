@@ -13,7 +13,7 @@ const SUBTIPE_ICON = {
 
 const STATUS_CLS = {
   true:  'bg-green-50 text-green-700 border-green-200',
-  false: 'bg-gray-100 text-gray-400 border-gray-200',
+  false: 'bg-gray-50 text-gray-500 border-gray-200',
 }
 
 const TIPE_CLS = {
@@ -333,7 +333,7 @@ export default function PPPromoPage() {
                         ? <ToggleRight size={18} className="text-[#1E1C43]" />
                         : <ToggleLeft  size={18} className="text-gray-300" />}
                       <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full ${STATUS_CLS[p.aktif]}`}>
-                        {p.aktif ? 'Aktif' : 'Non-Aktif'}
+                        {p.aktif ? 'Aktif' : 'Nonaktif'}
                       </span>
                     </button>
                   </td>

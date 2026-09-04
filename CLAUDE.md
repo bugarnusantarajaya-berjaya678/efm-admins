@@ -88,20 +88,12 @@ Setiap kali menyelesaikan sebuah task/perubahan kode:
 
 1. Pastikan perubahan sudah di-push ke branch kerja (bukan main)
 
-2. Selalu sertakan di akhir laporan: link PR DAN link Vercel
-   branch preview URL. JANGAN konstruksi URL preview secara manual
-   dari nama branch — branch panjang di-truncate Vercel dan URL
-   yang dikonstruksi tidak bisa dibuka. Selalu ambil URL preview
-   yang benar dengan memanggil mcp__github__pull_request_read
-   (method: get_comments) setelah PR dibuat, lalu baca field
-   previewUrl dari komentar Vercel bot di PR tersebut.
+2. Sertakan di akhir laporan: **link PR** saja. Jangan fetch Vercel
+   preview URL via API (get_comments) — pengguna tidak memakainya
+   dan ini memboroskan GitHub API quota. Pengguna akan refresh
+   efm-admins.vercel.app setelah PR di-merge.
 
-3. Jangan gunakan URL immutable deployment (yang formatnya 
-   efm-admins-[hash acak]-bugar-nusantara-jaya.vercel.app) sebagai 
-   link yang dibagikan ke pengguna - itu snapshot statis, tidak 
-   update otomatis
-
-4. efm-admins.vercel.app (tanpa suffix branch) adalah production, 
+3. efm-admins.vercel.app (tanpa suffix branch) adalah production,
    terhubung ke branch main - hanya update setelah PR di-merge
 
 ## Pull Request Otomatis
@@ -123,6 +115,12 @@ Setiap kali menyelesaikan task dan sudah push ke branch:
    "Open" sebelum melaporkan ke pengguna, jangan asumsi atau
    sebut nomor dari memori/sesi sebelumnya.
 
+4. **Batch perubahan ke satu PR.** Perubahan kecil yang berkaitan
+   (misalnya: beberapa fix UI di modul yang sama, atau dokumentasi
+   skill + implementasinya) digabung ke satu branch dan satu PR —
+   bukan PR terpisah per perubahan. Ini menghemat GitHub API quota
+   dan mengurangi risiko rate limit.
+
 ## Konfirmasi Merge
 
 Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
@@ -130,9 +128,8 @@ Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
 
 1. JANGAN langsung merge PR secara otomatis.
 
-2. Di akhir laporan, setelah link PR dan Vercel preview,
-   tambahkan pertanyaan eksplisit: "Sudah oke untuk di-merge ke
-   main? (ya/tidak)"
+2. Di akhir laporan, setelah link PR, tambahkan pertanyaan
+   eksplisit: "Sudah oke untuk di-merge ke main? (ya/tidak)"
 
 3. Kalau pengguna menjawab "ya" / "oke" / "lanjut" / "merge"
    atau kalimat senada yang menyatakan setuju - jalankan merge
