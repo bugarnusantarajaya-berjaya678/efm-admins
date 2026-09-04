@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
-import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2, User } from 'lucide-react';
+import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2, User, Tag, Gift, X, Sparkles } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
 import { getKlienByLeadId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
 import { PIC_DB } from '../../data/ppProgramDBData';
+import { validatePromo } from '../../data/ppPromoStore';
+import { TEMA_WARNA_CLS } from '../../data/ppPromoData';
 
 function toPaket(p) {
   const pic = PIC_DB[p.picId] || {};
@@ -77,6 +79,11 @@ export default function PPOrderNewPage() {
   // Section 6: Rincian Layanan / Invoice Items
   const [items, setItems] = useState([]);
 
+  // Section 6: Kode Promo
+  const [promoKodeInput, setPromoKodeInput] = useState('');
+  const [promoApplied, setPromoApplied] = useState(null); // promo object | null
+  const [promoError, setPromoError] = useState('');
+
   // Section 7: Catatan
   const [catatanOrder, setCatatanOrder] = useState('');
 
@@ -132,6 +139,25 @@ export default function PPOrderNewPage() {
 
   const handleRemoveItem = (id) => {
     setItems(items.filter(item => item.id !== id));
+  };
+
+  const handleApplyPromo = () => {
+    const kode = promoKodeInput.trim();
+    if (!kode) return;
+    const result = validatePromo(kode, { programId: selectedPaket?.id || null });
+    if (result.valid) {
+      setPromoApplied(result.promo);
+      setPromoError('');
+    } else {
+      setPromoApplied(null);
+      setPromoError(result.error);
+    }
+  };
+
+  const handleClearPromo = () => {
+    setPromoApplied(null);
+    setPromoKodeInput('');
+    setPromoError('');
   };
 
   const parseGoogleMapsLink = (url) => {
@@ -193,6 +219,13 @@ export default function PPOrderNewPage() {
   const totalNilai = items.reduce((sum, item) => sum + (item.total || 0), 0);
   const formatRp = (val) => 'Rp ' + (val || 0).toLocaleString('id-ID');
 
+  const nilaiDiskon = (() => {
+    if (!promoApplied || promoApplied.tipe !== 'diskon') return 0;
+    if (promoApplied.subTipe === 'persen') return Math.round(totalNilai * promoApplied.nilai / 100);
+    return Math.min(promoApplied.nilai, totalNilai);
+  })();
+  const totalSetelahPromo = totalNilai - nilaiDiskon;
+
   const handleSimpanOrder = () => {
     const newId = getNextOrderId()
     const today = new Date().toISOString().split('T')[0]
@@ -249,7 +282,12 @@ export default function PPOrderNewPage() {
       hariLatihan: jadwal.hariLatihan,
       jamLatihan: jadwal.jamLatihan,
       lokasiLatihan,
-      nilaiKontrak: totalNilai,
+      nilaiKontrak: totalSetelahPromo,
+      nilaiDiskon,
+      promoKode: promoApplied?.kode || null,
+      promoTipe: promoApplied?.tipe || null,
+      promoBenefitBonus: promoApplied?.tipe === 'bonus' ? (promoApplied.keterangan || promoApplied.benefitBonus || null) : null,
+      promoTema: promoApplied?.tema || null,
       rincianLayanan: items,
       catatanOrder,
       statusOrder: 'Aktif',
@@ -669,11 +707,123 @@ export default function PPOrderNewPage() {
           )}
 
           {selectedPaket && (
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-gray-100 space-y-1">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 font-semibold">Total Nilai Order</span>
-                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalNilai)}</span>
+                <span className="text-sm text-gray-500">Subtotal</span>
+                <span className="text-sm text-gray-600">{formatRp(totalNilai)}</span>
               </div>
+              {nilaiDiskon > 0 && (
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-green-600">Diskon Promo ({promoApplied?.kode})</span>
+                  <span className="text-sm font-semibold text-green-600">− {formatRp(nilaiDiskon)}</span>
+                </div>
+              )}
+              <div className="flex justify-between items-center pt-1 border-t border-gray-100">
+                <span className="text-sm text-gray-700 font-semibold">Total Nilai Order</span>
+                <span className="text-xl font-bold text-[#1E1C43]">{formatRp(totalSetelahPromo)}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── SECTION 6: Kode Promo ── */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4 flex items-center gap-2">
+            <Tag size={14} /> Kode Promo <span className="text-xs font-normal text-gray-400">(opsional)</span>
+          </h3>
+
+          {promoApplied ? (
+            <div className="space-y-3">
+              {/* Thematic banner */}
+              {promoApplied.tema && (
+                <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium ${TEMA_WARNA_CLS[promoApplied.tema.warna] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+                  <Sparkles size={13} className="shrink-0" />
+                  <span>{promoApplied.tema.icon} Promo Tematik: <strong>{promoApplied.tema.nama}</strong></span>
+                </div>
+              )}
+
+              {/* Applied promo card */}
+              <div className={`rounded-xl border-2 p-4 ${promoApplied.tipe === 'diskon' ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-start gap-2.5">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${promoApplied.tipe === 'diskon' ? 'bg-green-100' : 'bg-blue-100'}`}>
+                      {promoApplied.tipe === 'diskon' ? <Tag size={14} className="text-green-600" /> : <Gift size={14} className="text-blue-600" />}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className={`text-xs font-bold px-1.5 py-0.5 rounded font-mono ${promoApplied.tipe === 'diskon' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}>
+                          {promoApplied.kode}
+                        </span>
+                        <span className={`text-xs font-semibold ${promoApplied.tipe === 'diskon' ? 'text-green-800' : 'text-blue-800'}`}>
+                          {promoApplied.label}
+                        </span>
+                      </div>
+                      <p className={`text-xs ${promoApplied.tipe === 'diskon' ? 'text-green-700' : 'text-blue-700'}`}>
+                        {promoApplied.keterangan}
+                      </p>
+                      {promoApplied.benefitBonus && (
+                        <p className={`text-xs mt-1 font-medium ${promoApplied.tipe === 'diskon' ? 'text-green-600' : 'text-blue-600'}`}>
+                          + {promoApplied.benefitBonus}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <button onClick={handleClearPromo}
+                    className="text-gray-400 hover:text-red-500 transition-colors shrink-0">
+                    <X size={16} />
+                  </button>
+                </div>
+
+                {/* Diskon preview */}
+                {promoApplied.tipe === 'diskon' && totalNilai > 0 && (
+                  <div className="mt-3 pt-3 border-t border-green-200 flex justify-between items-center">
+                    <span className="text-xs text-green-700">
+                      Diskon{promoApplied.subTipe === 'persen' ? ` ${promoApplied.nilai}%` : ''}:
+                    </span>
+                    <span className="text-sm font-bold text-green-700">− {formatRp(nilaiDiskon)}</span>
+                  </div>
+                )}
+                {promoApplied.tipe === 'diskon' && totalNilai > 0 && (
+                  <div className="flex justify-between items-center mt-1">
+                    <span className="text-xs text-green-700 font-semibold">Total setelah promo:</span>
+                    <span className="text-base font-bold text-[#1E1C43]">{formatRp(totalSetelahPromo)}</span>
+                  </div>
+                )}
+                {promoApplied.tipe === 'bonus' && (
+                  <p className="text-xs text-blue-600 mt-3 pt-3 border-t border-blue-200 italic">
+                    Promo bonus tidak mengubah harga — benefit dicatat di invoice.
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={promoKodeInput}
+                  onChange={e => { setPromoKodeInput(e.target.value.toUpperCase()); setPromoError(''); }}
+                  onKeyDown={e => e.key === 'Enter' && handleApplyPromo()}
+                  placeholder="Masukkan kode promo..."
+                  className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43] font-mono uppercase"
+                />
+                <button
+                  onClick={handleApplyPromo}
+                  disabled={!promoKodeInput.trim()}
+                  className="px-4 py-2 bg-[#1E1C43] text-white rounded-lg text-sm font-semibold hover:bg-[#2d2b5e] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Terapkan
+                </button>
+              </div>
+              {promoError && (
+                <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg p-3">
+                  <XCircle size={14} className="text-red-500 mt-0.5 shrink-0" />
+                  <p className="text-xs text-red-600">{promoError}</p>
+                </div>
+              )}
+              {!selectedPaket && (
+                <p className="text-xs text-gray-400 italic">Pilih paket terlebih dahulu agar validasi program promo akurat.</p>
+              )}
             </div>
           )}
         </div>
@@ -818,7 +968,8 @@ export default function PPOrderNewPage() {
             </p>
             {items.length > 0 && (
               <p className="text-xs text-gray-400 mt-0.5">
-                Total: <span className="font-semibold text-[#1E1C43]">{formatRp(totalNilai)}</span>
+                Total: <span className="font-semibold text-[#1E1C43]">{formatRp(totalSetelahPromo)}</span>
+                {nilaiDiskon > 0 && <span className="text-green-600 ml-1">(hemat {formatRp(nilaiDiskon)})</span>}
               </p>
             )}
           </div>
