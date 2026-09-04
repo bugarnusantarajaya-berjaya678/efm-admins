@@ -10,8 +10,8 @@ import {
 
 const PP_SUB = [
   { label: 'Dashboard',  path: '/pp/dashboard'  },
-  { label: 'Leads',      path: '/pp/leads'      },
-  { label: 'Orders',     path: '/pp/orders'     },
+  { label: 'Leads',      path: '/pp/leads',      also: ['/pp/klien']              },
+  { label: 'Orders',     path: '/pp/orders',     also: ['/pp/invoice', '/pp/receipt', '/pp/promo'] },
   { label: 'Program DB', path: '/pp/program-db' },
 ]
 
@@ -214,7 +214,8 @@ export default function Sidebar({ isOpen, onClose }) {
                               )
                             }
 
-                            const subActive = location.pathname.startsWith(sub.path)
+                            const subActive = location.pathname.startsWith(sub.path) ||
+                              (sub.also?.some(p => location.pathname.startsWith(p)) ?? false)
                             return (
                               <li key={sub.path}>
                                 <NavLink
