@@ -2027,6 +2027,7 @@ Pola standar untuk menampilkan dan mengubah status **aktif/nonaktif** sebuah ent
 ⚠️ **Jangan gunakan lucide ToggleLeft/ToggleRight untuk expand/collapse section form** — itu fungsi UI, bukan status data.
 ⚠️ **Jangan gunakan custom pill toggle untuk status entitas** — tidak ada badge teks, tidak konsisten dengan halaman lain.
 
+
 ### Dua konteks pemakaian
 
 | Konteks | Kapan dipakai | Ukuran toggle |
