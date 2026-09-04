@@ -2118,3 +2118,215 @@ function handleToggleAktif(id) {
 
 **Catatan OPSMitraPage (card grid):** karena layout card bukan tabel, toggle dipasang di dalam card komponen dan aksi `e.stopPropagation()` diperlukan agar klik toggle tidak bubble ke handler card parent. Pola toggle tetap sama secara visual.
 
+---
+
+## 19. Promo & Diskon System (PP Module)
+
+Sistem promo PP diimplementasikan di 4 layer: data model, store/validator, form input, dan tampilan di order detail + invoice.
+
+### Data Model (`ppPromoData.js`)
+
+Setiap entry promo memiliki field berikut:
+
+```js
+{
+  id: 'PROMO-001',
+  kode: 'RAMADAN26',
+  nama: 'Promo Ramadan 2026',
+  tipe: 'diskon',        // 'diskon' | 'bonus'
+  subTipe: 'persen',     // diskon: 'persen' | 'nominal'; bonus: 'treatment' | 'latihan' | 'produk'
+  nilai: 20,             // angka: persen (%) atau nominal (Rp)
+  status: 'aktif',       // 'aktif' | 'nonaktif'
+  programIds: null,      // null = berlaku semua; array string = hanya program tertentu
+  tanggalMulai: '2026-03-01',   // null = tanpa batas awal
+  tanggalBerakhir: '2026-03-31', // null = tidak expired
+  maxPemakaian: 100,     // null = tidak terbatas
+  jumlahPemakaian: 0,    // counter usage
+  benefitBonus: 'Sesi stretching gratis 30 mnt',  // null untuk tipe diskon
+  keterangan: '...',
+  tema: {                // null jika bukan promo tematik
+    nama: 'Ramadan Kareem',
+    icon: '🌙',
+    warna: 'green',      // key ke TEMA_WARNA_CLS
+    berlakuHingga: '31 Mar 2026',
+  }
+}
+```
+
+**`TEMA_WARNA_CLS`** — color map untuk banner tematik:
+```js
+export const TEMA_WARNA_CLS = {
+  red:    'bg-red-50 text-red-600 border-red-200',
+  blue:   'bg-blue-50 text-blue-600 border-blue-200',
+  green:  'bg-green-50 text-green-600 border-green-200',
+  orange: 'bg-orange-50 text-orange-600 border-orange-200',
+  yellow: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+  purple: 'bg-purple-50 text-purple-600 border-purple-200',
+}
+```
+
+### Validator (`ppPromoStore.js`)
+
+Selalu gunakan `validatePromo()` — JANGAN lookup manual ke array. Fungsi ini melakukan 5-layer validation:
+
+```js
+import { validatePromo, incrementPemakaian } from '../../data/ppPromoStore'
+import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
+
+// Signature:
+const result = validatePromo(kode, { programId: null, tanggal: null })
+// result.valid === true  → result.promo = objek promo lengkap
+// result.valid === false → result.error = pesan error bahasa Indonesia spesifik
+
+// 5 layer (urutan):
+// 1. kode tidak ditemukan
+// 2. status nonaktif
+// 3. tanggalBerakhir sudah lewat (kadaluarsa)
+// 4. tanggalMulai belum tercapai (belum mulai)
+// 5. programIds restriction (kalau programId diberikan)
+// 6. maxPemakaian habis (kuota_habis)
+```
+
+Setelah order berhasil dibuat/dipakai:
+```js
+incrementPemakaian(kode)  // tambah jumlahPemakaian +1
+```
+
+### Section Kode Promo di Form Order Baru
+
+State yang dibutuhkan:
+```js
+const [promoKodeInput, setPromoKodeInput] = useState('')
+const [promoApplied, setPromoApplied] = useState(null)
+const [promoError, setPromoError] = useState('')
+```
+
+Computed values:
+```js
+const nilaiDiskon = (() => {
+  if (!promoApplied || promoApplied.tipe !== 'diskon') return 0
+  if (promoApplied.subTipe === 'persen') return Math.round(totalNilai * promoApplied.nilai / 100)
+  return Math.min(promoApplied.nilai, totalNilai)
+})()
+const totalSetelahPromo = totalNilai - nilaiDiskon
+```
+
+Handler apply/clear:
+```js
+const handleApplyPromo = () => {
+  const kode = promoKodeInput.trim()
+  if (!kode) return
+  const result = validatePromo(kode, { programId: selectedPaket?.id || null })
+  if (result.valid) { setPromoApplied(result.promo); setPromoError('') }
+  else { setPromoApplied(null); setPromoError(result.error) }
+}
+const handleClearPromo = () => { setPromoApplied(null); setPromoKodeInput(''); setPromoError('') }
+```
+
+Data yang disimpan saat `handleSimpanOrder`:
+```js
+nilaiKontrak: totalSetelahPromo,
+nilaiDiskon,
+promoKode: promoApplied?.kode || null,
+promoTipe: promoApplied?.tipe || null,
+promoBenefitBonus: promoApplied?.tipe === 'bonus' ? (promoApplied.keterangan || promoApplied.benefitBonus || null) : null,
+promoTema: promoApplied?.tema || null,
+```
+
+### Tampilan Promo di Order Detail Page
+
+Letakkan blok ini **antara biaya tambahan dan navy total box**:
+
+```jsx
+{/* Tema promo banner */}
+{order.promoTema && (() => {
+  const t = order.promoTema
+  const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
+  return (
+    <div className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border mt-3 ${cls}`}>
+      <Sparkles size={13} className="shrink-0" />
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
+        {t.berlakuHingga && <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>}
+      </div>
+    </div>
+  )
+})()}
+
+{/* Baris subtotal + diskon */}
+{order.nilaiDiskon > 0 && (
+  <div className="border border-gray-100 rounded-xl px-3 py-2.5 mt-3 space-y-1.5">
+    <div className="flex justify-between items-center">
+      <span className="text-xs text-gray-500">Subtotal</span>
+      <span className="text-xs font-semibold text-gray-700">{formatRp(subtotalRaw)}</span>
+    </div>
+    <div className="flex justify-between items-center">
+      <span className="flex items-center gap-1.5 text-xs text-green-700">
+        <Tag size={11} />
+        Diskon Promo
+        {order.promoKode && <span className="bg-green-100 px-1.5 py-0.5 rounded font-mono font-semibold">{order.promoKode}</span>}
+      </span>
+      <span className="text-xs font-semibold text-green-700">−{formatRp(order.nilaiDiskon)}</span>
+    </div>
+  </div>
+)}
+
+{/* Bonus promo (tipe bonus, tanpa potongan harga) */}
+{order.promoBenefitBonus && !order.nilaiDiskon && (
+  <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mt-3">
+    <Tag size={12} className="text-green-600 shrink-0 mt-0.5" />
+    <div>
+      <p className="text-xs font-semibold text-green-700">
+        Promo Bonus{order.promoKode && <span className="font-mono ml-1">({order.promoKode})</span>}
+      </p>
+      <p className="text-[10px] text-green-600 mt-0.5">{order.promoBenefitBonus}</p>
+    </div>
+  </div>
+)}
+
+{/* Navy total box — label + value berubah jika ada promo diskon */}
+<div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
+  <span className="text-sm font-medium text-white/80">
+    {order.nilaiDiskon > 0 ? 'Total Setelah Promo' : 'Total Nilai Order'}
+  </span>
+  <span className="text-sm font-bold text-white">
+    {formatRp(order.nilaiDiskon > 0 ? (order.nilaiKontrak ?? subtotalRaw - order.nilaiDiskon) : subtotalRaw)}
+  </span>
+</div>
+```
+
+**Aturan:**
+- Import `Sparkles, Tag` dari `lucide-react`; import `TEMA_WARNA_CLS` dari `../../data/ppPromoData`
+- `subtotalRaw` = sum dari rincian items (sebelum promo) — tampilkan sebagai subtotal hanya jika ada diskon
+- Backward compatible: order lama tanpa `promoKode`/`nilaiDiskon` tidak menampilkan promo block sama sekali
+
+### Thematic Banner di Invoice Document
+
+Di PPInvoiceDetailPage, banner tema promo ditempatkan **antara navy header card dan section Tagihan Kepada**:
+
+```jsx
+{invoice.promoTema && (() => {
+  const t = invoice.promoTema
+  const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
+  return (
+    <div className={`flex items-center gap-3 px-6 sm:px-8 py-3 border-b ${cls}`}>
+      <Sparkles size={14} className="shrink-0" />
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
+        {t.berlakuHingga && <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>}
+      </div>
+    </div>
+  )
+})()}
+```
+
+### Perbedaan Tipe Promo
+
+| | `tipe: 'diskon'` | `tipe: 'bonus'` |
+|---|---|---|
+| Effect ke harga | Ya — kurangi `nilaiKontrak` | Tidak — harga tetap |
+| `nilaiDiskon` | > 0 | 0 atau undefined |
+| `promoBenefitBonus` | null | string deskripsi benefit |
+| Display | Baris subtotal + diskon hijau | Kartu hijau info bonus |
+| `subTipe` | `'persen'` / `'nominal'` | `'treatment'` / `'latihan'` / `'produk'` |
+
