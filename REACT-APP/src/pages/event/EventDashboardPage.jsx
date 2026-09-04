@@ -154,7 +154,7 @@ function TipeBadge({ tipe }) {
     Private:    'bg-pink-500 text-white',
     Individual: 'bg-gray-400 text-white',
   }[tipe] || 'bg-gray-200 text-gray-600'
-  return <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>{tipe}</span>
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>{tipe}</span>
 }
 
 function TahapanBadge({ tahapan }) {
@@ -165,7 +165,7 @@ function TahapanBadge({ tahapan }) {
     'Event Running':   'bg-green-100 text-green-700',
     'Event Selesai':   'bg-gray-100 text-gray-500',
   }[tahapan] || 'bg-gray-100 text-gray-600'
-  return <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>{tahapan}</span>
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>{tahapan}</span>
 }
 
 /* ═══════════════════════════════════════
@@ -547,7 +547,7 @@ export default function EventDashboardPage() {
                   <p className="text-[10px] text-gray-400">{item.klien} · {item.pic}</p>
                 </div>
                 <span
-                  className="text-[10px] font-medium px-2 py-0.5 rounded-full flex-shrink-0"
+                  className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
                   style={{ backgroundColor: w.bg, color: w.text }}
                 >
                   {item.tipe}
@@ -617,7 +617,7 @@ export default function EventDashboardPage() {
                   <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{kns.id}</td>
                   <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{kns.nama}</td>
                   <td className="px-3 py-2.5">
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                       kns.hasil === 'Lanjut'       ? 'bg-green-100 text-green-700' :
                       kns.hasil === 'Pending'      ? 'bg-yellow-100 text-yellow-700' :
                       kns.hasil === 'Tidak Lanjut' ? 'bg-red-100 text-red-600' :

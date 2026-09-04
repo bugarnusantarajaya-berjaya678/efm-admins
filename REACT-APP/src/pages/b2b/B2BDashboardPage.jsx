@@ -95,7 +95,7 @@ function TipeBadge({ tipe }) {
     Apartment: 'bg-blue-500 text-white',
     Residence: 'bg-purple-600 text-white',
   }[tipe] || 'bg-gray-200 text-gray-600'
-  return <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>{tipe}</span>
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>{tipe}</span>
 }
 
 function TahapanBadge({ tahapan }) {
@@ -105,7 +105,7 @@ function TahapanBadge({ tahapan }) {
     'Contract':          'bg-purple-100 text-purple-700',
     'Class in Progress': 'bg-green-100 text-green-700',
   }[tahapan] || 'bg-gray-100 text-gray-600'
-  return <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>{tahapan}</span>
+  return <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>{tahapan}</span>
 }
 
 /* ═══════════════════════════════════════
@@ -369,7 +369,7 @@ export default function B2BDashboardPage() {
                   <p className="text-[10px] text-gray-400">{item.klien} · {item.pic}</p>
                 </div>
                 <span
-                  className="text-[10px] font-medium px-2 py-0.5 rounded-full flex-shrink-0"
+                  className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
                   style={{ backgroundColor: w.bg, color: w.text }}
                 >
                   {item.tipe}
@@ -410,7 +410,7 @@ export default function B2BDashboardPage() {
                 <td className="px-3 py-2.5 text-xs font-semibold text-[#1E1C43]">{srv.id}</td>
                 <td className="px-3 py-2.5 text-xs font-medium text-gray-900">{srv.nama}</td>
                 <td className="px-3 py-2.5">
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
                     srv.hasil === 'Lanjut'       ? 'bg-green-100 text-green-700' :
                     srv.hasil === 'Pending'      ? 'bg-yellow-100 text-yellow-700' :
                     srv.hasil === 'Tidak Lanjut' ? 'bg-red-100 text-red-600' :

@@ -404,9 +404,9 @@ export default function EventKonsultasiDetailPage() {
               </p>
               {!isNew && (
                 <div className="flex items-center gap-2 mt-2 flex-wrap">
-                  <span className="text-[10px] font-semibold bg-gray-100 text-[#1E1C43] px-2 py-0.5 rounded">{id}</span>
+                  <span className="text-xs font-semibold bg-gray-100 text-[#1E1C43] px-2 py-0.5 rounded">{id}</span>
                   {hasilKonsultasi && (
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${
                       hasilKonsultasi === 'Lanjut'       ? 'bg-green-50 text-green-700 border-green-200' :
                       hasilKonsultasi === 'Pending'      ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
                       hasilKonsultasi === 'Tidak Lanjut' ? 'bg-red-50 text-red-700 border-red-200' :

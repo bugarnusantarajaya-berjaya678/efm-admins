@@ -484,7 +484,7 @@ const PAY_ROWS_EO001 = [
 ═══════════════════════════════════════ */
 function Badge({ children, cls }) {
   return (
-    <span className={`inline-flex items-center text-[10px] font-medium px-2 py-0.5 rounded-full ${cls}`}>
+    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full ${cls}`}>
       {children}
     </span>
   )

@@ -316,7 +316,7 @@ export default function PPPromoPage() {
                       {p.aktif
                         ? <ToggleRight size={18} className="text-[#1E1C43]" />
                         : <ToggleLeft  size={18} className="text-gray-300" />}
-                      <span className={`text-[10px] font-medium border px-1.5 py-0.5 rounded-full ${STATUS_CLS[p.aktif]}`}>
+                      <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full ${STATUS_CLS[p.aktif]}`}>
                         {p.aktif ? 'Aktif' : 'Non-Aktif'}
                       </span>
                     </button>

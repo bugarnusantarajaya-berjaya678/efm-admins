@@ -171,12 +171,12 @@ export default function EventKonsultasiPage() {
                   <td className="text-xs font-semibold text-[#1E1C43] px-3 py-2.5 whitespace-nowrap">{s.id}</td>
                   <td className="text-xs font-medium text-gray-900 px-3 py-2.5 whitespace-nowrap">{s.nama}</td>
                   <td className="px-3 py-2.5">
-                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${JENIS_CFG[s.jenis] ?? 'bg-gray-100 text-gray-500'}`}>{s.jenis}</span>
+                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${JENIS_CFG[s.jenis] ?? 'bg-gray-100 text-gray-500'}`}>{s.jenis}</span>
                   </td>
                   <td className="text-xs font-medium text-gray-800 px-3 py-2.5">{s.namaEvent}</td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{s.jenisEvent}</td>
                   <td className="px-3 py-2.5">
-                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-[#1E1C43]/10 text-[#1E1C43]">{s.peranEFM}</span>
+                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-[#1E1C43]/10 text-[#1E1C43]">{s.peranEFM}</span>
                   </td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{s.tanggal}</td>
                   <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{s.pic}</td>

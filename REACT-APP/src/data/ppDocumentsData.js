@@ -90,10 +90,10 @@ export const DOCS_INIT = [
 ]
 
 export const STATUS_LABEL = {
-  signed: 'Signed',
-  pending: 'Pending TTD',
-  expired: 'Expired',
-  'waiting-approval': 'Waiting Approval',
+  signed: 'Ditandatangani',
+  pending: 'Menunggu TTD',
+  expired: 'Kadaluarsa',
+  'waiting-approval': 'Menunggu Persetujuan',
 }
 
 export const STATUS_CLS = {
