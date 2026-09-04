@@ -6,10 +6,10 @@ export const PIC_DB = {
 }
 
 export const PROGRAMS_INIT = [
-  { id: 'PRG-PP-001', namaLatihan: 'Private Training',  namaPaket: '4 Sesi - Starter',  sesi: 4,  pertemuan: 2, partisipan: 1, masa: '30 hari', picId: 'EFM-PIC-001', biayaSesiPIC: 75000,  harga: 600000,  hargaPersesi: 150000, diskonPaket: 0,      status: 'aktif' },
-  { id: 'PRG-PP-002', namaLatihan: 'Private Training',  namaPaket: '8 Sesi - Base',     sesi: 8,  pertemuan: 2, partisipan: 1, masa: '45 hari', picId: 'EFM-PIC-002', biayaSesiPIC: 75000,  harga: 1100000, hargaPersesi: 137500, diskonPaket: 0,      status: 'aktif' },
-  { id: 'PRG-PP-003', namaLatihan: 'Private Training',  namaPaket: '12 Sesi - Pro',     sesi: 12, pertemuan: 3, partisipan: 1, masa: '60 hari', picId: 'EFM-PIC-001', biayaSesiPIC: 75000,  harga: 1500000, hargaPersesi: 125000, diskonPaket: 0,      status: 'aktif' },
-  { id: 'PRG-PP-004', namaLatihan: 'Private Training',  namaPaket: '24 Sesi - Elite',   sesi: 24, pertemuan: 5, partisipan: 1, masa: '90 hari', picId: 'EFM-PIC-003', biayaSesiPIC: 70000,  harga: 2800000, hargaPersesi: 125000, diskonPaket: 200000, status: 'aktif' },
+  { id: 'PRG-PP-001', namaLatihan: 'Private Training',  namaPaket: '4 Sesi - Starter',  sesi: 4,  pertemuan: 2, partisipan: 1, masa: '30 hari', picId: 'EFM-PIC-001', biayaSesiPIC: 75000,  harga: 800000,  hargaPersesi: 200000, diskonPaket: 0, status: 'aktif' },
+  { id: 'PRG-PP-002', namaLatihan: 'Private Training',  namaPaket: '8 Sesi - Base',     sesi: 8,  pertemuan: 2, partisipan: 1, masa: '45 hari', picId: 'EFM-PIC-002', biayaSesiPIC: 75000,  harga: 1600000, hargaPersesi: 200000, diskonPaket: 0, status: 'aktif' },
+  { id: 'PRG-PP-003', namaLatihan: 'Private Training',  namaPaket: '12 Sesi - Pro',     sesi: 12, pertemuan: 3, partisipan: 1, masa: '60 hari', picId: 'EFM-PIC-001', biayaSesiPIC: 75000,  harga: 2400000, hargaPersesi: 200000, diskonPaket: 0, status: 'aktif' },
+  { id: 'PRG-PP-004', namaLatihan: 'Private Training',  namaPaket: '24 Sesi - Elite',   sesi: 24, pertemuan: 5, partisipan: 1, masa: '90 hari', picId: 'EFM-PIC-003', biayaSesiPIC: 70000,  harga: 4800000, hargaPersesi: 200000, diskonPaket: 0, status: 'aktif' },
   { id: 'PRG-TH-001', namaLatihan: 'Yoga & Stretching', namaPaket: '8 Sesi - Basic',   sesi: 8,  pertemuan: 2, partisipan: 2, masa: '45 hari', picId: 'EFM-PIC-003', biayaSesiPIC: 70000,  harga: 900000,  hargaPersesi: 112500, diskonPaket: 0,      status: 'aktif' },
   { id: 'PRG-TH-002', namaLatihan: 'Sports Rehab',      namaPaket: '12 Sesi - Rehab',  sesi: 12, pertemuan: 3, partisipan: 1, masa: '60 hari', picId: 'EFM-PIC-004', biayaSesiPIC: 80000,  harga: 1800000, hargaPersesi: 150000, diskonPaket: 0,      status: 'aktif' },
 ]

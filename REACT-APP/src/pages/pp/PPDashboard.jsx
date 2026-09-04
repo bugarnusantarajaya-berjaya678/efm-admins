@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { Users, ShoppingBag, CreditCard, TrendingUp, ChevronRight, FileText, ClipboardList, Calendar } from 'lucide-react'
-import { ORDERS_INIT } from '../../data/ppOrdersData'
+import { getAllOrders } from '../../data/ppOrdersStore'
 
 /* ═══════════════════════════════════════
    Dummy Data
@@ -20,7 +20,7 @@ const PERLU_TINDAKAN = [
   {
     borderColor: '#EF4444', bg: '#FEF2F2',
     judul: 'Invoice Overdue Belum Dibayar',
-    detail: 'James Wilson — INV-PP-26-0010 — sudah melewati jatuh tempo',
+    detail: 'Anita Suryani — INV-PP-26-0010 — sudah melewati jatuh tempo',
     path: '/pp/invoice',
   },
   {
@@ -65,30 +65,30 @@ const PIPELINE_OUTCOME = { converted: 1, lost: 0 }
 const KLIEN_MENDEKATI_HABIS = [
   { nama: 'Robert Taylor', orderId: 'PP-26-0011', paket: '24 Sesi - Elite',   sesiTerpakai: 22, totalSesi: 24, sisaSesi: 2, pic: 'Elena Rodriguez', urgency: 'high'   },
   { nama: 'Emily Chen',    orderId: 'PP-26-0012', paket: '4 Sesi - Starter',  sesiTerpakai: 3,  totalSesi: 4,  sisaSesi: 1, pic: 'Marcus Chen',     urgency: 'high'   },
-  { nama: 'Anita Kumar',   orderId: 'PP-26-0010', paket: '8 Sesi - Base',     sesiTerpakai: 6,  totalSesi: 8,  sisaSesi: 2, pic: 'Sarah Jenkins',   urgency: 'high'   },
+  { nama: 'Anita Suryani', orderId: 'PP-26-0010', paket: '8 Sesi - Base',     sesiTerpakai: 6,  totalSesi: 8,  sisaSesi: 2, pic: 'Sarah Jenkins',   urgency: 'high'   },
   { nama: 'Budi Santoso',  orderId: 'PP-26-0008', paket: '12 Sesi - Pro',     sesiTerpakai: 9,  totalSesi: 12, sisaSesi: 3, pic: 'Marcus Chen',     urgency: 'medium' },
 ]
 
 /* ═══════════════════════════════════════
    Computed from ORDERS_INIT
 ═══════════════════════════════════════ */
-const recentOrders = ORDERS_INIT.slice(0, 5)
+const recentOrders = getAllOrders().slice(0, 5)
 
 /* ═══════════════════════════════════════
    Badge config for Order Terbaru
 ═══════════════════════════════════════ */
 const ORDER_CLS = {
-  active:    'bg-green-50 text-green-600',
-  completed: 'bg-blue-50 text-blue-600',
-  cancelled: 'bg-red-50 text-red-500',
+  Aktif:     'bg-green-50 text-green-600',
+  Completed: 'bg-blue-50 text-blue-600',
+  Cancelled: 'bg-red-50 text-red-500',
 }
 const INV_CLS = {
-  paid:    'bg-green-50 text-green-600',
-  pending: 'bg-yellow-50 text-yellow-600',
-  overdue: 'bg-red-50 text-red-500',
+  Lunas:        'bg-green-50 text-green-600',
+  'Belum Bayar':'bg-yellow-50 text-yellow-600',
+  Terlambat:    'bg-red-50 text-red-500',
 }
-const ORDER_LBL = { active: 'Aktif', completed: 'Selesai', cancelled: 'Batal' }
-const INV_LBL   = { paid: 'Lunas', pending: 'Menunggu Pembayaran', overdue: 'Jatuh Tempo' }
+const ORDER_LBL = { Aktif: 'Aktif', Completed: 'Selesai', Cancelled: 'Batal' }
+const INV_LBL   = { Lunas: 'Lunas', 'Belum Bayar': 'Belum Bayar', Terlambat: 'Jatuh Tempo' }
 
 const formatRp = (n) => 'Rp ' + n.toLocaleString('id-ID')
 
@@ -211,16 +211,18 @@ export default function PPDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((o, i) => (
+                {recentOrders.map((o, i) => {
+                  const invStatus = o.paymentTracking?.[0]?.status ?? 'Belum Bayar'
+                  return (
                   <tr key={o.id} onClick={() => navigate('/pp/orders/' + o.id)} className={`hover:bg-gray-50 cursor-pointer transition-colors ${i < recentOrders.length - 1 ? 'border-b border-gray-100' : ''}`}>
                     <td className="px-4 py-3 text-xs font-semibold text-[#1E1C43] whitespace-nowrap">{o.id}</td>
-                    <td className="px-4 py-3 text-[13px] font-semibold text-[#1E1C43] whitespace-nowrap">{o.klien}</td>
+                    <td className="px-4 py-3 text-[13px] font-semibold text-[#1E1C43] whitespace-nowrap">{o.namaKlien}</td>
                     <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.paket}</td>
-                    <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.pic}</td>
+                    <td className="px-4 py-3 text-[12px] text-gray-500 whitespace-nowrap">{o.picSalesEFM}</td>
                     <td className="px-4 py-3"><StatusBadge val={o.statusOrder} clsMap={ORDER_CLS} lblMap={ORDER_LBL} /></td>
-                    <td className="px-4 py-3"><StatusBadge val={o.statusInv}   clsMap={INV_CLS}   lblMap={INV_LBL}   /></td>
+                    <td className="px-4 py-3"><StatusBadge val={invStatus}     clsMap={INV_CLS}   lblMap={INV_LBL}   /></td>
                   </tr>
-                ))}
+                )})}
               </tbody>
             </table>
           </div>
