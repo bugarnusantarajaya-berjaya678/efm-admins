@@ -1047,7 +1047,17 @@ export default function PPOrderDetailPage() {
               <div className="p-5">
                 {/* Pendaftar */}
                 <div className="mb-4">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Pendaftar</p>
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Pendaftar</p>
+                    {order?.leadId && (
+                      <button
+                        onClick={() => navigate('/pp/leads/' + order.leadId)}
+                        className="flex items-center gap-1 text-xs text-[#1E1C43] hover:text-[#E05945] transition-colors"
+                      >
+                        Lihat Lead <ExternalLink size={11} />
+                      </button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {[
                       { label: 'Sapaan',         val: infoDeal.sapaan    },
@@ -1086,12 +1096,10 @@ export default function PPOrderDetailPage() {
 
                 {/* Klien Latihan */}
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-                    Klien Latihan {hasKlienIds && <span className="text-xs font-normal normal-case text-gray-400">— data live dari Klien Store</span>}
-                  </p>
+                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Klien Latihan</p>
 
                   {hasKlienIds ? (
-                    /* ── Integrated view: kartu per-klien dari ppKlienStore ── */
+                    /* ── RRP: kartu per-klien, klik → Lead Detail ── */
                     <div className="flex flex-col gap-2">
                       {resolvedKlienList.length === 0 ? (
                         <p className="text-xs text-gray-400 italic text-center py-4">Data klien tidak ditemukan di store.</p>
@@ -1103,26 +1111,23 @@ export default function PPOrderDetailPage() {
                             return today.getFullYear() - d.getFullYear() - (today < new Date(today.getFullYear(), d.getMonth(), d.getDate()) ? 1 : 0)
                           })() : null
                           return (
-                            <div key={k.id} className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                              {[
-                                { label: 'ID Klien',      val: k.id },
-                                { label: 'Nama Klien',    val: k.nama },
-                                { label: 'No. HP',        val: k.noHp },
-                                { label: 'Jenis Kelamin', val: k.jenisKelamin || '—' },
-                              ].map(({ label, val }) => (
-                                <div key={label} className="bg-gray-50 rounded-lg p-3">
-                                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <Lock size={9} className="text-gray-300" /> {label}
-                                  </p>
-                                  <p className="text-sm font-semibold text-gray-800">{val || '—'}</p>
+                            <div
+                              key={k.id}
+                              onClick={() => navigate('/pp/leads/' + k.leadId)}
+                              className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                            >
+                              <div className="flex items-center gap-3 min-w-0">
+                                <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                                  <Users size={14} className="text-[#1E1C43]" />
                                 </div>
-                              ))}
-                              <div className="bg-gray-50 rounded-lg p-3">
-                                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                  <Lock size={9} className="text-gray-300" /> Usia
-                                </p>
-                                <p className="text-sm font-semibold text-gray-800">{usiaTahun !== null ? usiaTahun + ' tahun' : '—'}</p>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-semibold text-[#1E1C43] truncate">{k.id} — {k.nama}</p>
+                                  <p className="text-[10px] text-gray-400 truncate">
+                                    {[k.jenisKelamin, usiaTahun !== null ? usiaTahun + ' tahun' : null, k.noHp].filter(Boolean).join(' · ')}
+                                  </p>
+                                </div>
                               </div>
+                              <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
                             </div>
                           )
                         })
