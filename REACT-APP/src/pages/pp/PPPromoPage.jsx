@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import {
   Tag, Plus, ToggleLeft, ToggleRight, Gift,
   Percent, DollarSign, Search, RotateCcw, Calendar, Lock, Unlock,
-  Sparkles, Info,
+  Sparkles, Info, Copy, Check,
 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllPromo, toggleAktif } from '../../data/ppPromoStore'
@@ -63,6 +63,7 @@ export default function PPPromoPage() {
   const navigate = useNavigate()
   const { setCrumbs } = useBreadcrumb()
   const [list, setList]     = useState(() => getAllPromo())
+  const [copiedKode, setCopiedKode] = useState(null)
   const [fTipe,   setFTipe]   = useState('')
   const [fStatus, setFStatus] = useState('')
   const [fTema,   setFTema]   = useState('')
@@ -73,6 +74,14 @@ export default function PPPromoPage() {
   }, [])
 
   function refresh() { setList(getAllPromo()) }
+
+  function copyKode(e, kode) {
+    e.stopPropagation()
+    navigator.clipboard.writeText(kode).then(() => {
+      setCopiedKode(kode)
+      setTimeout(() => setCopiedKode(null), 1500)
+    })
+  }
 
   function handleToggle(kode) {
     toggleAktif(kode); refresh()
@@ -215,7 +224,18 @@ export default function PPPromoPage() {
 
                     {/* Kode + tema badge */}
                     <td className="px-3 py-3">
-                      <span className="text-xs font-semibold text-[#1E1C43] font-mono tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{p.kode}</span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-semibold text-[#1E1C43] font-mono tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{p.kode}</span>
+                        <button
+                          onClick={e => copyKode(e, p.kode)}
+                          title="Salin kode"
+                          className="shrink-0 p-1 rounded hover:bg-gray-200 transition-colors text-gray-400 hover:text-[#1E1C43]"
+                        >
+                          {copiedKode === p.kode
+                            ? <Check size={12} className="text-green-600" />
+                            : <Copy size={12} />}
+                        </button>
+                      </div>
                       {p.tema && (
                         <div className="mt-1">
                           <span className={`text-xs font-medium border px-1.5 py-0.5 rounded-full ${TEMA_WARNA_CLS[p.tema.warna] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
