@@ -960,7 +960,7 @@ export default function PPOrderDetailPage() {
           {/* ── Dokumen & Tahapan Shortcuts ── */}
           {!isNew && (() => {
             const INV_STATUS = { paid: { label: 'Lunas', cls: 'bg-green-50 text-green-700 border-green-200' }, pending: { label: 'Menunggu', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, overdue: { label: 'Jatuh Tempo', cls: 'bg-red-50 text-red-700 border-red-200' } }
-            const AGR_STATUS = { signed: { label: 'Ditandatangani', cls: 'bg-green-50 text-green-700 border-green-200' }, waiting_approval: { label: 'Menunggu TTD', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, expired: { label: 'Kadaluarsa', cls: 'bg-gray-50 text-gray-500 border-gray-200' } }
+            const AGR_STATUS = { signed: { label: 'Ditandatangani', cls: 'bg-green-50 text-green-700 border-green-200' }, 'waiting-approval': { label: 'Menunggu TTD', cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' }, expired: { label: 'Kadaluarsa', cls: 'bg-gray-50 text-gray-500 border-gray-200' } }
             const tahapan = [
               {
                 step: 1, label: 'Invoice',

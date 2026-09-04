@@ -205,7 +205,7 @@ export default function PPInvoiceDetailPage() {
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{invoice.client}</span>
               <span className="text-gray-300 text-xs">·</span>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold text-white ${statusBadgeCls}`}>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white ${statusBadgeCls}`}>
                 {STATUS_LABEL[invoice.status] || invoice.status}
               </span>
             </div>
