@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Gift, Percent, DollarSign, Search } from 'lucide-react'
+import { Tag, Plus, Pencil, Trash2, ToggleLeft, ToggleRight, X, Gift, Percent, DollarSign, Search, RotateCcw } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllPromo, addPromo, updatePromo, deletePromo, toggleAktif } from '../../data/ppPromoStore'
 import { TIPE_LABEL, SUBTIPE_LABEL, SUBTIPE_OPTS_DISKON, SUBTIPE_OPTS_BONUS } from '../../data/ppPromoData'
@@ -167,7 +167,8 @@ function PromoModal({ initial, onSave, onClose, existingKodes }) {
 export default function PPPromoPage() {
   const { setCrumbs } = useBreadcrumb()
   const [list, setList]     = useState(() => getAllPromo())
-  const [filter, setFilter] = useState('all')
+  const [fTipe,   setFTipe]   = useState('')
+  const [fStatus, setFStatus] = useState('')
   const [search, setSearch] = useState('')
   const [modal, setModal]   = useState(null)
   const [editTarget, setEditTarget] = useState(null)
@@ -200,11 +201,13 @@ export default function PPPromoPage() {
     toggleAktif(kode); refresh()
   }
 
+  function reset() { setFTipe(''); setFStatus(''); setSearch('') }
+
   const filtered = list.filter(p => {
-    if (filter === 'diskon' && p.tipe !== 'diskon') return false
-    if (filter === 'bonus'  && p.tipe !== 'bonus')  return false
-    if (filter === 'aktif'  && !p.aktif)             return false
-    if (filter === 'nonaktif' && p.aktif)            return false
+    if (fTipe   === 'diskon'   && p.tipe !== 'diskon') return false
+    if (fTipe   === 'bonus'    && p.tipe !== 'bonus')  return false
+    if (fStatus === 'aktif'    && !p.aktif)             return false
+    if (fStatus === 'nonaktif' && p.aktif)              return false
     if (search && !p.kode.toLowerCase().includes(search.toLowerCase()) &&
         !p.label.toLowerCase().includes(search.toLowerCase())) return false
     return true
@@ -255,21 +258,29 @@ export default function PPPromoPage() {
       </div>
 
       {/* Filter + Search */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 flex flex-wrap gap-2 items-center">
-        <div className="flex gap-1 flex-wrap">
-          {[['all','Semua'],['diskon','Diskon'],['bonus','Bonus'],['aktif','Aktif'],['nonaktif','Non-Aktif']].map(([v, l]) => (
-            <button key={v} onClick={() => setFilter(v)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filter === v ? 'bg-[#1E1C43] text-white' : 'bg-gray-100 text-gray-500 hover:bg-gray-200'}`}>
-              {l}
-            </button>
-          ))}
-        </div>
-        <div className="ml-auto flex items-center gap-2 min-w-[200px] bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={13} className="text-gray-400 shrink-0" />
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+        <select value={fTipe} onChange={e => setFTipe(e.target.value)}
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          <option value="">Semua Tipe</option>
+          <option value="diskon">Diskon</option>
+          <option value="bonus">Bonus / Free</option>
+        </select>
+        <select value={fStatus} onChange={e => setFStatus(e.target.value)}
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
+          <option value="">Semua Status</option>
+          <option value="aktif">Aktif</option>
+          <option value="nonaktif">Non-Aktif</option>
+        </select>
+        <div className="flex items-center gap-2 flex-1 min-w-[200px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={14} className="text-text-muted shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari kode / nama promo..."
-            className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400" />
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
         </div>
+        <button onClick={reset}
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+          <RotateCcw size={12} /> Reset
+        </button>
       </div>
 
       {/* Tabel */}
