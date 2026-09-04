@@ -9,8 +9,8 @@ export const RECEIPTS_INIT = [
   {
     rcpNo: 'RCP-PP-26-0021', invNo: 'INV-PP-26-0021',
     orderId: 'PP-26-0021', client: 'Sari Dewi Lestari', sapaan: 'Kak', initials: 'SD', color: '#8E44AD',
-    paket: '8 Sesi - Basic', pic: 'Dian Kartika',
-    tglBayar: '2 Nov 2026', metode: 'Transfer Bank (Mandiri)', total: 1400000,
+    paket: '8 Sesi - Base', pic: 'Dian Kartika',
+    tglBayar: '2 Nov 2026', metode: 'Transfer Bank (Mandiri)', total: 1600000,
     waStatus: 'sent', waTgl: '2 Nov 2026',
   },
   {
@@ -43,7 +43,7 @@ export const RECEIPTS_INIT = [
   },
   {
     rcpNo: 'RCP-PP-26-0005', invNo: 'INV-PP-26-0005',
-    orderId: 'PP-26-0005', client: 'Dewi Anggraini', sapaan: 'Kak', initials: 'DA', color: '#2ECC71',
+    orderId: 'PP-26-0005', client: 'Dewi Rahayu', sapaan: 'Kak', initials: 'DR', color: '#2ECC71',
     paket: '8 Sesi - Base', pic: 'Marcus Chen',
     tglBayar: '25 Sep 2026', metode: 'Transfer Bank (BCA)', total: 1600000,
     waStatus: 'sent', waTgl: '25 Sep 2026',
