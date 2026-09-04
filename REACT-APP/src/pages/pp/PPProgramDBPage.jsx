@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Layers, RotateCcw, ChevronDown, Tag, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Plus, Search, Layers, RotateCcw, ChevronDown, ToggleLeft, ToggleRight } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import { getStoredPrograms, updateStoredProgram } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -126,14 +126,6 @@ export default function PPProgramDBPage() {
                 >
                   <Layers size={14} className="text-gray-400" />
                   Jenis Program
-                </button>
-                <div className="border-t border-gray-100" />
-                <button
-                  onClick={() => { setShowMenu(false); navigate('/pp/promo') }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  <Tag size={14} className="text-gray-400" />
-                  Promo &amp; Diskon
                 </button>
               </div>
             )}
