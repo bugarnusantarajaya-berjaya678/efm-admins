@@ -9,7 +9,7 @@
 export const ORDER_TO_LEAD_ID = {
   'PP-26-0013': 'LP-0001',  // James Wilson
   'PP-27-0001': 'LP-0001',  // James Wilson (renewal)
-  'PP-26-0012': 'LP-0006',  // Emily Chen (fix: was LP-0002 = Dewi Ayu, bukan Emily Chen)
+  'PP-26-0012': 'LP-0002',  // Emily Chen
   'PP-26-0011': 'LP-0013',  // Robert Taylor
   'PP-26-0010': 'LP-0014',  // Anita Suryani
   'PP-26-0008': 'LP-0003',  // Budi Santoso (couple)
