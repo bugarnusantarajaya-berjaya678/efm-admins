@@ -1,12 +1,13 @@
 ﻿import React, { useState, useRef, useEffect } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
-import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle, Sparkles, Tag } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { getKlienById, getKlienByOrderId } from '../../data/ppKlienStore'
 import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
+import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
 import { INVOICES_INIT } from '../../data/ppInvoiceData'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -1364,9 +1365,60 @@ export default function PPOrderDetailPage() {
                 )
               )}
 
+              {/* Tema promo banner */}
+              {order.promoTema && (() => {
+                const t = order.promoTema
+                const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
+                return (
+                  <div className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border mt-3 ${cls}`}>
+                    <Sparkles size={13} className="shrink-0" />
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
+                      {t.berlakuHingga && <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>}
+                    </div>
+                  </div>
+                )
+              })()}
+
+              {/* Promo kode + diskon rows */}
+              {order.nilaiDiskon > 0 && (
+                <div className="border border-gray-100 rounded-xl px-3 py-2.5 mt-3 space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-gray-500">Subtotal</span>
+                    <span className="text-xs font-semibold text-gray-700">{formatRpPP(subtotalPP)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center gap-1.5 text-xs text-green-700">
+                      <Tag size={11} />
+                      Diskon Promo
+                      {order.promoKode && <span className="bg-green-100 px-1.5 py-0.5 rounded font-mono font-semibold">{order.promoKode}</span>}
+                    </span>
+                    <span className="text-xs font-semibold text-green-700">−{formatRpPP(order.nilaiDiskon)}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Bonus promo info */}
+              {order.promoBenefitBonus && !order.nilaiDiskon && (
+                <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mt-3">
+                  <Tag size={12} className="text-green-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-semibold text-green-700">
+                      Promo Bonus
+                      {order.promoKode && <span className="font-mono ml-1">({order.promoKode})</span>}
+                    </p>
+                    <p className="text-[10px] text-green-600 mt-0.5">{order.promoBenefitBonus}</p>
+                  </div>
+                </div>
+              )}
+
               <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
-                <span className="text-sm font-medium text-white/80">Total Nilai Order</span>
-                <span className="text-sm font-bold text-white">{formatRpPP(subtotalPP)}</span>
+                <span className="text-sm font-medium text-white/80">
+                  {order.nilaiDiskon > 0 ? 'Total Setelah Promo' : 'Total Nilai Order'}
+                </span>
+                <span className="text-sm font-bold text-white">
+                  {formatRpPP(order.nilaiDiskon > 0 ? (order.nilaiKontrak ?? subtotalPP - order.nilaiDiskon) : subtotalPP)}
+                </span>
               </div>
             </div>
 
