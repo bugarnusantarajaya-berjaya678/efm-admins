@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag, Gift, Sparkles } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
-import { getPromoByKode } from '../../data/ppPromoStore'
-import { Gift } from 'lucide-react'
+import { getPromoByKode, validatePromo } from '../../data/ppPromoStore'
+import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
 
 function getDefaultSyarat() {
   const cs = getCompanySettings()
@@ -31,11 +31,6 @@ function getSyaratList() {
   return getDefaultSyarat()
 }
 
-function lookupKode(kode) {
-  const p = getPromoByKode(kode)
-  if (!p || !p.aktif) return null
-  return { label: p.label, tipe: p.tipe, subTipe: p.subTipe, nilai: p.nilai, keterangan: p.keterangan }
-}
 
 function MarkPaidModal({ inv, onConfirm, onClose }) {
   const [paidDate,  setPaidDate]  = useState('')
@@ -108,7 +103,7 @@ export default function PPInvoiceDetailPage() {
   const [catatanDraft,  setCatatanDraft]  = useState('')
   const [kodeInput,     setKodeInput]     = useState('')
   const [diskonApplied, setDiskonApplied] = useState(null)
-  const [diskonError,   setDiskonError]   = useState(false)
+  const [diskonError,   setDiskonError]   = useState('')
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
     return () => setCrumbs(null)
@@ -137,28 +132,33 @@ export default function PPInvoiceDetailPage() {
     setCatatanDraft(invoice.catatan || '')
     const existingKode = invoice.promoKode || ''
     setKodeInput(existingKode)
-    const existing = existingKode ? lookupKode(existingKode) : null
-    setDiskonApplied(existing ? { kode: existingKode, ...existing } : null)
-    setDiskonError(false)
+    if (existingKode) {
+      const result = validatePromo(existingKode)
+      setDiskonApplied(result.valid ? { kode: existingKode, ...result.promo } : null)
+    } else {
+      setDiskonApplied(null)
+    }
+    setDiskonError('')
     setEditing(true)
   }
 
   function applyKode() {
     const kode = kodeInput.trim().toUpperCase()
-    const found = lookupKode(kode)
-    if (found) {
-      setDiskonApplied({ kode, ...found })
-      setDiskonError(false)
+    if (!kode) return
+    const result = validatePromo(kode)
+    if (result.valid) {
+      setDiskonApplied({ kode, ...result.promo })
+      setDiskonError('')
     } else {
       setDiskonApplied(null)
-      setDiskonError(true)
+      setDiskonError(result.error)
     }
   }
 
   function removeKode() {
     setDiskonApplied(null)
     setKodeInput('')
-    setDiskonError(false)
+    setDiskonError('')
   }
 
   function calcDiskonVal(applied, base) {
@@ -175,6 +175,10 @@ export default function PPInvoiceDetailPage() {
       catatan:    catatanDraft,
       promoKode:  diskonApplied?.kode     || '',
       promoType:  diskonApplied?.subTipe  || '',
+      promoTema:  diskonApplied?.tema     || null,
+      promoBenefitBonus: diskonApplied?.tipe === 'bonus'
+        ? (diskonApplied.keterangan || diskonApplied.benefitBonus || null)
+        : null,
       promoVal,
     }))
     setEditing(false)
@@ -295,6 +299,23 @@ export default function PPInvoiceDetailPage() {
           </div>
         </div>
 
+        {/* Thematic Banner — shown when promo has a tema */}
+        {invoice.promoTema && (() => {
+          const t = invoice.promoTema
+          const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
+          return (
+            <div className={`flex items-center gap-3 px-6 sm:px-8 py-3 border-b ${cls}`}>
+              <Sparkles size={14} className="shrink-0" />
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
+                {t.berlakuHingga && (
+                  <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>
+                )}
+              </div>
+            </div>
+          )
+        })()}
+
         {/* Tagihan Kepada */}
         <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
@@ -363,25 +384,33 @@ export default function PPInvoiceDetailPage() {
                 <div className="py-2 border-t border-gray-100 mt-1">
                   <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Promo</p>
                   {diskonApplied ? (
-                    diskonApplied.tipe === 'diskon' ? (
-                      <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                        <div>
-                          <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
-                          <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
-                          <span className="text-xs font-bold text-green-700 ml-2">- {formatRp(editDiskonVal)}</span>
+                    <div className="space-y-1.5">
+                      {diskonApplied.tema && (
+                        <div className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border text-[10px] font-medium ${TEMA_WARNA_CLS[diskonApplied.tema.warna] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+                          <Sparkles size={11} className="shrink-0" />
+                          {diskonApplied.tema.icon} Promo Tematik: {diskonApplied.tema.nama}
                         </div>
-                        <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
-                        <div>
-                          <span className="text-xs font-semibold text-blue-700">{diskonApplied.kode}</span>
-                          <span className="text-xs text-blue-600 ml-2">— {diskonApplied.label}</span>
-                          {diskonApplied.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{diskonApplied.keterangan}</p>}
+                      )}
+                      {diskonApplied.tipe === 'diskon' ? (
+                        <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                          <div>
+                            <span className="text-xs font-semibold text-green-700">{diskonApplied.kode}</span>
+                            <span className="text-xs text-green-600 ml-2">— {diskonApplied.label}</span>
+                            <span className="text-xs font-bold text-green-700 ml-2">- {formatRp(editDiskonVal)}</span>
+                          </div>
+                          <button onClick={removeKode} className="text-green-600 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
                         </div>
-                        <button onClick={removeKode} className="text-blue-400 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
-                      </div>
-                    )
+                      ) : (
+                        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                          <div>
+                            <span className="text-xs font-semibold text-blue-700">{diskonApplied.kode}</span>
+                            <span className="text-xs text-blue-600 ml-2">— {diskonApplied.label}</span>
+                            {diskonApplied.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{diskonApplied.keterangan}</p>}
+                          </div>
+                          <button onClick={removeKode} className="text-blue-400 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <div className="flex gap-2">
                       <input
@@ -397,7 +426,7 @@ export default function PPInvoiceDetailPage() {
                       </button>
                     </div>
                   )}
-                  {diskonError && <p className="text-[10px] text-red-500 mt-1">Kode tidak valid, tidak ditemukan, atau tidak aktif.</p>}
+                  {diskonError && <p className="text-[10px] text-red-500 mt-1">{diskonError}</p>}
                 </div>
               )}
 
