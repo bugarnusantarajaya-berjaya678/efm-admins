@@ -17,19 +17,13 @@ import { PIC_DB } from '../../data/ppProgramDBData'
 ═══════════════════════════════════════ */
 const BULAN_ID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
 
-const TAHAPAN_CLS = {
-  'Quotation & LOI':   'bg-amber-100 text-amber-700',
-  'MOU':               'bg-blue-100 text-blue-700',
-  'Contract':          'bg-purple-100 text-purple-700',
-  'Program Berjalan': 'bg-green-100 text-green-700',
-  'Selesai':           'bg-gray-100 text-gray-500',
-}
 const STATUS_CLS = {
   Aktif:     'bg-green-100 text-green-700',
   Completed: 'bg-blue-100 text-blue-700',
   Pending:   'bg-yellow-100 text-yellow-700',
   Selesai:   'bg-gray-100 text-gray-600',
   Batal:     'bg-red-100 text-red-600',
+  Cancelled: 'bg-red-100 text-red-600',
   Draft:     'bg-gray-100 text-gray-500',
 }
 
@@ -236,7 +230,7 @@ function SectionCard({ title, editing, onEdit, onSave, onCancel, children }) {
             onEdit && (
               <button
                 onClick={onEdit}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors"
+                className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
               >
                 <Edit2 size={12} /> Edit
               </button>
@@ -519,18 +513,23 @@ export default function PPOrderDetailPage() {
       const saved = localStorage.getItem(`order-log3-${id}`)
       if (saved) return JSON.parse(saved)
     } catch {}
+    const namaKlien = order?.namaKlien || 'Klien'
+    const picNama   = order?.picSalesEFM || 'Admin EFM'
+    const invId     = 'INV-' + id
+    const agrId     = 'AGR-' + id
+    const quoNomor  = order?.quotation?.nomor || ('QUO/EFM/PP/2026/' + id.split('-').pop())
     return [
-      { id:1,  waktu:"3 Nov 2026, 07:05",  actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-004",              teks:"Absensi ABS-004 tercatat: Sarah Jenkins hadir 07:05" },
-      { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-004",               teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
-      { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM",     kategori:"jadwal",    nomorLaporan:"JS-003",               teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
-      { id:4,  waktu:"29 Okt 2026, 07:01", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-002",              teks:"Absensi ABS-002 tercatat: Sarah Jenkins hadir 07:01" },
-      { id:5,  waktu:"27 Okt 2026, 07:03", actor:"Sarah Jenkins", kategori:"absensi",   nomorLaporan:"ABS-001",              teks:"Absensi ABS-001 tercatat: Sarah Jenkins hadir 07:03" },
-      { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Pembayaran INV-PP-26-0013 dikonfirmasi Lunas — Transfer · 24 Okt 2026" },
-      { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"INV-PP-26-0013",       teks:"Invoice INV-PP-26-0013 dikirim ke James Wilson" },
-      { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM",     kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement disetujui — dokumen TTD klien James Wilson diterima & dikonfirmasi" },
-      { id:9,  waktu:"21 Okt 2026, 13:30", actor:"James Wilson",  kategori:"agreement", nomorLaporan:"AGR-PP-26-0013",       teks:"Agreement ditandatangani klien James Wilson — pengajuan masuk" },
-      { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"QUO/EFM/PP/2026/0013", teks:"Quotation QUO/EFM/PP/2026/0013 disetujui" },
-      { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM",     kategori:"keuangan",  nomorLaporan:"PP-26-0013",           teks:"Order PP-26-0013 dibuat untuk James Wilson oleh Admin EFM" },
+      { id:1,  waktu:"3 Nov 2026, 07:05",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-004",  teks:`Absensi ABS-004 tercatat: ${picNama} hadir 07:05` },
+      { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM", kategori:"jadwal",    nomorLaporan:"JS-004",   teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
+      { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM", kategori:"jadwal",    nomorLaporan:"JS-003",   teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
+      { id:4,  waktu:"29 Okt 2026, 07:01", actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-002",  teks:`Absensi ABS-002 tercatat: ${picNama} hadir 07:01` },
+      { id:5,  waktu:"27 Okt 2026, 07:03", actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-001",  teks:`Absensi ABS-001 tercatat: ${picNama} hadir 07:03` },
+      { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Pembayaran ${invId} dikonfirmasi Lunas — Transfer · 24 Okt 2026` },
+      { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Invoice ${invId} dikirim ke ${namaKlien}` },
+      { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM", kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement disetujui — dokumen TTD klien ${namaKlien} diterima & dikonfirmasi` },
+      { id:9,  waktu:"21 Okt 2026, 13:30", actor:namaKlien,   kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement ditandatangani klien ${namaKlien} — pengajuan masuk` },
+      { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:quoNomor,   teks:`Quotation ${quoNomor} disetujui` },
+      { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:id,         teks:`Order ${id} dibuat untuk ${namaKlien} oleh Admin EFM` },
     ]
   })
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
@@ -1038,7 +1037,7 @@ export default function PPOrderDetailPage() {
                     <button
                       onClick={() => startEdit('dataKlienTambahan')}
                       disabled={!!editingSection && editingSection !== 'dataKlienTambahan'}
-                      className="h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                       Edit Info Tambahan
                     </button>
@@ -1189,7 +1188,7 @@ export default function PPOrderDetailPage() {
                   )}
                 </div>
               ) : (
-                <button onClick={() => startEdit('infoDeal')} className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] text-white text-xs font-semibold hover:bg-[#c94a38] transition-colors">
+                <button onClick={() => startEdit('infoDeal')} className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
                   <Edit2 size={12} /> Edit
                 </button>
               )}
