@@ -1,7 +1,8 @@
 import { useState, useMemo, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, ArrowLeft, ScrollText, Settings, ChevronDown, GripVertical, Save, RotateCcw, Plus, Trash2, Pencil, X } from 'lucide-react'
-import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
+import { getAllInvoices } from '../../data/ppInvoiceStore'
+import { STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getCompanySettings } from '../../utils/companySettings'
 
 /* ─── Status badge ─── */
@@ -243,7 +244,7 @@ const ROWS = 10
 export default function PPInvoicePage() {
   const location = useLocation()
   const navigate = useNavigate()
-  const [invoices,     setInvoices]     = useState(INVOICES_INIT)
+  const [invoices,     setInvoices]     = useState(getAllInvoices)
   const [fStatus,      setFStatus]      = useState('')
   const [fBulan,       setFBulan]       = useState('')
   const [fTahun,       setFTahun]       = useState('')

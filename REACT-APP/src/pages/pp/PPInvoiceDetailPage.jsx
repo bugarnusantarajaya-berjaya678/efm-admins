@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag, Gift, Sparkles } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { INVOICES_INIT, STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
+import { getInvoiceByNo } from '../../data/ppInvoiceStore'
+import { STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
 import { getPromoByKode, validatePromo } from '../../data/ppPromoStore'
@@ -96,7 +97,7 @@ export default function PPInvoiceDetailPage() {
   const navigate  = useNavigate()
 
   const { setCrumbs } = useBreadcrumb()
-  const [invoice, setInvoice] = useState(state?.invoice || INVOICES_INIT.find(i => i.invNo === id) || null)
+  const [invoice, setInvoice] = useState(state?.invoice || getInvoiceByNo(id) || null)
   const [modal,   setModal]   = useState(null)
   const [cs]                  = useState(() => getCompanySettings())
   const [editing,       setEditing]       = useState(false)
