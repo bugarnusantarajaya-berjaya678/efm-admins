@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
-import { getAllReceipts } from '../../data/ppReceiptStore'
+import { getAllReceipts, addReceipt, getNextReceiptNo } from '../../data/ppReceiptStore'
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -79,18 +79,20 @@ export default function PPReceiptPage() {
     if (!createForm.tglBayar) { alert('Pilih tanggal pembayaran.'); return }
     const prefill = createPrefill || {}
     const COLORS = ['#2980B9', '#27AE60', '#16A085', '#D35400', '#8E44AD']
-    const newRcpNo = 'RCP-PP-26-' + String(receipts.length + 5).padStart(4, '0')
+    const newRcpNo = getNextReceiptNo()
     const getInits = n => (n || '').split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase()
     const tglFormatted = new Date(createForm.tglBayar).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
     const newReceipt = {
       rcpNo: newRcpNo, invNo: prefill.invNo || '', orderId: prefill.orderId || '',
-      client: prefill.client || '', initials: getInits(prefill.client || ''),
-      color: COLORS[receipts.length % COLORS.length],
+      client: prefill.client || '', sapaan: prefill.sapaan || '',
+      initials: getInits(prefill.client || ''),
+      color: COLORS[getAllReceipts().length % COLORS.length],
       paket: prefill.paket || '', pic: prefill.pic || '',
       tglBayar: tglFormatted, metode: createForm.metode,
       total: prefill.total || 0, waStatus: 'not-sent', waTgl: null,
     }
-    setReceipts(prev => [newReceipt, ...prev])
+    addReceipt(newReceipt)
+    setReceipts(getAllReceipts())
     setShowCreateForm(false)
     setCreatePrefill(null)
     setCreateForm({ tglBayar: '', metode: 'Transfer Bank (BCA)' })
