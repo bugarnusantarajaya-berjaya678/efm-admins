@@ -207,8 +207,8 @@ export default function PPInvoiceDetailPage() {
             <ScrollText size={16} className="text-white" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice Private Training</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">#{invoice.invNo}</h1>
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice PP</p>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{invoice.invNo}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{invoice.client}</span>
               <span className="text-gray-300 text-xs">·</span>
@@ -274,11 +274,11 @@ export default function PPInvoiceDetailPage() {
             ) : (
               <img src="/logo.png" alt="EFM Logo" className="w-20 h-20 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
             )}
-            <div>
-              <p className="text-base font-bold">{cs.namaPerusahaan}</p>
-              <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
-              <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{cs.alamat}</p>
-              <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base font-bold break-words">{cs.namaPerusahaan}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{cs.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-all">{cs.email}</p>
               <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
             </div>
           </div>
