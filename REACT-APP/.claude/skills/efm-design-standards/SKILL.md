@@ -123,7 +123,8 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 | **Orange (CTA)** | `#E05945` | Aksi bisnis utama yang menggerakkan workflow — maks 1 per halaman/section | Buat Order Baru, Konfirmasi Pembayaran, Kirim Invoice, Tambah Lead |
 | **Navy (Primary)** | `#1E1C43` | Save/submit standard di form dan modal | Simpan, Lanjut, Terapkan |
 | **Gray secondary** | `border-gray-300 text-gray-600` | Navigasi & pembatalan | **Kembali**, Batal, Reset, Download PDF |
-| **Red** | `bg-red-600` | Aksi destruktif | Hapus, Delete |
+| **Red** | `bg-red-600 text-white` | Aksi destruktif langsung (tanpa konfirmasi) | Hapus (confirm dialog tidak ada) |
+| **Red outlined** | `text-red-600 border border-red-200 hover:bg-red-50` | Aksi destruktif dengan dialog konfirmasi (`confirm()` atau modal) | Hapus Promo, Delete (ada dialog) |
 
 ⚠️ **Kembali SELALU gray secondary** — BUKAN orange, BUKAN navy. Berlaku di semua modul dan semua page.
 ⚠️ **Orange adalah CTA eksklusif** — jika 2+ tombol orange ada di 1 baris, salah satunya salah; ganti yang bukan CTA utama ke navy atau gray.
