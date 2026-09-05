@@ -394,13 +394,13 @@ export default function PPPromoFormPage() {
               <p className="text-xs text-gray-400 mb-2">Kosongkan jika tidak ada batas waktu. Sistem otomatis memvalidasi saat promo digunakan.</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-[10px] text-gray-400 mb-1 block">Tanggal Mulai</label>
+                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tanggal Mulai</label>
                   <input type="date" value={form.tanggalMulai}
                     onChange={e => set('tanggalMulai', e.target.value)}
                     className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2.5 outline-none focus:border-[#1E1C43] bg-white transition-colors" />
                 </div>
                 <div>
-                  <label className="text-[10px] text-gray-400 mb-1 block">Tanggal Berakhir</label>
+                  <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tanggal Berakhir</label>
                   <input type="date" value={form.tanggalBerakhir}
                     onChange={e => set('tanggalBerakhir', e.target.value)}
                     min={form.tanggalMulai || undefined}
@@ -446,7 +446,7 @@ export default function PPPromoFormPage() {
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <div className="flex items-center justify-between mb-1">
             <div>
-              <h3 className="text-sm font-bold text-[#1E1C43]">Promo Tematik</h3>
+              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Promo Tematik</h3>
               <p className="text-xs text-gray-400 mt-0.5">
                 Aktifkan untuk promo bertema (Natal, Kemerdekaan, dll). Ditandai badge khusus di order & invoice.
               </p>
@@ -518,7 +518,7 @@ export default function PPPromoFormPage() {
               {/* Preview */}
               <div className="flex items-center gap-2">
                 <span className="text-[10px] text-gray-400">Preview badge:</span>
-                <span className={`text-xs font-medium border px-2 py-0.5 rounded-full ${TEMA_WARNA_CLS[temaForm.warna] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
+                <span className={`text-xs font-medium border px-2 py-1 rounded-full ${TEMA_WARNA_CLS[temaForm.warna] || 'bg-gray-100 text-gray-600 border-gray-200'}`}>
                   {temaForm.icon} {temaForm.nama || 'Nama Tema'}
                 </span>
               </div>
@@ -545,7 +545,7 @@ export default function PPPromoFormPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/pp/promo')}
-              className="border border-gray-200 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="border border-gray-300 text-gray-600 text-sm font-semibold px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Batal
             </button>
