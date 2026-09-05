@@ -133,10 +133,10 @@ export default function PPPromoPage() {
         ].map(k => {
           const Icon = k.icon
           return (
-            <div key={k.label} className="bg-white rounded-xl border border-gray-200 px-4 py-3 flex items-center gap-3">
+            <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
               <Icon size={16} className="text-[#1E1C43] shrink-0 opacity-60" />
               <div>
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{k.label}</p>
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{k.label}</p>
                 <p className="text-2xl font-bold text-[#1E1C43] leading-tight">{k.val}</p>
                 <p className="text-[10px] text-gray-400">{k.sub}</p>
               </div>
