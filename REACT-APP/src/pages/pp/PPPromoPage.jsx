@@ -117,8 +117,8 @@ export default function PPPromoPage() {
         </div>
         <div className="flex items-center gap-2">
           <button onClick={() => navigate('/pp/promo/new')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
-            <Plus size={14} /> Tambah Promo
+            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold bg-[#E05945] text-white hover:bg-[#c94a38] transition-colors">
+            <Plus size={15} strokeWidth={2.5} /> Tambah Promo
           </button>
         </div>
       </div>
@@ -180,17 +180,17 @@ export default function PPPromoPage() {
       {/* ── Tabel ── */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
-          <table className="w-full" style={{ minWidth: '880px' }}>
+          <table className="w-full" style={{ minWidth: '1030px' }}>
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
                 {[
-                  ['Kode Promo',      160],
-                  ['Nama / Deskripsi', 220],
-                  ['Tipe',            130],
-                  ['Nilai / Benefit', 140],
-                  ['Program',         120],
-                  ['Kuota',           110],
-                  ['Status',          150],
+                  ['Kode Promo',       160],
+                  ['Nama / Deskripsi', 190],
+                  ['Tipe',             150],
+                  ['Nilai / Benefit',  140],
+                  ['Program',          120],
+                  ['Kuota',            120],
+                  ['Status',           150],
                 ].map(([h, mw]) => (
                   <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
@@ -258,7 +258,7 @@ export default function PPPromoPage() {
 
                     {/* Tipe */}
                     <td className="px-3 py-2.5">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium border ${TIPE_CLS[p.tipe]}`}>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${TIPE_CLS[p.tipe]}`}>
                         {p.tipe === 'diskon' ? '💸 ' : '🎁 '}{TIPE_LABEL[p.tipe]}
                       </span>
                       {p.benefitBonus && (
