@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { X, Plus, Search, MessageCircle, RotateCcw, Users } from 'lucide-react'
+import { X, Plus, Search, MessageCircle, RotateCcw, Users, Flame, UserCheck, UserX } from 'lucide-react'
 import { getStoredLeads } from '../../data/ppLeadsStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -107,14 +107,17 @@ function getAvatarColor(name) {
 /* ═══════════════════════════════════════
    StatMini
 ═══════════════════════════════════════ */
-function StatMini({ label, value, sub, accent }) {
+function StatMini({ label, value, sub, accent, icon: Icon }) {
   const bCls = { orange:'border-accent', green:'border-success', red:'border-danger', yellow:'border-warning', blue:'border-blue-400' }[accent] || 'border-border'
   const vCls = { orange:'text-accent', green:'text-success', red:'text-danger', yellow:'text-warning', blue:'text-blue-600' }[accent] || 'text-text-primary'
   return (
-    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3`}>
-      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
-      <div className={`text-xl font-bold ${vCls}`}>{value}</div>
-      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${bCls} px-4 py-3 flex items-center gap-3`}>
+      {Icon && <Icon size={20} className="text-[#1E1C43] shrink-0 opacity-40" />}
+      <div>
+        <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+        <div className={`text-2xl font-bold ${vCls}`}>{value}</div>
+        {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+      </div>
     </div>
   )
 }
@@ -204,10 +207,10 @@ export default function PPLeadsPage() {
 
         {/* KPI Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" />
-          <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" />
-          <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" />
-          <StatMini label="Lost" value={kpiLost} sub="Tidak convert" accent="red" />
+          <StatMini label="Total Leads" value={kpiTotal} sub="Semua pipeline" icon={Users} />
+          <StatMini label="Hot Leads" value={kpiHot} sub="Screening & Invoicing" accent="orange" icon={Flame} />
+          <StatMini label="Converted" value={kpiConverted} sub="Jadi klien aktif" accent="green" icon={UserCheck} />
+          <StatMini label="Lost" value={kpiLost} sub="Tidak convert" accent="red" icon={UserX} />
         </div>
 
         {/* Filter Bar */}

@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { Plus, Search, FileText, Receipt, ClipboardList, ChevronDown, RotateCcw } from 'lucide-react'
+import { Plus, Search, FileText, Receipt, ClipboardList, ChevronDown, RotateCcw, Activity, CheckCircle, XCircle } from 'lucide-react'
 import { PIC_OPTS, PAKET_OPTS } from '../../data/ppOrdersData'
 import { getAllOrders } from '../../data/ppOrdersStore'
 import { avatarColor, initials } from '../../data/ppLeadsData'
@@ -57,12 +57,15 @@ function deriveStatusInv(order) {
 
 // ─── Stat Mini ────────────────────────────────────────────────────────────────
 
-function StatMini({ label, value, accent }) {
+function StatMini({ label, value, accent, icon: Icon }) {
   const ring = { orange:'border-accent text-accent', green:'border-success text-success', red:'border-danger text-danger' }
   return (
-    <div className={`bg-bg-surface rounded-xl border-[1.5px] px-4 py-3 ${accent ? ring[accent] : 'border-border'}`}>
-      <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-1">{label}</p>
-      <p className={`text-xl font-bold ${accent ? '' : 'text-text-primary'}`}>{value}</p>
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] px-4 py-3 flex items-center gap-3 ${accent ? ring[accent] : 'border-border'}`}>
+      {Icon && <Icon size={20} className="text-[#1E1C43] shrink-0 opacity-40" />}
+      <div>
+        <p className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-1">{label}</p>
+        <p className={`text-2xl font-bold ${accent ? '' : 'text-text-primary'}`}>{value}</p>
+      </div>
     </div>
   )
 }
@@ -202,10 +205,10 @@ export default function PPOrdersPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <StatMini label="Total Order" value={total}     accent="orange" />
-        <StatMini label="Aktif"       value={active}    />
-        <StatMini label="Selesai"     value={completed} accent="green"  />
-        <StatMini label="Dibatalkan"  value={cancelled} accent="red"    />
+        <StatMini label="Total Order" value={total}     accent="orange" icon={ClipboardList} />
+        <StatMini label="Aktif"       value={active}                    icon={Activity}     />
+        <StatMini label="Selesai"     value={completed} accent="green"  icon={CheckCircle}  />
+        <StatMini label="Dibatalkan"  value={cancelled} accent="red"    icon={XCircle}      />
       </div>
 
       {/* Filter bar */}
