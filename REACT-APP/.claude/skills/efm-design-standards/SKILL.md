@@ -86,7 +86,7 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - `text-sm font-bold text-[#1E1C43]`, often with `border-l-4 border-[#E05945] pl-3`
 
 **Table**
-- Header: `text-xs font-semibold text-gray-400 uppercase tracking-wide`
+- Header: `text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap`
 - Body/data: `text-xs text-gray-600` (list pages pakai `text-xs`, bukan `text-sm`)
 - Names/important data: `text-xs font-medium text-gray-900`
 - ID columns: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap` — WAJIB semibold navy, berlaku untuk SEMUA kolom ID: No. Invoice, No. Receipt, No. Agreement, Order ID, Lead ID, dsb.
