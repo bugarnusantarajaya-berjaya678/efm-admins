@@ -192,7 +192,7 @@ export default function PPPromoPage() {
                   ['Kuota',           110],
                   ['Status',          150],
                 ].map(([h, mw]) => (
-                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-xs font-semibold text-gray-400 uppercase tracking-wide whitespace-nowrap">{h}</th>
+                  <th key={h} style={{ minWidth: mw }} className="px-3 py-2.5 text-left text-[10px] font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
