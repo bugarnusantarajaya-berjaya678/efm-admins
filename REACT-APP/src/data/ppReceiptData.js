@@ -14,6 +14,13 @@ export const RECEIPTS_INIT = [
     waStatus: 'sent', waTgl: '2 Nov 2026',
   },
   {
+    rcpNo: 'RCP-PP-26-0011', invNo: 'INV-PP-26-0011',
+    orderId: 'PP-26-0011', client: 'Robert Taylor', sapaan: 'Pak', initials: 'RT', color: '#E05945',
+    paket: '24 Sesi - Elite', pic: 'Elena Rodriguez',
+    tglBayar: '20 Okt 2026', metode: 'Transfer Bank (BCA)', total: 4800000,
+    waStatus: 'not-sent', waTgl: null,
+  },
+  {
     rcpNo: 'RCP-PP-26-0013', invNo: 'INV-PP-26-0013',
     orderId: 'PP-26-0013', client: 'James Wilson', sapaan: 'Pak', initials: 'JW', color: '#2980B9',
     paket: '12 Sesi - Pro', pic: 'Sarah Jenkins',
@@ -33,6 +40,13 @@ export const RECEIPTS_INIT = [
     paket: '12 Sesi - Pro', pic: 'Marcus Chen',
     tglBayar: '10 Okt 2026', metode: 'Transfer Bank (Mandiri)', total: 2400000,
     waStatus: 'sent', waTgl: '10 Okt 2026',
+  },
+  {
+    rcpNo: 'RCP-PP-26-0006', invNo: 'INV-PP-26-0006',
+    orderId: 'PP-26-0006', client: 'Hendra Wijaya', sapaan: 'Mas', initials: 'HW', color: '#1ABC9C',
+    paket: '24 Sesi - Elite', pic: 'Sarah Jenkins',
+    tglBayar: '5 Okt 2026', metode: 'Transfer Bank (Mandiri)', total: 4800000,
+    waStatus: 'not-sent', waTgl: null,
   },
   {
     rcpNo: 'RCP-PP-26-0007', invNo: 'INV-PP-26-0007',
