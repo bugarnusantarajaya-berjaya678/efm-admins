@@ -517,7 +517,7 @@ export default function PPLeadDetailPage() {
             {editingPipeline && (
               <div className="border-t border-gray-100 pt-4 mt-3">
                 <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Status Baru</label>
                       <select value={newStage} onChange={e => setNewStage(e.target.value)}
@@ -1352,7 +1352,7 @@ export default function PPLeadDetailPage() {
               {addKlienError && (
                 <p className="text-red-500 text-xs bg-red-50 border border-red-200 rounded-lg px-3 py-2">{addKlienError}</p>
               )}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Sapaan</label>
                   <select className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"

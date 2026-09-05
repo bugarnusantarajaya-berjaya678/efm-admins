@@ -872,7 +872,7 @@ export default function PPOrderDetailPage() {
           {editingTahapan && (
             <div className="border-t border-gray-100 pt-4 mt-3">
               <div className="bg-gray-50 rounded-xl p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Tahapan Baru</label>
                     <select value={newTahapanVal} onChange={e => setNewTahapanVal(e.target.value)}
@@ -1459,7 +1459,7 @@ export default function PPOrderDetailPage() {
                     </div>
                   )}
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="bg-gray-50 rounded-lg p-3">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Jam Latihan</p>
                     {editingSection === 'infoDeal' ? (
@@ -1735,7 +1735,7 @@ export default function PPOrderDetailPage() {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
                           ['Diajukan oleh',      'Sarah Jenkins'],
                           ['Tgl Pengajuan',      '5 Nov 2026'],
@@ -1822,7 +1822,7 @@ export default function PPOrderDetailPage() {
                           <p className="text-xs text-green-700 mt-0.5">5 Nov 2026 · {absensiSesi.length} sesi terkonfirmasi</p>
                         </div>
                       </div>
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
                           ['Total Sesi Terkonfirmasi', `${absensiSesi.length} sesi`],
                           ['Total Honorarium',         'Rp ' + (absensiSesi.length * ratePerSesi).toLocaleString('id-ID')],
@@ -2183,7 +2183,7 @@ export default function PPOrderDetailPage() {
               </button>
             </div>
             <div className="p-5 space-y-4 overflow-y-auto flex-1">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tanggal</label>
                   <input
@@ -2263,7 +2263,7 @@ export default function PPOrderDetailPage() {
               <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-3">
                 <p className="text-xs text-yellow-700">⚠️ Entry manual memerlukan catatan alasan yang jelas untuk audit trail</p>
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5">Tanggal *</label>
                   <input
