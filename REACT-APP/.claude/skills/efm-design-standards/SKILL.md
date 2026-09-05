@@ -91,10 +91,22 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 - Names/important data: `text-xs font-medium text-gray-900`
 - ID columns: `text-xs font-semibold text-[#1E1C43] whitespace-nowrap` — WAJIB semibold navy, berlaku untuk SEMUA kolom ID: No. Invoice, No. Receipt, No. Agreement, Order ID, Lead ID, dsb.
 - Amount/angka: `text-xs font-semibold text-gray-600`
+- **TD padding (list page tbody):** `py-2.5` — BUKAN `py-3`. Selisih 4px per sisi → lebih banyak baris terlihat tanpa scroll
+- **Row hover:** `hover:bg-blue-50/30 transition-colors duration-150` — BUKAN `hover:bg-gray-50`
+- **Table card wrapper:** `rounded-2xl border border-gray-100` — BUKAN `rounded-xl border-gray-200`
+
+**Badge dalam tabel**
+⚠️ **WAJIB `whitespace-nowrap` pada setiap badge `<span>`** — column minWidth saja tidak mencegah text dalam badge wrap ke 2 baris. Selalu tambahkan ke class badge:
+```jsx
+<span className={`px-2 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${colorClass}`}>
+  Label Badge
+</span>
+```
+Berlaku untuk semua badge: status, tipe promo, event label, dll.
 
 **KPI cards / Stat cards (list page)**
 - Big number: `text-2xl font-bold text-[#1E1C43]`
-- Label: `text-xs uppercase tracking-wide text-gray-400`
+- Label: `text-[10px] font-semibold text-gray-500 uppercase tracking-wider` — BUKAN `text-xs text-gray-400 tracking-wide`
 - Container: `bg-white rounded-xl border border-gray-200 p-4`
 
 ⚠️ **Wajib Bahasa Indonesia:** semua nilai `label` dan `sub` di stat card HARUS dalam Bahasa Indonesia — TIDAK boleh Inggris (`"Paid"` → `"Lunas"`, `"Overdue"` → `"Jatuh Tempo"`, `"Expired"` → `"Kadaluarsa"`, dll).
@@ -135,12 +147,68 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 |---|---|
 | **Header page** — action row di kanan atas halaman | `flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold transition-colors` |
 | **Header page** — tombol dropdown navigasi (mis. Dokumen, Pengaturan) | Tombol sama persis: `h-8 px-3 text-xs font-semibold` + ChevronDown `size={12}`. Dropdown panel: `absolute top-full mt-1.5 w-48 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-30`. Item: `w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors`. Divider antar item: `<div className="border-t border-gray-100" />`. ⚠️ Selalu pakai divider antar item — dropdown tanpa divider tidak konsisten. |
-| **List page** — tombol Buat/Tambah Baru | `flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
+| **List page** — tombol Buat/Tambah Baru | `flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors` — ikon: `Plus size={15} strokeWidth={2.5}` |
 | **Modal footer** — Batal / Simpan | `px-4 py-2 rounded-lg text-sm font-semibold transition-colors` |
 | **Section CTA standalone** — Konfirmasi, Kirim | `flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-colors` |
 | **Inline kecil** — Edit/Lihat di dalam baris tabel | `px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors` |
 
 **Common mistake to avoid:** never use `text-base`, `text-lg`, or `text-xl` for field values, table data, or labels. `text-sm` is correct for form inputs and section titles in detail/form pages — but NOT for table body cells in list pages (use `text-xs` there). `text-[10px]` is standard for all field labels (both form pages and list-page table headers).
+
+---
+
+## 3e. Filter Bar — Design Token Pattern
+
+Filter bar di list page (search input + dropdown filter) WAJIB menggunakan **CSS design tokens**, bukan hardcoded hex. Referensi: PPLeadsPage, PPPromoPage (post-update).
+
+```jsx
+{/* Search input */}
+<div className="relative flex-1 min-w-[200px]">
+  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+  <input
+    className="w-full pl-9 pr-3 py-2 rounded-lg border border-border bg-bg-surface text-sm text-text-primary placeholder-text-muted
+                focus:outline-none focus:border-primary hover:border-primary transition-colors"
+    placeholder="Cari..."
+    value={search}
+    onChange={e => setSearch(e.target.value)}
+  />
+</div>
+
+{/* Dropdown select */}
+<select
+  className="px-3 py-2 rounded-lg border border-border bg-bg-surface text-sm text-text-primary
+             focus:outline-none focus:border-primary hover:border-primary transition-colors"
+  value={filter}
+  onChange={e => setFilter(e.target.value)}
+>
+  <option value="">Semua</option>
+</select>
+
+{/* Filter pill / toggle button — aktif state */}
+<button className="px-3 py-2 rounded-lg text-sm font-medium transition-colors
+  bg-primary text-white hover:bg-primary-2">
+  Aktif
+</button>
+
+{/* Filter pill — inaktif state */}
+<button className="px-3 py-2 rounded-lg text-sm font-medium transition-colors
+  bg-bg-page border border-border text-text-muted hover:border-primary hover:text-primary">
+  Inaktif
+</button>
+```
+
+**Tokens yang digunakan:**
+| Token | Nilai | Dipakai untuk |
+|---|---|---|
+| `bg-bg-surface` | `#FFFFFF` | input background |
+| `bg-bg-page` | `#F5F5F7` | page/inactive pill background |
+| `border-border` | border default | semua border filter |
+| `text-text-primary` | navy/dark | input text, nilai select |
+| `text-text-muted` | gray | placeholder, ikon, inactive label |
+| `focus:border-primary` / `hover:border-primary` | orange accent | border focus/hover state |
+| `bg-primary` | orange | active pill background |
+| `hover:bg-primary-2` | orange darker | active pill hover |
+
+⚠️ **Jangan hardcode hex di filter bar** — `border-gray-200`, `bg-white`, `text-gray-500`, `focus:border-[#1E1C43]` harus diganti ke token di atas saat melakukan styling ulang atau match-PP task.
 
 ---
 
