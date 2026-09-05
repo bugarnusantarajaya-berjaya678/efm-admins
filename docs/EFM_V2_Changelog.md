@@ -4,6 +4,52 @@ Catatan perubahan UI/fitur yang sudah diimplementasikan dan di-merge ke main.
 
 ---
 
+## 2026-09-05
+
+### PP: PPPromoPage & PPPromoFormPage — Penyesuaian penuh ke efm-design-standards (PR #395–#401)
+
+**Latar belakang:** PPPromoPage memiliki beberapa penyimpangan dari standar desain yang sudah ditetapkan di `efm-design-standards` — tabel menggunakan class yang tidak konsisten dengan PPLeadsPage, filter bar hardcode warna hex, dan badge tidak menggunakan pola yang benar. PPPromoFormPage juga memiliki beberapa ketidakkonsistenan pada section title, label form, dan tombol.
+
+**Perubahan PR #395-#396 — PPPromoPage, PPPromoFormPage (awal):**
+- Tabel PPPromoPage: sesuaikan header font ke `text-[10px] font-semibold text-gray-500 uppercase tracking-wider`
+- Badge status: padding `py-0.5` → `py-1`, ukuran `text-xs`
+- KPI card label: `text-[10px] font-semibold text-gray-500 uppercase tracking-wider`
+- KPI card number: `text-2xl font-bold text-[#1E1C43]`
+- Tombol copy kode promo di kolom Kode Promo
+
+**Perubahan PR #397-#398 — PPPromoPage tabel & filter (lanjutan):**
+- Tabel body TD: `py-2.5` (dari `py-3`), font `text-xs text-gray-600`
+- Row hover: `hover:bg-blue-50/30 transition-colors duration-150`
+- Table card wrapper: `rounded-2xl border border-gray-100` (dari `rounded-xl border-gray-200`)
+- Filter bar: migrasi dari hardcode hex (`#1E1C43`) ke design tokens (`bg-primary text-white`)
+
+**Perubahan PR #399 — PPPromoPage badge & lebar kolom:**
+- Badge status: tambah `whitespace-nowrap` pada `<span>` agar tidak wrap di kolom sempit — pola ini berlaku untuk SEMUA badge di tabel di seluruh project
+- Tombol Tambah Promo: `py-2.5`, `Plus size={15} strokeWidth={2.5}`
+- Lebar kolom Kode Promo diperlebar, kolom aksi dipersempit
+
+**Perubahan PR #400 — Skill update efm-design-standards:**
+- Dokumentasikan badge `whitespace-nowrap` sebagai aturan wajib
+- Tambah aturan KPI label versi final (`text-[10px] font-semibold ... tracking-wider`)
+- Tambah aturan TD padding list page (`py-2.5`), row hover, table card wrapper
+- Tambah Section 3e: Filter Bar design token pattern
+- Update tombol CTA list page spec
+
+**Perubahan PR #401 — PPPromoFormPage UI alignment (4 fixes + 1 keputusan):**
+- Section title "Promo Tematik": tambah `border-l-4 border-[#E05945] pl-3`
+- Label inline "Tanggal Mulai" / "Tanggal Berakhir": sesuaikan ke `text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block`
+- Badge preview Warna Tema: `py-0.5` → `py-1` (konsisten dengan badge standar)
+- Tombol Batal (footer): `border-gray-200` → `border-gray-300`, tambah `font-semibold`
+- Tombol Hapus Promo (edit mode): DIPERTAHANKAN sebagai outlined red (`text-red-600 border border-red-200`) karena dilindungi `confirm()` dialog — bukan filled red yang untuk aksi langsung destruktif
+- Skill update: tambah 2 varian tombol red (filled vs outlined) ke efm-design-standards
+
+**File yang diubah:**
+- `REACT-APP/src/pages/pp/PPPromoPage.jsx`
+- `REACT-APP/src/pages/pp/PPPromoFormPage.jsx`
+- `REACT-APP/.claude/skills/efm-design-standards/SKILL.md`
+
+---
+
 ## 2026-08-29
 
 ### PP: Integrasi Leads & Order pages ke live ppProgramStore / ppLeadsStore / ppJenisStore (PR #193 + PR #194)

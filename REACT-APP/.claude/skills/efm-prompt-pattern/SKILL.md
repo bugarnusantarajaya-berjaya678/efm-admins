@@ -141,3 +141,9 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - JANGAN konstruksi URL preview secara manual dari nama branch. Formula `efm-admins-git-[nama-branch]-bugar-nusantara-jaya.vercel.app` hanya benar kalau nama branch pendek (< 40 karakter termasuk prefix `efm-admins-git-` dan suffix `-bugar-nusantara-jaya`). Branch dengan nama panjang akan di-truncate oleh Vercel dan ditambah hash acak — URL yang dikonstruksi manual TIDAK BISA dibuka.
 - Setelah PR dibuat, selalu panggil `mcp__github__pull_request_read` dengan method `get_comments` untuk membaca komentar Vercel bot di PR tersebut. Komentar Vercel bot berisi field `previewUrl` yang merupakan URL yang benar dan bisa dibuka.
 - Ambil URL preview dari komentar itu (bukan dari formula), lalu sertakan di laporan akhir ke pengguna.
+
+**Stop push setelah pengguna konfirmasi merge:**
+- Begitu pengguna berkata "ya merge" atau "sudah merge", HENTIKAN semua push ke branch tersebut — meskipun ada follow-up yang ingin di-commit (skill update, typo fix, dll)
+- Alasan: push ke branch yang sudah/akan di-merge akan membuat PR "Already merged" tapi branch masih ada commit baru, yang memaksa pengguna buka PR lama atau buat PR baru yang membingungkan
+- Jika ada sesuatu yang belum selesai saat pengguna konfirmasi merge: catat dulu, buat branch baru setelah merge selesai, lanjutkan di sana
+- Skill updates yang baru disadari setelah konfirmasi merge → buat branch baru, JANGAN push ke branch yang sedang/sudah di-merge
