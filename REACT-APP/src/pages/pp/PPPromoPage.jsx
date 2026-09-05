@@ -43,7 +43,7 @@ function KuotaDisplay({ p }) {
   const pct   = Math.round((p.jumlahPemakaian / p.maxPemakaian) * 100)
   return (
     <div>
-      <span className={`text-sm font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
+      <span className={`text-xs font-semibold ${habis ? 'text-red-600' : pct >= 80 ? 'text-yellow-600' : 'text-gray-600'}`}>
         {p.jumlahPemakaian}/{p.maxPemakaian}
       </span>
       {habis && (
@@ -247,7 +247,7 @@ export default function PPPromoPage() {
 
                     {/* Nama + periode */}
                     <td className="px-3 py-3">
-                      <p className="text-sm font-semibold text-gray-800">{p.label}</p>
+                      <p className="text-xs font-semibold text-gray-800">{p.label}</p>
                       {p.keterangan && <p className="text-[10px] text-gray-400 mt-0.5 truncate max-w-[190px]">{p.keterangan}</p>}
                       {periodeStr && (
                         <p className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
@@ -271,12 +271,12 @@ export default function PPPromoPage() {
                     {/* Nilai / Benefit */}
                     <td className="px-3 py-3">
                       {p.tipe === 'diskon' ? (
-                        <span className="text-sm font-semibold text-gray-700 flex items-center gap-1">
+                        <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
                           <Icon size={11} className="text-gray-400" />
                           {p.subTipe === 'persen' ? `${p.nilai}%` : `Rp ${(p.nilai || 0).toLocaleString('id-ID')}`}
                         </span>
                       ) : (
-                        <span className="text-sm text-gray-500 flex items-center gap-1">
+                        <span className="text-xs text-gray-500 flex items-center gap-1">
                           <Gift size={11} className="text-blue-400" />
                           {SUBTIPE_LABEL[p.subTipe]}
                         </span>
@@ -286,12 +286,12 @@ export default function PPPromoPage() {
                     {/* Program */}
                     <td className="px-3 py-3">
                       {p.programIds === null ? (
-                        <span className="text-sm text-gray-400 flex items-center gap-1">
+                        <span className="text-xs text-gray-400 flex items-center gap-1">
                           <Unlock size={11} className="text-gray-300 shrink-0" /> Semua
                         </span>
                       ) : (
                         <span
-                          className="text-sm font-medium text-blue-600 flex items-center gap-1 cursor-default"
+                          className="text-xs font-medium text-blue-600 flex items-center gap-1 cursor-default"
                           title={p.programIds.join(', ')}
                         >
                           <Lock size={11} className="text-blue-400 shrink-0" />
