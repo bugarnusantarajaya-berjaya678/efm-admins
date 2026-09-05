@@ -5,6 +5,7 @@ import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDow
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
 import { addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { addInvoice, getNextInvoiceNo } from '../../data/ppInvoiceStore';
+import { addDoc, getNextAgreementNo } from '../../data/ppDocumentsStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
 import { getKlienByLeadId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
@@ -318,8 +319,9 @@ export default function PPOrderNewPage() {
     dueDate.setDate(dueDate.getDate() + 14)
     const mm = todayDate.getMonth()
     const bulan = `${BULAN_ID[mm]} ${todayDate.getFullYear()}`
+    const newInvNo = getNextInvoiceNo()
     addInvoice({
-      invNo: getNextInvoiceNo(),
+      invNo: newInvNo,
       orderId: newId,
       client: pendaftar.nama,
       sapaan: pendaftar.sapaan,
@@ -346,6 +348,31 @@ export default function PPOrderNewPage() {
       total: totalSetelahPromo,
       bulan,
       paidDate: null, payMethod: null,
+    })
+
+    // Auto-buat agreement untuk order baru
+    const newAgrId = getNextAgreementNo()
+    const AGRT_COLORS = ['#2980B9', '#27AE60', '#16A085', '#D35400', '#8E44AD', '#E05945']
+    addDoc({
+      id: newAgrId, displayId: newAgrId,
+      leadId: selectedLeadId || null,
+      orderId: newId,
+      namaKlien: pendaftar.nama,
+      initials: getInvoiceInitials(pendaftar.nama),
+      color: AGRT_COLORS[(pendaftar.nama.charCodeAt(0) || 0) % AGRT_COLORS.length],
+      namaPanggilan: pendaftar.nama.split(' ')[0] || '',
+      noWa: pendaftar.noHP || '',
+      email: pendaftar.email || '',
+      alamat: lokasiLatihan || '',
+      paket: selectedPaket?.namaPaket || '',
+      masaBerlaku: selectedPaket?.masaBerlaku || '',
+      pic: selectedPaket?.pic?.nama || '',
+      detailPesanan: `${selectedPaket?.totalSesi || 0} Sesi Private Training - ${selectedPaket?.namaPaket || ''}`,
+      noReceipt: '—',
+      refInvoice: newInvNo,
+      tglDibuat: formatTglInv(todayDate),
+      statusTtd: 'pending',
+      tglTtd: null,
     })
 
     navigate('/pp/orders/' + newId)

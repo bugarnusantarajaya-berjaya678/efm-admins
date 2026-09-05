@@ -255,7 +255,7 @@ export default function PPAgreementDetailPage() {
 
   const handleBack = () => {
     if (fromOrderId) {
-      navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } })
+      navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } })
     } else {
       navigate('/pp/documents')
     }
