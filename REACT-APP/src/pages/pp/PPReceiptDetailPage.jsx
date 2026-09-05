@@ -39,10 +39,10 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
   )
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
       {/* Navy Header */}
-      <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
+      <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-2 gap-4 text-white">
         {/* Kiri — logo + info perusahaan */}
         <div className="flex items-start gap-3">
           {cs.logoPerusahaan ? (
@@ -63,17 +63,17 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         </div>
 
         {/* Kanan — RECEIPT title + nomor + meta */}
-        <div className="text-left sm:text-right">
-          <div className="text-2xl sm:text-4xl font-black tracking-widest uppercase">RECEIPT</div>
+        <div className="text-right">
+          <div className="text-4xl font-black tracking-widest uppercase">RECEIPT</div>
           <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
 
-          <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
+          <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
             <span className="text-xs text-gray-400">Ref. Invoice</span>
             <button onClick={() => onGoToInvoice(rcp.invNo)}
               className="font-semibold text-sm hover:underline">{rcp.invNo}</button>
           </div>
 
-          <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5">
+          <div className="flex justify-end items-center gap-2 mb-0.5">
             <span className="text-xs text-gray-400">Order ID</span>
             <button onClick={() => onGoToOrder(rcp.orderId)}
               className="font-semibold text-sm hover:underline">#{rcp.orderId}</button>
@@ -276,11 +276,13 @@ export default function PPReceiptDetailPage() {
         </div>
       </div>
 
-      <ReceiptDocument
-        rcp={receipt}
-        onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
-        onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo, { state: { fromOrderId: receipt.orderId } })}
-      />
+      <div className="overflow-x-auto pb-2">
+        <ReceiptDocument
+          rcp={receipt}
+          onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
+          onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo, { state: { fromOrderId: receipt.orderId } })}
+        />
+      </div>
     </div>
   )
 }
