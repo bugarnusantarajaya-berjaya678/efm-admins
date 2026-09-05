@@ -79,3 +79,25 @@ tambahkan section/contoh baru di bagian yang sesuai, pertahankan
 format dan gaya penulisan yang sudah ada di file tersebut.
 
 Setelah selesai commit dan push seperti biasa.
+
+## Timing Commit Skill — WAJIB
+
+Skill update HARUS di-commit dalam batch yang sama dengan perubahan 
+kode yang memicunya — SEBELUM meminta konfirmasi merge ke pengguna.
+
+**Alasan:** Jika skill di-commit SETELAH pengguna konfirmasi merge, 
+perubahan itu mendarat di branch yang sudah di-merge, bukan di main. 
+Akibatnya:
+- Skill update tidak masuk ke main
+- Pengguna diminta merge lagi untuk commit yang tidak ada PR-nya
+- Membuat kebingungan "PR sudah merged tapi diminta merge lagi"
+
+**Aturan konkret:**
+- ✅ Benar: kode selesai → skill update → `npm run build` → satu commit 
+  → push → buat PR → lapor + tanya merge
+- ❌ Salah: kode selesai → push → buat PR → lapor → pengguna bilang 
+  "ya merge" → baru update skill → push lagi ke branch yang sama
+
+Jika terlambat menyadari skill perlu diupdate setelah pengguna 
+konfirmasi merge: buat branch baru untuk skill update, jangan push 
+ke branch yang sudah/akan di-merge.
