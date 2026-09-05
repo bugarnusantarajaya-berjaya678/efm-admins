@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useBreadcrumb } from '../../context/BreadcrumbContext';
 import { ArrowLeft, ChevronRight, Plus, Trash2, CheckCircle, XCircle, ChevronDown, ClipboardList, Link2, User, Tag, Gift, X, Sparkles } from 'lucide-react';
 import { getAllAssessments } from '../../data/ppAssessmentsStore';
-import { addOrder, getNextOrderId } from '../../data/ppOrdersStore';
+import { addOrder, getNextOrderId } from '../../data/ppOrdersStore'
+import { addInvoice, getNextInvoiceNo } from '../../data/ppInvoiceStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
 import { getKlienByLeadId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
@@ -31,6 +32,19 @@ function toPaket(p) {
 }
 
 const hariOptions = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+
+const AVATAR_COLORS = ['#2980B9', '#8E44AD', '#27AE60', '#E05945', '#F39C12', '#16A085', '#D35400', '#1ABC9C', '#2ECC71', '#3498DB', '#9B59B6', '#E67E22'];
+const BULAN_ID = ['jan','feb','mar','apr','mei','jun','jul','agu','sep','okt','nov','des'];
+
+function getInvoiceInitials(nama) {
+  return nama.trim().split(/\s+/).slice(0, 2).map(w => (w[0] || '').toUpperCase()).join('');
+}
+function pickAvatarColor(nama) {
+  return AVATAR_COLORS[(nama.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+}
+function formatTglInv(date) {
+  return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 function getPicInitials(nama) {
   return nama.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
@@ -229,6 +243,7 @@ export default function PPOrderNewPage() {
   const handleSimpanOrder = () => {
     const newId = getNextOrderId()
     const today = new Date().toISOString().split('T')[0]
+    const todayDate = new Date()
     addOrder({
       id: newId,
       leadId: selectedLeadId || null,
@@ -297,6 +312,42 @@ export default function PPOrderNewPage() {
       loiStatus: 'N/A', mouAda: false, contractStatus: 'Active',
       quotation: { manajemenFee: false, manajemenFeePersen: 0, pajak: [{ nama: 'PPN 11%', persen: 11, aktif: false }], status: 'Draft', catatan: '' },
     })
+
+    // Auto-buat invoice untuk order baru
+    const dueDate = new Date(todayDate)
+    dueDate.setDate(dueDate.getDate() + 14)
+    const mm = todayDate.getMonth()
+    const bulan = `${BULAN_ID[mm]} ${todayDate.getFullYear()}`
+    addInvoice({
+      invNo: getNextInvoiceNo(),
+      orderId: newId,
+      client: pendaftar.nama,
+      sapaan: pendaftar.sapaan,
+      initials: getInvoiceInitials(pendaftar.nama),
+      color: pickAvatarColor(pendaftar.nama),
+      alamat: lokasiLatihan || '',
+      noHp: pendaftar.noHP,
+      paket: selectedPaket?.namaPaket || '',
+      namaLatihan: selectedPaket?.namaProgram || 'Private Training',
+      pic: selectedPaket?.pic?.nama || '',
+      tanggal: formatTglInv(todayDate),
+      due: formatTglInv(dueDate),
+      status: 'pending',
+      hargaPersesi: selectedPaket ? Math.round(selectedPaket.hargaPaket / (selectedPaket.totalSesi || 1)) : 0,
+      sesi: selectedPaket?.totalSesi || 0,
+      hargaPaket: totalNilai,
+      diskonPaket: 0,
+      biayaLain: 0, biayaLainKet: '',
+      diskon: nilaiDiskon,
+      promoKode: promoApplied?.kode || '',
+      promoType: promoApplied?.tipe || '',
+      promoVal: promoApplied?.nilai || 0,
+      pajak: 0,
+      total: totalSetelahPromo,
+      bulan,
+      paidDate: null, payMethod: null,
+    })
+
     navigate('/pp/orders/' + newId)
   };
 

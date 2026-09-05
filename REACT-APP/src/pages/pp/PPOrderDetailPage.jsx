@@ -9,7 +9,7 @@ import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
-import { INVOICES_INIT } from '../../data/ppInvoiceData'
+import { getAllInvoices } from '../../data/ppInvoiceStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { PIC_DB } from '../../data/ppProgramDBData'
 
@@ -359,7 +359,7 @@ export default function PPOrderDetailPage() {
     : getOrderById(id)
 
   const agrDoc = getDocByOrderId(order?.id)
-  const linkedInv = !isNew ? (INVOICES_INIT.find(i => i.orderId === order?.id) ?? null) : null
+  const linkedInv = !isNew ? (getAllInvoices().find(i => i.orderId === order?.id) ?? null) : null
   const linkedRcp = !isNew ? (getReceiptByOrderId(order?.id) ?? null) : null
 
   /* ── Section state ───────────────────────────────────────────────────────── */
