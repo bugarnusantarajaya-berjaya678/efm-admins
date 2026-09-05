@@ -136,7 +136,7 @@ export default function PPPromoPage() {
             <div key={k.label} className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-3">
               <Icon size={16} className="text-[#1E1C43] shrink-0 opacity-60" />
               <div>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide">{k.label}</p>
+                <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider">{k.label}</p>
                 <p className="text-2xl font-bold text-[#1E1C43] leading-tight">{k.val}</p>
                 <p className="text-[10px] text-gray-400">{k.sub}</p>
               </div>
@@ -146,40 +146,40 @@ export default function PPPromoPage() {
       </div>
 
       {/* ── Filter + Search ── */}
-      <div className="bg-white border border-gray-200 rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
+      <div className="bg-bg-surface border border-border rounded-xl px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
         <select value={fTipe} onChange={e => setFTipe(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tipe</option>
           <option value="diskon">Diskon</option>
           <option value="bonus">Bonus / Free</option>
         </select>
         <select value={fTema} onChange={e => setFTema(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Tema</option>
           <option value="tematik">Tematik</option>
           <option value="biasa">Biasa</option>
         </select>
         <select value={fStatus} onChange={e => setFStatus(e.target.value)}
-          className="px-3 py-[7px] border-[1.5px] border-gray-200 rounded-lg text-xs text-gray-700 bg-white outline-none focus:border-[#1E1C43] transition-colors">
+          className="px-3 py-[7px] border-[1.5px] border-border rounded-lg text-xs text-text-primary bg-white outline-none focus:border-primary hover:border-primary transition-colors">
           <option value="">Semua Status</option>
           <option value="aktif">Aktif</option>
           <option value="nonaktif">Nonaktif / Expired</option>
         </select>
-        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-gray-50 border-[1.5px] border-gray-200 rounded-lg px-3 py-[7px] focus-within:border-[#1E1C43] focus-within:bg-white transition-colors">
-          <Search size={13} className="text-gray-400 shrink-0" />
+        <div className="flex items-center gap-2 flex-1 min-w-[180px] bg-bg-page border-[1.5px] border-border rounded-lg px-3 py-[7px] focus-within:border-primary focus-within:bg-white transition-colors">
+          <Search size={13} className="text-text-muted shrink-0" />
           <input value={search} onChange={e => setSearch(e.target.value)}
             placeholder="Cari kode / nama promo..."
-            className="border-none bg-transparent text-xs outline-none w-full text-gray-700 placeholder:text-gray-400" />
+            className="border-none bg-transparent text-xs outline-none w-full text-text-primary placeholder:text-text-muted" />
         </div>
         <button onClick={reset}
-          className="px-3.5 py-[7px] bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
+          className="px-3.5 py-[7px] bg-primary hover:bg-primary-2 text-white text-xs font-semibold rounded-lg transition-colors shrink-0 flex items-center gap-1.5">
           <RotateCcw size={12} /> Reset
         </button>
       </div>
 
       {/* ── Tabel ── */}
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '240px' }}>
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="overflow-auto" style={{ maxHeight: 'calc(100vh - 420px)', minHeight: '280px' }}>
           <table className="w-full" style={{ minWidth: '880px' }}>
             <thead className="sticky top-0 z-10">
               <tr className="bg-gray-50 border-b border-gray-100">
@@ -220,10 +220,10 @@ export default function PPPromoPage() {
                   : null
 
                 return (
-                  <tr key={p.kode} onClick={() => navigate(`/pp/promo/${p.kode}`)} className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <tr key={p.kode} onClick={() => navigate(`/pp/promo/${p.kode}`)} className="border-b border-gray-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer">
 
                     {/* Kode + tema badge */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       <div className="flex items-center gap-1.5">
                         <span className="text-xs font-semibold text-[#1E1C43] font-mono tracking-wide bg-gray-100 px-2 py-0.5 rounded-md">{p.kode}</span>
                         <button
@@ -246,7 +246,7 @@ export default function PPPromoPage() {
                     </td>
 
                     {/* Nama + periode */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       <p className="text-xs font-semibold text-gray-800">{p.label}</p>
                       {p.keterangan && <p className="text-[10px] text-gray-400 mt-0.5 truncate max-w-[190px]">{p.keterangan}</p>}
                       {periodeStr && (
@@ -257,7 +257,7 @@ export default function PPPromoPage() {
                     </td>
 
                     {/* Tipe */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium border ${TIPE_CLS[p.tipe]}`}>
                         {p.tipe === 'diskon' ? '💸 ' : '🎁 '}{TIPE_LABEL[p.tipe]}
                       </span>
@@ -269,7 +269,7 @@ export default function PPPromoPage() {
                     </td>
 
                     {/* Nilai / Benefit */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       {p.tipe === 'diskon' ? (
                         <span className="text-xs font-semibold text-gray-700 flex items-center gap-1">
                           <Icon size={11} className="text-gray-400" />
@@ -284,7 +284,7 @@ export default function PPPromoPage() {
                     </td>
 
                     {/* Program */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       {p.programIds === null ? (
                         <span className="text-xs text-gray-400 flex items-center gap-1">
                           <Unlock size={11} className="text-gray-300 shrink-0" /> Semua
@@ -302,12 +302,12 @@ export default function PPPromoPage() {
                     </td>
 
                     {/* Kuota */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       <KuotaDisplay p={p} />
                     </td>
 
                     {/* Status toggle */}
-                    <td className="px-3 py-3">
+                    <td className="px-3 py-2.5">
                       <div className="flex flex-col gap-1">
                         <button onClick={e => { e.stopPropagation(); handleToggle(p.kode) }} className="flex items-center gap-1.5">
                           {p.aktif
