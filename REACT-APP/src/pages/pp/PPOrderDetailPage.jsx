@@ -712,8 +712,8 @@ export default function PPOrderDetailPage() {
     const newOrder = {
       id: newId,
       ...infoDraft,
-      statusOrder: infoDraft.statusOrder || 'Aktif',
-      tahapan: infoDraft.tahapan || 'Program Berjalan',
+      statusOrder: infoDraft.statusOrder || 'Draft',
+      tahapan: infoDraft.tahapan || 'Invoice',
       nilaiKontrak: lineItems.reduce((s, i) => s + (i.total || 0), 0),
       rincianLayanan: lineItems,
       paymentTracking: [],
