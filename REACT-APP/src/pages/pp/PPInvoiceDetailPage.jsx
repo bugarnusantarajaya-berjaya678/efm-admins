@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag, Gift, Sparkles } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { getInvoiceByNo } from '../../data/ppInvoiceStore'
+import { getInvoiceByNo, updateInvoice } from '../../data/ppInvoiceStore'
 import { STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -191,7 +191,9 @@ export default function PPInvoiceDetailPage() {
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
   function handleMarkPaid({ paidDate, payMethod }) {
-    setInvoice(prev => ({ ...prev, status: 'paid', paidDate, payMethod }))
+    const changes = { status: 'paid', paidDate, payMethod }
+    updateInvoice(invoice.invNo, changes)
+    setInvoice(prev => ({ ...prev, ...changes }))
     setModal(null)
   }
 
@@ -236,7 +238,7 @@ export default function PPInvoiceDetailPage() {
               )}
               {invoice.status === 'paid' && !existingReceipt && (
                 <button
-                  onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
+                  onClick={() => navigate('/pp/receipt', { state: { createNew: true, prefill: { invNo: invoice.invNo, orderId: invoice.orderId, client: invoice.client, sapaan: invoice.sapaan, paket: invoice.paket, pic: invoice.pic, total: subtotalBase } } })}
                   className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
                   <Plus size={13} /> Buat Receipt
                 </button>
