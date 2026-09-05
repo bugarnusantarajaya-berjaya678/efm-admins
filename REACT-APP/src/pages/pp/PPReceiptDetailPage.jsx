@@ -39,7 +39,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
   )
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
       {/* Navy Header */}
       <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
@@ -276,11 +276,13 @@ export default function PPReceiptDetailPage() {
         </div>
       </div>
 
-      <ReceiptDocument
-        rcp={receipt}
-        onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
-        onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo, { state: { fromOrderId: receipt.orderId } })}
-      />
+      <div className="overflow-x-auto pb-2">
+        <ReceiptDocument
+          rcp={receipt}
+          onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
+          onGoToInvoice={invNo => navigate('/pp/invoice/' + invNo, { state: { fromOrderId: receipt.orderId } })}
+        />
+      </div>
     </div>
   )
 }

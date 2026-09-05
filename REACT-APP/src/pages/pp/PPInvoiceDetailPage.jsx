@@ -262,8 +262,9 @@ export default function PPInvoiceDetailPage() {
         </div>
       </div>
 
-      {/* ── Invoice Document ── */}
-      <div className="bg-white rounded-2xl shadow-lg max-w-4xl mx-auto w-full overflow-hidden">
+      {/* ── Invoice Document — horizontal scroll on narrow screens ── */}
+      <div className="overflow-x-auto pb-2">
+      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
         <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
@@ -546,6 +547,7 @@ export default function PPInvoiceDetailPage() {
           <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
         </div>
       </div>
+      </div>{/* /overflow-x-auto */}
 
       {modal === 'markPaid' && (
         <MarkPaidModal inv={invoice} onConfirm={handleMarkPaid} onClose={() => setModal(null)} />
