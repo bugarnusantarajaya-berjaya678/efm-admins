@@ -789,7 +789,7 @@ export default function PPDocumentsPage() {
               </button>
             </div>
             <button
-              onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'kontrak' } }) : navigate('/pp/orders')}
+              onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/orders')}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"
             >
               <ArrowLeft size={13} /> {fromOrderId ? `Kembali ke Order #${fromOrderId}` : 'Kembali ke Order'}
