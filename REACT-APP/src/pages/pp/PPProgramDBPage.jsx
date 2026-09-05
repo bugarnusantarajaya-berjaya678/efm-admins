@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, Search, Layers, RotateCcw, ChevronDown, ToggleLeft, ToggleRight } from 'lucide-react'
+import { Plus, Search, Layers, RotateCcw, ChevronDown, ToggleLeft, ToggleRight, CheckCircle, TrendingUp, TrendingDown } from 'lucide-react'
 import { PIC_DB, PIC_OPTS_DB, formatRp } from '../../data/ppProgramDBData'
 import { getStoredPrograms, updateStoredProgram } from '../../data/ppProgramStore'
 import { getStoredJenis } from '../../data/ppJenisStore'
@@ -9,14 +9,17 @@ const ROWS = 10
 
 /* ─── Components ─── */
 
-function StatMini({ label, value, sub, accent }) {
+function StatMini({ label, value, sub, accent, icon: Icon }) {
   const borderCls = { orange: 'border-accent', green: 'border-success', red: 'border-danger', yellow: 'border-warning' }[accent] || 'border-border'
   const valueCls  = { orange: 'text-accent', green: 'text-success', red: 'text-danger', yellow: 'text-warning' }[accent] || 'text-text-primary'
   return (
-    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${borderCls} px-4 py-3`}>
-      <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
-      <div className={`text-xl font-bold ${valueCls}`}>{value}</div>
-      {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+    <div className={`bg-bg-surface rounded-xl border-[1.5px] ${borderCls} px-4 py-3 flex items-center gap-3`}>
+      {Icon && <Icon size={20} className="text-[#1E1C43] shrink-0 opacity-40" />}
+      <div>
+        <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider mb-1">{label}</div>
+        <div className={`text-2xl font-bold ${valueCls}`}>{value}</div>
+        {sub && <div className="text-[11px] text-text-muted mt-0.5">{sub}</div>}
+      </div>
     </div>
   )
 }
@@ -142,10 +145,10 @@ export default function PPProgramDBPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatMini label="Total Program" value={programs.length} sub="semua terdaftar" />
-        <StatMini label="Program Aktif" value={aktifCount} sub="tersedia di form order" accent="green" />
-        <StatMini label="Harga Terendah" value={<span className="text-base">{minHarga}</span>} sub="paket terjangkau" />
-        <StatMini label="Harga Tertinggi" value={<span className="text-base">{maxHarga}</span>} sub="paket premium" accent="orange" />
+        <StatMini label="Total Program"   value={programs.length}                                    sub="semua terdaftar"          icon={Layers}       />
+        <StatMini label="Program Aktif"   value={aktifCount}                         accent="green"  sub="tersedia di form order"   icon={CheckCircle}  />
+        <StatMini label="Harga Terendah"  value={<span className="text-base">{minHarga}</span>}      sub="paket terjangkau"         icon={TrendingDown} />
+        <StatMini label="Harga Tertinggi" value={<span className="text-base">{maxHarga}</span>}      sub="paket premium" accent="orange" icon={TrendingUp}   />
       </div>
 
       {/* Filters */}
