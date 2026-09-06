@@ -93,7 +93,7 @@ export default function PPRekapAbsensiDetailPage() {
   const paymentRef = useRef(null)
 
   useEffect(() => {
-    setCrumbs?.(['Private Program', 'Rekap Absensi', orderId])
+    setCrumbs?.(['Private Program', 'Rekap Absensi', '#' + rekapId])
     return () => setCrumbs?.(null)
   }, [orderId])
 
