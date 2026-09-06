@@ -52,6 +52,7 @@ function toPaket(p) {
     frekuensi: `${p.pertemuan}x seminggu`,
     masaBerlaku: p.masa,
     hargaPaket: p.harga,
+    biayaSesiPIC: p.biayaSesiPIC || 0,
     pic: {
       nama: pic.fullname || '—',
       spesialisasi: pic.spesialis || '—',
@@ -504,10 +505,18 @@ export default function PPOrderDetailPage() {
   /* ── Tab 3: Operasional Sesi (PP) ───────────────────────────────────────── */
 
   const [absensiSesi, setAbsensiSesi] = useState([
-    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",          foto:true,  catatanKoreksi:"" },
-    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome",  foto:true,  catatanKoreksi:"" },
-    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",          foto:true,  catatanKoreksi:"" },
-    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",          foto:false, catatanKoreksi:"" },
+    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-13", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-15", jam:"06:59", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
+    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-17", jam:"07:04", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-10-20", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-005", jadwalId:"JS-005", tanggal:"2026-10-22", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
+    { id:"ABS-006", jadwalId:"JS-006", tanggal:"2026-10-24", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-007", jadwalId:"JS-007", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-008", jadwalId:"JS-008", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
+    { id:"ABS-009", jadwalId:"JS-009", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-010", jadwalId:"JS-010", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         foto:false, catatanKoreksi:"" },
+    { id:"ABS-011", jadwalId:"JS-011", tanggal:"2026-11-05", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
+    { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
   ])
   const [logTab3PP, setLogTab3PP] = useState(() => {
     try {
@@ -520,17 +529,24 @@ export default function PPOrderDetailPage() {
     const agrId     = 'AGR-' + id
     const quoNomor  = order?.quotation?.nomor || ('QUO/EFM/PP/2026/' + id.split('-').pop())
     return [
-      { id:1,  waktu:"3 Nov 2026, 07:05",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-004",  teks:`Absensi ABS-004 tercatat: ${picNama} hadir 07:05` },
-      { id:2,  waktu:"3 Nov 2026, 07:00",  actor:"Admin EFM", kategori:"jadwal",    nomorLaporan:"JS-004",   teks:"Sesi JS-004 terjadwal: 3 Nov 2026 07:00 di Hampton's Park" },
-      { id:3,  waktu:"31 Okt 2026, 07:00", actor:"Admin EFM", kategori:"jadwal",    nomorLaporan:"JS-003",   teks:"Sesi JS-003 terjadwal: 31 Okt 2026 07:00 di Hampton's Park" },
-      { id:4,  waktu:"29 Okt 2026, 07:01", actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-002",  teks:`Absensi ABS-002 tercatat: ${picNama} hadir 07:01` },
-      { id:5,  waktu:"27 Okt 2026, 07:03", actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-001",  teks:`Absensi ABS-001 tercatat: ${picNama} hadir 07:03` },
-      { id:6,  waktu:"24 Okt 2026, 09:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Pembayaran ${invId} dikonfirmasi Lunas — Transfer · 24 Okt 2026` },
-      { id:7,  waktu:"24 Okt 2026, 08:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Invoice ${invId} dikirim ke ${namaKlien}` },
-      { id:8,  waktu:"21 Okt 2026, 14:00", actor:"Admin EFM", kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement disetujui — dokumen TTD klien ${namaKlien} diterima & dikonfirmasi` },
-      { id:9,  waktu:"21 Okt 2026, 13:30", actor:namaKlien,   kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement ditandatangani klien ${namaKlien} — pengajuan masuk` },
-      { id:10, waktu:"20 Okt 2026, 10:00", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:quoNomor,   teks:`Quotation ${quoNomor} disetujui` },
-      { id:11, waktu:"20 Okt 2026, 07:30", actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:id,         teks:`Order ${id} dibuat untuk ${namaKlien} oleh Admin EFM` },
+      { id:1,  waktu:"7 Nov 2026, 07:00",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-012",  teks:`Absensi ABS-012 tercatat: ${picNama} hadir 07:00` },
+      { id:2,  waktu:"5 Nov 2026, 07:02",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-011",  teks:`Absensi ABS-011 tercatat: ${picNama} hadir 07:02` },
+      { id:3,  waktu:"3 Nov 2026, 07:05",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-010",  teks:`Absensi ABS-010 tercatat: ${picNama} — no foto, perlu verifikasi` },
+      { id:4,  waktu:"31 Okt 2026, 06:58",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-009",  teks:`Absensi ABS-009 tercatat: ${picNama} hadir 06:58` },
+      { id:5,  waktu:"29 Okt 2026, 07:01",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-008",  teks:`Absensi ABS-008 tercatat: ${picNama} hadir 07:01` },
+      { id:6,  waktu:"27 Okt 2026, 07:03",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-007",  teks:`Absensi ABS-007 tercatat: ${picNama} hadir 07:03` },
+      { id:7,  waktu:"24 Okt 2026, 07:03",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-006",  teks:`Absensi ABS-006 tercatat: ${picNama} hadir 07:03` },
+      { id:8,  waktu:"22 Okt 2026, 07:00",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-005",  teks:`Absensi ABS-005 tercatat: ${picNama} hadir 07:00` },
+      { id:9,  waktu:"20 Okt 2026, 07:01",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-004",  teks:`Absensi ABS-004 tercatat: ${picNama} hadir 07:01` },
+      { id:10, waktu:"17 Okt 2026, 07:04",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-003",  teks:`Absensi ABS-003 tercatat: ${picNama} hadir 07:04` },
+      { id:11, waktu:"15 Okt 2026, 06:59",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-002",  teks:`Absensi ABS-002 tercatat: ${picNama} hadir 06:59` },
+      { id:12, waktu:"13 Okt 2026, 07:02",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-001",  teks:`Absensi ABS-001 tercatat: ${picNama} hadir 07:02` },
+      { id:13, waktu:"12 Okt 2026, 09:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Pembayaran ${invId} dikonfirmasi Lunas — Transfer · 12 Okt 2026` },
+      { id:14, waktu:"12 Okt 2026, 08:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Invoice ${invId} dikirim ke ${namaKlien}` },
+      { id:15, waktu:"9 Okt 2026, 14:00",   actor:"Admin EFM", kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement disetujui — dokumen TTD klien ${namaKlien} diterima & dikonfirmasi` },
+      { id:16, waktu:"9 Okt 2026, 13:30",   actor:namaKlien,   kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement ditandatangani klien ${namaKlien} — pengajuan masuk` },
+      { id:17, waktu:"7 Okt 2026, 10:00",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:quoNomor,   teks:`Quotation ${quoNomor} disetujui` },
+      { id:18, waktu:"7 Okt 2026, 07:30",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:id,         teks:`Order ${id} dibuat untuk ${namaKlien} oleh Admin EFM` },
     ]
   })
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
@@ -541,7 +557,7 @@ export default function PPOrderDetailPage() {
   const [newTahapanVal,         setNewTahapanVal]         = useState(tahapanState)
   const [newTahapanTanggal,     setNewTahapanTanggal]     = useState('')
   const [newTahapanCatatan,     setNewTahapanCatatan]     = useState('')
-  const [rekapStatus,           setRekapStatus]           = useState('belum_diajukan')
+  const [rekapStatus,           setRekapStatus]           = useState('pengajuan_masuk')
   const [rekapCatatanTolak,     setRekapCatatanTolak]     = useState('')
   const [showTolakModal,        setShowTolakModal]        = useState(false)
   const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
@@ -1704,7 +1720,7 @@ export default function PPOrderDetailPage() {
             }
             const cur = REKAP_LABEL[rekapStatus] || REKAP_LABEL.belum_diajukan
             const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
+            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-3 flex-wrap">
@@ -1737,8 +1753,8 @@ export default function PPOrderDetailPage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         {[
-                          ['Diajukan oleh',      'Sarah Jenkins'],
-                          ['Tgl Pengajuan',      '5 Nov 2026'],
+                          ['Diajukan oleh',      prog?.pic?.nama || order?.picSalesEFM || 'Pelatih'],
+                          ['Tgl Pengajuan',      '8 Nov 2026'],
                           ['Total Sesi Rekap',   `${absensiSesi.length} sesi`],
                           ['Total Honorarium',   'Rp ' + (absensiSesi.length * ratePerSesi).toLocaleString('id-ID')],
                         ].map(([label, val]) => (
@@ -1753,7 +1769,7 @@ export default function PPOrderDetailPage() {
                         <CheckCircle size={16} className="text-green-600 shrink-0" />
                         <div className="flex-1">
                           <p className="text-xs font-semibold text-green-800">TTD Digital Pelatih Terverifikasi</p>
-                          <p className="text-xs text-green-700 mt-0.5">rekap-absensi-PP-26-0013-nov2026.pdf · 5 Nov 2026 14:32</p>
+                          <p className="text-xs text-green-700 mt-0.5">{`rekap-absensi-${order.id}-nov2026.pdf · 8 Nov 2026 14:32`}</p>
                         </div>
                         <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
                           <Download size={12} /> Lihat File
@@ -1819,7 +1835,7 @@ export default function PPOrderDetailPage() {
                         <CheckCircle size={16} className="text-green-600 shrink-0" />
                         <div>
                           <p className="text-xs font-semibold text-green-800">Rekap Dikonfirmasi oleh Admin</p>
-                          <p className="text-xs text-green-700 mt-0.5">5 Nov 2026 · {absensiSesi.length} sesi terkonfirmasi</p>
+                          <p className="text-xs text-green-700 mt-0.5">8 Nov 2026 · {absensiSesi.length} sesi terkonfirmasi</p>
                         </div>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1862,7 +1878,7 @@ export default function PPOrderDetailPage() {
           {/* ── Section 5: Honorarium Pelatih ── */}
           {(() => {
             const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
+            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
             const totalHonorariumDue = absensiSesi.length * ratePerSesi
             const isUnlocked = rekapStatus === 'dikonfirmasi'
             return (
