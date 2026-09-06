@@ -377,7 +377,13 @@ export default function PPOrderNewPage() {
     navigate('/pp/orders/' + newId)
   };
 
-  const allLeads = getStoredLeads().map(l => ({ ...l, noHP: l.noHp, email: l.emailUmum, sumber: l.sumberLead }));
+  const allLeads = getStoredLeads()
+    .map(l => ({ ...l, noHP: l.noHp, email: l.emailUmum, sumber: l.sumberLead }))
+    .sort((a, b) => {
+      const numA = parseInt(a.id.replace(/\D/g, ''), 10)
+      const numB = parseInt(b.id.replace(/\D/g, ''), 10)
+      return numB - numA
+    })
   const filteredLeads = pendaftarSearch
     ? allLeads.filter(l =>
         l.nama.toLowerCase().includes(pendaftarSearch.toLowerCase()) ||
