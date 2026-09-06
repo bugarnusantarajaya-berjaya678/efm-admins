@@ -558,6 +558,7 @@ export default function PPOrderDetailPage() {
   const [newTahapanTanggal,     setNewTahapanTanggal]     = useState('')
   const [newTahapanCatatan,     setNewTahapanCatatan]     = useState('')
 
+
   const [rincianDraft,          setRincianDraft]          = useState(order?.rincianLayanan || [])
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)

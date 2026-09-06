@@ -267,7 +267,7 @@ export default function PPInvoiceDetailPage() {
       <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
-        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-2 gap-4 text-white">
+        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
           <div className="flex items-start gap-3">
             {cs.logoPerusahaan ? (
               <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-20 h-20 rounded-full object-contain shrink-0" />
@@ -283,16 +283,16 @@ export default function PPInvoiceDetailPage() {
             </div>
           </div>
 
-          <div className="text-right">
-            <div className="text-4xl font-black tracking-widest uppercase">INVOICE</div>
+          <div className="text-left sm:text-right">
+            <div className="text-2xl sm:text-4xl font-black tracking-widest uppercase">INVOICE</div>
             <div className="text-sm text-gray-300 mt-0.5">{invoice.invNo}</div>
 
-            <div className="flex justify-end items-center gap-2 mb-0.5 mt-0.5">
+            <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
               <span className="text-xs text-gray-400">Tanggal:</span>
               <span className="font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-end items-center gap-2 mb-0.5">
+            <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5">
               <span className="text-xs text-gray-400">Jatuh Tempo:</span>
               <span className="font-semibold text-sm">{invoice.due}</span>
             </div>

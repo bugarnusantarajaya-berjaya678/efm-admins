@@ -175,7 +175,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
