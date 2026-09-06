@@ -557,11 +557,7 @@ export default function PPOrderDetailPage() {
   const [newTahapanVal,         setNewTahapanVal]         = useState(tahapanState)
   const [newTahapanTanggal,     setNewTahapanTanggal]     = useState('')
   const [newTahapanCatatan,     setNewTahapanCatatan]     = useState('')
-  const [rekapStatus,           setRekapStatus]           = useState('pengajuan_masuk')
-  const [rekapCatatanTolak,     setRekapCatatanTolak]     = useState('')
-  const [showTolakModal,        setShowTolakModal]        = useState(false)
-  const [honorariumBayarStatus,  setHonorariumBayarStatus]  = useState('menunggu_bayar')
-  const [honorariumBuktiBayar,   setHonorariumBuktiBayar]   = useState(null)
+
   const [rincianDraft,          setRincianDraft]          = useState(order?.rincianLayanan || [])
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
@@ -1710,278 +1706,105 @@ export default function PPOrderDetailPage() {
             )
           })()}
 
-          {/* ── Section 4: Pengajuan Rekap Absensi ── */}
+          {/* ── Section 4: Rekap Absensi (RRP card) ── */}
           {(() => {
-            const REKAP_LABEL = {
-              belum_diajukan:  { label: 'Belum Diajukan',   cls: 'bg-gray-100 text-gray-500'    },
-              pengajuan_masuk: { label: 'Pengajuan Masuk',  cls: 'bg-yellow-100 text-yellow-700' },
-              dikonfirmasi:    { label: 'Dikonfirmasi',     cls: 'bg-green-100 text-green-700'   },
-              ditolak:         { label: 'Ditolak',          cls: 'bg-red-100 text-red-700'       },
-            }
-            const cur = REKAP_LABEL[rekapStatus] || REKAP_LABEL.belum_diajukan
+            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+            const rStt = stored.status || 'pengajuan_masuk'
             const prog = ppPrograms.find(p => p.id === order.programId)
             const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
+            const totalHon = absensiSesi.length * ratePerSesi
+            const REKAP_CLS = {
+              belum_diajukan:  'bg-gray-50 text-gray-500 border-gray-200',
+              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+              dikonfirmasi:    'bg-green-50 text-green-700 border-green-200',
+              ditolak:         'bg-red-50 text-red-700 border-red-200',
+            }
+            const REKAP_LABEL = { belum_diajukan: 'Belum Diajukan', pengajuan_masuk: 'Pengajuan Masuk', dikonfirmasi: 'Dikonfirmasi', ditolak: 'Ditolak' }
+            const rekapId = 'RKP-' + id
             return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div className="px-5 py-3.5 border-b border-gray-100 flex items-center gap-3 flex-wrap">
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pengajuan Rekap Absensi</h3>
-                  <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${cur.cls}`}>{cur.label}</span>
-                </div>
-
-                <div className="p-5">
-                  {rekapStatus === 'belum_diajukan' && (
-                    <div className="text-center py-8">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <ClipboardList size={22} className="text-gray-400" />
-                      </div>
-                      <p className="text-sm text-gray-600 font-medium">Menunggu Pengajuan dari Pelatih</p>
-                      <p className="text-xs text-gray-400 mt-1 max-w-xs mx-auto">Pelatih akan mengajukan rekap setelah seluruh sesi selesai dan menandatangani file rekap digital dari aplikasi pelatih.</p>
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Rekap Absensi</h3>
+                <div
+                  onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                  className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
+                      <ClipboardList size={14} className="text-[#1E1C43]" />
                     </div>
-                  )}
-
-                  {rekapStatus === 'pengajuan_masuk' && (
-                    <div className="space-y-4">
-                      <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-yellow-200 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-xs font-bold text-yellow-700">!</span>
-                        </div>
-                        <div>
-                          <p className="text-xs font-semibold text-yellow-800">Rekap Masuk — Perlu Review Admin</p>
-                          <p className="text-xs text-yellow-700 mt-0.5">Pelatih telah mengajukan rekap absensi dan menandatangani file. Cek TTD dan verifikasi data sebelum konfirmasi.</p>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {[
-                          ['Diajukan oleh',      prog?.pic?.nama || order?.picSalesEFM || 'Pelatih'],
-                          ['Tgl Pengajuan',      '8 Nov 2026'],
-                          ['Total Sesi Rekap',   `${absensiSesi.length} sesi`],
-                          ['Total Honorarium',   'Rp ' + (absensiSesi.length * ratePerSesi).toLocaleString('id-ID')],
-                        ].map(([label, val]) => (
-                          <div key={label} className="bg-gray-50 rounded-xl p-3">
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                            <p className="text-sm font-semibold text-gray-800">{val}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                        <CheckCircle size={16} className="text-green-600 shrink-0" />
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-green-800">TTD Digital Pelatih Terverifikasi</p>
-                          <p className="text-xs text-green-700 mt-0.5">{`rekap-absensi-${order.id}-nov2026.pdf · 8 Nov 2026 14:32`}</p>
-                        </div>
-                        <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
-                          <Download size={12} /> Lihat File
-                        </button>
-                      </div>
-
-                      {!showTolakModal && (
-                        <div className="flex justify-end gap-2 pt-1">
-                          <button
-                            onClick={() => setShowTolakModal(true)}
-                            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-red-200 text-red-600 text-xs font-semibold hover:bg-red-50 transition"
-                          >
-                            Tolak
-                          </button>
-                          <button
-                            onClick={() => {
-                              setRekapStatus('dikonfirmasi')
-                              setLogTab3PP(prev => [{
-                                id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
-                                kategori: 'honorarium', nomorLaporan: order.id,
-                                teks: `Rekap absensi dikonfirmasi — ${absensiSesi.length} sesi · Rp ${(absensiSesi.length * ratePerSesi).toLocaleString('id-ID')}`
-                              }, ...prev])
-                            }}
-                            className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#1E1C43] text-white text-xs font-semibold hover:opacity-90 transition"
-                          >
-                            Konfirmasi Rekap
-                          </button>
-                        </div>
-                      )}
-
-                      {showTolakModal && (
-                        <div className="bg-red-50 border border-red-200 rounded-xl p-4 space-y-3">
-                          <p className="text-xs font-semibold text-red-700">Catatan Penolakan</p>
-                          <textarea
-                            value={rekapCatatanTolak}
-                            onChange={e => setRekapCatatanTolak(e.target.value)}
-                            placeholder="Jelaskan alasan penolakan..."
-                            rows={3}
-                            className="w-full border border-red-200 rounded-xl px-3 py-2 text-sm bg-white focus:outline-none focus:border-red-400 resize-none"
-                          />
-                          <div className="flex justify-end gap-2">
-                            <button
-                              onClick={() => setShowTolakModal(false)}
-                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition"
-                            >
-                              Batal
-                            </button>
-                            <button
-                              onClick={() => { setRekapStatus('ditolak'); setShowTolakModal(false) }}
-                              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition"
-                            >
-                              Kirim Penolakan
-                            </button>
-                          </div>
-                        </div>
-                      )}
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold text-[#1E1C43] truncate">{rekapId}</p>
+                      <p className="text-[10px] text-gray-400 truncate">{absensiSesi.length} sesi · Rp {totalHon.toLocaleString('id-ID')}</p>
                     </div>
-                  )}
-
-                  {rekapStatus === 'dikonfirmasi' && (
-                    <div className="space-y-4">
-                      <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3">
-                        <CheckCircle size={16} className="text-green-600 shrink-0" />
-                        <div>
-                          <p className="text-xs font-semibold text-green-800">Rekap Dikonfirmasi oleh Admin</p>
-                          <p className="text-xs text-green-700 mt-0.5">8 Nov 2026 · {absensiSesi.length} sesi terkonfirmasi</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {[
-                          ['Total Sesi Terkonfirmasi', `${absensiSesi.length} sesi`],
-                          ['Total Honorarium',         'Rp ' + (absensiSesi.length * ratePerSesi).toLocaleString('id-ID')],
-                        ].map(([label, val]) => (
-                          <div key={label} className="bg-gray-50 rounded-xl p-3">
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                            <p className="text-sm font-semibold text-gray-800">{val}</p>
-                          </div>
-                        ))}
-                      </div>
-                      <p className="text-xs text-gray-400 text-center">Lanjut ke bagian <span className="font-semibold text-[#1E1C43]">Honorarium Pelatih</span> di bawah untuk proses pembayaran.</p>
-                    </div>
-                  )}
-
-                  {rekapStatus === 'ditolak' && (
-                    <div className="space-y-3">
-                      <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3">
-                        <X size={16} className="text-red-600 shrink-0 mt-0.5" />
-                        <div>
-                          <p className="text-xs font-semibold text-red-700">Rekap Ditolak</p>
-                          {rekapCatatanTolak && <p className="text-xs text-red-600 mt-0.5">{rekapCatatanTolak}</p>}
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => { setRekapStatus('pengajuan_masuk'); setRekapCatatanTolak('') }}
-                        className="text-xs text-[#1E1C43] font-semibold hover:underline"
-                      >
-                        Kembalikan ke Review →
-                      </button>
-                    </div>
-                  )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${REKAP_CLS[rStt] || REKAP_CLS.belum_diajukan}`}>
+                      {REKAP_LABEL[rStt] || 'Belum Diajukan'}
+                    </span>
+                    <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
+                  </div>
                 </div>
               </div>
             )
           })()}
 
-          {/* ── Section 5: Honorarium Pelatih ── */}
+          {/* ── Section 5: Honorarium (status ringkas dari localStorage) ── */}
           {(() => {
+            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+            const rStt = stored.status || 'pengajuan_masuk'
+            const honStt = stored.honorariumStatus || 'menunggu_bayar'
             const prog = ppPrograms.find(p => p.id === order.programId)
             const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
             const totalHonorariumDue = absensiSesi.length * ratePerSesi
-            const isUnlocked = rekapStatus === 'dikonfirmasi'
+            const isUnlocked = rStt === 'dikonfirmasi'
             return (
-              <div className={`bg-white rounded-xl shadow-sm border ${isUnlocked ? 'border-gray-100' : 'border-gray-100 opacity-60'}`}>
-                <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Honorarium Pelatih</h3>
-                    {isUnlocked && (
-                      <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
-                        honorariumBayarStatus === 'sudah_bayar' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                      }`}>
-                        {honorariumBayarStatus === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
-                      </span>
-                    )}
-                    {!isUnlocked && (
-                      <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400">Terkunci</span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="p-5">
-                  {!isUnlocked ? (
-                    <div className="text-center py-6">
-                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                        <ClipboardList size={18} className="text-gray-400" />
-                      </div>
-                      <p className="text-sm text-gray-500 font-medium">Rekap belum dikonfirmasi</p>
-                      <p className="text-xs text-gray-400 mt-1">Proses honorarium tersedia setelah rekap absensi disetujui admin.</p>
-                    </div>
+              <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-5 ${!isUnlocked ? 'opacity-60' : ''}`}>
+                <div className="flex items-center gap-3 mb-3 flex-wrap">
+                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Honorarium Pelatih</h3>
+                  {isUnlocked ? (
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
+                      honStt === 'sudah_bayar' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                    }`}>
+                      {honStt === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
+                    </span>
                   ) : (
-                    <div className="space-y-4">
-                      {/* Kalkulasi otomatis */}
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {[
-                          ['Sesi Terkonfirmasi',  `${absensiSesi.length} sesi`],
-                          ['Rate / Sesi',         'Rp ' + ratePerSesi.toLocaleString('id-ID')],
-                          ['Total Honorarium',    'Rp ' + totalHonorariumDue.toLocaleString('id-ID')],
-                        ].map(([label, val]) => (
-                          <div key={label} className="bg-gray-50 rounded-xl p-3">
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                            <p className={`text-sm font-semibold ${label === 'Total Honorarium' ? 'text-[#1E1C43]' : 'text-gray-800'}`}>{val}</p>
-                          </div>
-                        ))}
-                      </div>
-
-                      {honorariumBayarStatus === 'menunggu_bayar' ? (
-                        <div className="space-y-3">
-                          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
-                            <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-                            <p className="text-xs text-yellow-700">Rekap telah dikonfirmasi. Transfer honorarium ke rekening pelatih, lalu upload bukti pembayaran.</p>
-                          </div>
-                          {/* Upload bukti bayar */}
-                          <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
-                            <label className="cursor-pointer flex items-center gap-3">
-                              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                                <span className="text-lg">📎</span>
-                              </div>
-                              <div className="flex-1">
-                                <input
-                                  type="file"
-                                  accept=".pdf,.jpg,.jpeg,.png"
-                                  className="hidden"
-                                  onChange={e => {
-                                    const file = e.target.files[0]
-                                    if (!file) return
-                                    setHonorariumBuktiBayar({ nama: file.name, tanggal: new Date().toLocaleDateString('id-ID') })
-                                    setHonorariumBayarStatus('sudah_bayar')
-                                    setLogTab3PP(prev => [{
-                                      id: Date.now(), waktu: fmtLogWaktu(), actor: 'Admin EFM',
-                                      kategori: 'honorarium', nomorLaporan: order.id,
-                                      teks: `Honorarium Rp ${totalHonorariumDue.toLocaleString('id-ID')} sudah dibayar — bukti: ${file.name}`
-                                    }, ...prev])
-                                  }}
-                                />
-                                <span className="text-xs text-[#1E1C43] font-semibold hover:underline">Upload Bukti Pembayaran Honorarium</span>
-                                <p className="text-xs text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
-                              </div>
-                            </label>
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-center gap-3">
-                            <CheckCircle size={15} className="text-green-600 shrink-0" />
-                            <div className="flex-1">
-                              <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
-                              {honorariumBuktiBayar && (
-                                <p className="text-xs text-green-700 mt-0.5">{honorariumBuktiBayar.nama} · {honorariumBuktiBayar.tanggal}</p>
-                              )}
-                            </div>
-                            <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
-                              <Download size={12} /> Lihat Bukti
-                            </button>
-                          </div>
-                          <div className="flex justify-between items-center bg-[#1E1C43]/5 border border-[#1E1C43]/10 rounded-xl px-4 py-3">
-                            <p className="text-sm font-bold text-[#1E1C43]">Total Dibayarkan</p>
-                            <p className="text-sm font-bold text-[#E05945]">Rp {totalHonorariumDue.toLocaleString('id-ID')}</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400 border border-gray-200">Terkunci</span>
                   )}
                 </div>
+                {!isUnlocked ? (
+                  <p className="text-xs text-gray-400 text-center py-4">Proses honorarium tersedia setelah rekap absensi disetujui. <button onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })} className="text-[#1E1C43] font-semibold hover:underline">Buka Rekap →</button></p>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-3 gap-3">
+                      {[
+                        ['Sesi', `${absensiSesi.length} sesi`],
+                        ['Rate/Sesi', 'Rp ' + ratePerSesi.toLocaleString('id-ID')],
+                        ['Total', 'Rp ' + totalHonorariumDue.toLocaleString('id-ID')],
+                      ].map(([label, val]) => (
+                        <div key={label} className="bg-gray-50 rounded-xl p-3">
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+                          <p className="text-xs font-semibold text-gray-800">{val}</p>
+                        </div>
+                      ))}
+                    </div>
+                    {honStt === 'sudah_bayar' ? (
+                      <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                        <CheckCircle size={14} className="text-green-600 shrink-0" />
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
+                          {stored.buktiBayarNama && <p className="text-xs text-green-700 mt-0.5 truncate">{stored.buktiBayarNama} · {stored.tglBayar}</p>}
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors"
+                      >
+                        Bayar Honorarium di Halaman Rekap →
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             )
           })()}
