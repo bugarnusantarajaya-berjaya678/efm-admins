@@ -53,11 +53,11 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
               <span className="text-white font-black text-base">EFM</span>
             </div>
           )}
-          <div className="min-w-0">
-            <p className="text-base font-bold leading-snug">{cs.namaPerusahaan}</p>
-            <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
-            <p className="text-xs text-white/70 mt-0.5 leading-relaxed max-w-xs">{cs.alamat}</p>
-            <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+          <div className="min-w-0 overflow-hidden">
+            <p className="text-base font-bold break-words leading-snug">{cs.namaPerusahaan}</p>
+            <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{cs.alamat}</p>
+            <p className="text-xs text-white/70 mt-0.5 break-all">{cs.email}</p>
             <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
           </div>
         </div>
