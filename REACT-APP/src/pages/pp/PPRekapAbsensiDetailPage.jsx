@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload, X } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload, X, ExternalLink } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -349,8 +349,11 @@ export default function PPRekapAbsensiDetailPage() {
                       <td className="px-4 py-2.5 text-xs text-gray-600">{a.lokasi || '—'}</td>
                       <td className="px-4 py-2.5 text-xs text-gray-500 whitespace-nowrap">{a.device || '—'}</td>
                       <td className="px-4 py-2.5">
-                        {a.foto
-                          ? <span className="flex items-center gap-1 text-xs text-green-700 font-medium"><CheckCircle size={11} /> Ada</span>
+                        {a.fotoUrl
+                          ? <a href={a.fotoUrl} target="_blank" rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium hover:underline">
+                              <ExternalLink size={11} /> Lihat Foto
+                            </a>
                           : <span className="text-xs text-gray-400">—</span>}
                       </td>
                     </tr>
@@ -467,18 +470,6 @@ export default function PPRekapAbsensiDetailPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-4">
-          {[
-            ['Sesi Terkonfirmasi', `${absensiSesi.length} sesi`],
-            ['Rate / Sesi',        'Rp ' + ratePerSesi.toLocaleString('id-ID')],
-            ['Total Honorarium',   'Rp ' + totalHon.toLocaleString('id-ID')],
-          ].map(([label, val]) => (
-            <div key={label} className="bg-gray-50 rounded-xl p-3">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-              <p className={`text-sm font-semibold ${label === 'Total Honorarium' ? 'text-[#1E1C43]' : 'text-gray-800'}`}>{val}</p>
-            </div>
-          ))}
-        </div>
 
         {honStatus === 'menunggu_bayar' ? (
           <div className="space-y-3">

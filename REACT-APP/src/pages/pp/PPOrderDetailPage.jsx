@@ -505,18 +505,18 @@ export default function PPOrderDetailPage() {
   /* ── Tab 3: Operasional Sesi (PP) ───────────────────────────────────────── */
 
   const [absensiSesi, setAbsensiSesi] = useState([
-    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-13", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-15", jam:"06:59", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
-    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-17", jam:"07:04", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-10-20", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-005", jadwalId:"JS-005", tanggal:"2026-10-22", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
-    { id:"ABS-006", jadwalId:"JS-006", tanggal:"2026-10-24", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-007", jadwalId:"JS-007", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-008", jadwalId:"JS-008", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
-    { id:"ABS-009", jadwalId:"JS-009", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-010", jadwalId:"JS-010", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         foto:false, catatanKoreksi:"" },
-    { id:"ABS-011", jadwalId:"JS-011", tanggal:"2026-11-05", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         foto:true,  catatanKoreksi:"" },
-    { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", foto:true,  catatanKoreksi:"" },
+    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-13", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm001ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-15", jam:"06:59", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm002ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-17", jam:"07:04", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm003ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-10-20", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm004ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-005", jadwalId:"JS-005", tanggal:"2026-10-22", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm005ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-006", jadwalId:"JS-006", tanggal:"2026-10-24", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm006ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-007", jadwalId:"JS-007", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm007ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-008", jadwalId:"JS-008", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm008ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-009", jadwalId:"JS-009", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm009ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-010", jadwalId:"JS-010", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:null,                                                                                       catatanKoreksi:"" },
+    { id:"ABS-011", jadwalId:"JS-011", tanggal:"2026-11-05", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm011ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm012ptlbs/view?usp=drive_link", catatanKoreksi:"" },
   ])
   const [logTab3PP, setLogTab3PP] = useState(() => {
     try {
@@ -1690,10 +1690,11 @@ export default function PPOrderDetailPage() {
                           <td className="px-4 py-3 text-sm text-gray-600">{a.lokasi || '—'}</td>
                           <td className="px-4 py-3 text-xs text-gray-500 whitespace-nowrap">{a.device || '—'}</td>
                           <td className="px-4 py-3">
-                            {a.foto ? (
-                              <span className="flex items-center gap-1 text-xs text-green-700 font-medium">
-                                <CheckCircle size={12} /> Ada
-                              </span>
+                            {a.fotoUrl ? (
+                              <a href={a.fotoUrl} target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium hover:underline">
+                                <ExternalLink size={11} /> Lihat Foto
+                              </a>
                             ) : (
                               <span className="text-xs text-gray-400">—</span>
                             )}
