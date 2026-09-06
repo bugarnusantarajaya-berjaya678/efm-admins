@@ -1,9 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, ExternalLink, Receipt } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
-import { getReceiptByRcpNo } from '../../data/ppReceiptStore'
 import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
 import { getCompanySettings } from '../../utils/companySettings'
 
@@ -176,7 +175,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
+      <div className="grid grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -192,11 +191,11 @@ function AgreementDoc({ doc }) {
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
               <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-[13px] font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              <div className="text-sm font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
-                <li key={i} className="text-[13px] leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
+                <li key={i} className="text-sm leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
           </div>
@@ -289,7 +288,7 @@ export default function PPAgreementDetailPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Agreement Klien</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">#{doc.displayId}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{doc.displayId}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{doc.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
@@ -352,52 +351,6 @@ export default function PPAgreementDetailPage() {
       </div>
       </div>{/* /overflow-x-auto */}
 
-      {/* ── Related Records Panel — Receipt terkait ── */}
-      {(() => {
-        const receipt = doc.noReceipt && doc.noReceipt !== '—' ? getReceiptByRcpNo(doc.noReceipt) : null
-        const receiptStatusCls = {
-          sent:       'bg-green-50 text-green-700 border-green-200',
-          'not-sent': 'bg-gray-50 text-gray-500 border-gray-200',
-        }
-        const receiptStatusLabel = { sent: 'WA Terkirim', 'not-sent': 'Belum Kirim WA' }
-        return (
-          <div className="max-w-4xl mx-auto w-full">
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-              <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2 mb-3">
-                <Receipt size={14} /> Dokumen Terkait — Receipt
-              </h3>
-              <div className="flex flex-col gap-2">
-                {receipt ? (
-                  <div
-                    onClick={() => navigate('/pp/receipt/' + receipt.rcpNo, { state: { fromAgreementId: doc.id } })}
-                    className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                        <Receipt size={14} className="text-[#1E1C43]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-[#1E1C43] truncate">{receipt.rcpNo}</p>
-                        <p className="text-[10px] text-gray-400 truncate">{receipt.client} · {receipt.tglBayar} · Rp {receipt.total?.toLocaleString('id-ID')}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${receiptStatusCls[receipt.waStatus] || receiptStatusCls['not-sent']}`}>
-                        {receiptStatusLabel[receipt.waStatus] || receipt.waStatus}
-                      </span>
-                      <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                    </div>
-                  </div>
-                ) : (
-                  <p className="text-xs text-gray-400 text-center py-4 italic">
-                    {doc.noReceipt && doc.noReceipt !== '—' ? `Receipt ${doc.noReceipt} tidak ditemukan.` : 'Belum ada receipt yang terhubung.'}
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      })()}
     </div>
   )
 }
