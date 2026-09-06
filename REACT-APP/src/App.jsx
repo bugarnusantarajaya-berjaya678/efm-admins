@@ -15,6 +15,7 @@ import PPOrdersPage from './pages/pp/PPOrdersPage'
 import PPProgramDBPage from './pages/pp/PPProgramDBPage'
 import PPDocumentsPage from './pages/pp/PPDocumentsPage'
 import PPAgreementDetailPage from './pages/pp/PPAgreementDetailPage'
+import PPRekapAbsensiDetailPage from './pages/pp/PPRekapAbsensiDetailPage'
 import PPInvoicePage from './pages/pp/PPInvoicePage'
 import PPInvoiceDetailPage from './pages/pp/PPInvoiceDetailPage'
 import PPReceiptPage from './pages/pp/PPReceiptPage'
@@ -121,6 +122,7 @@ function AppRoutes() {
       <Route path="/pp/promo/new" element={<AppShell><PPPromoFormPage /></AppShell>} />
       <Route path="/pp/promo/:kode" element={<AppShell><PPPromoFormPage /></AppShell>} />
       <Route path="/pp/agreement/:id" element={<AppShell><PPAgreementDetailPage /></AppShell>} />
+      <Route path="/pp/orders/rekap/:orderId" element={<AppShell><PPRekapAbsensiDetailPage /></AppShell>} />
 
       {/* B2B Routes */}
       <Route path="/b2b/dashboard" element={<AppShell><B2BDashboardPage /></AppShell>} />
