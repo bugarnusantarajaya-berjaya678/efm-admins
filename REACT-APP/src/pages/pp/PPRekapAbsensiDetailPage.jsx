@@ -4,6 +4,8 @@ import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload,
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
+import { getCompanySettings } from '../../utils/companySettings'
+import { formatRp } from '../../data/ppInvoiceData'
 
 /* ── localStorage helpers ── */
 function loadRekap(orderId) {
@@ -71,9 +73,10 @@ export default function PPRekapAbsensiDetailPage() {
   const navigate    = useNavigate()
   const { setCrumbs } = useBreadcrumb()
 
-  const order       = getOrderById(orderId)
-  const programs    = getStoredPrograms()
-  const prog        = programs.find(p => p.id === order?.programId)
+  const cs        = getCompanySettings()
+  const order     = getOrderById(orderId)
+  const programs  = getStoredPrograms()
+  const prog      = programs.find(p => p.id === order?.programId)
   const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
 
   const absensiSesi = state?.absensiSesi || []
@@ -235,220 +238,218 @@ export default function PPRekapAbsensiDetailPage() {
       {/* ══════════════════════════════════════════════
           DOKUMEN REKAP — print-ready area
       ══════════════════════════════════════════════ */}
-      <div id="rekap-print-area" className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+      <div id="rekap-print-area">
+        <div className="overflow-x-auto pb-2">
+          <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
-        {/* ── Document Header (navy — sama pola invoice) ── */}
-        <div className="bg-[#1E1C43] px-6 py-5 grid grid-cols-2 gap-4">
-          {/* Kiri: EFM info */}
-          <div className="flex items-start gap-3">
-            <div className="w-14 h-14 rounded-full bg-white/15 border border-white/20 flex items-center justify-center shrink-0">
-              <svg viewBox="0 0 36 36" fill="none" width="28" height="28">
-                <rect x="3" y="16" width="6" height="4" rx="1" fill="white"/>
-                <rect x="27" y="16" width="6" height="4" rx="1" fill="white"/>
-                <rect x="7" y="14" width="4" height="8" rx="1.5" fill="white"/>
-                <rect x="25" y="14" width="4" height="8" rx="1.5" fill="white"/>
-                <rect x="11" y="17" width="14" height="2" rx="1" fill="white"/>
-              </svg>
-            </div>
-            <div>
-              <p className="text-sm font-bold text-white leading-tight">Essential Fitness Management</p>
-              <p className="text-[10px] text-white/60 mt-0.5">CV. Bugar Nusantara Jaya</p>
-              <p className="text-[10px] text-white/50 mt-2 leading-relaxed">
-                Jl. Terogong Raya No. 18, Hampton&apos;s Park Apartment,<br/>
-                Tower A, Cilandak Barat, Jakarta Selatan
-              </p>
-              <p className="text-[10px] text-white/50 mt-0.5">essentialfitnessmanagement@gmail.com</p>
-              <p className="text-[10px] text-white/50">+62 811-1992-0666</p>
-            </div>
-          </div>
-
-          {/* Kanan: judul dokumen + info */}
-          <div className="text-right flex flex-col justify-between">
-            <div>
-              <p className="text-4xl font-black text-white tracking-widest">REKAP ABSENSI</p>
-              <p className="text-xs font-semibold text-white/70 mt-1">{rekapId}</p>
-            </div>
-            <div className="space-y-0.5 mt-3">
-              <p className="text-[10px] text-white/50">
-                Tgl Pengajuan: <span className="text-white/85 font-bold">{tglDiajukan}</span>
-              </p>
-              <p className="text-[10px] text-white/50">
-                Order: <span className="text-white/85 font-bold">#{orderId}</span>
-              </p>
-              <p className="text-[10px] text-white/50">
-                Klien: <span className="text-white/85 font-bold">{order.namaKlien}</span>
-              </p>
-              <div className="mt-2">
-                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold border ${badgeDark.cls}`}>
-                  {badgeDark.label}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ── Document body ── */}
-        <div className="p-6 space-y-6">
-
-          {/* Ditujukan untuk — Pelatih info */}
-          <div>
-            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2">Ditujukan Untuk</p>
-            <div className="border border-gray-100 rounded-xl p-4 bg-gray-50">
-              <p className="text-base font-bold text-[#1E1C43]">{prog?.pic?.nama || 'Pelatih'}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
-              <p className="text-xs text-gray-400 mt-1.5">
-                Ref Order: <span className="font-semibold text-gray-600">#{orderId}</span>
-                <span className="mx-1.5 text-gray-300">·</span>
-                Klien: <span className="font-semibold text-gray-600">{order.namaKlien}</span>
-              </p>
-            </div>
-          </div>
-
-          {/* Progress sesi */}
-          {prog && (
-            <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-              <div className="flex justify-between items-center mb-1.5">
-                <span className="text-xs text-gray-600 font-medium">{absensiSesi.length} dari {prog.totalSesi || 12} sesi terlaksana</span>
-                <span className="text-xs font-bold text-[#1E1C43]">
-                  {Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100))}%
-                </span>
-              </div>
-              <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                <div className="h-full rounded-full bg-[#1E1C43] transition-all"
-                  style={{ width: Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100)) + '%' }} />
-              </div>
-            </div>
-          )}
-
-          {/* ── Daftar Absensi ── */}
-          <div>
-            <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-              <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Daftar Absensi</h3>
-              <span className="text-[10px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-1 rounded font-semibold uppercase tracking-wide">
-                Sumber sistem · Read Only
-              </span>
-            </div>
-            <div className="overflow-x-auto rounded-xl border border-gray-100">
-              <table className="w-full" style={{ minWidth: '560px' }}>
-                <thead>
-                  <tr className="bg-[#1E1C43]">
-                    {['No', 'Tanggal', 'Jam Masuk', 'Lokasi', 'Device', 'Foto Bukti'].map(h => (
-                      <th key={h} className="text-left text-[10px] font-semibold text-white/70 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {absensiSesi.length === 0 && (
-                    <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-400">Tidak ada data absensi.</td></tr>
-                  )}
-                  {absensiSesi.map((a, i) => (
-                    <tr key={a.id} className={`border-b border-gray-50 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
-                      <td className="px-4 py-2.5 text-xs text-gray-400">{i + 1}</td>
-                      <td className="px-4 py-2.5 text-xs font-semibold text-gray-700 whitespace-nowrap">{a.tanggal}</td>
-                      <td className="px-4 py-2.5 text-xs font-bold text-[#1E1C43] font-mono whitespace-nowrap">{a.jam}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-600">{a.lokasi || '—'}</td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 whitespace-nowrap">{a.device || '—'}</td>
-                      <td className="px-4 py-2.5">
-                        {a.fotoUrl
-                          ? <a href={a.fotoUrl} target="_blank" rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium hover:underline">
-                              <ExternalLink size={11} /> Lihat Foto
-                            </a>
-                          : <span className="text-xs text-gray-400">—</span>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* ── Rincian Honorarium ── */}
-          <div>
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Rincian Honorarium</h3>
-            <div className="overflow-x-auto rounded-xl border border-gray-100">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
-                    {['Deskripsi Layanan', 'Jumlah Sesi', 'Rate / Sesi', 'Total'].map(h => (
-                      <th key={h} className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-gray-50">
-                    <td className="px-4 py-3 text-sm text-gray-700">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</td>
-                    <td className="px-4 py-3 text-sm font-semibold text-gray-700">{absensiSesi.length} sesi</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">Rp {ratePerSesi.toLocaleString('id-ID')}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-[#1E1C43]">Rp {totalHon.toLocaleString('id-ID')}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="bg-[#1E1C43] rounded-xl mt-2 px-5 py-3 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium</span>
-              <span className="text-lg font-black text-white">Rp {totalHon.toLocaleString('id-ID')}</span>
-            </div>
-          </div>
-
-          {/* ── Tanda Tangan ── */}
-          <div>
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Tanda Tangan</h3>
-            <div className="grid grid-cols-2 gap-5">
-
-              {/* Pelatih TTD */}
-              <div className="border border-gray-100 rounded-xl p-4 text-center">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Pelatih</p>
-                <PicSig uploaded={!!fileNamaTTD} />
-                <div className="border-t border-gray-100 mt-2 pt-3">
-                  <p className="text-xs font-semibold text-gray-700">{prog?.pic?.nama || 'Pelatih'}</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
+            {/* ── Document Header (navy) ── */}
+            <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
+              {/* Kiri: EFM info */}
+              <div className="flex items-start gap-3">
+                <img
+                  src="/logo.png"
+                  alt="EFM Logo"
+                  className="w-20 h-20 rounded-full object-cover shrink-0"
+                  onError={e => { e.currentTarget.style.display = 'none' }}
+                />
+                <div>
+                  <p className="text-base font-bold text-white break-words leading-tight">{cs.namaPerusahaan}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
+                  <p className="text-xs text-white/70 mt-2 leading-relaxed">{cs.alamat}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
+                  <p className="text-xs text-white/70">{cs.telepon}</p>
                 </div>
-                {!fileNamaTTD ? (
-                  <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
-                    <Upload size={10} /> Upload TTD
-                    <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
-                      onChange={e => { if (e.target.files[0]) doUploadTTD(e.target.files[0]) }} />
-                  </label>
-                ) : (
-                  <p className="mt-1 text-[10px] text-green-600 font-semibold">✓ Terverifikasi</p>
-                )}
               </div>
 
-              {/* Admin EFM TTD */}
-              <div className="border border-gray-100 rounded-xl p-4 text-center">
-                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Mengetahui, Admin EFM</p>
-                {rekapStatus === 'dikonfirmasi' ? (
-                  <EfmSig />
-                ) : (
-                  <div className="h-16 flex items-center justify-center">
-                    <p className="text-xs text-gray-400 italic">Menunggu konfirmasi admin</p>
+              {/* Kanan: judul dokumen + info */}
+              <div className="text-left sm:text-right flex flex-col justify-between">
+                <div>
+                  <p className="text-2xl sm:text-4xl font-black text-white tracking-widest uppercase">REKAP ABSENSI</p>
+                  <p className="text-sm text-gray-300 mt-1">{rekapId}</p>
+                </div>
+                <div className="space-y-1 mt-3">
+                  <div className="flex sm:flex-row-reverse items-center gap-2">
+                    <p className="text-xs text-gray-400">Tgl Pengajuan</p>
+                    <p className="font-semibold text-sm">{tglDiajukan}</p>
                   </div>
-                )}
-                <div className="border-t border-gray-100 mt-2 pt-3">
-                  <p className="text-xs font-semibold text-gray-700">Admin EFM</p>
-                  <p className="text-[10px] text-gray-400 mt-0.5">CV. Bugar Nusantara Jaya</p>
+                  <div className="flex sm:flex-row-reverse items-center gap-2">
+                    <p className="text-xs text-gray-400">Order</p>
+                    <p className="font-semibold text-sm">#{orderId}</p>
+                  </div>
+                  <div className="flex sm:flex-row-reverse items-center gap-2">
+                    <p className="text-xs text-gray-400">Klien</p>
+                    <p className="font-semibold text-sm">{order.namaKlien}</p>
+                  </div>
+                  <div className="mt-2 flex sm:justify-end">
+                    <span className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold border ${badgeDark.cls}`}>
+                      {badgeDark.label}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Alert ditolak */}
-          {rekapStatus === 'ditolak' && (
-            <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3">
-              <X size={14} className="text-red-500 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-red-700">Rekap Ditolak</p>
-                {catatanTolak && <p className="text-xs text-red-600 mt-0.5">{catatanTolak}</p>}
+            {/* ── Ditujukan Untuk ── */}
+            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Untuk</div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+                <p className="text-[18px] font-bold text-[#1E1C43]">{prog?.pic?.nama || 'Pelatih'}</p>
+                <p className="text-xs text-gray-500 mt-0.5">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
+                <p className="text-xs text-gray-400 mt-1.5">
+                  Ref Order: <span className="font-semibold text-gray-600">#{orderId}</span>
+                  <span className="mx-1.5 text-gray-300">·</span>
+                  Klien: <span className="font-semibold text-gray-600">{order.namaKlien}</span>
+                </p>
+              </div>
+              {prog && (
+                <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100 mt-3">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs text-gray-600 font-medium">{absensiSesi.length} dari {prog.totalSesi || 12} sesi terlaksana</span>
+                    <span className="text-xs font-bold text-[#1E1C43]">
+                      {Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100))}%
+                    </span>
+                  </div>
+                  <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full bg-[#1E1C43] transition-all"
+                      style={{ width: Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100)) + '%' }} />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Daftar Absensi ── */}
+            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+              <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Daftar Absensi</div>
+                <span className="text-[10px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-1 rounded font-semibold uppercase tracking-wide">
+                  Sumber sistem · Read Only
+                </span>
+              </div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+                <table className="w-full" style={{ minWidth: '560px' }}>
+                  <thead>
+                    <tr className="bg-[#1E1C43]">
+                      {['No', 'Tanggal', 'Jam Masuk', 'Lokasi', 'Device', 'Foto Bukti'].map(h => (
+                        <th key={h} className="text-left text-[10px] font-semibold text-white/70 uppercase tracking-wider px-4 py-3 whitespace-nowrap">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {absensiSesi.length === 0 && (
+                      <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-gray-400">Tidak ada data absensi.</td></tr>
+                    )}
+                    {absensiSesi.map((a, i) => (
+                      <tr key={a.id} className={`border-b border-gray-50 ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}`}>
+                        <td className="px-4 py-2.5 text-xs text-gray-400">{i + 1}</td>
+                        <td className="px-4 py-2.5 text-xs font-semibold text-gray-700 whitespace-nowrap">{a.tanggal}</td>
+                        <td className="px-4 py-2.5 text-xs font-bold text-[#1E1C43] font-mono whitespace-nowrap">{a.jam}</td>
+                        <td className="px-4 py-2.5 text-xs text-gray-600">{a.lokasi || '—'}</td>
+                        <td className="px-4 py-2.5 text-xs text-gray-500 whitespace-nowrap">{a.device || '—'}</td>
+                        <td className="px-4 py-2.5">
+                          {a.fotoUrl
+                            ? <a href={a.fotoUrl} target="_blank" rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-xs text-blue-600 font-medium hover:underline">
+                                <ExternalLink size={11} /> Lihat Foto
+                              </a>
+                            : <span className="text-xs text-gray-400">—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
-          )}
-        </div>
 
-        {/* ── Document footer ── */}
-        <div className="border-t border-gray-100 bg-gray-50 px-6 py-3 flex items-center justify-between">
-          <p className="text-[10px] text-gray-400">Dokumen rekap ini digunakan sebagai dasar pembayaran honorarium pelatih.</p>
-          <p className="text-[10px] font-semibold text-gray-400">#{rekapId} · Order #{orderId}</p>
+            {/* ── Rincian Honorarium ── */}
+            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Rincian Honorarium</div>
+              <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-100 border-b border-gray-200">
+                      {['Deskripsi Layanan', 'Jumlah Sesi', 'Rate / Sesi', 'Total'].map((h, i) => (
+                        <th key={h} className={`text-[10px] font-semibold text-gray-500 uppercase tracking-wider px-4 py-3 whitespace-nowrap ${i > 0 ? 'text-right' : 'text-left'}`}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="px-4 py-3 text-sm text-gray-700">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</td>
+                      <td className="px-4 py-3 text-sm font-semibold text-gray-700 text-right">{absensiSesi.length} sesi</td>
+                      <td className="px-4 py-3 text-sm text-gray-700 text-right">{formatRp(ratePerSesi)}</td>
+                      <td className="px-4 py-3 text-sm font-bold text-[#1E1C43] text-right">{formatRp(totalHon)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div className="bg-[#1E1C43] rounded-xl mt-3 px-4 py-2.5 flex justify-between items-center">
+                <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium</span>
+                <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
+              </div>
+            </div>
+
+            {/* ── Tanda Tangan ── */}
+            <div className="px-6 sm:px-8 py-4">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-4">Tanda Tangan</div>
+              <div className="grid grid-cols-2 gap-5">
+
+                {/* Pelatih TTD */}
+                <div className="border border-gray-200 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Pelatih</p>
+                  <PicSig uploaded={!!fileNamaTTD} />
+                  <div className="border-t border-gray-100 mt-2 pt-3">
+                    <p className="text-xs font-semibold text-gray-700">{prog?.pic?.nama || 'Pelatih'}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
+                  </div>
+                  {!fileNamaTTD ? (
+                    <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
+                      <Upload size={10} /> Upload TTD
+                      <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
+                        onChange={e => { if (e.target.files[0]) doUploadTTD(e.target.files[0]) }} />
+                    </label>
+                  ) : (
+                    <p className="mt-1 text-[10px] text-green-600 font-semibold">✓ Terverifikasi</p>
+                  )}
+                </div>
+
+                {/* Admin EFM TTD */}
+                <div className="border border-gray-200 rounded-xl p-4 text-center">
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Mengetahui, Admin EFM</p>
+                  {rekapStatus === 'dikonfirmasi' ? (
+                    <EfmSig />
+                  ) : (
+                    <div className="h-16 flex items-center justify-center">
+                      <p className="text-xs text-gray-400 italic">Menunggu konfirmasi admin</p>
+                    </div>
+                  )}
+                  <div className="border-t border-gray-100 mt-2 pt-3">
+                    <p className="text-xs font-semibold text-gray-700">Admin EFM</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{cs.namaLegal}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Alert ditolak */}
+              {rekapStatus === 'ditolak' && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3 flex items-start gap-3">
+                  <X size={14} className="text-red-500 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-semibold text-red-700">Rekap Ditolak</p>
+                    {catatanTolak && <p className="text-xs text-red-600 mt-0.5">{catatanTolak}</p>}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* ── Document footer ── */}
+            <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+              <p className="text-xs text-gray-500">Terima kasih atas kepercayaan Anda kepada layanan kami.</p>
+              <p className="text-[10px] text-gray-400">
+                Powered by {cs.namaPerusahaan} | {cs.namaLegal}
+              </p>
+            </div>
+
+          </div>
         </div>
       </div>
 
@@ -501,9 +502,9 @@ export default function PPRekapAbsensiDetailPage() {
                 <Download size={12} /> Lihat Bukti
               </button>
             </div>
-            <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wide">Total Honorarium Dibayarkan</span>
-              <span className="text-base font-black text-white">Rp {totalHon.toLocaleString('id-ID')}</span>
+            <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
+              <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
             </div>
           </div>
         )}
