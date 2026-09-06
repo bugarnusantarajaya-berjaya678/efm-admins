@@ -108,6 +108,7 @@ function AppRoutes() {
       <Route path="/pp/screening/:id" element={<AppShell><PPFitnessAssessmentPage /></AppShell>} />
       <Route path="/pp/orders" element={<AppShell><PPOrdersPage /></AppShell>} />
       <Route path="/pp/orders/new" element={<AppShell><PPOrderNewPage /></AppShell>} />
+      <Route path="/pp/orders/rekap/:orderId" element={<AppShell><PPRekapAbsensiDetailPage /></AppShell>} />
       <Route path="/pp/orders/:id" element={<AppShell><PPOrderDetailPage /></AppShell>} />
       <Route path="/pp/program-db" element={<AppShell><PPProgramDBPage /></AppShell>} />
       <Route path="/pp/program-db/jenis" element={<AppShell><PPJenisProgramPage /></AppShell>} />
@@ -122,7 +123,6 @@ function AppRoutes() {
       <Route path="/pp/promo/new" element={<AppShell><PPPromoFormPage /></AppShell>} />
       <Route path="/pp/promo/:kode" element={<AppShell><PPPromoFormPage /></AppShell>} />
       <Route path="/pp/agreement/:id" element={<AppShell><PPAgreementDetailPage /></AppShell>} />
-      <Route path="/pp/orders/rekap/:orderId" element={<AppShell><PPRekapAbsensiDetailPage /></AppShell>} />
 
       {/* B2B Routes */}
       <Route path="/b2b/dashboard" element={<AppShell><B2BDashboardPage /></AppShell>} />

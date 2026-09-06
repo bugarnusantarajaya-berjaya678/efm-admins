@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload, X, ExternalLink } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
@@ -84,8 +84,10 @@ export default function PPRekapAbsensiDetailPage() {
 
   const paymentRef = useRef(null)
 
-  /* breadcrumb */
-  useBreadcrumb && setCrumbs?.(['Private Program', 'Orders', orderId, 'Rekap Absensi'])
+  useEffect(() => {
+    setCrumbs?.(['Private Program', 'Orders', orderId, 'Rekap Absensi'])
+    return () => setCrumbs?.(null)
+  }, [orderId])
 
   /* ── action helpers ── */
   function doApprove() {
