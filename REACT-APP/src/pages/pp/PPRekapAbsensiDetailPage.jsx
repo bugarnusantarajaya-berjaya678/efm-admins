@@ -439,9 +439,9 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Document footer ── */}
             <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
-              <p className="text-xs text-gray-500">Terima kasih atas kepercayaan Anda kepada layanan kami.</p>
-              <p className="text-[10px] text-gray-400">
-                Powered by {cs.namaPerusahaan} | {cs.namaLegal}
+              <p className="text-xs text-gray-500">Terima kasih atas kepercayaan Anda.</p>
+              <p className="text-xs font-semibold text-gray-500">
+                Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}
               </p>
             </div>
 
