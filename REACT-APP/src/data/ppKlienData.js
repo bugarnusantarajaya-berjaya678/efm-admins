@@ -442,10 +442,10 @@ export const KLIEN_INIT = [
     },
   },
 
-  // ─── Klien: Dewi Anggraini (Order PP-26-0005, lead LP-0017) ─
+  // ─── Klien: Dewi Rahayu (Order PP-26-0005, lead LP-0017) ─
   {
     id: 'KL-0019',
-    nama: 'Dewi Anggraini',
+    nama: 'Dewi Rahayu',
     sapaan: 'Kak',
     jenisKelamin: 'Perempuan',
     tanggalLahir: '1992-07-04',

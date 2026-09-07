@@ -31,7 +31,7 @@ export const RECEIPTS_INIT = [
     rcpNo: 'RCP-PP-26-0012', invNo: 'INV-PP-26-0012',
     orderId: 'PP-26-0012', client: 'Emily Chen', sapaan: 'Kak', initials: 'EC', color: '#27AE60',
     paket: '4 Sesi - Starter', pic: 'Marcus Chen',
-    tglBayar: '22 Okt 2026', metode: 'QRIS', total: 600000,
+    tglBayar: '22 Okt 2026', metode: 'Transfer Bank (BCA)', total: 800000,
     waStatus: 'sent', waTgl: '22 Okt 2026',
   },
   {

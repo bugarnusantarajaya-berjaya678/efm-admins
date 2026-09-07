@@ -35,8 +35,8 @@ export const DOCS_INIT = [
   {
     id: 'AGR-PP-26-0004', displayId: 'AGR-PP-26-0004',
     leadId: 'LP-0014',
-    namaKlien: 'Anita Kumar', initials: 'AK', color: '#8E44AD',
-    namaPanggilan: 'Anita', noWa: '084567890123', email: 'anita.kumar@email.com',
+    namaKlien: 'Anita Suryani', initials: 'AS', color: '#8E44AD',
+    namaPanggilan: 'Anita', noWa: '084567890123', email: 'anita.suryani@email.com',
     alamat: 'Jl. TB Simatupang No. 20, Jakarta Selatan',
     detailPesanan: '8 Sesi Private Training - Paket Base',
     orderId: 'PP-26-0010', paket: '8 Sesi - Base', masaBerlaku: '45 Hari',
@@ -82,7 +82,7 @@ export const DOCS_INIT = [
     namaKlien: 'Dewi Rahayu', initials: 'DR', color: '#C0392B',
     namaPanggilan: 'Dewi', noWa: '088901234567', email: 'dewi.rahayu@email.com',
     alamat: 'Jl. Fatmawati No. 55, Jakarta Selatan',
-    detailPesanan: '8 Sesi Yoga & Stretching - Paket Base',
+    detailPesanan: '8 Sesi Private Training - Paket Base',
     orderId: 'PP-26-0005', paket: '8 Sesi - Base', masaBerlaku: '45 Hari',
     noReceipt: 'RCP-PP-26-0005', refInvoice: 'INV-PP-26-0005', pic: 'Marcus Chen',
     tglDibuat: '25 Sep 2026', statusTtd: 'signed', tglTtd: '26 Sep 2026',
@@ -111,7 +111,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0010', displayId: 'AGR-PP-26-0010',
-    leadId: 'LP-0019',
+    leadId: 'LP-0007',
     namaKlien: 'Kevin Hartanto', initials: 'KH', color: '#3498DB',
     namaPanggilan: 'Kevin', noWa: '081345678901', email: 'kevin.hartanto@email.com',
     alamat: 'Jl. Wijaya I No. 17, Jakarta Selatan',
@@ -122,7 +122,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0011', displayId: 'AGR-PP-26-0011',
-    leadId: 'LP-0020',
+    leadId: 'LP-0012',
     namaKlien: 'Fiona Santika', initials: 'FS', color: '#E74C3C',
     namaPanggilan: 'Fiona', noWa: '081988776655', email: 'fiona.santika@email.com',
     alamat: 'Jl. Kelapa Dua Wetan No. 3, Jakarta Timur',
@@ -133,7 +133,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0012', displayId: 'AGR-PP-26-0012',
-    leadId: 'LP-0021',
+    leadId: 'LP-0009',
     namaKlien: 'Ahmad Fauzi', initials: 'AF', color: '#9B59B6',
     namaPanggilan: 'Ahmad', noWa: '081122334455', email: 'ahmad.fauzi@email.com',
     alamat: 'Jl. Antasari No. 44, Jakarta Selatan',
@@ -144,7 +144,7 @@ export const DOCS_INIT = [
   },
   {
     id: 'AGR-PP-26-0013', displayId: 'AGR-PP-26-0013',
-    leadId: 'LP-0022',
+    leadId: 'LP-0008',
     namaKlien: 'Natasha Putri', initials: 'NP', color: '#E67E22',
     namaPanggilan: 'Natasha', noWa: '087811223344', email: 'natasha.putri@email.com',
     alamat: 'Jl. Blok M Raya No. 11, Jakarta Selatan',
