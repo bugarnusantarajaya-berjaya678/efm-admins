@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload, X, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, ClipboardList, Upload, X, ExternalLink, CreditCard, Camera } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -94,7 +94,14 @@ export default function PPRekapAbsensiDetailPage() {
   const [honStatus,     setHonStatus]     = useState(init.honorariumStatus || 'menunggu_bayar')
   const [buktiBayar,    setBuktiBayar]    = useState(init.buktiBayarNama   || null)
   const [tglBayar,      setTglBayar]      = useState(init.tglBayar         || null)
-  const paymentRef = useRef(null)
+  const [metodeBayar,   setMetodeBayar]   = useState(init.metodeBayar      || null)
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadFoto,    setUploadFoto]    = useState(null)
+  const [uploadPreview, setUploadPreview] = useState(null)
+  const [uploadTgl,     setUploadTgl]     = useState('')
+  const [uploadMetode,  setUploadMetode]  = useState('Transfer Bank')
+  const [uploadBank,    setUploadBank]    = useState('BCA')
+  const uploadFileRef = useRef(null)
 
 
   useEffect(() => {
@@ -121,12 +128,26 @@ export default function PPRekapAbsensiDetailPage() {
     setFileNamaTTD(file.name)
     saveRekap(orderId, { fileNamaTTD: file.name })
   }
-  function doUploadBukti(file) {
-    const tgl = fmtWaktu()
-    setBuktiBayar(file.name)
+  function doSimpanBukti() {
+    const tgl = uploadTgl || fmtWaktu()
+    const metode = `${uploadMetode} (${uploadBank})`
+    const namaFile = uploadFoto ? uploadFoto.name : 'bukti-honorarium.jpg'
+    setBuktiBayar(namaFile)
     setTglBayar(tgl)
+    setMetodeBayar(metode)
     setHonStatus('sudah_bayar')
-    saveRekap(orderId, { honorariumStatus: 'sudah_bayar', buktiBayarNama: file.name, tglBayar: tgl })
+    saveRekap(orderId, {
+      honorariumStatus: 'sudah_bayar',
+      buktiBayarNama: namaFile,
+      tglBayar: tgl,
+      metodeBayar: metode,
+    })
+    setShowUploadModal(false)
+    setUploadFoto(null)
+    setUploadPreview(null)
+    setUploadTgl('')
+    setUploadMetode('Transfer Bank')
+    setUploadBank('BCA')
   }
   const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
   const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
@@ -198,9 +219,9 @@ export default function PPRekapAbsensiDetailPage() {
             </button>
           )}
           {rekapStatus === 'dikonfirmasi' && honStatus === 'menunggu_bayar' && (
-            <button onClick={() => paymentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+            <button onClick={() => setShowUploadModal(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
-              Upload Bukti Honorarium
+              <Upload size={13} /> Upload Bukti Honorarium
             </button>
           )}
           {rekapStatus === 'ditolak' && (
@@ -448,58 +469,147 @@ export default function PPRekapAbsensiDetailPage() {
         </div>
       </div>
 
-      {/* ── Pembayaran Honorarium (admin only, non-printable) ── */}
-      <div ref={paymentRef}
-        className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-5 ${rekapStatus !== 'dikonfirmasi' ? 'opacity-60 pointer-events-none' : ''}`}>
-        <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pembayaran Honorarium</h3>
-          {rekapStatus === 'dikonfirmasi' ? (
-            <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
-              honStatus === 'sudah_bayar' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-            }`}>
-              {honStatus === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
-            </span>
-          ) : (
-            <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400 border border-gray-200">
-              Terkunci — selesaikan rekap dulu
-            </span>
-          )}
-        </div>
+      {/* ── Modal Upload Bukti Honorarium ── */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowUploadModal(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
+            onClick={e => e.stopPropagation()}>
 
-        {honStatus === 'menunggu_bayar' ? (
-          <div className="space-y-3">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
-              <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-yellow-700">Transfer honorarium ke rekening pelatih, lalu upload bukti pembayaran di bawah.</p>
+            {/* Modal Header */}
+            <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-[#1E1C43]/10 flex items-center justify-center">
+                  <Upload size={13} className="text-[#1E1C43]" />
+                </div>
+                <h3 className="text-sm font-bold text-[#1E1C43]">Upload Bukti Honorarium</h3>
+              </div>
+              <button onClick={() => setShowUploadModal(false)}
+                className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+                <X size={15} className="text-gray-500" />
+              </button>
             </div>
-            <label className="cursor-pointer flex items-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
-              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                <Upload size={16} className="text-gray-500" />
+
+            {/* Modal Body */}
+            <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
+
+              {/* DATA PEMBAYARAN summary */}
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
+                <p className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Data Pembayaran</p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                  <div>
+                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Pelatih</p>
+                    <p className="text-xs font-semibold text-green-900">{picData?.fullname || 'Pelatih'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Ref Rekap</p>
+                    <p className="text-xs font-semibold text-green-900">#{rekapId}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Sesi Dilaksanakan</p>
+                    <p className="text-xs font-semibold text-green-900">{absensiSesi.length} sesi</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Total Honorarium</p>
+                    <p className="text-xs font-bold text-green-900">{formatRp(totalHon)}</p>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1">
-                <span className="text-xs text-[#1E1C43] font-semibold">Upload Bukti Pembayaran Honorarium</span>
-                <p className="text-xs text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
+
+              {/* Tanggal Pembayaran */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Tanggal Pembayaran</label>
+                <input
+                  type="date"
+                  value={uploadTgl}
+                  onChange={e => setUploadTgl(e.target.value)}
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors"
+                />
               </div>
-              <input type="file" accept=".jpg,.jpeg,.png" className="hidden"
-                onChange={e => { if (e.target.files[0]) doUploadBukti(e.target.files[0]) }} />
-            </label>
+
+              {/* Metode Pembayaran */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Metode Pembayaran</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <select
+                    value={uploadMetode}
+                    onChange={e => setUploadMetode(e.target.value)}
+                    className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white"
+                  >
+                    <option value="Transfer Bank">Transfer Bank</option>
+                    <option value="QRIS">QRIS</option>
+                    <option value="Tunai">Tunai</option>
+                  </select>
+                  {uploadMetode === 'Transfer Bank' && (
+                    <select
+                      value={uploadBank}
+                      onChange={e => setUploadBank(e.target.value)}
+                      className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white"
+                    >
+                      {['BCA','BRI','BNI','Mandiri','BSI','CIMB Niaga','Danamon'].map(b => (
+                        <option key={b} value={b}>{b}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+
+              {/* Foto Bukti */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-700">Foto Bukti Transfer</label>
+                {uploadPreview ? (
+                  <div className="relative rounded-xl overflow-hidden border border-gray-200">
+                    <img src={uploadPreview} alt="preview" className="w-full object-cover max-h-48" />
+                    <button
+                      onClick={() => { setUploadFoto(null); setUploadPreview(null) }}
+                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70 transition-colors">
+                      <X size={12} className="text-white" />
+                    </button>
+                    <p className="px-3 py-1.5 text-[10px] text-gray-500 truncate">{uploadFoto?.name}</p>
+                  </div>
+                ) : (
+                  <label className="cursor-pointer flex items-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/40 transition-colors">
+                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                      <Camera size={16} className="text-gray-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs font-semibold text-[#1E1C43]">Pilih Foto Bukti</p>
+                      <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
+                    </div>
+                    <input
+                      ref={uploadFileRef}
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      className="hidden"
+                      onChange={e => {
+                        const f = e.target.files[0]
+                        if (!f) return
+                        setUploadFoto(f)
+                        setUploadPreview(URL.createObjectURL(f))
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex-shrink-0 flex justify-end gap-2 px-5 py-4 border-t border-gray-100">
+              <button onClick={() => setShowUploadModal(false)}
+                className="h-9 px-4 rounded-xl border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                Batal
+              </button>
+              <button
+                onClick={doSimpanBukti}
+                className="h-9 px-4 rounded-xl bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold transition-colors flex items-center gap-1.5">
+                <CheckCircle size={13} /> Simpan Bukti
+              </button>
+            </div>
+
           </div>
-        ) : (
-          <div className="space-y-3">
-            <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-              <CheckCircle size={15} className="text-green-600 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
-                {buktiBayar && <p className="text-xs text-green-700 mt-0.5 truncate">{buktiBayar} · {tglBayar}</p>}
-              </div>
-            </div>
-            <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
-              <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
-              <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
-            </div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
     </div>
   )
