@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, ClipboardList, Upload, X, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, ClipboardList, AlertTriangle, Upload, X, ExternalLink } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -91,6 +91,10 @@ export default function PPRekapAbsensiDetailPage() {
   const [tglDiajukan]                     = useState(init.tglDiajukan      || '8 Nov 2026')
   const [catatanTolak,  setCatatanTolak]  = useState(init.catatanTolak    || '')
   const [showTolakForm, setShowTolakForm] = useState(false)
+  const [honStatus,     setHonStatus]     = useState(init.honorariumStatus || 'menunggu_bayar')
+  const [buktiBayar,    setBuktiBayar]    = useState(init.buktiBayarNama   || null)
+  const [tglBayar,      setTglBayar]      = useState(init.tglBayar         || null)
+  const paymentRef = useRef(null)
 
 
   useEffect(() => {
@@ -116,6 +120,13 @@ export default function PPRekapAbsensiDetailPage() {
   function doUploadTTD(file) {
     setFileNamaTTD(file.name)
     saveRekap(orderId, { fileNamaTTD: file.name })
+  }
+  function doUploadBukti(file) {
+    const tgl = fmtWaktu()
+    setBuktiBayar(file.name)
+    setTglBayar(tgl)
+    setHonStatus('sudah_bayar')
+    saveRekap(orderId, { honorariumStatus: 'sudah_bayar', buktiBayarNama: file.name, tglBayar: tgl })
   }
   const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
   const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
@@ -184,6 +195,12 @@ export default function PPRekapAbsensiDetailPage() {
             <button onClick={() => setShowTolakForm(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-red-200 text-red-600 text-xs font-semibold rounded-lg hover:bg-red-50 transition-colors shrink-0">
               <X size={13} /> Tolak
+            </button>
+          )}
+          {rekapStatus === 'dikonfirmasi' && honStatus === 'menunggu_bayar' && (
+            <button onClick={() => paymentRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+              Upload Bukti Honorarium
             </button>
           )}
           {rekapStatus === 'ditolak' && (
@@ -429,6 +446,59 @@ export default function PPRekapAbsensiDetailPage() {
 
           </div>
         </div>
+      </div>
+
+      {/* ── Pembayaran Honorarium (admin only, non-printable) ── */}
+      <div ref={paymentRef}
+        className={`bg-white rounded-2xl border border-gray-100 shadow-sm p-5 ${rekapStatus !== 'dikonfirmasi' ? 'opacity-60 pointer-events-none' : ''}`}>
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pembayaran Honorarium</h3>
+          {rekapStatus === 'dikonfirmasi' ? (
+            <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
+              honStatus === 'sudah_bayar' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'
+            }`}>
+              {honStatus === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
+            </span>
+          ) : (
+            <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400 border border-gray-200">
+              Terkunci — selesaikan rekap dulu
+            </span>
+          )}
+        </div>
+
+        {honStatus === 'menunggu_bayar' ? (
+          <div className="space-y-3">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
+              <AlertTriangle size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+              <p className="text-xs text-yellow-700">Transfer honorarium ke rekening pelatih, lalu upload bukti pembayaran di bawah.</p>
+            </div>
+            <label className="cursor-pointer flex items-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/30 transition-colors">
+              <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                <Upload size={16} className="text-gray-500" />
+              </div>
+              <div className="flex-1">
+                <span className="text-xs text-[#1E1C43] font-semibold">Upload Bukti Pembayaran Honorarium</span>
+                <p className="text-xs text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
+              </div>
+              <input type="file" accept=".jpg,.jpeg,.png" className="hidden"
+                onChange={e => { if (e.target.files[0]) doUploadBukti(e.target.files[0]) }} />
+            </label>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+              <CheckCircle size={15} className="text-green-600 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
+                {buktiBayar && <p className="text-xs text-green-700 mt-0.5 truncate">{buktiBayar} · {tglBayar}</p>}
+              </div>
+            </div>
+            <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
+              <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
+              <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
+            </div>
+          </div>
+        )}
       </div>
 
     </div>
