@@ -574,6 +574,14 @@ export default function PPOrderDetailPage() {
   })
   const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
   const [logFilter, setLogFilter] = useState('semua')
+  const [showHonModal,   setShowHonModal]   = useState(false)
+  const [honFoto,        setHonFoto]        = useState(null)
+  const [honPreview,     setHonPreview]     = useState(null)
+  const [honTgl,         setHonTgl]         = useState('')
+  const [honMetode,      setHonMetode]      = useState('Transfer Bank')
+  const [honBank,        setHonBank]        = useState('BCA')
+  const [honRefresh,     setHonRefresh]     = useState(0)
+  const honFileRef = useRef(null)
   const orderCtx = {
     namaKlien:   infoDeal.namaKlien || '',
     sapaan:      infoDeal.sapaan    || '',
@@ -1661,37 +1669,36 @@ export default function PPOrderDetailPage() {
                   </div>
 
                   {/* Card 2: Bukti Honorarium */}
+                  {/* honRefresh: {honRefresh} — forces re-render after modal save */}
                   {isUnlocked ? (
                     hasBukti ? (
-                      <div
-                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
-                        className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                      >
+                      <div className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50">
                         <div className="flex items-center justify-between">
                           <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#1E1C43] text-white shrink-0">2</div>
-                          <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                          <CheckCircle size={11} className="text-green-500 shrink-0" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
                           <p className="text-xs font-semibold text-[#1E1C43] truncate leading-tight">{stored.buktiBayarNama}</p>
                           {stored.tglBayar && <p className="text-[10px] text-gray-400 mt-0.5">{stored.tglBayar}</p>}
+                          {stored.metodeBayar && <p className="text-[10px] text-gray-400">{stored.metodeBayar}</p>}
                         </div>
                         <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">Sudah Dibayar</span>
                       </div>
                     ) : (
                       <div
-                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                        onClick={() => setShowHonModal(true)}
                         className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white hover:bg-gray-50 cursor-pointer transition-colors group"
                       >
                         <div className="flex items-center justify-between">
                           <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
-                          <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                          <Upload size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
                           <p className="text-xs text-gray-400 italic leading-tight">Belum ada bukti</p>
                         </div>
-                        <span className="self-start text-xs text-[#1E1C43] font-semibold">Upload di Rekap →</span>
+                        <span className="self-start text-xs text-[#1E1C43] font-semibold">+ Upload Bukti</span>
                       </div>
                     )
                   ) : (
@@ -2148,6 +2155,156 @@ export default function PPOrderDetailPage() {
 
 
       </div>
+
+      {/* ── Modal Upload Bukti Honorarium ── */}
+      {showHonModal && (() => {
+        const honProg = ppPrograms.find(p => p.id === order?.programId)
+        const honPic  = honProg ? (PIC_DB[honProg.picId] || null) : null
+        const honRate = honProg?.biayaSesiPIC || 0
+        const honTotal = absensiSesi.length * honRate
+        const rekapId = 'RKP-' + id
+        function doSaveHon() {
+          const tgl = honTgl || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+          const metode = honMetode === 'Transfer Bank' ? `Transfer Bank (${honBank})` : honMetode
+          const namaFile = honFoto ? honFoto.name : 'bukti-honorarium.jpg'
+          try {
+            const prev = JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {}
+            localStorage.setItem(`rekap-pp-${id}`, JSON.stringify({
+              ...prev,
+              honorariumStatus: 'sudah_bayar',
+              buktiBayarNama: namaFile,
+              tglBayar: tgl,
+              metodeBayar: metode,
+            }))
+          } catch {}
+          setHonRefresh(n => n + 1)
+          setShowHonModal(false)
+          setHonFoto(null); setHonPreview(null); setHonTgl(''); setHonMetode('Transfer Bank'); setHonBank('BCA')
+        }
+        return (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={() => setShowHonModal(false)}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
+              onClick={e => e.stopPropagation()}>
+
+              {/* Header */}
+              <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-[#1E1C43]/10 flex items-center justify-center">
+                    <Upload size={13} className="text-[#1E1C43]" />
+                  </div>
+                  <h3 className="text-sm font-bold text-[#1E1C43]">Upload Bukti Honorarium</h3>
+                </div>
+                <button onClick={() => setShowHonModal(false)}
+                  className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+                  <X size={15} className="text-gray-500" />
+                </button>
+              </div>
+
+              {/* Body */}
+              <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
+
+                {/* DATA PEMBAYARAN summary */}
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
+                  <p className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Data Pembayaran</p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
+                    <div>
+                      <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Pelatih</p>
+                      <p className="text-xs font-semibold text-green-900">{honPic?.fullname || 'Pelatih'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Ref Rekap</p>
+                      <p className="text-xs font-semibold text-green-900">#{rekapId}</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Sesi Dilaksanakan</p>
+                      <p className="text-xs font-semibold text-green-900">{absensiSesi.length} sesi</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Total Honorarium</p>
+                      <p className="text-xs font-bold text-green-900">{fmtRp(honTotal)}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Tanggal Pembayaran */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Tanggal Pembayaran</label>
+                  <input type="date" value={honTgl} onChange={e => setHonTgl(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors" />
+                </div>
+
+                {/* Metode Pembayaran */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Metode Pembayaran</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <select value={honMetode} onChange={e => setHonMetode(e.target.value)}
+                      className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white">
+                      <option value="Transfer Bank">Transfer Bank</option>
+                      <option value="QRIS">QRIS</option>
+                      <option value="Tunai">Tunai</option>
+                    </select>
+                    {honMetode === 'Transfer Bank' && (
+                      <select value={honBank} onChange={e => setHonBank(e.target.value)}
+                        className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white">
+                        {['BCA','BRI','BNI','Mandiri','BSI','CIMB Niaga','Danamon'].map(b => (
+                          <option key={b} value={b}>{b}</option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                </div>
+
+                {/* Foto Bukti */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-gray-700">Foto Bukti Transfer</label>
+                  {honPreview ? (
+                    <div className="relative rounded-xl overflow-hidden border border-gray-200">
+                      <img src={honPreview} alt="preview" className="w-full object-cover max-h-48" />
+                      <button onClick={() => { setHonFoto(null); setHonPreview(null) }}
+                        className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70 transition-colors">
+                        <X size={12} className="text-white" />
+                      </button>
+                      <p className="px-3 py-1.5 text-[10px] text-gray-500 truncate">{honFoto?.name}</p>
+                    </div>
+                  ) : (
+                    <label className="cursor-pointer flex items-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/40 transition-colors">
+                      <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
+                        <ImageIcon size={16} className="text-gray-400" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-[#1E1C43]">Pilih Foto Bukti</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
+                      </div>
+                      <input ref={honFileRef} type="file" accept=".jpg,.jpeg,.png" className="hidden"
+                        onChange={e => {
+                          const f = e.target.files[0]
+                          if (!f) return
+                          setHonFoto(f)
+                          setHonPreview(URL.createObjectURL(f))
+                        }} />
+                    </label>
+                  )}
+                </div>
+
+              </div>
+
+              {/* Footer */}
+              <div className="flex-shrink-0 flex justify-end gap-2 px-5 py-4 border-t border-gray-100">
+                <button onClick={() => setShowHonModal(false)}
+                  className="h-9 px-4 rounded-xl border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                  Batal
+                </button>
+                <button onClick={doSaveHon}
+                  className="h-9 px-4 rounded-xl bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold transition-colors flex items-center gap-1.5">
+                  <CheckCircle size={13} /> Simpan Bukti
+                </button>
+              </div>
+
+            </div>
+          </div>
+        )
+      })()}
 
     </>
   )
