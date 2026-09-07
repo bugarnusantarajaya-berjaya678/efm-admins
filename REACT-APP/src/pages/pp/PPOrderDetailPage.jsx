@@ -83,6 +83,21 @@ const TAHAPAN_STEPS = ['Invoice', 'Agreement', 'Program Berjalan', 'Program Sele
 const TAHAPAN_ORDER = { 'Invoice': 0, 'Agreement': 1, 'Program Berjalan': 2, 'Program Selesai': 3 }
 const TAHAPAN_TO_STATUS = { 'Invoice': 'Draft', 'Agreement': 'Pending', 'Program Berjalan': 'Aktif', 'Program Selesai': 'Completed' }
 
+/* ── Dummy absensi data (shared pool, sliced per order by sesiDone) ─────── */
+const ABSENSI_DUMMY = [
+  { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-13", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm001ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-15", jam:"06:59", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm002ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-17", jam:"07:04", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm003ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-10-20", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm004ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-005", jadwalId:"JS-005", tanggal:"2026-10-22", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm005ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-006", jadwalId:"JS-006", tanggal:"2026-10-24", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm006ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-007", jadwalId:"JS-007", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm007ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-008", jadwalId:"JS-008", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm008ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-009", jadwalId:"JS-009", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm009ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-010", jadwalId:"JS-010", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:null,                                                                                       catatanKoreksi:"" },
+  { id:"ABS-011", jadwalId:"JS-011", tanggal:"2026-11-05", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm011ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+  { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm012ptlbs/view?usp=drive_link", catatanKoreksi:"" },
+]
 
 /* ── Generate payment schedule ────────────────────────────────────────────── */
 function generatePayRows(startStr, endStr, terms, nilaiNum) {
@@ -504,20 +519,11 @@ export default function PPOrderDetailPage() {
 
   /* ── Tab 3: Operasional Sesi (PP) ───────────────────────────────────────── */
 
-  const [absensiSesi, setAbsensiSesi] = useState([
-    { id:"ABS-001", jadwalId:"JS-001", tanggal:"2026-10-13", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm001ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-002", jadwalId:"JS-002", tanggal:"2026-10-15", jam:"06:59", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm002ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-003", jadwalId:"JS-003", tanggal:"2026-10-17", jam:"07:04", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm003ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-004", jadwalId:"JS-004", tanggal:"2026-10-20", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm004ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-005", jadwalId:"JS-005", tanggal:"2026-10-22", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm005ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-006", jadwalId:"JS-006", tanggal:"2026-10-24", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm006ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-007", jadwalId:"JS-007", tanggal:"2026-10-27", jam:"07:03", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm007ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-008", jadwalId:"JS-008", tanggal:"2026-10-29", jam:"07:01", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm008ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-009", jadwalId:"JS-009", tanggal:"2026-10-31", jam:"06:58", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm009ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-010", jadwalId:"JS-010", tanggal:"2026-11-03", jam:"07:05", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 13 - Safari",         fotoUrl:null,                                                                                       catatanKoreksi:"" },
-    { id:"ABS-011", jadwalId:"JS-011", tanggal:"2026-11-05", jam:"07:02", lokasi:"Hampton's Park Tower A, Lt. 12", device:"iPhone 14 - Safari",         fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm011ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-    { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm012ptlbs/view?usp=drive_link", catatanKoreksi:"" },
-  ])
+  const [absensiSesi, setAbsensiSesi] = useState(() => {
+    const isCancelled = order?.statusOrder === 'Cancelled'
+    const count = isCancelled ? 0 : Math.min(order?.sesiDone || 0, ABSENSI_DUMMY.length)
+    return ABSENSI_DUMMY.slice(0, count)
+  })
   const [logTab3PP, setLogTab3PP] = useState(() => {
     try {
       const saved = localStorage.getItem(`order-log3-${id}`)
@@ -528,25 +534,37 @@ export default function PPOrderDetailPage() {
     const invId     = 'INV-' + id
     const agrId     = 'AGR-' + id
     const quoNomor  = order?.quotation?.nomor || ('QUO/EFM/PP/2026/' + id.split('-').pop())
+    const isCancelled = order?.statusOrder === 'Cancelled'
+    const sesiDone  = order?.sesiDone || 0
+
+    // Absensi log entries (newest-first: ABS-012 → ABS-001)
+    const allAbsLogs = [
+      { id:1,  waktu:"7 Nov 2026, 07:00",   actor:picNama, kategori:"absensi", nomorLaporan:"ABS-012", teks:`Absensi ABS-012 tercatat: ${picNama} hadir 07:00` },
+      { id:2,  waktu:"5 Nov 2026, 07:02",   actor:picNama, kategori:"absensi", nomorLaporan:"ABS-011", teks:`Absensi ABS-011 tercatat: ${picNama} hadir 07:02` },
+      { id:3,  waktu:"3 Nov 2026, 07:05",   actor:picNama, kategori:"absensi", nomorLaporan:"ABS-010", teks:`Absensi ABS-010 tercatat: ${picNama} — no foto, perlu verifikasi` },
+      { id:4,  waktu:"31 Okt 2026, 06:58",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-009", teks:`Absensi ABS-009 tercatat: ${picNama} hadir 06:58` },
+      { id:5,  waktu:"29 Okt 2026, 07:01",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-008", teks:`Absensi ABS-008 tercatat: ${picNama} hadir 07:01` },
+      { id:6,  waktu:"27 Okt 2026, 07:03",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-007", teks:`Absensi ABS-007 tercatat: ${picNama} hadir 07:03` },
+      { id:7,  waktu:"24 Okt 2026, 07:03",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-006", teks:`Absensi ABS-006 tercatat: ${picNama} hadir 07:03` },
+      { id:8,  waktu:"22 Okt 2026, 07:00",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-005", teks:`Absensi ABS-005 tercatat: ${picNama} hadir 07:00` },
+      { id:9,  waktu:"20 Okt 2026, 07:01",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-004", teks:`Absensi ABS-004 tercatat: ${picNama} hadir 07:01` },
+      { id:10, waktu:"17 Okt 2026, 07:04",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-003", teks:`Absensi ABS-003 tercatat: ${picNama} hadir 07:04` },
+      { id:11, waktu:"15 Okt 2026, 06:59",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-002", teks:`Absensi ABS-002 tercatat: ${picNama} hadir 06:59` },
+      { id:12, waktu:"13 Okt 2026, 07:02",  actor:picNama, kategori:"absensi", nomorLaporan:"ABS-001", teks:`Absensi ABS-001 tercatat: ${picNama} hadir 07:02` },
+    ]
+    // Keep only absensi log entries matching sessions actually done
+    // allAbsLogs is newest-first; oldest sessions are at the END
+    const absCount = isCancelled ? 0 : Math.min(sesiDone, allAbsLogs.length)
+    const absLogs  = absCount === 0 ? [] : allAbsLogs.slice(allAbsLogs.length - absCount)
+
     return [
-      { id:1,  waktu:"7 Nov 2026, 07:00",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-012",  teks:`Absensi ABS-012 tercatat: ${picNama} hadir 07:00` },
-      { id:2,  waktu:"5 Nov 2026, 07:02",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-011",  teks:`Absensi ABS-011 tercatat: ${picNama} hadir 07:02` },
-      { id:3,  waktu:"3 Nov 2026, 07:05",   actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-010",  teks:`Absensi ABS-010 tercatat: ${picNama} — no foto, perlu verifikasi` },
-      { id:4,  waktu:"31 Okt 2026, 06:58",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-009",  teks:`Absensi ABS-009 tercatat: ${picNama} hadir 06:58` },
-      { id:5,  waktu:"29 Okt 2026, 07:01",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-008",  teks:`Absensi ABS-008 tercatat: ${picNama} hadir 07:01` },
-      { id:6,  waktu:"27 Okt 2026, 07:03",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-007",  teks:`Absensi ABS-007 tercatat: ${picNama} hadir 07:03` },
-      { id:7,  waktu:"24 Okt 2026, 07:03",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-006",  teks:`Absensi ABS-006 tercatat: ${picNama} hadir 07:03` },
-      { id:8,  waktu:"22 Okt 2026, 07:00",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-005",  teks:`Absensi ABS-005 tercatat: ${picNama} hadir 07:00` },
-      { id:9,  waktu:"20 Okt 2026, 07:01",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-004",  teks:`Absensi ABS-004 tercatat: ${picNama} hadir 07:01` },
-      { id:10, waktu:"17 Okt 2026, 07:04",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-003",  teks:`Absensi ABS-003 tercatat: ${picNama} hadir 07:04` },
-      { id:11, waktu:"15 Okt 2026, 06:59",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-002",  teks:`Absensi ABS-002 tercatat: ${picNama} hadir 06:59` },
-      { id:12, waktu:"13 Okt 2026, 07:02",  actor:picNama,     kategori:"absensi",   nomorLaporan:"ABS-001",  teks:`Absensi ABS-001 tercatat: ${picNama} hadir 07:02` },
-      { id:13, waktu:"12 Okt 2026, 09:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Pembayaran ${invId} dikonfirmasi Lunas — Transfer · 12 Okt 2026` },
-      { id:14, waktu:"12 Okt 2026, 08:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,      teks:`Invoice ${invId} dikirim ke ${namaKlien}` },
-      { id:15, waktu:"9 Okt 2026, 14:00",   actor:"Admin EFM", kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement disetujui — dokumen TTD klien ${namaKlien} diterima & dikonfirmasi` },
-      { id:16, waktu:"9 Okt 2026, 13:30",   actor:namaKlien,   kategori:"agreement", nomorLaporan:agrId,      teks:`Agreement ditandatangani klien ${namaKlien} — pengajuan masuk` },
-      { id:17, waktu:"7 Okt 2026, 10:00",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:quoNomor,   teks:`Quotation ${quoNomor} disetujui` },
-      { id:18, waktu:"7 Okt 2026, 07:30",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:id,         teks:`Order ${id} dibuat untuk ${namaKlien} oleh Admin EFM` },
+      ...absLogs,
+      { id:13, waktu:"12 Okt 2026, 09:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,    teks:`Pembayaran ${invId} dikonfirmasi Lunas — Transfer · 12 Okt 2026` },
+      { id:14, waktu:"12 Okt 2026, 08:00",  actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:invId,    teks:`Invoice ${invId} dikirim ke ${namaKlien}` },
+      { id:15, waktu:"9 Okt 2026, 14:00",   actor:"Admin EFM", kategori:"agreement", nomorLaporan:agrId,    teks:`Agreement disetujui — dokumen TTD klien ${namaKlien} diterima & dikonfirmasi` },
+      { id:16, waktu:"9 Okt 2026, 13:30",   actor:namaKlien,   kategori:"agreement", nomorLaporan:agrId,    teks:`Agreement ditandatangani klien ${namaKlien} — pengajuan masuk` },
+      { id:17, waktu:"7 Okt 2026, 10:00",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:quoNomor, teks:`Quotation ${quoNomor} disetujui` },
+      { id:18, waktu:"7 Okt 2026, 07:30",   actor:"Admin EFM", kategori:"keuangan",  nomorLaporan:id,       teks:`Order ${id} dibuat untuk ${namaKlien} oleh Admin EFM` },
     ]
   })
   const [editingAbsensi,        setEditingAbsensi]        = useState(null)
