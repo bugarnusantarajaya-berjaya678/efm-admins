@@ -574,6 +574,11 @@ export default function PPOrderDetailPage() {
   })
   const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
   const [logFilter, setLogFilter] = useState('semua')
+  const [showUploadHon, setShowUploadHon] = useState(false)
+  const [honFile, setHonFile] = useState(null)
+  const [honPreview, setHonPreview] = useState(null)
+  const [honTglBayar, setHonTglBayar] = useState('')
+  const honFileRef = useRef(null)
 
   const orderCtx = {
     namaKlien:   infoDeal.namaKlien || '',
@@ -1625,6 +1630,95 @@ export default function PPOrderDetailPage() {
       {activeTab === 'operasional' && (
         <div className="space-y-4">
 
+          {/* ── Section: Dokumen Operasional ── */}
+          {(() => {
+            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+            const rStt = stored.status || 'belum_diajukan'
+            const isUnlocked = rStt === 'dikonfirmasi'
+            const hasBukti = !!stored.buktiBayarNama
+            const REKAP_CLS = {
+              belum_diajukan:  'bg-gray-50 text-gray-500 border-gray-200',
+              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+              dikonfirmasi:    'bg-green-50 text-green-700 border-green-200',
+              ditolak:         'bg-red-50 text-red-700 border-red-200',
+            }
+            const REKAP_LABEL = { belum_diajukan: 'Belum Diajukan', pengajuan_masuk: 'Pengajuan Masuk', dikonfirmasi: 'Dikonfirmasi', ditolak: 'Ditolak' }
+            const rekapId = 'RKP-' + id
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Dokumen Operasional</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Card 1: Rekap Absensi */}
+                  <div
+                    onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                    className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#1E1C43] text-white shrink-0">1</div>
+                      <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Rekap Absensi</p>
+                      <p className="text-xs font-semibold text-[#1E1C43] truncate leading-tight">{rekapId}</p>
+                    </div>
+                    <span className={`self-start px-2 py-0.5 rounded-full text-xs font-medium border ${REKAP_CLS[rStt] || REKAP_CLS.belum_diajukan}`}>
+                      {REKAP_LABEL[rStt] || 'Belum Diajukan'}
+                    </span>
+                  </div>
+
+                  {/* Card 2: Bukti Honorarium */}
+                  {isUnlocked ? (
+                    hasBukti ? (
+                      <div
+                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                        className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#1E1C43] text-white shrink-0">2</div>
+                          <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                          <p className="text-xs font-semibold text-[#1E1C43] truncate leading-tight">{stored.buktiBayarNama}</p>
+                          {stored.tglBayar && <p className="text-[10px] text-gray-400 mt-0.5">{stored.tglBayar}</p>}
+                        </div>
+                        <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">Sudah Dibayar</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white">
+                        <div className="flex items-center justify-between">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                          <p className="text-xs text-gray-300 italic leading-tight">Belum ada bukti</p>
+                        </div>
+                        <button
+                          onClick={() => setShowUploadHon(true)}
+                          className="self-start flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-[#1E1C43] text-white hover:bg-[#2d2b5e] transition-colors"
+                        >
+                          <Plus size={11} /> Upload Bukti
+                        </button>
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white opacity-50">
+                      <div className="flex items-center justify-between">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
+                        <Lock size={11} className="text-gray-300 shrink-0" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                        <p className="text-xs text-gray-300 italic leading-tight">Tersedia setelah rekap dikonfirmasi</p>
+                      </div>
+                      <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-gray-50 text-gray-400 border-gray-200">Terkunci</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
+
           {/* ── Section 3: Monitoring Sesi (read-only, dari backend) ── */}
           {(() => {
             const prog = ppPrograms.find(p => p.id === order.programId)
@@ -1707,110 +1801,6 @@ export default function PPOrderDetailPage() {
               </div>
             )
           })()}
-
-          {/* ── Section 4: Rekap Absensi (RRP card) ── */}
-          {(() => {
-            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
-            const rStt = stored.status || 'pengajuan_masuk'
-            const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
-            const totalHon = absensiSesi.length * ratePerSesi
-            const REKAP_CLS = {
-              belum_diajukan:  'bg-gray-50 text-gray-500 border-gray-200',
-              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-              dikonfirmasi:    'bg-green-50 text-green-700 border-green-200',
-              ditolak:         'bg-red-50 text-red-700 border-red-200',
-            }
-            const REKAP_LABEL = { belum_diajukan: 'Belum Diajukan', pengajuan_masuk: 'Pengajuan Masuk', dikonfirmasi: 'Dikonfirmasi', ditolak: 'Ditolak' }
-            const rekapId = 'RKP-' + id
-            return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Rekap Absensi</h3>
-                <div
-                  onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                      <ClipboardList size={14} className="text-[#1E1C43]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-[#1E1C43] truncate">{rekapId}</p>
-                      <p className="text-[10px] text-gray-400 truncate">{absensiSesi.length} sesi · Rp {totalHon.toLocaleString('id-ID')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${REKAP_CLS[rStt] || REKAP_CLS.belum_diajukan}`}>
-                      {REKAP_LABEL[rStt] || 'Belum Diajukan'}
-                    </span>
-                    <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                  </div>
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* ── Section 5: Honorarium (status ringkas dari localStorage) ── */}
-          {(() => {
-            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
-            const rStt = stored.status || 'pengajuan_masuk'
-            const honStt = stored.honorariumStatus || 'menunggu_bayar'
-            const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
-            const totalHonorariumDue = absensiSesi.length * ratePerSesi
-            const isUnlocked = rStt === 'dikonfirmasi'
-            return (
-              <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-5 ${!isUnlocked ? 'opacity-60' : ''}`}>
-                <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Honorarium Pelatih</h3>
-                  {isUnlocked ? (
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
-                      honStt === 'sudah_bayar' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                    }`}>
-                      {honStt === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400 border border-gray-200">Terkunci</span>
-                  )}
-                </div>
-                {!isUnlocked ? (
-                  <p className="text-xs text-gray-400 text-center py-4">Proses honorarium tersedia setelah rekap absensi disetujui. <button onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })} className="text-[#1E1C43] font-semibold hover:underline">Buka Rekap →</button></p>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        ['Sesi', `${absensiSesi.length} sesi`],
-                        ['Rate/Sesi', 'Rp ' + ratePerSesi.toLocaleString('id-ID')],
-                        ['Total', 'Rp ' + totalHonorariumDue.toLocaleString('id-ID')],
-                      ].map(([label, val]) => (
-                        <div key={label} className="bg-gray-50 rounded-xl p-3">
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                          <p className="text-xs font-semibold text-gray-800">{val}</p>
-                        </div>
-                      ))}
-                    </div>
-                    {honStt === 'sudah_bayar' ? (
-                      <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                        <CheckCircle size={14} className="text-green-600 shrink-0" />
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
-                          {stored.buktiBayarNama && <p className="text-xs text-green-700 mt-0.5 truncate">{stored.buktiBayarNama} · {stored.tglBayar}</p>}
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors"
-                      >
-                        Bayar Honorarium di Halaman Rekap →
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          })()}
-
 
           {/* ── Section 7: Catatan Progres Pelatih ── */}
           {(() => {
@@ -2166,6 +2156,88 @@ export default function PPOrderDetailPage() {
 
       </div>
 
+      {/* ── Modal Upload Bukti Honorarium ── */}
+      {showUploadHon && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowUploadHon(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+            <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#1E1C43]">Upload Bukti Honorarium</h3>
+              <button onClick={() => setShowUploadHon(false)} className="text-gray-400 hover:text-gray-600">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1 p-4 space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Tanggal Bayar</label>
+                <input
+                  type="date"
+                  value={honTglBayar}
+                  onChange={e => setHonTglBayar(e.target.value)}
+                  className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none focus:border-[#1E1C43]"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-600 block mb-1.5">Foto Bukti Transfer (JPEG / PNG)</label>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/jpg"
+                  ref={honFileRef}
+                  onChange={e => {
+                    const f = e.target.files?.[0]
+                    if (f) { setHonFile(f); setHonPreview(URL.createObjectURL(f)) }
+                  }}
+                  className="hidden"
+                />
+                {honPreview ? (
+                  <div className="relative">
+                    <img src={honPreview} alt="preview" className="w-full rounded-xl object-contain max-h-52 border border-gray-200" />
+                    <button
+                      onClick={() => { setHonFile(null); setHonPreview(null) }}
+                      className="absolute top-2 right-2 bg-black/50 rounded-full p-1 text-white hover:bg-black/70"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => honFileRef.current?.click()}
+                    className="w-full border-2 border-dashed border-gray-200 rounded-xl py-8 flex flex-col items-center gap-2 text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition-colors"
+                  >
+                    <Upload size={24} />
+                    <span className="text-xs font-medium">Pilih foto dari perangkat</span>
+                  </button>
+                )}
+              </div>
+            </div>
+            <div className="flex-shrink-0 p-4 border-t border-gray-200 flex justify-end gap-2">
+              <button
+                onClick={() => { setShowUploadHon(false); setHonFile(null); setHonPreview(null); setHonTglBayar('') }}
+                className="h-9 px-4 rounded-lg border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50"
+              >
+                Batal
+              </button>
+              <button
+                disabled={!honFile || !honTglBayar}
+                onClick={() => {
+                  const data = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+                  data.honorariumStatus = 'sudah_bayar'
+                  data.buktiBayarNama = honFile.name
+                  data.tglBayar = honTglBayar
+                  data.buktiBayarUrl = honPreview
+                  localStorage.setItem(`rekap-pp-${id}`, JSON.stringify(data))
+                  setShowUploadHon(false)
+                  setHonFile(null)
+                  setHonPreview(null)
+                  setHonTglBayar('')
+                }}
+                className="h-9 px-4 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Simpan Bukti
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </>
   )
