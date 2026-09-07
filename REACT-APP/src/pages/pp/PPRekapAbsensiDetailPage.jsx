@@ -6,6 +6,7 @@ import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { getCompanySettings } from '../../utils/companySettings'
 import { formatRp } from '../../data/ppInvoiceData'
+import { PIC_DB } from '../../data/ppProgramDBData'
 
 /* ── localStorage helpers ── */
 function loadRekap(orderId) {
@@ -77,6 +78,7 @@ export default function PPRekapAbsensiDetailPage() {
   const order     = getOrderById(orderId)
   const programs  = getStoredPrograms()
   const prog      = programs.find(p => p.id === order?.programId)
+  const picData   = prog ? (PIC_DB[prog.picId] || null) : null
   const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
 
   const absensiSesi = state?.absensiSesi || []
@@ -249,7 +251,7 @@ export default function PPRekapAbsensiDetailPage() {
                 <img
                   src="/logo.png"
                   alt="EFM Logo"
-                  className="w-20 h-20 rounded-full object-cover shrink-0"
+                  className="w-20 h-20 rounded-full object-contain shrink-0"
                   onError={e => { e.currentTarget.style.display = 'none' }}
                 />
                 <div>
@@ -269,10 +271,8 @@ export default function PPRekapAbsensiDetailPage() {
                 </div>
                 <div className="space-y-0.5 mt-3">
                   <p className="text-[10px] text-white/50">Tgl Pengajuan: <span className="text-white font-semibold">{tglDiajukan}</span></p>
-                  <p className="text-[10px] text-white/50">Order: <span className="text-white font-semibold">#{orderId}</span></p>
-                  <p className="text-[10px] text-white/50">Klien: <span className="text-white font-semibold">{order.namaKlien}</span></p>
                   <div className="mt-2 flex justify-end">
-                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${badgeDark.cls}`}>
+                    <span className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold ${badgeDark.cls}`}>
                       {badgeDark.label}
                     </span>
                   </div>
@@ -284,7 +284,7 @@ export default function PPRekapAbsensiDetailPage() {
             <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Untuk</div>
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-                <p className="text-[18px] font-bold text-[#1E1C43]">{prog?.pic?.nama || 'Pelatih'}</p>
+                <p className="text-[18px] font-bold text-[#1E1C43]">{picData?.fullname || 'Pelatih'}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
                 <p className="text-xs text-gray-400 mt-1.5">
                   Ref Order: <span className="font-semibold text-gray-600">#{orderId}</span>
@@ -389,7 +389,7 @@ export default function PPRekapAbsensiDetailPage() {
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Pelatih</p>
                   <PicSig uploaded={!!fileNamaTTD} />
                   <div className="border-t border-gray-100 mt-2 pt-3">
-                    <p className="text-xs font-semibold text-gray-700">{prog?.pic?.nama || 'Pelatih'}</p>
+                    <p className="text-xs font-semibold text-gray-700">{picData?.fullname || 'Pelatih'}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
                   </div>
                   {!fileNamaTTD ? (
