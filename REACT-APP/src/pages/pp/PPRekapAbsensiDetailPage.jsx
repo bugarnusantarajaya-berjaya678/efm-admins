@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, ClipboardList, Upload, X, ExternalLink, CreditCard, Camera } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, ClipboardList, Upload, X, ExternalLink } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getOrderById } from '../../data/ppOrdersStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -91,17 +91,10 @@ export default function PPRekapAbsensiDetailPage() {
   const [tglDiajukan]                     = useState(init.tglDiajukan      || '8 Nov 2026')
   const [catatanTolak,  setCatatanTolak]  = useState(init.catatanTolak    || '')
   const [showTolakForm, setShowTolakForm] = useState(false)
-  const [honStatus,     setHonStatus]     = useState(init.honorariumStatus || 'menunggu_bayar')
-  const [buktiBayar,    setBuktiBayar]    = useState(init.buktiBayarNama   || null)
-  const [tglBayar,      setTglBayar]      = useState(init.tglBayar         || null)
-  const [metodeBayar,   setMetodeBayar]   = useState(init.metodeBayar      || null)
-  const [showUploadModal, setShowUploadModal] = useState(false)
-  const [uploadFoto,    setUploadFoto]    = useState(null)
-  const [uploadPreview, setUploadPreview] = useState(null)
-  const [uploadTgl,     setUploadTgl]     = useState('')
-  const [uploadMetode,  setUploadMetode]  = useState('Transfer Bank')
-  const [uploadBank,    setUploadBank]    = useState('BCA')
-  const uploadFileRef = useRef(null)
+  const honStatus   = init.honorariumStatus || 'menunggu_bayar'
+  const buktiBayar  = init.buktiBayarNama  || null
+  const tglBayar    = init.tglBayar        || null
+  const metodeBayar = init.metodeBayar     || null
 
 
   useEffect(() => {
@@ -127,27 +120,6 @@ export default function PPRekapAbsensiDetailPage() {
   function doUploadTTD(file) {
     setFileNamaTTD(file.name)
     saveRekap(orderId, { fileNamaTTD: file.name })
-  }
-  function doSimpanBukti() {
-    const tgl = uploadTgl || fmtWaktu()
-    const metode = `${uploadMetode} (${uploadBank})`
-    const namaFile = uploadFoto ? uploadFoto.name : 'bukti-honorarium.jpg'
-    setBuktiBayar(namaFile)
-    setTglBayar(tgl)
-    setMetodeBayar(metode)
-    setHonStatus('sudah_bayar')
-    saveRekap(orderId, {
-      honorariumStatus: 'sudah_bayar',
-      buktiBayarNama: namaFile,
-      tglBayar: tgl,
-      metodeBayar: metode,
-    })
-    setShowUploadModal(false)
-    setUploadFoto(null)
-    setUploadPreview(null)
-    setUploadTgl('')
-    setUploadMetode('Transfer Bank')
-    setUploadBank('BCA')
   }
   const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
   const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
@@ -216,12 +188,6 @@ export default function PPRekapAbsensiDetailPage() {
             <button onClick={() => setShowTolakForm(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-red-200 text-red-600 text-xs font-semibold rounded-lg hover:bg-red-50 transition-colors shrink-0">
               <X size={13} /> Tolak
-            </button>
-          )}
-          {rekapStatus === 'dikonfirmasi' && honStatus === 'menunggu_bayar' && (
-            <button onClick={() => setShowUploadModal(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
-              <Upload size={13} /> Upload Bukti Honorarium
             </button>
           )}
           {rekapStatus === 'ditolak' && (
@@ -510,155 +476,21 @@ export default function PPRekapAbsensiDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
-              <Upload size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-yellow-700">Honorarium belum dibayarkan. Klik tombol <strong>"Upload Bukti Honorarium"</strong> di header untuk merekam pembayaran.</p>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 min-w-0">
+                <Upload size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+                <p className="text-xs text-yellow-700">Honorarium belum dibayarkan. Catat pembayaran melalui halaman Order.</p>
+              </div>
+              <button
+                onClick={() => navigate(`/pp/orders/${orderId}`, { state: { defaultTab: 'operasional' } })}
+                className="inline-flex items-center gap-1 text-xs font-semibold text-[#1E1C43] hover:underline shrink-0 whitespace-nowrap">
+                Ke Order <ExternalLink size={11} />
+              </button>
             </div>
           )}
         </div>
       )}
 
-      {/* ── Modal Upload Bukti Honorarium ── */}
-      {showUploadModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-          onClick={() => setShowUploadModal(false)}>
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
-            onClick={e => e.stopPropagation()}>
-
-            {/* Modal Header */}
-            <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-[#1E1C43]/10 flex items-center justify-center">
-                  <Upload size={13} className="text-[#1E1C43]" />
-                </div>
-                <h3 className="text-sm font-bold text-[#1E1C43]">Upload Bukti Honorarium</h3>
-              </div>
-              <button onClick={() => setShowUploadModal(false)}
-                className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
-                <X size={15} className="text-gray-500" />
-              </button>
-            </div>
-
-            {/* Modal Body */}
-            <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
-
-              {/* DATA PEMBAYARAN summary */}
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
-                <p className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Data Pembayaran</p>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-                  <div>
-                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Pelatih</p>
-                    <p className="text-xs font-semibold text-green-900">{picData?.fullname || 'Pelatih'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Ref Rekap</p>
-                    <p className="text-xs font-semibold text-green-900">#{rekapId}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Sesi Dilaksanakan</p>
-                    <p className="text-xs font-semibold text-green-900">{absensiSesi.length} sesi</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-green-600/70 uppercase tracking-wide">Total Honorarium</p>
-                    <p className="text-xs font-bold text-green-900">{formatRp(totalHon)}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Tanggal Pembayaran */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700">Tanggal Pembayaran</label>
-                <input
-                  type="date"
-                  value={uploadTgl}
-                  onChange={e => setUploadTgl(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors"
-                />
-              </div>
-
-              {/* Metode Pembayaran */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700">Metode Pembayaran</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <select
-                    value={uploadMetode}
-                    onChange={e => setUploadMetode(e.target.value)}
-                    className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white"
-                  >
-                    <option value="Transfer Bank">Transfer Bank</option>
-                    <option value="QRIS">QRIS</option>
-                    <option value="Tunai">Tunai</option>
-                  </select>
-                  {uploadMetode === 'Transfer Bank' && (
-                    <select
-                      value={uploadBank}
-                      onChange={e => setUploadBank(e.target.value)}
-                      className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-[#1E1C43] transition-colors bg-white"
-                    >
-                      {['BCA','BRI','BNI','Mandiri','BSI','CIMB Niaga','Danamon'].map(b => (
-                        <option key={b} value={b}>{b}</option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              </div>
-
-              {/* Foto Bukti */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-700">Foto Bukti Transfer</label>
-                {uploadPreview ? (
-                  <div className="relative rounded-xl overflow-hidden border border-gray-200">
-                    <img src={uploadPreview} alt="preview" className="w-full object-cover max-h-48" />
-                    <button
-                      onClick={() => { setUploadFoto(null); setUploadPreview(null) }}
-                      className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/50 flex items-center justify-center hover:bg-black/70 transition-colors">
-                      <X size={12} className="text-white" />
-                    </button>
-                    <p className="px-3 py-1.5 text-[10px] text-gray-500 truncate">{uploadFoto?.name}</p>
-                  </div>
-                ) : (
-                  <label className="cursor-pointer flex items-center gap-3 border-2 border-dashed border-gray-200 rounded-xl p-4 hover:border-[#1E1C43]/40 transition-colors">
-                    <div className="w-9 h-9 bg-gray-100 rounded-lg flex items-center justify-center shrink-0">
-                      <Camera size={16} className="text-gray-400" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-semibold text-[#1E1C43]">Pilih Foto Bukti</p>
-                      <p className="text-[10px] text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
-                    </div>
-                    <input
-                      ref={uploadFileRef}
-                      type="file"
-                      accept=".jpg,.jpeg,.png"
-                      className="hidden"
-                      onChange={e => {
-                        const f = e.target.files[0]
-                        if (!f) return
-                        setUploadFoto(f)
-                        setUploadPreview(URL.createObjectURL(f))
-                      }}
-                    />
-                  </label>
-                )}
-              </div>
-
-            </div>
-
-            {/* Modal Footer */}
-            <div className="flex-shrink-0 flex justify-end gap-2 px-5 py-4 border-t border-gray-100">
-              <button onClick={() => setShowUploadModal(false)}
-                className="h-9 px-4 rounded-xl border border-gray-200 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
-                Batal
-              </button>
-              <button
-                onClick={doSimpanBukti}
-                className="h-9 px-4 rounded-xl bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold transition-colors flex items-center gap-1.5">
-                <CheckCircle size={13} /> Simpan Bukti
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
 
     </div>
   )
