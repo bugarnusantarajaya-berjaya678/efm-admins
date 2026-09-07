@@ -166,6 +166,15 @@ cek: badge status di EventLeadsPage
 
 **Aturan penting:** `cek:` adalah analysis-only mode. Claude tidak boleh langsung edit setelah analisis tanpa konfirmasi eksplisit dari pengguna. Setelah laporan, tunggu instruksi: fix / skip / update skill.
 
+**Varian: `cek: ... analisa mendalam`**
+
+Ketika prompt mengandung kata `analisa mendalam`, ini bukan cek visual biasa — ini audit konsistensi lintas file. Workflow berbeda:
+1. Baca SEMUA file data yang relevan (bukan hanya satu file)
+2. Petakan relasi antar entitas: Order ↔ Lead ↔ Invoice ↔ Receipt ↔ Agreement ↔ Assessment ↔ Klien
+3. Identifikasi SEMUA inkonsistensi: nama klien berbeda, harga tidak sinkron, leadId salah, status lead tidak sesuai outcome order
+4. Lapor sebagai tabel terstruktur: File | Field | Nilai Saat Ini | Seharusnya | Alasan
+5. Tunggu konfirmasi sebelum fix — user biasanya menjawab "Kerjakan sekaligus" (→ Pattern 11)
+
 ---
 
 ## Pattern 9 — Pindahkan Elemen UI
@@ -203,6 +212,52 @@ buat halaman Receipt Detail untuk modul PP
 1. Cek apakah modul lain sudah punya halaman serupa (clone-first approach)
 2. Kalau ada → jalankan Pattern 1 (clone)
 3. Kalau tidak ada → tanya dulu sebelum desain dari nol (task besar, perlu scope konfirmasi)
+
+---
+
+## Pattern 11 — Kerjakan Sekaligus (follow-up dari analisa mendalam)
+
+**Trigger:** `Kerjakan sekaligus` (selalu sebagai follow-up dari Pattern 8 varian analisa mendalam)
+
+**Contoh:**
+Setelah Claude melaporkan temuan dari `cek: semua page PP, sinkronisasi data, analisa mendalam`:
+```
+Kerjakan sekaligus
+```
+
+**Workflow yang dijalankan:**
+1. Ambil SEMUA temuan dari analisis sebelumnya (tidak perlu baca ulang)
+2. Edit semua file yang terdampak dalam satu batch — urutan berdasarkan dependensi (data.js → store.js → halaman)
+3. Satu commit mencakup semua perubahan, pesan commit deskriptif per file
+4. Build + push + PR
+
+**Aturan penting:**
+- Kalau ada ambiguitas tentang nilai yang benar (misal: invoice vs receipt tidak sinkron dan tidak bisa ditentukan mana yang otoritatif), pilih yang paling konsisten dengan data lain, dokumentasikan pilihan di commit message
+- Untuk PP module: `ppLeadsStore.ORDER_TO_LEAD_ID` adalah sumber kebenaran untuk mapping Order → Lead. Untuk harga: PAKET_HARGA di ppOrdersData.js adalah otoritatif (4S=800k, 8S=1.6M, 12S=2.4M, 24S=4.8M)
+
+---
+
+## Pattern 12 — Update Skill Komprehensif
+
+**Trigger:** `update skill: tambah aturan baru semua perubahan yang baru dilakukan hingga hari ini`
+
+atau: `update skill: [deskripsi singkat] + tambahkan di artifact claude juga`
+
+**Contoh:**
+```
+update skill: tambah aturan baru semua perubahan yang baru dilakukan hingga hari ini
+update skill: catat keputusan form date range + perbaiki di artifact claude juga
+```
+
+**Workflow yang dijalankan:**
+1. Review apa yang berubah dalam sesi ini: pola baru, aturan baru, koreksi terhadap skill lama
+2. Tentukan skill mana yang perlu update (design-standards / prompt-pattern / quick-task / component-patterns)
+3. Edit file SKILL.md yang relevan — tambahkan section baru atau koreksi section yang salah
+4. Baca artifact referensi yang ada (`action: "list"` + `action: "read"`) lalu update sesuai perubahan skill
+5. Publish ulang artifact ke URL yang sama (bukan URL baru)
+6. Commit + push file SKILL.md yang diubah ke branch aktif
+
+**Catatan:** `hingga hari ini` berarti semua pola yang muncul dalam sesi ini, bukan hanya pola yang disebutkan di prompt. Claude harus review seluruh sesi dan identifikasi sendiri apa yang layak ditambahkan.
 
 ---
 
