@@ -585,6 +585,14 @@ export default function PPOrderDetailPage() {
   const [uploadHonMetode,  setUploadHonMetode]   = useState('Transfer Bank')
   const [uploadHonBank,    setUploadHonBank]     = useState('BCA')
   const uploadHonRef = useRef(null)
+  /* edit / cancel mode inside view modal */
+  const [honViewMode,    setHonViewMode]    = useState('view') // 'view'|'edit'|'confirm_cancel'
+  const [editHonTgl,     setEditHonTgl]     = useState('')
+  const [editHonMetode,  setEditHonMetode]  = useState('Transfer Bank')
+  const [editHonBank,    setEditHonBank]    = useState('BCA')
+  const [editHonFoto,    setEditHonFoto]    = useState(null)
+  const [editHonPreview, setEditHonPreview] = useState(null)
+  const editHonRef = useRef(null)
   const orderCtx = {
     namaKlien:   infoDeal.namaKlien || '',
     sapaan:      infoDeal.sapaan    || '',
@@ -2298,74 +2306,249 @@ export default function PPOrderDetailPage() {
         )
       })()}
 
-      {/* ── Modal View Bukti Honorarium ───────────────────────────────────────── */}
+      {/* ── Modal View/Edit/Cancel Bukti Honorarium ─────────────────────────── */}
       {showHonView && (() => {
-        const stored2 = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
-        const prog2   = ppPrograms.find(p => p.id === order?.programId)
+        const stored2  = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+        const prog2    = ppPrograms.find(p => p.id === order?.programId)
         const picName2 = prog2 ? (PIC_DB[prog2.picId]?.fullname || '—') : '—'
-        const rate2   = prog2?.biayaSesiPIC || 0
-        const total2  = absensiSesi.length * rate2
+        const rate2    = prog2?.biayaSesiPIC || 0
+        const total2   = absensiSesi.length * rate2
+
+        const closeView = () => {
+          setShowHonView(false)
+          setHonViewMode('view')
+          setEditHonFoto(null); setEditHonPreview(null)
+          setEditHonTgl(''); setEditHonMetode('Transfer Bank'); setEditHonBank('BCA')
+        }
+
+        const enterEdit = () => {
+          const mParts = stored2.metodeBayar?.match(/^(.*?) \((.*?)\)$/)
+          setEditHonMetode(mParts?.[1] || 'Transfer Bank')
+          setEditHonBank(mParts?.[2] || 'BCA')
+          setEditHonTgl('')
+          setEditHonFoto(null); setEditHonPreview(null)
+          setHonViewMode('edit')
+        }
+
+        const saveEdit = () => {
+          const tgl = editHonTgl
+            ? new Date(editHonTgl).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+            : stored2.tglBayar
+          const metode = `${editHonMetode} (${editHonBank})`
+          const namaFile = editHonFoto ? editHonFoto.name : stored2.buktiBayarNama
+          try {
+            const prev = JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {}
+            localStorage.setItem(`rekap-pp-${id}`, JSON.stringify({
+              ...prev,
+              buktiBayarNama: namaFile,
+              tglBayar: tgl,
+              metodeBayar: metode,
+            }))
+          } catch {}
+          closeView()
+          setHonRefresh(n => n + 1)
+        }
+
+        const doCancel = () => {
+          try {
+            const prev = JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {}
+            const { honorariumStatus, buktiBayarNama, tglBayar, metodeBayar, ...rest } = prev
+            localStorage.setItem(`rekap-pp-${id}`, JSON.stringify(rest))
+          } catch {}
+          closeView()
+          setHonRefresh(n => n + 1)
+        }
+
+        const TITLE = honViewMode === 'edit' ? 'Edit Pembayaran' :
+                      honViewMode === 'confirm_cancel' ? 'Batalkan Pembayaran?' : 'Bukti Honorarium'
+
         return (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowHonView(false)}>
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={honViewMode === 'view' ? closeView : undefined}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
+              onClick={e => e.stopPropagation()}>
+
+              {/* Header */}
               <div className="flex-shrink-0 flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-full bg-green-100 flex items-center justify-center">
-                    <CheckCircle size={13} className="text-green-600" />
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                    honViewMode === 'confirm_cancel' ? 'bg-red-100' :
+                    honViewMode === 'edit' ? 'bg-[#1E1C43]/10' : 'bg-green-100'
+                  }`}>
+                    {honViewMode === 'confirm_cancel'
+                      ? <AlertTriangle size={13} className="text-red-500" />
+                      : honViewMode === 'edit'
+                        ? <Edit2 size={13} className="text-[#1E1C43]" />
+                        : <CheckCircle size={13} className="text-green-600" />
+                    }
                   </div>
-                  <h3 className="text-sm font-bold text-[#1E1C43]">Bukti Honorarium</h3>
+                  <h3 className="text-sm font-bold text-[#1E1C43]">{TITLE}</h3>
                 </div>
-                <button onClick={() => setShowHonView(false)} className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
+                <button onClick={closeView} className="w-7 h-7 rounded-full hover:bg-gray-100 flex items-center justify-center transition-colors">
                   <X size={15} className="text-gray-500" />
                 </button>
               </div>
+
+              {/* Body */}
               <div className="overflow-y-auto flex-1 px-5 py-4 space-y-4">
-                <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                  <CheckCircle size={15} className="text-green-600 shrink-0" />
-                  <p className="text-xs font-semibold text-green-800">Honorarium telah dibayarkan</p>
-                </div>
-                <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">{picName2}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Ref Rekap</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">#RKP-{id}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">{stored2.tglBayar || '—'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">{stored2.metodeBayar || '—'}</p>
-                    </div>
-                    <div className="col-span-2">
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">File Bukti</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{stored2.buktiBayarNama || '—'}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Sesi Dibayar</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">{absensiSesi.length} sesi</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Rate / Sesi</p>
-                      <p className="text-xs font-semibold text-gray-800 mt-0.5">{fmtRp(rate2)}</p>
+
+                {/* ── MODE: VIEW ── */}
+                {honViewMode === 'view' && (<>
+                  <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
+                    <CheckCircle size={15} className="text-green-600 shrink-0" />
+                    <p className="text-xs font-semibold text-green-800">Honorarium telah dibayarkan</p>
+                  </div>
+                  <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{picName2}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Ref Rekap</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">#RKP-{id}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{stored2.tglBayar || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{stored2.metodeBayar || '—'}</p>
+                      </div>
+                      <div className="col-span-2">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">File Bukti</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{stored2.buktiBayarNama || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Sesi Dibayar</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{absensiSesi.length} sesi</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Rate / Sesi</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{fmtRp(rate2)}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
-                  <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium</span>
-                  <span className="text-base font-black text-white">{fmtRp(total2)}</span>
-                </div>
+                  <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium</span>
+                    <span className="text-base font-black text-white">{fmtRp(total2)}</span>
+                  </div>
+                </>)}
+
+                {/* ── MODE: EDIT ── */}
+                {honViewMode === 'edit' && (<>
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+                    <p className="text-xs text-blue-700">Kosongkan tanggal atau foto jika tidak perlu diubah — nilai lama akan dipertahankan.</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5">Metode</label>
+                      <select value={editHonMetode} onChange={e => setEditHonMetode(e.target.value)}
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]">
+                        <option>Transfer Bank</option>
+                        <option>Cash</option>
+                        <option>E-Wallet</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-gray-600 mb-1.5">Bank / Platform</label>
+                      <select value={editHonBank} onChange={e => setEditHonBank(e.target.value)}
+                        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]">
+                        <option>BCA</option>
+                        <option>Mandiri</option>
+                        <option>BRI</option>
+                        <option>BNI</option>
+                        <option>OVO</option>
+                        <option>GoPay</option>
+                        <option>DANA</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                      Tanggal Bayar
+                      {stored2.tglBayar && <span className="ml-1 text-gray-400 font-normal">(saat ini: {stored2.tglBayar})</span>}
+                    </label>
+                    <input type="date" value={editHonTgl} onChange={e => setEditHonTgl(e.target.value)}
+                      className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1.5">
+                      Foto Bukti
+                      {stored2.buktiBayarNama && <span className="ml-1 text-gray-400 font-normal">(saat ini: {stored2.buktiBayarNama})</span>}
+                    </label>
+                    <input ref={editHonRef} type="file" accept="image/*" className="hidden"
+                      onChange={e => {
+                        const f = e.target.files?.[0]
+                        if (!f) return
+                        setEditHonFoto(f)
+                        setEditHonPreview(URL.createObjectURL(f))
+                      }} />
+                    {editHonPreview ? (
+                      <div className="relative">
+                        <img src={editHonPreview} alt="preview" className="w-full h-28 object-cover rounded-xl border border-gray-200" />
+                        <button onClick={() => { setEditHonFoto(null); setEditHonPreview(null) }}
+                          className="absolute top-2 right-2 bg-black/50 rounded-full p-1">
+                          <X size={12} className="text-white" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button onClick={() => editHonRef.current?.click()}
+                        className="w-full border-2 border-dashed border-gray-200 rounded-xl py-4 flex items-center justify-center gap-2 hover:border-[#1E1C43] transition-colors">
+                        <Upload size={14} className="text-gray-300" />
+                        <p className="text-xs text-gray-400">Ganti foto (opsional)</p>
+                      </button>
+                    )}
+                  </div>
+                </>)}
+
+                {/* ── MODE: CONFIRM CANCEL ── */}
+                {honViewMode === 'confirm_cancel' && (
+                  <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-4">
+                    <p className="text-sm font-semibold text-red-700 mb-1">Batalkan pencatatan pembayaran?</p>
+                    <p className="text-xs text-red-600">
+                      Semua data pembayaran honorarium untuk rekap ini akan dihapus — tanggal, metode, dan file bukti.
+                      Rekap akan kembali ke status <strong>Menunggu Bayar</strong>.
+                    </p>
+                  </div>
+                )}
               </div>
-              <div className="flex-shrink-0 flex justify-end px-5 py-4 border-t border-gray-100">
-                <button onClick={() => setShowHonView(false)}
-                  className="h-9 px-5 rounded-xl bg-[#1E1C43] hover:bg-[#2D2B5A] text-white text-xs font-semibold transition-colors">
-                  Tutup
-                </button>
+
+              {/* Footer */}
+              <div className="flex-shrink-0 flex gap-3 px-5 py-4 border-t border-gray-100">
+                {honViewMode === 'view' && (<>
+                  <button
+                    onClick={() => setHonViewMode('confirm_cancel')}
+                    className="flex-1 border border-red-200 text-red-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-red-50 transition">
+                    Batalkan Pembayaran
+                  </button>
+                  <button
+                    onClick={enterEdit}
+                    className="flex-1 bg-[#1E1C43] hover:bg-[#2D2B5A] text-white rounded-xl py-2.5 text-xs font-semibold transition">
+                    Edit Pembayaran
+                  </button>
+                </>)}
+                {honViewMode === 'edit' && (<>
+                  <button onClick={() => setHonViewMode('view')}
+                    className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-gray-50 transition">
+                    Batal
+                  </button>
+                  <button onClick={saveEdit}
+                    className="flex-1 bg-[#1E1C43] hover:bg-[#2D2B5A] text-white rounded-xl py-2.5 text-xs font-semibold transition">
+                    Simpan Perubahan
+                  </button>
+                </>)}
+                {honViewMode === 'confirm_cancel' && (<>
+                  <button onClick={() => setHonViewMode('view')}
+                    className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-xs font-semibold hover:bg-gray-50 transition">
+                    Tidak, Kembali
+                  </button>
+                  <button onClick={doCancel}
+                    className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2.5 text-xs font-semibold transition">
+                    Ya, Batalkan
+                  </button>
+                </>)}
               </div>
             </div>
           </div>

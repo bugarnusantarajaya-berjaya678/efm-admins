@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppShell from './components/layout/AppShell'
+import { seedRekapData } from './utils/seedRekapData'
+
+seedRekapData()
 
 // Auth
 import LoginPage from './pages/auth/LoginPage'
