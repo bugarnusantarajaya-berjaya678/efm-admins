@@ -94,8 +94,8 @@ export default function PPRekapAbsensiDetailPage() {
   const [honStatus,     setHonStatus]     = useState(init.honorariumStatus || 'menunggu_bayar')
   const [buktiBayar,    setBuktiBayar]    = useState(init.buktiBayarNama   || null)
   const [tglBayar,      setTglBayar]      = useState(init.tglBayar         || null)
-
   const paymentRef = useRef(null)
+
 
   useEffect(() => {
     setCrumbs?.(['Private Program', 'Rekap Absensi', '#' + rekapId])
@@ -128,7 +128,6 @@ export default function PPRekapAbsensiDetailPage() {
     setHonStatus('sudah_bayar')
     saveRekap(orderId, { honorariumStatus: 'sudah_bayar', buktiBayarNama: file.name, tglBayar: tgl })
   }
-
   const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
   const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
   const BADGE_SOLID_CLS = {
@@ -201,7 +200,7 @@ export default function PPRekapAbsensiDetailPage() {
           {rekapStatus === 'dikonfirmasi' && honStatus === 'menunggu_bayar' && (
             <button onClick={() => paymentRef.current?.scrollIntoView({ behavior: 'smooth' })}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
-              Bayar Honorarium
+              Upload Bukti Honorarium
             </button>
           )}
           {rekapStatus === 'ditolak' && (
@@ -467,7 +466,6 @@ export default function PPRekapAbsensiDetailPage() {
           )}
         </div>
 
-
         {honStatus === 'menunggu_bayar' ? (
           <div className="space-y-3">
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start gap-3">
@@ -480,9 +478,9 @@ export default function PPRekapAbsensiDetailPage() {
               </div>
               <div className="flex-1">
                 <span className="text-xs text-[#1E1C43] font-semibold">Upload Bukti Pembayaran Honorarium</span>
-                <p className="text-xs text-gray-400 mt-0.5">PDF, JPG, PNG · Maks 5MB</p>
+                <p className="text-xs text-gray-400 mt-0.5">JPG, PNG · Maks 5MB</p>
               </div>
-              <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
+              <input type="file" accept=".jpg,.jpeg,.png" className="hidden"
                 onChange={e => { if (e.target.files[0]) doUploadBukti(e.target.files[0]) }} />
             </label>
           </div>
@@ -494,9 +492,6 @@ export default function PPRekapAbsensiDetailPage() {
                 <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
                 {buktiBayar && <p className="text-xs text-green-700 mt-0.5 truncate">{buktiBayar} · {tglBayar}</p>}
               </div>
-              <button className="text-xs text-green-700 font-semibold flex items-center gap-1 hover:underline shrink-0">
-                <Download size={12} /> Lihat Bukti
-              </button>
             </div>
             <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
               <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>

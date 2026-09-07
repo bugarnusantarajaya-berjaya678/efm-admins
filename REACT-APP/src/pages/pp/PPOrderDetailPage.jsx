@@ -574,7 +574,6 @@ export default function PPOrderDetailPage() {
   })
   const [showAllWaTemplates, setShowAllWaTemplates] = useState(false)
   const [logFilter, setLogFilter] = useState('semua')
-
   const orderCtx = {
     namaKlien:   infoDeal.namaKlien || '',
     sapaan:      infoDeal.sapaan    || '',
@@ -1625,6 +1624,94 @@ export default function PPOrderDetailPage() {
       {activeTab === 'operasional' && (
         <div className="space-y-4">
 
+          {/* ── Section: Dokumen Operasional ── */}
+          {(() => {
+            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
+            const rStt = stored.status || 'belum_diajukan'
+            const isUnlocked = rStt === 'dikonfirmasi'
+            const hasBukti = !!stored.buktiBayarNama
+            const REKAP_CLS = {
+              belum_diajukan:  'bg-gray-50 text-gray-500 border-gray-200',
+              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border-yellow-200',
+              dikonfirmasi:    'bg-green-50 text-green-700 border-green-200',
+              ditolak:         'bg-red-50 text-red-700 border-red-200',
+            }
+            const REKAP_LABEL = { belum_diajukan: 'Belum Diajukan', pengajuan_masuk: 'Pengajuan Masuk', dikonfirmasi: 'Dikonfirmasi', ditolak: 'Ditolak' }
+            const rekapId = 'RKP-' + id
+            return (
+              <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Dokumen Operasional</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Card 1: Rekap Absensi */}
+                  <div
+                    onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                    className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#1E1C43] text-white shrink-0">1</div>
+                      <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Rekap Absensi</p>
+                      <p className="text-xs font-semibold text-[#1E1C43] truncate leading-tight">{rekapId}</p>
+                    </div>
+                    <span className={`self-start px-2 py-0.5 rounded-full text-xs font-medium border ${REKAP_CLS[rStt] || REKAP_CLS.belum_diajukan}`}>
+                      {REKAP_LABEL[rStt] || 'Belum Diajukan'}
+                    </span>
+                  </div>
+
+                  {/* Card 2: Bukti Honorarium */}
+                  {isUnlocked ? (
+                    hasBukti ? (
+                      <div
+                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                        className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-[#1E1C43] text-white shrink-0">2</div>
+                          <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                          <p className="text-xs font-semibold text-[#1E1C43] truncate leading-tight">{stored.buktiBayarNama}</p>
+                          {stored.tglBayar && <p className="text-[10px] text-gray-400 mt-0.5">{stored.tglBayar}</p>}
+                        </div>
+                        <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">Sudah Dibayar</span>
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                        className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white hover:bg-gray-50 cursor-pointer transition-colors group"
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
+                          <ExternalLink size={11} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors shrink-0" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                          <p className="text-xs text-gray-400 italic leading-tight">Belum ada bukti</p>
+                        </div>
+                        <span className="self-start text-xs text-[#1E1C43] font-semibold">Upload di Rekap →</span>
+                      </div>
+                    )
+                  ) : (
+                    <div className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white opacity-50">
+                      <div className="flex items-center justify-between">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
+                        <Lock size={11} className="text-gray-300 shrink-0" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
+                        <p className="text-xs text-gray-300 italic leading-tight">Tersedia setelah rekap dikonfirmasi</p>
+                      </div>
+                      <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-gray-50 text-gray-400 border-gray-200">Terkunci</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })()}
+
           {/* ── Section 3: Monitoring Sesi (read-only, dari backend) ── */}
           {(() => {
             const prog = ppPrograms.find(p => p.id === order.programId)
@@ -1707,110 +1794,6 @@ export default function PPOrderDetailPage() {
               </div>
             )
           })()}
-
-          {/* ── Section 4: Rekap Absensi (RRP card) ── */}
-          {(() => {
-            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
-            const rStt = stored.status || 'pengajuan_masuk'
-            const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
-            const totalHon = absensiSesi.length * ratePerSesi
-            const REKAP_CLS = {
-              belum_diajukan:  'bg-gray-50 text-gray-500 border-gray-200',
-              pengajuan_masuk: 'bg-yellow-50 text-yellow-700 border-yellow-200',
-              dikonfirmasi:    'bg-green-50 text-green-700 border-green-200',
-              ditolak:         'bg-red-50 text-red-700 border-red-200',
-            }
-            const REKAP_LABEL = { belum_diajukan: 'Belum Diajukan', pengajuan_masuk: 'Pengajuan Masuk', dikonfirmasi: 'Dikonfirmasi', ditolak: 'Ditolak' }
-            const rekapId = 'RKP-' + id
-            return (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
-                <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-3">Rekap Absensi</h3>
-                <div
-                  onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-8 h-8 rounded-full bg-[#1E1C43]/10 flex items-center justify-center shrink-0">
-                      <ClipboardList size={14} className="text-[#1E1C43]" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-semibold text-[#1E1C43] truncate">{rekapId}</p>
-                      <p className="text-[10px] text-gray-400 truncate">{absensiSesi.length} sesi · Rp {totalHon.toLocaleString('id-ID')}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${REKAP_CLS[rStt] || REKAP_CLS.belum_diajukan}`}>
-                      {REKAP_LABEL[rStt] || 'Belum Diajukan'}
-                    </span>
-                    <ExternalLink size={13} className="text-gray-300 group-hover:text-[#1E1C43] transition-colors" />
-                  </div>
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* ── Section 5: Honorarium (status ringkas dari localStorage) ── */}
-          {(() => {
-            const stored = (() => { try { return JSON.parse(localStorage.getItem(`rekap-pp-${id}`)) || {} } catch { return {} } })()
-            const rStt = stored.status || 'pengajuan_masuk'
-            const honStt = stored.honorariumStatus || 'menunggu_bayar'
-            const prog = ppPrograms.find(p => p.id === order.programId)
-            const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
-            const totalHonorariumDue = absensiSesi.length * ratePerSesi
-            const isUnlocked = rStt === 'dikonfirmasi'
-            return (
-              <div className={`bg-white rounded-xl shadow-sm border border-gray-100 p-5 ${!isUnlocked ? 'opacity-60' : ''}`}>
-                <div className="flex items-center gap-3 mb-3 flex-wrap">
-                  <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Honorarium Pelatih</h3>
-                  {isUnlocked ? (
-                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
-                      honStt === 'sudah_bayar' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-                    }`}>
-                      {honStt === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
-                    </span>
-                  ) : (
-                    <span className="px-2 py-0.5 text-xs rounded-full font-medium bg-gray-100 text-gray-400 border border-gray-200">Terkunci</span>
-                  )}
-                </div>
-                {!isUnlocked ? (
-                  <p className="text-xs text-gray-400 text-center py-4">Proses honorarium tersedia setelah rekap absensi disetujui. <button onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })} className="text-[#1E1C43] font-semibold hover:underline">Buka Rekap →</button></p>
-                ) : (
-                  <div className="space-y-3">
-                    <div className="grid grid-cols-3 gap-3">
-                      {[
-                        ['Sesi', `${absensiSesi.length} sesi`],
-                        ['Rate/Sesi', 'Rp ' + ratePerSesi.toLocaleString('id-ID')],
-                        ['Total', 'Rp ' + totalHonorariumDue.toLocaleString('id-ID')],
-                      ].map(([label, val]) => (
-                        <div key={label} className="bg-gray-50 rounded-xl p-3">
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide mb-1">{label}</p>
-                          <p className="text-xs font-semibold text-gray-800">{val}</p>
-                        </div>
-                      ))}
-                    </div>
-                    {honStt === 'sudah_bayar' ? (
-                      <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl px-4 py-3">
-                        <CheckCircle size={14} className="text-green-600 shrink-0" />
-                        <div className="flex-1">
-                          <p className="text-xs font-semibold text-green-800">Honorarium Sudah Dibayar</p>
-                          {stored.buktiBayarNama && <p className="text-xs text-green-700 mt-0.5 truncate">{stored.buktiBayarNama} · {stored.tglBayar}</p>}
-                        </div>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
-                        className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors"
-                      >
-                        Bayar Honorarium di Halaman Rekap →
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            )
-          })()}
-
 
           {/* ── Section 7: Catatan Progres Pelatih ── */}
           {(() => {
@@ -2165,7 +2148,6 @@ export default function PPOrderDetailPage() {
 
 
       </div>
-
 
     </>
   )
