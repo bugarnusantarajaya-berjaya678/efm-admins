@@ -131,6 +131,13 @@ export default function PPRekapAbsensiDetailPage() {
 
   const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
   const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
+  const BADGE_SOLID_CLS = {
+    belum_diajukan:  'bg-gray-500',
+    pengajuan_masuk: 'bg-amber-500',
+    dikonfirmasi:    'bg-green-600',
+    ditolak:         'bg-red-600',
+  }
+  const badgeSolidCls = BADGE_SOLID_CLS[rekapStatus] || 'bg-gray-500'
 
   if (!order) {
     return (
@@ -173,9 +180,7 @@ export default function PPRekapAbsensiDetailPage() {
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{order.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
-              <span className="text-xs text-gray-500">Order #{orderId}</span>
-              <span className="text-gray-300 text-xs">·</span>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${badgeLight.cls}`}>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white ${badgeSolidCls}`}>
                 {badgeLight.label}
               </span>
             </div>
@@ -210,8 +215,8 @@ export default function PPRekapAbsensiDetailPage() {
             <Download size={13} /> Download PDF
           </button>
           <button onClick={() => navigate('/pp/orders/' + orderId, { state: { defaultTab: 'operasional' } })}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">
-            <ArrowLeft size={13} /> Kembali ke Order
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
+            <ArrowLeft size={13} /> Kembali ke Order #{orderId}
           </button>
         </div>
 
