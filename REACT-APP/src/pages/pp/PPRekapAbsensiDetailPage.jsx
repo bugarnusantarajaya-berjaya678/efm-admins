@@ -243,7 +243,7 @@ export default function PPRekapAbsensiDetailPage() {
           <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
             {/* ── Document Header (navy) ── */}
-            <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
+            <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-2 gap-4 text-white">
               {/* Kiri: EFM info */}
               <div className="flex items-start gap-3">
                 <img
@@ -262,26 +262,17 @@ export default function PPRekapAbsensiDetailPage() {
               </div>
 
               {/* Kanan: judul dokumen + info */}
-              <div className="text-left sm:text-right flex flex-col justify-between">
+              <div className="text-right flex flex-col justify-between">
                 <div>
-                  <p className="text-2xl sm:text-4xl font-black text-white tracking-widest uppercase">REKAP ABSENSI</p>
+                  <p className="text-4xl font-black text-white tracking-widest uppercase">REKAP ABSENSI</p>
                   <p className="text-sm text-gray-300 mt-1">{rekapId}</p>
                 </div>
-                <div className="space-y-1 mt-3">
-                  <div className="flex sm:flex-row-reverse items-center gap-2">
-                    <p className="text-xs text-gray-400">Tgl Pengajuan</p>
-                    <p className="font-semibold text-sm">{tglDiajukan}</p>
-                  </div>
-                  <div className="flex sm:flex-row-reverse items-center gap-2">
-                    <p className="text-xs text-gray-400">Order</p>
-                    <p className="font-semibold text-sm">#{orderId}</p>
-                  </div>
-                  <div className="flex sm:flex-row-reverse items-center gap-2">
-                    <p className="text-xs text-gray-400">Klien</p>
-                    <p className="font-semibold text-sm">{order.namaKlien}</p>
-                  </div>
-                  <div className="mt-2 flex sm:justify-end">
-                    <span className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold border ${badgeDark.cls}`}>
+                <div className="space-y-0.5 mt-3">
+                  <p className="text-[10px] text-white/50">Tgl Pengajuan: <span className="text-white font-semibold">{tglDiajukan}</span></p>
+                  <p className="text-[10px] text-white/50">Order: <span className="text-white font-semibold">#{orderId}</span></p>
+                  <p className="text-[10px] text-white/50">Klien: <span className="text-white font-semibold">{order.namaKlien}</span></p>
+                  <div className="mt-2 flex justify-end">
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${badgeDark.cls}`}>
                       {badgeDark.label}
                     </span>
                   </div>
