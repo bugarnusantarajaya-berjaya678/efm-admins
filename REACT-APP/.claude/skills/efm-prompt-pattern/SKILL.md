@@ -128,6 +128,18 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Fix: `git fetch origin main && git merge origin/main` → resolve conflict dengan keep HEAD (semua akumulasi import/logic baru) → `npm run build` → commit → push → retry merge
 - Saat resolve: konflik di import block → keep HEAD; konflik di logic block → keep HEAD dan verifikasi correctness
 
+**PP Module — PIC (trainer) data lookup**
+- `PROGRAMS_INIT` di `ppProgramDBData.js` menyimpan `picId` sebagai string (contoh: `'EFM-PIC-003'`) — BUKAN embedded object `pic: { nama: '...' }`
+- Untuk mendapatkan data trainer, selalu lookup via `PIC_DB[prog.picId]` — import dari `ppProgramDBData.js`
+- Jangan gunakan `prog?.pic?.nama` — ini akan selalu undefined dan menyebabkan nama pelatih tidak muncul di halaman
+- Pattern yang benar:
+  ```js
+  import { PIC_DB } from '../../data/ppProgramDBData'
+  // di dalam komponen:
+  const picData = prog ? (PIC_DB[prog.picId] || null) : null
+  // Gunakan: picData?.fullname, picData?.spesialis, picData?.biayaSesi
+  ```
+
 ---
 
 ## 5. Claude Code Web — Branch & PR Workflow
@@ -141,6 +153,17 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - JANGAN konstruksi URL preview secara manual dari nama branch. Formula `efm-admins-git-[nama-branch]-bugar-nusantara-jaya.vercel.app` hanya benar kalau nama branch pendek (< 40 karakter termasuk prefix `efm-admins-git-` dan suffix `-bugar-nusantara-jaya`). Branch dengan nama panjang akan di-truncate oleh Vercel dan ditambah hash acak — URL yang dikonstruksi manual TIDAK BISA dibuka.
 - Setelah PR dibuat, selalu panggil `mcp__github__pull_request_read` dengan method `get_comments` untuk membaca komentar Vercel bot di PR tersebut. Komentar Vercel bot berisi field `previewUrl` yang merupakan URL yang benar dan bisa dibuka.
 - Ambil URL preview dari komentar itu (bukan dari formula), lalu sertakan di laporan akhir ke pengguna.
+
+**Cek merge conflict setelah push — WAJIB sebelum lapor selesai:**
+- Setelah push dan PR dibuat/diperbarui, SELALU cek apakah PR punya merge conflict menggunakan `mcp__github__pull_request_read`
+- Cek field `mergeable` dan `mergeable_state` di response — jika `mergeable: false` atau `mergeable_state: "dirty"`, ada conflict
+- Jika ada conflict: resolve LANGSUNG saat itu juga di branch yang sama, JANGAN tunggu pengguna melaporkan
+  1. `git fetch origin main && git merge origin/main`
+  2. Resolve conflict — untuk squash merge project ini: keep HEAD untuk import dan logic baru milik kita; keep origin/main untuk bagian yang memang baru di main (bukan milik kita)
+  3. `npm run build` untuk verifikasi
+  4. `git add` + `git commit` (merge commit) + `git push`
+- Baru laporkan PR ke pengguna setelah dipastikan `mergeable: true`
+- Ini menghemat 1 round-trip interaction yang selalu berulang ("masih ada conflict" → resolve → lapor ulang)
 
 **Stop push setelah pengguna konfirmasi merge:**
 - Begitu pengguna berkata "ya merge" atau "sudah merge", HENTIKAN semua push ke branch tersebut — meskipun ada follow-up yang ingin di-commit (skill update, typo fix, dll)
