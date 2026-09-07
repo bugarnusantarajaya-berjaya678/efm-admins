@@ -662,6 +662,31 @@ Semua status invoice/receipt di seluruh modul harus konsisten berbahasa Indonesi
 - Status badge di header navy: `px-4 py-1 rounded-full text-white text-sm font-semibold` — lebih besar dari badge tabel biasa
 - Page header `h1`: `Receipt #RCP-PP-27-0001` / `Invoice #INV-PP-27-0001` — selalu prefix `#` di judul page
 
+### 5e-pre. Document Header Kanan — Prinsip Anti-Duplikat
+
+Kolom kanan di navy header (Section 5b) hanya untuk: **judul dokumen, nomor dokumen, tanggal, dan status badge**. Jangan tampilkan ulang data yang sudah ada di body document.
+
+| Informasi | Tempat yang benar | Di header kanan? |
+|---|---|---|
+| Judul dokumen (INVOICE, RECEIPT, REKAP ABSENSI) | Header kanan | ✅ Ya |
+| Nomor dokumen (INV-PP-27-0001, dll) | Header kanan | ✅ Ya |
+| Tanggal terbit / jatuh tempo | Header kanan | ✅ Ya |
+| Status (Lunas, Menunggu Pembayaran, dll) | Header kanan (badge) | ✅ Ya |
+| Order ID, nama klien, nama pelatih | Section "Tagihan Kepada" / "Ditujukan Untuk" di body | ❌ Tidak — redundant |
+
+⚠️ **Rekap Absensi**: header kanan = judul `REKAP ABSENSI` + nomor rekap + tanggal pengajuan + status badge — **tanpa** Order ID dan nama klien, karena sudah ada di section "Ditujukan Untuk" di body.
+
+**Status badge di document header (dark bg):**
+```jsx
+<span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block ${statusCls}`}>
+  {statusLabel}
+</span>
+```
+- `px-4 py-1 text-sm font-semibold` — LEBIH BESAR dari badge tabel biasa
+- **Tidak ada `border`** — badge di atas background navy tidak perlu border
+- `text-white` — selalu putih (bukan warna semantik gelap) saat di atas navy dark bg
+- Berlaku untuk semua document print area: Invoice, Receipt, Rekap Absensi, dsb.
+
 ### 5e. Invoice/Receipt — Section Body (Divider Pattern)
 
 Body dokumen TIDAK menggunakan satu wrapper `space-y-5`. Setiap section adalah **full-bleed** dengan padding dan border sendiri:
