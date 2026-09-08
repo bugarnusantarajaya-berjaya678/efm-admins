@@ -200,6 +200,29 @@ export default function PPInvoiceDetailPage() {
   return (
     <div className="flex flex-col gap-4 pb-24">
 
+      {/* Print CSS — isolate invoice document, hide admin chrome */}
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          #inv-print-area, #inv-print-area * { visibility: visible; }
+          #inv-print-area {
+            position: absolute; left: 0; top: 0; width: 100%;
+            overflow: visible !important;
+            padding: 0 !important;
+          }
+          #inv-print-area > div {
+            min-width: 0 !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            overflow: visible !important;
+          }
+          * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          @page { margin: 10mm; size: A4 portrait; }
+        }
+      `}</style>
+
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
         <div className="flex items-center gap-2 flex-wrap">
@@ -263,7 +286,7 @@ export default function PPInvoiceDetailPage() {
       </div>
 
       {/* ── Invoice Document — horizontal scroll on narrow screens ── */}
-      <div className="overflow-x-auto pb-2">
+      <div id="inv-print-area" className="overflow-x-auto pb-2">
       <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
