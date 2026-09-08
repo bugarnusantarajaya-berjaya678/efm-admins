@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag, Gift, Sparkles } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Download, ScrollText, Receipt, Plus, Edit, X, Tag, Gift, Sparkles, Trash2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getInvoiceByNo, updateInvoice } from '../../data/ppInvoiceStore'
+import { getOrderById, updateOrder } from '../../data/ppOrdersStore'
 import { STATUS_LABEL, formatRp } from '../../data/ppInvoiceData'
 import { getReceiptByInvNo } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
@@ -100,9 +101,10 @@ export default function PPInvoiceDetailPage() {
   const [invoice, setInvoice] = useState(state?.invoice || getInvoiceByNo(id) || null)
   const [modal,   setModal]   = useState(null)
   const [cs]                  = useState(() => getCompanySettings())
-  const [editing,          setEditing]          = useState(false)
-  const [biayaLainDraft,   setBiayaLainDraft]   = useState(0)
-  const [biayaLainKetDraft,setBiayaLainKetDraft]= useState('')
+  const [editing,           setEditing]           = useState(false)
+  const [biayaLainDraft,    setBiayaLainDraft]    = useState(0)
+  const [biayaLainKetDraft, setBiayaLainKetDraft] = useState('')
+  const [biayaLainExpanded, setBiayaLainExpanded] = useState(false)
   const [kodeInput,        setKodeInput]        = useState('')
   const [diskonApplied,    setDiskonApplied]    = useState(null)
   const [diskonError,      setDiskonError]      = useState('')
@@ -133,6 +135,7 @@ export default function PPInvoiceDetailPage() {
   function startEdit() {
     setBiayaLainDraft(invoice.biayaLain || 0)
     setBiayaLainKetDraft(invoice.biayaLainKet || '')
+    setBiayaLainExpanded((invoice.biayaLain || 0) > 0)
     const existingKode = invoice.promoKode || ''
     setKodeInput(existingKode)
     if (existingKode) {
@@ -172,12 +175,14 @@ export default function PPInvoiceDetailPage() {
   }
 
   function saveEdit() {
-    const editBase = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainDraft || 0)
+    const finalBiayaLain = biayaLainExpanded ? (biayaLainDraft || 0) : 0
+    const finalBiayaLainKet = biayaLainExpanded ? biayaLainKetDraft : ''
+    const editBase = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + finalBiayaLain
     const promoVal = calcDiskonVal(diskonApplied, editBase)
     setInvoice(prev => ({
       ...prev,
-      biayaLain:    biayaLainDraft || 0,
-      biayaLainKet: biayaLainKetDraft,
+      biayaLain:    finalBiayaLain,
+      biayaLainKet: finalBiayaLainKet,
       promoKode:  diskonApplied?.kode     || '',
       promoType:  diskonApplied?.subTipe  || '',
       promoTema:  diskonApplied?.tema     || null,
@@ -186,10 +191,25 @@ export default function PPInvoiceDetailPage() {
         : null,
       promoVal,
     }))
+    updateInvoice(invoice.invNo, {
+      biayaLain: finalBiayaLain,
+      biayaLainKet: finalBiayaLainKet,
+    })
+
+    // Sync ke order terkait
+    const ord = getOrderById(invoice.orderId)
+    if (ord) {
+      const mainItem = (ord.rincianLayanan || [])[0] || { id: 1, namaItem: invoice.paket, satuan: 'Paket', jumlah: 1, total: invoice.hargaPaket }
+      const biayaItems = finalBiayaLain > 0
+        ? [{ id: 2, namaItem: finalBiayaLainKet || 'Biaya Tambahan', satuan: 'Item', jumlah: 1, harga: finalBiayaLain, total: finalBiayaLain }]
+        : []
+      updateOrder(invoice.orderId, { rincianLayanan: [mainItem, ...biayaItems] })
+    }
+
     setEditing(false)
   }
 
-  const editSubtotal  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainDraft || 0)
+  const editSubtotal  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainExpanded ? (biayaLainDraft || 0) : 0)
   const editDiskonVal = calcDiskonVal(diskonApplied, editSubtotal)
   const editTotal     = editSubtotal - editDiskonVal
   const syaratList     = getSyaratList()
@@ -483,31 +503,50 @@ export default function PPInvoiceDetailPage() {
               {/* Biaya Lain — edit mode */}
               {editing && (
                 <div className="py-2 border-t border-gray-100 mt-1">
-                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
-                    <Plus size={11} /> Biaya Tambahan
-                  </p>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={biayaLainKetDraft}
-                      onChange={e => setBiayaLainKetDraft(e.target.value)}
-                      placeholder="Keterangan biaya tambahan"
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43]"
-                    />
-                    <input
-                      type="number"
-                      min={0}
-                      value={biayaLainDraft || ''}
-                      onChange={e => setBiayaLainDraft(Number(e.target.value) || 0)}
-                      placeholder="0"
-                      className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-xs text-right outline-none focus:border-[#1E1C43]"
-                    />
-                  </div>
-                  {biayaLainDraft > 0 && (
-                    <div className="flex justify-between items-center mt-1.5 text-xs">
-                      <span className="text-gray-500">{biayaLainKetDraft || 'Biaya Tambahan'}</span>
-                      <span className="font-medium text-[#1E1C43]">+ {formatRp(biayaLainDraft)}</span>
+                  {biayaLainExpanded ? (
+                    <div className="border border-gray-200 rounded-xl p-3">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
+                        <button
+                          onClick={() => { setBiayaLainExpanded(false); setBiayaLainDraft(0); setBiayaLainKetDraft('') }}
+                          className="ml-auto text-gray-300 hover:text-red-500 transition">
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Keterangan</label>
+                          <input
+                            type="text"
+                            value={biayaLainKetDraft}
+                            onChange={e => setBiayaLainKetDraft(e.target.value)}
+                            placeholder="Nama biaya tambahan"
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nominal (Rp)</label>
+                          <input
+                            type="number"
+                            min={0}
+                            value={biayaLainDraft || ''}
+                            onChange={e => setBiayaLainDraft(Number(e.target.value) || 0)}
+                            placeholder="0"
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:border-[#1E1C43]"
+                          />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-right">
+                        <span className="text-xs text-gray-400">Subtotal: </span>
+                        <span className="text-sm font-bold text-[#1E1C43]">{formatRp(biayaLainDraft || 0)}</span>
+                      </div>
                     </div>
+                  ) : (
+                    <button
+                      onClick={() => setBiayaLainExpanded(true)}
+                      className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2">
+                      <Plus size={14} /> Tambah Biaya Lain (Transport, Sewa Alat, dll)
+                    </button>
                   )}
                 </div>
               )}
