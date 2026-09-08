@@ -216,6 +216,9 @@ export default function PPInvoiceDetailPage() {
             box-shadow: none !important;
             overflow: visible !important;
           }
+          #inv-print-area > div * {
+            overflow: visible !important;
+          }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 10mm; size: A4 portrait; }
         }
@@ -344,11 +347,9 @@ export default function PPInvoiceDetailPage() {
         {/* Tagihan Kepada */}
         <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-            <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
-            {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
-            {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
-          </div>
+          <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
+          {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
+          {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
         </div>
 
         {/* Rincian Layanan */}
@@ -518,12 +519,14 @@ export default function PPInvoiceDetailPage() {
         {invoice.status !== 'paid' && (
           <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Cara Pembayaran</div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex flex-col gap-1.5">
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
-                <div key={b.bank} className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Transfer {b.bank}</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">{b.rek}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">a.n. {b.an}</p>
+                <div key={b.bank} className="flex items-center justify-between py-1.5 border-b border-gray-100 last:border-0">
+                  <p className="text-xs text-gray-400">Transfer {b.bank}</p>
+                  <div className="text-right">
+                    <p className="text-sm font-semibold text-[#1E1C43]">{b.rek}</p>
+                    <p className="text-xs text-gray-500">a.n. {b.an}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -534,32 +537,28 @@ export default function PPInvoiceDetailPage() {
         {(editing || invoice.catatan) && (
           <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-              {editing ? (
-                <textarea
-                  value={catatanDraft}
-                  onChange={e => setCatatanDraft(e.target.value)}
-                  placeholder="Tambahkan catatan untuk invoice ini..."
-                  rows={3}
-                  className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none bg-white"
-                />
-              ) : (
-                <p className="text-sm text-gray-600">{invoice.catatan}</p>
-              )}
-            </div>
+            {editing ? (
+              <textarea
+                value={catatanDraft}
+                onChange={e => setCatatanDraft(e.target.value)}
+                placeholder="Tambahkan catatan untuk invoice ini..."
+                rows={3}
+                className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none bg-white"
+              />
+            ) : (
+              <p className="text-sm text-gray-600">{invoice.catatan}</p>
+            )}
           </div>
         )}
 
         {/* Syarat & Ketentuan */}
         <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Syarat &amp; Ketentuan</div>
-          <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
-            <ol className="list-decimal list-inside space-y-2">
-              {syaratList.map((item, idx) => (
-                <li key={idx} className="text-xs text-gray-500 leading-relaxed">{item}</li>
-              ))}
-            </ol>
-          </div>
+          <ol className="list-decimal list-inside space-y-1.5">
+            {syaratList.map((item, idx) => (
+              <li key={idx} className="text-xs text-gray-500 leading-relaxed">{item}</li>
+            ))}
+          </ol>
         </div>
 
         {/* Footer */}
