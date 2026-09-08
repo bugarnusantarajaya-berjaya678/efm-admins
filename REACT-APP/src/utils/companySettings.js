@@ -11,7 +11,7 @@ export const getCompanySettings = () => {
   return {
     namaPerusahaan: 'Essential Fitness Management',
     namaLegal: 'CV. Bugar Nusantara Jaya',
-    alamat: "Jl. Terogong Raya No. 18, Hampton's Park Apartment, Tower A, Cilandak Barat, Jakarta Selatan",
+    alamat: "Jl. Terogong Raya No. 18, Hampton's Park Apartment,\nTower A,\nCilandak Barat, Jakarta Selatan",
     email: 'essentialfitnessmanagement@gmail.com',
     telepon: '+62 811-1992-0666',
     website: 'www.essentialfitnessmanagement.com',
