@@ -176,6 +176,8 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Alasan: GitHub API rate limit untuk akun ini (user ID 289648120) terkena sangat mudah. Merge PR yang masih draft membutuhkan 2 API call: (1) undraft → (2) merge. Jika call pertama kena rate limit, PR tidak bisa di-merge via API sama sekali — pengguna harus merge manual. Buat PR langsung ready memangkas kebutuhan menjadi 1 API call saja.
 - Saat pengguna berkata "ya merge": langsung panggil `mcp__github__merge_pull_request` dengan `merge_method: "squash"` — tanpa perlu undraft terlebih dahulu.
 - Jika merge tetap gagal karena rate limit: beritahu pengguna dan sertakan link PR langsung (`https://github.com/bugarnusantarajaya-berjaya678/efm-admins/pull/<nomor>`) agar bisa merge manual. JANGAN retry API call berkali-kali.
+- **KRITIS — setelah menyuruh merge manual: HENTIKAN semua push ke branch.** Pengguna kemungkinan besar langsung merge manual saat itu juga. Push commit baru setelah itu = commit masuk ke branch yang sudah di-merge, TIDAK akan ikut di-squash.
+- **Sebelum panggil `merge_pull_request`: selalu cek dulu PR masih open.** Panggil `pull_request_read` dan cek field `state === "open"`. Jika `state === "closed"` atau `merged === true`, PR sudah di-merge sebelumnya — `merge_pull_request` akan return state lama (`"merged": true`) tanpa error, yang terlihat seperti sukses baru padahal bukan. Commit-commit setelah merge manual tidak akan ikut masuk main.
 
 **Branch reset setelah squash merge — WAJIB sebelum task berikutnya:**
 - Project ini squash merge ke main. Setelah PR di-merge, branch lama punya riwayat commit yang sudah tidak relevan — main punya squash commit baru yang tidak ada di branch. Task berikutnya di branch yang sama = conflict hampir pasti.
