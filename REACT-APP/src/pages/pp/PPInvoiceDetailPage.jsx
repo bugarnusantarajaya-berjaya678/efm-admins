@@ -679,29 +679,6 @@ export default function PPInvoiceDetailPage() {
         <MarkPaidModal inv={invoice} onConfirm={handleMarkPaid} onClose={() => setModal(null)} />
       )}
 
-      {/* Sticky footer — Edit / Simpan / Batal */}
-      <div className="fixed bottom-0 left-0 right-0 md:left-64 bg-white border-t border-gray-200 px-6 py-4 flex items-center justify-end gap-3 z-40">
-        {editing ? (
-          <>
-            <button
-              onClick={() => setEditing(false)}
-              className="border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-              Batal
-            </button>
-            <button
-              onClick={saveEdit}
-              className="inline-flex items-center gap-1.5 bg-[#1E1C43] hover:bg-[#2d2b5e] text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
-              <CheckCircle size={14} /> Simpan Perubahan
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={startEdit}
-            className="inline-flex items-center gap-1.5 border border-gray-300 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors">
-            <Edit size={14} /> Edit Invoice
-          </button>
-        )}
-      </div>
 
     </div>
   )
