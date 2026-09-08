@@ -298,7 +298,7 @@ function PanelCompany() {
   function handleAddRekening() {
     setCompanySettings(prev => ({
       ...prev,
-      rekeningList: [...(prev.rekeningList || []), { bank: '', rek: '', an: '' }],
+      rekeningList: [...(prev.rekeningList || []), { bank: '', rek: '', an: '', kcp: '' }],
     }))
   }
 
@@ -368,7 +368,7 @@ function PanelCompany() {
           <div className="flex flex-col gap-3">
             {(companySettings.rekeningList || []).map((rek, idx) => (
               <div key={idx} className="flex gap-2 items-start p-3 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex-1 grid grid-cols-3 gap-2">
+                <div className="flex-1 grid grid-cols-2 gap-2">
                   <div>
                     <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">Nama Bank</label>
                     <input
@@ -394,6 +394,15 @@ function PanelCompany() {
                       placeholder="CV. Bugar Nusantara Jaya"
                       value={rek.an}
                       onChange={e => handleRekeningChange(idx, 'an', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">KCP / Cabang <span className="normal-case font-normal text-gray-400">(opsional)</span></label>
+                    <input
+                      className="w-full px-2.5 py-1.5 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#1E1C43]"
+                      placeholder="mis. KCP Terogong Raya"
+                      value={rek.kcp || ''}
+                      onChange={e => handleRekeningChange(idx, 'kcp', e.target.value)}
                     />
                   </div>
                 </div>
