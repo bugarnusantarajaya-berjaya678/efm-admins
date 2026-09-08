@@ -140,6 +140,40 @@ Every task follows this discipline, regardless of how the prompt is phrased.
   // Gunakan: picData?.fullname, picData?.spesialis, picData?.biayaSesi
   ```
 
+**PP Invoice — view-only; semua edit dari Order Detail**
+- `PPInvoiceDetailPage.jsx` adalah **read-only** — tidak ada tombol "Edit Invoice" di halaman ini. Jangan tambahkan sticky footer edit ke file ini.
+- Semua field yang tampil di invoice (kode promo, biaya tambahan, tanggal invoice, jatuh tempo, catatan) hanya bisa diubah dari `PPOrderDetailPage.jsx` di section "Detail Program & Operasional" saat edit mode aktif.
+- B2B dan Event Invoice tetap punya edit mode lengkap — aturan ini khusus PP.
+
+**`toPaket()` — wajib map `diskonPaket`**
+- Fungsi `toPaket(p)` di `PPOrderDetailPage.jsx` memetakan record program DB ke objek UI. Selalu sertakan `diskonPaket: p.diskonPaket || 0` di return object-nya.
+- Tanpa ini, diskon paket yang sudah diset di `ppProgramDBData.js` tidak akan pernah muncul di invoice.
+
+**`saveInfoDeal()` — wajib sync promo ke invoice**
+- Setiap kali `saveInfoDeal()` menyimpan perubahan order, semua field promo harus di-sync ke invoice terkait via `invChanges`:
+  ```js
+  const invChanges = {
+    // ... field lain,
+    promoKode:         promoApplied?.kode || '',
+    promoType:         promoApplied?.subTipe || '',
+    promoTema:         promoApplied?.tema || null,
+    promoBenefitBonus: promoApplied?.tipe === 'bonus' ? (promoApplied.keterangan || promoApplied.benefitBonus || null) : null,
+    promoVal:          finalPromoVal,
+  }
+  ```
+- Dan ke order store via `updateOrder()`:
+  ```js
+  updateOrder(order.id, {
+    // ... field lain,
+    promoKode:         promoApplied?.kode || '',
+    promoType:         promoApplied?.subTipe || '',
+    promoTema:         promoApplied?.tema || null,
+    promoBenefitBonus: promoApplied?.tipe === 'bonus' ? ... : null,
+    nilaiDiskon:       finalPromoVal,
+  })
+  ```
+- Jangan hanya simpan ke salah satu — order dan invoice harus selalu sinkron.
+
 ---
 
 ## 5. Claude Code Web — Branch & PR Workflow

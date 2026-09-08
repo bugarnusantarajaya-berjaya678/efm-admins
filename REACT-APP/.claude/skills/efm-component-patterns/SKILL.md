@@ -342,6 +342,47 @@ function calcDiskonVal(applied, base) {
 </div>
 ```
 
+**Lokasi input kode promo — penting:**
+- **PP modul:** input kode promo ada di `PPOrderDetailPage.jsx` edit mode, bukan di invoice. Invoice hanya menampilkan promo dalam read mode (hasil sync dari order).
+- **B2B/Event modul:** input kode promo ada di invoice edit mode (standar lama, belum diubah).
+
+**State dan fungsi promo di PPOrderDetailPage (order-level):**
+```js
+const [kodePromoDraft, setKodePromoDraft] = useState(order?.promoKode || '')
+const [promoApplied,   setPromoApplied]   = useState(() => {
+  const k = order?.promoKode || ''
+  if (!k) return null
+  const r = validatePromo(k)
+  return r.valid ? { kode: k, ...r.promo } : null
+})
+const [promoError, setPromoError] = useState('')
+
+function applyPromo() {
+  const kode = kodePromoDraft.trim().toUpperCase()
+  if (!kode) return
+  const result = validatePromo(kode, { programId: infoDraft.programId })
+  if (result.valid) { setPromoApplied({ kode, ...result.promo }); setPromoError('') }
+  else { setPromoApplied(null); setPromoError(result.error) }
+}
+function removePromo() { setPromoApplied(null); setKodePromoDraft(''); setPromoError('') }
+function calcPromoVal(applied, base) {
+  if (!applied || applied.tipe !== 'diskon') return 0
+  return applied.subTipe === 'persen' ? Math.round(base * applied.nilai / 100) : applied.nilai
+}
+```
+
+`cancelEdit` harus restore promo state:
+```js
+function cancelEdit() {
+  // ... reset lain
+  const k = order?.promoKode || ''
+  setKodePromoDraft(k)
+  if (k) { const r = validatePromo(k); setPromoApplied(r.valid ? { kode: k, ...r.promo } : null) }
+  else { setPromoApplied(null) }
+  setPromoError('')
+}
+```
+
 ---
 
 ## 4. Activity Log Pattern (Filterable, Appendable)
