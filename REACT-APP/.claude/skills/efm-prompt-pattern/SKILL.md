@@ -170,3 +170,16 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Alasan: push ke branch yang sudah/akan di-merge akan membuat PR "Already merged" tapi branch masih ada commit baru, yang memaksa pengguna buka PR lama atau buat PR baru yang membingungkan
 - Jika ada sesuatu yang belum selesai saat pengguna konfirmasi merge: catat dulu, buat branch baru setelah merge selesai, lanjutkan di sana
 - Skill updates yang baru disadari setelah konfirmasi merge → buat branch baru, JANGAN push ke branch yang sedang/sudah di-merge
+
+**Branch reset setelah squash merge — WAJIB sebelum task berikutnya:**
+- Project ini squash merge ke main. Setelah PR di-merge, branch lama punya riwayat commit yang sudah tidak relevan — main punya squash commit baru yang tidak ada di branch. Task berikutnya di branch yang sama = conflict hampir pasti.
+- Sebelum memulai task baru APAPUN di branch yang sudah pernah di-merge, selalu reset branch ke main terlebih dahulu:
+  ```bash
+  git fetch origin main
+  git checkout -B <nama-branch> origin/main
+  git push --force-with-lease origin <nama-branch>
+  ```
+- Baru setelah reset → buat perubahan → commit → push → buat PR baru
+- Ini menghilangkan conflict sama sekali karena branch selalu mulai dari tip main yang bersih
+- Cek apakah branch sudah pernah di-merge: `git log --oneline origin/main..HEAD` — jika tidak ada output (0 commit ahead), branch sudah sinkron. Jika ada commit yang tidak seharusnya ada (commit lama dari PR yang sudah di-merge), lakukan reset.
+- `--force-with-lease` aman dipakai di sini karena kita sengaja reset branch kerja ke main, bukan menghapus commit orang lain
