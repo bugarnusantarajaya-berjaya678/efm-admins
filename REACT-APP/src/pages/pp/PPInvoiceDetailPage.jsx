@@ -211,8 +211,6 @@ export default function PPInvoiceDetailPage() {
             padding: 0 !important;
           }
           #inv-print-area > div {
-            min-width: 0 !important;
-            max-width: 100% !important;
             width: 100% !important;
             border-radius: 0 !important;
             box-shadow: none !important;
@@ -287,7 +285,7 @@ export default function PPInvoiceDetailPage() {
 
       {/* ── Invoice Document — horizontal scroll on narrow screens ── */}
       <div id="inv-print-area" className="overflow-x-auto pb-2">
-      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
         <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
