@@ -203,18 +203,23 @@ export default function PPInvoiceDetailPage() {
       {/* Print CSS — isolate invoice document, hide admin chrome */}
       <style>{`
         @media print {
+          html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
           body * { visibility: hidden; }
           #inv-print-area, #inv-print-area * { visibility: visible; }
           #inv-print-area {
             position: absolute; left: 0; top: 0; width: 100%;
             overflow: visible !important;
             padding: 0 !important;
+            background: white !important;
+            margin: 0 !important;
           }
           #inv-print-area > div {
             width: 100% !important;
             border-radius: 0 !important;
             box-shadow: none !important;
+            border: none !important;
             overflow: visible !important;
+            background: white !important;
           }
           #inv-print-area > div * {
             overflow: visible !important;
@@ -291,17 +296,17 @@ export default function PPInvoiceDetailPage() {
       <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
-        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-4 text-white">
+        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
           <div className="flex items-start gap-3">
             {cs.logoPerusahaan ? (
-              <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-12 h-12 rounded-full object-contain shrink-0" />
+              <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
             ) : (
-              <img src="/logo.png" alt="EFM Logo" className="w-12 h-12 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+              <img src="/logo.png" alt="EFM Logo" className="w-14 h-14 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
             )}
             <div className="min-w-0 overflow-hidden">
               <p className="text-base font-bold break-words">{cs.namaPerusahaan}</p>
               <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
-              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{cs.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words" style={{ whiteSpace: 'pre-line' }}>{cs.alamat}</p>
               <p className="text-xs text-white/70 mt-0.5 break-words">{cs.email}</p>
               <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
             </div>
