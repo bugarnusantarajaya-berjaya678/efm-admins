@@ -558,7 +558,7 @@ export default function PPInvoiceDetailPage() {
           <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
             <ol className="list-decimal list-inside space-y-2">
               {syaratList.map((item, idx) => (
-                <li key={idx} className="text-sm text-gray-600">{item}</li>
+                <li key={idx} className="text-xs text-gray-500 leading-relaxed">{item}</li>
               ))}
             </ol>
           </div>
