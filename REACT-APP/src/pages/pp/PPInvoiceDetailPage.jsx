@@ -357,12 +357,12 @@ export default function PPInvoiceDetailPage() {
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Rincian Layanan</div>
           <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
+              <table className="w-full text-xs" style={{ tableLayout: 'fixed', minWidth: '600px', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    {[['Deskripsi','27%'],['Harga Persesi','15%'],['Jumlah Sesi','9%'],['Harga Paket','16%'],['Diskon Paket','15%'],['Total','18%']].map(([h, w], i) => (
+                    {[['Deskripsi','20%'],['Harga Persesi','14%'],['Jumlah Sesi','7%'],['Harga Paket','18%'],['Diskon Paket','21%'],['Total','20%']].map(([h, w], i) => (
                       <th key={h}
-                        className="px-2.5 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
+                        className="px-3 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
                         style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right', width: w }}>
                         {h}
                       </th>
@@ -371,27 +371,27 @@ export default function PPInvoiceDetailPage() {
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="px-2.5 py-2 border-b border-gray-100">
-                      <div className="font-semibold text-[#1E1C43]">Private Training — {invoice.paket}</div>
-                      <div className="text-xs text-gray-500">PIC: {invoice.pic}</div>
+                    <td className="px-3 py-2.5 border-b border-gray-100">
+                      <div className="font-semibold text-[#1E1C43] leading-snug">Private Training — {invoice.paket}</div>
+                      <div className="text-[10px] text-gray-400 mt-0.5">PIC: {invoice.pic}</div>
                     </td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPersesi)}</td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-gray-700">{formatRp(invoice.hargaPaket)}</td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-right text-[#27AE60]">
+                    <td className="px-3 py-2.5 border-b border-gray-100 text-right text-gray-700 whitespace-nowrap">{formatRp(invoice.hargaPersesi)}</td>
+                    <td className="px-3 py-2.5 border-b border-gray-100 text-center text-gray-700">{invoice.sesi}</td>
+                    <td className="px-3 py-2.5 border-b border-gray-100 text-right text-gray-700 whitespace-nowrap">{formatRp(invoice.hargaPaket)}</td>
+                    <td className="px-3 py-2.5 border-b border-gray-100 text-right whitespace-nowrap text-[#27AE60]">
                       {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
                     </td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">
+                    <td className="px-3 py-2.5 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">
                       {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
                     </td>
                   </tr>
                   {invoice.biayaLain > 0 && (
                     <tr>
-                      <td className="px-2.5 py-2 border-b border-gray-100" colSpan={5}>
-                        <div className="font-semibold text-[#1E1C43]">Biaya Tambahan</div>
-                        <div className="text-xs text-gray-500">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
+                      <td className="px-3 py-2.5 border-b border-gray-100" colSpan={5}>
+                        <div className="font-semibold text-[#1E1C43] leading-snug">Biaya Tambahan</div>
+                        <div className="text-[10px] text-gray-400 mt-0.5">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
                       </td>
-                      <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">{formatRp(invoice.biayaLain)}</td>
+                      <td className="px-3 py-2.5 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">{formatRp(invoice.biayaLain)}</td>
                     </tr>
                   )}
                 </tbody>
