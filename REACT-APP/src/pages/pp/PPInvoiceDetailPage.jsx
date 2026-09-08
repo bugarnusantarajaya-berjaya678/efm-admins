@@ -543,6 +543,7 @@ export default function PPInvoiceDetailPage() {
                 <div key={b.bank} className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50">
                   <p className="text-[10px] text-gray-400 mb-0.5">Transfer ke</p>
                   <p className="text-xs font-bold text-[#1E1C43]">Bank {b.bank}</p>
+                  {b.kcp && <p className="text-[10px] text-gray-400 mt-0.5">KCP {b.kcp}</p>}
                   <p className="text-sm font-semibold text-[#1E1C43] mt-0.5 tracking-wide">{b.rek}</p>
                   <p className="text-xs text-gray-500 mt-0.5">a.n. {b.an}</p>
                 </div>

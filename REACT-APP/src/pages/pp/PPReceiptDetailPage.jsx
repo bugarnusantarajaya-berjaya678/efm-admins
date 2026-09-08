@@ -173,7 +173,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
               <p className="text-sm font-semibold text-[#1E1C43]">{rcp.metode}</p>
               {matchedBank ? (
                 <p className="text-xs text-gray-400 mt-0.5">
-                  {matchedBank.rek} · a.n. {matchedBank.an}
+                  {matchedBank.kcp ? `KCP ${matchedBank.kcp} · ` : ''}{matchedBank.rek} · a.n. {matchedBank.an}
                 </p>
               ) : (
                 <p className="text-xs text-gray-400 mt-0.5">Pembayaran diterima langsung</p>
