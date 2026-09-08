@@ -171,6 +171,12 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Jika ada sesuatu yang belum selesai saat pengguna konfirmasi merge: catat dulu, buat branch baru setelah merge selesai, lanjutkan di sana
 - Skill updates yang baru disadari setelah konfirmasi merge → buat branch baru, JANGAN push ke branch yang sedang/sudah di-merge
 
+**Buat PR sebagai ready-for-review, bukan draft — mencegah rate limit saat merge:**
+- JANGAN buat PR dengan `draft: true`. Selalu buat PR dalam status **ready for review** (`draft: false` atau omit parameter `draft`).
+- Alasan: GitHub API rate limit untuk akun ini (user ID 289648120) terkena sangat mudah. Merge PR yang masih draft membutuhkan 2 API call: (1) undraft → (2) merge. Jika call pertama kena rate limit, PR tidak bisa di-merge via API sama sekali — pengguna harus merge manual. Buat PR langsung ready memangkas kebutuhan menjadi 1 API call saja.
+- Saat pengguna berkata "ya merge": langsung panggil `mcp__github__merge_pull_request` dengan `merge_method: "squash"` — tanpa perlu undraft terlebih dahulu.
+- Jika merge tetap gagal karena rate limit: beritahu pengguna dan sertakan link PR langsung (`https://github.com/bugarnusantarajaya-berjaya678/efm-admins/pull/<nomor>`) agar bisa merge manual. JANGAN retry API call berkali-kali.
+
 **Branch reset setelah squash merge — WAJIB sebelum task berikutnya:**
 - Project ini squash merge ke main. Setelah PR di-merge, branch lama punya riwayat commit yang sudah tidak relevan — main punya squash commit baru yang tidak ada di branch. Task berikutnya di branch yang sama = conflict hampir pasti.
 - Sebelum memulai task baru APAPUN di branch yang sudah pernah di-merge, selalu reset branch ke main terlebih dahulu:
