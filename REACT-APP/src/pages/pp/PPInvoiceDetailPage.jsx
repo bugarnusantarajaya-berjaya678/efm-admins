@@ -221,9 +221,18 @@ export default function PPInvoiceDetailPage() {
             overflow: visible !important;
             background: white !important;
           }
-          #inv-print-area > div * {
-            overflow: visible !important;
+          #inv-print-area > div * { overflow: visible !important; }
+
+          /* sm: breakpoint overrides — tidak aktif di print viewport */
+          #inv-hdr {
+            grid-template-columns: 1.5fr 1fr !important;
+            padding: 1.25rem 2rem !important;
           }
+          #inv-hdr-right { text-align: right !important; }
+          #inv-hdr-right .inv-date-row { justify-content: flex-end !important; }
+          #inv-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+          .inv-sec { padding-left: 2rem !important; padding-right: 2rem !important; }
+
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 10mm; size: A4 portrait; }
         }
@@ -296,7 +305,7 @@ export default function PPInvoiceDetailPage() {
       <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
-        <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
+        <div id="inv-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
           <div className="flex items-start gap-3">
             {cs.logoPerusahaan ? (
               <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
@@ -306,22 +315,27 @@ export default function PPInvoiceDetailPage() {
             <div className="min-w-0 overflow-hidden">
               <p className="text-base font-bold break-words">{cs.namaPerusahaan}</p>
               <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
-              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words" style={{ whiteSpace: 'pre-line' }}>{cs.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+                {cs.alamat
+                  .replace(', Tower A,', ',\nTower A,')
+                  .split('\n')
+                  .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+              </p>
               <p className="text-xs text-white/70 mt-0.5 break-words">{cs.email}</p>
               <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
             </div>
           </div>
 
-          <div className="text-left sm:text-right">
-            <div className="text-2xl sm:text-4xl font-black tracking-widest uppercase">INVOICE</div>
+          <div id="inv-hdr-right" className="text-left sm:text-right">
+            <div id="inv-hdr-title" className="text-2xl sm:text-4xl font-black tracking-widest uppercase">INVOICE</div>
             <div className="text-sm text-gray-300 mt-0.5">{invoice.invNo}</div>
 
-            <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
+            <div className="inv-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
               <span className="text-xs text-gray-400">Tanggal:</span>
               <span className="font-semibold text-sm">{invoice.tanggal}</span>
             </div>
 
-            <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5">
+            <div className="inv-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5">
               <span className="text-xs text-gray-400">Jatuh Tempo:</span>
               <span className="font-semibold text-sm">{invoice.due}</span>
             </div>
@@ -337,7 +351,7 @@ export default function PPInvoiceDetailPage() {
           const t = invoice.promoTema
           const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
           return (
-            <div className={`flex items-center gap-3 px-6 sm:px-8 py-3 border-b ${cls}`}>
+            <div className={`inv-sec flex items-center gap-3 px-6 sm:px-8 py-3 border-b ${cls}`}>
               <Sparkles size={14} className="shrink-0" />
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
@@ -350,7 +364,7 @@ export default function PPInvoiceDetailPage() {
         })()}
 
         {/* Tagihan Kepada */}
-        <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <div className="inv-sec px-6 sm:px-8 py-4 border-b border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
           <p className="text-[18px] font-bold text-[#1E1C43] mb-1">{invoice.client}</p>
           {invoice.alamat && <p className="text-xs text-gray-500 mt-0.5">{invoice.alamat}</p>}
@@ -358,7 +372,7 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Rincian Layanan */}
-        <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+        <div className="inv-sec px-6 sm:px-8 py-4 border-b border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Rincian Layanan</div>
           <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
@@ -522,7 +536,7 @@ export default function PPInvoiceDetailPage() {
 
         {/* Cara Pembayaran */}
         {invoice.status !== 'paid' && (
-          <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
+          <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Cara Pembayaran</div>
             <div className="flex flex-col gap-1.5">
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
@@ -540,7 +554,7 @@ export default function PPInvoiceDetailPage() {
 
         {/* Catatan Invoice — hidden when empty and not editing */}
         {(editing || invoice.catatan) && (
-          <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
+          <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
             {editing ? (
               <textarea
@@ -557,7 +571,7 @@ export default function PPInvoiceDetailPage() {
         )}
 
         {/* Syarat & Ketentuan */}
-        <div className="px-6 sm:px-8 py-4 border-t border-gray-100">
+        <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
           <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Syarat &amp; Ketentuan</div>
           <ol className="list-decimal list-inside space-y-1.5">
             {syaratList.map((item, idx) => (
@@ -567,7 +581,7 @@ export default function PPInvoiceDetailPage() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+        <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
           <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Harap selesaikan pembayaran sesuai tenggat waktu yang tertera.</p>
           <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
         </div>
