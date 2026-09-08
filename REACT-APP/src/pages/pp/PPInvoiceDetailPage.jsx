@@ -287,8 +287,8 @@ export default function PPInvoiceDetailPage() {
       </div>
 
       {/* ── Invoice Document — horizontal scroll on narrow screens ── */}
-      <div id="inv-print-area" className="overflow-x-auto pb-2">
-      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
+      <div id="inv-print-area" className="overflow-x-auto">
+      <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
         {/* Header Navy */}
         <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[2fr_1fr] gap-4 text-white">
@@ -360,7 +360,7 @@ export default function PPInvoiceDetailPage() {
               <table className="w-full text-sm" style={{ tableLayout: 'fixed', minWidth: '540px', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    {[['Deskripsi','32%'],['Harga Persesi','15%'],['Jumlah Sesi','10%'],['Harga Paket','16%'],['Diskon Paket','14%'],['Total','13%']].map(([h, w], i) => (
+                    {[['Deskripsi','27%'],['Harga Persesi','15%'],['Jumlah Sesi','9%'],['Harga Paket','16%'],['Diskon Paket','15%'],['Total','18%']].map(([h, w], i) => (
                       <th key={h}
                         className="px-2.5 py-2 text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-200"
                         style={{ textAlign: i === 0 ? 'left' : i === 2 ? 'center' : 'right', width: w }}>
@@ -381,7 +381,7 @@ export default function PPInvoiceDetailPage() {
                     <td className="px-2.5 py-2 border-b border-gray-100 text-right text-[#27AE60]">
                       {invoice.diskonPaket ? `- ${formatRp(invoice.diskonPaket)}` : '—'}
                     </td>
-                    <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">
+                    <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">
                       {formatRp(invoice.hargaPaket - (invoice.diskonPaket || 0))}
                     </td>
                   </tr>
@@ -391,7 +391,7 @@ export default function PPInvoiceDetailPage() {
                         <div className="font-semibold text-[#1E1C43]">Biaya Tambahan</div>
                         <div className="text-xs text-gray-500">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
                       </td>
-                      <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43]">{formatRp(invoice.biayaLain)}</td>
+                      <td className="px-2.5 py-2 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">{formatRp(invoice.biayaLain)}</td>
                     </tr>
                   )}
                 </tbody>
