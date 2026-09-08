@@ -53,6 +53,7 @@ function toPaket(p) {
     masaBerlaku: p.masa,
     hargaPaket: p.harga,
     biayaSesiPIC: p.biayaSesiPIC || 0,
+    diskonPaket: p.diskonPaket || 0,
     pic: {
       nama: pic.fullname || '—',
       spesialisasi: pic.spesialis || '—',
@@ -751,6 +752,7 @@ export default function PPOrderDetailPage() {
       if (prog) {
         invChanges.paket         = prog.namaPaket
         invChanges.hargaPaket    = prog.hargaPaket
+        invChanges.diskonPaket   = prog.diskonPaket || 0
         invChanges.sesi          = prog.totalSesi
         invChanges.hargaPersesi  = prog.totalSesi > 0 ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
         invChanges.pic           = prog.pic?.nama || linkedInv.pic
