@@ -53,6 +53,7 @@ function toPaket(p) {
     masaBerlaku: p.masa,
     hargaPaket: p.harga,
     biayaSesiPIC: p.biayaSesiPIC || 0,
+    diskonPaket: p.diskonPaket || 0,
     pic: {
       nama: pic.fullname || '—',
       spesialisasi: pic.spesialis || '—',
@@ -725,16 +726,38 @@ export default function PPOrderDetailPage() {
       : rincianDraft
     if (prog) setRincianDraft(finalRincian)
 
-    // Persist order changes to store
-    updateOrder(order.id, { rincianLayanan: finalRincian })
+    // Persist ALL infoDraft fields + rincianLayanan ke store
+    updateOrder(order.id, {
+      programId:      infoDraft.programId,
+      paket:          prog ? prog.namaPaket : infoDraft.paket,
+      nilaiKontrak:   prog ? prog.hargaPaket : order.nilaiKontrak,
+      tanggalMulai:   infoDraft.tanggalMulai,
+      tanggalSelesai: infoDraft.tanggalSelesai,
+      hariLatihan:    infoDraft.hariLatihan,
+      jamLatihan:     infoDraft.jamLatihan,
+      lokasiLatihan:  infoDraft.lokasiLatihan,
+      catatanOrder:   infoDraft.catatan,
+      picSalesEFM:    infoDraft.pic,
+      picOpsEFM:      infoDraft.picOps,
+      rincianLayanan: finalRincian,
+    })
 
-    // Sync biaya tambahan ke invoice terkait
+    // Sync ke invoice terkait — biaya tambahan + data program jika program berubah
     const linkedInv = getInvoiceByOrderId(order.id)
     if (linkedInv) {
       const extraItems = finalRincian.slice(1)
       const extraTotal = extraItems.reduce((s, i) => s + (i.total || 0), 0)
       const extraKet = extraItems.map(i => i.namaItem).filter(Boolean).join(', ')
-      updateInvoice(linkedInv.invNo, { biayaLain: extraTotal, biayaLainKet: extraKet })
+      const invChanges = { biayaLain: extraTotal, biayaLainKet: extraKet }
+      if (prog) {
+        invChanges.paket         = prog.namaPaket
+        invChanges.hargaPaket    = prog.hargaPaket
+        invChanges.diskonPaket   = prog.diskonPaket || 0
+        invChanges.sesi          = prog.totalSesi
+        invChanges.hargaPersesi  = prog.totalSesi > 0 ? Math.round(prog.hargaPaket / prog.totalSesi) : 0
+        invChanges.pic           = prog.pic?.nama || linkedInv.pic
+      }
+      updateInvoice(linkedInv.invNo, invChanges)
     }
 
     setEditingSection(null)

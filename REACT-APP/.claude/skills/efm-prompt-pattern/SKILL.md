@@ -179,6 +179,16 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - **KRITIS — setelah menyuruh merge manual: HENTIKAN semua push ke branch.** Pengguna kemungkinan besar langsung merge manual saat itu juga. Push commit baru setelah itu = commit masuk ke branch yang sudah di-merge, TIDAK akan ikut di-squash.
 - **Sebelum panggil `merge_pull_request`: selalu cek dulu PR masih open.** Panggil `pull_request_read` dan cek field `state === "open"`. Jika `state === "closed"` atau `merged === true`, PR sudah di-merge sebelumnya — `merge_pull_request` akan return state lama (`"merged": true`) tanpa error, yang terlihat seperti sukses baru padahal bukan. Commit-commit setelah merge manual tidak akan ikut masuk main.
 
+**⛔ WAJIB SETELAH PR DI-MERGE — sync branch sebelum sentuh apapun:**
+- Begitu pengguna mengkonfirmasi PR sudah di-merge (atau kita tahu PR sudah merged via API), LANGSUNG jalankan ini sebelum task apapun:
+  ```bash
+  git fetch origin main && git merge origin/main
+  ```
+- **Tidak ada pengecualian.** Task kecil, fix 1 baris, update teks — semuanya tetap harus sync dulu. Squash merge selalu membuat branch diverge dari main, sehingga setiap push berikutnya tanpa sync = conflict.
+- Jika ada conflict saat merge: `git checkout --ours <file-yang-conflict>` → `git add` → `npm run build` → commit merge → push.
+- **Jangan tunggu GitHub menampilkan "This branch has conflicts."** Lakukan proaktif sebelum menulis satu baris kode pun.
+- Pelanggaran aturan ini adalah penyebab utama conflict berulang di project ini.
+
 **Branch reset setelah squash merge — WAJIB sebelum task berikutnya:**
 - Project ini squash merge ke main. Setelah PR di-merge, branch lama punya riwayat commit yang sudah tidak relevan — main punya squash commit baru yang tidak ada di branch. Task berikutnya di branch yang sama = conflict hampir pasti.
 - Sebelum memulai task baru APAPUN di branch yang sudah pernah di-merge, selalu reset branch ke main terlebih dahulu:
