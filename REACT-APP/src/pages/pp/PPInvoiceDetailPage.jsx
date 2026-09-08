@@ -100,11 +100,12 @@ export default function PPInvoiceDetailPage() {
   const [invoice, setInvoice] = useState(state?.invoice || getInvoiceByNo(id) || null)
   const [modal,   setModal]   = useState(null)
   const [cs]                  = useState(() => getCompanySettings())
-  const [editing,       setEditing]       = useState(false)
-  const [catatanDraft,  setCatatanDraft]  = useState('')
-  const [kodeInput,     setKodeInput]     = useState('')
-  const [diskonApplied, setDiskonApplied] = useState(null)
-  const [diskonError,   setDiskonError]   = useState('')
+  const [editing,          setEditing]          = useState(false)
+  const [biayaLainDraft,   setBiayaLainDraft]   = useState(0)
+  const [biayaLainKetDraft,setBiayaLainKetDraft]= useState('')
+  const [kodeInput,        setKodeInput]        = useState('')
+  const [diskonApplied,    setDiskonApplied]    = useState(null)
+  const [diskonError,      setDiskonError]      = useState('')
   useEffect(() => {
     setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
     return () => setCrumbs(null)
@@ -130,7 +131,8 @@ export default function PPInvoiceDetailPage() {
   const statusBadgeCls = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
 
   function startEdit() {
-    setCatatanDraft(invoice.catatan || '')
+    setBiayaLainDraft(invoice.biayaLain || 0)
+    setBiayaLainKetDraft(invoice.biayaLainKet || '')
     const existingKode = invoice.promoKode || ''
     setKodeInput(existingKode)
     if (existingKode) {
@@ -170,10 +172,12 @@ export default function PPInvoiceDetailPage() {
   }
 
   function saveEdit() {
-    const promoVal = calcDiskonVal(diskonApplied, subtotalBase)
+    const editBase = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainDraft || 0)
+    const promoVal = calcDiskonVal(diskonApplied, editBase)
     setInvoice(prev => ({
       ...prev,
-      catatan:    catatanDraft,
+      biayaLain:    biayaLainDraft || 0,
+      biayaLainKet: biayaLainKetDraft,
       promoKode:  diskonApplied?.kode     || '',
       promoType:  diskonApplied?.subTipe  || '',
       promoTema:  diskonApplied?.tema     || null,
@@ -185,8 +189,9 @@ export default function PPInvoiceDetailPage() {
     setEditing(false)
   }
 
-  const editDiskonVal = calcDiskonVal(diskonApplied, subtotalBase)
-  const editTotal = subtotalBase - editDiskonVal
+  const editSubtotal  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainDraft || 0)
+  const editDiskonVal = calcDiskonVal(diskonApplied, editSubtotal)
+  const editTotal     = editSubtotal - editDiskonVal
   const syaratList     = getSyaratList()
   const existingReceipt = getReceiptByInvNo(invoice.invNo)
 
@@ -421,7 +426,7 @@ export default function PPInvoiceDetailPage() {
             <div className="px-4 py-2 border-t border-gray-200">
               <div className="flex justify-between items-center py-1 text-sm">
                 <span className="text-gray-600">Subtotal</span>
-                <span className="font-medium text-gray-800">{formatRp(subtotalBase)}</span>
+                <span className="font-medium text-gray-800">{editing ? formatRp(editSubtotal) : formatRp(subtotalBase)}</span>
               </div>
 
               {/* Kode Diskon — edit mode */}
@@ -472,6 +477,38 @@ export default function PPInvoiceDetailPage() {
                     </div>
                   )}
                   {diskonError && <p className="text-[10px] text-red-500 mt-1">{diskonError}</p>}
+                </div>
+              )}
+
+              {/* Biaya Lain — edit mode */}
+              {editing && (
+                <div className="py-2 border-t border-gray-100 mt-1">
+                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5">
+                    <Plus size={11} /> Biaya Tambahan
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={biayaLainKetDraft}
+                      onChange={e => setBiayaLainKetDraft(e.target.value)}
+                      placeholder="Keterangan biaya tambahan"
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-xs outline-none focus:border-[#1E1C43]"
+                    />
+                    <input
+                      type="number"
+                      min={0}
+                      value={biayaLainDraft || ''}
+                      onChange={e => setBiayaLainDraft(Number(e.target.value) || 0)}
+                      placeholder="0"
+                      className="w-28 px-3 py-2 border border-gray-300 rounded-lg text-xs text-right outline-none focus:border-[#1E1C43]"
+                    />
+                  </div>
+                  {biayaLainDraft > 0 && (
+                    <div className="flex justify-between items-center mt-1.5 text-xs">
+                      <span className="text-gray-500">{biayaLainKetDraft || 'Biaya Tambahan'}</span>
+                      <span className="font-medium text-[#1E1C43]">+ {formatRp(biayaLainDraft)}</span>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -537,11 +574,10 @@ export default function PPInvoiceDetailPage() {
         {/* Cara Pembayaran */}
         {invoice.status !== 'paid' && (
           <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran</div>
-            <div className="flex flex-col gap-2.5">
+            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran Transfer Ke Bank</div>
+            <div className={`grid gap-2.5 ${(cs.rekeningList || [{ bank: cs.namaBank }]).length >= 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50">
-                  <p className="text-[10px] text-gray-400 mb-0.5">Transfer ke</p>
                   <p className="text-xs font-bold text-[#1E1C43]">Bank {b.bank}</p>
                   {b.kcp && <p className="text-[10px] text-gray-400 mt-0.5">KCP {b.kcp}</p>}
                   <p className="text-sm font-semibold text-[#1E1C43] mt-0.5 tracking-wide">{b.rek}</p>
@@ -549,24 +585,6 @@ export default function PPInvoiceDetailPage() {
                 </div>
               ))}
             </div>
-          </div>
-        )}
-
-        {/* Catatan Invoice — hidden when empty and not editing */}
-        {(editing || invoice.catatan) && (
-          <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
-            <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
-            {editing ? (
-              <textarea
-                value={catatanDraft}
-                onChange={e => setCatatanDraft(e.target.value)}
-                placeholder="Tambahkan catatan untuk invoice ini..."
-                rows={3}
-                className="w-full px-2 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 outline-none focus:border-[#1E1C43] resize-none bg-white"
-              />
-            ) : (
-              <p className="text-sm text-gray-600">{invoice.catatan}</p>
-            )}
           </div>
         )}
 
