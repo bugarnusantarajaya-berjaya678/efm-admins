@@ -538,7 +538,7 @@ export default function PPInvoiceDetailPage() {
         {invoice.status !== 'paid' && (
           <div className="inv-sec px-6 sm:px-8 py-4 border-t border-gray-100">
             <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Cara Pembayaran Transfer Ke Bank</div>
-            <div className="flex flex-col gap-2.5">
+            <div className={`grid gap-2.5 ${(cs.rekeningList || [{ bank: cs.namaBank }]).length >= 2 ? 'grid-cols-2' : 'grid-cols-1'}`}>
               {(cs.rekeningList || [{ bank: cs.namaBank, rek: cs.nomorRekening, an: cs.atasNamaRekening }]).map(b => (
                 <div key={b.bank} className="border border-gray-200 rounded-xl px-4 py-3 bg-gray-50">
                   <p className="text-xs font-bold text-[#1E1C43]">Bank {b.bank}</p>
