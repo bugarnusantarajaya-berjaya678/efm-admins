@@ -8,6 +8,7 @@ import { getKlienById, getKlienByOrderId } from '../../data/ppKlienStore'
 import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
+import { validatePromo } from '../../data/ppPromoStore'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
 import { getAllInvoices, getInvoiceByOrderId, updateInvoice } from '../../data/ppInvoiceStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
@@ -412,6 +413,15 @@ export default function PPOrderDetailPage() {
   const [infoDeal, setInfoDeal] = useState(initInfo)
   const [infoDraft, setInfoDraft] = useState(initInfo)
 
+  const [kodePromoDraft, setKodePromoDraft] = useState(order?.promoKode || '')
+  const [promoApplied,   setPromoApplied]   = useState(() => {
+    const k = order?.promoKode || ''
+    if (!k) return null
+    const r = validatePromo(k)
+    return r.valid ? { kode: k, ...r.promo } : null
+  })
+  const [promoError, setPromoError] = useState('')
+
   const ppPrograms = getStoredPrograms().map(toPaket)
 
   // Integrated klien data — lookup via ORDER_TO_KLIEN_ID map, fallback ke klienIds field
@@ -715,7 +725,46 @@ export default function PPOrderDetailPage() {
     }
   }
 
-  function cancelEdit() { setEditingSection(null); setQuotationDraft(null); setShowGantiPaket(false) }
+  function applyPromo() {
+    const kode = kodePromoDraft.trim().toUpperCase()
+    if (!kode) return
+    const result = validatePromo(kode, { programId: infoDraft.programId })
+    if (result.valid) {
+      setPromoApplied({ kode, ...result.promo })
+      setPromoError('')
+    } else {
+      setPromoApplied(null)
+      setPromoError(result.error)
+    }
+  }
+
+  function removePromo() {
+    setPromoApplied(null)
+    setKodePromoDraft('')
+    setPromoError('')
+  }
+
+  function calcPromoVal(applied, base) {
+    if (!applied || applied.tipe !== 'diskon') return 0
+    return applied.subTipe === 'persen'
+      ? Math.round(base * applied.nilai / 100)
+      : applied.nilai
+  }
+
+  function cancelEdit() {
+    setEditingSection(null)
+    setQuotationDraft(null)
+    setShowGantiPaket(false)
+    const k = order?.promoKode || ''
+    setKodePromoDraft(k)
+    if (k) {
+      const r = validatePromo(k)
+      setPromoApplied(r.valid ? { kode: k, ...r.promo } : null)
+    } else {
+      setPromoApplied(null)
+    }
+    setPromoError('')
+  }
 
   function saveInfoDeal() {
     setInfoDeal({ ...infoDraft })
@@ -726,29 +775,47 @@ export default function PPOrderDetailPage() {
       : rincianDraft
     if (prog) setRincianDraft(finalRincian)
 
-    // Persist ALL infoDraft fields + rincianLayanan ke store
+    // Hitung nilai promo
+    const finalSubtotal  = finalRincian.reduce((s, i) => s + (i.total || 0), 0)
+    const finalPromoVal  = calcPromoVal(promoApplied, finalSubtotal)
+    const finalNilaiKontrak = prog ? prog.hargaPaket - finalPromoVal : finalSubtotal - finalPromoVal
+
+    // Persist ALL infoDraft fields + promo + rincianLayanan ke store
     updateOrder(order.id, {
-      programId:      infoDraft.programId,
-      paket:          prog ? prog.namaPaket : infoDraft.paket,
-      nilaiKontrak:   prog ? prog.hargaPaket : order.nilaiKontrak,
-      tanggalMulai:   infoDraft.tanggalMulai,
-      tanggalSelesai: infoDraft.tanggalSelesai,
-      hariLatihan:    infoDraft.hariLatihan,
-      jamLatihan:     infoDraft.jamLatihan,
-      lokasiLatihan:  infoDraft.lokasiLatihan,
-      catatanOrder:   infoDraft.catatan,
-      picSalesEFM:    infoDraft.pic,
-      picOpsEFM:      infoDraft.picOps,
-      rincianLayanan: finalRincian,
+      programId:         infoDraft.programId,
+      paket:             prog ? prog.namaPaket : infoDraft.paket,
+      nilaiKontrak:      finalNilaiKontrak,
+      tanggalMulai:      infoDraft.tanggalMulai,
+      tanggalSelesai:    infoDraft.tanggalSelesai,
+      hariLatihan:       infoDraft.hariLatihan,
+      jamLatihan:        infoDraft.jamLatihan,
+      lokasiLatihan:     infoDraft.lokasiLatihan,
+      catatanOrder:      infoDraft.catatan,
+      picSalesEFM:       infoDraft.pic,
+      picOpsEFM:         infoDraft.picOps,
+      rincianLayanan:    finalRincian,
+      promoKode:         promoApplied?.kode || '',
+      promoType:         promoApplied?.subTipe || '',
+      promoTema:         promoApplied?.tema || null,
+      promoBenefitBonus: promoApplied?.tipe === 'bonus' ? (promoApplied.keterangan || promoApplied.benefitBonus || null) : null,
+      nilaiDiskon:       finalPromoVal,
     })
 
-    // Sync ke invoice terkait — biaya tambahan + data program jika program berubah
+    // Sync ke invoice terkait — biaya tambahan + data program + promo
     const linkedInv = getInvoiceByOrderId(order.id)
     if (linkedInv) {
       const extraItems = finalRincian.slice(1)
       const extraTotal = extraItems.reduce((s, i) => s + (i.total || 0), 0)
       const extraKet = extraItems.map(i => i.namaItem).filter(Boolean).join(', ')
-      const invChanges = { biayaLain: extraTotal, biayaLainKet: extraKet }
+      const invChanges = {
+        biayaLain:         extraTotal,
+        biayaLainKet:      extraKet,
+        promoKode:         promoApplied?.kode || '',
+        promoType:         promoApplied?.subTipe || '',
+        promoTema:         promoApplied?.tema || null,
+        promoBenefitBonus: promoApplied?.tipe === 'bonus' ? (promoApplied.keterangan || promoApplied.benefitBonus || null) : null,
+        promoVal:          finalPromoVal,
+      }
       if (prog) {
         invChanges.paket         = prog.namaPaket
         invChanges.hargaPaket    = prog.hargaPaket
@@ -1448,61 +1515,120 @@ export default function PPOrderDetailPage() {
                 )
               )}
 
-              {/* Tema promo banner */}
-              {order.promoTema && (() => {
-                const t = order.promoTema
-                const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
-                return (
-                  <div className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border mt-3 ${cls}`}>
-                    <Sparkles size={13} className="shrink-0" />
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
-                      {t.berlakuHingga && <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>}
+              {editingSection === 'infoDeal' ? (
+                /* Edit mode — input kode promo */
+                <div className="py-2 border-t border-gray-100 mt-3">
+                  <p className="text-xs font-semibold text-gray-500 mb-2 flex items-center gap-1.5"><Tag size={11} /> Kode Promo</p>
+                  {promoApplied ? (
+                    <div className="space-y-1.5">
+                      {promoApplied.tema && (
+                        <div className={`flex items-center gap-2 px-2 py-1.5 rounded-lg border text-[10px] font-medium ${TEMA_WARNA_CLS[promoApplied.tema.warna] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+                          <Sparkles size={11} className="shrink-0" />
+                          {promoApplied.tema.icon} Promo Tematik: {promoApplied.tema.nama}
+                        </div>
+                      )}
+                      {promoApplied.tipe === 'diskon' ? (
+                        <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
+                          <div>
+                            <span className="text-xs font-semibold text-green-700">{promoApplied.kode}</span>
+                            <span className="text-xs text-green-600 ml-2">— {promoApplied.label}</span>
+                          </div>
+                          <button onClick={removePromo} className="text-green-600 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-3 py-2">
+                          <div>
+                            <span className="text-xs font-semibold text-blue-700">{promoApplied.kode}</span>
+                            <span className="text-xs text-blue-600 ml-2">— {promoApplied.label}</span>
+                            {promoApplied.keterangan && <p className="text-[10px] text-blue-500 mt-0.5">{promoApplied.keterangan}</p>}
+                          </div>
+                          <button onClick={removePromo} className="text-blue-400 hover:text-red-500 transition-colors ml-3"><X size={14} /></button>
+                        </div>
+                      )}
                     </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={kodePromoDraft}
+                        onChange={e => { setKodePromoDraft(e.target.value.toUpperCase()); setPromoError('') }}
+                        onKeyDown={e => e.key === 'Enter' && applyPromo()}
+                        placeholder="Masukkan kode promo"
+                        className={`flex-1 px-3 py-2 border rounded-lg text-xs outline-none focus:border-[#1E1C43] ${promoError ? 'border-red-400' : 'border-gray-300'}`}
+                      />
+                      <button onClick={applyPromo} className="px-3 py-2 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:opacity-90 transition-colors">
+                        Terapkan
+                      </button>
+                    </div>
+                  )}
+                  {promoError && <p className="text-[10px] text-red-500 mt-1">{promoError}</p>}
+                </div>
+              ) : (
+                <>
+                  {/* Read mode — tema promo banner */}
+                  {order.promoTema && (() => {
+                    const t = order.promoTema
+                    const cls = TEMA_WARNA_CLS[t.warna] || 'bg-gray-50 text-gray-600 border-gray-200'
+                    return (
+                      <div className={`flex items-center gap-2.5 px-3 py-2 rounded-lg border mt-3 ${cls}`}>
+                        <Sparkles size={13} className="shrink-0" />
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-bold">{t.icon} Promo Tematik: {t.nama}</span>
+                          {t.berlakuHingga && <span className="text-[10px] opacity-70">· berlaku s/d {t.berlakuHingga}</span>}
+                        </div>
+                      </div>
+                    )
+                  })()}
+
+                  {/* Read mode — promo kode + diskon rows */}
+                  {order.nilaiDiskon > 0 && (
+                    <div className="border border-gray-100 rounded-xl px-3 py-2.5 mt-3 space-y-1.5">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs text-gray-500">Subtotal</span>
+                        <span className="text-xs font-semibold text-gray-700">{formatRpPP(subtotalPP)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="flex items-center gap-1.5 text-xs text-green-700">
+                          <Tag size={11} />
+                          Diskon Promo
+                          {order.promoKode && <span className="bg-green-100 px-1.5 py-0.5 rounded font-mono font-semibold">{order.promoKode}</span>}
+                        </span>
+                        <span className="text-xs font-semibold text-green-700">−{formatRpPP(order.nilaiDiskon)}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Read mode — bonus promo info */}
+                  {order.promoBenefitBonus && !order.nilaiDiskon && (
+                    <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mt-3">
+                      <Tag size={12} className="text-green-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-semibold text-green-700">
+                          Promo Bonus
+                          {order.promoKode && <span className="font-mono ml-1">({order.promoKode})</span>}
+                        </p>
+                        <p className="text-[10px] text-green-600 mt-0.5">{order.promoBenefitBonus}</p>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {(() => {
+                const editPromoVal = editingSection === 'infoDeal' ? calcPromoVal(promoApplied, subtotalPP) : 0
+                const displayTotal = editingSection === 'infoDeal'
+                  ? subtotalPP - editPromoVal
+                  : (order.nilaiDiskon > 0 ? (order.nilaiKontrak ?? subtotalPP - order.nilaiDiskon) : subtotalPP)
+                const hasDiskon = editingSection === 'infoDeal' ? editPromoVal > 0 : order.nilaiDiskon > 0
+                return (
+                  <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
+                    <span className="text-sm font-medium text-white/80">
+                      {hasDiskon ? 'Total Setelah Promo' : 'Total Nilai Order'}
+                    </span>
+                    <span className="text-sm font-bold text-white">{formatRpPP(displayTotal)}</span>
                   </div>
                 )
               })()}
-
-              {/* Promo kode + diskon rows */}
-              {order.nilaiDiskon > 0 && (
-                <div className="border border-gray-100 rounded-xl px-3 py-2.5 mt-3 space-y-1.5">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xs text-gray-500">Subtotal</span>
-                    <span className="text-xs font-semibold text-gray-700">{formatRpPP(subtotalPP)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="flex items-center gap-1.5 text-xs text-green-700">
-                      <Tag size={11} />
-                      Diskon Promo
-                      {order.promoKode && <span className="bg-green-100 px-1.5 py-0.5 rounded font-mono font-semibold">{order.promoKode}</span>}
-                    </span>
-                    <span className="text-xs font-semibold text-green-700">−{formatRpPP(order.nilaiDiskon)}</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Bonus promo info */}
-              {order.promoBenefitBonus && !order.nilaiDiskon && (
-                <div className="flex items-start gap-2 bg-green-50 border border-green-200 rounded-lg px-3 py-2 mt-3">
-                  <Tag size={12} className="text-green-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-semibold text-green-700">
-                      Promo Bonus
-                      {order.promoKode && <span className="font-mono ml-1">({order.promoKode})</span>}
-                    </p>
-                    <p className="text-[10px] text-green-600 mt-0.5">{order.promoBenefitBonus}</p>
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-[#1E1C43] rounded-xl px-4 py-3 flex justify-between items-center mt-3">
-                <span className="text-sm font-medium text-white/80">
-                  {order.nilaiDiskon > 0 ? 'Total Setelah Promo' : 'Total Nilai Order'}
-                </span>
-                <span className="text-sm font-bold text-white">
-                  {formatRpPP(order.nilaiDiskon > 0 ? (order.nilaiKontrak ?? subtotalPP - order.nilaiDiskon) : subtotalPP)}
-                </span>
-              </div>
             </div>
 
             <div className="border-t border-gray-100 my-5" />
