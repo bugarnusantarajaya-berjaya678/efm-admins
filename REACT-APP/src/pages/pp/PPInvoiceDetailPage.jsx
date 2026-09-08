@@ -102,9 +102,10 @@ export default function PPInvoiceDetailPage() {
   const [modal,   setModal]   = useState(null)
   const [cs]                  = useState(() => getCompanySettings())
   const [editing,           setEditing]           = useState(false)
-  const [biayaLainDraft,    setBiayaLainDraft]    = useState(0)
-  const [biayaLainKetDraft, setBiayaLainKetDraft] = useState('')
-  const [biayaLainExpanded, setBiayaLainExpanded] = useState(false)
+  const [biayaLainDraft,     setBiayaLainDraft]     = useState(0)
+  const [biayaLainJumlahDraft, setBiayaLainJumlahDraft] = useState(1)
+  const [biayaLainKetDraft, setBiayaLainKetDraft]   = useState('')
+  const [biayaLainExpanded, setBiayaLainExpanded]   = useState(false)
   const [kodeInput,        setKodeInput]        = useState('')
   const [diskonApplied,    setDiskonApplied]    = useState(null)
   const [diskonError,      setDiskonError]      = useState('')
@@ -133,7 +134,8 @@ export default function PPInvoiceDetailPage() {
   const statusBadgeCls = { paid: 'bg-green-500', pending: 'bg-yellow-500', overdue: 'bg-red-500', draft: 'bg-gray-400' }[invoice.status] || 'bg-gray-400'
 
   function startEdit() {
-    setBiayaLainDraft(invoice.biayaLain || 0)
+    setBiayaLainDraft(invoice.biayaLainHarga || invoice.biayaLain || 0)
+    setBiayaLainJumlahDraft(invoice.biayaLainJumlah || 1)
     setBiayaLainKetDraft(invoice.biayaLainKet || '')
     setBiayaLainExpanded((invoice.biayaLain || 0) > 0)
     const existingKode = invoice.promoKode || ''
@@ -175,14 +177,18 @@ export default function PPInvoiceDetailPage() {
   }
 
   function saveEdit() {
-    const finalBiayaLain = biayaLainExpanded ? (biayaLainDraft || 0) : 0
-    const finalBiayaLainKet = biayaLainExpanded ? biayaLainKetDraft : ''
+    const finalBiayaLainHarga  = biayaLainExpanded ? (biayaLainDraft || 0) : 0
+    const finalBiayaLainJumlah = biayaLainExpanded ? (biayaLainJumlahDraft || 1) : 0
+    const finalBiayaLain       = biayaLainExpanded ? (finalBiayaLainJumlah * finalBiayaLainHarga) : 0
+    const finalBiayaLainKet    = biayaLainExpanded ? biayaLainKetDraft : ''
     const editBase = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + finalBiayaLain
     const promoVal = calcDiskonVal(diskonApplied, editBase)
     setInvoice(prev => ({
       ...prev,
-      biayaLain:    finalBiayaLain,
-      biayaLainKet: finalBiayaLainKet,
+      biayaLain:       finalBiayaLain,
+      biayaLainJumlah: finalBiayaLainJumlah,
+      biayaLainHarga:  finalBiayaLainHarga,
+      biayaLainKet:    finalBiayaLainKet,
       promoKode:  diskonApplied?.kode     || '',
       promoType:  diskonApplied?.subTipe  || '',
       promoTema:  diskonApplied?.tema     || null,
@@ -192,8 +198,10 @@ export default function PPInvoiceDetailPage() {
       promoVal,
     }))
     updateInvoice(invoice.invNo, {
-      biayaLain: finalBiayaLain,
-      biayaLainKet: finalBiayaLainKet,
+      biayaLain:       finalBiayaLain,
+      biayaLainJumlah: finalBiayaLainJumlah,
+      biayaLainHarga:  finalBiayaLainHarga,
+      biayaLainKet:    finalBiayaLainKet,
     })
 
     // Sync ke order terkait
@@ -201,7 +209,7 @@ export default function PPInvoiceDetailPage() {
     if (ord) {
       const mainItem = (ord.rincianLayanan || [])[0] || { id: 1, namaItem: invoice.paket, satuan: 'Paket', jumlah: 1, total: invoice.hargaPaket }
       const biayaItems = finalBiayaLain > 0
-        ? [{ id: 2, namaItem: finalBiayaLainKet || 'Biaya Tambahan', satuan: 'Item', jumlah: 1, harga: finalBiayaLain, total: finalBiayaLain }]
+        ? [{ id: 2, namaItem: finalBiayaLainKet || 'Biaya Tambahan', satuan: 'Item', jumlah: finalBiayaLainJumlah, harga: finalBiayaLainHarga, total: finalBiayaLain }]
         : []
       updateOrder(invoice.orderId, { rincianLayanan: [mainItem, ...biayaItems] })
     }
@@ -209,7 +217,7 @@ export default function PPInvoiceDetailPage() {
     setEditing(false)
   }
 
-  const editSubtotal  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainExpanded ? (biayaLainDraft || 0) : 0)
+  const editSubtotal  = (invoice.hargaPaket || 0) - (invoice.diskonPaket || 0) + (biayaLainExpanded ? ((biayaLainJumlahDraft || 1) * (biayaLainDraft || 0)) : 0)
   const editDiskonVal = calcDiskonVal(diskonApplied, editSubtotal)
   const editTotal     = editSubtotal - editDiskonVal
   const syaratList     = getSyaratList()
@@ -433,7 +441,12 @@ export default function PPInvoiceDetailPage() {
                     <tr>
                       <td className="px-3 py-2.5 border-b border-gray-100" colSpan={5}>
                         <div className="font-semibold text-[#1E1C43] leading-snug">Biaya Tambahan</div>
-                        <div className="text-[10px] text-gray-400 mt-0.5">{invoice.biayaLainKet || 'Biaya lain-lain'}</div>
+                        <div className="text-[10px] text-gray-400 mt-0.5">
+                          {invoice.biayaLainKet || 'Biaya lain-lain'}
+                          {invoice.biayaLainJumlah > 0 && invoice.biayaLainHarga > 0
+                            ? ` · ${invoice.biayaLainJumlah} × ${formatRp(invoice.biayaLainHarga)}`
+                            : ''}
+                        </div>
                       </td>
                       <td className="px-3 py-2.5 border-b border-gray-100 text-right font-semibold text-[#1E1C43] whitespace-nowrap">{formatRp(invoice.biayaLain)}</td>
                     </tr>
@@ -508,13 +521,13 @@ export default function PPInvoiceDetailPage() {
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">Biaya Tambahan</span>
                         <button
-                          onClick={() => { setBiayaLainExpanded(false); setBiayaLainDraft(0); setBiayaLainKetDraft('') }}
+                          onClick={() => { setBiayaLainExpanded(false); setBiayaLainDraft(0); setBiayaLainJumlahDraft(1); setBiayaLainKetDraft('') }}
                           className="ml-auto text-gray-300 hover:text-red-500 transition">
                           <Trash2 size={14} />
                         </button>
                       </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <div>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <div className="col-span-2">
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Keterangan</label>
                           <input
                             type="text"
@@ -525,7 +538,18 @@ export default function PPInvoiceDetailPage() {
                           />
                         </div>
                         <div>
-                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nominal (Rp)</label>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
+                          <input
+                            type="number"
+                            min={1}
+                            value={biayaLainJumlahDraft || ''}
+                            onChange={e => setBiayaLainJumlahDraft(Number(e.target.value) || 1)}
+                            placeholder="1"
+                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:border-[#1E1C43]"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
                           <input
                             type="number"
                             min={0}
@@ -538,7 +562,7 @@ export default function PPInvoiceDetailPage() {
                       </div>
                       <div className="mt-2 text-right">
                         <span className="text-xs text-gray-400">Subtotal: </span>
-                        <span className="text-sm font-bold text-[#1E1C43]">{formatRp(biayaLainDraft || 0)}</span>
+                        <span className="text-sm font-bold text-[#1E1C43]">{formatRp((biayaLainJumlahDraft || 1) * (biayaLainDraft || 0))}</span>
                       </div>
                     </div>
                   ) : (
