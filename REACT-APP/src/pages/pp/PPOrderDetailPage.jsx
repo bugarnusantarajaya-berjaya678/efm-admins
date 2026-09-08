@@ -3,13 +3,13 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { getCompanySettings } from '../../utils/companySettings'
 import { ArrowLeft, ChevronRight, Edit2, Save, X, Plus, Trash2, ChevronDown, ExternalLink, FileText, Printer, Eye, Download, CheckCircle, MapPin, Users, Calendar, ClipboardList, AlertTriangle, ImageIcon, Info, Upload, Paperclip, Lock, MessageCircle, Sparkles, Tag } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { getOrderById, addOrder, getNextOrderId } from '../../data/ppOrdersStore'
+import { getOrderById, addOrder, getNextOrderId, updateOrder } from '../../data/ppOrdersStore'
 import { getKlienById, getKlienByOrderId } from '../../data/ppKlienStore'
 import { getLeadById } from '../../data/ppLeadsStore'
 import { getDocByOrderId } from '../../data/ppDocumentsStore'
 import { TEMA_WARNA_CLS } from '../../data/ppPromoData'
 import { getReceiptByOrderId } from '../../data/ppReceiptStore'
-import { getAllInvoices } from '../../data/ppInvoiceStore'
+import { getAllInvoices, getInvoiceByOrderId, updateInvoice } from '../../data/ppInvoiceStore'
 import { getStoredPrograms } from '../../data/ppProgramStore'
 import { PIC_DB } from '../../data/ppProgramDBData'
 
@@ -720,12 +720,23 @@ export default function PPOrderDetailPage() {
     setInfoDeal({ ...infoDraft })
     setLineItems([...itemsDraft])
     const prog = ppPrograms.find(p => p.id === infoDraft.programId)
-    if (prog) {
-      setRincianDraft(prev => [
-        { id: 1, namaItem: `${prog.namaProgram} ${prog.namaPaket}`, satuan: 'Paket', jumlah: 1, total: prog.hargaPaket },
-        ...prev.slice(1)
-      ])
+    const finalRincian = prog
+      ? [{ id: 1, namaItem: `${prog.namaProgram} ${prog.namaPaket}`, satuan: 'Paket', jumlah: 1, total: prog.hargaPaket }, ...rincianDraft.slice(1)]
+      : rincianDraft
+    if (prog) setRincianDraft(finalRincian)
+
+    // Persist order changes to store
+    updateOrder(order.id, { rincianLayanan: finalRincian })
+
+    // Sync biaya tambahan ke invoice terkait
+    const linkedInv = getInvoiceByOrderId(order.id)
+    if (linkedInv) {
+      const extraItems = finalRincian.slice(1)
+      const extraTotal = extraItems.reduce((s, i) => s + (i.total || 0), 0)
+      const extraKet = extraItems.map(i => i.namaItem).filter(Boolean).join(', ')
+      updateInvoice(linkedInv.invNo, { biayaLain: extraTotal, biayaLainKet: extraKet })
     }
+
     setEditingSection(null)
   }
 

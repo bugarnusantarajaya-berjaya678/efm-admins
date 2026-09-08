@@ -237,4 +237,8 @@ export function addOrder(order) {
   _store = [..._store, order]
 }
 
+export function updateOrder(id, changes) {
+  _store = _store.map(o => o.id === id ? { ...o, ...changes } : o)
+}
+
 export { ORDERS_INIT }
