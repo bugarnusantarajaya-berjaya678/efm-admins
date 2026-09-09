@@ -265,6 +265,7 @@ export default function PPInvoiceDetailPage() {
           #inv-hdr-right .inv-date-row { justify-content: flex-end !important; }
           #inv-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
           .inv-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+          #inv-tagihan-grid { grid-template-columns: repeat(4, 1fr) !important; }
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
@@ -364,8 +365,9 @@ export default function PPInvoiceDetailPage() {
             <div className="text-sm text-gray-300 mt-0.5">{invoice.invNo}</div>
 
             <div className="inv-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
-              <span className="text-xs text-gray-400">Tanggal:</span>
-              <span className="font-semibold text-sm">{invoice.tanggal}</span>
+              <span className="text-xs text-gray-400">Order ID:</span>
+              <button onClick={() => navigate('/pp/orders/' + invoice.orderId)}
+                className="font-semibold text-sm hover:underline">#{invoice.orderId}</button>
             </div>
 
             <div className="inv-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5">
@@ -398,15 +400,19 @@ export default function PPInvoiceDetailPage() {
 
         {/* Tagihan Kepada */}
         <div className="inv-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-          <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</div>
-          <div className="flex items-start justify-between gap-4">
-            <p className="text-[18px] font-bold text-[#1E1C43]">{invoice.client}</p>
-            {(invoice.alamat || invoice.noHp) && (
-              <div className="text-right shrink-0">
-                {invoice.alamat && <p className="text-xs text-gray-500">{invoice.alamat}</p>}
-                {invoice.noHp   && <p className="text-xs text-gray-500 mt-0.5">{invoice.noHp}</p>}
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</p>
+          <div id="inv-tagihan-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+            {[
+              ['Nama Klien',        invoice.client       || '—'],
+              ['No. HP / WA',       invoice.noHp         || '—'],
+              ['Alamat',            invoice.alamat        || '—'],
+              ['Tgl Invoice Dibuat',invoice.tanggal       || '—'],
+            ].map(([l, v]) => (
+              <div key={l}>
+                <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
+                <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
               </div>
-            )}
+            ))}
           </div>
         </div>
 
