@@ -4,6 +4,7 @@ import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from '
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL } from '../../data/ppDocumentsData'
+import { getCompanySettings } from '../../utils/companySettings'
 
 const BADGE_FILLED = {
   signed:             'bg-green-500 text-white',
@@ -11,7 +12,6 @@ const BADGE_FILLED = {
   'waiting-approval': 'bg-blue-500 text-white',
   expired:            'bg-red-500 text-white',
 }
-import { getCompanySettings } from '../../utils/companySettings'
 
 /* ── helpers ── */
 function DocBadge({ status }) {
@@ -20,14 +20,6 @@ function DocBadge({ status }) {
       {STATUS_LABEL[status] || status}
     </span>
   )
-}
-
-const MONTH_ROMAN = { Jan:'I', Feb:'II', Mar:'III', Apr:'IV', Mei:'V', Jun:'VI', Jul:'VII', Agu:'VIII', Sep:'IX', Okt:'X', Nov:'XI', Des:'XII' }
-function docNomor(displayId, tglDibuat) {
-  const parts = (tglDibuat || '').split(' ')
-  const roman = MONTH_ROMAN[parts[1]] || parts[1] || '—'
-  const year  = parts[2] || '—'
-  return `${displayId}/EFM/${roman}/${year}`
 }
 
 /* ── EFM Signature SVG ── */
@@ -64,8 +56,8 @@ function ClientSig({ status }) {
     return (
       <div className="h-[72px] border border-[#F5B7B1] rounded-xl flex items-center justify-center bg-[#FDEDEC] mb-2">
         <div className="text-center">
-          <div className="text-[11px] font-bold text-[#C0392B]">Agreement Expired</div>
-          <div className="text-[10px] text-[#C0392B] opacity-75 mt-0.5">Perlu pembaharuan dokumen</div>
+          <div className="text-xs font-bold text-[#C0392B]">Agreement Expired</div>
+          <div className="text-xs text-[#C0392B] opacity-75 mt-0.5">Perlu pembaharuan dokumen</div>
         </div>
       </div>
     )
@@ -143,47 +135,59 @@ function AgreementDoc({ doc }) {
 
   const sigMeta = () => {
     if (doc.statusTtd === 'signed')
-      return <span className="text-[#27AE60] text-[10px]">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
+      return <span className="text-[#27AE60] text-xs">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
     if (doc.statusTtd === 'waiting-approval')
-      return <span className="text-[#2980B9] text-[10px]">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
+      return <span className="text-[#2980B9] text-xs">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
     if (doc.statusTtd === 'expired')
-      return <span className="text-[#C0392B] text-[10px]">Expired — {doc.tglDibuat}</span>
-    return <span className="text-[#B7770D] text-[10px]">Status: Pending TTD</span>
+      return <span className="text-[#C0392B] text-xs">Expired — {doc.tglDibuat}</span>
+    return <span className="text-[#B7770D] text-xs">Status: Pending TTD</span>
   }
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Navy header */}
-      <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <img
-              src={company.logoPerusahaan || '/logo.png'}
-              alt="EFM Logo"
-              className="w-14 h-14 rounded-full object-contain shrink-0"
-              onError={e => { e.target.style.display = 'none' }}
-            />
-            <div className="min-w-0 overflow-hidden">
-              <p className="text-base font-bold break-words leading-snug">{company.namaPerusahaan}</p>
-              <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
-              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{company.alamat}</p>
-              <p className="text-xs text-white/70 mt-0.5 break-all">{company.email}</p>
-              <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
-            </div>
-          </div>
-          <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16, maxWidth: 180, wordBreak: 'break-all' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+      <div id="agr-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
+        {/* Left — logo + company info */}
+        <div className="flex items-start gap-3">
+          {company.logoPerusahaan ? (
+            <img src={company.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
+          ) : (
+            <img src="/logo.png" alt="EFM Logo" className="w-14 h-14 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+          )}
+          <div className="min-w-0 overflow-hidden">
+            <p className="text-base font-bold break-words">{company.namaPerusahaan}</p>
+            <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+              {company.alamat
+                .replace(', Tower A,', ',\nTower A,')
+                .split('\n')
+                .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+            </p>
+            <p className="text-xs text-white/70 mt-0.5 break-words">{company.email}</p>
+            <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', letterSpacing: 2, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
+
+        {/* Right — AGREEMENT title + doc info + status */}
+        <div id="agr-hdr-right" className="text-left sm:text-right">
+          <div id="agr-hdr-title" className="text-2xl sm:text-4xl font-black tracking-widest uppercase">AGREEMENT</div>
+          <div className="text-sm text-gray-300 mt-0.5">{doc.displayId}</div>
+          <div className="agr-date-row flex justify-start sm:justify-end items-center gap-2 mt-1 mb-0.5">
+            <span className="text-xs text-gray-400">Ref. Invoice:</span>
+            <span className="font-semibold text-sm">{doc.refInvoice || '—'}</span>
+          </div>
+          <div className="agr-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5">
+            <span className="text-xs text-gray-400">Order ID:</span>
+            <span className="font-semibold text-sm">#{doc.orderId}</span>
+          </div>
+          <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 ${BADGE_FILLED[doc.statusTtd] || 'bg-gray-500'}`}>
+            {STATUS_LABEL[doc.statusTtd] || doc.statusTtd}
+          </span>
         </div>
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -193,7 +197,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Syarat & Ketentuan */}
-      <div className="mb-6 px-6">
+      <div className="px-6 py-5 border-b border-gray-100">
         <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
@@ -237,8 +241,8 @@ function AgreementDoc({ doc }) {
 
       {/* Document footer */}
       <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
-        <p className="text-[10px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
-        <p className="text-[10px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
+        <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
@@ -311,6 +315,19 @@ export default function PPAgreementDetailPage() {
             background: white !important;
           }
           #agr-print-area > div * { overflow: visible !important; }
+<<<<<<< HEAD
+
+          /* header grid — sm: breakpoint tidak aktif di print viewport */
+          #agr-hdr {
+            grid-template-columns: 1.5fr 1fr !important;
+            padding: 1rem 1.25rem !important;
+          }
+          #agr-hdr-right { text-align: right !important; }
+          #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
+          #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+
+=======
+>>>>>>> origin/main
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
@@ -358,7 +375,7 @@ export default function PPAgreementDetailPage() {
       </div>
 
       <div id="agr-print-area" className="overflow-x-auto pb-2">
-      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
         {/* Admin-only status notice — bukan form TTD klien */}
