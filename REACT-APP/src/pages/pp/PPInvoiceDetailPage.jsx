@@ -110,7 +110,7 @@ export default function PPInvoiceDetailPage() {
   const [diskonApplied,    setDiskonApplied]    = useState(null)
   const [diskonError,      setDiskonError]      = useState('')
   useEffect(() => {
-    setCrumbs(['Private Program', 'Invoice', invoice ? '#' + invoice.invNo : id])
+    setCrumbs(['Private Program', 'Invoice', invoice ? invoice.invNo : id])
     return () => setCrumbs(null)
   }, [invoice?.invNo, id])
 
@@ -279,7 +279,7 @@ export default function PPInvoiceDetailPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice PP</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{invoice.invNo}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">{invoice.invNo}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{invoice.client}</span>
               <span className="text-gray-300 text-xs">·</span>
