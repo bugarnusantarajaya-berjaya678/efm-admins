@@ -236,6 +236,64 @@ Jangan biarkan konten section float tanpa container — semua section pakai patt
 
 ---
 
+**Print CSS — standar baku untuk semua halaman Invoice & Receipt**
+
+Setiap halaman Invoice/Receipt wajib punya print CSS block berikut. Nilai margin, padding, dan ukuran ini sudah dioptimasi agar konten terlihat proporsional di kertas A4 — **jangan naikkan margin atau padding kembali ke nilai lama**.
+
+```jsx
+<style>{`
+  @media print {
+    html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+    body * { visibility: hidden; }
+    #[module]-print-area, #[module]-print-area * { visibility: visible; }
+    #[module]-print-area {
+      position: absolute; left: 0; top: 0; width: 100%;
+      overflow: visible !important;
+      padding: 0 !important;
+      background: white !important;
+      margin: 0 !important;
+    }
+    #[module]-print-area > div {
+      width: 100% !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      overflow: visible !important;
+      background: white !important;
+    }
+    #[module]-print-area > div * { overflow: visible !important; }
+
+    /* sm: breakpoint overrides — tidak aktif di print viewport */
+    #[module]-hdr {
+      grid-template-columns: 1.5fr 1fr !important;
+      padding: 1rem 1.25rem !important;   /* ← 1rem vertikal, 1.25rem horizontal */
+    }
+    #[module]-hdr-right { text-align: right !important; }
+    .[module]-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+    * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    @page { margin: 5mm; size: A4 portrait; }   /* ← 5mm, BUKAN 10mm */
+  }
+`}</style>
+```
+
+**Nilai kritis yang TIDAK boleh diubah:**
+| Property | Nilai benar | Nilai SALAH (jangan pakai) |
+|---|---|---|
+| `@page margin` | `5mm` | `10mm` — terlalu banyak whitespace |
+| `#hdr padding` | `1rem 1.25rem` | `1.25rem 2rem` — header terlalu sempit |
+| `.sec padding` kiri/kanan | `1.25rem` | `2rem` — konten terlalu jauh dari tepi |
+
+**Naming convention ID/class per modul:**
+| Modul | Print area ID | Header ID | Section class |
+|---|---|---|---|
+| PP Invoice | `inv-print-area` | `inv-hdr` | `inv-sec` |
+| PP Receipt | `rcp-print-area` | `rcp-hdr` | `rcp-sec` |
+| B2B Invoice | `b2b-inv-print-area` | `b2b-inv-hdr` | `b2b-inv-sec` |
+| Event Invoice | `ev-inv-print-area` | `ev-inv-hdr` | `ev-inv-sec` |
+
+---
+
 **Rincian Layanan table — kolom proporsional dengan tuple array**
 
 Gunakan array `[label, width]` (bukan array string biasa) agar lebar kolom bisa di-set per-header tanpa inline style terpisah. Tambahkan `tableLayout: 'fixed'` pada `<table>` supaya width persen benar-benar diterapkan:
