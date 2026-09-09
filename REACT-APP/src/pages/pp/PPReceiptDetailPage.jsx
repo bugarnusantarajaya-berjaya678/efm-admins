@@ -225,13 +225,13 @@ export default function PPReceiptDetailPage() {
 
           #rcp-hdr {
             grid-template-columns: 1.5fr 1fr !important;
-            padding: 1.25rem 2rem !important;
+            padding: 1rem 1.25rem !important;
           }
           #rcp-hdr-right { text-align: right !important; }
-          .rcp-sec { padding-left: 2rem !important; padding-right: 2rem !important; }
+          .rcp-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { margin: 10mm; size: A4 portrait; }
+          @page { margin: 5mm; size: A4 portrait; }
         }
       `}</style>
 
