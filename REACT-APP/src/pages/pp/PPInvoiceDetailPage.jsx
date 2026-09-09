@@ -266,6 +266,7 @@ export default function PPInvoiceDetailPage() {
           #inv-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
           .inv-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
           #inv-tagihan-grid { grid-template-columns: repeat(4, 1fr) !important; }
+          .inv-tagihan-alamat { font-size: 0.6875rem !important; line-height: 1.3 !important; }
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
@@ -403,14 +404,14 @@ export default function PPInvoiceDetailPage() {
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</p>
           <div id="inv-tagihan-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
             {[
-              ['Nama Klien',        invoice.client       || '—'],
-              ['No. HP / WA',       invoice.noHp         || '—'],
-              ['Alamat',            invoice.alamat        || '—'],
-              ['Tgl Invoice Dibuat',invoice.tanggal       || '—'],
-            ].map(([l, v]) => (
+              ['Nama Klien',        invoice.client       || '—', ''],
+              ['No. HP / WA',       invoice.noHp         || '—', ''],
+              ['Alamat',            invoice.alamat        || '—', 'inv-tagihan-alamat'],
+              ['Tgl Invoice Dibuat',invoice.tanggal       || '—', ''],
+            ].map(([l, v, cls]) => (
               <div key={l}>
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
-                <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
+                <p className={`text-sm font-semibold text-[#1E1C43]${cls ? ' ' + cls : ''}`}>{v}</p>
               </div>
             ))}
           </div>
