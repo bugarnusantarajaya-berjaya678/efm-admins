@@ -51,7 +51,12 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           <div className="min-w-0 overflow-hidden">
             <p className="text-base font-bold break-words leading-snug">{cs.namaPerusahaan}</p>
             <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
-            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{cs.alamat}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+              {cs.alamat
+                .replace(', Tower A,', ',\nTower A,')
+                .split('\n')
+                .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+            </p>
             <p className="text-xs text-white/70 mt-0.5 break-all">{cs.email}</p>
             <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
           </div>
