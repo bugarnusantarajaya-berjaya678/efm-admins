@@ -177,6 +177,7 @@ export default function PPRekapAbsensiDetailPage() {
           }
           #rkp-hdr-right { text-align: right !important; }
           .rkp-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+          #rkp-pelatih-grid { grid-template-columns: repeat(4, 1fr) !important; }
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
@@ -298,13 +299,22 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Ditujukan Untuk ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pelatih</div>
-              <div className="grid grid-cols-2 gap-4 items-start">
-                <p className="text-[18px] font-bold text-[#1E1C43]">{picData?.fullname || 'Pelatih'}</p>
-                <div className="text-right">
-                  <p className="text-xs text-gray-500">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Ref Order: <span className="font-semibold text-gray-700">#{orderId}</span></p>
-                  <p className="text-xs text-gray-500 mt-0.5">Klien: <span className="font-semibold text-gray-700">{order.namaKlien}</span></p>
+              <div id="rkp-pelatih-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Pelatih</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">{picData?.fullname || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Program</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">{prog?.namaPaket || prog?.namaProgram || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Ref Order</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">#{orderId}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Klien</p>
+                  <p className="text-sm font-semibold text-[#1E1C43]">{order.namaKlien}</p>
                 </div>
               </div>
               {prog && (
