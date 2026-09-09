@@ -3,13 +3,20 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
-import { STATUS_LABEL, STATUS_CLS } from '../../data/ppDocumentsData'
+import { STATUS_LABEL } from '../../data/ppDocumentsData'
+
+const BADGE_FILLED = {
+  signed:             'bg-green-500 text-white',
+  pending:            'bg-yellow-500 text-white',
+  'waiting-approval': 'bg-blue-500 text-white',
+  expired:            'bg-red-500 text-white',
+}
 import { getCompanySettings } from '../../utils/companySettings'
 
 /* ── helpers ── */
 function DocBadge({ status }) {
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium ${STATUS_CLS[status] || STATUS_CLS.pending}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${BADGE_FILLED[status] || 'bg-gray-400 text-white'}`}>
       {STATUS_LABEL[status] || status}
     </span>
   )
@@ -149,18 +156,19 @@ function AgreementDoc({ doc }) {
       {/* Navy header */}
       <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 0 }}>
-            <img src={company.logoPerusahaan || '/logo.png'} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-              onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} alt="EFM" />
-            <div style={{ display: 'none', width: 52, height: 52, borderRadius: '50%', background: '#E8781A', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <div style={{ minWidth: 0, flex: 1, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.telepon}</div>
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <img
+              src={company.logoPerusahaan || '/logo.png'}
+              alt="EFM Logo"
+              className="w-14 h-14 rounded-full object-contain shrink-0"
+              onError={e => { e.target.style.display = 'none' }}
+            />
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base font-bold break-words leading-snug">{company.namaPerusahaan}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{company.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-all">{company.email}</p>
+              <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
             </div>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16, maxWidth: 180, wordBreak: 'break-all' }}>
@@ -179,7 +187,7 @@ function AgreementDoc({ doc }) {
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
-            <div className="text-sm font-bold text-[#1E1C43] break-words break-all">{val}</div>
+            <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
           </div>
         ))}
       </div>
@@ -279,7 +287,36 @@ export default function PPAgreementDetailPage() {
 
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 pb-24">
+
+      {/* Print CSS — isolate agreement document, hide admin chrome */}
+      <style>{`
+        @media print {
+          html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+          body * { visibility: hidden; }
+          #agr-print-area, #agr-print-area * { visibility: visible; }
+          #agr-print-area {
+            position: absolute; left: 0; top: 0; width: 100%;
+            overflow: visible !important;
+            padding: 0 !important;
+            background: white !important;
+            margin: 0 !important;
+          }
+          #agr-print-area > div {
+            width: 100% !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            overflow: visible !important;
+            background: white !important;
+          }
+          #agr-print-area > div * { overflow: visible !important; }
+          .no-print { display: none !important; }
+          * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          @page { margin: 5mm; size: A4 portrait; }
+        }
+      `}</style>
+
       {/* Page header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
         <div className="flex items-center gap-2 flex-wrap">
@@ -320,13 +357,13 @@ export default function PPAgreementDetailPage() {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-2">
+      <div id="agr-print-area" className="overflow-x-auto pb-2">
       <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
         {/* Admin-only status notice — bukan form TTD klien */}
         {doc.statusTtd === 'pending' && (
-          <div className="px-5 pb-5 pt-2">
+          <div className="no-print px-5 pb-5 pt-2">
             <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3.5">
               <Clock size={16} className="text-yellow-600 shrink-0 mt-0.5" />
               <div>
@@ -338,7 +375,7 @@ export default function PPAgreementDetailPage() {
         )}
 
         {doc.statusTtd === 'waiting-approval' && (
-          <div className="px-5 pb-5 pt-2">
+          <div className="no-print px-5 pb-5 pt-2">
             <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3.5">
               <AlertCircle size={16} className="text-blue-600 shrink-0 mt-0.5" />
               <div>
