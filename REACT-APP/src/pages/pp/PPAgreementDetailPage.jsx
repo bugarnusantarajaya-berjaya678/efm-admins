@@ -4,6 +4,7 @@ import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from '
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL } from '../../data/ppDocumentsData'
+import { getCompanySettings } from '../../utils/companySettings'
 
 const BADGE_FILLED = {
   signed:             'bg-green-500 text-white',
@@ -11,7 +12,6 @@ const BADGE_FILLED = {
   'waiting-approval': 'bg-blue-500 text-white',
   expired:            'bg-red-500 text-white',
 }
-import { getCompanySettings } from '../../utils/companySettings'
 
 /* ── helpers ── */
 function DocBadge({ status }) {
@@ -64,8 +64,8 @@ function ClientSig({ status }) {
     return (
       <div className="h-[72px] border border-[#F5B7B1] rounded-xl flex items-center justify-center bg-[#FDEDEC] mb-2">
         <div className="text-center">
-          <div className="text-[11px] font-bold text-[#C0392B]">Agreement Expired</div>
-          <div className="text-[10px] text-[#C0392B] opacity-75 mt-0.5">Perlu pembaharuan dokumen</div>
+          <div className="text-xs font-bold text-[#C0392B]">Agreement Expired</div>
+          <div className="text-xs text-[#C0392B] opacity-75 mt-0.5">Perlu pembaharuan dokumen</div>
         </div>
       </div>
     )
@@ -143,19 +143,19 @@ function AgreementDoc({ doc }) {
 
   const sigMeta = () => {
     if (doc.statusTtd === 'signed')
-      return <span className="text-[#27AE60] text-[10px]">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
+      return <span className="text-[#27AE60] text-xs">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
     if (doc.statusTtd === 'waiting-approval')
-      return <span className="text-[#2980B9] text-[10px]">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
+      return <span className="text-[#2980B9] text-xs">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
     if (doc.statusTtd === 'expired')
-      return <span className="text-[#C0392B] text-[10px]">Expired — {doc.tglDibuat}</span>
-    return <span className="text-[#B7770D] text-[10px]">Status: Pending TTD</span>
+      return <span className="text-[#C0392B] text-xs">Expired — {doc.tglDibuat}</span>
+    return <span className="text-[#B7770D] text-xs">Status: Pending TTD</span>
   }
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Navy header */}
-      <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
+      <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6">
+        <div className="flex justify-between items-start mb-4">
           <div className="flex items-start gap-3 flex-1 min-w-0">
             <img
               src={company.logoPerusahaan || '/logo.png'}
@@ -164,26 +164,26 @@ function AgreementDoc({ doc }) {
               onError={e => { e.target.style.display = 'none' }}
             />
             <div className="min-w-0 overflow-hidden">
-              <p className="text-base font-bold break-words leading-snug">{company.namaPerusahaan}</p>
+              <p className="text-base font-bold text-white break-words leading-snug">{company.namaPerusahaan}</p>
               <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
               <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{company.alamat}</p>
               <p className="text-xs text-white/70 mt-0.5 break-all">{company.email}</p>
               <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
             </div>
           </div>
-          <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16, maxWidth: 180, wordBreak: 'break-all' }}>
-            <div style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.55)', textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>No. Dokumen</div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', letterSpacing: '.3px' }}>{docNomor(doc.displayId, doc.tglDibuat)}</div>
+          <div className="text-right shrink-0 pl-4 max-w-[180px] break-all">
+            <div className="text-[10px] font-semibold text-white/55 uppercase tracking-wider mb-1">No. Dokumen</div>
+            <div className="text-[13px] font-bold text-white tracking-wide">{docNomor(doc.displayId, doc.tglDibuat)}</div>
           </div>
         </div>
-        <div style={{ borderTop: '1px solid rgba(255,255,255,.15)', paddingTop: 16, textAlign: 'center' }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: 'white', letterSpacing: 2, textTransform: 'uppercase', lineHeight: 1.35 }}>PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', marginTop: 4, letterSpacing: '.5px' }}>EFM — {company.namaPerusahaan}</div>
+        <div className="border-t border-white/15 pt-4 text-center">
+          <div className="text-xl font-bold text-white tracking-widest uppercase leading-snug">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
+          <div className="text-[11px] text-white/45 mt-1 tracking-wide">EFM — {company.namaPerusahaan}</div>
         </div>
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-6 mt-0 pt-5 px-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -193,7 +193,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Syarat & Ketentuan */}
-      <div className="mb-6 px-6">
+      <div className="px-6 py-5 border-b border-gray-100">
         <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
@@ -237,8 +237,8 @@ function AgreementDoc({ doc }) {
 
       {/* Document footer */}
       <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
-        <p className="text-[10px] text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
-        <p className="text-[10px] font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
+        <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
+        <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
     </div>
   )
@@ -358,7 +358,7 @@ export default function PPAgreementDetailPage() {
       </div>
 
       <div id="agr-print-area" className="overflow-x-auto pb-2">
-      <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
+      <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
         {/* Admin-only status notice — bukan form TTD klien */}
