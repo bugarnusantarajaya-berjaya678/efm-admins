@@ -259,15 +259,15 @@ export default function PPInvoiceDetailPage() {
           /* sm: breakpoint overrides — tidak aktif di print viewport */
           #inv-hdr {
             grid-template-columns: 1.5fr 1fr !important;
-            padding: 1.25rem 2rem !important;
+            padding: 1rem 1.25rem !important;
           }
           #inv-hdr-right { text-align: right !important; }
           #inv-hdr-right .inv-date-row { justify-content: flex-end !important; }
           #inv-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
-          .inv-sec { padding-left: 2rem !important; padding-right: 2rem !important; }
+          .inv-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { margin: 10mm; size: A4 portrait; }
+          @page { margin: 5mm; size: A4 portrait; }
         }
       `}</style>
 
