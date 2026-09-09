@@ -315,6 +315,7 @@ export default function PPAgreementDetailPage() {
             background: white !important;
           }
           #agr-print-area > div * { overflow: visible !important; }
+<<<<<<< HEAD
 
           /* header grid — sm: breakpoint tidak aktif di print viewport */
           #agr-hdr {
@@ -325,6 +326,8 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
 
+=======
+>>>>>>> origin/main
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
