@@ -68,13 +68,13 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
 
           <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
-            <span className="text-xs text-gray-400">Ref. Invoice</span>
+            <span className="text-xs text-gray-400">Ref. Invoice:</span>
             <button onClick={() => onGoToInvoice(rcp.invNo)}
               className="font-semibold text-sm hover:underline">{rcp.invNo}</button>
           </div>
 
           <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5">
-            <span className="text-xs text-gray-400">Order ID</span>
+            <span className="text-xs text-gray-400">Order ID:</span>
             <button onClick={() => onGoToOrder(rcp.orderId)}
               className="font-semibold text-sm hover:underline">#{rcp.orderId}</button>
           </div>
