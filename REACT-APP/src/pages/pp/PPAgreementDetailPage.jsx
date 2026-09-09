@@ -156,18 +156,19 @@ function AgreementDoc({ doc }) {
       {/* Navy header */}
       <div style={{ background: '#1E1C43', padding: '20px 22px 18px', borderRadius: 0, marginBottom: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14, flex: 1, minWidth: 0 }}>
-            <img src={company.logoPerusahaan || '/logo.png'} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
-              onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} alt="EFM" />
-            <div style={{ display: 'none', width: 52, height: 52, borderRadius: '50%', background: '#E8781A', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-              <svg viewBox="0 0 24 24" fill="white" width="22" height="22"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <div style={{ minWidth: 0, flex: 1, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: 'white', lineHeight: 1.3 }}>{company.namaPerusahaan}</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,.6)', marginTop: 3, lineHeight: 1.7 }}>{company.namaLegal}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.alamat}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.email}</div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', lineHeight: 1.7 }}>{company.telepon}</div>
+          <div className="flex items-start gap-3 flex-1 min-w-0">
+            <img
+              src={company.logoPerusahaan || '/logo.png'}
+              alt="EFM Logo"
+              className="w-14 h-14 rounded-full object-contain shrink-0"
+              onError={e => { e.target.style.display = 'none' }}
+            />
+            <div className="min-w-0 overflow-hidden">
+              <p className="text-base font-bold break-words leading-snug">{company.namaPerusahaan}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
+              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{company.alamat}</p>
+              <p className="text-xs text-white/70 mt-0.5 break-all">{company.email}</p>
+              <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
             </div>
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0, paddingLeft: 16, maxWidth: 180, wordBreak: 'break-all' }}>
