@@ -187,7 +187,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
+      <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -315,9 +315,8 @@ export default function PPAgreementDetailPage() {
             background: white !important;
           }
           #agr-print-area > div * { overflow: visible !important; }
-<<<<<<< HEAD
 
-          /* header grid — sm: breakpoint tidak aktif di print viewport */
+          /* sm: breakpoint tidak aktif di print viewport */
           #agr-hdr {
             grid-template-columns: 1.5fr 1fr !important;
             padding: 1rem 1.25rem !important;
@@ -325,9 +324,8 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-right { text-align: right !important; }
           #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+          #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
-=======
->>>>>>> origin/main
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
