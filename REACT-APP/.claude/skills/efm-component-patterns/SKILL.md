@@ -2572,18 +2572,40 @@ Aturan untuk memilih format section info di halaman dokumen PP (Invoice, Receipt
 | **Flat 4-col** `grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3` — TANPA card grey | Dokumen operasional/harian, ≤6 field, scan cepat oleh pelatih/klien | Receipt "Informasi Pembayaran", Rekap Absensi "Pelatih" |
 | **Grey card per sel** `bg-gray-50 rounded-xl px-3 py-2.5` `grid grid-cols-1 sm:grid-cols-2 gap-2.5` | Dokumen legal/kontrak, banyak field (7+), info padat | Agreement "Detail grid" (10 field: nama, email, alamat, dll) |
 
-**Flat 4-col** — struktur tiap kolom:
+**Flat 4-col** — struktur lengkap (section label + grid):
 ```jsx
-<div>
-  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Label Kolom</p>
-  <p className="text-sm font-semibold text-[#1E1C43]">{nilai}</p>
+<div className="xxx-sec px-6 sm:px-8 py-4 border-b border-gray-100">
+  {/* Section label dengan border-b sebagai pemisah visual */}
+  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100 pb-2 mb-3">
+    Nama Section
+  </p>
+  <div id="xxx-info-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+    {[
+      ['Label A', nilaiA],
+      ['Label B', nilaiB],
+      ['Label C', nilaiC],
+      ['Label D', nilaiD],
+    ].map(([l, v]) => (
+      <div key={l}>
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
+        <p className="text-[11px] font-semibold text-[#1E1C43]">{v}</p>
+      </div>
+    ))}
+  </div>
 </div>
 ```
 
+**Nama section per dokumen PP:**
+| Halaman | Nama Label Section |
+|---|---|
+| Invoice (`PPInvoiceDetailPage`) | `Tagihan Kepada` |
+| Receipt (`PPReceiptDetailPage`) | `Informasi Pembayaran` |
+| Rekap Absensi (`PPRekapAbsensiDetailPage`) | `Ditujukan Untuk` |
+
 **Aturan flat 4-col:**
-- Label kolom menggantikan judul section — tidak perlu `<p>` judul section di atas grid
-- Nilai pakai `text-sm font-semibold text-[#1E1C43]` — BUKAN `text-xs text-gray-500`
-- Tidak ada `bg-gray-50`, `border`, atau `rounded` pada sel
+- WAJIB ada `<p>` judul section di atas grid dengan `border-b border-gray-100 pb-2 mb-3` — ini pemisah antara judul dan data
+- Nilai pakai `text-[11px] font-semibold text-[#1E1C43]` — BUKAN `text-sm` (14px) maupun `text-xs`; `text-[11px]` penting agar nilai panjang (seperti alamat) tidak mempengaruhi tinggi halaman
+- Tidak ada `bg-gray-50`, `border`, atau `rounded` pada sel individual
 
 **⚠️ WAJIB: Print CSS override untuk 4-col grid**
 
