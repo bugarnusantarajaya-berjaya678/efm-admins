@@ -201,7 +201,7 @@ function AgreementDoc({ doc }) {
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
-            <div className="text-center mb-1.5">
+            <div className="bg-gray-50 rounded-xl px-4 py-2 text-center mb-2">
               <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
               <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
@@ -216,7 +216,7 @@ function AgreementDoc({ doc }) {
 
       {/* Tanda Tangan */}
       <div className="border-t border-gray-200 pt-5 px-6 pb-6">
-        <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4 text-center">Tanda Tangan Para Pihak</div>
+        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Tanda Tangan Para Pihak</div>
         <div className="grid grid-cols-2 gap-5">
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
