@@ -39,20 +39,18 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
   )
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
       {/* Navy Header */}
-      <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-white">
+      <div id="rcp-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
         {/* Kiri — logo + info perusahaan */}
         <div className="flex items-start gap-3">
-          {cs.logoPerusahaan ? (
-            <img src={cs.logoPerusahaan} alt="EFM Logo"
-              className="w-20 h-20 rounded-full object-contain shrink-0" />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <span className="text-white font-black text-base">EFM</span>
-            </div>
-          )}
+          <img
+            src={cs.logoPerusahaan || '/logo.png'}
+            alt="EFM Logo"
+            className="w-14 h-14 rounded-full object-contain shrink-0"
+            onError={e => { e.target.style.display = 'none' }}
+          />
           <div className="min-w-0 overflow-hidden">
             <p className="text-base font-bold break-words leading-snug">{cs.namaPerusahaan}</p>
             <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
@@ -63,7 +61,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
         </div>
 
         {/* Kanan — RECEIPT title + nomor + meta */}
-        <div className="text-left sm:text-right">
+        <div id="rcp-hdr-right" className="text-left sm:text-right">
           <div className="text-2xl sm:text-4xl font-black tracking-widest uppercase">RECEIPT</div>
           <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
 
@@ -86,7 +84,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       </div>
 
       {/* Informasi Pembayaran */}
-      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+      <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
           Informasi Pembayaran
         </p>
@@ -108,7 +106,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       </div>
 
       {/* Rincian Program + Total strip */}
-      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+      <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
           Rincian Program
         </p>
@@ -147,7 +145,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       </div>
 
       {/* Barcode Absensi Sesi */}
-      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+      <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
           Barcode Absensi Sesi
         </p>
@@ -160,7 +158,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       </div>
 
       {/* Detail Pembayaran Diterima */}
-      <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+      <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
           Detail Pembayaran Diterima
         </p>
@@ -188,7 +186,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
 
 
       {/* Footer */}
-      <div className="px-6 sm:px-8 py-4 text-center space-y-1">
+      <div className="rcp-sec px-6 sm:px-8 py-4 text-center space-y-1">
         <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan receipt ini sebagai bukti pembayaran yang sah.</p>
         <p className="text-xs font-semibold text-gray-500">Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}</p>
       </div>
@@ -233,7 +231,42 @@ export default function PPReceiptDetailPage() {
   const backOrderId = fromOrderId || receipt.orderId
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
+    <div className="flex flex-col gap-4 pb-24">
+
+      {/* Print CSS — isolate receipt document, hide admin chrome */}
+      <style>{`
+        @media print {
+          html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+          body * { visibility: hidden; }
+          #rcp-print-area, #rcp-print-area * { visibility: visible; }
+          #rcp-print-area {
+            position: absolute; left: 0; top: 0; width: 100%;
+            overflow: visible !important;
+            padding: 0 !important;
+            background: white !important;
+            margin: 0 !important;
+          }
+          #rcp-print-area > div {
+            width: 100% !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            overflow: visible !important;
+            background: white !important;
+          }
+          #rcp-print-area > div * { overflow: visible !important; }
+
+          #rcp-hdr {
+            grid-template-columns: 1.5fr 1fr !important;
+            padding: 1.25rem 2rem !important;
+          }
+          #rcp-hdr-right { text-align: right !important; }
+          .rcp-sec { padding-left: 2rem !important; padding-right: 2rem !important; }
+
+          * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          @page { margin: 10mm; size: A4 portrait; }
+        }
+      `}</style>
 
       {/* Page Header */}
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
@@ -276,7 +309,7 @@ export default function PPReceiptDetailPage() {
         </div>
       </div>
 
-      <div className="overflow-x-auto pb-2">
+      <div id="rcp-print-area" className="overflow-x-auto">
         <ReceiptDocument
           rcp={receipt}
           onGoToOrder={orderId => navigate('/pp/orders/' + orderId)}
