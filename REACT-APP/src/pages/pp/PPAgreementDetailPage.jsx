@@ -197,8 +197,8 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Syarat & Ketentuan */}
-      <div className="px-6 py-5 border-b border-gray-100">
-        <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
+      <div className="px-6 py-5">
+        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
