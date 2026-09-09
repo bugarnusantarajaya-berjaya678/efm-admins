@@ -187,7 +187,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
+      <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -197,17 +197,17 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Syarat & Ketentuan */}
-      <div className="px-6 py-5 border-b border-gray-100">
-        <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200 text-center">Syarat dan Ketentuan Layanan</div>
+      <div className="px-6 py-5">
+        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
-              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-sm font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
-                <li key={i} className="text-sm leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
+                <li key={i} className="text-xs leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
           </div>
@@ -315,9 +315,8 @@ export default function PPAgreementDetailPage() {
             background: white !important;
           }
           #agr-print-area > div * { overflow: visible !important; }
-<<<<<<< HEAD
 
-          /* header grid — sm: breakpoint tidak aktif di print viewport */
+          /* sm: breakpoint tidak aktif di print viewport */
           #agr-hdr {
             grid-template-columns: 1.5fr 1fr !important;
             padding: 1rem 1.25rem !important;
@@ -325,9 +324,8 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-right { text-align: right !important; }
           #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+          #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
-=======
->>>>>>> origin/main
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
