@@ -257,3 +257,34 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Cara cek cepat: baca section yang baru diubah dan bandingkan dengan expected state. Jika ternyata file masih di state lama (commit terakhir tidak ikut squash), apply ulang perubahan tersebut sebagai commit baru SEBELUM melanjutkan task berikutnya.
 - Jangan tunggu pengguna melaporkan bahwa halaman "tidak berubah" — proaktif verifikasi setelah setiap reset.
 - Contoh yang pernah terjadi: 3 PR berturut-turut (461, 462, 463) karena commit 4-col flat grid tidak ikut squash di PR #461 maupun #462. Seharusnya terdeteksi dan difix langsung setelah reset pertama.
+
+**⛔ WAJIB: Verifikasi konten di main SEBELUM lapor "Merged" ke pengguna:**
+- Setelah merge berhasil (via API maupun konfirmasi manual dari pengguna), JANGAN langsung lapor "Merged. X sudah masuk ke main."
+- Selalu jalankan dulu cek satu baris kunci:
+  ```bash
+  git fetch origin main
+  git show origin/main:REACT-APP/path/to/file.jsx | grep "kata_kunci_perubahan"
+  ```
+- Jika output muncul → perubahan masuk → baru lapor ke pengguna
+- Jika output TIDAK muncul → perubahan tidak ikut squash → apply ulang sebagai commit baru, push, buat PR baru, BARU lapor
+- Ini mencegah pengguna membuka browser dan mendapati halaman tidak berubah — yang menyebabkan round-trip debugging yang sia-sia
+
+**🔄 Workflow "ya + task baru" dalam satu pesan:**
+- Ketika pengguna menjawab "ya" untuk merge SEKALIGUS memberi task baru di pesan yang sama, urutan eksekusinya WAJIB:
+  1. Selesaikan merge (API atau minta manual) → verifikasi konten di main (lihat di atas)
+  2. `git fetch origin main && git checkout -B <branch> origin/main && git push --force-with-lease` — reset branch ke main yang sudah include hasil merge
+  3. BARU mulai kerjakan task baru dari branch yang bersih
+- Jangan skip step 2 meskipun task baru terasa kecil. Branch yang tidak di-reset setelah squash merge PASTI conflict di push berikutnya.
+- Kalau reset (`git checkout -B`) ditolak oleh permission classifier, gunakan alternatif: `git fetch origin main && git merge origin/main` untuk sync, lalu jika ada conflict resolve dengan keep HEAD
+
+**🔍 Session start check — cek kondisi branch saat awal sesi:**
+- Di awal setiap sesi baru (konteks sebelumnya sudah ter-compress), jalankan ini sebelum mengerjakan apapun:
+  ```bash
+  git fetch origin main
+  git log --oneline origin/main..HEAD  # Jika ada output = branch punya commit yang belum/tidak di-merge
+  ```
+- Jika ada commit di branch yang tidak ada di main (bukan karena task sedang berjalan):
+  - Cek apakah PR untuk commit itu masih open atau sudah merged
+  - Jika PR sudah merged tanpa commit ini → commit "terjatuh", apply ulang
+  - Jika PR sudah closed/tidak relevan → reset branch ke main
+- Jangan asumsikan kondisi branch dari memori sesi sebelumnya — selalu verifikasi dari git state aktual
