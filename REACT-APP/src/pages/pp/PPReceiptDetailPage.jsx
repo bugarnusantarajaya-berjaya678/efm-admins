@@ -87,7 +87,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
 
       {/* Informasi Pembayaran */}
       <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100 pb-2 mb-3">
           Informasi Pembayaran
         </p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
@@ -99,7 +99,7 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           ].map(([l, v]) => (
             <div key={l}>
               <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
-              <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
+              <p className="text-[11px] font-semibold text-[#1E1C43]">{v}</p>
             </div>
           ))}
         </div>
