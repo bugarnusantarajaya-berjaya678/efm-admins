@@ -51,7 +51,12 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           <div className="min-w-0 overflow-hidden">
             <p className="text-base font-bold break-words leading-snug">{cs.namaPerusahaan}</p>
             <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
-            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{cs.alamat}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+              {cs.alamat
+                .replace(', Tower A,', ',\nTower A,')
+                .split('\n')
+                .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+            </p>
             <p className="text-xs text-white/70 mt-0.5 break-all">{cs.email}</p>
             <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
           </div>
@@ -63,13 +68,13 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           <div className="text-sm text-gray-300 mt-0.5">{rcp.rcpNo}</div>
 
           <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
-            <span className="text-xs text-gray-400">Ref. Invoice</span>
+            <span className="text-xs text-gray-400">Ref. Invoice:</span>
             <button onClick={() => onGoToInvoice(rcp.invNo)}
               className="font-semibold text-sm hover:underline">{rcp.invNo}</button>
           </div>
 
           <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5">
-            <span className="text-xs text-gray-400">Order ID</span>
+            <span className="text-xs text-gray-400">Order ID:</span>
             <button onClick={() => onGoToOrder(rcp.orderId)}
               className="font-semibold text-sm hover:underline">#{rcp.orderId}</button>
           </div>
