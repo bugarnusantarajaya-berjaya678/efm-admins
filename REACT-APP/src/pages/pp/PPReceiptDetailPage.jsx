@@ -250,11 +250,11 @@ export default function PPReceiptDetailPage() {
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               Receipt Pembayaran PP
             </p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug truncate">#{receipt.rcpNo}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{receipt.rcpNo}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{receipt.client}</span>
               <span className="text-gray-300 text-xs">·</span>
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white bg-green-500">
                 Lunas
               </span>
             </div>
@@ -275,7 +275,7 @@ export default function PPReceiptDetailPage() {
           </button>
           <button
             onClick={() => navigate('/pp/orders/' + backOrderId)}
-            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">
+            className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
             <ArrowLeft size={13} /> Kembali ke Order #{backOrderId}
           </button>
         </div>
