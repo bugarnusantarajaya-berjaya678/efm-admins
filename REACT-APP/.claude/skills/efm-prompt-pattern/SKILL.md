@@ -235,3 +235,25 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Ini menghilangkan conflict sama sekali karena branch selalu mulai dari tip main yang bersih
 - Cek apakah branch sudah pernah di-merge: `git log --oneline origin/main..HEAD` — jika tidak ada output (0 commit ahead), branch sudah sinkron. Jika ada commit yang tidak seharusnya ada (commit lama dari PR yang sudah di-merge), lakukan reset.
 - `--force-with-lease` aman dipakai di sini karena kita sengaja reset branch kerja ke main, bukan menghapus commit orang lain
+
+**⛔ SATU COMMIT PER PR — squash merge hanya menjamin commit yang sudah ada saat merge terjadi:**
+- Squash merge project ini terbukti bermasalah ketika PR punya banyak commit yang di-push secara bertahap: commit terakhir sering tidak ikut masuk ke squash result, terutama saat merge dilakukan manual oleh pengguna di antara push-push tersebut.
+- **Aturan wajib:** Sebelum meminta approval merge, pastikan SEMUA perubahan sudah dalam **satu commit tunggal** di branch. Jika ada perubahan tambahan setelah commit pertama, consolidate dulu:
+  ```bash
+  # Jika belum push: amend commit terakhir
+  git add <file> && git commit --amend --no-edit
+
+  # Jika sudah push sebelumnya tapi belum ada PR: squash lokal
+  git reset --soft HEAD~N  # N = jumlah commit yang ingin digabung
+  git commit -m "pesan commit baru yang menggabungkan semua"
+  git push --force-with-lease
+  ```
+- **Jangan buat PR dulu saat masih ada perubahan yang belum selesai.** Selesaikan semua, build hijau, baru satu commit, baru PR.
+- Jika karena sesuatu hal perlu push commit tambahan ke PR yang sudah ada: lakukan SEBELUM minta merge approval. Setelah pengguna bilang "ya", STOP — jangan push apapun lagi.
+- Pola yang terbukti bekerja: 1 PR = 1 commit = 1 squash commit di main yang berisi semua perubahan.
+
+**✅ Verifikasi isi file setelah branch reset — jangan asumsikan main sudah benar:**
+- Setelah branch reset ke main, jangan langsung mulai task baru. READ dulu file-file kunci yang seharusnya berubah dari PR terakhir untuk memastikan perubahan benar-benar masuk ke main.
+- Cara cek cepat: baca section yang baru diubah dan bandingkan dengan expected state. Jika ternyata file masih di state lama (commit terakhir tidak ikut squash), apply ulang perubahan tersebut sebagai commit baru SEBELUM melanjutkan task berikutnya.
+- Jangan tunggu pengguna melaporkan bahwa halaman "tidak berubah" — proaktif verifikasi setelah setiap reset.
+- Contoh yang pernah terjadi: 3 PR berturut-turut (461, 462, 463) karena commit 4-col flat grid tidak ikut squash di PR #461 maupun #462. Seharusnya terdeteksi dan difix langsung setelah reset pertama.
