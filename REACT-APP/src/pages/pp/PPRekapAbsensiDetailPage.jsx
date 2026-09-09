@@ -298,10 +298,10 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Ditujukan Untuk ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Untuk</div>
-              <div className="flex items-start justify-between gap-4">
+              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Pelatih</div>
+              <div className="grid grid-cols-2 gap-4 items-start">
                 <p className="text-[18px] font-bold text-[#1E1C43]">{picData?.fullname || 'Pelatih'}</p>
-                <div className="text-right shrink-0">
+                <div className="text-right">
                   <p className="text-xs text-gray-500">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
                   <p className="text-xs text-gray-500 mt-0.5">Ref Order: <span className="font-semibold text-gray-700">#{orderId}</span></p>
                   <p className="text-xs text-gray-500 mt-0.5">Klien: <span className="font-semibold text-gray-700">{order.namaKlien}</span></p>
