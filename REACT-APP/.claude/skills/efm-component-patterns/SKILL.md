@@ -2561,3 +2561,30 @@ JANGAN turunkan ke 160px — terlalu kecil untuk dipindai.
 
 Gunakan `<ol>` + `list-decimal` persis seperti Syarat & Ketentuan — bukan `<p>` atau teks polos di dalam card barcode.
 
+---
+
+## 22. Dokumen Operasional — Info Section: Flat 4-Col vs Grey Card
+
+Aturan untuk memilih format section info di halaman dokumen PP (Invoice, Receipt, Agreement, Rekap Absensi):
+
+| Format | Kapan dipakai | Contoh |
+|---|---|---|
+| **Flat 4-col** `grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3` — TANPA card grey | Dokumen operasional/harian, ≤6 field, scan cepat oleh pelatih/klien | Receipt "Informasi Pembayaran", Rekap Absensi "Pelatih" |
+| **Grey card per sel** `bg-gray-50 rounded-xl px-3 py-2.5` `grid grid-cols-1 sm:grid-cols-2 gap-2.5` | Dokumen legal/kontrak, banyak field (7+), info padat | Agreement "Detail grid" (10 field: nama, email, alamat, dll) |
+
+**Flat 4-col** — struktur tiap kolom:
+```jsx
+<div>
+  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Label Kolom</p>
+  <p className="text-sm font-semibold text-[#1E1C43]">{nilai}</p>
+</div>
+```
+
+**Aturan flat 4-col:**
+- Label kolom menggantikan judul section — tidak perlu `<p>` judul section di atas grid
+- Nilai pakai `text-sm font-semibold text-[#1E1C43]` — BUKAN `text-xs text-gray-500`
+- Tidak ada `bg-gray-50`, `border`, atau `rounded` pada sel
+- Print-friendly: flat cells bebas dari masalah rendering background saat print
+
+**Rekap Absensi — section info pelatih** menggunakan flat 4-col dengan 4 kolom: Pelatih | Program | Ref Order | Klien. Progress bar sesi ditampilkan di bawah grid (dalam `{prog && ...}` block), masih dalam section yang sama.
+
