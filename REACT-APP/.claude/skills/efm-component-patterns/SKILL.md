@@ -2584,7 +2584,22 @@ Aturan untuk memilih format section info di halaman dokumen PP (Invoice, Receipt
 - Label kolom menggantikan judul section — tidak perlu `<p>` judul section di atas grid
 - Nilai pakai `text-sm font-semibold text-[#1E1C43]` — BUKAN `text-xs text-gray-500`
 - Tidak ada `bg-gray-50`, `border`, atau `rounded` pada sel
-- Print-friendly: flat cells bebas dari masalah rendering background saat print
 
-**Rekap Absensi — section info pelatih** menggunakan flat 4-col dengan 4 kolom: Pelatih | Program | Ref Order | Klien. Progress bar sesi ditampilkan di bawah grid (dalam `{prog && ...}` block), masih dalam section yang sama.
+**⚠️ WAJIB: Print CSS override untuk 4-col grid**
+
+`sm:grid-cols-4` TIDAK aktif di print viewport (browser menganggap print area < 640px wide), sehingga grid jatuh ke 2 kolom. Solusi wajib:
+
+1. Beri `id` pada elemen grid:
+   ```jsx
+   <div id="xxx-info-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+   ```
+
+2. Tambahkan override di blok `@media print` halaman tersebut:
+   ```css
+   #xxx-info-grid { grid-template-columns: repeat(4, 1fr) !important; }
+   ```
+
+Tanpa override ini, tampilan screen dan print tidak konsisten — screen 4 kolom, print 2 kolom. Setiap halaman dokumen yang pakai flat 4-col HARUS punya kedua hal ini sekaligus.
+
+**Rekap Absensi — section info pelatih** menggunakan flat 4-col dengan 4 kolom: Pelatih | Program | Ref Order | Klien. Progress bar sesi ditampilkan di bawah grid (dalam `{prog && ...}` block), masih dalam section yang sama. Grid ID: `rkp-pelatih-grid`.
 
