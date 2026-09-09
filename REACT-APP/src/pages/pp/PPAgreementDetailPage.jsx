@@ -22,14 +22,6 @@ function DocBadge({ status }) {
   )
 }
 
-const MONTH_ROMAN = { Jan:'I', Feb:'II', Mar:'III', Apr:'IV', Mei:'V', Jun:'VI', Jul:'VII', Agu:'VIII', Sep:'IX', Okt:'X', Nov:'XI', Des:'XII' }
-function docNomor(displayId, tglDibuat) {
-  const parts = (tglDibuat || '').split(' ')
-  const roman = MONTH_ROMAN[parts[1]] || parts[1] || '—'
-  const year  = parts[2] || '—'
-  return `${displayId}/EFM/${roman}/${year}`
-}
-
 /* ── EFM Signature SVG ── */
 function EfmSig() {
   return (
@@ -154,31 +146,43 @@ function AgreementDoc({ doc }) {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
       {/* Navy header */}
-      <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-5 sm:px-8 sm:py-6">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex items-start gap-3 flex-1 min-w-0">
-            <img
-              src={company.logoPerusahaan || '/logo.png'}
-              alt="EFM Logo"
-              className="w-14 h-14 rounded-full object-contain shrink-0"
-              onError={e => { e.target.style.display = 'none' }}
-            />
-            <div className="min-w-0 overflow-hidden">
-              <p className="text-base font-bold text-white break-words leading-snug">{company.namaPerusahaan}</p>
-              <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
-              <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">{company.alamat}</p>
-              <p className="text-xs text-white/70 mt-0.5 break-all">{company.email}</p>
-              <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
-            </div>
-          </div>
-          <div className="text-right shrink-0 pl-4 max-w-[180px] break-all">
-            <div className="text-[10px] font-semibold text-white/55 uppercase tracking-wider mb-1">No. Dokumen</div>
-            <div className="text-[13px] font-bold text-white tracking-wide">{docNomor(doc.displayId, doc.tglDibuat)}</div>
+      <div id="agr-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
+        {/* Left — logo + company info */}
+        <div className="flex items-start gap-3">
+          {company.logoPerusahaan ? (
+            <img src={company.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
+          ) : (
+            <img src="/logo.png" alt="EFM Logo" className="w-14 h-14 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+          )}
+          <div className="min-w-0 overflow-hidden">
+            <p className="text-base font-bold break-words">{company.namaPerusahaan}</p>
+            <p className="text-xs text-white/70 mt-0.5 break-words">{company.namaLegal}</p>
+            <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+              {company.alamat
+                .replace(', Tower A,', ',\nTower A,')
+                .split('\n')
+                .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+            </p>
+            <p className="text-xs text-white/70 mt-0.5 break-words">{company.email}</p>
+            <p className="text-xs text-white/70 mt-0.5">{company.telepon}</p>
           </div>
         </div>
-        <div className="border-t border-white/15 pt-4 text-center">
-          <div className="text-xl font-bold text-white tracking-widest uppercase leading-snug">PERJANJIAN LAYANAN PRIVATE PROGRAM</div>
-          <div className="text-[11px] text-white/45 mt-1 tracking-wide">EFM — {company.namaPerusahaan}</div>
+
+        {/* Right — AGREEMENT title + doc info + status */}
+        <div id="agr-hdr-right" className="text-left sm:text-right">
+          <div id="agr-hdr-title" className="text-2xl sm:text-4xl font-black tracking-widest uppercase">AGREEMENT</div>
+          <div className="text-sm text-gray-300 mt-0.5">{doc.displayId}</div>
+          <div className="agr-date-row flex justify-start sm:justify-end items-center gap-2 mt-1 mb-0.5">
+            <span className="text-xs text-gray-400">Ref. Invoice:</span>
+            <span className="font-semibold text-sm">{doc.refInvoice || '—'}</span>
+          </div>
+          <div className="agr-date-row flex justify-start sm:justify-end items-center gap-2 mb-0.5">
+            <span className="text-xs text-gray-400">Order ID:</span>
+            <span className="font-semibold text-sm">#{doc.orderId}</span>
+          </div>
+          <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 ${BADGE_FILLED[doc.statusTtd] || 'bg-gray-500'}`}>
+            {STATUS_LABEL[doc.statusTtd] || doc.statusTtd}
+          </span>
         </div>
       </div>
 
@@ -311,6 +315,16 @@ export default function PPAgreementDetailPage() {
             background: white !important;
           }
           #agr-print-area > div * { overflow: visible !important; }
+
+          /* header grid — sm: breakpoint tidak aktif di print viewport */
+          #agr-hdr {
+            grid-template-columns: 1.5fr 1fr !important;
+            padding: 1rem 1.25rem !important;
+          }
+          #agr-hdr-right { text-align: right !important; }
+          #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
+          #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
