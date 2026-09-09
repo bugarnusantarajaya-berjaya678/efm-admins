@@ -202,12 +202,12 @@ function AgreementDoc({ doc }) {
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
             <div className="text-center mb-1.5">
-              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-sm font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
-                <li key={i} className="text-sm leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
+                <li key={i} className="text-xs leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
           </div>
