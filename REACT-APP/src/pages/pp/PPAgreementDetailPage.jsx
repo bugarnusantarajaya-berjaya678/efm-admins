@@ -187,7 +187,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Detail grid */}
-      <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5 border-b border-gray-100">
+      <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5">
         {detailCells.map(([lbl, val]) => (
           <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
@@ -199,23 +199,25 @@ function AgreementDoc({ doc }) {
       {/* Syarat & Ketentuan */}
       <div className="px-6 py-5">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
-        {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
-          <div key={pi} className="mb-3.5">
-            <div className="text-center mb-1.5">
-              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+        <div className="border border-gray-200 rounded-xl p-4">
+          {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
+            <div key={pi} className={pi > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}>
+              <div className="text-center mb-1.5">
+                <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+                <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
+              </div>
+              <ol className="pl-4 space-y-1">
+                {poin.map((p, i) => (
+                  <li key={i} className="text-xs leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
+                ))}
+              </ol>
             </div>
-            <ol className="pl-4 space-y-1">
-              {poin.map((p, i) => (
-                <li key={i} className="text-xs leading-relaxed text-gray-700 text-justify" style={{ listStyleType: 'decimal' }}>{p}</li>
-              ))}
-            </ol>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* Tanda Tangan */}
-      <div className="border-t border-gray-200 pt-5 px-6 pb-6">
+      <div className="px-6 pb-6">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Tanda Tangan Para Pihak</div>
         <div className="grid grid-cols-2 gap-5">
           {/* Pihak Pertama — EFM */}
