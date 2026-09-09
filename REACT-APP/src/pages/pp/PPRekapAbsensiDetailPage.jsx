@@ -98,7 +98,7 @@ export default function PPRekapAbsensiDetailPage() {
 
 
   useEffect(() => {
-    setCrumbs?.(['Private Program', 'Rekap Absensi', '#' + rekapId])
+    setCrumbs?.(['Private Program', 'Rekap Absensi', rekapId])
     return () => setCrumbs?.(null)
   }, [orderId])
 
@@ -146,17 +146,40 @@ export default function PPRekapAbsensiDetailPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-8">
+    <div className="flex flex-col gap-4 pb-24">
 
-      {/* Print CSS — hide admin bar & payment section, isolate document */}
+      {/* Print CSS — isolate rekap document, hide admin chrome */}
       <style>{`
         @media print {
+          html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
           body * { visibility: hidden; }
-          #rekap-print-area, #rekap-print-area * { visibility: visible; }
-          #rekap-print-area {
+          #rkp-print-area, #rkp-print-area * { visibility: visible; }
+          #rkp-print-area {
             position: absolute; left: 0; top: 0; width: 100%;
-            border: none !important; border-radius: 0 !important; box-shadow: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+            background: white !important;
+            margin: 0 !important;
           }
+          #rkp-print-area > div {
+            width: 100% !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            border: none !important;
+            overflow: visible !important;
+            background: white !important;
+          }
+          #rkp-print-area > div * { overflow: visible !important; }
+
+          #rkp-hdr {
+            grid-template-columns: 1.5fr 1fr !important;
+            padding: 1rem 1.25rem !important;
+          }
+          #rkp-hdr-right { text-align: right !important; }
+          .rkp-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
+
+          * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+          @page { margin: 5mm; size: A4 portrait; }
         }
       `}</style>
 
@@ -168,7 +191,7 @@ export default function PPRekapAbsensiDetailPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Rekap Absensi PP</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{rekapId}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">{rekapId}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{order.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
@@ -231,48 +254,50 @@ export default function PPRekapAbsensiDetailPage() {
       {/* ══════════════════════════════════════════════
           DOKUMEN REKAP — print-ready area
       ══════════════════════════════════════════════ */}
-      <div id="rekap-print-area">
-        <div className="overflow-x-auto pb-2">
-          <div className="bg-white rounded-2xl shadow-lg min-w-[660px] max-w-4xl mx-auto w-full overflow-hidden">
+      <div id="rkp-print-area" className="overflow-x-auto">
+        <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
 
             {/* ── Document Header (navy) ── */}
-            <div className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-2 gap-4 text-white">
+            <div id="rkp-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
               {/* Kiri: EFM info */}
               <div className="flex items-start gap-3">
-                <img
-                  src="/logo.png"
-                  alt="EFM Logo"
-                  className="w-20 h-20 rounded-full object-contain shrink-0"
-                  onError={e => { e.currentTarget.style.display = 'none' }}
-                />
-                <div>
-                  <p className="text-base font-bold text-white break-words leading-tight">{cs.namaPerusahaan}</p>
-                  <p className="text-xs text-white/70 mt-0.5">{cs.namaLegal}</p>
-                  <p className="text-xs text-white/70 mt-2 leading-relaxed">{cs.alamat}</p>
-                  <p className="text-xs text-white/70 mt-0.5">{cs.email}</p>
-                  <p className="text-xs text-white/70">{cs.telepon}</p>
+                {cs.logoPerusahaan ? (
+                  <img src={cs.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
+                ) : (
+                  <img src="/logo.png" alt="EFM Logo" className="w-14 h-14 rounded-full object-cover shrink-0" onError={e => { e.target.style.display = 'none' }} />
+                )}
+                <div className="min-w-0 overflow-hidden">
+                  <p className="text-base font-bold break-words leading-snug">{cs.namaPerusahaan}</p>
+                  <p className="text-xs text-white/70 mt-0.5 break-words">{cs.namaLegal}</p>
+                  <p className="text-xs text-white/70 mt-0.5 leading-relaxed break-words">
+                    {cs.alamat
+                      .replace(', Tower A,', ',\nTower A,')
+                      .split('\n')
+                      .map((line, i) => <span key={i}>{i > 0 && <br />}{line}</span>)}
+                  </p>
+                  <p className="text-xs text-white/70 mt-0.5 break-all">{cs.email}</p>
+                  <p className="text-xs text-white/70 mt-0.5">{cs.telepon}</p>
                 </div>
               </div>
 
               {/* Kanan: judul dokumen + info */}
-              <div className="text-right flex flex-col justify-between">
-                <div>
-                  <p className="text-4xl font-black text-white tracking-widest uppercase">REKAP ABSENSI</p>
-                  <p className="text-sm text-gray-300 mt-1">{rekapId}</p>
+              <div id="rkp-hdr-right" className="text-left sm:text-right">
+                <div className="text-2xl sm:text-4xl font-black tracking-widest uppercase">REKAP ABSENSI</div>
+                <div className="text-sm text-gray-300 mt-0.5">{rekapId}</div>
+
+                <div className="flex justify-start sm:justify-end items-center gap-2 mb-0.5 mt-0.5">
+                  <span className="text-xs text-gray-400">Tgl Pengajuan:</span>
+                  <span className="font-semibold text-sm">{tglDiajukan}</span>
                 </div>
-                <div className="space-y-0.5 mt-3">
-                  <p className="text-[10px] text-white/50">Tgl Pengajuan: <span className="text-white font-semibold">{tglDiajukan}</span></p>
-                  <div className="mt-2 flex justify-end">
-                    <span className={`inline-flex items-center px-4 py-1 rounded-full text-sm font-semibold ${badgeDark.cls}`}>
-                      {badgeDark.label}
-                    </span>
-                  </div>
-                </div>
+
+                <span className={`px-4 py-1 rounded-full text-white text-sm font-semibold inline-block mt-0.5 ${badgeSolidCls}`}>
+                  {badgeLight.label}
+                </span>
               </div>
             </div>
 
             {/* ── Ditujukan Untuk ── */}
-            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+            <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Untuk</div>
               <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
                 <p className="text-[18px] font-bold text-[#1E1C43]">{picData?.fullname || 'Pelatih'}</p>
@@ -300,7 +325,7 @@ export default function PPRekapAbsensiDetailPage() {
             </div>
 
             {/* ── Daftar Absensi ── */}
-            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+            <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
               <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
                 <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">Daftar Absensi</div>
                 <span className="text-[10px] text-gray-400 bg-gray-50 border border-gray-200 px-2 py-1 rounded font-semibold uppercase tracking-wide">
@@ -343,7 +368,7 @@ export default function PPRekapAbsensiDetailPage() {
             </div>
 
             {/* ── Rincian Honorarium ── */}
-            <div className="px-6 sm:px-8 py-4 border-b border-gray-100">
+            <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Rincian Honorarium</div>
               <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
                 <table className="w-full">
@@ -371,7 +396,7 @@ export default function PPRekapAbsensiDetailPage() {
             </div>
 
             {/* ── Tanda Tangan ── */}
-            <div className="px-6 sm:px-8 py-4">
+            <div className="rkp-sec px-6 sm:px-8 py-4">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-4">Tanda Tangan</div>
               <div className="grid grid-cols-2 gap-5">
 
@@ -424,16 +449,15 @@ export default function PPRekapAbsensiDetailPage() {
             </div>
 
             {/* ── Document footer ── */}
-            <div className="px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+            <div className="rkp-sec px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
               <p className="text-xs text-gray-500">Terima kasih atas kepercayaan Anda.</p>
               <p className="text-xs font-semibold text-gray-500">
                 Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}
               </p>
             </div>
 
-          </div>
         </div>
-      </div>
+      </div>{/* /overflow-x-auto */}
 
       {/* ── Status Pembayaran Honorarium (admin only, non-printable) ── */}
       {rekapStatus === 'dikonfirmasi' && (
