@@ -408,7 +408,7 @@ export default function PPInvoiceDetailPage() {
               ['Alamat',            invoice.alamat        || '—', 'text-[11px]'],
               ['Tgl Invoice Dibuat',invoice.tanggal       || '—', 'text-[11px]'],
             ].map(([l, v, sizeCls]) => (
-              <div key={l}>
+              <div key={l} className="border-b border-gray-100 pb-2">
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
                 <p className={`${sizeCls} font-semibold text-[#1E1C43]`}>{v}</p>
               </div>
