@@ -132,10 +132,27 @@ Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
    eksplisit: "Sudah oke untuk di-merge ke main? (ya/tidak)"
 
 3. Kalau pengguna menjawab "ya" / "oke" / "lanjut" / "merge"
-   atau kalimat senada yang menyatakan setuju - jalankan merge
-   PR menggunakan gh pr merge (pilih metode merge standar/default
-   project), lalu konfirmasi hasilnya dan berikan link production
-   (efm-admins.vercel.app).
+   atau kalimat senada yang menyatakan setuju, lakukan langkah
+   ini BERURUTAN sebelum merge:
+
+   a. **Push terlebih dahulu** — jalankan `git push` ke branch
+      kerja. Ini memastikan semua commit lokal terbaru sudah ada
+      di remote, termasuk commit yang di-push setelah PR dibuat.
+
+   b. **Verifikasi HEAD sinkron** — bandingkan output `git rev-parse HEAD`
+      (lokal) dengan SHA terbaru di remote branch. Kalau berbeda,
+      push ulang sampai sinkron sebelum lanjut merge.
+
+   c. **Baru merge** — gunakan mcp__github__merge_pull_request
+      dengan merge_method squash. Kalau PR masih draft, panggil
+      update_pull_request (draft: false) lebih dulu.
+
+   d. **Konfirmasi hasil** — laporan hasilnya dan berikan link
+      production (efm-admins.vercel.app).
+
+   ⚠️ JANGAN merge tanpa langkah (a) dan (b). Commit yang belum
+   di-push akan tertinggal dan tidak masuk ke main — ini penyebab
+   utama perubahan yang "hilang" setelah merge.
 
 4. Kalau pengguna menjawab "tidak" / minta revisi - JANGAN merge,
    tunggu instruksi perbaikan lebih lanjut dari pengguna. PR
