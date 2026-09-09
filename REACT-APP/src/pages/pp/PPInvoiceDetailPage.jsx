@@ -400,7 +400,7 @@ export default function PPInvoiceDetailPage() {
 
         {/* Tagihan Kepada */}
         <div className="inv-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Tagihan Kepada</p>
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100 pb-2 mb-3">Tagihan Kepada</p>
           <div id="inv-tagihan-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
             {[
               ['Nama Klien',        invoice.client       || '—', 'text-[11px]'],
@@ -408,7 +408,7 @@ export default function PPInvoiceDetailPage() {
               ['Alamat',            invoice.alamat        || '—', 'text-[11px]'],
               ['Tgl Invoice Dibuat',invoice.tanggal       || '—', 'text-[11px]'],
             ].map(([l, v, sizeCls]) => (
-              <div key={l} className="border-b border-gray-100 pb-2">
+              <div key={l}>
                 <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
                 <p className={`${sizeCls} font-semibold text-[#1E1C43]`}>{v}</p>
               </div>
