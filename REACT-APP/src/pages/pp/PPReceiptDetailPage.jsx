@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useLocation, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Download, Receipt, CheckCircle2, ScrollText } from 'lucide-react'
+import { ArrowLeft, Download, Receipt, ScrollText } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
@@ -34,9 +34,6 @@ function QRVerifikasi({ label, size = 72 }) {
 function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
   const cs = getCompanySettings()
   const sesi = sesiCount(rcp.paket)
-  const matchedBank = cs.rekeningList?.find(b =>
-    rcp.metode.toLowerCase().includes(b.bank.toLowerCase())
-  )
 
   return (
     <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
@@ -154,34 +151,6 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
           </p>
         </div>
       </div>
-
-      {/* Detail Pembayaran Diterima */}
-      <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
-        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">
-          Detail Pembayaran Diterima
-        </p>
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-              <CheckCircle2 size={16} className="text-green-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-[#1E1C43]">{rcp.metode}</p>
-              {matchedBank ? (
-                <p className="text-xs text-gray-400 mt-0.5">
-                  {matchedBank.kcp ? `KCP ${matchedBank.kcp} · ` : ''}{matchedBank.rek} · a.n. {matchedBank.an}
-                </p>
-              ) : (
-                <p className="text-xs text-gray-400 mt-0.5">Pembayaran diterima langsung</p>
-              )}
-            </div>
-            <span className="px-2 py-1 rounded-full text-[10px] font-semibold bg-green-50 text-green-700 border border-green-200 shrink-0">
-              Terkonfirmasi
-            </span>
-          </div>
-        </div>
-      </div>
-
 
       {/* Footer */}
       <div className="rcp-sec px-6 sm:px-8 py-4 text-center space-y-1">
