@@ -218,23 +218,29 @@ function AgreementDoc({ doc }) {
       <div className="border-t border-gray-200 pt-5 px-6 pb-6">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Tanda Tangan Para Pihak</div>
         <div className="grid grid-cols-2 gap-5">
-          <div className="text-center">
-            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
-            <div className="text-xs font-bold text-[#1E1C43] mb-2">Essential Fitness Management (EFM)</div>
-            <div className="h-[72px] flex items-center justify-center mb-2">
+          {/* Pihak Pertama — EFM */}
+          <div className="border border-gray-200 rounded-xl p-4 text-center">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pihak Pertama</p>
+            <p className="text-xs font-bold text-[#1E1C43] mb-3">Essential Fitness Management (EFM)</p>
+            <div className="h-[72px] flex items-center justify-center">
               {company.tandaTanganCEO
                 ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
                 : <EfmSig />}
             </div>
-            <div className="text-xs text-[#1E1C43] font-semibold">{company.namaPenandatangan || 'Manajemen EFM'}</div>
-            <div className="text-[10px] text-text-muted">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</div>
+            <div className="border-t border-gray-100 mt-2 pt-3">
+              <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
+              <p className="text-[10px] text-gray-400 mt-0.5">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</p>
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Kedua</div>
-            <div className="text-xs font-bold text-[#1E1C43] mb-2">Klien</div>
+          {/* Pihak Kedua — Klien */}
+          <div className="border border-gray-200 rounded-xl p-4 text-center">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pihak Kedua</p>
+            <p className="text-xs font-bold text-[#1E1C43] mb-3">Klien</p>
             <ClientSig status={doc.statusTtd} />
-            <div className="text-xs text-[#1E1C43] font-semibold">{doc.namaKlien}</div>
-            <div className="mt-0.5">{sigMeta()}</div>
+            <div className="border-t border-gray-100 mt-2 pt-3">
+              <p className="text-xs font-semibold text-gray-700">{doc.namaKlien}</p>
+              <div className="mt-0.5">{sigMeta()}</div>
+            </div>
           </div>
         </div>
       </div>
