@@ -299,14 +299,13 @@ export default function PPRekapAbsensiDetailPage() {
             {/* ── Ditujukan Untuk ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Ditujukan Untuk</div>
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-3">
+              <div className="flex items-start justify-between gap-4">
                 <p className="text-[18px] font-bold text-[#1E1C43]">{picData?.fullname || 'Pelatih'}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
-                <p className="text-xs text-gray-400 mt-1.5">
-                  Ref Order: <span className="font-semibold text-gray-600">#{orderId}</span>
-                  <span className="mx-1.5 text-gray-300">·</span>
-                  Klien: <span className="font-semibold text-gray-600">{order.namaKlien}</span>
-                </p>
+                <div className="text-right shrink-0">
+                  <p className="text-xs text-gray-500">{prog?.namaPaket || prog?.namaProgram || 'Private Training'}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Ref Order: <span className="font-semibold text-gray-700">#{orderId}</span></p>
+                  <p className="text-xs text-gray-500 mt-0.5">Klien: <span className="font-semibold text-gray-700">{order.namaKlien}</span></p>
+                </div>
               </div>
               {prog && (
                 <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100 mt-3">
