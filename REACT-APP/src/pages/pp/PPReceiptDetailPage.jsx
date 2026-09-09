@@ -176,7 +176,7 @@ export default function PPReceiptDetailPage() {
     state?.receipt || getAllReceipts().find(r => r.rcpNo === id) || null
   )
   useEffect(() => {
-    setCrumbs(['Private Program', 'Receipt', receipt ? '#' + receipt.rcpNo : id])
+    setCrumbs(['Private Program', 'Receipt', receipt ? receipt.rcpNo : id])
     return () => setCrumbs(null)
   }, [receipt?.rcpNo, id])
 
@@ -250,7 +250,7 @@ export default function PPReceiptDetailPage() {
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
               Receipt Pembayaran PP
             </p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{receipt.rcpNo}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">{receipt.rcpNo}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{receipt.client}</span>
               <span className="text-gray-300 text-xs">·</span>

@@ -342,7 +342,7 @@ export default function PPAgreementDetailPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Agreement Klien</p>
-            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{doc.displayId}</h1>
+            <h1 className="text-base font-bold text-[#1E1C43] leading-snug">{doc.displayId}</h1>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
               <span className="text-xs text-gray-500">{doc.namaKlien}</span>
               <span className="text-gray-300 text-xs">·</span>
