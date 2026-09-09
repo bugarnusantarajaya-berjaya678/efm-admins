@@ -34,7 +34,7 @@ function EfmSig() {
 function ClientSig({ status }) {
   if (status === 'signed') {
     return (
-      <div className="h-[72px] border border-[#A9DFBF] rounded-xl flex items-center justify-center bg-[#EAFAF1] mb-2">
+      <div className="h-[72px] flex items-center justify-center mb-2">
         <svg viewBox="0 0 160 48" width="120" height="36">
           <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#27AE60" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M30,42 C40,38 50,44 60,40" fill="none" stroke="#27AE60" strokeWidth="1.5" strokeLinecap="round"/>
@@ -44,7 +44,7 @@ function ClientSig({ status }) {
   }
   if (status === 'waiting-approval') {
     return (
-      <div className="h-[72px] border border-[#AED6F1] rounded-xl flex items-center justify-center bg-[#EBF5FB] mb-2">
+      <div className="h-[72px] flex items-center justify-center mb-2">
         <svg viewBox="0 0 160 48" width="120" height="36">
           <path d="M8,38 C18,14 28,44 42,22 C52,6 60,40 76,18 C88,4 96,36 112,16 C122,6 132,32 152,20" fill="none" stroke="#2980B9" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M30,42 C40,38 50,44 60,40" fill="none" stroke="#2980B9" strokeWidth="1.5" strokeLinecap="round"/>
@@ -54,7 +54,7 @@ function ClientSig({ status }) {
   }
   if (status === 'expired') {
     return (
-      <div className="h-[72px] border border-[#F5B7B1] rounded-xl flex items-center justify-center bg-[#FDEDEC] mb-2">
+      <div className="h-[72px] flex items-center justify-center mb-2">
         <div className="text-center">
           <div className="text-xs font-bold text-[#C0392B]">Agreement Expired</div>
           <div className="text-xs text-[#C0392B] opacity-75 mt-0.5">Perlu pembaharuan dokumen</div>
@@ -63,7 +63,7 @@ function ClientSig({ status }) {
     )
   }
   return (
-    <div className="h-[72px] border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
+    <div className="h-[72px] flex items-center justify-center mb-2">
       <div className="text-center">
         <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" width="20" height="20" className="mx-auto mb-1"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         <div className="text-[10px] font-semibold text-gray-400">Menunggu TTD Klien</div>
@@ -201,11 +201,9 @@ function AgreementDoc({ doc }) {
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
         {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
           <div key={pi} className="mb-3.5">
-            <div className="text-center mb-2">
-              <div className="inline-block pb-1.5 border-b-2 border-[#1E1C43]">
-                <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
-                <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
-              </div>
+            <div className="text-center mb-1.5">
+              <div className="text-[10px] font-bold text-[#1E1C43] uppercase tracking-wide">Pasal {pi + 1}</div>
+              <div className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide">{judul}</div>
             </div>
             <ol className="pl-4 space-y-1">
               {poin.map((p, i) => (
@@ -222,8 +220,8 @@ function AgreementDoc({ doc }) {
         <div className="grid grid-cols-2 gap-5">
           <div className="text-center">
             <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Pihak Pertama</div>
-            <div className="text-xs font-bold text-[#1E1C43] mb-2">EFM</div>
-            <div className="h-[72px] border border-gray-200 rounded-xl flex items-center justify-center bg-gray-50 mb-2">
+            <div className="text-xs font-bold text-[#1E1C43] mb-2">Essential Fitness Management (EFM)</div>
+            <div className="h-[72px] flex items-center justify-center mb-2">
               {company.tandaTanganCEO
                 ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
                 : <EfmSig />}
