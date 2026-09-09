@@ -299,22 +299,23 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Ditujukan Untuk ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-100 pb-2 mb-3">Ditujukan Untuk</p>
               <div id="rkp-pelatih-grid" className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
                 <div>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Pelatih</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">{picData?.fullname || '—'}</p>
+                  <p className="text-[11px] font-semibold text-[#1E1C43]">{picData?.fullname || '—'}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Program</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">{prog?.namaPaket || prog?.namaProgram || '—'}</p>
+                  <p className="text-[11px] font-semibold text-[#1E1C43]">{prog?.namaPaket || prog?.namaProgram || '—'}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Ref Order</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">#{orderId}</p>
+                  <p className="text-[11px] font-semibold text-[#1E1C43]">#{orderId}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Klien</p>
-                  <p className="text-sm font-semibold text-[#1E1C43]">{order.namaKlien}</p>
+                  <p className="text-[11px] font-semibold text-[#1E1C43]">{order.namaKlien}</p>
                 </div>
               </div>
               {prog && (
