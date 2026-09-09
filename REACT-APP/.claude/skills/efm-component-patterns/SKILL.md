@@ -2429,3 +2429,135 @@ Di PPInvoiceDetailPage, banner tema promo ditempatkan **antara navy header card 
 | Display | Baris subtotal + diskon hijau | Kartu hijau info bonus |
 | `subTipe` | `'persen'` / `'nominal'` | `'treatment'` / `'latihan'` / `'produk'` |
 
+---
+
+## 20. Invoice & Receipt Detail — Page Header Card
+
+Berlaku untuk semua halaman detail dokumen: `PPInvoiceDetailPage`, `PPReceiptDetailPage`, dan padanannya di B2B/Event. Ini adalah kartu admin UI di bagian atas halaman (BUKAN bagian dari dokumen PDF/print).
+
+### Struktur
+
+```jsx
+<div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+  <div className="flex items-center gap-2 flex-wrap">
+
+    {/* Icon navy — bukan colored initials */}
+    <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
+      <ScrollText size={16} className="text-white" />  {/* atau Receipt, FileText */}
+    </div>
+
+    {/* Info */}
+    <div className="min-w-0 flex-1">
+      <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Invoice PP</p>
+      <h1 className="text-base font-bold text-[#1E1C43] leading-snug">#{doc.invNo}</h1>
+      <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+        <span className="text-xs text-gray-500">{doc.client}</span>
+        <span className="text-gray-300 text-xs">·</span>
+        {/* Status badge — WAJIB filled + white text, JANGAN outline/border */}
+        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold text-white ${statusBadgeCls}`}>
+          {statusLabel}
+        </span>
+      </div>
+    </div>
+
+    {/* Action buttons — kondisional sesuai status */}
+    <button className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#27AE60] hover:bg-[#1E8449] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
+      <Receipt size={13} /> Lihat Receipt
+    </button>
+    <button onClick={() => window.print()}
+      className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
+      <Download size={13} /> Download PDF
+    </button>
+
+    {/* Back button — WAJIB lighter style */}
+    <button
+      onClick={handleBack}
+      className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0">
+      <ArrowLeft size={13} /> Kembali ke Order #{orderId}
+    </button>
+
+  </div>
+</div>
+```
+
+### Aturan wajib
+
+**Status badge:**
+| Status | Class |
+|---|---|
+| Lunas / Paid | `bg-green-500 text-white` |
+| Pending / Belum Bayar | `bg-yellow-500 text-white` |
+| Overdue | `bg-red-500 text-white` |
+| Draft | `bg-gray-400 text-white` |
+
+⚠️ JANGAN gunakan `bg-green-50 text-green-700 border border-green-200` (outline) — itu pola list page, bukan header card detail page. Header card selalu **filled + white text**.
+
+**Title `<h1>`:** TANPA `truncate` — biarkan wrap secara alami untuk ID dokumen panjang.
+
+**Back button:** `border-gray-200 text-gray-500 font-medium` — lebih subtle dari action button utama. BUKAN `border-gray-300 text-gray-600 font-semibold`.
+
+**Icon pilihan per tipe dokumen:**
+| Halaman | Icon |
+|---|---|
+| Invoice | `ScrollText` |
+| Receipt | `Receipt` |
+| Agreement | `FileText` |
+
+---
+
+## 21. Receipt Document — Struktur & Aturan
+
+Berlaku untuk `PPReceiptDetailPage` (dan padanannya di B2B/Event saat dibuat).
+
+### Urutan section (wajib)
+
+```
+1. Navy Header (logo + info perusahaan | RECEIPT + metadata)
+2. Informasi Pembayaran
+3. Rincian Program + Total strip
+4. Barcode Absensi Sesi
+5. Catatan
+6. Footer
+```
+
+### Informasi Pembayaran — inline grid, TANPA card grey
+
+Field ditampilkan langsung dalam grid, **tanpa** wrapper `bg-gray-50 border border-gray-200 rounded-xl`:
+
+```jsx
+<div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
+  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Informasi Pembayaran</p>
+  <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-8 gap-y-3">
+    {[['Nama Klien', rcp.client], ['Metode Bayar', rcp.metode], ...].map(([l, v]) => (
+      <div key={l}>
+        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{l}</p>
+        <p className="text-sm font-semibold text-[#1E1C43]">{v}</p>
+      </div>
+    ))}
+  </div>
+</div>
+```
+
+### Barcode — ukuran 200px
+
+```jsx
+<QRVerifikasi label={rcp.rcpNo} size={200} />
+```
+
+JANGAN turunkan ke 160px — terlalu kecil untuk dipindai.
+
+### Catatan — styling sama dengan Syarat & Ketentuan di Invoice
+
+```jsx
+<div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
+  <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
+  <ol className="list-decimal list-inside space-y-1.5">
+    <li className="text-xs text-gray-500 leading-relaxed">
+      Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung
+    </li>
+  </ol>
+</div>
+```
+
+Gunakan `<ol>` + `list-decimal` persis seperti Syarat & Ketentuan — bukan `<p>` atau teks polos di dalam card barcode.
+
