@@ -144,9 +144,20 @@ function AgreementDoc({ doc }) {
 
   const sigMeta = () => {
     if (doc.statusTtd === 'signed')
-      return <span className="text-[#27AE60] text-xs">✓ Ditandatangani pada: {doc.tglTtd || doc.tglDibuat}</span>
+      return (
+        <div>
+          <span className="text-[#27AE60] text-xs">Ditandatangani secara elektronik</span>
+          {doc.ttdMetadata && (
+            <div className="mt-1.5 space-y-0.5 text-left">
+              <p className="text-[9px] text-gray-400"><span className="font-semibold">Waktu TTD:</span> {doc.ttdMetadata.timestamp}</p>
+              <p className="text-[9px] text-gray-400"><span className="font-semibold">Perangkat:</span> {doc.ttdMetadata.device}</p>
+              <p className="text-[9px] text-gray-400"><span className="font-semibold">IP:</span> {doc.ttdMetadata.ipAddress}</p>
+            </div>
+          )}
+        </div>
+      )
     if (doc.statusTtd === 'waiting-approval')
-      return <span className="text-[#2980B9] text-xs">⏳ Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
+      return <span className="text-[#2980B9] text-xs">Klien TTD pada: {doc.tglTtd || doc.tglDibuat} — Menunggu approval admin</span>
     if (doc.statusTtd === 'expired')
       return <span className="text-[#C0392B] text-xs">Expired — {doc.tglDibuat}</span>
     return <span className="text-[#B7770D] text-xs">Status: Pending TTD</span>
@@ -454,6 +465,9 @@ export default function PPAgreementDetailPage() {
               <div>
                 <p className="text-xs font-semibold text-blue-800">TTD Klien Diterima — Menunggu Approval Admin</p>
                 <p className="text-[11px] text-blue-700 mt-0.5">Klien telah menandatangani agreement. Verifikasi TTD di atas, lalu klik <strong>Approve Agreement</strong> di bagian atas halaman untuk mengonfirmasi.</p>
+                <p className="text-[10px] text-blue-600 mt-1.5 font-semibold flex items-center gap-1">
+                  <CheckCircle size={10} /> Notifikasi WhatsApp telah dikirim ke admin.
+                </p>
               </div>
             </div>
           </div>
