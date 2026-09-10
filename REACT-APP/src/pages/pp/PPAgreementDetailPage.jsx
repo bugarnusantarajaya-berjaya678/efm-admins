@@ -110,9 +110,18 @@ const DEFAULT_PASAL_DETAIL = [
     'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
     'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
   ]},
+  { judul: 'Penyelesaian Perselisihan', poin: [
+    'Apabila terjadi perselisihan antara Para Pihak sehubungan dengan pelaksanaan Perjanjian ini, Para Pihak sepakat untuk terlebih dahulu menyelesaikannya secara musyawarah untuk mufakat dalam jangka waktu 14 (empat belas) hari kalender sejak perselisihan disampaikan secara tertulis.',
+    'Apabila penyelesaian secara musyawarah tidak tercapai, Para Pihak sepakat untuk menyelesaikan perselisihan melalui Badan Penyelesaian Sengketa Konsumen (BPSK) atau Pengadilan Negeri yang berwenang sesuai ketentuan hukum yang berlaku di Republik Indonesia.',
+  ]},
+  { judul: 'Ketentuan Hukum yang Berlaku', poin: [
+    'Perjanjian ini dibuat, ditafsirkan, dan dilaksanakan berdasarkan hukum yang berlaku di Republik Indonesia.',
+    'Tanda tangan elektronik dalam Perjanjian ini memiliki kekuatan hukum yang sama dengan tanda tangan basah sesuai Undang-Undang Republik Indonesia Nomor 11 Tahun 2008 tentang Informasi dan Transaksi Elektronik (UU ITE) beserta perubahannya.',
+    'Setiap pemberitahuan, persetujuan, atau komunikasi resmi antar Para Pihak yang dilakukan melalui WhatsApp atau media elektronik tertulis lainnya dianggap sah dan mengikat secara hukum.',
+  ]},
   { judul: 'Pernyataan Kesadaran dan Persetujuan', poin: [
-    'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
-    'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
+    'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari seluruh ketentuan dalam Perjanjian ini.',
+    'Perjanjian ini disetujui dan ditandatangani secara elektronik oleh Para Pihak dalam keadaan sadar, sehat jasmani dan rohani, serta tanpa paksaan dari pihak manapun.',
     'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
   ]},
 ]
@@ -196,9 +205,38 @@ function AgreementDoc({ doc }) {
         ))}
       </div>
 
-      {/* Syarat & Ketentuan */}
-      <div className="px-6 py-5">
-        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Syarat dan Ketentuan Layanan</div>
+      {/* Komparisi */}
+      <div className="px-6 py-4">
+        <p className="text-xs text-gray-700 leading-relaxed mb-3">Yang bertandatangan di bawah ini:</p>
+        <div className="space-y-2.5">
+          <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">1. Pihak Pertama</p>
+            <div className="space-y-0.5">
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {company.namaPenandatangan || 'Manajemen EFM'}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Jabatan</span>: {company.jabatanPenandatangan || 'Perwakilan Manajemen'}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Bertindak untuk</span>: {company.namaPerusahaan} / {company.namaLegal}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Alamat</span>: {company.alamat}</p>
+            </div>
+            <p className="text-[10px] font-semibold text-[#1E1C43] mt-2">(selanjutnya disebut <strong>"PIHAK PERTAMA"</strong>)</p>
+          </div>
+          <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">2. Pihak Kedua</p>
+            <div className="space-y-0.5">
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {doc.namaKlien}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">No. WhatsApp</span>: {doc.noWa || '—'}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Alamat</span>: {doc.alamat || '—'}</p>
+            </div>
+            <p className="text-[10px] font-semibold text-[#1E1C43] mt-2">(selanjutnya disebut <strong>"PIHAK KEDUA"</strong>)</p>
+          </div>
+        </div>
+        <p className="text-xs text-gray-700 leading-relaxed mt-3">
+          Selanjutnya PIHAK PERTAMA dan PIHAK KEDUA secara bersama-sama disebut <strong>"Para Pihak"</strong>. Para Pihak sepakat untuk mengikatkan diri dalam Perjanjian ini dengan ketentuan-ketentuan sebagai berikut:
+        </p>
+      </div>
+
+      {/* Ketentuan-Ketentuan Perjanjian */}
+      <div className="px-6 pb-5">
+        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Ketentuan-Ketentuan Perjanjian</div>
         <div className="border border-gray-200 rounded-xl p-4">
           {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
             <div key={pi} className={pi > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}>
@@ -216,9 +254,17 @@ function AgreementDoc({ doc }) {
         </div>
       </div>
 
+      {/* Penutup formal */}
+      <div className="px-6 pb-4 text-center">
+        <p className="text-xs text-gray-600 leading-relaxed">
+          Demikian Perjanjian ini dibuat dan ditandatangani oleh Para Pihak dalam keadaan sadar, sehat jasmani dan rohani, serta tanpa paksaan dari pihak manapun.
+        </p>
+      </div>
+
       {/* Tanda Tangan */}
       <div className="px-6 pb-6">
-        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Tanda Tangan Para Pihak</div>
+        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3">Tanda Tangan Para Pihak</div>
+        <p className="text-xs text-gray-500 text-center mb-4">Jakarta, {doc.tglDibuat}</p>
         <div className="grid grid-cols-2 gap-5">
           {/* Pihak Pertama — EFM */}
           <div className="border border-gray-200 rounded-xl p-4 text-center">
@@ -245,6 +291,10 @@ function AgreementDoc({ doc }) {
             </div>
           </div>
         </div>
+        <p className="text-[10px] text-gray-400 text-center mt-4 leading-relaxed">
+          Dokumen ini ditandatangani secara elektronik dan memiliki kekuatan hukum yang sama dengan tanda tangan basah sesuai UU ITE No. 11 Tahun 2008.<br />
+          Untuk transaksi di atas Rp 5.000.000, berlaku ketentuan Bea Meterai sesuai UU No. 10 Tahun 2020.
+        </p>
       </div>
 
       {/* Document footer */}
