@@ -100,6 +100,8 @@ export default function PPOrderNewPage() {
 
   // Section 7: Catatan
   const [catatanOrder, setCatatanOrder] = useState('');
+  const [peralatanLatihan, setPeralatanLatihan] = useState('Matras, Pakaian Olahraga, Botol Minum');
+  const [catatanKhusus, setCatatanKhusus] = useState('');
 
   // ── Handlers ──────────────────────────────────────
   const handleSelectLead = (lead) => {
@@ -372,6 +374,9 @@ export default function PPOrderNewPage() {
       tglDibuat: formatTglInv(todayDate),
       statusTtd: 'pending',
       tglTtd: null,
+      sapaan: pendaftar.sapaan || 'Kak',
+      peralatanLatihan: peralatanLatihan || '',
+      catatanKhusus: catatanKhusus || '',
     })
 
     navigate('/pp/orders/' + newId)
@@ -1000,12 +1005,27 @@ export default function PPOrderNewPage() {
         {/* ── SECTION 7: Catatan Order ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
           <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Catatan Order</h3>
-          <div>
-            <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Order / Target Klien</label>
-            <textarea value={catatanOrder} onChange={e => setCatatanOrder(e.target.value)}
-              placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
-              rows={3}
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
+          <div className="flex flex-col gap-4">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Order / Target Klien</label>
+              <textarea value={catatanOrder} onChange={e => setCatatanOrder(e.target.value)}
+                placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
+                rows={3}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Peralatan Latihan</label>
+              <input type="text" value={peralatanLatihan} onChange={e => setPeralatanLatihan(e.target.value)}
+                placeholder="cth. Matras, Resistance Band, Botol Minum"
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
+            </div>
+            <div>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Khusus (Agreement)</label>
+              <textarea value={catatanKhusus} onChange={e => setCatatanKhusus(e.target.value)}
+                placeholder="Kondisi kesehatan khusus, instruksi spesifik untuk pelatih, dll..."
+                rows={2}
+                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
+            </div>
           </div>
         </div>
 

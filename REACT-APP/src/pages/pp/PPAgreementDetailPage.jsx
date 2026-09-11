@@ -306,7 +306,7 @@ function AgreementDoc({ doc }) {
           <div className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">2. Pihak Kedua</p>
             <div className="space-y-0.5">
-              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {doc.namaKlien}</p>
+              <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {doc.sapaan ? doc.sapaan + ' ' : ''}{doc.namaKlien}</p>
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">No. WhatsApp</span>: {doc.noWa || '—'}</p>
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Alamat</span>: {doc.alamat || '—'}</p>
             </div>
