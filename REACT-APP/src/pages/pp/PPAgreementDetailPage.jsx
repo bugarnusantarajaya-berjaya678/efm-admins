@@ -390,13 +390,13 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Lampiran A — Detail Paket & Informasi Order */}
-      <div className="px-6 pb-6 border-t border-dashed border-gray-200 pt-4">
+      <div id="agr-lampiran" className="px-6 pb-6 border-t border-dashed border-gray-200 pt-4">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center mb-3">Lampiran A — Detail Paket &amp; Informasi Order</p>
         <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {detailCells.map(([lbl, val]) => (
             <div key={lbl} className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white min-w-0 overflow-hidden">
               <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
-              <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
+              <div className="agr-cell-val text-sm font-semibold text-[#1E1C43] break-words">{val}</div>
             </div>
           ))}
         </div>
@@ -411,7 +411,7 @@ function AgreementDoc({ doc }) {
             </div>
             <div className="border-t border-gray-100 pt-2.5">
               <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Catatan Khusus Dari Klien</div>
-              <div className="text-xs font-semibold text-gray-700">{doc.catatanKhusus || 'Tidak ada'}</div>
+              <div className="agr-catatan-val text-xs font-semibold text-gray-700">{doc.catatanKhusus || 'Tidak ada'}</div>
             </div>
           </div>
         </div>
@@ -467,16 +467,27 @@ export default function PPAgreementDetailPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-24">
+    <div id="agr-page-root" className="flex flex-col gap-4 pb-24">
 
       {/* Print CSS — isolate agreement document, hide admin chrome */}
       <style>{`
         @media print {
           html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+
+          /* Sembunyikan semua konten, lalu tampilkan hanya area cetak */
           body * { visibility: hidden; }
           #agr-print-area, #agr-print-area * { visibility: visible; }
+
+          /* Kolapskan admin chrome dari flow (bukan hanya sembunyikan)
+             agar #agr-print-area mulai dari posisi paling atas halaman */
+          .no-print { display: none !important; }
+          #agr-page-root { display: block !important; padding: 0 !important; }
+
+          /* KUNCI: position: static agar break-before:page bisa bekerja.
+             position:absolute menonaktifkan page-break di dalam elemen. */
           #agr-print-area {
-            position: absolute; left: 0; top: 0; width: 100%;
+            position: static !important;
+            width: 100% !important;
             overflow: visible !important;
             padding: 0 !important;
             margin: 0 !important;
@@ -509,6 +520,32 @@ export default function PPAgreementDetailPage() {
           #agr-ttd-section { break-inside: avoid; page-break-inside: avoid; }
           #agr-komparisi { break-inside: avoid; page-break-inside: avoid; }
 
+          /* Lampiran A — selalu mulai di halaman baru (mandiri)
+             Hapus border dashed karena sudah halaman sendiri */
+          #agr-lampiran {
+            break-before: page;
+            page-break-before: always;
+            border-top: none !important;
+            padding-top: 1rem !important;
+          }
+
+          /* Kunci tinggi cell agar tiap klien konsisten */
+          .agr-cell-val {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            word-break: break-word;
+          }
+          /* Catatan khusus boleh sedikit lebih panjang */
+          .agr-catatan-val {
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            word-break: break-word;
+          }
+
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page {
@@ -525,7 +562,7 @@ export default function PPAgreementDetailPage() {
       `}</style>
 
       {/* Page header */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
+      <div className="no-print bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4">
         <div className="flex items-center gap-2 flex-wrap">
           <div className="w-10 h-10 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
             <FileText size={16} className="text-white" />
