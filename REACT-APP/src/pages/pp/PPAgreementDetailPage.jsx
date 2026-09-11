@@ -217,7 +217,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Komparisi */}
-      <div className="px-6 py-4">
+      <div id="agr-komparisi" className="px-6 py-4">
         <p className="text-xs text-gray-700 leading-relaxed mb-3">Yang bertandatangan di bawah ini:</p>
         <div className="space-y-2.5">
           <div className="bg-gray-50 rounded-xl px-3 py-2.5">
@@ -248,7 +248,7 @@ function AgreementDoc({ doc }) {
       {/* Ketentuan-Ketentuan Perjanjian */}
       <div className="px-6 pb-5">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Ketentuan-Ketentuan Perjanjian</div>
-        <div className="border border-gray-200 rounded-xl p-4">
+        <div id="agr-pasals-card" className="border border-gray-200 rounded-xl p-4">
           {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
             <div key={pi} className={pi > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}>
               <div className="text-center mb-1.5">
@@ -273,7 +273,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Tanda Tangan */}
-      <div className="px-6 pb-6">
+      <div id="agr-ttd-section" className="px-6 pb-6">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3">Tanda Tangan Para Pihak</div>
         <p className="text-xs text-gray-500 text-center mb-4">Jakarta, {doc.tglDibuat}</p>
         <div className="grid grid-cols-2 gap-5">
@@ -372,18 +372,21 @@ export default function PPAgreementDetailPage() {
             position: absolute; left: 0; top: 0; width: 100%;
             overflow: visible !important;
             padding: 0 !important;
-            background: white !important;
             margin: 0 !important;
+            background: white !important;
           }
           #agr-print-area > div {
             width: 100% !important;
+            min-width: unset !important;
+            max-width: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
             border: none !important;
             overflow: visible !important;
             background: white !important;
           }
-          #agr-print-area > div * { overflow: visible !important; }
+          /* hanya satu level — tidak broadcast ke semua descendant */
+          #agr-print-area > div > * { overflow: visible !important; }
 
           /* sm: breakpoint tidak aktif di print viewport */
           #agr-hdr {
@@ -395,9 +398,14 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
           #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
+          /* Page break — tiap pasal, komparisi, dan TTD tidak terpotong */
+          #agr-pasals-card > div { break-inside: avoid; page-break-inside: avoid; }
+          #agr-ttd-section { break-inside: avoid; page-break-inside: avoid; }
+          #agr-komparisi { break-inside: avoid; page-break-inside: avoid; }
+
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { margin: 5mm; size: A4 portrait; }
+          @page { margin: 10mm; size: A4 portrait; }
         }
       `}</style>
 
