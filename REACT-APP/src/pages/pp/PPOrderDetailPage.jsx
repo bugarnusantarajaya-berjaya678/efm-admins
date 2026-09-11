@@ -1917,6 +1917,13 @@ export default function PPOrderDetailPage() {
             const totalHadir = absensiSesi.length
             const sesiTersisa = Math.max(0, totalPaket - totalHadir)
             const pctHadir = Math.min(100, Math.round((totalHadir / totalPaket) * 100))
+            const tglMulaiAktual = order.tglMulaiAktual || null
+            const masaDays = (() => { const m = (prog?.masaBerlaku || '').match(/\d+/); return m ? parseInt(m[0]) : 0 })()
+            const tglBerakhirAktual = tglMulaiAktual && masaDays > 0
+              ? new Date(new Date(tglMulaiAktual).getTime() + masaDays * 86400000)
+              : null
+            const today0 = new Date(); today0.setHours(0, 0, 0, 0)
+            const sisaHari = tglBerakhirAktual ? Math.ceil((tglBerakhirAktual - today0) / 86400000) : null
             return (
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
                 <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
@@ -1949,9 +1956,20 @@ export default function PPOrderDetailPage() {
                       style={{ width: pctHadir + '%' }}
                     />
                   </div>
-                  {prog?.masaBerlaku && (
-                    <p className="text-xs text-gray-400 mt-1.5">Masa berlaku paket: <span className="font-semibold text-gray-600">{prog.masaBerlaku}</span></p>
-                  )}
+                  <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { label: 'Estimasi Mulai', value: order.tanggalMulai ? fmtDate(order.tanggalMulai) : '—', note: 'Rencana di Agreement' },
+                      { label: 'Aktual Mulai', value: tglMulaiAktual ? fmtDate(tglMulaiAktual) : '—', note: tglMulaiAktual ? 'Sesi ke-1 terlaksana' : 'Belum ada sesi' },
+                      { label: 'Berakhir (Aktual)', value: tglBerakhirAktual ? fmtDate(tglBerakhirAktual.toISOString().split('T')[0]) : '—', note: prog?.masaBerlaku ? `Berlaku ${prog.masaBerlaku}` : '—' },
+                      { label: 'Sisa Hari', value: sisaHari === null ? '—' : sisaHari <= 0 ? 'Selesai' : sisaHari + ' hari', note: 'Per hari ini', red: sisaHari !== null && sisaHari > 0 && sisaHari <= 7 },
+                    ].map(item => (
+                      <div key={item.label} className="bg-white rounded-lg p-2.5 border border-gray-100">
+                        <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">{item.label}</p>
+                        <p className={`text-xs font-semibold ${item.red ? 'text-red-600' : 'text-gray-800'}`}>{item.value}</p>
+                        <p className="text-[10px] text-gray-400 mt-0.5">{item.note}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <div className="overflow-x-auto">
