@@ -309,6 +309,12 @@ function AgreementDoc({ doc }) {
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {doc.sapaan ? doc.sapaan + ' ' : ''}{doc.namaKlien}</p>
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">No. WhatsApp</span>: {doc.noWa || '—'}</p>
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Alamat</span>: {doc.alamat || '—'}</p>
+              {doc.pendaftarSamaDenganKlien === false && doc.namaWali && (
+                <>
+                  <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Diwakili oleh</span>: {doc.namaWali} ({doc.hubunganWali})</p>
+                  <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">WA Wali</span>: {doc.noWaWali || '—'}</p>
+                </>
+              )}
             </div>
             <p className="text-[10px] font-semibold text-[#1E1C43] mt-2">(selanjutnya disebut <strong>"PIHAK KEDUA"</strong>)</p>
           </div>
@@ -373,13 +379,18 @@ function AgreementDoc({ doc }) {
             <p className="text-xs font-bold text-[#1E1C43] mb-3">Essential Fitness Management (EFM)</p>
             {efmTtdContent()}
           </div>
-          {/* Pihak Kedua — Klien */}
+          {/* Pihak Kedua — Klien / Wali */}
           <div className="border border-gray-200 rounded-xl p-4 text-center">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pihak Kedua</p>
-            <p className="text-xs font-bold text-[#1E1C43] mb-3">Klien</p>
+            <p className="text-xs font-bold text-[#1E1C43] mb-3">{doc.pendaftarSamaDenganKlien === false ? 'Wali / Pendaftar' : 'Klien'}</p>
             <ClientSig status={doc.statusTtd} />
             <div className="border-t border-gray-100 mt-2 pt-3">
-              <p className="text-xs font-semibold text-gray-700">{doc.namaKlien}</p>
+              <p className="text-xs font-semibold text-gray-700">
+                {doc.pendaftarSamaDenganKlien === false && doc.namaWali ? doc.namaWali : doc.namaKlien}
+              </p>
+              {doc.pendaftarSamaDenganKlien === false && doc.namaWali && (
+                <p className="text-[10px] text-gray-400 mt-0.5">Bertindak atas nama: {doc.namaKlien}</p>
+              )}
               <div className="mt-0.5">{sigMeta()}</div>
             </div>
           </div>
