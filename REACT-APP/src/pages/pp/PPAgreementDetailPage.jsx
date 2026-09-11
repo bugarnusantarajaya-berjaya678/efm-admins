@@ -472,21 +472,21 @@ export default function PPAgreementDetailPage() {
       {/* Print CSS — isolate agreement document, hide admin chrome */}
       <style>{`
         @media print {
-          html, body { background: white !important; margin: 0 !important; padding: 0 !important; }
+          html, body { background: white !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; height: auto !important; }
 
           /* Sembunyikan semua konten, lalu tampilkan hanya area cetak */
           body * { visibility: hidden; }
           #agr-print-area, #agr-print-area * { visibility: visible; }
 
-          /* Kolapskan admin chrome dari flow (bukan hanya sembunyikan)
-             agar #agr-print-area mulai dari posisi paling atas halaman */
+          /* Kolapskan admin chrome dari flow */
           .no-print { display: none !important; }
-          #agr-page-root { display: block !important; padding: 0 !important; }
 
-          /* KUNCI: position: static agar break-before:page bisa bekerja.
-             position:absolute menonaktifkan page-break di dalam elemen. */
+          /* position:absolute agar area cetak menempel ke pojok kiri atas
+             tanpa dipengaruhi layout admin di sekitarnya */
           #agr-print-area {
-            position: static !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
             width: 100% !important;
             overflow: visible !important;
             padding: 0 !important;
