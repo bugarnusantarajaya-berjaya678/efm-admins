@@ -85,8 +85,9 @@ const DEFAULT_PASAL_DETAIL = [
     'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen PIHAK PERTAMA berdasarkan kualifikasi spesifik yang dibutuhkan oleh program PIHAK KEDUA.',
   ]},
   { judul: 'Masa Berlaku Paket (Validity Period)', poin: [
-    'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
-    'Jika masa berlaku paket telah habis sedangkan PIHAK KEDUA belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem PIHAK PERTAMA.',
+    'Masa berlaku paket sebagaimana tercantum dalam Lampiran A dihitung mulai dari tanggal sesi pertama yang benar-benar terlaksana dan tercatat dalam sistem EFM ("Tanggal Mulai Aktual"), bukan dari estimasi tanggal mulai yang disepakati pada saat penandatanganan Perjanjian ini. Apabila sesi pertama tidak dapat dilaksanakan sesuai estimasi yang tercantum, masa berlaku paket secara otomatis menyesuaikan mengikuti Tanggal Mulai Aktual tersebut.',
+    'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan sebelum berakhirnya masa berlaku paket, dihitung dari Tanggal Mulai Aktual ditambah durasi masa berlaku sebagaimana tertera pada kolom Masa Berlaku Paket di Lampiran A.',
+    'Jika masa berlaku paket telah habis sedangkan PIHAK KEDUA belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem PIHAK PERTAMA, kecuali disebabkan oleh kondisi Force Majeure sebagaimana diatur dalam ketentuan Force Majeure Perjanjian ini.',
   ]},
   { judul: 'Kebijakan Pembatalan dan Penjadwalan Ulang', poin: [
     'Non-Darurat: PIHAK KEDUA wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
@@ -151,7 +152,9 @@ function AgreementDoc({ doc }) {
     ['Alamat',                doc.alamat || '—'],
     ['Kontak Darurat',        doc.kontakDarurat || '—'],
     ['Order ID',              '#' + doc.orderId],
+    ['No. Receipt',           doc.noReceipt || '—'],
     ['Paket Dipilih',         doc.paket],
+    ['Total Harga Paket',     doc.harga || '—'],
     ['Masa Berlaku',          doc.masaBerlaku || '—'],
     ['Harga Per Sesi',        doc.hargaPerSesi || 'Rp200.000'],
     ['Durasi Per Sesi',       doc.durasiLatihan || '60 Menit'],
@@ -159,9 +162,9 @@ function AgreementDoc({ doc }) {
     ['Lokasi Latihan',        doc.lokasiLatihan || '—'],
     ['Hari Latihan',          doc.hariLatihan || '—'],
     ['Jam Latihan',           doc.jamLatihan || '—'],
-    ['Tanggal Mulai Program',    doc.tglMulai || '—'],
-    ['Tanggal Berakhir Program', doc.tglBerakhir || '—'],
-    ['Tanggal Dibuat',           doc.tglDibuat],
+    ['Estimasi Mulai Program',        doc.tglMulai || '—'],
+    ['Estimasi Berakhir Paket (Maks)', doc.tglBerakhir || '—'],
+    ['Tanggal Dibuat',                doc.tglDibuat],
   ]
 
   const sigMeta = () => {
@@ -316,7 +319,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Konsiderans */}
-      <div className="px-6 pb-4">
+      <div id="agr-konsiderans" className="px-6 pb-4">
         <div className="border border-gray-200 rounded-xl px-4 py-3 bg-white">
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Konsiderans</p>
           <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
@@ -348,7 +351,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Pernyataan Klien */}
-      <div className="px-6 pb-4">
+      <div id="agr-pernyataan" className="px-6 pb-4">
         <div className="border border-gray-200 rounded-xl px-4 py-3.5 bg-white">
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2.5">Pernyataan Klien</p>
           <div className="space-y-2 text-xs text-gray-700 leading-relaxed text-justify">
@@ -400,6 +403,10 @@ function AgreementDoc({ doc }) {
             </div>
           ))}
         </div>
+
+        <p className="text-[9px] text-gray-400 mt-2 text-center italic">
+          * Estimasi mulai dan berakhir dihitung dari rencana sesi pertama saat penandatanganan. Masa berlaku aktual dihitung dari tanggal sesi pertama yang benar-benar terlaksana (lihat Pasal 2).
+        </p>
 
         {/* Keterangan Tambahan */}
         <div className="mt-3 border border-gray-200 rounded-xl px-4 py-3 bg-white">
@@ -515,10 +522,12 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
           #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
-          /* Page break — tiap pasal, komparisi, dan TTD tidak terpotong */
+          /* Page break — tiap pasal, komparisi, TTD, konsiderans, dan pernyataan tidak terpotong */
           #agr-pasals-card > div { break-inside: avoid; page-break-inside: avoid; }
           #agr-ttd-section { break-inside: avoid; page-break-inside: avoid; }
           #agr-komparisi { break-inside: avoid; page-break-inside: avoid; }
+          #agr-konsiderans { break-inside: avoid; page-break-inside: avoid; }
+          #agr-pernyataan { break-inside: avoid; page-break-inside: avoid; }
 
           /* Lampiran A — selalu mulai di halaman baru (mandiri)
              Hapus border dashed karena sudah halaman sendiri */
