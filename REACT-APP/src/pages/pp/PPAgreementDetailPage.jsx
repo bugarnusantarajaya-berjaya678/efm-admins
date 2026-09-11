@@ -13,7 +13,6 @@ const BADGE_FILLED = {
   expired:            'bg-red-500 text-white',
 }
 
-/* ── helpers ── */
 function DocBadge({ status }) {
   return (
     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${BADGE_FILLED[status] || 'bg-gray-400 text-white'}`}>
@@ -22,7 +21,6 @@ function DocBadge({ status }) {
   )
 }
 
-/* ── EFM Signature SVG ── */
 function EfmSig() {
   return (
     <svg viewBox="0 0 160 48" width="120" height="36">
@@ -73,7 +71,6 @@ function ClientSig({ status }) {
   )
 }
 
-/* ── Settings helpers ── */
 function getTemplatePasal() {
   try {
     const s = localStorage.getItem('efmAgreementTemplate')
@@ -84,31 +81,43 @@ function getTemplatePasal() {
 
 const DEFAULT_PASAL_DETAIL = [
   { judul: 'Ruang Lingkup Layanan', poin: [
-    'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
-    'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
+    'PIHAK PERTAMA menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada PIHAK KEDUA sesuai dengan detail paket yang dipilih.',
+    'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen PIHAK PERTAMA berdasarkan kualifikasi spesifik yang dibutuhkan oleh program PIHAK KEDUA.',
   ]},
   { judul: 'Masa Berlaku Paket (Validity Period)', poin: [
     'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
-    'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
+    'Jika masa berlaku paket telah habis sedangkan PIHAK KEDUA belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem PIHAK PERTAMA.',
   ]},
   { judul: 'Kebijakan Pembatalan dan Penjadwalan Ulang', poin: [
-    'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
+    'Non-Darurat: PIHAK KEDUA wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
     'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
-    'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
-    'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
+    'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara PIHAK KEDUA dan Pelatih/Terapis yang ditunjuk.',
+    'Pembatalan sepihak oleh PIHAK KEDUA kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
   ]},
   { judul: 'Pembayaran dan Validasi Order', poin: [
-    'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
-    'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
+    'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi PIHAK PERTAMA yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
+    'PIHAK KEDUA wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
   ]},
   { judul: 'Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', poin: [
-    'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
-    'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
-    'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
+    'PIHAK KEDUA menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
+    'PIHAK KEDUA memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
+    'PIHAK PERTAMA beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian PIHAK KEDUA atau adanya kondisi medis tersembunyi.',
   ]},
   { judul: 'Kerjasama dan Etika dengan Pelatih/Terapis', poin: [
-    'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
-    'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+    'Setiap Pelatih atau Terapis yang bertugas di PIHAK PERTAMA memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
+    'PIHAK KEDUA dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis PIHAK PERTAMA di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
+  ]},
+  { judul: 'Kerahasiaan dan Perlindungan Data Pribadi', poin: [
+    'PIHAK PERTAMA berkomitmen untuk menjaga kerahasiaan seluruh data pribadi dan data kesehatan PIHAK KEDUA, termasuk kondisi fisik, riwayat cedera, dan catatan medis, sesuai Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP).',
+    'Data pribadi PIHAK KEDUA tidak akan dibagikan kepada pihak ketiga tanpa persetujuan tertulis dari PIHAK KEDUA, kecuali diwajibkan oleh ketentuan perundang-undangan yang berlaku.',
+    'PIHAK KEDUA memberikan persetujuan kepada PIHAK PERTAMA untuk memproses data pribadi dan data kesehatannya semata-mata dalam rangka pelaksanaan program layanan yang disepakati dalam Perjanjian ini.',
+    'PIHAK KEDUA berhak mengajukan permintaan akses, pembaruan, atau penghapusan datanya sesuai mekanisme yang ditetapkan oleh PIHAK PERTAMA.',
+  ]},
+  { judul: 'Force Majeure', poin: [
+    'Force Majeure dalam Perjanjian ini adalah setiap kejadian di luar kendali Para Pihak, termasuk namun tidak terbatas pada: bencana alam, kebakaran, banjir, gempa bumi, pandemi, huru-hara, pemadaman listrik massal, atau kebijakan pemerintah yang melarang kegiatan operasional.',
+    'Pihak yang mengalami Force Majeure wajib memberitahukan secara tertulis kepada Pihak lainnya dalam waktu 3 (tiga) hari kerja sejak terjadinya kondisi tersebut, disertai bukti pendukung yang sah.',
+    'Sesi yang tidak dapat dilaksanakan selama kondisi Force Majeure berlangsung akan ditangguhkan dan tidak dihitung sebagai sesi terpakai. Masa berlaku paket dapat diperpanjang sebanding dengan durasi Force Majeure yang telah diverifikasi.',
+    'Force Majeure tidak membebaskan Para Pihak dari kewajiban pembayaran yang telah jatuh tempo sebelum terjadinya kondisi tersebut.',
   ]},
   { judul: 'Penyelesaian Perselisihan', poin: [
     'Apabila terjadi perselisihan antara Para Pihak sehubungan dengan pelaksanaan Perjanjian ini, Para Pihak sepakat untuk terlebih dahulu menyelesaikannya secara musyawarah untuk mufakat dalam jangka waktu 14 (empat belas) hari kalender sejak perselisihan disampaikan secara tertulis.',
@@ -119,16 +128,21 @@ const DEFAULT_PASAL_DETAIL = [
     'Tanda tangan elektronik dalam Perjanjian ini memiliki kekuatan hukum yang sama dengan tanda tangan basah sesuai Undang-Undang Republik Indonesia Nomor 11 Tahun 2008 tentang Informasi dan Transaksi Elektronik (UU ITE) beserta perubahannya.',
     'Setiap pemberitahuan, persetujuan, atau komunikasi resmi antar Para Pihak yang dilakukan melalui WhatsApp atau media elektronik tertulis lainnya dianggap sah dan mengikat secara hukum.',
   ]},
+  { judul: 'Perubahan Perjanjian dan Pemisahan Klausul', poin: [
+    'Perubahan atau penambahan terhadap ketentuan dalam Perjanjian ini hanya dapat dilakukan berdasarkan kesepakatan tertulis Para Pihak dan merupakan bagian yang tidak terpisahkan dari Perjanjian ini.',
+    'Apabila salah satu atau beberapa ketentuan dalam Perjanjian ini dinyatakan tidak sah atau tidak dapat dilaksanakan berdasarkan hukum yang berlaku, maka ketentuan-ketentuan lainnya tetap sah, berlaku, dan mengikat Para Pihak.',
+  ]},
   { judul: 'Pernyataan Kesadaran dan Persetujuan', poin: [
-    'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari seluruh ketentuan dalam Perjanjian ini.',
+    'PIHAK KEDUA menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari seluruh ketentuan dalam Perjanjian ini.',
     'Perjanjian ini disetujui dan ditandatangani secara elektronik oleh Para Pihak dalam keadaan sadar, sehat jasmani dan rohani, serta tanpa paksaan dari pihak manapun.',
-    'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
+    'PIHAK KEDUA sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional PIHAK PERTAMA.',
   ]},
 ]
 
 /* ── Agreement Document ── */
 function AgreementDoc({ doc }) {
   const company = getCompanySettings()
+
   const detailCells = [
     ['Nama Klien',     doc.namaKlien],
     ['Nama Panggilan', doc.namaPanggilan || '—'],
@@ -163,11 +177,69 @@ function AgreementDoc({ doc }) {
     return <span className="text-[#B7770D] text-xs">Status: Pending TTD</span>
   }
 
+  const efmTtdContent = () => {
+    if (doc.statusTtd === 'signed') {
+      return (
+        <>
+          <div className="h-[72px] flex items-center justify-center">
+            {company.tandaTanganCEO
+              ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
+              : <EfmSig />}
+          </div>
+          <div className="border-t border-gray-100 mt-2 pt-3">
+            <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{company.jabatanPenandatangan || 'Perwakilan Manajemen'}</p>
+            {doc.approvalTimestamp && (
+              <div className="mt-1.5 space-y-0.5 text-left">
+                <p className="text-[9px] text-gray-400"><span className="font-semibold">Disetujui oleh:</span> {doc.approvedBy}</p>
+                <p className="text-[9px] text-gray-400"><span className="font-semibold">Waktu:</span> {doc.approvalTimestamp}</p>
+              </div>
+            )}
+          </div>
+        </>
+      )
+    }
+    if (doc.statusTtd === 'waiting-approval') {
+      return (
+        <>
+          <div className="h-[72px] flex items-center justify-center">
+            <div className="text-center">
+              <Clock size={18} className="text-blue-400 mx-auto mb-1" />
+              <div className="text-[10px] font-semibold text-blue-500">Menunggu Review Admin</div>
+              <div className="text-[9px] text-gray-400 mt-0.5">Klien telah menandatangani</div>
+            </div>
+          </div>
+          <div className="border-t border-gray-100 mt-2 pt-3">
+            <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">Belum disetujui</p>
+          </div>
+        </>
+      )
+    }
+    return (
+      <>
+        <div className="h-[72px] flex items-center justify-center">
+          <div className="text-center">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5" width="20" height="20" className="mx-auto mb-1">
+              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+            </svg>
+            <div className="text-[10px] font-semibold text-gray-400">Belum Disetujui</div>
+            <div className="text-[9px] text-gray-400 opacity-75">Menunggu TTD Klien</div>
+          </div>
+        </div>
+        <div className="border-t border-gray-100 mt-2 pt-3">
+          <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
+          <p className="text-[10px] text-gray-400 mt-0.5">Belum disetujui</p>
+        </div>
+      </>
+    )
+  }
+
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
+
       {/* Navy header */}
       <div id="agr-hdr" className="bg-[#1E1C43] rounded-t-2xl px-6 py-4 sm:px-8 sm:py-5 grid grid-cols-1 sm:grid-cols-[1.5fr_1fr] gap-4 text-white">
-        {/* Left — logo + company info */}
         <div className="flex items-start gap-3">
           {company.logoPerusahaan ? (
             <img src={company.logoPerusahaan} alt="EFM Logo" className="w-14 h-14 rounded-full object-contain shrink-0" />
@@ -188,10 +260,10 @@ function AgreementDoc({ doc }) {
           </div>
         </div>
 
-        {/* Right — AGREEMENT title + doc info + status */}
         <div id="agr-hdr-right" className="text-left sm:text-right">
-          <div id="agr-hdr-title" className="text-2xl sm:text-4xl font-black tracking-widest uppercase">AGREEMENT</div>
-          <div className="text-sm text-gray-300 mt-0.5">{doc.displayId}</div>
+          <div id="agr-hdr-title" className="text-2xl sm:text-4xl font-black tracking-widest uppercase leading-tight">PERJANJIAN</div>
+          <div className="text-xs text-gray-400 mt-0.5 tracking-wide">Layanan Program Privat</div>
+          <div className="text-sm text-gray-300 mt-1">{doc.displayId}</div>
           <div className="agr-date-row flex justify-start sm:justify-end items-center gap-2 mt-1 mb-0.5">
             <span className="text-xs text-gray-400">Ref. Invoice:</span>
             <span className="font-semibold text-sm">{doc.refInvoice || '—'}</span>
@@ -206,18 +278,8 @@ function AgreementDoc({ doc }) {
         </div>
       </div>
 
-      {/* Detail grid */}
-      <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 px-5 py-5">
-        {detailCells.map(([lbl, val]) => (
-          <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
-            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
-            <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Komparisi */}
-      <div className="px-6 py-4">
+      {/* Komparisi — langsung setelah header */}
+      <div id="agr-komparisi" className="px-6 py-4">
         <p className="text-xs text-gray-700 leading-relaxed mb-3">Yang bertandatangan di bawah ini:</p>
         <div className="space-y-2.5">
           <div className="bg-gray-50 rounded-xl px-3 py-2.5">
@@ -245,10 +307,22 @@ function AgreementDoc({ doc }) {
         </p>
       </div>
 
+      {/* Konsiderans */}
+      <div className="px-6 pb-4">
+        <div className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Konsiderans</p>
+          <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
+            <p>Bahwa PIHAK PERTAMA adalah badan usaha yang bergerak di bidang layanan program kebugaran dan pelatihan fisik privat, serta memiliki kapasitas dan kompetensi untuk menyelenggarakan layanan tersebut secara profesional.</p>
+            <p>Bahwa PIHAK KEDUA bermaksud menggunakan layanan program latihan atau terapi privat yang disediakan oleh PIHAK PERTAMA sesuai kebutuhan dan kemampuannya.</p>
+            <p>Bahwa Para Pihak sepakat untuk saling mengikatkan diri dalam suatu Perjanjian Layanan Program Privat yang diatur dengan ketentuan-ketentuan sebagaimana tersebut di bawah ini.</p>
+          </div>
+        </div>
+      </div>
+
       {/* Ketentuan-Ketentuan Perjanjian */}
       <div className="px-6 pb-5">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Ketentuan-Ketentuan Perjanjian</div>
-        <div className="border border-gray-200 rounded-xl p-4">
+        <div id="agr-pasals-card" className="border border-gray-200 rounded-xl p-4">
           {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
             <div key={pi} className={pi > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}>
               <div className="text-center mb-1.5">
@@ -273,7 +347,7 @@ function AgreementDoc({ doc }) {
       </div>
 
       {/* Tanda Tangan */}
-      <div className="px-6 pb-6">
+      <div id="agr-ttd-section" className="px-6 pb-6">
         <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3">Tanda Tangan Para Pihak</div>
         <p className="text-xs text-gray-500 text-center mb-4">Jakarta, {doc.tglDibuat}</p>
         <div className="grid grid-cols-2 gap-5">
@@ -281,15 +355,7 @@ function AgreementDoc({ doc }) {
           <div className="border border-gray-200 rounded-xl p-4 text-center">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pihak Pertama</p>
             <p className="text-xs font-bold text-[#1E1C43] mb-3">Essential Fitness Management (EFM)</p>
-            <div className="h-[72px] flex items-center justify-center">
-              {company.tandaTanganCEO
-                ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
-                : <EfmSig />}
-            </div>
-            <div className="border-t border-gray-100 mt-2 pt-3">
-              <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
-              <p className="text-[10px] text-gray-400 mt-0.5">{company.jabatanPenandatangan || 'Ditandatangani secara digital'}</p>
-            </div>
+            {efmTtdContent()}
           </div>
           {/* Pihak Kedua — Klien */}
           <div className="border border-gray-200 rounded-xl p-4 text-center">
@@ -302,10 +368,6 @@ function AgreementDoc({ doc }) {
             </div>
           </div>
         </div>
-        <p className="text-[10px] text-gray-400 text-center mt-4 leading-relaxed">
-          Dokumen ini ditandatangani secara elektronik dan memiliki kekuatan hukum yang sama dengan tanda tangan basah sesuai UU ITE No. 11 Tahun 2008.<br />
-          Untuk transaksi di atas Rp 5.000.000, berlaku ketentuan Bea Meterai sesuai UU No. 10 Tahun 2020.
-        </p>
       </div>
 
       {/* Document footer */}
@@ -313,6 +375,20 @@ function AgreementDoc({ doc }) {
         <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
         <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
+
+      {/* Lampiran A — Detail Paket & Informasi Order */}
+      <div className="px-6 pb-6 border-t border-dashed border-gray-200 pt-4">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center mb-3">Lampiran A — Detail Paket &amp; Informasi Order</p>
+        <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          {detailCells.map(([lbl, val]) => (
+            <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
+              <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
+              <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   )
 }
@@ -353,11 +429,14 @@ export default function PPAgreementDetailPage() {
   }
 
   const handleApprove = () => {
-    const tglTtd = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
-    updateDoc(doc.id, { statusTtd: 'signed', tglTtd })
-    setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd }))
+    const company = getCompanySettings()
+    const now = new Date()
+    const tglTtd = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+    const approvalTimestamp = tglTtd + ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
+    const approvedBy = company.namaPenandatangan || 'Admin EFM'
+    updateDoc(doc.id, { statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp })
+    setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp }))
   }
-
 
   return (
     <div className="flex flex-col gap-4 pb-24">
@@ -372,18 +451,20 @@ export default function PPAgreementDetailPage() {
             position: absolute; left: 0; top: 0; width: 100%;
             overflow: visible !important;
             padding: 0 !important;
-            background: white !important;
             margin: 0 !important;
+            background: white !important;
           }
           #agr-print-area > div {
             width: 100% !important;
+            min-width: unset !important;
+            max-width: none !important;
             border-radius: 0 !important;
             box-shadow: none !important;
             border: none !important;
             overflow: visible !important;
             background: white !important;
           }
-          #agr-print-area > div * { overflow: visible !important; }
+          #agr-print-area > div > * { overflow: visible !important; }
 
           /* sm: breakpoint tidak aktif di print viewport */
           #agr-hdr {
@@ -395,9 +476,23 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
           #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
+          /* Page break — tiap pasal, komparisi, dan TTD tidak terpotong */
+          #agr-pasals-card > div { break-inside: avoid; page-break-inside: avoid; }
+          #agr-ttd-section { break-inside: avoid; page-break-inside: avoid; }
+          #agr-komparisi { break-inside: avoid; page-break-inside: avoid; }
+
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-          @page { margin: 5mm; size: A4 portrait; }
+          @page {
+            margin: 10mm;
+            size: A4 portrait;
+            @bottom-right {
+              content: "Halaman " counter(page) " dari " counter(pages);
+              font-size: 8pt;
+              color: #9ca3af;
+              font-family: 'Poppins', sans-serif;
+            }
+          }
         }
       `}</style>
 
@@ -426,7 +521,6 @@ export default function PPAgreementDetailPage() {
             </button>
           )}
 
-          {/* Download PDF */}
           <button
             onClick={() => window.print()}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
@@ -445,7 +539,6 @@ export default function PPAgreementDetailPage() {
       <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
         <AgreementDoc doc={doc} />
 
-        {/* Admin-only status notice — bukan form TTD klien */}
         {doc.statusTtd === 'pending' && (
           <div className="no-print px-5 pb-5 pt-2">
             <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3.5">
@@ -473,7 +566,7 @@ export default function PPAgreementDetailPage() {
           </div>
         )}
       </div>
-      </div>{/* /overflow-x-auto */}
+      </div>
 
     </div>
   )

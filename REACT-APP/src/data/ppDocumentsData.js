@@ -10,6 +10,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0013', refInvoice: 'INV-PP-26-0013', pic: 'Sarah Jenkins',
     tglDibuat: '24 Okt 2026', statusTtd: 'signed', tglTtd: '25 Okt 2026',
     ttdMetadata: { timestamp: '25 Okt 2026, 09:14 WIB', device: 'iPhone 15 Pro — iOS 17.5', ipAddress: '182.253.147.88' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '25 Okt 2026, 10:30 WIB',
   },
   {
     id: 'AGR-PP-26-0002', displayId: 'AGR-PP-26-0002',
@@ -22,6 +23,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0012', refInvoice: 'INV-PP-26-0012', pic: 'Marcus Chen',
     tglDibuat: '22 Okt 2026', statusTtd: 'signed', tglTtd: '22 Okt 2026',
     ttdMetadata: { timestamp: '22 Okt 2026, 14:37 WIB', device: 'Samsung Galaxy S24 Ultra — Android 14', ipAddress: '180.254.22.61' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '22 Okt 2026, 15:45 WIB',
   },
   {
     id: 'AGR-PP-26-0003', displayId: 'AGR-PP-26-0003',
@@ -34,6 +36,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0011', refInvoice: 'INV-PP-26-0011', pic: 'Elena Rodriguez',
     tglDibuat: '18 Okt 2026', statusTtd: 'signed', tglTtd: '21 Okt 2026',
     ttdMetadata: { timestamp: '21 Okt 2026, 11:05 WIB', device: 'Xiaomi 14 Pro — Android 14', ipAddress: '114.125.83.42' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '21 Okt 2026, 13:20 WIB',
   },
   {
     id: 'AGR-PP-26-0004', displayId: 'AGR-PP-26-0004',
@@ -46,6 +49,7 @@ export const DOCS_INIT = [
     noReceipt: '—', refInvoice: 'INV-PP-26-0010', pic: 'Sarah Jenkins',
     tglDibuat: '15 Okt 2026', statusTtd: 'expired', tglTtd: null,
     ttdMetadata: null,
+    approvedBy: null, approvalTimestamp: null,
   },
   {
     id: 'AGR-PP-26-0005', displayId: 'AGR-PP-26-0005',
@@ -58,6 +62,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0008', refInvoice: 'INV-PP-26-0008', pic: 'Marcus Chen',
     tglDibuat: '10 Okt 2026', statusTtd: 'signed', tglTtd: '11 Okt 2026',
     ttdMetadata: { timestamp: '11 Okt 2026, 16:22 WIB', device: 'OPPO Reno 12 Pro — Android 14', ipAddress: '182.253.201.17' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '11 Okt 2026, 17:05 WIB',
   },
   {
     id: 'AGR-PP-26-0006', displayId: 'AGR-PP-26-0006',
@@ -70,6 +75,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0007', refInvoice: 'INV-PP-26-0007', pic: 'Elena Rodriguez',
     tglDibuat: '5 Okt 2026', statusTtd: 'signed', tglTtd: '5 Okt 2026',
     ttdMetadata: { timestamp: '5 Okt 2026, 10:48 WIB', device: 'Samsung Galaxy A55 — Android 14', ipAddress: '180.254.55.130' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '5 Okt 2026, 11:30 WIB',
   },
   {
     id: 'AGR-PP-26-0007', displayId: 'AGR-PP-26-0007',
@@ -82,6 +88,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0006', refInvoice: 'INV-PP-26-0006', pic: 'Sarah Jenkins',
     tglDibuat: '1 Okt 2026', statusTtd: 'signed', tglTtd: '6 Okt 2026',
     ttdMetadata: { timestamp: '6 Okt 2026, 13:59 WIB', device: 'realme 12 Pro 5G — Android 14', ipAddress: '114.125.44.209' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '6 Okt 2026, 14:45 WIB',
   },
   {
     id: 'AGR-PP-26-0008', displayId: 'AGR-PP-26-0008',
@@ -94,6 +101,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0005', refInvoice: 'INV-PP-26-0005', pic: 'Marcus Chen',
     tglDibuat: '25 Sep 2026', statusTtd: 'signed', tglTtd: '26 Sep 2026',
     ttdMetadata: { timestamp: '26 Sep 2026, 08:31 WIB', device: 'iPhone 14 Pro Max — iOS 17.4', ipAddress: '182.253.88.75' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '26 Sep 2026, 09:15 WIB',
   },
   {
     id: 'AGR-PP-27-0001', displayId: 'AGR-PP-27-0001',
@@ -106,6 +114,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-27-0001', refInvoice: 'INV-PP-27-0001', pic: 'Sarah Jenkins',
     tglDibuat: '8 Jan 2027', statusTtd: 'signed', tglTtd: '9 Jan 2027',
     ttdMetadata: { timestamp: '9 Jan 2027, 15:03 WIB', device: 'iPhone 15 Pro — iOS 18.1', ipAddress: '182.253.147.91' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '9 Jan 2027, 16:20 WIB',
   },
   {
     id: 'AGR-PP-26-0009', displayId: 'AGR-PP-26-0009',
@@ -118,6 +127,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0021', refInvoice: 'INV-PP-26-0021', pic: 'Dian Kartika',
     tglDibuat: '2 Nov 2026', statusTtd: 'signed', tglTtd: '3 Nov 2026',
     ttdMetadata: { timestamp: '3 Nov 2026, 11:47 WIB', device: 'Vivo V30 Pro — Android 14', ipAddress: '180.254.118.33' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '3 Nov 2026, 13:00 WIB',
   },
   {
     id: 'AGR-PP-26-0010', displayId: 'AGR-PP-26-0010',
@@ -130,6 +140,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0004', refInvoice: 'INV-PP-26-0004', pic: 'Elena Rodriguez',
     tglDibuat: '20 Sep 2026', statusTtd: 'signed', tglTtd: '21 Sep 2026',
     ttdMetadata: { timestamp: '21 Sep 2026, 17:12 WIB', device: 'Samsung Galaxy S24 — Android 14', ipAddress: '114.125.67.158' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '22 Sep 2026, 09:05 WIB',
   },
   {
     id: 'AGR-PP-26-0011', displayId: 'AGR-PP-26-0011',
@@ -142,6 +153,7 @@ export const DOCS_INIT = [
     noReceipt: '—', refInvoice: 'INV-PP-26-0003', pic: 'Sarah Jenkins',
     tglDibuat: '15 Sep 2026', statusTtd: 'expired', tglTtd: null,
     ttdMetadata: null,
+    approvedBy: null, approvalTimestamp: null,
   },
   {
     id: 'AGR-PP-26-0012', displayId: 'AGR-PP-26-0012',
@@ -154,6 +166,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0002', refInvoice: 'INV-PP-26-0002', pic: 'Marcus Chen',
     tglDibuat: '10 Sep 2026', statusTtd: 'signed', tglTtd: '11 Sep 2026',
     ttdMetadata: { timestamp: '11 Sep 2026, 09:55 WIB', device: 'Xiaomi Redmi Note 13 Pro — Android 13', ipAddress: '182.253.33.207' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '11 Sep 2026, 10:45 WIB',
   },
   {
     id: 'AGR-PP-26-0013', displayId: 'AGR-PP-26-0013',
@@ -166,6 +179,7 @@ export const DOCS_INIT = [
     noReceipt: 'RCP-PP-26-0001', refInvoice: 'INV-PP-26-0001', pic: 'Elena Rodriguez',
     tglDibuat: '1 Sep 2026', statusTtd: 'signed', tglTtd: '2 Sep 2026',
     ttdMetadata: { timestamp: '2 Sep 2026, 14:08 WIB', device: 'OPPO A98 5G — Android 13', ipAddress: '180.254.91.44' },
+    approvedBy: 'Bagoes Santoso', approvalTimestamp: '2 Sep 2026, 15:30 WIB',
   },
 ]
 
