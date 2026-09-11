@@ -377,6 +377,10 @@ export default function PPOrderNewPage() {
       sapaan: pendaftar.sapaan || 'Kak',
       peralatanLatihan: peralatanLatihan || '',
       catatanKhusus: catatanKhusus || '',
+      pendaftarSamaDenganKlien: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') === 'Diri Sendiri',
+      namaWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.nama : null,
+      hubunganWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.hubunganDenganKlien : null,
+      noWaWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.noHP : null,
     })
 
     navigate('/pp/orders/' + newId)
