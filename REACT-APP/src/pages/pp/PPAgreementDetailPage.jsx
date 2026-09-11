@@ -144,16 +144,24 @@ function AgreementDoc({ doc }) {
   const company = getCompanySettings()
 
   const detailCells = [
-    ['Nama Klien',     doc.namaKlien],
-    ['Nama Panggilan', doc.namaPanggilan || '—'],
-    ['No. WhatsApp',   doc.noWa || '—'],
-    ['Email',          doc.email || '—'],
-    ['Alamat',         doc.alamat || '—'],
-    ['Order ID',       '#' + doc.orderId],
-    ['Paket Dipilih',  doc.paket],
-    ['Masa Berlaku',   doc.masaBerlaku || '—'],
-    ['Nama Pelatih',   doc.pic || '—'],
-    ['Tanggal Dibuat', doc.tglDibuat],
+    ['Nama Klien',            doc.namaKlien],
+    ['Nama Panggilan',        doc.namaPanggilan || '—'],
+    ['No. WhatsApp',          doc.noWa || '—'],
+    ['Email',                 doc.email || '—'],
+    ['Alamat',                doc.alamat || '—'],
+    ['Kontak Darurat',        doc.kontakDarurat || '—'],
+    ['Order ID',              '#' + doc.orderId],
+    ['Paket Dipilih',         doc.paket],
+    ['Masa Berlaku',          doc.masaBerlaku || '—'],
+    ['Harga Per Sesi',        doc.hargaPerSesi || 'Rp200.000'],
+    ['Durasi Per Sesi',       doc.durasiLatihan || '60 Menit'],
+    ['Nama Pelatih',          doc.pic || '—'],
+    ['Lokasi Latihan',        doc.lokasiLatihan || '—'],
+    ['Hari Latihan',          doc.hariLatihan || '—'],
+    ['Jam Latihan',           doc.jamLatihan || '—'],
+    ['Tanggal Mulai Program',    doc.tglMulai || '—'],
+    ['Tanggal Berakhir Program', doc.tglBerakhir || '—'],
+    ['Tanggal Dibuat',           doc.tglDibuat],
   ]
 
   const sigMeta = () => {
@@ -282,7 +290,7 @@ function AgreementDoc({ doc }) {
       <div id="agr-komparisi" className="px-6 py-4">
         <p className="text-xs text-gray-700 leading-relaxed mb-3">Yang bertandatangan di bawah ini:</p>
         <div className="space-y-2.5">
-          <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+          <div className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">1. Pihak Pertama</p>
             <div className="space-y-0.5">
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {company.namaPenandatangan || 'Manajemen EFM'}</p>
@@ -292,7 +300,7 @@ function AgreementDoc({ doc }) {
             </div>
             <p className="text-[10px] font-semibold text-[#1E1C43] mt-2">(selanjutnya disebut <strong>"PIHAK PERTAMA"</strong>)</p>
           </div>
-          <div className="bg-gray-50 rounded-xl px-3 py-2.5">
+          <div className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white">
             <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">2. Pihak Kedua</p>
             <div className="space-y-0.5">
               <p className="text-xs text-gray-700"><span className="font-semibold inline-block w-32">Nama</span>: {doc.namaKlien}</p>
@@ -309,7 +317,7 @@ function AgreementDoc({ doc }) {
 
       {/* Konsiderans */}
       <div className="px-6 pb-4">
-        <div className="bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+        <div className="border border-gray-200 rounded-xl px-4 py-3 bg-white">
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Konsiderans</p>
           <div className="space-y-2 text-xs text-gray-600 leading-relaxed">
             <p>Bahwa PIHAK PERTAMA adalah badan usaha yang bergerak di bidang layanan program kebugaran dan pelatihan fisik privat, serta memiliki kapasitas dan kompetensi untuk menyelenggarakan layanan tersebut secara profesional.</p>
@@ -339,11 +347,16 @@ function AgreementDoc({ doc }) {
         </div>
       </div>
 
-      {/* Penutup formal */}
-      <div className="px-6 pb-4 text-center">
-        <p className="text-xs text-gray-600 leading-relaxed">
-          Demikian Perjanjian ini dibuat dan ditandatangani oleh Para Pihak dalam keadaan sadar, sehat jasmani dan rohani, serta tanpa paksaan dari pihak manapun.
-        </p>
+      {/* Pernyataan Klien */}
+      <div className="px-6 pb-4">
+        <div className="border border-gray-200 rounded-xl px-4 py-3.5 bg-white">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2.5">Pernyataan Klien</p>
+          <div className="space-y-2 text-xs text-gray-700 leading-relaxed text-justify">
+            <p>Dengan ini, saya sebagai PIHAK KEDUA dalam Perjanjian ini, dengan penuh kesadaran dan tanpa adanya paksaan dari pihak manapun, menyatakan bahwa saya telah membaca dengan saksama dan memahami sepenuhnya isi dari Perjanjian Layanan Program Privat ini beserta seluruh ketentuan yang berlaku di Essential Fitness Management.</p>
+            <p>Saya setuju dan berkomitmen untuk mematuhi segala ketentuan yang tercantum dalam Perjanjian ini, termasuk ketentuan-ketentuan lainnya yang ditetapkan oleh PIHAK PERTAMA.</p>
+            <p>Saya mengakui bahwa Perjanjian ini beserta seluruh ketentuan terkait adalah sah dan mengikat secara hukum, dan saya bersedia mematuhi ketentuan tersebut selama berlangsungnya paket program. Perjanjian ini berlaku mulai dari tanggal sesi pertama dimulai hingga berakhirnya seluruh sesi dalam paket yang telah disepakati, kecuali ada ketentuan lain dari PIHAK PERTAMA.</p>
+          </div>
+        </div>
       </div>
 
       {/* Tanda Tangan */}
@@ -381,11 +394,26 @@ function AgreementDoc({ doc }) {
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center mb-3">Lampiran A — Detail Paket &amp; Informasi Order</p>
         <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
           {detailCells.map(([lbl, val]) => (
-            <div key={lbl} className="bg-gray-50 rounded-xl px-3 py-2.5 min-w-0 overflow-hidden">
+            <div key={lbl} className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white min-w-0 overflow-hidden">
               <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">{lbl}</div>
               <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
             </div>
           ))}
+        </div>
+
+        {/* Keterangan Tambahan */}
+        <div className="mt-3 border border-gray-200 rounded-xl px-4 py-3 bg-white">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2.5">Keterangan Tambahan</p>
+          <div className="space-y-2.5">
+            <div>
+              <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Peralatan Latihan Klien</div>
+              <div className="text-xs font-semibold text-gray-700">{doc.peralatanLatihan || '—'}</div>
+            </div>
+            <div className="border-t border-gray-100 pt-2.5">
+              <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Catatan Khusus Dari Klien</div>
+              <div className="text-xs font-semibold text-gray-700">{doc.catatanKhusus || 'Tidak ada'}</div>
+            </div>
+          </div>
         </div>
       </div>
 
