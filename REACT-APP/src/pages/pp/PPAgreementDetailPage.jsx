@@ -329,7 +329,7 @@ function AgreementDoc({ doc }) {
 
       {/* Ketentuan-Ketentuan Perjanjian */}
       <div className="px-6 pb-5">
-        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-4">Ketentuan-Ketentuan Perjanjian</div>
+        <div className="bg-[#1E1C43] rounded-lg px-4 py-2 text-center text-xs font-bold text-white uppercase tracking-wide mb-4">Ketentuan-Ketentuan Perjanjian</div>
         <div id="agr-pasals-card" className="border border-gray-200 rounded-xl p-4">
           {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
             <div key={pi} className={pi > 0 ? 'mt-4 pt-4 border-t border-gray-100' : ''}>
@@ -361,7 +361,7 @@ function AgreementDoc({ doc }) {
 
       {/* Tanda Tangan */}
       <div id="agr-ttd-section" className="px-6 pb-6">
-        <div className="bg-gray-50 rounded-xl px-4 py-2 text-center text-xs font-bold text-[#1E1C43] uppercase tracking-wide mb-3">Tanda Tangan Para Pihak</div>
+        <div className="bg-[#1E1C43] rounded-lg px-4 py-2 text-center text-xs font-bold text-white uppercase tracking-wide mb-3">Tanda Tangan Para Pihak</div>
         <p className="text-xs text-gray-500 text-center mb-4">Jakarta, {doc.tglDibuat}</p>
         <div className="grid grid-cols-2 gap-5">
           {/* Pihak Pertama — EFM */}
