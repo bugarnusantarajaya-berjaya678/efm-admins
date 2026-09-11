@@ -154,12 +154,14 @@ function AgreementDoc({ doc }) {
     ['Paket Dipilih',         doc.paket],
     ['Masa Berlaku',          doc.masaBerlaku || '—'],
     ['Harga Per Sesi',        doc.hargaPerSesi || 'Rp200.000'],
+    ['Durasi Per Sesi',       doc.durasiLatihan || '60 Menit'],
     ['Nama Pelatih',          doc.pic || '—'],
     ['Lokasi Latihan',        doc.lokasiLatihan || '—'],
     ['Hari Latihan',          doc.hariLatihan || '—'],
     ['Jam Latihan',           doc.jamLatihan || '—'],
-    ['Tanggal Mulai Program', doc.tglMulai || '—'],
-    ['Tanggal Dibuat',        doc.tglDibuat],
+    ['Tanggal Mulai Program',    doc.tglMulai || '—'],
+    ['Tanggal Berakhir Program', doc.tglBerakhir || '—'],
+    ['Tanggal Dibuat',           doc.tglDibuat],
   ]
 
   const sigMeta = () => {
@@ -397,6 +399,21 @@ function AgreementDoc({ doc }) {
               <div className="text-sm font-semibold text-[#1E1C43] break-words break-all">{val}</div>
             </div>
           ))}
+        </div>
+
+        {/* Keterangan Tambahan */}
+        <div className="mt-3 border border-gray-200 rounded-xl px-4 py-3 bg-white">
+          <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2.5">Keterangan Tambahan</p>
+          <div className="space-y-2.5">
+            <div>
+              <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Peralatan Latihan Klien</div>
+              <div className="text-xs font-semibold text-gray-700">{doc.peralatanLatihan || '—'}</div>
+            </div>
+            <div className="border-t border-gray-100 pt-2.5">
+              <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wide mb-0.5">Catatan Khusus Dari Klien</div>
+              <div className="text-xs font-semibold text-gray-700">{doc.catatanKhusus || 'Tidak ada'}</div>
+            </div>
+          </div>
         </div>
       </div>
 
