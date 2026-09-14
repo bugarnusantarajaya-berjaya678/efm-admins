@@ -405,6 +405,9 @@ export default function PPProgramFormPage() {
                 min="0"
                 className={inputCls('hargaPersesi')}
               />
+              {form.hargaPersesi ? (
+                <p className="text-[10px] text-gray-400 mt-1">{formatRp(parseInt(form.hargaPersesi) || 0)}</p>
+              ) : null}
               {errors.hargaPersesi && <p className="text-red-500 text-[10px] mt-1">{errors.hargaPersesi}</p>}
             </div>
 
@@ -418,19 +421,18 @@ export default function PPProgramFormPage() {
                 min="0"
                 className={inputCls('diskonPaket')}
               />
+              {form.diskonPaket && parseInt(form.diskonPaket) > 0 ? (
+                <p className="text-[10px] text-gray-400 mt-1">{formatRp(parseInt(form.diskonPaket) || 0)}</p>
+              ) : null}
             </div>
 
             <div className="sm:col-span-2">
               <label className={label}>Harga Paket / Total (Rp)</label>
-              <input
-                type="number"
-                value={form.harga}
-                readOnly
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
-              />
+              <div className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm bg-gray-50 font-semibold cursor-not-allowed select-none text-[#1E1C43]">
+                {form.harga ? formatRp(parseInt(form.harga) || 0) : <span className="text-gray-400 font-normal">—</span>}
+              </div>
               <p className="text-[10px] text-gray-400 mt-1">
                 Auto-hitung: (Harga Per Sesi × Jumlah Sesi) − Diskon Paket
-                {form.harga ? ` = ${formatRp(parseInt(form.harga) || 0)}` : ''}
               </p>
             </div>
 
@@ -455,7 +457,7 @@ export default function PPProgramFormPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => navigate('/pp/program-db')}
-              className="border border-gray-200 text-gray-600 text-sm px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              className="border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-lg hover:bg-gray-50 transition-colors"
             >
               Batal
             </button>
