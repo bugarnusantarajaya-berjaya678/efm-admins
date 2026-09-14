@@ -1275,7 +1275,7 @@ export default function B2BOrderDetailPage() {
                       <button className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-gray-50">
                         <Eye size={13} /> Preview
                       </button>
-                      <button onClick={() => window.print()} className="inline-flex items-center gap-1.5 bg-[#1E1C43] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:opacity-90">
+                      <button onClick={() => { const _p = document.title; document.title = `${quotationData.nomorQuotation}_${(order.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }} className="inline-flex items-center gap-1.5 bg-[#1E1C43] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:opacity-90">
                         <Download size={13} /> Download PDF
                       </button>
                     </div>
@@ -2703,7 +2703,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
 
             {/* Footer */}
             <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-              <button onClick={() => window.print()}
+              <button onClick={() => { const _p = document.title; document.title = `LAPORAN-${id}_${(order.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
                 className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
                 <Printer size={13} /> Export PDF
               </button>
@@ -2748,7 +2748,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
                 </button>
                 <button
                   type="button"
-                  onClick={() => window.print()}
+                  onClick={() => { const _p = document.title; document.title = `${loiData.nomorLOI}_${(loiData.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
                   className="inline-flex items-center gap-1.5 bg-[#E05945] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-[#c94a38]">
                   ⬇️ Download PDF
                 </button>
@@ -3581,7 +3581,7 @@ Format: Profesional, bahasa formal, siap dikirim ke Building Management atau HR 
             </div>
 
             <div className="flex items-center justify-between px-6 py-4 border-t border-gray-100">
-              <button onClick={() => window.print()}
+              <button onClick={() => { const _p = document.title; document.title = `INSIDEN-${id}_${(order.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
                 className="flex items-center gap-1.5 h-9 px-4 rounded-lg border border-[#1E1C43] text-[#1E1C43] text-xs font-semibold hover:bg-[#1E1C43] hover:text-white transition-colors">
                 <Printer size={13} /> Export PDF
               </button>
