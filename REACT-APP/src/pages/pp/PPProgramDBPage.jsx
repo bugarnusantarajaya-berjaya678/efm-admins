@@ -26,8 +26,8 @@ function StatMini({ label, value, sub, accent, icon: Icon }) {
 
 function Badge({ status }) {
   return status === 'aktif'
-    ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#EAFAF1] text-[#1E8449]">Aktif</span>
-    : <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-[#F2F3F4] text-[#7F8C8D]">Nonaktif</span>
+    ? <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#EAFAF1] text-[#1E8449]">Aktif</span>
+    : <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-[#F2F3F4] text-[#7F8C8D]">Nonaktif</span>
 }
 
 function PBtn({ children, active, onClick }) {
@@ -221,14 +221,14 @@ export default function PPProgramDBPage() {
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 whitespace-nowrap">{p.masa}</td>
                     <td className="text-xs font-normal text-gray-600 px-3 py-2.5 text-center">{p.partisipan} org</td>
                     <td className="px-3 py-2.5">
-                      <div className="text-xs font-bold text-[#E05945]">{p.picId}</div>
+                      <div className="text-xs font-semibold text-[#1E1C43]">{p.picId}</div>
                       <div className="text-xs text-gray-400">{pic.fullname || '—'}</div>
                     </td>
                     <td className="text-xs font-semibold text-gray-500 px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.biayaSesiPIC)}</td>
                     <td className="text-xs font-bold text-[#1E1C43] px-3 py-2.5 text-right whitespace-nowrap">{formatRp(p.harga)}</td>
                     <td className="px-3 py-2.5">
                       <button
-                        onClick={() => handleToggleAktif(p.id)}
+                        onClick={e => { e.stopPropagation(); handleToggleAktif(p.id) }}
                         className="flex items-center gap-1.5"
                         title={p.status === 'aktif' ? 'Klik untuk nonaktifkan' : 'Klik untuk aktifkan'}
                       >
