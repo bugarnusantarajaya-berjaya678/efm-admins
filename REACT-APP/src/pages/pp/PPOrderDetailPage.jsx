@@ -425,11 +425,10 @@ export default function PPOrderDetailPage() {
 
   const ppPrograms = getStoredPrograms().map(toPaket)
 
-  // Integrated klien data — lookup via ORDER_TO_KLIEN_ID map, fallback ke klienIds field
-  const _klienFromMap = getKlienByOrderId(id)
-  const resolvedKlienList = _klienFromMap
-    ? [_klienFromMap]
-    : (order?.klienIds || []).map(kId => getKlienById(kId)).filter(Boolean)
+  // Prioritas: order.klienIds (couple/grup dengan multi-klien) → ORDER_TO_KLIEN_ID (individual fallback)
+  const resolvedKlienList = (order?.klienIds?.length > 0)
+    ? order.klienIds.map(kId => getKlienById(kId)).filter(Boolean)
+    : (() => { const k = getKlienByOrderId(id); return k ? [k] : [] })()
   const hasKlienIds = resolvedKlienList.length > 0
   const liveLead = order?.leadId ? getLeadById(order.leadId) : null
   const liveHubungan = liveLead?.hubunganDenganKlien || infoDeal.hubunganKlien || 'Diri Sendiri'
@@ -1243,7 +1242,7 @@ export default function PPOrderDetailPage() {
                           return (
                             <div
                               key={k.id}
-                              onClick={() => navigate('/pp/leads/' + k.leadId)}
+                              onClick={() => navigate('/pp/klien/' + k.id)}
                               className="flex items-center justify-between px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
                             >
                               <div className="flex items-center gap-3 min-w-0">
