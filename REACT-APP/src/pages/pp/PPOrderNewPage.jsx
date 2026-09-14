@@ -394,6 +394,20 @@ export default function PPOrderNewPage() {
     // Auto-buat agreement untuk order baru
     const newAgrId = getNextAgreementNo()
     const AGRT_COLORS = ['#2980B9', '#27AE60', '#16A085', '#D35400', '#8E44AD', '#E05945']
+    const agrKlienList = (() => {
+      if (!selectedLeadId || selectedKlienIds.length === 0) return []
+      const allK = getKlienByLeadId(selectedLeadId)
+      return selectedKlienIds.map((kid, idx) => {
+        const k = allK.find(kl => kl.id === kid)
+        return {
+          id: kid,
+          nama: k?.nama || '',
+          sapaan: k?.sapaan || 'Kak',
+          hubungan: idx === 0 ? 'Koordinator' : 'Peserta',
+        }
+      })
+    })()
+    const agrTipeProgram = agrKlienList.length >= 3 ? 'grup' : agrKlienList.length === 2 ? 'couple' : 'personal'
     addDoc({
       id: newAgrId, displayId: newAgrId,
       leadId: selectedLeadId || null,
@@ -421,6 +435,8 @@ export default function PPOrderNewPage() {
       namaWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.nama : null,
       hubunganWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.hubunganDenganKlien : null,
       noWaWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.noHP : null,
+      tipeProgram: agrTipeProgram,
+      klienList: agrKlienList,
     })
 
     navigate('/pp/orders/' + newId)
