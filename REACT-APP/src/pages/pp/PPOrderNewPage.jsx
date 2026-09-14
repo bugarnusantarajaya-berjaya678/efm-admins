@@ -408,6 +408,11 @@ export default function PPOrderNewPage() {
       })
     })()
     const agrTipeProgram = agrKlienList.length >= 3 ? 'grup' : agrKlienList.length === 2 ? 'couple' : 'personal'
+    const hargaPerSesiNum = selectedPaket ? Math.round(selectedPaket.hargaPaket / (selectedPaket.totalSesi || 1)) : 0
+    const agrTglMulai = jadwal.tanggalMulai
+      ? new Date(jadwal.tanggalMulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
+      : ''
+    const agrTglBerakhir = calcTanggalBerakhir() || ''
     addDoc({
       id: newAgrId, displayId: newAgrId,
       leadId: selectedLeadId || null,
@@ -419,9 +424,17 @@ export default function PPOrderNewPage() {
       noWa: pendaftar.noHP || '',
       email: pendaftar.email || '',
       alamat: lokasiLatihan || '',
+      lokasiLatihan: lokasiLatihan || '',
       paket: selectedPaket?.namaPaket || '',
       masaBerlaku: selectedPaket?.masaBerlaku || '',
       pic: selectedPaket?.pic?.nama || '',
+      harga: formatRp(totalSetelahPromo),
+      hargaPerSesi: formatRp(hargaPerSesiNum),
+      durasiLatihan: '60 Menit',
+      hariLatihan: jadwal.hariLatihan?.length > 0 ? jadwal.hariLatihan.join(', ') : '',
+      jamLatihan: jadwal.jamLatihan ? jadwal.jamLatihan + ' WIB' : '',
+      tglMulai: agrTglMulai,
+      tglBerakhir: agrTglBerakhir,
       detailPesanan: `${selectedPaket?.totalSesi || 0} Sesi Private Training - ${selectedPaket?.namaPaket || ''}`,
       noReceipt: '—',
       refInvoice: newInvNo,

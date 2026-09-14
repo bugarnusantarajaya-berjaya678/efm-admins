@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Search, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
 import { getAllReceipts, addReceipt, getNextReceiptNo } from '../../data/ppReceiptStore'
+import { getDocByOrderId, updateDoc } from '../../data/ppDocumentsStore'
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -92,6 +93,9 @@ export default function PPReceiptPage() {
       total: prefill.total || 0, waStatus: 'not-sent', waTgl: null,
     }
     addReceipt(newReceipt)
+    // Sync noReceipt ke agreement yang terkait order ini
+    const linkedAgr = getDocByOrderId(newReceipt.orderId)
+    if (linkedAgr) updateDoc(linkedAgr.id, { noReceipt: newRcpNo })
     setReceipts(getAllReceipts())
     setShowCreateForm(false)
     setCreatePrefill(null)
