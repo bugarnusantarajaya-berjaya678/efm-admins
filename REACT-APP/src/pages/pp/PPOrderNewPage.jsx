@@ -101,7 +101,6 @@ export default function PPOrderNewPage() {
   // Section 7: Catatan
   const [catatanOrder, setCatatanOrder] = useState('');
   const [peralatanLatihan, setPeralatanLatihan] = useState('Matras, Pakaian Olahraga, Botol Minum');
-  const [catatanKhusus, setCatatanKhusus] = useState('');
 
   // ── Handlers ──────────────────────────────────────
   const handleSelectLead = (lead) => {
@@ -307,6 +306,7 @@ export default function PPOrderNewPage() {
       promoTema: promoApplied?.tema || null,
       rincianLayanan: items,
       catatanOrder,
+      peralatanLatihan: peralatanLatihan || '',
       statusOrder: 'Draft',
       tahapan: 'Invoice',
       paymentTerms: 'Per Paket',
@@ -376,7 +376,7 @@ export default function PPOrderNewPage() {
       tglTtd: null,
       sapaan: pendaftar.sapaan || 'Kak',
       peralatanLatihan: peralatanLatihan || '',
-      catatanKhusus: catatanKhusus || '',
+      catatanKhusus: catatanOrder || '',
       pendaftarSamaDenganKlien: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') === 'Diri Sendiri',
       namaWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.nama : null,
       hubunganWali: (pendaftar.hubunganDenganKlien || 'Diri Sendiri') !== 'Diri Sendiri' ? pendaftar.hubunganDenganKlien : null,
@@ -1006,12 +1006,12 @@ export default function PPOrderNewPage() {
           </div>
         </div>
 
-        {/* ── SECTION 7: Catatan Order ── */}
+        {/* ── SECTION 7: Catatan & Peralatan ── */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Catatan Order</h3>
+          <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3 mb-4">Catatan &amp; Peralatan</h3>
           <div className="flex flex-col gap-4">
             <div>
-              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Order / Target Klien</label>
+              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan &amp; Target Klien</label>
               <textarea value={catatanOrder} onChange={e => setCatatanOrder(e.target.value)}
                 placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
                 rows={3}
@@ -1022,13 +1022,6 @@ export default function PPOrderNewPage() {
               <input type="text" value={peralatanLatihan} onChange={e => setPeralatanLatihan(e.target.value)}
                 placeholder="cth. Matras, Resistance Band, Botol Minum"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1E1C43]" />
-            </div>
-            <div>
-              <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Catatan Khusus (Agreement)</label>
-              <textarea value={catatanKhusus} onChange={e => setCatatanKhusus(e.target.value)}
-                placeholder="Kondisi kesehatan khusus, instruksi spesifik untuk pelatih, dll..."
-                rows={2}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] resize-none" />
             </div>
           </div>
         </div>

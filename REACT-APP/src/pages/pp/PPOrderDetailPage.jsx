@@ -396,6 +396,7 @@ export default function PPOrderDetailPage() {
         pic:               order.picSalesEFM       || '',
         picOps:            order.picOpsEFM         || '',
         catatan:           order.catatanOrder      || '',
+        peralatanLatihan:  order.peralatanLatihan  || 'Matras, Pakaian Olahraga, Botol Minum',
         noHP:              order.noHP              || '',
         email:             order.email             || '',
         hubunganKlien:     order.hubunganKlien     || 'Diri Sendiri',
@@ -791,6 +792,7 @@ export default function PPOrderDetailPage() {
       jamLatihan:        infoDraft.jamLatihan,
       lokasiLatihan:     infoDraft.lokasiLatihan,
       catatanOrder:      infoDraft.catatan,
+      peralatanLatihan:  infoDraft.peralatanLatihan,
       picSalesEFM:       infoDraft.pic,
       picOpsEFM:         infoDraft.picOps,
       rincianLayanan:    finalRincian,
@@ -1727,9 +1729,21 @@ export default function PPOrderDetailPage() {
               </div>
             </div>
 
+            {/* Peralatan Latihan */}
+            <div className="bg-gray-50 rounded-lg p-3">
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Peralatan Latihan</p>
+              {editingSection === 'infoDeal' ? (
+                <input type="text" value={infoDraft.peralatanLatihan || ''} onChange={e => setInfoDraft(p => ({...p, peralatanLatihan: e.target.value}))}
+                  placeholder="cth. Matras, Resistance Band, Botol Minum"
+                  className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
+              ) : (
+                <p className="text-sm font-semibold text-gray-800">{infoDeal.peralatanLatihan || order.peralatanLatihan || '—'}</p>
+              )}
+            </div>
+
             {/* Catatan Order */}
             <div className="bg-gray-50 rounded-lg p-3">
-              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan / Target Klien</p>
+              <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Catatan &amp; Target Klien</p>
               {editingSection === 'infoDeal' ? (
                 <textarea value={infoDraft.catatan || ''} onChange={e => setInfoDraft(p => ({...p, catatan: e.target.value}))}
                   rows={3} placeholder="Target klien, catatan khusus, kondisi kesehatan yang perlu diperhatikan, dll..."
