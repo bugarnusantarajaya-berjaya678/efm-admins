@@ -1,5 +1,26 @@
 export const RECEIPTS_INIT = [
   {
+    rcpNo: 'RCP-PP-27-0004', invNo: 'INV-PP-27-0004',
+    orderId: 'PP-27-0004', client: 'Mega Wulandari', sapaan: 'Kak', initials: 'MW', color: '#E67E22',
+    paket: 'Grup Zumba', pic: 'Dian Kartika',
+    tglBayar: '10 Jan 2027', metode: 'Transfer Bank (BCA)', total: 8400000,
+    waStatus: 'sent', waTgl: '10 Jan 2027',
+  },
+  {
+    rcpNo: 'RCP-PP-27-0003', invNo: 'INV-PP-27-0003',
+    orderId: 'PP-27-0003', client: 'Citra Anggraini', sapaan: 'Kak', initials: 'CA', color: '#27AE60',
+    paket: '12 Sesi - Pro', pic: 'Marcus Chen',
+    tglBayar: '9 Jan 2027', metode: 'Transfer Bank (Mandiri)', total: 4800000,
+    waStatus: 'sent', waTgl: '9 Jan 2027',
+  },
+  {
+    rcpNo: 'RCP-PP-27-0002', invNo: 'INV-PP-27-0002',
+    orderId: 'PP-27-0002', client: 'Reza Putra', sapaan: 'Mas', initials: 'RP', color: '#8E44AD',
+    paket: '8 Sesi - Base', pic: 'Sarah Jenkins',
+    tglBayar: '8 Jan 2027', metode: 'Transfer Bank (BCA)', total: 3200000,
+    waStatus: 'not-sent', waTgl: null,
+  },
+  {
     rcpNo: 'RCP-PP-27-0001', invNo: 'INV-PP-27-0001',
     orderId: 'PP-27-0001', client: 'James Wilson', sapaan: 'Pak', initials: 'JW', color: '#2980B9',
     paket: '12 Sesi - Pro', pic: 'Sarah Jenkins',
