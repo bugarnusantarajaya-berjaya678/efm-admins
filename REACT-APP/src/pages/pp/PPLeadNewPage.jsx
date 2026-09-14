@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
-import { ArrowLeft, UserPlus, Users } from 'lucide-react'
+import { ArrowLeft, UserPlus, Users, Plus, Trash2 } from 'lucide-react'
 import { addStoredLead, getNextLeadId } from '../../data/ppLeadsStore'
 import { addStoredKlien, getNextKlienId } from '../../data/ppKlienStore'
 import { PIC_OPTS } from '../../data/ppProgramDBData'
@@ -43,6 +43,9 @@ export default function PPLeadNewPage() {
   useEffect(() => {
     if (form.tipe === 'Couple') {
       if (klienForms.length < 2) setKlienForms(prev => [...prev, { ...EMPTY_KLIEN }])
+      if (klienForms.length > 2) setKlienForms(prev => prev.slice(0, 2))
+    } else if (form.tipe === 'Group') {
+      if (klienForms.length < 1) setKlienForms([{ ...EMPTY_KLIEN }])
     } else {
       if (klienForms.length > 1) setKlienForms(prev => [prev[0]])
     }
@@ -62,8 +65,9 @@ export default function PPLeadNewPage() {
   /* Apakah perlu form klien terpisah */
   const isDiriSendiri  = form.hubunganDenganKlien === 'Diri Sendiri'
   const isCouple       = form.tipe === 'Couple'
-  /* Couple selalu punya klien terpisah. Non-couple hanya kalau bukan diri sendiri */
-  const showKlienForms = isCouple || !isDiriSendiri
+  const isGroup        = form.tipe === 'Group'
+  /* Couple & Group selalu punya klien terpisah. Personal hanya kalau bukan diri sendiri */
+  const showKlienForms = isCouple || isGroup || !isDiriSendiri
 
   function validate() {
     const e = {}
@@ -75,7 +79,7 @@ export default function PPLeadNewPage() {
 
     if (showKlienForms) {
       klienForms.forEach((k, idx) => {
-        const label = isCouple ? `Klien ${idx + 1}` : 'Klien Latihan'
+        const label = (isCouple || isGroup) ? `Klien ${idx + 1}` : 'Klien Latihan'
         if (!k.nama.trim()) e[`klien_${idx}_nama`] = `Nama ${label} wajib diisi`
       })
     }
@@ -253,12 +257,23 @@ export default function PPLeadNewPage() {
 
         {/* Section 2: Data Klien Latihan */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center justify-between mb-1">
             <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Data Klien Latihan</h3>
+            {isGroup && (
+              <button
+                type="button"
+                onClick={() => setKlienForms(prev => [...prev, { ...EMPTY_KLIEN }])}
+                className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-[10px] font-semibold transition-colors"
+              >
+                <Plus size={11} /> Tambah Klien
+              </button>
+            )}
           </div>
           <p className="text-xs text-gray-400 mb-4 pl-4">
             {isCouple
               ? 'Couple — isi data kedua klien yang akan berlatih bersama'
+              : isGroup
+              ? `Group — isi data semua klien (${klienForms.length} klien)`
               : 'Siapa yang akan berlatih (bisa sama atau berbeda dari pendaftar)'}
           </p>
 
@@ -281,7 +296,18 @@ export default function PPLeadNewPage() {
               {klienForms.map((klien, idx) => (
                 <div key={idx} className={klienForms.length > 1 ? 'border border-gray-100 rounded-xl p-4' : ''}>
                   {klienForms.length > 1 && (
-                    <p className="text-xs font-bold text-[#1E1C43] mb-3">Klien {idx + 1}</p>
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-bold text-[#1E1C43]">Klien {idx + 1}</p>
+                      {isGroup && klienForms.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setKlienForms(prev => prev.filter((_, i) => i !== idx))}
+                          className="flex items-center gap-1 h-6 px-2 rounded-lg border border-red-200 text-red-500 text-[10px] font-medium hover:bg-red-50 transition-colors"
+                        >
+                          <Trash2 size={10} /> Hapus
+                        </button>
+                      )}
+                    </div>
                   )}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
