@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText } from 'lucide-react'
+import { ArrowLeft, Download, CheckCircle, Clock, AlertCircle, FileText, Edit2 } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getDocById, updateDoc } from '../../data/ppDocumentsStore'
 import { STATUS_LABEL } from '../../data/ppDocumentsData'
@@ -26,6 +26,101 @@ function EfmSig() {
     <svg viewBox="0 0 160 48" width="120" height="36">
       <path d="M10,36 C20,10 30,40 45,20 C55,6 65,38 80,22 C90,10 100,34 115,18 C125,8 135,30 150,24" fill="none" stroke="#1E1C43" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
+  )
+}
+
+function SignaturePad({ onSign, onClear, readOnly, existingSignature }) {
+  const canvasRef = useRef(null)
+  const isDrawingRef = useRef(false)
+  const lastPosRef = useRef(null)
+
+  useEffect(() => {
+    if (existingSignature && canvasRef.current) {
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d')
+      const img = new Image()
+      img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      img.src = existingSignature
+    }
+  }, [existingSignature])
+
+  const getPos = (e) => {
+    const canvas = canvasRef.current
+    const rect = canvas.getBoundingClientRect()
+    const scaleX = canvas.width / rect.width
+    const scaleY = canvas.height / rect.height
+    const src = e.touches ? e.touches[0] : e
+    return {
+      x: (src.clientX - rect.left) * scaleX,
+      y: (src.clientY - rect.top) * scaleY,
+    }
+  }
+
+  const startDraw = (e) => {
+    if (readOnly) return
+    e.preventDefault()
+    isDrawingRef.current = true
+    lastPosRef.current = getPos(e)
+  }
+
+  const draw = (e) => {
+    if (!isDrawingRef.current || readOnly) return
+    e.preventDefault()
+    const canvas = canvasRef.current
+    const ctx = canvas.getContext('2d')
+    const pos = getPos(e)
+    ctx.beginPath()
+    ctx.moveTo(lastPosRef.current.x, lastPosRef.current.y)
+    ctx.lineTo(pos.x, pos.y)
+    ctx.strokeStyle = '#1E1C43'
+    ctx.lineWidth = 2.5
+    ctx.lineCap = 'round'
+    ctx.lineJoin = 'round'
+    ctx.stroke()
+    lastPosRef.current = pos
+  }
+
+  const endDraw = () => {
+    if (!isDrawingRef.current) return
+    isDrawingRef.current = false
+    onSign?.(canvasRef.current.toDataURL())
+  }
+
+  const clear = () => {
+    const canvas = canvasRef.current
+    canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+    onClear?.()
+  }
+
+  return (
+    <div className="w-full">
+      <canvas
+        ref={canvasRef}
+        width={400}
+        height={120}
+        className={`w-full h-20 rounded-lg mb-1 touch-none ${
+          readOnly
+            ? 'border border-gray-200'
+            : 'border-2 border-dashed border-gray-300 cursor-crosshair hover:border-[#1E1C43] transition-colors'
+        }`}
+        onMouseDown={startDraw}
+        onMouseMove={draw}
+        onMouseUp={endDraw}
+        onMouseLeave={endDraw}
+        onTouchStart={startDraw}
+        onTouchMove={draw}
+        onTouchEnd={endDraw}
+      />
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={clear}
+          className="text-[10px] text-gray-400 hover:text-red-500 transition-colors underline"
+        >
+          Hapus tanda tangan
+        </button>
+      )}
+    </div>
   )
 }
 
@@ -141,7 +236,7 @@ const DEFAULT_PASAL_DETAIL = [
 ]
 
 /* ── Agreement Document ── */
-function AgreementDoc({ doc }) {
+function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
   const company = getCompanySettings()
 
   const detailCells = [
@@ -189,11 +284,13 @@ function AgreementDoc({ doc }) {
   }
 
   const efmTtdContent = () => {
-    if (doc.statusTtd === 'signed') {
+    if (doc.statusTtd === 'signed' && !showEfmCanvas) {
       return (
         <>
-          <div className="h-[72px] flex items-center justify-center">
-            {company.tandaTanganCEO
+          <div className="flex items-center justify-center mb-2">
+            {efmSig
+              ? <img src={efmSig} alt="TTD EFM" className="h-12 object-contain" />
+              : company.tandaTanganCEO
               ? <img src={company.tandaTanganCEO} alt="TTD EFM" className="h-12 object-contain" />
               : <EfmSig />}
           </div>
@@ -210,19 +307,19 @@ function AgreementDoc({ doc }) {
         </>
       )
     }
-    if (doc.statusTtd === 'waiting-approval') {
+    if (showEfmCanvas) {
       return (
         <>
-          <div className="h-[72px] flex items-center justify-center">
-            <div className="text-center">
-              <Clock size={18} className="text-blue-400 mx-auto mb-1" />
-              <div className="text-[10px] font-semibold text-blue-500">Menunggu Review Admin</div>
-              <div className="text-[9px] text-gray-400 mt-0.5">Klien telah menandatangani</div>
-            </div>
-          </div>
+          <p className="text-[10px] text-gray-400 mb-1.5 text-left">Gambar tanda tangan EFM di sini:</p>
+          <SignaturePad
+            readOnly={false}
+            existingSignature={null}
+            onSign={onEfmSign}
+            onClear={onEfmClear}
+          />
           <div className="border-t border-gray-100 mt-2 pt-3">
             <p className="text-xs font-semibold text-gray-700">{company.namaPenandatangan || 'Manajemen EFM'}</p>
-            <p className="text-[10px] text-gray-400 mt-0.5">Belum disetujui</p>
+            <p className="text-[10px] text-gray-400 mt-0.5">{company.jabatanPenandatangan || 'Perwakilan Manajemen'}</p>
           </div>
         </>
       )
@@ -477,6 +574,8 @@ export default function PPAgreementDetailPage() {
   const { setCrumbs } = useBreadcrumb()
 
   const [doc, setDoc] = useState(() => getDocById(id))
+  const [efmSignatureData, setEfmSignatureData] = useState(() => getDocById(id)?.efmSignatureData || null)
+  const [efmSigEditing, setEfmSigEditing] = useState(false)
 
   useEffect(() => {
     setCrumbs(['Private Program', 'Agreement', doc ? doc.displayId : id])
@@ -519,8 +618,15 @@ export default function PPAgreementDetailPage() {
     const tglTtd = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
     const approvalTimestamp = tglTtd + ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB'
     const approvedBy = company.namaPenandatangan || 'Admin EFM'
-    updateDoc(doc.id, { statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp })
-    setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp }))
+    updateDoc(doc.id, { statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp, efmSignatureData })
+    setDoc(prev => ({ ...prev, statusTtd: 'signed', tglTtd, approvedBy, approvalTimestamp, efmSignatureData }))
+    setEfmSigEditing(false)
+  }
+
+  const handleSaveEfmSig = () => {
+    updateDoc(doc.id, { efmSignatureData })
+    setDoc(prev => ({ ...prev, efmSignatureData }))
+    setEfmSigEditing(false)
   }
 
   return (
@@ -652,6 +758,22 @@ export default function PPAgreementDetailPage() {
               <CheckCircle size={13} /> Approve Agreement
             </button>
           )}
+          {doc.statusTtd === 'signed' && !efmSigEditing && (
+            <button
+              onClick={() => setEfmSigEditing(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0"
+            >
+              <Edit2 size={13} /> Edit TTD EFM
+            </button>
+          )}
+          {doc.statusTtd === 'signed' && efmSigEditing && (
+            <button
+              onClick={handleSaveEfmSig}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#1E1C43] hover:bg-[#2d2a5e] text-white text-xs font-semibold rounded-lg transition-colors shrink-0"
+            >
+              <CheckCircle size={13} /> Simpan TTD EFM
+            </button>
+          )}
 
           <button
             onClick={() => window.print()}
@@ -669,7 +791,13 @@ export default function PPAgreementDetailPage() {
 
       <div id="agr-print-area" className="overflow-x-auto pb-2">
       <div className="bg-white rounded-2xl border border-gray-200 min-w-[660px] max-w-[794px] mx-auto w-full overflow-hidden">
-        <AgreementDoc doc={doc} />
+        <AgreementDoc
+          doc={doc}
+          efmSig={efmSignatureData}
+          onEfmSign={setEfmSignatureData}
+          onEfmClear={() => setEfmSignatureData(null)}
+          showEfmCanvas={doc.statusTtd === 'waiting-approval' || efmSigEditing}
+        />
 
         {doc.statusTtd === 'pending' && (
           <div className="no-print px-5 pb-5 pt-2">
