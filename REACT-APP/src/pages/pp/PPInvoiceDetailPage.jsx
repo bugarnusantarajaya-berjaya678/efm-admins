@@ -318,7 +318,7 @@ export default function PPInvoiceDetailPage() {
 
               {/* Download PDF */}
               <button
-                onClick={() => { const _p = document.title; document.title = `${invoice.invNo}_${(invoice.client||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
+                onClick={() => { const _p = document.title; document.title = `${invoice.orderId}_Invoice_${(invoice.client||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition-colors shrink-0">
                 <Download size={13} /> Download PDF
               </button>

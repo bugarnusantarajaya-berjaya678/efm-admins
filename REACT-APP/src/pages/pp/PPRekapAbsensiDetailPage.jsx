@@ -220,7 +220,7 @@ export default function PPRekapAbsensiDetailPage() {
               Kembalikan ke Pengajuan
             </button>
           )}
-          <button onClick={() => { const _p = document.title; document.title = `${rekapId}_${(order?.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
+          <button onClick={() => { const _p = document.title; document.title = `${orderId}_RekapAbsensi_${(order?.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }}
             className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0">
             <Download size={13} /> Download PDF
           </button>

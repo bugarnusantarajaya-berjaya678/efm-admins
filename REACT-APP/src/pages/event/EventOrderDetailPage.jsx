@@ -1449,7 +1449,7 @@ export default function EventOrderDetailPage() {
                       <button className="inline-flex items-center gap-1.5 border border-[#1E1C43] text-[#1E1C43] text-xs font-medium px-3 py-1.5 rounded-lg hover:bg-gray-50">
                         <Eye size={13} /> Preview
                       </button>
-                      <button onClick={() => { const _p = document.title; document.title = `${quotationData.nomorQuotation}_${(order.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }} className="inline-flex items-center gap-1.5 bg-[#1E1C43] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:opacity-90">
+                      <button onClick={() => { const _p = document.title; document.title = `${id}_Quotation_${(order.namaKlien||'').replace(/\s+/g,'')}`; window.print(); setTimeout(() => { document.title = _p }, 500) }} className="inline-flex items-center gap-1.5 bg-[#1E1C43] text-white text-xs font-medium px-3 py-1.5 rounded-lg hover:opacity-90">
                         <Download size={13} /> Download PDF
                       </button>
                     </div>
