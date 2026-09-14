@@ -288,3 +288,40 @@ Every task follows this discipline, regardless of how the prompt is phrased.
   - Jika PR sudah merged tanpa commit ini → commit "terjatuh", apply ulang
   - Jika PR sudah closed/tidak relevan → reset branch ke main
 - Jangan asumsikan kondisi branch dari memori sesi sebelumnya — selalu verifikasi dari git state aktual
+
+**PP Agreement `addDoc` — field checklist wajib saat buat agreement baru**
+- Setiap kali `addDoc()` dipanggil untuk auto-buat agreement (di `PPOrderNewPage.jsx`), WAJIB menyertakan semua field berikut — tanpa salah satu dari ini, Lampiran A di Agreement page akan tampil "—":
+  - `harga`: `formatRp(totalSetelahPromo)` — format string "Rp 800.000"
+  - `lokasiLatihan`: variabel `lokasiLatihan` — **BUKAN** `alamat`. `alamat` dan `lokasiLatihan` adalah dua field terpisah di Agreement page; `addDoc` lama hanya mengisi `alamat` sehingga field Lokasi tetap "—"
+  - `hariLatihan`: `jadwal.hariLatihan?.length > 0 ? jadwal.hariLatihan.join(', ') : ''`
+  - `jamLatihan`: `jadwal.jamLatihan ? jadwal.jamLatihan + ' WIB' : ''`
+  - `tglMulai`: Indonesian-formatted date dari `jadwal.tanggalMulai` — `new Date(jadwal.tanggalMulai).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })`
+  - `tglBerakhir`: hasil `calcTanggalBerakhir()` atau `''`
+  - `hargaPerSesi`: `formatRp(Math.round(selectedPaket.hargaPaket / (selectedPaket.totalSesi || 1)))`
+  - `durasiLatihan`: `'60 Menit'` (hardcoded default PP)
+  - `tipeProgram`: `'personal'` / `'couple'` / `'grup'` — tentukan dari `agrKlienList.length` (1 = personal, 2 = couple, ≥3 = grup)
+  - `klienList`: array `{id, nama, sapaan, hubungan}` dari `selectedKlienIds` mapped via `getKlienByLeadId(selectedLeadId)` — entry pertama `hubungan: 'Koordinator'`, sisanya `'Peserta'`
+- Saat memeriksa atau mengaudit `addDoc` call, cek ke-10 field ini secara eksplisit — jangan asumsikan semua sudah ada hanya karena variabelnya tersedia di scope
+
+**Cross-document sync — Receipt ke Agreement**
+- Saat receipt PP dibuat (`PPReceiptPage.jsx` → `handleCreateReceipt`), WAJIB update field `noReceipt` di agreement yang terkait order yang sama
+- Pattern yang benar — setelah `addReceipt(newReceipt)`, tambahkan:
+  ```js
+  import { getDocByOrderId, updateDoc } from '../../data/ppDocumentsStore'
+  const linkedAgr = getDocByOrderId(newReceipt.orderId)
+  if (linkedAgr) updateDoc(linkedAgr.id, { noReceipt: newRcpNo })
+  ```
+- Tanpa ini, field "No. Receipt" di Agreement Lampiran A tetap "—" selamanya meski receipt sudah ada
+- `getDocByOrderId(orderId)` dan `updateDoc(id, patch)` sudah tersedia di `ppDocumentsStore.js` — tidak perlu tambah fungsi baru
+
+**Group tipe form dinamis — `klienForms` array + `klienList` shape**
+- Tipe 'Group' di New Lead (`PPLeadNewPage.jsx`) membutuhkan form dinamis: `+ Tambah Klien` / `Hapus` per entry
+- Shape state `klienForms`: array of `{ nama, sapaan, hubungan, ... }` — panjang array menentukan jumlah peserta
+- `tipe` effect yang mengontrol panjang array:
+  - `'Personal'`: paksa ke 1 entry (potong jika lebih)
+  - `'Couple'`: paksa ke tepat 2 entry (tambah atau potong)
+  - `'Group'`: minimal 1, bisa ditambah/hapus bebas
+- Tombol `+ Tambah Klien` (orange): hanya tampil untuk tipe 'Group', append `EMPTY_KLIEN` ke array
+- Tombol `Hapus` (red border): hanya tampil untuk tipe 'Group' ketika `klienForms.length > 1`, remove entry di index tersebut
+- Konversi ke `klienList` saat simpan (untuk Agreement): entry pertama `hubungan: 'Koordinator'`, sisanya `hubungan: 'Peserta'`
+- Validasi error label: `(isCouple || isGroup) ? \`Klien ${idx + 1}\` : 'Klien Latihan'`
