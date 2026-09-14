@@ -6,7 +6,7 @@ import { addOrder, getNextOrderId } from '../../data/ppOrdersStore'
 import { addInvoice, getNextInvoiceNo } from '../../data/ppInvoiceStore';
 import { addDoc, getNextAgreementNo } from '../../data/ppDocumentsStore';
 import { getStoredLeads } from '../../data/ppLeadsStore';
-import { getKlienByLeadId } from '../../data/ppKlienStore';
+import { getKlienByLeadId, addStoredKlien, getNextKlienId } from '../../data/ppKlienStore';
 import { getStoredPrograms } from '../../data/ppProgramStore';
 import { PIC_DB } from '../../data/ppProgramDBData';
 import { validatePromo } from '../../data/ppPromoStore';
@@ -71,6 +71,9 @@ export default function PPOrderNewPage() {
 
   // Section 2: Data Klien Latihan
   const [selectedKlienIds, setSelectedKlienIds] = useState([]);
+  const [showTambahKlienForm, setShowTambahKlienForm] = useState(false);
+  const [klienBaru, setKlienBaru] = useState({ nama: '', sapaan: 'Kak', noHp: '', jenisKelamin: '', tanggalLahir: '' });
+  const [klienSamaDenganPendaftar, setKlienSamaDenganPendaftar] = useState(false);
 
   // Section 3: Program & Paket
   const [selectedPaket, setSelectedPaket] = useState(null);
@@ -113,6 +116,43 @@ export default function PPOrderNewPage() {
     });
     setSelectedKlienIds([]);
     setSelectedLeadId(lead.id);
+  };
+
+  const handleKlienSamaDenganPendaftar = (checked) => {
+    setKlienSamaDenganPendaftar(checked);
+    if (checked) {
+      setKlienBaru(prev => ({
+        ...prev,
+        nama: pendaftar.nama || '',
+        sapaan: pendaftar.sapaan || 'Kak',
+        noHp: pendaftar.noHP || '',
+      }));
+    }
+  };
+
+  const handleSimpanKlienBaru = () => {
+    if (!klienBaru.nama.trim()) return;
+    const newId = getNextKlienId();
+    addStoredKlien({
+      id: newId,
+      leadId: selectedLeadId || null,
+      nama: klienBaru.nama.trim(),
+      sapaan: klienBaru.sapaan || 'Kak',
+      noHp: klienBaru.noHp || '',
+      jenisKelamin: klienBaru.jenisKelamin || '',
+      tanggalLahir: klienBaru.tanggalLahir || null,
+      infoKesehatan: { sudahDiisi: false },
+    });
+    setSelectedKlienIds(prev => [...prev, newId]);
+    setKlienBaru({ nama: '', sapaan: 'Kak', noHp: '', jenisKelamin: '', tanggalLahir: '' });
+    setKlienSamaDenganPendaftar(false);
+    setShowTambahKlienForm(false);
+  };
+
+  const resetTambahKlienForm = () => {
+    setShowTambahKlienForm(false);
+    setKlienSamaDenganPendaftar(false);
+    setKlienBaru({ nama: '', sapaan: 'Kak', noHp: '', jenisKelamin: '', tanggalLahir: '' });
   };
 
   const handleSelectPaket = (paket) => {
@@ -632,8 +672,128 @@ export default function PPOrderNewPage() {
             {!selectedLeadId && (
               <p className="text-xs text-gray-400 italic text-center py-4">Pilih lead pendaftar terlebih dahulu untuk melihat data klien.</p>
             )}
-            {selectedLeadId && getKlienByLeadId(selectedLeadId).length === 0 && (
-              <p className="text-xs text-gray-400 italic text-center py-4">Lead ini belum memiliki data klien terdaftar.</p>
+            {selectedLeadId && getKlienByLeadId(selectedLeadId).length === 0 && !showTambahKlienForm && (
+              <p className="text-xs text-gray-400 italic text-center py-2">Lead ini belum memiliki data klien terdaftar.</p>
+            )}
+
+            {/* ── Tambah Klien Baru ── */}
+            {selectedLeadId && (
+              !showTambahKlienForm ? (
+                <button
+                  type="button"
+                  onClick={() => setShowTambahKlienForm(true)}
+                  className="w-full border-2 border-dashed border-gray-200 rounded-xl py-3 text-xs text-gray-400 hover:border-[#1E1C43] hover:text-[#1E1C43] transition flex items-center justify-center gap-2"
+                >
+                  <Plus size={14} /> Tambah Klien Baru
+                </button>
+              ) : (
+                <div className="p-4 rounded-xl border-2 border-[#1E1C43]/20 bg-[#1E1C43]/5">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-bold text-[#1E1C43] uppercase tracking-wide flex items-center gap-1.5">
+                      <User size={12} /> Tambah Klien Baru
+                    </p>
+                    <button type="button" onClick={resetTambahKlienForm}
+                      className="text-gray-400 hover:text-red-500 transition">
+                      <X size={14} />
+                    </button>
+                  </div>
+
+                  {/* Checkbox: Klien = Pendaftar */}
+                  {pendaftar.nama && (
+                    <button type="button"
+                      onClick={() => handleKlienSamaDenganPendaftar(!klienSamaDenganPendaftar)}
+                      className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-xl border mb-3 transition-colors text-left ${
+                        klienSamaDenganPendaftar
+                          ? 'border-[#1E1C43] bg-[#1E1C43]/10'
+                          : 'border-gray-200 bg-white hover:border-[#1E1C43]'
+                      }`}>
+                      <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                        klienSamaDenganPendaftar ? 'bg-[#1E1C43] border-[#1E1C43]' : 'border-gray-300 bg-white'
+                      }`}>
+                        {klienSamaDenganPendaftar && (
+                          <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
+                            <path d="M1 3l2 2L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                          </svg>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-[#1E1C43]">Klien sama dengan Pendaftar</p>
+                        <p className="text-[10px] text-gray-400">Nama, sapaan, dan HP diisi otomatis dari data pendaftar</p>
+                      </div>
+                    </button>
+                  )}
+
+                  {/* Form fields */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="col-span-2">
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Nama Lengkap *</label>
+                      <input type="text" value={klienBaru.nama}
+                        onChange={e => setKlienBaru(p => ({ ...p, nama: e.target.value }))}
+                        disabled={klienSamaDenganPendaftar}
+                        placeholder="Nama lengkap klien"
+                        className={`w-full border rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] ${
+                          klienSamaDenganPendaftar
+                            ? 'bg-gray-50 border-gray-100 text-gray-500 cursor-not-allowed'
+                            : 'border-gray-200 bg-white'
+                        }`} />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Sapaan</label>
+                      <select value={klienBaru.sapaan}
+                        onChange={e => setKlienBaru(p => ({ ...p, sapaan: e.target.value }))}
+                        disabled={klienSamaDenganPendaftar}
+                        className={`w-full border rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] ${
+                          klienSamaDenganPendaftar
+                            ? 'bg-gray-50 border-gray-100 text-gray-500 cursor-not-allowed'
+                            : 'border-gray-200 bg-white'
+                        }`}>
+                        {['Kak', 'Bapak', 'Ibu', 'Mas', 'Mbak'].map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">No. HP</label>
+                      <input type="text" value={klienBaru.noHp}
+                        onChange={e => setKlienBaru(p => ({ ...p, noHp: e.target.value }))}
+                        disabled={klienSamaDenganPendaftar}
+                        placeholder="08xxxxxxxxxx"
+                        className={`w-full border rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] ${
+                          klienSamaDenganPendaftar
+                            ? 'bg-gray-50 border-gray-100 text-gray-500 cursor-not-allowed'
+                            : 'border-gray-200 bg-white'
+                        }`} />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jenis Kelamin</label>
+                      <select value={klienBaru.jenisKelamin}
+                        onChange={e => setKlienBaru(p => ({ ...p, jenisKelamin: e.target.value }))}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] bg-white">
+                        <option value="">— pilih</option>
+                        <option value="L">Laki-laki</option>
+                        <option value="P">Perempuan</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Tanggal Lahir</label>
+                      <input type="date" value={klienBaru.tanggalLahir}
+                        onChange={e => setKlienBaru(p => ({ ...p, tanggalLahir: e.target.value }))}
+                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm focus:outline-none focus:border-[#1E1C43] bg-white" />
+                    </div>
+                  </div>
+
+                  {/* Buttons */}
+                  <div className="flex justify-end gap-2 mt-3">
+                    <button type="button" onClick={resetTambahKlienForm}
+                      className="px-3 py-1.5 border border-gray-300 text-gray-600 text-xs font-semibold rounded-lg hover:bg-gray-50 transition">
+                      Batal
+                    </button>
+                    <button type="button" onClick={handleSimpanKlienBaru}
+                      disabled={!klienBaru.nama.trim()}
+                      className="px-4 py-1.5 bg-[#1E1C43] text-white text-xs font-semibold rounded-lg hover:bg-[#2d2b5e] transition disabled:opacity-50 disabled:cursor-not-allowed">
+                      Simpan Klien
+                    </button>
+                  </div>
+                </div>
+              )
             )}
           </div>
         </div>
