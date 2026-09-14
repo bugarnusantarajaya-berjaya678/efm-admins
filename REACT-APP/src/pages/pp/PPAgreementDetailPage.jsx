@@ -387,7 +387,7 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Komparisi — langsung setelah header */}
-      <div id="agr-komparisi" className="px-6 py-3">
+      <div id="agr-komparisi" className="agr-sec px-6 sm:px-8 py-3">
         <p className="text-xs text-gray-700 leading-relaxed mb-3">Yang bertandatangan di bawah ini:</p>
         <div className="space-y-2.5">
           <div className="border border-gray-200 rounded-xl px-3 py-2.5 bg-white">
@@ -427,7 +427,7 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Konsiderans */}
-      <div id="agr-konsiderans" className="px-6 pb-3">
+      <div id="agr-konsiderans" className="agr-sec px-6 sm:px-8 pb-3">
         <div className="border border-gray-200 rounded-xl px-4 py-2.5 bg-white">
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Konsiderans</p>
           <div className="space-y-1.5 text-xs text-gray-600 leading-snug">
@@ -439,7 +439,7 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Ketentuan-Ketentuan Perjanjian */}
-      <div className="px-6 pb-3">
+      <div className="agr-sec px-6 sm:px-8 pb-3">
         <div className="bg-[#1E1C43] rounded-lg px-4 py-1.5 text-center text-xs font-bold text-white uppercase tracking-wide mb-3">Ketentuan-Ketentuan Perjanjian</div>
         <div id="agr-pasals-card" className="border border-gray-200 rounded-xl p-3">
           {(getTemplatePasal() || DEFAULT_PASAL_DETAIL).map(({ judul, poin }, pi) => (
@@ -459,7 +459,7 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Pernyataan Klien */}
-      <div id="agr-pernyataan" className="px-6 pb-3">
+      <div id="agr-pernyataan" className="agr-sec px-6 sm:px-8 pb-3">
         <div className="border border-gray-200 rounded-xl px-4 py-2.5 bg-white">
           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1.5">Pernyataan Klien</p>
           <div className="space-y-1.5 text-[11px] text-gray-700 leading-snug text-justify">
@@ -471,7 +471,7 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Tanda Tangan */}
-      <div id="agr-ttd-section" className="px-6 pb-4">
+      <div id="agr-ttd-section" className="agr-sec px-6 sm:px-8 pb-4">
         <div className="bg-[#1E1C43] rounded-lg px-4 py-1.5 text-center text-xs font-bold text-white uppercase tracking-wide mb-2.5">Tanda Tangan Para Pihak</div>
         <p className="text-xs text-gray-500 text-center mb-3">Jakarta, {doc.tglDibuat}</p>
         <div className="grid grid-cols-2 gap-5">
@@ -500,13 +500,13 @@ function AgreementDoc({ doc, efmSig, onEfmSign, onEfmClear, showEfmCanvas }) {
       </div>
 
       {/* Document footer */}
-      <div className="px-6 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
+      <div className="agr-sec px-6 sm:px-8 pb-4 border-t border-gray-100 pt-4 text-center space-y-0.5">
         <p className="text-xs text-gray-400">Terima kasih atas kepercayaan Anda. Simpan dokumen ini sebagai bukti perjanjian yang sah.</p>
         <p className="text-xs font-semibold text-gray-500">Powered by {company.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{company.namaLegal}</p>
       </div>
 
       {/* Lampiran A — Detail Paket & Informasi Order */}
-      <div id="agr-lampiran" className="px-6 pb-5 border-t border-dashed border-gray-200 pt-3">
+      <div id="agr-lampiran" className="agr-sec px-6 sm:px-8 pb-5 border-t border-dashed border-gray-200 pt-3">
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide text-center mb-2.5">Lampiran A — Detail Paket &amp; Informasi Order</p>
         <div id="agr-detail-grid" className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {detailCells.map(([lbl, val]) => (
@@ -676,6 +676,7 @@ export default function PPAgreementDetailPage() {
           #agr-hdr-right { text-align: right !important; }
           #agr-hdr-right .agr-date-row { justify-content: flex-end !important; }
           #agr-hdr-title { font-size: 2.25rem !important; line-height: 2.5rem !important; }
+          .agr-sec { padding-left: 1.25rem !important; padding-right: 1.25rem !important; }
           #agr-detail-grid { grid-template-columns: repeat(2, 1fr) !important; }
 
           /* Page break — tiap pasal, komparisi, TTD, konsiderans, dan pernyataan tidak terpotong */
@@ -714,7 +715,7 @@ export default function PPAgreementDetailPage() {
           .no-print { display: none !important; }
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page {
-            margin: 10mm;
+            margin: 5mm;
             size: A4 portrait;
             @bottom-right {
               content: "Halaman " counter(page) " dari " counter(pages);
