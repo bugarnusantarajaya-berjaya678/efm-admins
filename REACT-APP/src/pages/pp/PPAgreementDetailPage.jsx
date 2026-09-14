@@ -316,6 +316,11 @@ function AgreementDoc({ doc }) {
                 </>
               )}
             </div>
+            {(doc.tipeProgram === 'couple' || doc.tipeProgram === 'grup') && doc.klienList?.length > 0 && (
+              <p className="text-xs text-gray-500 italic mt-1.5">
+                Untuk dan atas nama seluruh peserta program sebagaimana tercantum dalam Lampiran A.
+              </p>
+            )}
             <p className="text-[10px] font-semibold text-[#1E1C43] mt-2">(selanjutnya disebut <strong>"PIHAK KEDUA"</strong>)</p>
           </div>
         </div>
@@ -433,6 +438,31 @@ function AgreementDoc({ doc }) {
             </div>
           </div>
         </div>
+
+        {/* Daftar Peserta Latihan — hanya untuk couple/grup */}
+        {doc.klienList?.length > 0 && (
+          <div className="mt-3 border border-gray-200 rounded-xl px-4 py-3 bg-white">
+            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2.5">Daftar Peserta Latihan</p>
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wide pb-2 pr-3 w-8">No.</th>
+                  <th className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wide pb-2 pr-3">Nama Peserta</th>
+                  <th className="text-left text-[10px] font-semibold text-gray-400 uppercase tracking-wide pb-2">Peran / Hubungan</th>
+                </tr>
+              </thead>
+              <tbody>
+                {doc.klienList.map((k, idx) => (
+                  <tr key={k.id || idx} className={idx < doc.klienList.length - 1 ? 'border-b border-gray-100' : ''}>
+                    <td className="py-2 text-xs text-gray-500 pr-3">{idx + 1}.</td>
+                    <td className="py-2 text-xs font-semibold text-[#1E1C43] pr-3">{k.sapaan ? k.sapaan + ' ' : ''}{k.nama}</td>
+                    <td className="py-2 text-xs text-gray-600">{k.hubungan || (idx === 0 ? 'Koordinator' : 'Peserta')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
     </div>
