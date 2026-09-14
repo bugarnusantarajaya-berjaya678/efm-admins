@@ -20,6 +20,9 @@ export const ORDER_TO_KLIEN_ID = {
   'PP-26-0021': 'KL-0016',  // Sari Dewi Lestari
   'PP-26-0011': 'KL-0014',  // Robert Taylor
   'PP-26-0010': 'KL-0015',  // Anita Suryani
+  'PP-27-0002': 'KL-0020',  // Reza Putra (couple A, primary)
+  'PP-27-0003': 'KL-0022',  // Suyitno (couple B, klien 1)
+  'PP-27-0004': 'KL-0024',  // Mega Wulandari (grup, koordinator)
   'PP-26-0008': 'KL-0003',  // Budi Santoso (couple, primary)
   'PP-26-0007': 'KL-0017',  // Rina Kusuma
   'PP-26-0006': 'KL-0018',  // Hendra Wijaya
