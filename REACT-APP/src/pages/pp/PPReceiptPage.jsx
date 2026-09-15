@@ -1,9 +1,191 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Search, CheckCircle, X, ArrowLeft, Receipt, RotateCcw } from 'lucide-react'
+import { Search, CheckCircle, X, ArrowLeft, Receipt, RotateCcw, Save, GripVertical, Trash2, Pencil, Settings, ChevronDown, ScrollText, Plus } from 'lucide-react'
 import { WA_LABEL, formatRp } from '../../data/ppReceiptData'
 import { getAllReceipts, addReceipt, getNextReceiptNo } from '../../data/ppReceiptStore'
 import { getDocByOrderId, updateDoc } from '../../data/ppDocumentsStore'
+
+/* ─── Template Receipt Catatan ─── */
+function getDefaultRcpCatatan() {
+  return [
+    'Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung.',
+    'Simpan receipt ini sebagai bukti pembayaran yang sah.',
+    'Barcode tidak dapat dipindahtangankan — hanya berlaku untuk klien yang bersangkutan.',
+  ]
+}
+
+function TemplateReceiptEditor({ onClose }) {
+  const [items, setItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('efmReceiptTemplate')
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+      }
+    } catch {}
+    return [...getDefaultRcpCatatan()]
+  })
+  const [dirty,       setDirty]       = useState(false)
+  const [savedOk,     setSavedOk]     = useState(false)
+  const [editMode,    setEditMode]    = useState(false)
+  const [dragOverIdx, setDragOverIdx] = useState(null)
+  const dragIdx      = useRef(null)
+  const editSnapshot = useRef(null)
+
+  const mutate = fn => { setItems(prev => fn([...prev])); setDirty(true); setSavedOk(false) }
+
+  const handleSave = () => {
+    try { localStorage.setItem('efmReceiptTemplate', JSON.stringify({ items })) } catch {}
+    setDirty(false); setSavedOk(true); setEditMode(false)
+    setTimeout(() => setSavedOk(false), 2500)
+  }
+
+  const handleReset = () => {
+    if (!window.confirm('Reset ke template default? Semua perubahan akan hilang.')) return
+    setItems([...getDefaultRcpCatatan()])
+    try { localStorage.removeItem('efmReceiptTemplate') } catch {}
+    setDirty(false); setSavedOk(false)
+  }
+
+  const enterEdit  = () => { editSnapshot.current = [...items]; setEditMode(true) }
+  const cancelEdit = () => {
+    if (editSnapshot.current) { setItems(editSnapshot.current); setDirty(false) }
+    setEditMode(false); setSavedOk(false)
+  }
+
+  return (
+    <div className="bg-bg-surface border border-border rounded-2xl overflow-hidden">
+      {/* Editor header */}
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-[#1E1C43] flex items-center justify-center shrink-0">
+            <Receipt size={16} className="text-white" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-[#1E1C43]">Template Catatan Receipt</h2>
+            <p className="text-[11px] text-text-muted mt-0.5">Berlaku untuk semua receipt Private Training</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          {editMode ? (
+            <>
+              <button onClick={handleReset}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                <RotateCcw size={12} /> Reset Default
+              </button>
+              <button onClick={cancelEdit}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors">
+                <X size={12} /> Batal
+              </button>
+              <button onClick={handleSave} disabled={!dirty}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-white text-xs font-semibold disabled:opacity-40 transition-colors ${savedOk ? 'bg-green-500' : 'bg-[#1E1C43] hover:bg-[#2d2b5c]'}`}>
+                <Save size={12} /> {savedOk ? 'Tersimpan!' : 'Simpan Template'}
+              </button>
+            </>
+          ) : (
+            <>
+              {savedOk && (
+                <span className="text-xs text-green-600 font-medium px-2 py-1 bg-green-50 rounded-lg">✓ Tersimpan</span>
+              )}
+              <button onClick={enterEdit}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1C43] hover:bg-[#2d2b5c] text-white text-xs font-semibold transition-colors">
+                <Pencil size={12} /> Edit Template
+              </button>
+            </>
+          )}
+          <button onClick={onClose}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors">
+            <X size={12} /> Tutup
+          </button>
+        </div>
+      </div>
+
+      {/* Info hint */}
+      <div className="px-5 py-3 bg-blue-50 border-b border-blue-100">
+        <p className="text-[11px] text-blue-700">
+          <span className="font-semibold">Info:</span> Catatan ini akan tampil di semua receipt Private Training yang dicetak atau di-download. Perubahan tidak mempengaruhi receipt yang sudah dikirim sebelumnya.
+        </p>
+      </div>
+
+      {/* View mode hint */}
+      {!editMode && (
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+          <p className="text-[11px] text-gray-500">Mode tampilan — klik <strong className="text-[#1E1C43]">Edit Template</strong> untuk mulai mengedit baris.</p>
+        </div>
+      )}
+
+      {/* Dirty warning */}
+      {editMode && dirty && (
+        <div className="px-5 py-3 bg-yellow-50 border-b border-yellow-100">
+          <p className="text-[11px] text-yellow-700 font-medium">Ada perubahan yang belum disimpan — klik <strong>Simpan Template</strong> untuk menyimpan.</p>
+        </div>
+      )}
+
+      {/* Drag hint */}
+      {editMode && (
+        <div className="px-5 py-3 bg-gray-50 border-b border-gray-100 flex items-center gap-2">
+          <GripVertical size={13} className="text-gray-400" />
+          <p className="text-[11px] text-gray-500">Drag handle untuk mengubah urutan baris.</p>
+        </div>
+      )}
+
+      {/* Items list */}
+      <div className="p-5 space-y-2">
+        {items.map((item, idx) => (
+          <div
+            key={idx}
+            draggable={editMode}
+            onDragStart={() => { dragIdx.current = idx }}
+            onDragOver={e => { e.preventDefault(); setDragOverIdx(idx) }}
+            onDrop={() => {
+              if (dragIdx.current === null || dragIdx.current === idx) { setDragOverIdx(null); return }
+              mutate(arr => {
+                const [moved] = arr.splice(dragIdx.current, 1)
+                arr.splice(idx, 0, moved)
+                return arr
+              })
+              setDragOverIdx(null)
+            }}
+            onDragEnd={() => { dragIdx.current = null; setDragOverIdx(null) }}
+            className={`flex items-start gap-3 rounded-xl p-3 border transition-colors ${
+              dragOverIdx === idx ? 'border-[#1E1C43] bg-blue-50' : 'border-gray-100 bg-gray-50'
+            } ${editMode ? 'cursor-grab active:cursor-grabbing' : ''}`}
+          >
+            <div className="flex items-center gap-2 shrink-0 mt-0.5">
+              {editMode && <GripVertical size={14} className="text-gray-300" />}
+              <span className="w-5 h-5 rounded-full bg-[#1E1C43] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                {idx + 1}
+              </span>
+            </div>
+            {editMode ? (
+              <input
+                type="text"
+                value={item}
+                onChange={e => mutate(arr => { arr[idx] = e.target.value; return arr })}
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-[#1E1C43] bg-white"
+              />
+            ) : (
+              <span className="flex-1 text-sm text-gray-700 leading-relaxed">{item}</span>
+            )}
+            {editMode && (
+              <button onClick={() => mutate(arr => { arr.splice(idx, 1); return arr })}
+                className="text-gray-300 hover:text-red-500 transition-colors mt-0.5 shrink-0">
+                <Trash2 size={14} />
+              </button>
+            )}
+          </div>
+        ))}
+
+        {editMode && (
+          <button onClick={() => mutate(arr => { arr.push(''); return arr })}
+            className="flex items-center gap-2 text-sm text-[#E05945] hover:text-[#c94a38] font-medium mt-2 transition-colors">
+            <Plus size={14} /> Tambah Baris
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
 
 /* ─── WA status badge ─── */
 const WA_STYLE = {
@@ -63,6 +245,7 @@ export default function PPReceiptPage() {
   const [fWA,            setFWA]           = useState('')
   const [fSearch,        setFSearch]       = useState('')
   const [page,           setPage]          = useState(1)
+  const [showTemplate,   setShowTemplate]   = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [createPrefill,  setCreatePrefill]  = useState(null)
   const [createForm,     setCreateForm]     = useState({ tglBayar: '', metode: 'Transfer Bank (BCA)' })
@@ -130,7 +313,7 @@ export default function PPReceiptPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-[#1E1C43] flex items-center justify-center shrink-0">
               <Receipt size={20} className="text-white" />
@@ -140,14 +323,31 @@ export default function PPReceiptPage() {
               <p className="text-sm text-text-muted mt-0.5">Kelola receipt pembayaran dan status pengiriman WhatsApp</p>
             </div>
           </div>
-          <button
-            onClick={() => navigate('/pp/orders')}
-            className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors shrink-0"
-          >
-            <ArrowLeft size={12} /> Kembali ke PP Orders
-          </button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button
+              onClick={() => setShowTemplate(v => !v)}
+              className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border w-full sm:w-auto ${
+                showTemplate
+                  ? 'bg-[#1E1C43] text-white border-[#1E1C43]'
+                  : 'border-[#1E1C43] text-[#1E1C43] hover:bg-[#1E1C43] hover:text-white'
+              }`}
+            >
+              <Settings size={12} /> Template Receipt <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
+            </button>
+            <button
+              onClick={() => navigate('/pp/orders')}
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
+            >
+              <ArrowLeft size={12} /> Kembali ke PP Orders
+            </button>
+          </div>
         </div>
       </div>
+
+      {showTemplate ? (
+        <TemplateReceiptEditor onClose={() => setShowTemplate(false)} />
+      ) : (
+      <>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -290,6 +490,8 @@ export default function PPReceiptPage() {
             </div>
           </div>
         </div>
+      )}
+      </>
       )}
     </div>
   )
