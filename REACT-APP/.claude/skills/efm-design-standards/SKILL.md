@@ -771,7 +771,31 @@ Receipt body berisi section-section berikut (urutan ini wajib, jangan tambah sec
 5. **Barcode Absensi Sesi** — QR/barcode untuk absensi
 6. **Footer** — 2 baris (lihat 5g)
 
-⚠️ **TIDAK ADA section "Catatan"** di receipt — section ini sudah dihapus. Jika perlu catatan, tampilkan di Invoice bukan Receipt.
+⚠️ **Section "Catatan"** di receipt adalah template global yang dikelola dari halaman list (`PPReceiptPage`), bukan hardcoded JSX dan bukan diedit per-receipt dari detail page. Lihat Section 5j untuk prinsip selengkapnya.
+
+---
+
+### 5j. Invoice & Receipt — Prinsip Read-Only Document
+
+Invoice dan Receipt adalah **dokumen turunan yang bersifat read-only** terhadap data bisnisnya. Desain ini disengaja:
+
+| Data | Tempat edit yang benar | Di Invoice/Receipt Detail? |
+|---|---|---|
+| Harga paket, pilihan program | Order Detail (`/pp/orders/[id]`) | ❌ Tidak bisa diedit |
+| Kode diskon / promo | Order Detail (`/pp/orders/[id]`) | ❌ Tidak bisa diedit |
+| Tanggal invoice, jatuh tempo | Order Detail | ❌ Tidak bisa diedit |
+| Biaya Tambahan | Order Detail (atau edit biaya lain di Invoice) | ⚠️ Terbatas — hanya field tambahan, bukan paket utama |
+| Syarat & Ketentuan invoice | Template editor di `PPInvoicePage` (list page) | ❌ Tidak bisa diedit per-invoice |
+| Catatan receipt | Template editor di `PPReceiptPage` (list page) | ❌ Tidak bisa diedit per-receipt |
+
+**Prinsip arsitektur:**
+- Data bisnis (harga, program, diskon) dikontrol dari **Order** — invoice/receipt hanya **mencerminkan** data order
+- Template teks (Syarat & Ketentuan, Catatan) dikontrol dari **halaman list** masing-masing dokumen — berlaku global untuk semua dokumen
+- Admin yang ingin mengubah isi Syarat invoice pergi ke halaman Invoice list, bukan buka invoice tertentu
+- Admin yang ingin mengubah isi Catatan receipt pergi ke halaman Receipt list, bukan buka receipt tertentu
+- Desain ini mencegah admin sembarangan mengubah data per-dokumen dan memastikan konsistensi
+
+⚠️ **Jangan tambahkan field editable ke Invoice/Receipt detail** untuk data yang sudah dikelola di Order atau template list page — ini melanggar prinsip di atas.
 
 ---
 
