@@ -2761,3 +2761,42 @@ const [focusedNilai, setFocusedNilai] = useState(false)
 - Field Rp yang **read-only / auto-kalkulasi** (Total, Subtotal) TIDAK pakai pola ini — tetap tampilkan `formatRp(nilai)` langsung tanpa state fokus
 - Pola ini berlaku untuk semua modul (PP, B2B, Event) — konsisten
 
+---
+
+## 24. Leading Zero Fix — Field Count / Integer (Non-Rp)
+
+Untuk field hitungan (Jumlah, Sesi, Partisipan, Usia, dll) yang tetap menggunakan `type="number"` (bukan Opsi B), pastikan `value` tidak pernah merender `"0"` atau `0` secara eksplisit — ini yang memicu leading zero bug.
+
+**Root cause:** Ketika React set `value={0}` pada `type="number"` input, DOM menampilkan "0". User fokus dan mulai ketik "5" → browser append → "05". Browser menganggap "05" invalid untuk number input → `e.target.value = ""` → `Number("") = 0` (sama dengan state) → React skip re-render → DOM tetap tampilkan "05". User ketik lagi → "055", "0555", dst.
+
+**Fix — state berupa number (paling umum, mis. item.jumlah di array):**
+```jsx
+// ❌ Salah — value={0} memicu leading zero bug
+<input type="number" value={item.jumlah ?? 1} min="1" ... />
+<input type="number" value={item.jumlah} ... />
+
+// ✅ Benar — field kosong saat nilai 0, tidak ada "0" yang bisa di-append
+<input
+  type="number"
+  value={item.jumlah > 0 ? item.jumlah : ''}
+  min="1"
+  placeholder="1"
+  onChange={e => setItem({ ...item, jumlah: parseInt(e.target.value) || 0 })}
+/>
+```
+
+**Fix — state berupa number, pattern `|| ''`:**
+```jsx
+// ✅ Juga aman — || '' menangkap 0 (falsy)
+<input type="number" value={biayaLainJumlahDraft || ''} min={1} placeholder="1" ... />
+```
+
+**Kapan TIDAK perlu fix:**
+- State berupa **string** yang dimulai dari `''` (bukan `'0'`) — field sudah mulai kosong, tidak ada initial "0"
+- Contoh: `form.sesi = ''`, `form.pertemuan = ''` di PPProgramFormPage → aman karena user mulai dari blank
+
+**Checklist saat menambah field count baru:**
+- State numeric? → wajib `value={val > 0 ? val : ''}` atau `value={val || ''}`
+- State string dimulai dari `''`? → aman, tidak perlu perlakuan khusus
+- State string dimulai dari `'0'`? → ganti initial value ke `''` dan tambahkan placeholder
+
