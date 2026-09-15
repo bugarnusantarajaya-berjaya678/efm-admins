@@ -787,15 +787,17 @@ Invoice dan Receipt adalah **dokumen turunan yang bersifat read-only** terhadap 
 | Biaya Tambahan | Order Detail (atau edit biaya lain di Invoice) | ⚠️ Terbatas — hanya field tambahan, bukan paket utama |
 | Syarat & Ketentuan invoice | Template editor di `PPInvoicePage` (list page) | ❌ Tidak bisa diedit per-invoice |
 | Catatan receipt | Template editor di `PPReceiptPage` (list page) | ❌ Tidak bisa diedit per-receipt |
+| Pasal-pasal agreement (Syarat & Ketentuan) | Template editor di `PPDocumentsPage` (list page) | ❌ Tidak bisa diedit per-agreement |
 
 **Prinsip arsitektur:**
 - Data bisnis (harga, program, diskon) dikontrol dari **Order** — invoice/receipt hanya **mencerminkan** data order
-- Template teks (Syarat & Ketentuan, Catatan) dikontrol dari **halaman list** masing-masing dokumen — berlaku global untuk semua dokumen
+- Template teks (Syarat & Ketentuan, Catatan, Pasal) dikontrol dari **halaman list** masing-masing dokumen — berlaku global untuk semua dokumen
 - Admin yang ingin mengubah isi Syarat invoice pergi ke halaman Invoice list, bukan buka invoice tertentu
 - Admin yang ingin mengubah isi Catatan receipt pergi ke halaman Receipt list, bukan buka receipt tertentu
+- Admin yang ingin mengubah pasal agreement pergi ke halaman Documents list, bukan buka agreement tertentu
 - Desain ini mencegah admin sembarangan mengubah data per-dokumen dan memastikan konsistensi
 
-⚠️ **Jangan tambahkan field editable ke Invoice/Receipt detail** untuk data yang sudah dikelola di Order atau template list page — ini melanggar prinsip di atas.
+⚠️ **Jangan tambahkan field editable ke Invoice/Receipt/Agreement detail** untuk data yang sudah dikelola di Order atau template list page — ini melanggar prinsip di atas.
 
 ---
 

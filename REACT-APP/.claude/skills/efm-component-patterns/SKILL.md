@@ -1521,7 +1521,7 @@ const cancelEdit = () => {
 }
 ```
 
-### localStorage — dua format berbeda
+### localStorage — tiga format berbeda
 
 **Invoice** (flat string list):
 ```js
@@ -1540,6 +1540,23 @@ const [items, setItems] = useState(() => {
 // Reset: localStorage.removeItem('efmInvoiceTemplate')
 ```
 
+**Receipt** (flat string list — format identik dengan Invoice):
+```js
+// Key: 'efmReceiptTemplate'  |  Shape: { items: string[] }
+const [items, setItems] = useState(() => {
+  try {
+    const saved = localStorage.getItem('efmReceiptTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return [...DEFAULT_RCP_CATATAN]
+})
+// Save: localStorage.setItem('efmReceiptTemplate', JSON.stringify({ items }))
+// Reset: localStorage.removeItem('efmReceiptTemplate')
+```
+
 **Agreement** (nested pasal/poin):
 ```js
 // Key: 'efmAgreementTemplate'  |  Shape: { pasal: [{ id, judul, poin: string[] }] }
@@ -1552,7 +1569,11 @@ const [pasal, setPasal] = useState(() => {
 })
 ```
 
-**Invoice Detail** membaca template saat render (bukan saat edit):
+### Helper function di detail/render page
+
+Setiap detail/render page membaca template dari localStorage menggunakan helper function kecil yang didefinisikan di atas komponen. Polanya seragam di ketiga dokumen — selalu ikuti pola ini, jangan baca localStorage langsung dari JSX.
+
+**Invoice Detail** (`PPInvoiceDetailPage.jsx`):
 ```js
 function getSyaratList() {
   try {
@@ -1562,10 +1583,47 @@ function getSyaratList() {
       if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
     }
   } catch {}
-  return DEFAULT_SYARAT
+  return DEFAULT_SYARAT  // atau getDefaultSyarat()
 }
 const syaratList = getSyaratList()
 ```
+
+**Receipt Detail** (`PPReceiptDetailPage.jsx`):
+```js
+function getRcpCatatan() {
+  try {
+    const saved = localStorage.getItem('efmReceiptTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return getDefaultRcpCatatan()
+}
+// Dipakai di JSX: {getRcpCatatan().map((item, i) => <li key={i}>{item}</li>)}
+```
+
+**Agreement Doc** (`PPDocumentsPage.jsx`, di dalam `AgreementDoc` component):
+```js
+function getAgreementPasal() {
+  try {
+    const saved = localStorage.getItem('efmAgreementTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.pasal) && parsed.pasal.length > 0) return parsed.pasal
+    }
+  } catch {}
+  return DEFAULT_PASAL.map(p => ({ ...p, poin: [...p.poin] }))
+}
+// Dipakai di JSX: {getAgreementPasal().map((ps, pi) => ...)}
+```
+
+**Aturan helper function:**
+- Selalu `try/catch` — jangan biarkan localStorage error merusak render
+- Validasi isi sebelum memakai (`.length > 0`, cek tipe array)
+- Fallback ke konstanta default jika localStorage kosong atau invalid
+- Definisi helper function: di **luar** komponen (bukan di dalam `useState` initializer) supaya bisa dipanggil saat render
+- Default konstanta (`getDefaultRcpCatatan`, `DEFAULT_PASAL`, dll) diduplikasi di list page (untuk editor) dan detail page (untuk render) — **ini konvensi project, bukan bug** — tidak ada shared import antar page untuk helper kecil ini
 
 ### Render pattern di parent
 
@@ -1581,7 +1639,7 @@ Editor menggantikan konten utama halaman list (bukan modal/sidebar):
 )}
 ```
 
-**Implementasi:** `PPInvoicePage.jsx` (`TemplateInvoiceEditor`) dan `PPDocumentsPage.jsx` (`TemplateEditor`).
+**Implementasi:** `PPInvoicePage.jsx` (`TemplateInvoiceEditor`), `PPReceiptPage.jsx` (`TemplateReceiptEditor`), dan `PPDocumentsPage.jsx` (`TemplateEditor`).
 
 ---
 
