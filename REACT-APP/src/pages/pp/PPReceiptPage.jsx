@@ -246,6 +246,7 @@ export default function PPReceiptPage() {
   const [fSearch,        setFSearch]       = useState('')
   const [page,           setPage]          = useState(1)
   const [showTemplate,   setShowTemplate]   = useState(false)
+  const isOwner = localStorage.getItem('efm_role') === 'owner'
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [createPrefill,  setCreatePrefill]  = useState(null)
   const [createForm,     setCreateForm]     = useState({ tglBayar: '', metode: 'Transfer Bank (BCA)' })
@@ -324,6 +325,7 @@ export default function PPReceiptPage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
+            {isOwner && (
             <button
               onClick={() => setShowTemplate(v => !v)}
               className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border w-full sm:w-auto ${
@@ -334,6 +336,7 @@ export default function PPReceiptPage() {
             >
               <Settings size={12} /> Template Receipt <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
             </button>
+            )}
             <button
               onClick={() => navigate('/pp/orders')}
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"

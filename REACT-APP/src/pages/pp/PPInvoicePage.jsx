@@ -251,6 +251,7 @@ export default function PPInvoicePage() {
   const [fSearch,      setFSearch]      = useState(location.state?.filterSearch ?? '')
   const [page,         setPage]         = useState(1)
   const [showTemplate, setShowTemplate] = useState(false)
+  const isOwner = localStorage.getItem('efm_role') === 'owner'
 
   const BSHORT = { Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des' }
   const filtered = useMemo(() => {
@@ -291,6 +292,7 @@ export default function PPInvoicePage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
+            {isOwner && (
             <button
               onClick={() => setShowTemplate(v => !v)}
               className={`flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold transition-colors border w-full sm:w-auto ${
@@ -301,6 +303,7 @@ export default function PPInvoicePage() {
             >
               <Settings size={12} /> Template Invoice <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
             </button>
+            )}
             <button
               onClick={() => navigate('/pp/orders')}
               className="flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-300 text-gray-600 text-xs font-semibold hover:bg-gray-50 transition-colors"
