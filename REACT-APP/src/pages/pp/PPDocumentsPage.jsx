@@ -692,6 +692,7 @@ export default function PPDocumentsPage() {
   const [fSearch, setFSearch] = useState('')
   const [page, setPage] = useState(1)
   const [showTemplate, setShowTemplate] = useState(false)
+  const isOwner = localStorage.getItem('efm_role') === 'owner'
   const templateMenuRef = useRef(null)
 
   const BSHORT = {Januari:'Jan',Februari:'Feb',Maret:'Mar',April:'Apr',Mei:'Mei',Juni:'Jun',Juli:'Jul',Agustus:'Agu',September:'Sep',Oktober:'Okt',November:'Nov',Desember:'Des'}
@@ -754,6 +755,7 @@ export default function PPDocumentsPage() {
             </div>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
+            {isOwner && (
             <div className="relative" ref={templateMenuRef}>
               <button
                 onClick={() => setShowTemplate(v => !v)}
@@ -768,6 +770,7 @@ export default function PPDocumentsPage() {
                 <ChevronDown size={12} className={`transition-transform ${showTemplate ? 'rotate-180' : ''}`} />
               </button>
             </div>
+            )}
             <button
               onClick={() => fromOrderId ? navigate('/pp/orders/' + fromOrderId, { state: { defaultTab: 'keuangan' } }) : navigate('/pp/orders')}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-gray-200 text-gray-500 text-xs font-medium hover:bg-gray-50 transition-colors shrink-0"

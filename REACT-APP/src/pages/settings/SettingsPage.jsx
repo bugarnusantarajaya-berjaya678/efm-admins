@@ -15,14 +15,15 @@ const NAV_ITEMS = [
 
 /* ── Access matrix rows ── */
 const ACCESS_ROWS = [
-  { label: 'Lihat semua modul',           sub: 'PP, B2B, Event, Ops',                   defaultOn: true  },
-  { label: 'Buat & edit invoice (Draft)',  sub: '',                                       defaultOn: true  },
-  { label: 'Kirim invoice ke klien',       sub: 'Memerlukan approval Owner',              defaultOn: false },
-  { label: 'Input bukti pembayaran',       sub: '',                                       defaultOn: true  },
-  { label: 'Approve pembayaran (Paid)',    sub: 'Memerlukan approval Owner',              defaultOn: false },
-  { label: 'Lihat halaman Revenue',        sub: '',                                       defaultOn: false },
-  { label: 'Hapus data',                   sub: '',                                       defaultOn: false },
-  { label: 'Akses Settings',              sub: '',                                       defaultOn: false },
+  { label: 'Lihat semua modul',           sub: 'PP, B2B, Event, Ops',                             defaultOn: true  },
+  { label: 'Buat & edit invoice (Draft)',  sub: '',                                                 defaultOn: true  },
+  { label: 'Kirim invoice ke klien',       sub: 'Memerlukan approval Owner',                        defaultOn: false },
+  { label: 'Input bukti pembayaran',       sub: '',                                                 defaultOn: true  },
+  { label: 'Approve pembayaran (Paid)',    sub: 'Memerlukan approval Owner',                        defaultOn: false },
+  { label: 'Lihat halaman Revenue',        sub: '',                                                 defaultOn: false },
+  { label: 'Edit template dokumen',        sub: 'Syarat Invoice, Catatan Receipt, Pasal Agreement', defaultOn: false, locked: true },
+  { label: 'Hapus data',                   sub: '',                                                 defaultOn: false, locked: true },
+  { label: 'Akses Settings',               sub: '',                                                 defaultOn: false, locked: true },
 ]
 
 /* ── Badge component ── */
@@ -204,7 +205,7 @@ function PanelAccess() {
               <td className="px-4 py-3.5 border-b border-gray-100">
                 <div className="flex justify-center">
                   {/* last 2 rows (Hapus data, Akses Settings) are fixed ✗ for admin */}
-                  {i >= ACCESS_ROWS.length - 2 ? (
+                  {row.locked ? (
                     <span className="text-red-500 text-[16px] font-bold">✗</span>
                   ) : (
                     <Toggle on={toggles[i]} onChange={v => toggle(i, v)} />
