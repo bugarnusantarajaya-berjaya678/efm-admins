@@ -2625,3 +2625,139 @@ Tanpa override ini, tampilan screen dan print tidak konsisten — screen 4 kolom
 
 **Rekap Absensi — section info pelatih** menggunakan flat 4-col dengan 4 kolom: Pelatih | Program | Ref Order | Klien. Progress bar sesi ditampilkan di bawah grid (dalam `{prog && ...}` block), masih dalam section yang sama. Grid ID: `rkp-pelatih-grid`.
 
+---
+
+## 23. Format Input Nominal Rp (Opsi B — Format-on-Blur)
+
+Pola standar untuk semua field input nominal / mata uang (Rp) di seluruh project. Eliminasi leading-zero bug sekaligus memberikan UX yang lebih baik: nilai terformat langsung di dalam field saat idle.
+
+**Prinsip:**
+- Saat **idle/blur** → field tampil `Rp X.XXX.XXX` (font-semibold)
+- Saat **fokus** → field tampil angka mentah untuk editing
+- Nilai **0** → field kosong (bukan "0") — ini yang mengeliminasi leading zero bug secara tuntas
+
+**Root cause leading zero bug:** `value={item.harga ?? 0}` atau `value={harga || 0}` menyebabkan field menampilkan "0". User ketik "5" → browser append → "05". React hitung `Number("05") === 5` (sama dengan state) → skip DOM update → "05" tetap tampil. Fix: tampilkan `''` saat nilai 0, bukan "0".
+
+---
+
+### Varian A — Beberapa field Rp dalam satu form (helper terpusat)
+
+Dipakai ketika satu form punya 2+ field Rp (contoh: `PPProgramFormPage` — biayaSesiPIC, hargaPersesi, diskonPaket).
+
+```jsx
+const [focusedRp, setFocusedRp] = useState(null) // null = tidak ada yang fokus
+
+// Helper functions
+const rpVal = (key) => {
+  if (focusedRp === key) {
+    const raw = form[key]
+    return (!raw || raw === '0') ? '' : raw
+  }
+  const n = parseInt(form[key]) || 0
+  return n > 0 ? formatRp(n) : ''
+}
+const rpCls = (key) => {
+  const base = inputCls(key) // class dasar form field
+  return (focusedRp !== key && parseInt(form[key]) > 0) ? base + ' font-semibold' : base
+}
+const rpChange = (key) => (e) => set(key, e.target.value.replace(/\D/g, ''))
+
+// Usage di JSX:
+<input
+  type="text"
+  inputMode="numeric"
+  value={rpVal('hargaPersesi')}
+  onChange={rpChange('hargaPersesi')}
+  onFocus={() => setFocusedRp('hargaPersesi')}
+  onBlur={() => setFocusedRp(null)}
+  placeholder="125000"
+  className={rpCls('hargaPersesi')}
+/>
+```
+
+**Catatan:** hapus hint `<p>` di bawah field (mis. "Rp 200.000") — format kini langsung di dalam field. Tidak perlu dua tempat untuk hal yang sama.
+
+---
+
+### Varian B — Satu field Rp standalone
+
+Dipakai untuk satu field Rp yang berdiri sendiri (contoh: `PPInvoiceDetailPage` — biayaLainDraft).
+
+```jsx
+const [focusedBiayaLain, setFocusedBiayaLain] = useState(false)
+
+<input
+  type="text"
+  inputMode="numeric"
+  value={focusedBiayaLain
+    ? (biayaLainDraft > 0 ? String(biayaLainDraft) : '')
+    : (biayaLainDraft > 0 ? formatRp(biayaLainDraft) : '')}
+  onFocus={() => setFocusedBiayaLain(true)}
+  onBlur={() => setFocusedBiayaLain(false)}
+  onChange={e => setBiayaLainDraft(parseInt(e.target.value.replace(/\D/g, '')) || 0)}
+  placeholder="0"
+  className={`w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]${!focusedBiayaLain && biayaLainDraft > 0 ? ' font-semibold' : ''}`}
+/>
+```
+
+---
+
+### Varian C — Multi-row dynamic items (array)
+
+Dipakai untuk Biaya Tambahan / line items yang bisa ditambah/hapus (contoh: `PPOrderDetailPage`, `PPOrderNewPage`). Focus tracking pakai `item.id` bukan boolean, sehingga hanya row yang aktif yang tampil raw.
+
+```jsx
+const [focusedItemId, setFocusedItemId] = useState(null)
+
+// Dalam map atas items:
+<input
+  type="text"
+  inputMode="numeric"
+  value={focusedItemId === item.id
+    ? (item.harga > 0 ? String(item.harga) : '')
+    : (item.harga > 0 ? formatRp(item.harga) : '')}
+  placeholder="0"
+  onFocus={() => setFocusedItemId(item.id)}
+  onBlur={() => setFocusedItemId(null)}
+  onChange={e => handleUpdateItem(item.id, 'harga', parseInt(e.target.value.replace(/\D/g, '')) || 0)}
+  className={`w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]${focusedItemId !== item.id && item.harga > 0 ? ' font-semibold' : ''}`}
+/>
+```
+
+---
+
+### Varian D — Conditional (Rp vs. non-Rp)
+
+Dipakai ketika field bisa berganti tipe (contoh: `PPPromoFormPage` — diskon bisa persen atau Rp). Opsi B hanya aktif untuk mode Rp; mode lain tetap `type="number"`.
+
+```jsx
+const [focusedNilai, setFocusedNilai] = useState(false)
+
+{form.subTipe === 'persen' ? (
+  <input type="number" value={form.nilai} onChange={e => set('nilai', e.target.value)} ... />
+) : (
+  <input
+    type="text"
+    inputMode="numeric"
+    value={focusedNilai
+      ? (form.nilai && form.nilai !== '0' ? form.nilai : '')
+      : (form.nilai && Number(form.nilai) > 0 ? 'Rp ' + Number(form.nilai).toLocaleString('id-ID') : '')}
+    onFocus={() => setFocusedNilai(true)}
+    onBlur={() => setFocusedNilai(false)}
+    onChange={e => set('nilai', e.target.value.replace(/\D/g, ''))}
+    placeholder="Contoh: 50000"
+    className={`${inputCls('nilai')}${!focusedNilai && Number(form.nilai) > 0 ? ' font-semibold' : ''}`}
+  />
+)}
+```
+
+---
+
+**Aturan umum semua varian:**
+- Selalu `type="text"` + `inputMode="numeric"` — BUKAN `type="number"` (type=number tidak bisa format string)
+- `onChange`: strip non-digit dengan `.replace(/\D/g, '')` sebelum simpan ke state
+- State simpan angka mentah (number atau string digit) — formatRp hanya untuk tampilan
+- `formatRp` gunakan yang sudah ada di file yang sama atau import dari data module; jangan buat duplikat formatter
+- Field Rp yang **read-only / auto-kalkulasi** (Total, Subtotal) TIDAK pakai pola ini — tetap tampilkan `formatRp(nilai)` langsung tanpa state fokus
+- Pola ini berlaku untuk semua modul (PP, B2B, Event) — konsisten
+

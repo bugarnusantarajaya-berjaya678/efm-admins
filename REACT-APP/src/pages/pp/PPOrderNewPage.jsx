@@ -932,7 +932,7 @@ export default function PPOrderNewPage() {
                     </div>
                     <div>
                       <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
-                      <input type="number" value={item.jumlah}
+                      <input type="number" value={item.jumlah > 0 ? item.jumlah : ''} min="1" placeholder="1"
                         onChange={e => handleUpdateItem(item.id, 'jumlah', e.target.value)}
                         className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
                     </div>
