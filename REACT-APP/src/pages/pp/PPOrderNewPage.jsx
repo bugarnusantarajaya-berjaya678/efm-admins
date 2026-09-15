@@ -95,6 +95,7 @@ export default function PPOrderNewPage() {
 
   // Section 6: Rincian Layanan / Invoice Items
   const [items, setItems] = useState([]);
+  const [focusedItemId, setFocusedItemId] = useState(null);
 
   // Section 6: Kode Promo
   const [promoKodeInput, setPromoKodeInput] = useState('');
@@ -937,9 +938,17 @@ export default function PPOrderNewPage() {
                     </div>
                     <div>
                       <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
-                      <input type="number" value={item.harga}
-                        onChange={e => handleUpdateItem(item.id, 'harga', e.target.value)}
-                        className="w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]" />
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={focusedItemId === item.id
+                          ? (item.harga > 0 ? String(item.harga) : '')
+                          : (item.harga > 0 ? formatRp(item.harga) : '')}
+                        placeholder="0"
+                        onFocus={() => setFocusedItemId(item.id)}
+                        onBlur={() => setFocusedItemId(null)}
+                        onChange={e => handleUpdateItem(item.id, 'harga', parseInt(e.target.value.replace(/\D/g, '')) || 0)}
+                        className={`w-full border border-gray-200 rounded-lg px-2.5 py-2 text-xs focus:outline-none focus:border-[#1E1C43]${focusedItemId !== item.id && item.harga > 0 ? ' font-semibold' : ''}`} />
                     </div>
                   </div>
                   <div className="mt-2 text-right">

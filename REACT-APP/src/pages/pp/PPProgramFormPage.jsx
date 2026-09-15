@@ -83,6 +83,7 @@ export default function PPProgramFormPage() {
 
   const [form, setForm] = useState(() => isEdit && existing ? toFormValues(existing) : { ...EMPTY_FORM })
   const [errors, setErrors] = useState({})
+  const [focusedRp, setFocusedRp] = useState(null)
 
   const jenisAktif = getStoredJenis().filter(j => j.status === 'aktif').map(j => j.nama)
   const picInfo = PIC_DB[form.picId] || null
@@ -178,6 +179,20 @@ export default function PPProgramFormPage() {
     `w-full border rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-[#1E1C43] transition-colors ${errors[key] ? 'border-red-400 bg-red-50' : 'border-gray-200'}`
 
   const label = 'text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block'
+
+  const rpVal = (key) => {
+    if (focusedRp === key) {
+      const raw = form[key]
+      return (!raw || raw === '0') ? '' : raw
+    }
+    const n = parseInt(form[key]) || 0
+    return n > 0 ? formatRp(n) : ''
+  }
+  const rpCls = (key) => {
+    const base = inputCls(key)
+    return (focusedRp !== key && parseInt(form[key]) > 0) ? base + ' font-semibold' : base
+  }
+  const rpChange = (key) => (e) => set(key, e.target.value.replace(/\D/g, ''))
 
   return (
     <div className="bg-[#F5F5F7] min-h-screen pb-24">
@@ -357,12 +372,14 @@ export default function PPProgramFormPage() {
             <div>
               <label className={label}>Biaya Per Sesi PIC (Rp) <span className="text-red-500">*</span></label>
               <input
-                type="number"
-                value={form.biayaSesiPIC}
-                onChange={e => set('biayaSesiPIC', e.target.value)}
+                type="text"
+                inputMode="numeric"
+                value={rpVal('biayaSesiPIC')}
+                onChange={rpChange('biayaSesiPIC')}
+                onFocus={() => setFocusedRp('biayaSesiPIC')}
+                onBlur={() => setFocusedRp(null)}
                 placeholder="75000"
-                min="0"
-                className={inputCls('biayaSesiPIC')}
+                className={rpCls('biayaSesiPIC')}
               />
               {errors.biayaSesiPIC && <p className="text-red-500 text-[10px] mt-1">{errors.biayaSesiPIC}</p>}
             </div>
@@ -398,32 +415,30 @@ export default function PPProgramFormPage() {
             <div>
               <label className={label}>Harga Per Sesi (Rp) <span className="text-red-500">*</span></label>
               <input
-                type="number"
-                value={form.hargaPersesi}
-                onChange={e => set('hargaPersesi', e.target.value)}
+                type="text"
+                inputMode="numeric"
+                value={rpVal('hargaPersesi')}
+                onChange={rpChange('hargaPersesi')}
+                onFocus={() => setFocusedRp('hargaPersesi')}
+                onBlur={() => setFocusedRp(null)}
                 placeholder="125000"
-                min="0"
-                className={inputCls('hargaPersesi')}
+                className={rpCls('hargaPersesi')}
               />
-              {form.hargaPersesi ? (
-                <p className="text-[10px] text-gray-400 mt-1">{formatRp(parseInt(form.hargaPersesi) || 0)}</p>
-              ) : null}
               {errors.hargaPersesi && <p className="text-red-500 text-[10px] mt-1">{errors.hargaPersesi}</p>}
             </div>
 
             <div>
               <label className={label}>Diskon Paket (Rp)</label>
               <input
-                type="number"
-                value={form.diskonPaket}
-                onChange={e => set('diskonPaket', e.target.value)}
+                type="text"
+                inputMode="numeric"
+                value={rpVal('diskonPaket')}
+                onChange={rpChange('diskonPaket')}
+                onFocus={() => setFocusedRp('diskonPaket')}
+                onBlur={() => setFocusedRp(null)}
                 placeholder="0"
-                min="0"
-                className={inputCls('diskonPaket')}
+                className={rpCls('diskonPaket')}
               />
-              {form.diskonPaket && parseInt(form.diskonPaket) > 0 ? (
-                <p className="text-[10px] text-gray-400 mt-1">{formatRp(parseInt(form.diskonPaket) || 0)}</p>
-              ) : null}
             </div>
 
             <div className="sm:col-span-2">
