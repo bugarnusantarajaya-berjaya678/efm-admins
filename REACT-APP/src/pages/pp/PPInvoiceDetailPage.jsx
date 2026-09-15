@@ -106,6 +106,7 @@ export default function PPInvoiceDetailPage() {
   const [biayaLainJumlahDraft, setBiayaLainJumlahDraft] = useState(1)
   const [biayaLainKetDraft, setBiayaLainKetDraft]   = useState('')
   const [biayaLainExpanded, setBiayaLainExpanded]   = useState(false)
+  const [focusedBiayaLain, setFocusedBiayaLain]   = useState(false)
   const [kodeInput,        setKodeInput]        = useState('')
   const [diskonApplied,    setDiskonApplied]    = useState(null)
   const [diskonError,      setDiskonError]      = useState('')
@@ -563,12 +564,16 @@ export default function PPInvoiceDetailPage() {
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
                           <input
-                            type="number"
-                            min={0}
-                            value={biayaLainDraft || ''}
-                            onChange={e => setBiayaLainDraft(Number(e.target.value) || 0)}
+                            type="text"
+                            inputMode="numeric"
+                            value={focusedBiayaLain
+                              ? (biayaLainDraft > 0 ? String(biayaLainDraft) : '')
+                              : (biayaLainDraft > 0 ? formatRp(biayaLainDraft) : '')}
+                            onFocus={() => setFocusedBiayaLain(true)}
+                            onBlur={() => setFocusedBiayaLain(false)}
+                            onChange={e => setBiayaLainDraft(parseInt(e.target.value.replace(/\D/g, '')) || 0)}
                             placeholder="0"
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:border-[#1E1C43]"
+                            className={`w-full border border-gray-200 rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:border-[#1E1C43]${!focusedBiayaLain && biayaLainDraft > 0 ? ' font-semibold' : ''}`}
                           />
                         </div>
                       </div>

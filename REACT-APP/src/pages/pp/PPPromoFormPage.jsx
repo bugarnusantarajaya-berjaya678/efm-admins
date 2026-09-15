@@ -75,6 +75,7 @@ export default function PPPromoFormPage() {
   const [temaForm, setTemaForm] = useState(
     existing?.tema || { nama: '', icon: '⭐', warna: 'orange', berlakuHingga: '' }
   )
+  const [focusedNilai, setFocusedNilai] = useState(false)
 
   const allPrograms = getStoredPrograms().filter(p => p.status === 'aktif')
   const subTipeOpts = form.tipe === 'diskon' ? SUBTIPE_OPTS_DISKON : SUBTIPE_OPTS_BONUS
@@ -290,14 +291,29 @@ export default function PPPromoFormPage() {
               {form.tipe === 'diskon' && (
                 <div>
                   <label className={label}>Nilai {form.subTipe === 'persen' ? '(%)' : '(Rp)'} <span className="text-red-500">*</span></label>
-                  <input
-                    type="number"
-                    value={form.nilai}
-                    onChange={e => set('nilai', e.target.value)}
-                    placeholder={form.subTipe === 'persen' ? 'Contoh: 10' : 'Contoh: 50000'}
-                    min="0"
-                    className={inputCls('nilai')}
-                  />
+                  {form.subTipe === 'persen' ? (
+                    <input
+                      type="number"
+                      value={form.nilai}
+                      onChange={e => set('nilai', e.target.value)}
+                      placeholder="Contoh: 10"
+                      min="0"
+                      className={inputCls('nilai')}
+                    />
+                  ) : (
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={focusedNilai
+                        ? (form.nilai && form.nilai !== '0' ? form.nilai : '')
+                        : (form.nilai && Number(form.nilai) > 0 ? 'Rp ' + Number(form.nilai).toLocaleString('id-ID') : '')}
+                      onFocus={() => setFocusedNilai(true)}
+                      onBlur={() => setFocusedNilai(false)}
+                      onChange={e => set('nilai', e.target.value.replace(/\D/g, ''))}
+                      placeholder="Contoh: 50000"
+                      className={`${inputCls('nilai')}${!focusedNilai && Number(form.nilai) > 0 ? ' font-semibold' : ''}`}
+                    />
+                  )}
                   {err.nilai && <p className="text-red-500 text-[10px] mt-1">{err.nilai}</p>}
                 </div>
               )}

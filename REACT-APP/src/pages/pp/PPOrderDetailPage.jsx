@@ -589,6 +589,7 @@ export default function PPOrderDetailPage() {
 
 
   const [rincianDraft,          setRincianDraft]          = useState(order?.rincianLayanan || [])
+  const [focusedRincianId,      setFocusedRincianId]      = useState(null)
 
   const subtotalPP = rincianDraft.reduce((s, i) => s + (i.total || 0), 0)
   const formatRpPP = (val) => 'Rp ' + Math.round(val || 0).toLocaleString('id-ID')
@@ -1482,13 +1483,21 @@ export default function PPOrderDetailPage() {
                         </div>
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
-                          <input type="number" value={item.harga ?? (item.total / Math.max(1, item.jumlah || 1))} min="0"
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            value={focusedRincianId === item.id
+                              ? (item.harga > 0 ? String(item.harga) : '')
+                              : (item.harga > 0 ? formatRpPP(item.harga) : '')}
+                            placeholder="0"
+                            onFocus={() => setFocusedRincianId(item.id)}
+                            onBlur={() => setFocusedRincianId(null)}
                             onChange={e => setRincianDraft(prev => prev.map((it, i) => {
                               if (i !== idx + 1) return it
-                              const harga = Number(e.target.value)
+                              const harga = parseInt(e.target.value.replace(/\D/g, '')) || 0
                               return { ...it, harga, total: (it.jumlah ?? 1) * harga }
                             }))}
-                            className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]" />
+                            className={`w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]${focusedRincianId !== item.id && item.harga > 0 ? ' font-semibold' : ''}`} />
                         </div>
                       </div>
                       <div className="mt-2 text-right">
