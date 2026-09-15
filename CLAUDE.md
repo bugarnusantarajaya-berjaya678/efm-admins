@@ -147,7 +147,20 @@ Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
       dengan merge_method squash. Kalau PR masih draft, panggil
       update_pull_request (draft: false) lebih dulu.
 
-   d. **Konfirmasi hasil** — laporan hasilnya dan berikan link
+   d. **Reset branch ke main** — WAJIB segera setelah merge berhasil
+      (atau setelah pengguna konfirmasi merge manual), SEBELUM
+      melakukan hal apapun lain:
+      ```bash
+      git fetch origin main
+      git checkout -B <nama-branch> origin/main
+      git push --force-with-lease origin <nama-branch>
+      ```
+      Ini menghilangkan divergence dari squash merge sehingga
+      task berikutnya selalu mulai dari base yang bersih.
+      **Tidak ada pengecualian** — skip langkah ini = conflict
+      pasti di PR berikutnya.
+
+   e. **Konfirmasi hasil** — laporan hasilnya dan berikan link
       production (efm-admins.vercel.app).
 
    ⚠️ JANGAN merge tanpa langkah (a) dan (b). Commit yang belum
@@ -161,6 +174,10 @@ Setelah menyelesaikan task, build sukses, dan PR sudah dibuat
 5. Pengguna juga tetap bisa merge manual sendiri lewat GitHub
    kapan saja tanpa menunggu ditanya - alur tanya ini hanya
    mempercepat, bukan satu-satunya cara.
+
+6. **Jika pengguna merge manual** (konfirmasi atau terdeteksi via
+   git fetch): langsung jalankan reset branch (langkah d di atas)
+   sebelum task berikutnya — sama seperti merge via API.
 
 ## Referensi Tambahan
 

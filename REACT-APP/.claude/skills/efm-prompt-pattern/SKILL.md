@@ -213,28 +213,38 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - **KRITIS — setelah menyuruh merge manual: HENTIKAN semua push ke branch.** Pengguna kemungkinan besar langsung merge manual saat itu juga. Push commit baru setelah itu = commit masuk ke branch yang sudah di-merge, TIDAK akan ikut di-squash.
 - **Sebelum panggil `merge_pull_request`: selalu cek dulu PR masih open.** Panggil `pull_request_read` dan cek field `state === "open"`. Jika `state === "closed"` atau `merged === true`, PR sudah di-merge sebelumnya — `merge_pull_request` akan return state lama (`"merged": true`) tanpa error, yang terlihat seperti sukses baru padahal bukan. Commit-commit setelah merge manual tidak akan ikut masuk main.
 
-**⛔ WAJIB SETELAH PR DI-MERGE — sync branch sebelum sentuh apapun:**
-- Begitu pengguna mengkonfirmasi PR sudah di-merge (atau kita tahu PR sudah merged via API), LANGSUNG jalankan ini sebelum task apapun:
-  ```bash
-  git fetch origin main && git merge origin/main
-  ```
-- **Tidak ada pengecualian.** Task kecil, fix 1 baris, update teks — semuanya tetap harus sync dulu. Squash merge selalu membuat branch diverge dari main, sehingga setiap push berikutnya tanpa sync = conflict.
-- Jika ada conflict saat merge: `git checkout --ours <file-yang-conflict>` → `git add` → `npm run build` → commit merge → push.
-- **Jangan tunggu GitHub menampilkan "This branch has conflicts."** Lakukan proaktif sebelum menulis satu baris kode pun.
-- Pelanggaran aturan ini adalah penyebab utama conflict berulang di project ini.
+**⛔ WAJIB SETELAH PR DI-MERGE — reset branch ke main sebelum sentuh apapun:**
 
-**Branch reset setelah squash merge — WAJIB sebelum task berikutnya:**
-- Project ini squash merge ke main. Setelah PR di-merge, branch lama punya riwayat commit yang sudah tidak relevan — main punya squash commit baru yang tidak ada di branch. Task berikutnya di branch yang sama = conflict hampir pasti.
-- Sebelum memulai task baru APAPUN di branch yang sudah pernah di-merge, selalu reset branch ke main terlebih dahulu:
-  ```bash
-  git fetch origin main
-  git checkout -B <nama-branch> origin/main
-  git push --force-with-lease origin <nama-branch>
-  ```
-- Baru setelah reset → buat perubahan → commit → push → buat PR baru
-- Ini menghilangkan conflict sama sekali karena branch selalu mulai dari tip main yang bersih
-- Cek apakah branch sudah pernah di-merge: `git log --oneline origin/main..HEAD` — jika tidak ada output (0 commit ahead), branch sudah sinkron. Jika ada commit yang tidak seharusnya ada (commit lama dari PR yang sudah di-merge), lakukan reset.
-- `--force-with-lease` aman dipakai di sini karena kita sengaja reset branch kerja ke main, bukan menghapus commit orang lain
+> Ini adalah penyebab utama conflict berulang di project ini. Squash merge membuat branch diverge dari main (SHA berbeda). Task berikutnya di branch yang belum di-reset = conflict hampir pasti.
+
+**Dua kondisi, dua command berbeda:**
+
+| Kondisi | Command yang benar |
+|---|---|
+| Setelah PR di-merge, belum ada uncommitted work | `git checkout -B <branch> origin/main` + force-with-lease push **(RESET BERSIH)** |
+| Sedang di tengah task, ada perubahan lokal yang belum selesai | `git fetch origin main && git merge origin/main` + resolve conflict **(MERGE SAJA)** |
+
+**Kondisi 1 — setelah merge (paling sering):**
+```bash
+git fetch origin main
+git checkout -B <nama-branch> origin/main
+git push --force-with-lease origin <nama-branch>
+# Verifikasi: git log --oneline origin/main..HEAD  →  harus kosong (0 output)
+```
+- Jalankan ini SEGERA setelah PR di-merge — sebelum task apapun, sebelum menulis satu baris kode
+- **Tidak ada pengecualian:** task kecil, fix 1 baris, update teks — semuanya tetap reset dulu
+- `--force-with-lease` aman karena kita sengaja reset ke main, bukan menghapus commit orang lain
+
+**Kondisi 2 — mid-task dengan uncommitted/unfinished work:**
+```bash
+git fetch origin main && git merge origin/main
+# Jika conflict: keep HEAD (akumulasi kita) untuk import/logic milik kita
+#                keep origin/main untuk bagian baru di main yang bukan milik kita
+npm run build  # verifikasi setelah resolve
+git add . && git commit && git push
+```
+
+**Jangan pakai `git merge` untuk kondisi 1.** Merge di atas branch yang sudah diverge hanya menambah merge commit baru di atas commit lama — branch tetap punya riwayat tidak relevan dan kemungkinan conflict lagi di PR berikutnya.
 
 **⛔ SATU COMMIT PER PR — squash merge hanya menjamin commit yang sudah ada saat merge terjadi:**
 - Squash merge project ini terbukti bermasalah ketika PR punya banyak commit yang di-push secara bertahap: commit terakhir sering tidak ikut masuk ke squash result, terutama saat merge dilakukan manual oleh pengguna di antara push-push tersebut.
