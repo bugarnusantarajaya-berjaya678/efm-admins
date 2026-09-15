@@ -79,6 +79,17 @@ const DEFAULT_PASAL = [
   ]},
 ]
 
+function getAgreementPasal() {
+  try {
+    const saved = localStorage.getItem('efmAgreementTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.pasal) && parsed.pasal.length > 0) return parsed.pasal
+    }
+  } catch {}
+  return DEFAULT_PASAL.map(p => ({ ...p, poin: [...p.poin] }))
+}
+
 /* ── Template Editor ── */
 function TemplateEditor({ onClose }) {
   const [pasal, setPasal] = useState(() => {
@@ -251,7 +262,7 @@ function TemplateEditor({ onClose }) {
             </span>
             {editMode ? (
               <input
-                className="flex-1 text-sm font-semibold text-[#1E1C43] bg-transparent border-none outline-none placeholder:text-gray-400 placeholder:font-normal min-w-0"
+                className="flex-1 text-sm font-semibold text-[#1E1C43] border border-gray-300 rounded-lg px-2.5 py-1 outline-none focus:border-[#1E1C43] bg-white min-w-0 placeholder:text-gray-400 placeholder:font-normal"
                 placeholder="Judul pasal..."
                 value={ps.judul}
                 onChange={e => updateJudul(pi, e.target.value)}
@@ -516,44 +527,13 @@ function AgreementDoc({ doc }) {
       <div className="mb-6">
         <div className="text-[11px] font-bold text-[#1E1C43] uppercase tracking-wide mb-3.5 pb-1.5 border-b border-gray-200">Syarat dan Ketentuan Layanan</div>
 
-        {[
-          ['Pasal 1 — Ruang Lingkup Layanan', [
-            'Essential Fitness Management (EFM), di bawah naungan CV Bugar Nusantara Jaya, menyediakan layanan panduan program latihan atau terapi privat secara eksklusif kepada Klien sesuai dengan detail paket yang dipilih.',
-            'Sesi latihan/terapi akan dipandu secara langsung oleh Pelatih atau Terapis resmi yang ditunjuk oleh manajemen EFM berdasarkan kualifikasi spesifik yang dibutuhkan oleh program Klien.',
-          ]],
-          ['Pasal 2 — Masa Berlaku Paket (Validity Period)', [
-            'Seluruh kuota sesi latihan dalam paket yang telah dibeli wajib diselesaikan dalam rentang waktu yang tertera pada kolom Masa Berlaku Paket.',
-            'Jika masa berlaku paket telah habis sedangkan Klien belum menyelesaikan seluruh sesi, maka sisa sesi akan dinyatakan hangus secara otomatis oleh sistem backend.',
-          ]],
-          ['Pasal 3 — Kebijakan Pembatalan dan Penjadwalan Ulang', [
-            'Non-Darurat: Klien wajib melakukan konfirmasi rescheduling atau pembatalan sekurang-kurangnya 24 jam sebelum sesi dimulai.',
-            'Darurat/Sakit: Pembatalan mendadak karena sakit wajib disertai bukti pendukung sah (mis. Surat Keterangan Dokter). Tanpa bukti sah, sesi tetap dihitung terpakai.',
-            'Sesi Pengganti: Pengaturan jadwal pengganti akibat sakit/izin menjadi tanggung jawab langsung antara Klien dan Pelatih/Terapis.',
-            'Pembatalan sepihak kurang dari 24 jam tanpa alasan darurat yang disetujui akan menyebabkan sesi tersebut hangus otomatis dari total kuota.',
-          ]],
-          ['Pasal 4 — Pembayaran dan Validasi Order', [
-            'Seluruh transaksi pemesanan paket dinyatakan sah apabila dilakukan melalui WhatsApp Asisten Virtual / Admin Resmi EFM yang terintegrasi dengan payment gateway CV Bugar Nusantara Jaya.',
-            'Klien wajib memastikan detail pesanan sudah sesuai sebelum pelunasan. Pembayaran yang telah divalidasi bersifat final, tidak dapat dibatalkan, dan non-refundable.',
-          ]],
-          ['Pasal 5 — Jaminan Data dan Tanggung Jawab Kesehatan Mandiri', [
-            'Klien menyatakan dan bertanggung jawab penuh bahwa seluruh data pribadi, kondisi fisik, riwayat cedera, dan catatan medis yang diberikan adalah benar, akurat, dan jujur.',
-            'Klien memahami bahwa aktivitas fisik memiliki risiko cedera bawaan dan bertanggung jawab penuh atas keselamatan dirinya selama dan sesudah sesi berlangsung.',
-            'EFM beserta seluruh manajemen, pelatih, dan terapis dibebaskan dari segala tuntutan hukum atas risiko yang timbul akibat kelalaian Klien atau adanya kondisi medis tersembunyi.',
-          ]],
-          ['Pasal 6 — Kerjasama dan Etika dengan Pelatih/Terapis', [
-            'Setiap Pelatih atau Terapis yang bertugas di EFM memiliki kontrak resmi dengan manajemen demi menjaga profesionalitas dan kualitas layanan.',
-            'Klien dilarang keras mempekerjakan atau membuat kesepakatan dengan Pelatih/Terapis EFM di luar manajemen tanpa izin tertulis dari Direksi CV Bugar Nusantara Jaya.',
-          ]],
-          ['Pasal 7 — Pernyataan Kesadaran dan Persetujuan', [
-            'Klien menyatakan telah membaca dengan saksama, memahami seluruh isi, serta menerima konsekuensi hukum dari Syarat dan Ketentuan dalam dokumen ini.',
-            'Perjanjian ini disetujui dan ditandatangani secara elektronik dalam keadaan sadar, sehat jasmani dan rohani, tanpa paksaan dari pihak manapun.',
-            'Klien sepakat dan berkomitmen untuk menjalani seluruh rangkaian paket program privat yang telah dibeli sesuai regulasi operasional EFM.',
-          ]],
-        ].map(([judul, poin]) => (
-          <div key={judul} className="mb-3.5">
-            <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide mb-1.5">{judul}</div>
+        {getAgreementPasal().map((ps, pi) => (
+          <div key={ps.id || pi} className="mb-3.5">
+            <div className="text-[10.5px] font-bold text-[#1E1C43] uppercase tracking-wide mb-1.5">
+              Pasal {pi + 1} — {ps.judul}
+            </div>
             <ol className="pl-4 space-y-1">
-              {poin.map((p, i) => (
+              {ps.poin.map((p, i) => (
                 <li key={i} className="text-[11px] leading-relaxed text-gray-700" style={{ listStyleType: 'decimal' }}>{p}</li>
               ))}
             </ol>
