@@ -1482,10 +1482,11 @@ export default function PPOrderDetailPage() {
                         </div>
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Harga (Rp)</label>
-                          <input type="number" value={item.harga ?? (item.total / Math.max(1, item.jumlah || 1))} min="0"
+                          <input type="number" value={item.harga > 0 ? item.harga : ''} min="0"
+                            placeholder="0"
                             onChange={e => setRincianDraft(prev => prev.map((it, i) => {
                               if (i !== idx + 1) return it
-                              const harga = Number(e.target.value)
+                              const harga = Number(e.target.value) || 0
                               return { ...it, harga, total: (it.jumlah ?? 1) * harga }
                             }))}
                             className="w-full border border-gray-200 rounded-lg px-2 py-1 text-sm focus:outline-none focus:border-[#1E1C43]" />
