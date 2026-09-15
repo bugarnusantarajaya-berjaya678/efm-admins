@@ -6,6 +6,25 @@ import { formatRp, sesiCount } from '../../data/ppReceiptData'
 import { getAllReceipts } from '../../data/ppReceiptStore'
 import { getCompanySettings } from '../../utils/companySettings'
 
+function getDefaultRcpCatatan() {
+  return [
+    'Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung.',
+    'Simpan receipt ini sebagai bukti pembayaran yang sah.',
+    'Barcode tidak dapat dipindahtangankan — hanya berlaku untuk klien yang bersangkutan.',
+  ]
+}
+
+function getRcpCatatan() {
+  try {
+    const saved = localStorage.getItem('efmReceiptTemplate')
+    if (saved) {
+      const parsed = JSON.parse(saved)
+      if (Array.isArray(parsed.items) && parsed.items.length > 0) return parsed.items
+    }
+  } catch {}
+  return getDefaultRcpCatatan()
+}
+
 function QRVerifikasi({ label, size = 72 }) {
   return (
     <div className="flex flex-col items-center justify-center py-2">
@@ -158,7 +177,9 @@ function ReceiptDocument({ rcp, onGoToOrder, onGoToInvoice }) {
       <div className="rcp-sec px-6 sm:px-8 py-4 border-b border-gray-100">
         <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-2">Catatan</div>
         <ol className="list-decimal list-inside space-y-1.5">
-          <li className="text-xs text-gray-500 leading-relaxed">Tunjukkan barcode ini kepada pelatih / terapis di setiap sesi pertemuan berlangsung</li>
+          {getRcpCatatan().map((item, i) => (
+            <li key={i} className="text-xs text-gray-500 leading-relaxed">{item}</li>
+          ))}
         </ol>
       </div>
 
