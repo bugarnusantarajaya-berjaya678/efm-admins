@@ -1472,10 +1472,10 @@ export default function PPOrderDetailPage() {
                         </div>
                         <div>
                           <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1 block">Jumlah</label>
-                          <input type="number" value={item.jumlah ?? 1} min="1"
+                          <input type="number" value={item.jumlah > 0 ? item.jumlah : ''} min="1" placeholder="1"
                             onChange={e => setRincianDraft(prev => prev.map((it, i) => {
                               if (i !== idx + 1) return it
-                              const jml = Number(e.target.value)
+                              const jml = parseInt(e.target.value) || 0
                               const harga = it.harga ?? (it.total / Math.max(1, it.jumlah || 1))
                               return { ...it, jumlah: jml, total: jml * harga }
                             }))}
