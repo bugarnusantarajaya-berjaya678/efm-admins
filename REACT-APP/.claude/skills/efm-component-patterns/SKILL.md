@@ -2858,3 +2858,126 @@ Untuk field hitungan (Jumlah, Sesi, Partisipan, Usia, dll) yang tetap menggunaka
 - State string dimulai dari `''`? → aman, tidak perlu perlakuan khusus
 - State string dimulai dari `'0'`? → ganti initial value ke `''` dan tambahkan placeholder
 
+---
+
+## 25. SectionCard dengan Optional Action Button
+
+Used for: section kartu di halaman detail yang membutuhkan tombol aksi di header (mis. "Buat Assessment" di Riwayat Assessment, "Tambah Sesi" di Riwayat Sesi, dll). Implementasi resmi ada di `PPKlienDetailPage.jsx`.
+
+```jsx
+function SectionCard({ icon: Icon, title, action, children }) {
+  return (
+    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2 border-l-4 border-[#E05945] pl-3">
+          <Icon size={14} className="shrink-0" /> {title}
+        </h3>
+        {action}
+      </div>
+      {children}
+    </div>
+  )
+}
+```
+
+**Pemakaian — dengan tombol CTA:**
+```jsx
+<SectionCard
+  icon={ClipboardList}
+  title="Riwayat Assessment"
+  action={
+    <button
+      onClick={() => navigate('/pp/screening/new', {
+        state: { klienId: klien.id, leadId: klien.leadId, namaKlien: klien.nama },
+      })}
+      className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+    >
+      <Plus size={11} /> Buat Assessment
+    </button>
+  }
+>
+  {/* ... isi section */}
+</SectionCard>
+```
+
+**Aturan:**
+- Prop `action` opsional — kalau tidak di-pass, header tetap render dengan judul saja
+- Tombol `action` ukuran `h-7 px-2.5` (sedikit lebih kecil dari tombol header page yang `h-8`) agar proporsional di header section
+- Tombol CTA di header section: orange (`bg-[#E05945]`) — bukan navy, bukan gray
+- Versi tanpa `action` prop: `SectionCard` tetap backward-compatible, tidak perlu ubah pemanggil lama
+
+---
+
+## 26. Assessment Switcher Dropdown
+
+Used for: memilih/berpindah antara beberapa record assessment milik klien yang sama, tanpa meninggalkan halaman. Implementasi resmi ada di `PPFitnessAssessmentPage.jsx`.
+
+**State / data:**
+```js
+// Ambil semua assessment klien yang sama — computed via useMemo
+const clientAssessments = useMemo(() => {
+  const effKlienId = klienId || existing?.klienId
+  const effLeadId  = leadId  || existing?.leadId
+  if (!effKlienId && !effLeadId) return []
+  return Object.entries(getAllAssessments())
+    .filter(([, a]) => effKlienId ? a.klienId === effKlienId : a.leadId === effLeadId)
+    .map(([k, a]) => ({ id: k, ...a }))
+    .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
+}, [getAllAssessments(), klienId, leadId, existing?.klienId, existing?.leadId])
+```
+
+**UI (ditempatkan antara header card dan konten form):**
+```jsx
+{clientAssessments.length > 0 && (
+  <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3 mb-4">
+    <div className="flex items-center gap-3 flex-wrap">
+      <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider shrink-0">
+        Assessment Klien
+      </span>
+      <select
+        value={isNew ? '' : id}
+        onChange={e => {
+          const newId = e.target.value
+          if (newId && newId !== id) {
+            navigate(`/pp/screening/${newId}`, {
+              state: { leadId: leadId || existing?.leadId, klienId: klienId || existing?.klienId },
+            })
+          }
+        }}
+        className="flex-1 min-w-0 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#1E1C43] bg-white"
+      >
+        {isNew && <option value="">— Assessment Baru —</option>}
+        {clientAssessments.map(a => (
+          <option key={a.id} value={a.id}>
+            {a.id}
+            {a.statusAssessment ? ` — ${a.statusAssessment}` : ''}
+            {a.tanggalPreTest
+              ? ` — ${new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
+              : ''}
+          </option>
+        ))}
+      </select>
+      <button
+        onClick={() => navigate('/pp/screening/new', {
+          state: {
+            leadId:    leadId    || existing?.leadId,
+            klienId:   klienId   || existing?.klienId,
+            namaKlien: existing?.namaKlien || namaKlien,
+          },
+        })}
+        className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
+      >
+        <Plus size={12} /> Buat Baru
+      </button>
+    </div>
+  </div>
+)}
+```
+
+**Aturan:**
+- Hanya tampil kalau `clientAssessments.length > 0` — tidak perlu switcher kalau klien hanya punya satu assessment
+- Pilih SCR-ID → navigate ke route assessment itu, teruskan `{ leadId, klienId }` dalam state
+- Saat form "baru" (`isNew`): tambahkan option `— Assessment Baru —` di atas list
+- "Buat Baru" button: orange CTA, pass full context `{ leadId, klienId, namaKlien }`
+- Format option: `SCR-YY-####` + status (opsional) + tanggal preTest — cukup informatif untuk pilih yang mana
+
