@@ -451,9 +451,9 @@ export default function PPRekapAbsensiDetailPage() {
 
                   {/* TTD area */}
                   {rekapStatus === 'dikonfirmasi' ? (
-                    efmSignature ? (
+                    (efmSignature || cs.tandaTanganCEO) ? (
                       <div className="flex items-center justify-center h-16">
-                        <img src={efmSignature} alt="TTD EFM" className="h-14 object-contain" />
+                        <img src={efmSignature || cs.tandaTanganCEO} alt="TTD EFM" className="h-14 object-contain" />
                       </div>
                     ) : (
                       <EfmSig />
@@ -467,9 +467,11 @@ export default function PPRekapAbsensiDetailPage() {
                   <div className="border-t border-gray-100 mt-2 pt-3">
                     <p className="text-xs font-semibold text-gray-700">{approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">{cs.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
-                    <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
                     {rekapStatus === 'dikonfirmasi' && tglKonfirmasi && (
-                      <p className="text-[10px] text-gray-400 mt-0.5">Dikonfirmasi: {tglKonfirmasi}</p>
+                      <div className="mt-1.5 space-y-0.5 text-left">
+                        <p className="text-[9px] text-gray-400"><span className="font-semibold">Disetujui oleh:</span> {approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
+                        <p className="text-[9px] text-gray-400"><span className="font-semibold">Waktu:</span> {tglKonfirmasi}</p>
+                      </div>
                     )}
                   </div>
                 </div>
