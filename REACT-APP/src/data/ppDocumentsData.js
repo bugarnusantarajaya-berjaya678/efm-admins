@@ -247,8 +247,8 @@ export const DOCS_INIT = [
       { id: 'KL-0028', nama: 'Tio Wahyudi', sapaan: 'Mas', hubungan: 'Anggota' },
       { id: 'KL-0029', nama: 'Bambang Sutrisno', sapaan: 'Pak', hubungan: 'Anggota' },
     ],
-    tglDibuat: '10 Jan 2027', statusTtd: 'pending', tglTtd: null,
-    ttdMetadata: null,
+    tglDibuat: '10 Jan 2027', statusTtd: 'waiting-approval', tglTtd: '19 Jan 2027 14:22',
+    ttdMetadata: { namaKlien: 'Mega Wulandari', device: 'iPhone 15 Pro - Safari', ipAddress: '182.253.xx.xx', timestamp: '2027-01-19T14:22:11+07:00' },
     approvedBy: null, approvalTimestamp: null,
   },
   {
