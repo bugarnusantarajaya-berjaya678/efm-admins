@@ -8,6 +8,15 @@ import { getCompanySettings } from '../../utils/companySettings'
 import { formatRp } from '../../data/ppInvoiceData'
 import { PIC_DB } from '../../data/ppProgramDBData'
 
+/* ── Per-order absensi seed (for direct URL access without navigation state) ── */
+const ABSENSI_SEED = {
+  'PP-27-0004': [
+    { id:"ABS-001", jadwalId:"JS-Z01", tanggal:"2027-01-16", jam:"08:03", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"iPhone 15 Pro - Safari",        fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm001zumba/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-002", jadwalId:"JS-Z02", tanggal:"2027-01-17", jam:"08:00", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm002zumba/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-003", jadwalId:"JS-Z03", tanggal:"2027-01-23", jam:"08:01", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"iPhone 15 Pro - Safari",        fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm003zumba/view?usp=drive_link", catatanKoreksi:"" },
+  ],
+}
+
 /* ── localStorage helpers ── */
 function loadRekap(orderId) {
   try { return JSON.parse(localStorage.getItem(`rekap-pp-${orderId}`)) || {} } catch { return {} }
@@ -81,7 +90,7 @@ export default function PPRekapAbsensiDetailPage() {
   const picData   = Object.values(PIC_DB).find(p => p.fullname === order?.picOpsEFM) || null
   const ratePerSesi = picData?.biayaSesi || (prog?.biayaSesiPIC || 0)
 
-  const absensiSesi = state?.absensiSesi || []
+  const absensiSesi = state?.absensiSesi || init.absensiSesi || ABSENSI_SEED[orderId] || []
   const totalHon    = absensiSesi.length * ratePerSesi
   const rekapId     = 'RKP-' + orderId
 

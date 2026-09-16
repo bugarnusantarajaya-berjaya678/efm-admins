@@ -101,6 +101,15 @@ const ABSENSI_DUMMY = [
   { id:"ABS-012", jadwalId:"JS-012", tanggal:"2026-11-07", jam:"07:00", lokasi:"Hampton's Park Tower A, Lt. 12", device:"Samsung Galaxy S24 - Chrome", fotoUrl:"https://drive.google.com/file/d/1A2Bk9XRA5nFMdKvBdBZjgm012ptlbs/view?usp=drive_link", catatanKoreksi:"" },
 ]
 
+/* ── Per-order absensi overrides (Zumba, rehab, dll — order-specific location & dates) ── */
+const ABSENSI_BY_ORDER = {
+  'PP-27-0004': [
+    { id:"ABS-001", jadwalId:"JS-Z01", tanggal:"2027-01-16", jam:"08:03", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"iPhone 15 Pro - Safari",         fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm001zumba/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-002", jadwalId:"JS-Z02", tanggal:"2027-01-17", jam:"08:00", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"Samsung Galaxy S24 - Chrome",  fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm002zumba/view?usp=drive_link", catatanKoreksi:"" },
+    { id:"ABS-003", jadwalId:"JS-Z03", tanggal:"2027-01-23", jam:"08:01", lokasi:"Cluster Bukit Indah, Cilandak, Jakarta Selatan", device:"iPhone 15 Pro - Safari",         fotoUrl:"https://drive.google.com/file/d/1Z2mKqXRA5nFMdKvBdBZjgm003zumba/view?usp=drive_link", catatanKoreksi:"" },
+  ],
+}
+
 /* ── Generate payment schedule ────────────────────────────────────────────── */
 function generatePayRows(startStr, endStr, terms, nilaiNum) {
   if (!startStr || !endStr) return []
@@ -531,6 +540,7 @@ export default function PPOrderDetailPage() {
   /* ── Tab 3: Operasional Sesi (PP) ───────────────────────────────────────── */
 
   const [absensiSesi, setAbsensiSesi] = useState(() => {
+    if (ABSENSI_BY_ORDER[id]) return ABSENSI_BY_ORDER[id]
     const isCancelled = order?.statusOrder === 'Cancelled'
     const count = isCancelled ? 0 : Math.min(order?.sesiDone || 0, ABSENSI_DUMMY.length)
     return ABSENSI_DUMMY.slice(0, count)
@@ -1863,7 +1873,13 @@ export default function PPOrderDetailPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {/* Card 1: Rekap Absensi */}
                   <div
-                    onClick={() => navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })}
+                    onClick={() => {
+                      try {
+                        const existing = JSON.parse(localStorage.getItem('rekap-pp-' + id) || '{}')
+                        localStorage.setItem('rekap-pp-' + id, JSON.stringify({ ...existing, absensiSesi }))
+                      } catch {}
+                      navigate('/pp/orders/rekap/' + id, { state: { absensiSesi, orderId: id } })
+                    }}
                     className="flex flex-col gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors group"
                   >
                     <div className="flex items-center justify-between">
