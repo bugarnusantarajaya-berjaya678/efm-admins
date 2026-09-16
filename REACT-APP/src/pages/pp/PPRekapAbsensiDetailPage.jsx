@@ -437,10 +437,47 @@ export default function PPRekapAbsensiDetailPage() {
               <p className="text-xs text-gray-500 text-center mb-3">Jakarta, {tglDiajukan}</p>
               <div className="grid grid-cols-2 gap-5">
 
-                {/* Kolom Pelatih — Pihak Kedua */}
-                <div className="border border-gray-200 rounded-xl p-4 bg-white">
+                {/* Kolom EFM — Pihak Pertama (kiri, sesuai konvensi dokumen) */}
+                <div className="border border-gray-200 rounded-xl p-4 text-center">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Pihak Kedua</p>
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Pihak Pertama</p>
+                    {rekapStatus === 'dikonfirmasi' ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">Dikonfirmasi</span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">Menunggu Admin</span>
+                    )}
+                  </div>
+                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{cs.namaPerusahaan}</p>
+
+                  {/* TTD area */}
+                  {rekapStatus === 'dikonfirmasi' ? (
+                    efmSignature ? (
+                      <div className="flex items-center justify-center h-16">
+                        <img src={efmSignature} alt="TTD EFM" className="h-14 object-contain" />
+                      </div>
+                    ) : (
+                      <EfmSig />
+                    )
+                  ) : (
+                    <div className="h-16 flex items-center justify-center rounded-lg border border-dashed border-gray-200">
+                      <p className="text-[10px] text-gray-400 italic px-2">Menunggu konfirmasi admin</p>
+                    </div>
+                  )}
+
+                  <div className="border-t border-gray-100 mt-2 pt-3">
+                    <p className="text-xs font-semibold text-gray-700">{approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">{cs.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
+                    <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
+                    {rekapStatus === 'dikonfirmasi' && tglKonfirmasi && (
+                      <p className="text-[10px] text-gray-400 mt-0.5">Dikonfirmasi: {tglKonfirmasi}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Kolom Pelatih — Pihak Kedua (kanan) */}
+                <div className="border border-gray-200 rounded-xl p-4 text-center">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Pihak Kedua</p>
                     {fileNamaTTD ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">TTD Diterima</span>
                     ) : (
@@ -449,83 +486,21 @@ export default function PPRekapAbsensiDetailPage() {
                   </div>
                   <p className="text-xs font-bold text-[#1E1C43] mb-3">{picData?.fullname || '—'}</p>
                   <PicSig uploaded={!!fileNamaTTD} />
-                  <div className="border-t border-gray-100 mt-2 pt-3 space-y-1">
-                    <p className="text-[10px] text-gray-400">Personal Trainer</p>
+                  <div className="border-t border-gray-100 mt-2 pt-3">
+                    <p className="text-xs font-semibold text-gray-700">{picData?.fullname || '—'}</p>
+                    <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
                     {tglDiajukan && (
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Tgl Pengajuan:</span>
-                        <span className="text-[10px] font-semibold text-gray-600">{tglDiajukan}</span>
-                      </div>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Diajukan: {tglDiajukan}</p>
                     )}
                     {fileNamaTTD && (
-                      <div>
-                        <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">File TTD: </span>
-                        <span className="text-[10px] font-semibold text-gray-600">{fileNamaTTD}</span>
-                      </div>
+                      <p className="text-[10px] text-gray-400 mt-0.5 truncate">{fileNamaTTD}</p>
                     )}
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Via:</span>
-                      <span className="text-[10px] font-semibold text-gray-600">Perangkat Pelatih</span>
-                    </div>
-                  </div>
-                  {!fileNamaTTD && (
-                    <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
-                      <Upload size={10} /> Upload TTD
-                      <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
-                        onChange={e => { if (e.target.files[0]) doUploadTTD(e.target.files[0]) }} />
-                    </label>
-                  )}
-                </div>
-
-                {/* Kolom EFM — Pihak Pertama */}
-                <div className="border border-[#1E1C43]/20 rounded-xl p-4 bg-[#1E1C43]/[0.04]">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-bold text-[#1E1C43]/70 uppercase tracking-wider">Pihak Pertama</p>
-                    {rekapStatus === 'dikonfirmasi' ? (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">Dikonfirmasi</span>
-                    ) : (
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">Menunggu Admin</span>
-                    )}
-                  </div>
-
-                  {/* Cap + Nama */}
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-9 h-9 rounded-full border-2 border-[#1E1C43]/30 flex items-center justify-center shrink-0">
-                      <span className="text-[8px] font-black text-[#1E1C43]/50 uppercase tracking-tight">EFM</span>
-                    </div>
-                    <p className="text-xs font-bold text-[#1E1C43]">{cs.namaPerusahaan}</p>
-                  </div>
-
-                  {/* TTD area */}
-                  {rekapStatus === 'dikonfirmasi' ? (
-                    efmSignature ? (
-                      <div className="flex items-center justify-center h-16 bg-white/60 rounded-lg">
-                        <img src={efmSignature} alt="TTD EFM" className="h-14 object-contain" />
-                      </div>
-                    ) : (
-                      <EfmSig />
-                    )
-                  ) : (
-                    <div className="h-16 flex items-center justify-center bg-white/40 rounded-lg border border-dashed border-[#1E1C43]/20">
-                      <p className="text-[10px] text-gray-400 italic text-center px-2">Menunggu konfirmasi<br/>admin</p>
-                    </div>
-                  )}
-
-                  <div className="border-t border-[#1E1C43]/10 mt-2 pt-3 space-y-1">
-                    <p className="text-xs font-semibold text-gray-700">{approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
-                    <p className="text-[10px] text-gray-500">{cs.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
-                    <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
-                    {rekapStatus === 'dikonfirmasi' && tglKonfirmasi && (
-                      <>
-                        <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                          <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Tgl Konfirmasi:</span>
-                          <span className="text-[10px] font-semibold text-gray-600">{tglKonfirmasi}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Perangkat:</span>
-                          <span className="text-[10px] font-semibold text-gray-600">Web Dashboard EFM</span>
-                        </div>
-                      </>
+                    {!fileNamaTTD && (
+                      <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
+                        <Upload size={10} /> Upload TTD
+                        <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
+                          onChange={e => { if (e.target.files[0]) doUploadTTD(e.target.files[0]) }} />
+                      </label>
                     )}
                   </div>
                 </div>
