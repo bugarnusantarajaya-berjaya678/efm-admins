@@ -439,15 +439,17 @@ export default function PPRekapAbsensiDetailPage() {
 
                 {/* Kolom EFM — Pihak Pertama (kiri, sesuai konvensi dokumen) */}
                 <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-1">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Pihak Pertama</p>
+                    <p className="text-xs font-bold text-[#1E1C43] mt-0.5">{cs.namaPerusahaan}</p>
+                  </div>
+                  <div className="flex justify-center mb-3">
                     {rekapStatus === 'dikonfirmasi' ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">Dikonfirmasi</span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">Menunggu Admin</span>
                     )}
                   </div>
-                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{cs.namaPerusahaan}</p>
 
                   {/* TTD area */}
                   {rekapStatus === 'dikonfirmasi' ? (
@@ -478,15 +480,17 @@ export default function PPRekapAbsensiDetailPage() {
 
                 {/* Kolom Pelatih — Pihak Kedua (kanan) */}
                 <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="mb-1">
                     <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Pihak Kedua</p>
+                    <p className="text-xs font-bold text-[#1E1C43] mt-0.5">Pelatih / Terapis</p>
+                  </div>
+                  <div className="flex justify-center mb-3">
                     {fileNamaTTD ? (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">TTD Diterima</span>
                     ) : (
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-50 text-gray-500 border border-gray-200">Belum Upload</span>
                     )}
                   </div>
-                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{picData?.fullname || '—'}</p>
                   <PicSig uploaded={!!fileNamaTTD} />
                   <div className="border-t border-gray-100 mt-2 pt-3">
                     <p className="text-xs font-semibold text-gray-700">{picData?.fullname || '—'}</p>
