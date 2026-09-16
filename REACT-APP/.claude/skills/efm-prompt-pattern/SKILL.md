@@ -205,12 +205,15 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Jika ada sesuatu yang belum selesai saat pengguna konfirmasi merge: catat dulu, buat branch baru setelah merge selesai, lanjutkan di sana
 - Skill updates yang baru disadari setelah konfirmasi merge → buat branch baru, JANGAN push ke branch yang sedang/sudah di-merge
 
-**Buat PR sebagai ready-for-review, bukan draft — mencegah rate limit saat merge:**
-- JANGAN buat PR dengan `draft: true`. Selalu buat PR dalam status **ready for review** (`draft: false` atau omit parameter `draft`).
+**⛔ Buat PR sebagai ready-for-review, bukan draft — mencegah rate limit saat merge:**
+- **DILARANG KERAS buat PR dengan `draft: true`.** Selalu buat PR dalam status **ready for review** — omit parameter `draft` sepenuhnya, atau set `draft: false` secara eksplisit.
+- Ini aturan yang sudah terbukti dilanggar berulang kali (PR #521, #522). Setiap kali PR dibuat sebagai draft, merge via API butuh 2 call → rate limit → pengguna merge manual → berisiko commit tertinggal.
+- Parameter `draft` TIDAK BOLEH ada di `mcp__github__create_pull_request` call untuk project ini.
 - Alasan: GitHub API rate limit untuk akun ini (user ID 289648120) terkena sangat mudah. Merge PR yang masih draft membutuhkan 2 API call: (1) undraft → (2) merge. Jika call pertama kena rate limit, PR tidak bisa di-merge via API sama sekali — pengguna harus merge manual. Buat PR langsung ready memangkas kebutuhan menjadi 1 API call saja.
 - Saat pengguna berkata "ya merge": langsung panggil `mcp__github__merge_pull_request` dengan `merge_method: "squash"` — tanpa perlu undraft terlebih dahulu.
 - Jika merge tetap gagal karena rate limit: beritahu pengguna dan sertakan link PR langsung (`https://github.com/bugarnusantarajaya-berjaya678/efm-admins/pull/<nomor>`) agar bisa merge manual. JANGAN retry API call berkali-kali.
 - **KRITIS — setelah menyuruh merge manual: HENTIKAN semua push ke branch.** Pengguna kemungkinan besar langsung merge manual saat itu juga. Push commit baru setelah itu = commit masuk ke branch yang sudah di-merge, TIDAK akan ikut di-squash.
+- **Ketika pengguna mengirim task baru setelah "merge manual" diucapkan (sebelum merge dikonfirmasi):** JANGAN langsung kerjakan. Cek dulu status PR dengan `git fetch origin main && git log --oneline origin/main -3`. Jika PR sudah di-merge (commit terlihat di main) → reset branch dulu → baru kerjakan task baru dari base bersih. Jika PR belum di-merge → tahan semua push dan katakan: "Merge PR #X dulu, konfirmasi ke saya, baru saya lanjut task berikutnya." Ini mencegah commit baru tertinggal di branch yang sudah di-squash-merge.
 - **Sebelum panggil `merge_pull_request`: selalu cek dulu PR masih open.** Panggil `pull_request_read` dan cek field `state === "open"`. Jika `state === "closed"` atau `merged === true`, PR sudah di-merge sebelumnya — `merge_pull_request` akan return state lama (`"merged": true`) tanpa error, yang terlihat seperti sukses baru padahal bukan. Commit-commit setelah merge manual tidak akan ikut masuk main.
 
 **⛔ WAJIB SETELAH PR DI-MERGE — reset branch ke main sebelum sentuh apapun:**

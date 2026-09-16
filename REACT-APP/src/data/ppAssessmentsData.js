@@ -2,9 +2,8 @@
  * ppAssessmentsData.js — PP Fitness Assessment master data
  *
  * Struktur per assessment:
- *   leadId           — ID lead/klien (dari ppLeadsData), penghubung antar order satu klien
- *   orderId          — order yang assessment ini tempel (= noIdProgram, kept for backward compat)
- *   prevAssessmentId — jika renewal: ID assessment order sebelumnya yang _akhir-nya di-copy
+ *   leadId           — ID lead/klien (dari ppLeadsData), penghubung antar klien
+ *   prevAssessmentId — jika renewal: ID assessment sebelumnya yang _akhir-nya di-copy
  *                      ke _awal record ini. null = order pertama klien ini.
  *
  * Naming convention field pengukuran:
@@ -27,10 +26,7 @@ export const PP_ASSESSMENTS = {
   'SCR-26-0001': {
     leadId: 'LP-0001',
     klienId: 'KL-0001',
-    orderId: 'PP-26-0013',
     prevAssessmentId: null,
-
-    noIdProgram: 'PP-26-0013',
     cabangWilayah: 'Jakarta Selatan',
     namaFC: 'Sarah Jenkins',
     namaPelatih: 'Sarah Jenkins',
@@ -156,10 +152,7 @@ export const PP_ASSESSMENTS = {
   'SCR-27-0001': {
     leadId: 'LP-0001',
     klienId: 'KL-0001',
-    orderId: 'PP-27-0001',
     prevAssessmentId: 'SCR-26-0001',
-
-    noIdProgram: 'PP-27-0001',
     cabangWilayah: 'Jakarta Selatan',
     namaFC: 'Sarah Jenkins',
     namaPelatih: 'Sarah Jenkins',
@@ -270,12 +263,9 @@ export const PP_ASSESSMENTS = {
   // SCR-26-0002  —  Sari Dewi Lestari  |  Order #PP-26-0021
   // ════════════════════════════════════════════════════════════════════════
   'SCR-26-0002': {
-    leadId: 'LP-0018',  // Sari Dewi Lestari
-    klienId: 'KL-0016',  // Sari Dewi Lestari
-    orderId: 'PP-26-0021',
+    leadId: 'LP-0018',
+    klienId: 'KL-0016',
     prevAssessmentId: null,
-
-    noIdProgram: 'PP-26-0021',
     cabangWilayah: 'Jakarta Pusat',
     namaFC: 'Marcus Chen',
     namaPelatih: 'Marcus Chen',
