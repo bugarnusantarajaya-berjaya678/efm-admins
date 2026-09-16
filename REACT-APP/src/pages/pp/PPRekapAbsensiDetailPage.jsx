@@ -96,6 +96,11 @@ export default function PPRekapAbsensiDetailPage() {
   const tglBayar    = init.tglBayar        || null
   const metodeBayar = init.metodeBayar     || null
 
+  const [showApproveModal, setShowApproveModal] = useState(false)
+  const [tglKonfirmasi,    setTglKonfirmasi]    = useState(init.tglKonfirmasi || null)
+  const [efmSignature,     setEfmSignature]     = useState(init.efmSignature  || '')
+  const [approvedBy,       setApprovedBy]       = useState(init.approvedBy    || '')
+
 
   useEffect(() => {
     setCrumbs?.(['Private Program', 'Rekap Absensi', rekapId])
@@ -104,8 +109,20 @@ export default function PPRekapAbsensiDetailPage() {
 
   function doApprove() {
     const tgl = fmtWaktu()
+    const sig = cs.tandaTanganCEO || ''
+    const by  = cs.namaPenandatangan || 'Admin EFM'
     setRekapStatus('dikonfirmasi')
-    saveRekap(orderId, { status: 'dikonfirmasi', tglKonfirmasi: tgl })
+    setTglKonfirmasi(tgl)
+    setEfmSignature(sig)
+    setApprovedBy(by)
+    setShowApproveModal(false)
+    saveRekap(orderId, {
+      status: 'dikonfirmasi',
+      tglKonfirmasi: tgl,
+      efmSignature: sig,
+      approvedBy: by,
+      approvedDevice: 'Web Dashboard EFM',
+    })
   }
   function doTolak() {
     setRekapStatus('ditolak')
@@ -203,7 +220,7 @@ export default function PPRekapAbsensiDetailPage() {
           </div>
 
           {rekapStatus === 'pengajuan_masuk' && (
-            <button onClick={doApprove}
+            <button onClick={() => setShowApproveModal(true)}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold rounded-lg transition-colors shrink-0">
               <CheckCircle size={13} /> Approve Rekap
             </button>
@@ -411,41 +428,99 @@ export default function PPRekapAbsensiDetailPage() {
               <p className="text-xs text-gray-500 text-center mb-3">Jakarta, {tglDiajukan}</p>
               <div className="grid grid-cols-2 gap-5">
 
-                {/* Pelatih TTD */}
-                <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pelatih</p>
+                {/* Kolom Pelatih — Pihak Kedua */}
+                <div className="border border-gray-200 rounded-xl p-4 bg-white">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Pihak Kedua</p>
+                    {fileNamaTTD ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">TTD Diterima</span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-50 text-gray-500 border border-gray-200">Belum Upload</span>
+                    )}
+                  </div>
                   <p className="text-xs font-bold text-[#1E1C43] mb-3">{picData?.fullname || '—'}</p>
                   <PicSig uploaded={!!fileNamaTTD} />
-                  <div className="border-t border-gray-100 mt-2 pt-3">
+                  <div className="border-t border-gray-100 mt-2 pt-3 space-y-1">
                     <p className="text-[10px] text-gray-400">Personal Trainer</p>
+                    {tglDiajukan && (
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Tgl Pengajuan:</span>
+                        <span className="text-[10px] font-semibold text-gray-600">{tglDiajukan}</span>
+                      </div>
+                    )}
+                    {fileNamaTTD && (
+                      <div>
+                        <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">File TTD: </span>
+                        <span className="text-[10px] font-semibold text-gray-600">{fileNamaTTD}</span>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Via:</span>
+                      <span className="text-[10px] font-semibold text-gray-600">Perangkat Pelatih</span>
+                    </div>
                   </div>
-                  {!fileNamaTTD ? (
+                  {!fileNamaTTD && (
                     <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
                       <Upload size={10} /> Upload TTD
                       <input type="file" accept=".pdf,.jpg,.jpeg,.png" className="hidden"
                         onChange={e => { if (e.target.files[0]) doUploadTTD(e.target.files[0]) }} />
                     </label>
-                  ) : (
-                    <p className="mt-1 text-[10px] text-green-600 font-semibold">✓ Terverifikasi</p>
                   )}
                 </div>
 
-                {/* Admin EFM TTD */}
-                <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Mengetahui,</p>
-                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{cs.namaPerusahaan}</p>
+                {/* Kolom EFM — Pihak Pertama */}
+                <div className="border border-[#1E1C43]/20 rounded-xl p-4 bg-[#1E1C43]/[0.04]">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-bold text-[#1E1C43]/70 uppercase tracking-wider">Pihak Pertama</p>
+                    {rekapStatus === 'dikonfirmasi' ? (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-green-50 text-green-700 border border-green-200">Dikonfirmasi</span>
+                    ) : (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-yellow-50 text-yellow-700 border border-yellow-200">Menunggu Admin</span>
+                    )}
+                  </div>
+
+                  {/* Cap + Nama */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-9 h-9 rounded-full border-2 border-[#1E1C43]/30 flex items-center justify-center shrink-0">
+                      <span className="text-[8px] font-black text-[#1E1C43]/50 uppercase tracking-tight">EFM</span>
+                    </div>
+                    <p className="text-xs font-bold text-[#1E1C43]">{cs.namaPerusahaan}</p>
+                  </div>
+
+                  {/* TTD area */}
                   {rekapStatus === 'dikonfirmasi' ? (
-                    <EfmSig />
+                    efmSignature ? (
+                      <div className="flex items-center justify-center h-16 bg-white/60 rounded-lg">
+                        <img src={efmSignature} alt="TTD EFM" className="h-14 object-contain" />
+                      </div>
+                    ) : (
+                      <EfmSig />
+                    )
                   ) : (
-                    <div className="h-16 flex items-center justify-center">
-                      <p className="text-xs text-gray-400 italic">Menunggu konfirmasi admin</p>
+                    <div className="h-16 flex items-center justify-center bg-white/40 rounded-lg border border-dashed border-[#1E1C43]/20">
+                      <p className="text-[10px] text-gray-400 italic text-center px-2">Menunggu konfirmasi<br/>admin</p>
                     </div>
                   )}
-                  <div className="border-t border-gray-100 mt-2 pt-3">
-                    <p className="text-xs font-semibold text-gray-700">{cs.namaPenandatangan || 'Admin EFM'}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">{cs.namaLegal}</p>
+
+                  <div className="border-t border-[#1E1C43]/10 mt-2 pt-3 space-y-1">
+                    <p className="text-xs font-semibold text-gray-700">{approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
+                    <p className="text-[10px] text-gray-500">{cs.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
+                    <p className="text-[10px] text-gray-400">{cs.namaLegal}</p>
+                    {rekapStatus === 'dikonfirmasi' && tglKonfirmasi && (
+                      <>
+                        <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+                          <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Tgl Konfirmasi:</span>
+                          <span className="text-[10px] font-semibold text-gray-600">{tglKonfirmasi}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-gray-400 uppercase tracking-wide font-medium">Perangkat:</span>
+                          <span className="text-[10px] font-semibold text-gray-600">Web Dashboard EFM</span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
+
               </div>
 
               {/* Alert ditolak */}
@@ -470,6 +545,79 @@ export default function PPRekapAbsensiDetailPage() {
 
         </div>
       </div>{/* /overflow-x-auto */}
+
+      {/* ── Modal Konfirmasi TTD EFM ── */}
+      {showApproveModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowApproveModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[90vh]"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex-shrink-0 p-4 border-b border-gray-200 flex items-center justify-between">
+              <h3 className="text-base font-bold text-[#1E1C43]">Konfirmasi Rekap Absensi</h3>
+              <button onClick={() => setShowApproveModal(false)}><X size={20} className="text-gray-400 hover:text-gray-600" /></button>
+            </div>
+            <div className="overflow-y-auto flex-1 p-4 space-y-4">
+              {/* Ringkasan rekap */}
+              <div className="bg-gray-50 border border-gray-100 rounded-xl p-4">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wide mb-3">Ringkasan Rekap</p>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide">Klien</p>
+                    <p className="text-xs font-semibold text-gray-700 mt-0.5">{order.namaKlien}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide">Pelatih</p>
+                    <p className="text-xs font-semibold text-gray-700 mt-0.5">{picData?.fullname || '—'}</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide">Sesi Terlaksana</p>
+                    <p className="text-xs font-semibold text-gray-700 mt-0.5">{absensiSesi.length} sesi</p>
+                  </div>
+                  <div>
+                    <p className="text-[10px] text-gray-400 uppercase font-semibold tracking-wide">Total Honorarium</p>
+                    <p className="text-xs font-bold text-[#1E1C43] mt-0.5">{formatRp(totalHon)}</p>
+                  </div>
+                </div>
+              </div>
+              {/* Preview TTD */}
+              <div className="border border-gray-200 rounded-xl p-4">
+                <p className="text-xs font-bold text-[#1E1C43] mb-1">TTD Penandatangan</p>
+                <p className="text-[10px] text-gray-500 mb-3">{cs.namaPenandatangan} · {cs.jabatanPenandatangan}</p>
+                {cs.tandaTanganCEO ? (
+                  <div className="bg-gray-50 rounded-lg p-3 flex items-center justify-center min-h-[64px]">
+                    <img src={cs.tandaTanganCEO} alt="TTD" className="h-14 object-contain" />
+                  </div>
+                ) : (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2.5">
+                    <p className="text-xs text-yellow-700">TTD founder belum diupload di Pengaturan Perusahaan. Konfirmasi tetap akan dicatat dengan metadata admin.</p>
+                  </div>
+                )}
+              </div>
+              <p className="text-xs text-gray-500 text-center">
+                Dengan mengkonfirmasi, rekap ini ditandatangani secara digital atas nama <span className="font-semibold">{cs.namaPenandatangan}</span>.
+              </p>
+            </div>
+            <div className="flex-shrink-0 p-4 border-t border-gray-200 flex justify-end gap-2">
+              <button
+                onClick={() => setShowApproveModal(false)}
+                className="px-4 py-2 rounded-lg text-sm font-semibold border border-gray-300 text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={doApprove}
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-[#1E1C43] hover:bg-[#2d2b5e] text-white transition-colors"
+              >
+                Konfirmasi &amp; Tandatangani
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Status Pembayaran Honorarium (admin only, non-printable) ── */}
       {rekapStatus === 'dikonfirmasi' && (
