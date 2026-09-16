@@ -278,7 +278,11 @@ function PanelCompany() {
       return
     }
     const reader = new FileReader()
-    reader.onload = e => setCompanySettings(prev => ({ ...prev, [field]: e.target.result }))
+    reader.onload = e => {
+      const updated = { ...companySettings, [field]: e.target.result }
+      setCompanySettings(updated)
+      try { localStorage.setItem('efmCompanySettings', JSON.stringify(updated)) } catch {}
+    }
     reader.readAsDataURL(file)
   }
 
