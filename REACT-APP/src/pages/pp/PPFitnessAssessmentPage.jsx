@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText } from 'lucide-react'
+import { ArrowLeft, Save, CheckCircle, Edit2, Activity, Download, FileText, Plus } from 'lucide-react'
 import { useBreadcrumb } from '../../context/BreadcrumbContext'
 import { getAllAssessments, getNextAssessmentId, addAssessment, updateAssessment } from '../../data/ppAssessmentsStore'
 import { getStoredLeads, getLeadById, getLeadHealthById, getLeadDocumentsById } from '../../data/ppLeadsStore'
@@ -459,8 +459,18 @@ export default function PPFitnessAssessmentPage() {
     return null
   })()
 
+  // Client assessments for the dropdown switcher
+  const clientAssessments = useMemo(() => {
+    const effLeadId = leadId || existing?.leadId
+    const effKlienId = klienId || existing?.klienId
+    if (!effLeadId && !effKlienId) return []
+    return Object.entries(_allAssessments)
+      .filter(([, a]) => effKlienId ? a.klienId === effKlienId : a.leadId === effLeadId)
+      .map(([k, a]) => ({ id: k, ...a }))
+      .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
+  }, [_allAssessments, leadId, klienId, existing?.leadId, existing?.klienId])
+
   // Personal Detail
-  const [noIdProgram, setNoIdProgram] = useState(existing?.noIdProgram || '')
   const [cabangWilayah, setCabangWilayah] = useState(existing?.cabangWilayah || '')
   const [namaFC, setNamaFC] = useState(existing?.namaFC || '')
   const [namaPelatih, setNamaPelatih] = useState(existing?.namaPelatih || '')
@@ -566,7 +576,7 @@ export default function PPFitnessAssessmentPage() {
       leadId: leadId || existing?.leadId || null,
       klienId: klienId || existing?.klienId || null,
       prevAssessmentId: isNew ? (prevSource?.id || null) : (existing?.prevAssessmentId || null),
-      noIdProgram, cabangWilayah, namaFC, namaPelatih, namaKlien,
+      cabangWilayah, namaFC, namaPelatih, namaKlien,
       noHpKlien, tipeKlien, sapaanKlien, usia, jenisKelamin, tipeBadan,
       detailGoals, programLatihan, tanggalPreTest, tanggalPostTest, toggles,
       statusAssessment: newStatus,
@@ -642,7 +652,7 @@ export default function PPFitnessAssessmentPage() {
     if (effectLeadId) {
       const lead = getLeadById(effectLeadId)
       if (lead) {
-        if (!existing?.noIdProgram) setNoIdProgram(effectLeadId)
+        // leadId already stored separately; no noIdProgram needed
         setNamaFC(lead.picEfm || '')
         setProgramLatihan(lead.programDiminati || '')
         setTipeKlien(lead.tipe || '')
@@ -730,6 +740,57 @@ export default function PPFitnessAssessmentPage() {
         </div>
       </div>
 
+      {/* Assessment Switcher */}
+      {clientAssessments.length > 0 && (
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-3 mb-4">
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider shrink-0">
+              Assessment Klien
+            </span>
+            <select
+              value={isNew ? '' : id}
+              onChange={e => {
+                const newId = e.target.value
+                if (newId && newId !== id) {
+                  navigate(`/pp/screening/${newId}`, {
+                    state: {
+                      leadId: leadId || existing?.leadId,
+                      klienId: klienId || existing?.klienId,
+                    },
+                  })
+                }
+              }}
+              className="flex-1 min-w-0 text-sm border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:border-[#1E1C43] bg-white"
+            >
+              {isNew && <option value="">— Assessment Baru —</option>}
+              {clientAssessments.map(a => (
+                <option key={a.id} value={a.id}>
+                  {a.id}
+                  {a.statusAssessment ? ` — ${a.statusAssessment}` : ''}
+                  {a.tanggalPreTest
+                    ? ` — ${new Date(a.tanggalPreTest).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}`
+                    : ''}
+                </option>
+              ))}
+            </select>
+            <button
+              onClick={() =>
+                navigate('/pp/screening/new', {
+                  state: {
+                    leadId: leadId || existing?.leadId,
+                    klienId: klienId || existing?.klienId,
+                    namaKlien: existing?.namaKlien || namaKlien,
+                  },
+                })
+              }
+              className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors shrink-0"
+            >
+              <Plus size={12} /> Buat Baru
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Renewal Banner */}
       {prevSource && (
         <div className="bg-purple-50 border border-purple-200 rounded-xl px-4 py-3 mb-4 flex items-start gap-3">
@@ -762,8 +823,8 @@ export default function PPFitnessAssessmentPage() {
         <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-3">Data Klien</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-1">
           <div>
-            <label className={labelCls}>Referensi Lead</label>
-            <input className={readOnlyCls} value={noIdProgram} readOnly />
+            <label className={labelCls}>Lead ID</label>
+            <input className={readOnlyCls} value={leadId || existing?.leadId || '—'} readOnly />
           </div>
           <div>
             <label className={labelCls}>Sapaan</label>

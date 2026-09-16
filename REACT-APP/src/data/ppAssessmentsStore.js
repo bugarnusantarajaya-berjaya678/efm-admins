@@ -16,6 +16,20 @@ export function getAssessmentByOrderId(orderId) {
   return entry ? { id: entry[0], ...entry[1] } : null
 }
 
+export function getAssessmentsByLeadId(leadId) {
+  return Object.entries(_store)
+    .filter(([, a]) => a.leadId === leadId)
+    .map(([k, a]) => ({ id: k, ...a }))
+    .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
+}
+
+export function getAssessmentsByKlienId(klienId) {
+  return Object.entries(_store)
+    .filter(([, a]) => a.klienId === klienId)
+    .map(([k, a]) => ({ id: k, ...a }))
+    .sort((a, b) => (b.tanggalPreTest || '').localeCompare(a.tanggalPreTest || ''))
+}
+
 export function getNextAssessmentId() {
   const yy = String(new Date().getFullYear()).slice(-2)
   const prefix = `SCR-${yy}-`

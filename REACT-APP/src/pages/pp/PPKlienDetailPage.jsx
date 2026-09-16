@@ -427,7 +427,7 @@ export default function PPKlienDetailPage() {
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-[#1E1C43] truncate">{a.id}</p>
                           <p className="text-[10px] text-gray-400 truncate">
-                            {a.programLatihan || a.noIdProgram || '—'} · {a.namaFC || '—'}
+                            {a.programLatihan || '—'} · {a.namaFC || '—'}
                           </p>
                         </div>
                       </div>
