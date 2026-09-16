@@ -65,16 +65,18 @@ function fmtWaktu() {
 }
 
 const BADGE_DARK = {
-  belum_diajukan:  { label: 'Belum Diajukan',  cls: 'bg-gray-400/30 text-gray-200 border-gray-400/30' },
-  pengajuan_masuk: { label: 'Pengajuan Masuk',  cls: 'bg-yellow-400 text-yellow-900 border-yellow-400' },
-  dikonfirmasi:    { label: 'Dikonfirmasi',     cls: 'bg-green-400 text-green-900 border-green-400' },
-  ditolak:         { label: 'Ditolak',          cls: 'bg-red-400 text-red-900 border-red-400' },
+  belum_diajukan:   { label: 'Belum Diajukan',   cls: 'bg-gray-400/30 text-gray-200 border-gray-400/30' },
+  pengajuan_masuk:  { label: 'Pengajuan Masuk',  cls: 'bg-yellow-400 text-yellow-900 border-yellow-400' },
+  dikonfirmasi:     { label: 'Dikonfirmasi',      cls: 'bg-green-400 text-green-900 border-green-400' },
+  ditolak:          { label: 'Ditolak',           cls: 'bg-red-400 text-red-900 border-red-400' },
+  sudah_dibayarkan: { label: 'Sudah Dibayarkan',  cls: 'bg-emerald-500 text-white border-emerald-500' },
 }
 const BADGE_LIGHT = {
-  belum_diajukan:  { label: 'Belum Diajukan',  cls: 'bg-gray-50 text-gray-500 border-gray-200' },
-  pengajuan_masuk: { label: 'Pengajuan Masuk',  cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
-  dikonfirmasi:    { label: 'Dikonfirmasi',     cls: 'bg-green-50 text-green-700 border-green-200' },
-  ditolak:         { label: 'Ditolak',          cls: 'bg-red-50 text-red-700 border-red-200' },
+  belum_diajukan:   { label: 'Belum Diajukan',   cls: 'bg-gray-50 text-gray-500 border-gray-200' },
+  pengajuan_masuk:  { label: 'Pengajuan Masuk',  cls: 'bg-yellow-50 text-yellow-700 border-yellow-200' },
+  dikonfirmasi:     { label: 'Dikonfirmasi',      cls: 'bg-green-50 text-green-700 border-green-200' },
+  ditolak:          { label: 'Ditolak',           cls: 'bg-red-50 text-red-700 border-red-200' },
+  sudah_dibayarkan: { label: 'Sudah Dibayarkan',  cls: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
 }
 
 export default function PPRekapAbsensiDetailPage() {
@@ -100,10 +102,11 @@ export default function PPRekapAbsensiDetailPage() {
   const [tglDiajukan]                     = useState(init.tglDiajukan      || '8 Nov 2026')
   const [catatanTolak,  setCatatanTolak]  = useState(init.catatanTolak    || '')
   const [showTolakForm, setShowTolakForm] = useState(false)
-  const honStatus   = init.honorariumStatus || 'menunggu_bayar'
-  const buktiBayar  = init.buktiBayarNama  || null
-  const tglBayar    = init.tglBayar        || null
-  const metodeBayar = init.metodeBayar     || null
+  const honStatus     = init.honorariumStatus || 'menunggu_bayar'
+  const buktiBayar    = init.buktiBayarNama  || null
+  const buktiBayarUrl = init.buktiBayarUrl   || null
+  const tglBayar      = init.tglBayar        || null
+  const metodeBayar   = init.metodeBayar     || null
 
   const [showApproveModal, setShowApproveModal] = useState(false)
   const [tglKonfirmasi,    setTglKonfirmasi]    = useState(init.tglKonfirmasi || null)
@@ -147,15 +150,18 @@ export default function PPRekapAbsensiDetailPage() {
     setFileNamaTTD(file.name)
     saveRekap(orderId, { fileNamaTTD: file.name })
   }
-  const badgeDark  = BADGE_DARK[rekapStatus]  || BADGE_DARK.belum_diajukan
-  const badgeLight = BADGE_LIGHT[rekapStatus] || BADGE_LIGHT.belum_diajukan
+  const effectiveBadgeKey = (rekapStatus === 'dikonfirmasi' && honStatus === 'sudah_bayar')
+    ? 'sudah_dibayarkan' : rekapStatus
+  const badgeDark  = BADGE_DARK[effectiveBadgeKey]  || BADGE_DARK.belum_diajukan
+  const badgeLight = BADGE_LIGHT[effectiveBadgeKey] || BADGE_LIGHT.belum_diajukan
   const BADGE_SOLID_CLS = {
-    belum_diajukan:  'bg-gray-500',
-    pengajuan_masuk: 'bg-amber-500',
-    dikonfirmasi:    'bg-green-600',
-    ditolak:         'bg-red-600',
+    belum_diajukan:   'bg-gray-500',
+    pengajuan_masuk:  'bg-amber-500',
+    dikonfirmasi:     'bg-green-600',
+    ditolak:          'bg-red-600',
+    sudah_dibayarkan: 'bg-emerald-600',
   }
-  const badgeSolidCls = BADGE_SOLID_CLS[rekapStatus] || 'bg-gray-500'
+  const badgeSolidCls = BADGE_SOLID_CLS[effectiveBadgeKey] || 'bg-gray-500'
 
   if (!order) {
     return (
@@ -207,6 +213,15 @@ export default function PPRekapAbsensiDetailPage() {
 
           * { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
           @page { margin: 5mm; size: A4 portrait; }
+
+          /* Link bukti tetap tampil sebagai teks berwarna di PDF */
+          #rkp-print-area a[href] {
+            color: #1E1C43 !important;
+            text-decoration: underline !important;
+          }
+          #rkp-print-area a[href]::after {
+            content: none !important;
+          }
         }
       `}</style>
 
@@ -463,7 +478,7 @@ export default function PPRekapAbsensiDetailPage() {
                     <p className="text-xs font-semibold text-gray-700">{approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">{cs.jabatanPenandatangan || 'Owner & Co-Founder'}</p>
                     {rekapStatus === 'dikonfirmasi' && tglKonfirmasi && (
-                      <div className="mt-1.5 space-y-0.5 text-left">
+                      <div className="mt-1.5 space-y-0.5 text-center">
                         <p className="text-[9px] text-gray-400"><span className="font-semibold">Disetujui oleh:</span> {approvedBy || cs.namaPenandatangan || 'Admin EFM'}</p>
                         <p className="text-[9px] text-gray-400"><span className="font-semibold">Waktu:</span> {tglKonfirmasi}</p>
                       </div>
@@ -483,9 +498,6 @@ export default function PPRekapAbsensiDetailPage() {
                     <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
                     {tglDiajukan && (
                       <p className="text-[10px] text-gray-400 mt-0.5">Diajukan: {tglDiajukan}</p>
-                    )}
-                    {fileNamaTTD && (
-                      <p className="text-[10px] text-gray-400 mt-0.5 truncate">{fileNamaTTD}</p>
                     )}
                     {!fileNamaTTD && (
                       <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
@@ -510,6 +522,52 @@ export default function PPRekapAbsensiDetailPage() {
                 </div>
               )}
             </div>
+
+            {/* ── Pembayaran Honorarium (masuk PDF jika dikonfirmasi) ── */}
+            {rekapStatus === 'dikonfirmasi' && (
+              <div className="rkp-sec px-6 sm:px-8 py-5 border-t border-gray-100">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-3 border-l-4 border-[#E05945] pl-2">
+                  Pembayaran Honorarium
+                </p>
+                {honStatus === 'sudah_bayar' ? (
+                  <div className="space-y-3">
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{picData?.fullname || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{tglBayar || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{metodeBayar || '—'}</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Bukti Transfer</p>
+                        {buktiBayarUrl ? (
+                          <a href={buktiBayarUrl} target="_blank" rel="noopener noreferrer"
+                            className="text-xs font-semibold text-[#1E1C43] underline mt-0.5 inline-flex items-center gap-1 break-all">
+                            {buktiBayar || 'Lihat Bukti'} <ExternalLink size={10} />
+                          </a>
+                        ) : (
+                          <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{buktiBayar || '—'}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between mt-2">
+                      <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
+                      <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+                    <p className="text-xs text-yellow-700 italic">Honorarium belum dibayarkan pada saat dokumen ini dicetak.</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* ── Document footer ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
