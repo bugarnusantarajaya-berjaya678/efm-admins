@@ -327,6 +327,24 @@ git add . && git commit && git push
 - Tanpa ini, field "No. Receipt" di Agreement Lampiran A tetap "—" selamanya meski receipt sudah ada
 - `getDocByOrderId(orderId)` dan `updateDoc(id, patch)` sudah tersedia di `ppDocumentsStore.js` — tidak perlu tambah fungsi baru
 
+**PP Assessment — free-floating, bukan per-order**
+- Assessment PP (`SCR-YY-####`) TIDAK terikat ke order — bisa dibuat sebelum order ada, selama order berjalan, atau beberapa kali per klien sebagai progress tracking
+- Data identifier yang valid di setiap record assessment: `leadId` + `klienId` — TIDAK ada `orderId` atau `noIdProgram` di record assessment
+- `_awal` = pengukuran masuk/entry (pre-test); `_akhir` = pengukuran keluar/exit (opsional — bisa dikosongkan)
+- Status "Post-Test Selesai" berarti periode assessment ini sudah lengkap
+- Store helpers yang benar untuk lookup per klien:
+  - `getAssessmentsByLeadId(leadId)` — semua assessment untuk lead tertentu
+  - `getAssessmentsByKlienId(klienId)` — semua assessment untuk klien tertentu
+  - Keduanya ada di `ppAssessmentsStore.js`
+- **Entry points yang wajib meneruskan context** (supaya assessment terikat ke klien):
+  | Entry point | State yang di-pass |
+  |---|---|
+  | Lead Detail → "Buat Assessment" | `{ klienId, leadId, namaKlien }` |
+  | Klien Detail → "Buat Assessment" | `{ klienId, leadId: klien.leadId, namaKlien: klien.nama }` |
+  | Assessment page "Buat Baru" (dropdown) | `{ leadId, klienId, namaKlien }` dari record aktif |
+  | Direct URL `/pp/screening/new` tanpa state | `leadId`/`klienId` null → assessment tidak terikat klien |
+- Jangan tambahkan tombol "Buat Assessment" di halaman yang tidak punya akses ke `klienId` — assessment tanpa client context tidak bisa dilacak
+
 **Group tipe form dinamis — `klienForms` array + `klienList` shape**
 - Tipe 'Group' di New Lead (`PPLeadNewPage.jsx`) membutuhkan form dinamis: `+ Tambah Klien` / `Hapus` per entry
 - Shape state `klienForms`: array of `{ nama, sapaan, hubungan, ... }` — panjang array menentukan jumlah peserta
