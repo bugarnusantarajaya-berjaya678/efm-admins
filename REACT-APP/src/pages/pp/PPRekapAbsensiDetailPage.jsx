@@ -407,16 +407,17 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Tanda Tangan ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4">
-              <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-4">Tanda Tangan</div>
+              <div className="bg-[#1E1C43] rounded-lg px-4 py-1.5 text-center text-xs font-bold text-white uppercase tracking-wide mb-2.5">Tanda Tangan Para Pihak</div>
+              <p className="text-xs text-gray-500 text-center mb-3">Jakarta, {tglDiajukan}</p>
               <div className="grid grid-cols-2 gap-5">
 
                 {/* Pelatih TTD */}
                 <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Pelatih</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Pelatih</p>
+                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{picData?.fullname || '—'}</p>
                   <PicSig uploaded={!!fileNamaTTD} />
                   <div className="border-t border-gray-100 mt-2 pt-3">
-                    <p className="text-xs font-semibold text-gray-700">{picData?.fullname || 'Pelatih'}</p>
-                    <p className="text-[10px] text-gray-400 mt-0.5">Personal Trainer</p>
+                    <p className="text-[10px] text-gray-400">Personal Trainer</p>
                   </div>
                   {!fileNamaTTD ? (
                     <label className="mt-2 cursor-pointer inline-flex items-center gap-1 text-[10px] text-[#1E1C43] font-semibold hover:underline">
@@ -431,7 +432,8 @@ export default function PPRekapAbsensiDetailPage() {
 
                 {/* Admin EFM TTD */}
                 <div className="border border-gray-200 rounded-xl p-4 text-center">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Mengetahui, Admin EFM</p>
+                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-1">Mengetahui,</p>
+                  <p className="text-xs font-bold text-[#1E1C43] mb-3">{cs.namaPerusahaan}</p>
                   {rekapStatus === 'dikonfirmasi' ? (
                     <EfmSig />
                   ) : (
@@ -440,7 +442,7 @@ export default function PPRekapAbsensiDetailPage() {
                     </div>
                   )}
                   <div className="border-t border-gray-100 mt-2 pt-3">
-                    <p className="text-xs font-semibold text-gray-700">Admin EFM</p>
+                    <p className="text-xs font-semibold text-gray-700">{cs.namaPenandatangan || 'Admin EFM'}</p>
                     <p className="text-[10px] text-gray-400 mt-0.5">{cs.namaLegal}</p>
                   </div>
                 </div>
