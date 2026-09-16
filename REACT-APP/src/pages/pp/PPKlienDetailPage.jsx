@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   ArrowLeft, Edit, Save, X, User, Heart, Link2, ShoppingBag,
-  ClipboardList, AlertTriangle, ExternalLink,
+  ClipboardList, AlertTriangle, ExternalLink, Plus,
 } from 'lucide-react'
 import { getKlienById, updateKlien } from '../../data/ppKlienStore'
 import { getLeadById } from '../../data/ppLeadsStore'
@@ -74,12 +74,15 @@ const INPUT_CLS = 'w-full text-sm border border-gray-200 rounded-lg px-3 py-2 fo
 const TEXTAREA_CLS = 'w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:border-[#1E1C43] bg-white resize-none'
 
 /* ─── Section card wrapper ─── */
-function SectionCard({ icon: Icon, title, children }) {
+function SectionCard({ icon: Icon, title, action, children }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-      <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2 border-l-4 border-[#E05945] pl-3 mb-4">
-        <Icon size={14} className="shrink-0" /> {title}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-bold text-[#1E1C43] flex items-center gap-2 border-l-4 border-[#E05945] pl-3">
+          <Icon size={14} className="shrink-0" /> {title}
+        </h3>
+        {action}
+      </div>
       {children}
     </div>
   )
@@ -410,7 +413,20 @@ export default function PPKlienDetailPage() {
           </SectionCard>
 
           {/* Riwayat Assessment */}
-          <SectionCard icon={ClipboardList} title="Riwayat Assessment">
+          <SectionCard
+            icon={ClipboardList}
+            title="Riwayat Assessment"
+            action={
+              <button
+                onClick={() => navigate('/pp/screening/new', {
+                  state: { klienId: klien.id, leadId: klien.leadId, namaKlien: klien.nama },
+                })}
+                className="flex items-center gap-1 h-7 px-2.5 rounded-lg bg-[#E05945] hover:bg-[#c94a38] text-white text-xs font-semibold transition-colors"
+              >
+                <Plus size={11} /> Buat Assessment
+              </button>
+            }
+          >
             {assessments.length === 0 ? (
               <p className="text-xs text-gray-400 text-center py-4">Belum ada assessment.</p>
             ) : (
