@@ -149,21 +149,21 @@ function MeasTable({ title, fields, data, onChange, readOnly, isRenewal }) {
         <table className="w-full" style={{ minWidth: '700px' }}>
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
-              <th className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide w-48">Item Tes</th>
+              <th className="text-left px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider w-48">Item Tes</th>
               <th
-                className={`text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-400'}`}
+                className={`text-center px-3 py-2 text-[10px] font-semibold uppercase tracking-wider ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-500'}`}
                 colSpan={2}
               >
                 Tes Awal{isRenewal && <span className="ml-1 text-[10px] font-medium normal-case text-purple-400">(diadopsi)</span>}
               </th>
-              <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={2}>Tes Akhir</th>
+              <th className="text-center px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider" colSpan={2}>Tes Akhir</th>
             </tr>
             <tr className="border-b border-gray-200 bg-gray-50">
               <th className="px-3 py-1"></th>
-              <th className={`text-center px-3 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Hasil</th>
-              <th className={`text-center px-3 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Keterangan</th>
-              <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Hasil</th>
-              <th className="text-center px-3 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
+              <th className={`text-center px-3 py-1 text-[10px] font-semibold ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-500'}`}>Hasil</th>
+              <th className={`text-center px-3 py-1 text-[10px] font-semibold ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-500'}`}>Keterangan</th>
+              <th className="text-center px-3 py-1 text-[10px] font-semibold text-gray-500">Hasil</th>
+              <th className="text-center px-3 py-1 text-[10px] font-semibold text-gray-500">Keterangan</th>
             </tr>
           </thead>
           <tbody>
@@ -214,23 +214,23 @@ function ParqTable({ items, data, onChange, readOnly, isRenewal }) {
       <table className="w-full" style={{ minWidth: '800px' }}>
         <thead>
           <tr className="border-b border-gray-200 bg-gray-50">
-            <th className="text-left px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">Pertanyaan</th>
+            <th className="text-left px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider">Pertanyaan</th>
             <th
-              className={`text-center px-3 py-2 text-xs font-semibold uppercase tracking-wide ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-400'}`}
+              className={`text-center px-3 py-2 text-[10px] font-semibold uppercase tracking-wider ${isRenewal ? 'bg-purple-50 text-purple-600' : 'text-gray-500'}`}
               colSpan={3}
             >
               Tes Awal{isRenewal && <span className="ml-1 text-[10px] font-medium normal-case text-purple-400">(diadopsi)</span>}
             </th>
-            <th className="text-center px-3 py-2 text-xs font-semibold text-gray-400 uppercase tracking-wide" colSpan={3}>Tes Akhir</th>
+            <th className="text-center px-3 py-2 text-[10px] font-semibold text-gray-500 uppercase tracking-wider" colSpan={3}>Tes Akhir</th>
           </tr>
           <tr className="border-b border-gray-200 bg-gray-50">
             <th className="px-3 py-1"></th>
-            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Ya</th>
-            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Tidak</th>
-            <th className={`text-center px-2 py-1 text-xs font-medium ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-400'}`}>Keterangan</th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Ya</th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Tidak</th>
-            <th className="text-center px-2 py-1 text-xs text-gray-400 font-medium">Keterangan</th>
+            <th className={`text-center px-2 py-1 text-[10px] font-semibold ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-500'}`}>Ya</th>
+            <th className={`text-center px-2 py-1 text-[10px] font-semibold ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-500'}`}>Tidak</th>
+            <th className={`text-center px-2 py-1 text-[10px] font-semibold ${isRenewal ? 'bg-purple-50 text-purple-400' : 'text-gray-500'}`}>Keterangan</th>
+            <th className="text-center px-2 py-1 text-[10px] font-semibold text-gray-500">Ya</th>
+            <th className="text-center px-2 py-1 text-[10px] font-semibold text-gray-500">Tidak</th>
+            <th className="text-center px-2 py-1 text-[10px] font-semibold text-gray-500">Keterangan</th>
           </tr>
         </thead>
         <tbody>
@@ -719,7 +719,7 @@ export default function PPFitnessAssessmentPage() {
                 <>
                   <span className="text-xs text-gray-500">{existing?.namaKlien || '—'}</span>
                   <span className="text-gray-300 text-xs">·</span>
-                  <span className={`px-2 py-0.5 text-[10px] rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+                  <span className={`px-2 py-1 text-xs rounded-full font-medium border ${statusColors[statusLabel] || 'bg-gray-50 text-gray-500 border-gray-200'}`}>
                     {statusLabel}
                   </span>
                 </>
@@ -1207,7 +1207,7 @@ export default function PPFitnessAssessmentPage() {
             {!isNew && !isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 <Edit2 size={14} /> Edit
               </button>
@@ -1215,7 +1215,7 @@ export default function PPFitnessAssessmentPage() {
             {!isNew && isEditing && (
               <button
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 hover:bg-gray-50 transition-colors"
+                className="px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
               >
                 Batalkan
               </button>
@@ -1223,7 +1223,7 @@ export default function PPFitnessAssessmentPage() {
             {isEditing && (
               <button
                 onClick={handleSave}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors ${
                   saved ? 'bg-green-600 text-white' : 'bg-[#1E1C43] text-white hover:bg-[#2d2a5e]'
                 }`}
               >
