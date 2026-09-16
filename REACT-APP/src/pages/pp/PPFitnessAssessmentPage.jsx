@@ -495,7 +495,9 @@ export default function PPFitnessAssessmentPage() {
 
   // Section Toggles
   const [toggles, setToggles] = useState(
-    existing?.toggles || { kesehatan: false, bodyMeasurement: false, healthScreening: false, fitnessTest: false }
+    existing?.toggles
+      ? { kesehatan: false, bodyMeasurement: false, healthScreening: false, fitnessTest: false, ...existing.toggles }
+      : { kesehatan: false, bodyMeasurement: true, healthScreening: true, fitnessTest: true }
   )
   const [leadDokumen, setLeadDokumen] = useState([])
 
