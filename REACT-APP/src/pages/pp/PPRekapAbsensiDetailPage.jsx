@@ -78,8 +78,8 @@ export default function PPRekapAbsensiDetailPage() {
   const order     = getOrderById(orderId)
   const programs  = getStoredPrograms()
   const prog      = programs.find(p => p.id === order?.programId)
-  const picData   = prog ? (PIC_DB[prog.picId] || null) : null
-  const ratePerSesi = prog ? (prog.biayaSesiPIC || 0) : 0
+  const picData   = Object.values(PIC_DB).find(p => p.fullname === order?.picOpsEFM) || null
+  const ratePerSesi = picData?.biayaSesi || (prog?.biayaSesiPIC || 0)
 
   const absensiSesi = state?.absensiSesi || []
   const totalHon    = absensiSesi.length * ratePerSesi
@@ -321,14 +321,14 @@ export default function PPRekapAbsensiDetailPage() {
               {prog && (
                 <div className="bg-gray-50 rounded-xl px-4 py-3 border border-gray-100 mt-3">
                   <div className="flex justify-between items-center mb-1.5">
-                    <span className="text-xs text-gray-600 font-medium">{absensiSesi.length} dari {prog.totalSesi || 12} sesi terlaksana</span>
+                    <span className="text-xs text-gray-600 font-medium">{absensiSesi.length} dari {prog.sesi || order?.sesiTotal || 12} sesi terlaksana</span>
                     <span className="text-xs font-bold text-[#1E1C43]">
-                      {Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100))}%
+                      {Math.min(100, Math.round((absensiSesi.length / (prog.sesi || order?.sesiTotal || 12)) * 100))}%
                     </span>
                   </div>
                   <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div className="h-full rounded-full bg-[#1E1C43] transition-all"
-                      style={{ width: Math.min(100, Math.round((absensiSesi.length / (prog.totalSesi || 12)) * 100)) + '%' }} />
+                      style={{ width: Math.min(100, Math.round((absensiSesi.length / (prog.sesi || order?.sesiTotal || 12)) * 100)) + '%' }} />
                   </div>
                 </div>
               )}
