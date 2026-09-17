@@ -653,28 +653,6 @@ export default function PPRekapAbsensiDetailPage() {
         </div>
       )}
 
-      {/* ── Status Pembayaran Honorarium (admin only, non-printable) ── */}
-      {rekapStatus === 'dikonfirmasi' && honStatus !== 'sudah_bayar' && (
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center gap-3 mb-3 flex-wrap">
-            <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pembayaran Honorarium</h3>
-            <span className="px-2 py-0.5 text-xs rounded-full font-medium border bg-yellow-50 text-yellow-700 border-yellow-200">
-              Menunggu Bayar
-            </span>
-          </div>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 min-w-0">
-              <Upload size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-              <p className="text-xs text-yellow-700">Honorarium belum dibayarkan. Catat pembayaran melalui halaman Order.</p>
-            </div>
-            <button
-              onClick={() => navigate(`/pp/orders/${orderId}`, { state: { defaultTab: 'operasional' } })}
-              className="inline-flex items-center gap-1 text-xs font-semibold text-[#1E1C43] hover:underline shrink-0 whitespace-nowrap">
-              Ke Order <ExternalLink size={11} />
-            </button>
-          </div>
-        </div>
-      )}
 
 
     </div>
