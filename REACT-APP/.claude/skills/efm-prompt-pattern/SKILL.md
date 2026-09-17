@@ -128,6 +128,13 @@ Every task follows this discipline, regardless of how the prompt is phrased.
 - Fix: `git fetch origin main && git merge origin/main` → resolve conflict dengan keep HEAD (semua akumulasi import/logic baru) → `npm run build` → commit → push → retry merge
 - Saat resolve: konflik di import block → keep HEAD; konflik di logic block → keep HEAD dan verifikasi correctness
 
+**Seed/fallback data — harus ada di file data tersendiri**
+- Data seed/fallback yang dipakai sebagai default state sebuah modul (contoh: `ABSENSI_SEED` untuk Rekap Absensi, data jadwal sesi, dll) WAJIB disimpan di file `*Data.js` tersendiri di `src/data/`, BUKAN sebagai konstanta inline di dalam file komponen
+- Alasan: inline seed mencegah data dipakai ulang di komponen lain, sulit di-maintain, dan melanggar konvensi "data files di data/"
+- Contoh yang benar: `ppAbsensiData.js` → export `ABSENSI_SEED`, lalu import di `PPRekapAbsensiDetailPage.jsx`
+- Contoh yang salah: `const ABSENSI_SEED = { 'PP-27-0004': [...] }` hardcoded di dalam JSX file
+- Ketika diminta "sinkronisasi dummy data", cek apakah ada seed inline di komponen — jika ada, ekstrak ke file data dulu sebelum menambah entri baru
+
 **PP Module — PIC (trainer) data lookup**
 - `PROGRAMS_INIT` di `ppProgramDBData.js` menyimpan `picId` sebagai string (contoh: `'EFM-PIC-003'`) — BUKAN embedded object `pic: { nama: '...' }`
 - Untuk mendapatkan data trainer, selalu lookup via `PIC_DB[prog.picId]` — import dari `ppProgramDBData.js`
