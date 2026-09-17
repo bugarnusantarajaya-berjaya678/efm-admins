@@ -2981,3 +2981,82 @@ const clientAssessments = useMemo(() => {
 - "Buat Baru" button: orange CTA, pass full context `{ leadId, klienId, namaKlien }`
 - Format option: `SCR-YY-####` + status (opsional) + tanggal preTest — cukup informatif untuk pilih yang mana
 
+
+---
+
+## 17. localStorage Re-render Pattern (honRefresh)
+
+Dipakai ketika: sebuah halaman menyimpan state ke localStorage (via `saveRekap()` atau sejenisnya) dan perlu memastikan plain vars yang di-derive dari localStorage terbaca ulang setelah save — tanpa refaktor ke `useState`.
+
+**Pattern:**
+```js
+// State counter — increment memaksa re-render
+const [honRefresh, setHonRefresh] = useState(0)
+// Referensikan di body komponen untuk mencegah tree-shaking/ESLint warning
+void honRefresh
+
+// Plain vars yang bergantung localStorage (di-evaluate ulang setiap render)
+const stored   = loadRekap(orderId)
+const honStatus = stored.honStatus || 'menunggu_bayar'
+const buktiBayar = stored.buktiBayar || null
+
+// Saat save ke localStorage, increment counter
+function handleSave() {
+  saveRekap(orderId, { honStatus: 'sudah_bayar', ... })
+  setHonRefresh(n => n + 1)  // trigger re-render → plain vars terbaca ulang
+}
+```
+
+**Aturan:**
+- `void honRefresh` WAJIB ada — tanpa ini, ESLint atau tree-shaking bisa remove state yang "tidak dipakai", sehingga re-render tidak terjadi
+- Jangan pindahkan `loadRekap()` ke dalam `useEffect` — ini sengaja di body komponen supaya re-evaluate setiap render
+- Pattern ini tepat untuk state yang sumbernya localStorage tetapi jarang berubah (mis. status honorarium, bukti bayar) — jangan dipakai untuk state yang berubah sering/real-time
+- Nama `honRefresh` bisa diganti sesuai konteks (contoh: `payRefresh`, `statusRefresh`)
+
+---
+
+## 18. Multi-Column Info Grid (Pembayaran / Summary Section)
+
+Dipakai untuk: section ringkasan pembayaran dengan beberapa field info (bukan form input), seperti Pembayaran Honorarium di Rekap Absensi.
+
+**Pola 3-kolom 2-baris:**
+```jsx
+<div className="grid grid-cols-3 gap-x-6 gap-y-4">
+  {/* Baris 1 */}
+  <div>
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
+    <p className="text-xs font-semibold text-gray-700 mt-0.5">{picNama}</p>
+  </div>
+  <div>
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
+    <p className="text-xs font-semibold text-gray-700 mt-0.5">{tglBayar || '—'}</p>
+  </div>
+  <div>
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Bukti Transfer</p>
+    {/* foto thumbnail atau placeholder */}
+  </div>
+
+  {/* Baris 2 */}
+  <div>
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
+    <p className="text-xs font-semibold text-gray-700 mt-0.5">{metode}</p>
+  </div>
+  <div>
+    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Total Dibayarkan</p>
+    <p className="text-xs font-bold text-[#1E1C43] mt-0.5">{formatRp(totalHon)}</p>
+    <span className="mt-1.5 inline-block px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">
+      Sudah Dibayarkan
+    </span>
+  </div>
+  <div>{/* kolom 3 baris 2 — kosong atau isi opsional */}</div>
+</div>
+```
+
+**Aturan:**
+- Label field: `text-[10px] text-gray-400 uppercase tracking-wide font-semibold`
+- Nilai field: `text-xs font-semibold text-gray-700`
+- Nilai total/penting: `text-xs font-bold text-[#1E1C43]`
+- Status badge: langsung di bawah nilai total, inline (bukan di baris terpisah)
+- `gap-x-6 gap-y-4` — jangan reduce gap, ini penting untuk readability
+- Jika hanya 2 kolom yang relevan: gunakan `grid-cols-2`, bukan `grid-cols-3` dengan kolom kosong
+- Jangan gunakan navy box/"total bar" terpisah untuk nilai total — tampil flat sebagai field biasa dalam grid ini

@@ -122,6 +122,7 @@ General pattern: `[DOCTYPE]-[MODULE]-[YY]-[SEQUENCE]` (e.g. `INV-PP-26-0001`)
 |---|---|---|---|
 | **Orange (CTA)** | `#E05945` | Aksi bisnis utama yang menggerakkan workflow — maks 1 per halaman/section | Buat Order Baru, Konfirmasi Pembayaran, Kirim Invoice, Tambah Lead |
 | **Navy (Primary)** | `#1E1C43` | Save/submit standard di form dan modal | Simpan, Lanjut, Terapkan |
+| **Green (Approve/Upload)** | `#27AE60` hover `#1E8449` | Aksi konfirmasi/upload yang menyelesaikan sebuah siklus pembayaran atau verifikasi | Upload Bukti Bayar, Konfirmasi Honorarium, Approve |
 | **Gray secondary** | `border-gray-300 text-gray-600` | Navigasi & pembatalan | **Kembali**, Batal, Reset, Download PDF |
 | **Red** | `bg-red-600` | Aksi destruktif | Hapus, Delete |
 
@@ -860,3 +861,27 @@ Saat halaman sub-dokumen (Invoice, Receipt, Agreement) dibuka melalui navigasi d
 - **Promo** sudah punya entry sendiri di sidebar (`/pp/promo`) — TIDAK perlu ada di `also[]` Orders
 
 Jika halaman Invoice/Receipt/Agreement memiliki route standalone (`/pp/invoice`, `/pp/receipt`) yang tidak berawalan `/pp/orders/`, highlight sidebar akan hilang — dan solusi yang benar adalah **menerima kondisi ini** (tidak perlu highlight saat di halaman cross-order list view), bukan menambahnya ke sidebar.
+
+
+---
+
+## 7. Document Footer Standard (Dokumen Operasional)
+
+Dipakai untuk: Rekap Absensi, dan dokumen operasional sejenis yang diterima pelatih/terapis.
+
+**Struktur footer (2 baris):**
+```jsx
+<div className="rkp-sec px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
+  <p className="text-xs text-gray-500">Simpan dokumen ini sebagai bukti sesi dan konfirmasi honorarium Anda.</p>
+  <p className="text-xs font-semibold text-gray-500">
+    Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}
+  </p>
+</div>
+```
+
+**Aturan:**
+- Baris 1: kalimat fungsional dari **POV penerima dokumen** (pelatih/terapis) — menjelaskan untuk apa dokumen ini disimpan
+- Baris 2: identitas perusahaan via `getCompanySettings()` — JANGAN hardcode
+- JANGAN gunakan "Terima kasih atas kepercayaan Anda." — terlalu generik, tidak memberi informasi
+- JANGAN gunakan kalimat basa-basi lain yang tidak menambah nilai fungsional
+- Jika dokumen ditujukan ke klien (bukan pelatih), sesuaikan baris 1 dengan konteks: mis. "Simpan dokumen ini sebagai bukti program dan pembayaran Anda."
