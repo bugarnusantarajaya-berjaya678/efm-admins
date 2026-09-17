@@ -654,58 +654,25 @@ export default function PPRekapAbsensiDetailPage() {
       )}
 
       {/* ── Status Pembayaran Honorarium (admin only, non-printable) ── */}
-      {rekapStatus === 'dikonfirmasi' && (
+      {rekapStatus === 'dikonfirmasi' && honStatus !== 'sudah_bayar' && (
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="flex items-center gap-3 mb-3 flex-wrap">
             <h3 className="text-sm font-bold text-[#1E1C43] border-l-4 border-[#E05945] pl-3">Pembayaran Honorarium</h3>
-            <span className={`px-2 py-0.5 text-xs rounded-full font-medium border ${
-              honStatus === 'sudah_bayar'
-                ? 'bg-green-50 text-green-700 border-green-200'
-                : 'bg-yellow-50 text-yellow-700 border-yellow-200'
-            }`}>
-              {honStatus === 'sudah_bayar' ? '✓ Sudah Dibayar' : 'Menunggu Bayar'}
+            <span className="px-2 py-0.5 text-xs rounded-full font-medium border bg-yellow-50 text-yellow-700 border-yellow-200">
+              Menunggu Bayar
             </span>
           </div>
-          {honStatus === 'sudah_bayar' ? (
-            <div className="space-y-3">
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                <div className="grid grid-cols-2 gap-x-6 gap-y-3">
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Bukti File</p>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{buktiBayar || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">{tglBayar || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">{metodeBayar || '—'}</p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
-                    <p className="text-xs font-semibold text-gray-800 mt-0.5">{picData?.fullname || 'Pelatih'}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between">
-                <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
-                <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
-              </div>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 min-w-0">
+              <Upload size={14} className="text-yellow-500 shrink-0 mt-0.5" />
+              <p className="text-xs text-yellow-700">Honorarium belum dibayarkan. Catat pembayaran melalui halaman Order.</p>
             </div>
-          ) : (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 flex items-start justify-between gap-3">
-              <div className="flex items-start gap-3 min-w-0">
-                <Upload size={14} className="text-yellow-500 shrink-0 mt-0.5" />
-                <p className="text-xs text-yellow-700">Honorarium belum dibayarkan. Catat pembayaran melalui halaman Order.</p>
-              </div>
-              <button
-                onClick={() => navigate(`/pp/orders/${orderId}`, { state: { defaultTab: 'operasional' } })}
-                className="inline-flex items-center gap-1 text-xs font-semibold text-[#1E1C43] hover:underline shrink-0 whitespace-nowrap">
-                Ke Order <ExternalLink size={11} />
-              </button>
-            </div>
-          )}
+            <button
+              onClick={() => navigate(`/pp/orders/${orderId}`, { state: { defaultTab: 'operasional' } })}
+              className="inline-flex items-center gap-1 text-xs font-semibold text-[#1E1C43] hover:underline shrink-0 whitespace-nowrap">
+              Ke Order <ExternalLink size={11} />
+            </button>
+          </div>
         </div>
       )}
 
