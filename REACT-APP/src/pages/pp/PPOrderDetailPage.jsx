@@ -1915,19 +1915,16 @@ export default function PPOrderDetailPage() {
                         <span className="self-start px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">Sudah Dibayar</span>
                       </div>
                     ) : (
-                      <div
-                        onClick={() => setShowHonModal(true)}
-                        className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white hover:bg-gray-50 cursor-pointer transition-colors group"
-                      >
+                      <div className="flex flex-col gap-2 p-3 rounded-xl border border-dashed border-gray-200 bg-white">
                         <div className="flex items-center justify-between">
                           <div className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold bg-gray-100 text-gray-400 shrink-0">2</div>
-                          <Upload size={11} className="text-gray-300 group-hover:text-[#E05945] transition-colors shrink-0" />
+                          <Upload size={11} className="text-gray-300 shrink-0" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-0.5">Bukti Honorarium</p>
                           <p className="text-xs text-gray-400 italic leading-tight">Belum ada bukti</p>
                         </div>
-                        <span className="self-start text-xs text-[#E05945] font-semibold">Upload Bukti →</span>
+                        <p className="text-[10px] text-gray-400 leading-snug">Upload melalui halaman Rekap Absensi</p>
                       </div>
                     )
                   ) : (
