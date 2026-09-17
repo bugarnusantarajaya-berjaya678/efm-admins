@@ -546,7 +546,8 @@ export default function PPRekapAbsensiDetailPage() {
                 </p>
                 {honStatus === 'sudah_bayar' ? (
                   <div className="space-y-3">
-                    <div className="grid grid-cols-2 gap-x-6 gap-y-3">
+                    <div className="grid grid-cols-3 gap-x-6 gap-y-4">
+                      {/* Baris 1 */}
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Pelatih</p>
                         <p className="text-xs font-semibold text-gray-800 mt-0.5">{picData?.fullname || '—'}</p>
@@ -554,10 +555,6 @@ export default function PPRekapAbsensiDetailPage() {
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Tanggal Bayar</p>
                         <p className="text-xs font-semibold text-gray-800 mt-0.5">{tglBayar || '—'}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
-                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{metodeBayar || '—'}</p>
                       </div>
                       <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Bukti Transfer</p>
@@ -570,9 +567,17 @@ export default function PPRekapAbsensiDetailPage() {
                           <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{buktiBayar || '—'}</p>
                         )}
                       </div>
-                      <div className="col-span-2 pt-2.5 border-t border-gray-100">
+                      {/* Baris 2 */}
+                      <div>
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Metode</p>
+                        <p className="text-xs font-semibold text-gray-800 mt-0.5">{metodeBayar || '—'}</p>
+                      </div>
+                      <div>
                         <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Total Dibayarkan</p>
                         <p className="text-xs font-bold text-[#1E1C43] mt-0.5">{formatRp(totalHon)}</p>
+                        <span className="mt-1.5 inline-block px-2 py-0.5 rounded-full text-xs font-medium border bg-green-50 text-green-700 border-green-200">
+                          Sudah Dibayarkan
+                        </span>
                       </div>
                     </div>
                   </div>
