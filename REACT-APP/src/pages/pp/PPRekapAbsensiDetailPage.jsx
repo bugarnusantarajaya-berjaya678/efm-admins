@@ -583,7 +583,7 @@ export default function PPRekapAbsensiDetailPage() {
 
             {/* ── Document footer ── */}
             <div className="rkp-sec px-6 sm:px-8 py-4 border-t border-gray-100 text-center space-y-1">
-              <p className="text-xs text-gray-500">Terima kasih atas kepercayaan Anda.</p>
+              <p className="text-xs text-gray-500">Simpan dokumen ini sebagai bukti sesi dan konfirmasi honorarium Anda.</p>
               <p className="text-xs font-semibold text-gray-500">
                 Powered by {cs.namaPerusahaan}&nbsp;&nbsp;|&nbsp;&nbsp;{cs.namaLegal}
               </p>
