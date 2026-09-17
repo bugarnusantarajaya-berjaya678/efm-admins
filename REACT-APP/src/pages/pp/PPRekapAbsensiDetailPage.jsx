@@ -570,10 +570,10 @@ export default function PPRekapAbsensiDetailPage() {
                           <p className="text-xs font-semibold text-gray-800 mt-0.5 truncate">{buktiBayar || '—'}</p>
                         )}
                       </div>
-                    </div>
-                    <div className="bg-[#1E1C43] rounded-xl px-4 py-2.5 flex items-center justify-between mt-2">
-                      <span className="text-xs font-bold text-white uppercase tracking-wider">Total Honorarium Dibayarkan</span>
-                      <span className="text-base font-black text-white">{formatRp(totalHon)}</span>
+                      <div className="col-span-2 pt-2.5 border-t border-gray-100">
+                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold">Total Dibayarkan</p>
+                        <p className="text-xs font-bold text-[#1E1C43] mt-0.5">{formatRp(totalHon)}</p>
+                      </div>
                     </div>
                   </div>
                 ) : (
