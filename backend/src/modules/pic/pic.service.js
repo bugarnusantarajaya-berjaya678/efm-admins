@@ -46,6 +46,10 @@ export async function updatePicDetails(id, updates, requestId) {
 
   return withTransaction(async (client) => {
     const updated = await updatePic(id, updates, client)
+    // Guard against concurrent delete between the existence check above and
+    // the UPDATE inside the transaction.
+    if (!updated) throw notFound('PIC', id)
+
     await recordAuditEvent({
       eventType: updates.status ? AuditEventType.PIC_STATUS_CHANGED : AuditEventType.PIC_UPDATED,
       entityType: EntityType.PIC,
@@ -63,7 +67,14 @@ export async function addPicContext(picId, contextData, requestId) {
   if (!existing) throw notFound('PIC', picId)
 
   return withTransaction(async (client) => {
-    const ctx = await insertPicContext({ picId, ...contextData }, client)
+    let ctx
+    try {
+      ctx = await insertPicContext({ picId, ...contextData }, client)
+    } catch (err) {
+      // FK violation on pic_id means the PIC was deleted concurrently
+      if (err.code === '23503') throw notFound('PIC', picId)
+      throw err
+    }
     await recordAuditEvent({
       eventType: AuditEventType.PIC_UPDATED,
       entityType: EntityType.PIC,

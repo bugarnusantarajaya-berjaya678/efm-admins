@@ -82,9 +82,16 @@ function formatId(docType, module, year, seq) {
  * @param {pg.PoolClient} [options.client]  - existing transaction client
  * @param {number} [options.year]           - override year (for testing)
  */
+// Doc types whose IDs are module-independent — always use GLOBAL bucket
+// regardless of what the caller passes, preventing duplicate IDs across modules.
+const GLOBAL_TYPES = new Set([DOCTYPE.ASSESSMENT, DOCTYPE.PIC])
+
 export async function nextId(docType, module, options = {}) {
   if (!DOCTYPE[docType]) throw new Error(`Invalid docType: ${docType}`)
   if (!MODULE[module]) throw new Error(`Invalid module: ${module}`)
+
+  // Normalize module-independent types to GLOBAL to guarantee uniqueness
+  const effectiveModule = GLOBAL_TYPES.has(docType) ? MODULE.GLOBAL : module
 
   const isLead = LEAD_TYPES.has(docType)
   // Leads use year=0 as a permanent bucket (no year resets)
@@ -100,10 +107,10 @@ export async function nextId(docType, module, options = {}) {
          last_seq   = id_sequences.last_seq + 1,
          updated_at = NOW()
        RETURNING last_seq`,
-      [docType, module, year]
+      [docType, effectiveModule, year]
     )
     const seq = rows[0].last_seq
-    return formatId(docType, module, year, seq)
+    return formatId(docType, effectiveModule, year, seq)
   }
 
   if (options.client) {
@@ -117,14 +124,15 @@ export async function nextId(docType, module, options = {}) {
  * Safe for display; not guaranteed — another request may claim it first.
  */
 export async function peekNextId(docType, module, options = {}) {
+  const effectiveModule = GLOBAL_TYPES.has(docType) ? MODULE.GLOBAL : module
   const isLead = LEAD_TYPES.has(docType)
   const year = isLead ? 0 : (options.year ?? new Date().getFullYear())
   const { rows } = await query(
     `SELECT last_seq FROM id_sequences WHERE doc_type=$1 AND module=$2 AND year=$3`,
-    [docType, module, year]
+    [docType, effectiveModule, year]
   )
   const nextSeq = rows.length ? rows[0].last_seq + 1 : 1
-  return formatId(docType, module, year, nextSeq)
+  return formatId(docType, effectiveModule, year, nextSeq)
 }
 
 export { DOCTYPE, MODULE }

@@ -35,7 +35,7 @@ export async function withTransaction(fn) {
     await client.query('COMMIT')
     return result
   } catch (err) {
-    await client.query('ROLLBACK')
+    try { await client.query('ROLLBACK') } catch { /* rollback failed; original error is rethrown below */ }
     throw err
   } finally {
     client.release()

@@ -6,9 +6,22 @@
 
 import { query, withTransaction } from '../db/index.js'
 
+// Allowed table names — any subclass must register its table here.
+// This prevents SQL injection from dynamic or mis-configured tableName values.
+const ALLOWED_TABLES = new Set([
+  'id_sequences',
+  'audit_events',
+  'pic_master',
+  'pic_contexts',
+  'schema_migrations',
+])
+
 export class BaseRepository {
-  /** @param {string} tableName */
+  /** @param {string} tableName - must be listed in ALLOWED_TABLES */
   constructor(tableName) {
+    if (!ALLOWED_TABLES.has(tableName)) {
+      throw new Error(`BaseRepository: unknown table "${tableName}". Add it to ALLOWED_TABLES.`)
+    }
     this.tableName = tableName
   }
 

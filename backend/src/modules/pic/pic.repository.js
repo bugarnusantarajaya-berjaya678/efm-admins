@@ -13,17 +13,32 @@ export async function findPicById(id) {
 }
 
 export async function findAllPics({ status, module } = {}) {
-  let sql = `
-    SELECT p.*, json_agg(c.*) FILTER (WHERE c.id IS NOT NULL) AS contexts
-    FROM pic_master p
-    LEFT JOIN pic_contexts c ON c.pic_id = p.id
-  `
   const params = []
   const where = []
   if (status) { params.push(status); where.push(`p.status = $${params.length}`) }
-  if (module) { params.push(module); where.push(`c.module = $${params.length}`) }
+
+  // When filtering by module we must keep all contexts for matched PICs, while
+  // still preserving PICs that have no contexts in other modules (LEFT JOIN must
+  // not collapse to INNER JOIN). We push the module filter into the JOIN
+  // condition so the outer query still returns PICs with zero matching contexts.
+  let joinCondition = 'c.pic_id = p.id'
+  if (module) {
+    // Push module param once for the JOIN filter, reuse same index for the
+    // IN-subquery. Both references use the same $N placeholder.
+    params.push(module)
+    const moduleParamIdx = params.length
+    joinCondition += ` AND c.module = $${moduleParamIdx}`
+    where.push(`p.id IN (SELECT pic_id FROM pic_contexts WHERE module = $${moduleParamIdx})`)
+  }
+
+  let sql = `
+    SELECT p.*, json_agg(c.*) FILTER (WHERE c.id IS NOT NULL) AS contexts
+    FROM pic_master p
+    LEFT JOIN pic_contexts c ON ${joinCondition}
+  `
   if (where.length) sql += ' WHERE ' + where.join(' AND ')
   sql += ' GROUP BY p.id ORDER BY p.full_name'
+
   const { rows } = await query(sql, params)
   return rows
 }
@@ -39,19 +54,40 @@ export async function insertPic({ id, fullName, email, phone, status, pksExpiryD
   return rows[0]
 }
 
-export async function updatePic(id, { fullName, email, phone, status, pksExpiryDate }, client) {
+/**
+ * Patch PIC master fields. Only fields explicitly present in the updates object
+ * are changed. Passing a field as null clears it (allows un-setting nullable
+ * fields like phone). Fields absent from updates are preserved via COALESCE.
+ *
+ * "Present" means the key exists in the raw updates object — undefined means
+ * "omitted", null means "clear to NULL".
+ */
+export async function updatePic(id, updates, client) {
   const q = client ? client.query.bind(client) : query
+
+  // Build dynamic SET list — only touch fields that were explicitly passed
+  const setClauses = []
+  const params = [id]
+
+  const field = (key, col) => {
+    if (key in updates) {
+      params.push(updates[key] ?? null)
+      setClauses.push(`${col} = $${params.length}`)
+    } else {
+      setClauses.push(`${col} = ${col}`)
+    }
+  }
+
+  field('fullName', 'full_name')
+  field('email', 'email')
+  field('phone', 'phone')
+  field('status', 'status')
+  field('pksExpiryDate', 'pks_expiry_date')
+  setClauses.push('updated_at = NOW()')
+
   const { rows } = await q(
-    `UPDATE pic_master
-     SET full_name      = COALESCE($2, full_name),
-         email          = COALESCE($3, email),
-         phone          = COALESCE($4, phone),
-         status         = COALESCE($5, status),
-         pks_expiry_date = COALESCE($6, pks_expiry_date),
-         updated_at     = NOW()
-     WHERE id = $1
-     RETURNING *`,
-    [id, fullName ?? null, email ?? null, phone ?? null, status ?? null, pksExpiryDate ?? null]
+    `UPDATE pic_master SET ${setClauses.join(', ')} WHERE id = $1 RETURNING *`,
+    params
   )
   return rows[0] ?? null
 }
