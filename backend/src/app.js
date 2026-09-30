@@ -5,6 +5,18 @@ import { asyncHandler } from './middleware/errorHandler.js'
 import { checkConnection } from './db/index.js'
 import { picRouter } from './modules/pic/pic.router.js'
 import { auditRouter } from './modules/audit/audit.router.js'
+// Phase 2A Commercial Core
+import { catalogRouter } from './modules/catalog/catalog.router.js'
+import { leadRouter } from './modules/lead/lead.router.js'
+import { clientRouter } from './modules/client/client.router.js'
+import { orderRouter } from './modules/order/order.router.js'
+import { invoiceRouter } from './modules/invoice/invoice.router.js'
+import { paymentRouter } from './modules/payment/payment.router.js'
+import { receiptRouter } from './modules/receipt/receipt.router.js'
+import { refundRouter } from './modules/refund/refund.router.js'
+// Phase 2B Participants & Assessments
+import { participantRouter } from './modules/participant/participant.router.js'
+import { assessmentRouter } from './modules/assessment/assessment.router.js'
 
 const app = express()
 
@@ -18,13 +30,25 @@ app.get('/health', asyncHandler(async (req, res) => {
     status: 'ok',
     requestId: req.requestId,
     db: { connected: true, serverTime: dbTime },
-    version: '1.0.0-phase1',
+    version: '1.0.0-phase2b',
   })
 }))
 
-// Module routers
+// Phase 1 routers
 app.use('/api/v1/pics', picRouter)
 app.use('/api/v1/audit', auditRouter)
+// Phase 2A PP Commercial Core
+app.use('/api/pp', catalogRouter)
+app.use('/api/pp', leadRouter)
+app.use('/api/pp', clientRouter)
+app.use('/api/pp', orderRouter)
+app.use('/api/pp', invoiceRouter)
+app.use('/api/pp', paymentRouter)
+app.use('/api/pp', receiptRouter)
+app.use('/api/pp', refundRouter)
+// Phase 2B PP Participants & Assessments
+app.use('/api/pp', participantRouter)
+app.use('/api/pp', assessmentRouter)
 
 // 404 catch-all
 app.use((req, res) => {

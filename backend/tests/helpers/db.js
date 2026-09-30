@@ -12,9 +12,15 @@ export async function setupTestDb() {
 }
 
 export async function teardownTestDb() {
-  // Truncate all foundation tables between runs
+  // Truncate all tables between runs (Phase 1 + Phase 2A)
   await query(`
-    TRUNCATE id_sequences, audit_events, pic_contexts, pic_master
+    TRUNCATE
+      assessments_pp, participants_pp,
+      refunds_pp, receipts_pp, payments_pp, invoices_pp,
+      order_commercial_snapshots, orders_pp,
+      clients_pp, leads_pp,
+      package_prices, packages, offerings, programs,
+      id_sequences, audit_events, pic_contexts, pic_master
     RESTART IDENTITY CASCADE
   `)
 }
