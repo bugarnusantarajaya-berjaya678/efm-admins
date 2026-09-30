@@ -14,6 +14,19 @@ const ALLOWED_TABLES = new Set([
   'pic_master',
   'pic_contexts',
   'schema_migrations',
+  // Phase 2A Commercial Core
+  'programs',
+  'offerings',
+  'packages',
+  'package_prices',
+  'leads_pp',
+  'clients_pp',
+  'orders_pp',
+  'order_commercial_snapshots',
+  'invoices_pp',
+  'payments_pp',
+  'receipts_pp',
+  'refunds_pp',
 ])
 
 export class BaseRepository {

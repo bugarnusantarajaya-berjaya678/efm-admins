@@ -1,5 +1,5 @@
 /**
- * Authoritative ID Generator — EFM PP Phase 1 Foundation.
+ * Authoritative ID Generator — EFM PP Phase 1 Foundation + Phase 2A Commercial Core.
  *
  * Formats (from Technical Build Specification v1.0):
  *   ORDER      PP-YY-xxxx
@@ -15,6 +15,9 @@
  *   LEAD_PP    LP-xxxx       (no year — permanent, never resets)
  *   LEAD_B2B   LB-xxxx
  *   LEAD_EVENT LE-xxxx
+ *   CLIENT     KL-xxxx       (permanent, no year — like Lead IDs)
+ *   PAYMENT    PAY-PP-YY-xxxx
+ *   REFUND_PP  REF-PP-YY-xxxx
  *
  * Sequences are persisted in the id_sequences table.
  * nextId() uses a database transaction with row-level lock to guarantee uniqueness.
@@ -36,6 +39,10 @@ const DOCTYPE = Object.freeze({
   LEAD_PP: 'LEAD_PP',
   LEAD_B2B: 'LEAD_B2B',
   LEAD_EVENT: 'LEAD_EVENT',
+  // Phase 2A Commercial Core
+  CLIENT: 'CLIENT',
+  PAYMENT: 'PAYMENT',
+  REFUND_PP: 'REFUND_PP',
 })
 
 const MODULE = Object.freeze({
@@ -45,8 +52,8 @@ const MODULE = Object.freeze({
   GLOBAL: 'GLOBAL',
 })
 
-// Lead IDs: permanent, no year reset
-const LEAD_TYPES = new Set([DOCTYPE.LEAD_PP, DOCTYPE.LEAD_B2B, DOCTYPE.LEAD_EVENT])
+// Lead and Client IDs: permanent, no year reset
+const LEAD_TYPES = new Set([DOCTYPE.LEAD_PP, DOCTYPE.LEAD_B2B, DOCTYPE.LEAD_EVENT, DOCTYPE.CLIENT])
 
 function pad(n, len = 4) {
   return String(n).padStart(len, '0')
@@ -68,6 +75,9 @@ function formatId(docType, module, year, seq) {
     case DOCTYPE.LEAD_PP:    return `LP-${pad(seq)}`
     case DOCTYPE.LEAD_B2B:   return `LB-${pad(seq)}`
     case DOCTYPE.LEAD_EVENT: return `LE-${pad(seq)}`
+    case DOCTYPE.CLIENT:     return `KL-${pad(seq)}`
+    case DOCTYPE.PAYMENT:    return `PAY-${module}-${yy}-${pad(seq)}`
+    case DOCTYPE.REFUND_PP:  return `REF-${module}-${yy}-${pad(seq)}`
     default: throw new Error(`Unknown docType: ${docType}`)
   }
 }
