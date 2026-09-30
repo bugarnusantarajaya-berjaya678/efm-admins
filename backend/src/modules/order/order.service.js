@@ -1,9 +1,9 @@
-import { withTransaction } from '../../db/index.js'
+import { withTransaction, query } from '../../db/index.js'
 import { nextId, DOCTYPE, MODULE } from '../id/id.generator.js'
 import { recordAuditEvent, AuditEventType, EntityType } from '../audit/audit.service.js'
 import { validationError, notFound, businessRuleViolation } from '../../shared/errors.js'
 import { classifyUrgency } from './deadline.engine.js'
-import { getPackage, resolvePackagePrice } from '../catalog/catalog.service.js'
+import { getPackage, resolvePackagePrice, getOffering, getProgram } from '../catalog/catalog.service.js'
 import {
   findOrderById, findAllOrders, countOrders,
   insertOrder, updateOrderStatus, updateOrderUrgency,
@@ -44,6 +44,8 @@ export async function createOrder({ clientId, leadId, packageId, picId, startDat
   if (!picId) throw validationError('picId is required')
 
   const pkg = await getPackage(packageId)
+  const offering = await getOffering(pkg.offering_id)
+  const program = await getProgram(offering.program_id)
   const unitPrice = await resolvePackagePrice(packageId)
   const baseAmount = unitPrice * pkg.session_count
   const finalAmount = baseAmount // no discount at creation
@@ -65,12 +67,12 @@ export async function createOrder({ clientId, leadId, packageId, picId, startDat
       finalOrder = await updateOrderUrgency(id, 'URGENT', client)
     }
 
-    // Write-once commercial snapshot
+    // Write-once commercial snapshot — store resolved names, not FKs
     await insertCommercialSnapshot({
       orderId: id,
       packageName: pkg.name,
-      offeringName: pkg.offering_id, // will be enriched if needed
-      programName: '',
+      offeringName: offering.name,
+      programName: program.name,
       sessionsTotal: pkg.session_count,
       unitPrice,
       baseAmount,
@@ -103,28 +105,36 @@ export async function createOrder({ clientId, leadId, packageId, picId, startDat
   })
 }
 
-export async function transitionOrderStatus(id, targetStatus, requestId) {
-  const order = await findOrderById(id)
-  if (!order) throw notFound('Order', id)
+const ORDER_EVENT_MAP = {
+  ACTIVE: AuditEventType.ORDER_ACTIVATED,
+  COMPLETED: AuditEventType.ORDER_COMPLETED,
+  CANCELLED: AuditEventType.ORDER_CANCELLED,
+}
 
-  const allowed = VALID_STATUS_TRANSITIONS[order.status] ?? []
-  if (!allowed.includes(targetStatus)) {
-    throw businessRuleViolation(
-      'INVALID_STATUS_TRANSITION',
-      `Cannot transition order from ${order.status} to ${targetStatus}`
-    )
-  }
+/**
+ * Transition an order to a new status.
+ * Accepts an optional txClient to run within an existing transaction.
+ * Idempotent: if already in targetStatus, returns the current order without error.
+ */
+export async function transitionOrderStatus(id, targetStatus, requestId, txClient) {
+  const execute = async (client) => {
+    const order = await findOrderById(id, client)
+    if (!order) throw notFound('Order', id)
 
-  const eventTypeMap = {
-    ACTIVE: AuditEventType.ORDER_ACTIVATED,
-    COMPLETED: AuditEventType.ORDER_COMPLETED,
-    CANCELLED: AuditEventType.ORDER_CANCELLED,
-  }
+    // Idempotent: already in target state — return gracefully
+    if (order.status === targetStatus) return order
 
-  return withTransaction(async (client) => {
+    const allowed = VALID_STATUS_TRANSITIONS[order.status] ?? []
+    if (!allowed.includes(targetStatus)) {
+      throw businessRuleViolation(
+        'INVALID_STATUS_TRANSITION',
+        `Cannot transition order from ${order.status} to ${targetStatus}`
+      )
+    }
+
     const updated = await updateOrderStatus(id, targetStatus, client)
     await recordAuditEvent({
-      eventType: eventTypeMap[targetStatus] ?? AuditEventType.ORDER_UPDATED,
+      eventType: ORDER_EVENT_MAP[targetStatus] ?? AuditEventType.ORDER_UPDATED,
       entityType: EntityType.ORDER,
       entityId: id,
       metadata: { from: order.status, to: targetStatus },
@@ -132,22 +142,21 @@ export async function transitionOrderStatus(id, targetStatus, requestId) {
       client,
     })
     return updated
-  })
+  }
+  return txClient ? execute(txClient) : withTransaction(execute)
 }
 
 /**
- * Program Readiness — derived state, never stored.
+ * Program Readiness — derived state, never stored (D-09 / OPEN-2B-04).
  * An order is "program ready" when status = ACTIVE and its invoice = PAID.
  */
 export async function isOrderProgramReady(orderId) {
-  const { rows } = await import('../../db/index.js').then(m =>
-    m.query(
-      `SELECT o.status AS order_status, i.status AS invoice_status
-       FROM orders_pp o
-       LEFT JOIN invoices_pp i ON i.order_id = o.id
-       WHERE o.id = $1`,
-      [orderId]
-    )
+  const { rows } = await query(
+    `SELECT o.status AS order_status, i.status AS invoice_status
+     FROM orders_pp o
+     LEFT JOIN invoices_pp i ON i.order_id = o.id
+     WHERE o.id = $1`,
+    [orderId]
   )
   if (!rows.length) return false
   const { order_status, invoice_status } = rows[0]

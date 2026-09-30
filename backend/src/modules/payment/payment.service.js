@@ -109,12 +109,8 @@ export async function confirmPayment(id, { confirmedBy } = {}, requestId) {
     // Mark invoice as PAID
     await markInvoicePaid(payment.invoice_id, requestId, client)
 
-    // Transition order PENDING_PAYMENT → ACTIVE
-    try {
-      await transitionOrderStatus(invoice.order_id, 'ACTIVE', requestId)
-    } catch {
-      // Order may already be ACTIVE if transitioned externally; non-fatal
-    }
+    // Transition order PENDING_PAYMENT → ACTIVE (idempotent — safe if already ACTIVE)
+    await transitionOrderStatus(invoice.order_id, 'ACTIVE', requestId, client)
 
     // Auto-generate receipt
     const receipt = await createReceipt({
