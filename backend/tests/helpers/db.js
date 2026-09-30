@@ -15,6 +15,7 @@ export async function teardownTestDb() {
   // Truncate all tables between runs (Phase 1 + Phase 2A)
   await query(`
     TRUNCATE
+      assessments_pp, participants_pp,
       refunds_pp, receipts_pp, payments_pp, invoices_pp,
       order_commercial_snapshots, orders_pp,
       clients_pp, leads_pp,

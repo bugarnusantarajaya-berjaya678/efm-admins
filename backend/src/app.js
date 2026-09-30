@@ -14,6 +14,9 @@ import { invoiceRouter } from './modules/invoice/invoice.router.js'
 import { paymentRouter } from './modules/payment/payment.router.js'
 import { receiptRouter } from './modules/receipt/receipt.router.js'
 import { refundRouter } from './modules/refund/refund.router.js'
+// Phase 2B Participants & Assessments
+import { participantRouter } from './modules/participant/participant.router.js'
+import { assessmentRouter } from './modules/assessment/assessment.router.js'
 
 const app = express()
 
@@ -27,7 +30,7 @@ app.get('/health', asyncHandler(async (req, res) => {
     status: 'ok',
     requestId: req.requestId,
     db: { connected: true, serverTime: dbTime },
-    version: '1.0.0-phase2a',
+    version: '1.0.0-phase2b',
   })
 }))
 
@@ -43,6 +46,9 @@ app.use('/api/pp', invoiceRouter)
 app.use('/api/pp', paymentRouter)
 app.use('/api/pp', receiptRouter)
 app.use('/api/pp', refundRouter)
+// Phase 2B PP Participants & Assessments
+app.use('/api/pp', participantRouter)
+app.use('/api/pp', assessmentRouter)
 
 // 404 catch-all
 app.use((req, res) => {

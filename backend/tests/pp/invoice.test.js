@@ -98,6 +98,6 @@ describe('PP Invoice Module', () => {
       orderId,
       dueDate: dueDate.toISOString().split('T')[0],
     })
-    expect([201, 422]).toContain(res.status)
+    expect(res.status).toBe(201)
   })
 })
