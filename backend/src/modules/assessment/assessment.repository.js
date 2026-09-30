@@ -14,7 +14,7 @@ export async function insertAssessment(
     [
       id, participantId, orderId,
       assessorId ?? null,
-      assessmentDate ?? null,
+      assessmentDate ?? new Date().toISOString().split('T')[0],
       assessmentType,
       heightCm ?? null, weightKg ?? null, bodyFatPct ?? null,
       fitnessScore ?? null, notes ?? null,

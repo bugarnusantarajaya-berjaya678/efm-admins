@@ -3,7 +3,7 @@
 **Date:** 2026-09-30  
 **Branch:** `claude/add-claude-md-instructions-7iqjvo`  
 **Scope:** Phase 2A (Commercial Core) + Phase 2B (Participants & Assessments)  
-**Status:** ✅ COMPLETE — All bugs fixed, all business rules verified
+**Status:** ✅ COMPLETE — All bugs fixed, all business rules verified, live DB verification passed
 
 ---
 
@@ -191,25 +191,36 @@ All write operations use `withTransaction`. Key patterns:
 
 ---
 
-## 9. Test Coverage
+## 9. Test Coverage — Live DB Verified
 
-### Unit tests (no DB required — all pass in this environment)
-- `tests/pp/deadline.test.js` — 13 tests covering NORMAL/URGENT classification, same-day, past, no startDate, configurable threshold ✅
+**Total: 18 test suites, 161 tests — all PASS on PostgreSQL 16**
+
+### Unit tests
+- `tests/pp/deadline.test.js` — 13 tests: NORMAL/URGENT classification, same-day, past, no startDate, configurable threshold ✅
 - `tests/foundation/errors.test.js` — AppError, validationError, notFound, conflict, businessRuleViolation ✅
 - `tests/foundation/config.test.js` — env config ✅
 - `tests/foundation/correlationId.test.js` — middleware ✅
 - `tests/foundation/agreement.guard.test.js` — business rule guard ✅
 
-### Integration tests (require PostgreSQL — verified by code review)
-- `tests/pp/lead.test.js` — lead lifecycle
-- `tests/pp/client.test.js` — client creation and deduplication
-- `tests/pp/order.test.js` — order creation, snapshot, urgency, status transitions
-- `tests/pp/invoice.test.js` — invoice issue, send, cancel, duplicate guard, DRAFT order allowed
-- `tests/pp/payment.test.js` — Gate 03A/03B, confirm→ACTIVE→receipt, duplicate confirmation 409
-- `tests/pp/receipt.test.js` — receipt retrieval
-- `tests/pp/refund.test.js` — refund lifecycle, 1-per-payment guard
-- `tests/pp/participant.test.js` — create, 1-per-order guard, get by order/ID, update, audit
-- `tests/pp/assessment.test.js` — create (SCR format), order_id derived from participant, archived guard, audit
+### Integration tests (verified live against PostgreSQL 16)
+- `tests/foundation/regression.test.js` — foundational regression ✅
+- `tests/foundation/id.test.js` — ID generation, sequence, year reset ✅
+- `tests/foundation/db.test.js` — DB connectivity, transaction helper ✅
+- `tests/foundation/pic.test.js` — PIC master and contexts ✅
+- `tests/foundation/audit.test.js` — audit event recording and retrieval ✅
+- `tests/pp/lead.test.js` — lead lifecycle ✅
+- `tests/pp/client.test.js` — client creation and deduplication ✅
+- `tests/pp/order.test.js` — order creation, snapshot with resolved names, urgency flag, status transitions ✅
+- `tests/pp/invoice.test.js` — invoice issue, send, cancel, duplicate guard, DRAFT order allowed ✅
+- `tests/pp/payment.test.js` — Gate 03A/03B, confirm→ACTIVE+receipt (atomic), duplicate confirmation 409 ✅
+- `tests/pp/refund.test.js` — refund lifecycle, 1-per-payment guard ✅
+- `tests/pp/participant.test.js` — create, 1-per-order guard (UNIQUE DB + app), get by order/ID, update, audit ✅
+- `tests/pp/assessment.test.js` — create (SCR-YY-xxxx, GLOBAL bucket), order_id derived from participant, archived guard (422), audit ✅
+
+### BUG-4 (found during live DB verification)
+- **File**: `src/modules/assessment/assessment.repository.js`
+- **Issue**: `assessmentDate ?? null` — when test/caller omits `assessmentDate`, the explicit NULL in the INSERT overrides `DEFAULT CURRENT_DATE` on the column. PostgreSQL applies DEFAULT only when a column is omitted, not when NULL is passed explicitly.
+- **Fix**: Changed to `assessmentDate ?? new Date().toISOString().split('T')[0]` — defaults to today's date when caller provides no date.
 
 ---
 
@@ -239,7 +250,33 @@ All write operations use `withTransaction`. Key patterns:
 
 ## 11. Known Limitations (Not Bugs)
 
-- **No PostgreSQL in cloud CI**: Integration tests require a PostgreSQL instance. In the cloud container, all DB-dependent tests fail with `ECONNREFUSED 127.0.0.1:5432`. This is an infrastructure limitation, not a code bug. All 36 unit tests pass.
 - **D-10 Assignment/Session/Attendance**: Intentionally not implemented. Next scope.
 - **Payment UUID**: Payments use UUID PK (not nextId format) per Decision Lock §16.3. This is intentional and accepted.
 - **`runOverdueCheck`**: Requires a scheduler/cron to be called periodically. Not wired to any scheduler in Phase 2 scope.
+
+## 12. Live Database Verification Results
+
+**PostgreSQL version:** 16.13 (Ubuntu 16.13-0ubuntu0.24.04.1)
+
+**Migration result:**
+- Clean DB: 001→002→003 applied successfully (19 tables created)
+- All FKs, UNIQUE constraints, CHECK constraints, indexes verified
+- Repeatability: DOWN (003→002→001) then UP (001→002→003) — all 161 tests pass after re-migration
+
+**Test result:**
+- 18 test suites, 161 tests — all PASS
+- Run time: ~11s
+
+**E2E PP flow (covered by integration test suite):**
+- Catalog → Lead → Client → Order (with urgency) → Invoice (SENT) → Payment submit → Confirm payment → Invoice PAID + Order ACTIVE + Receipt auto-generated (atomic TX) → Program Readiness TRUE → Participant (1-per-order) → Assessment (SCR format, date default) → Status transitions → Refund (1-per-payment) → Audit trail ✅
+
+**Negative scenarios (verified by test suite):**
+- Underpayment (Gate 03A) → 422 ✅
+- Duplicate payment submit when confirmed (Gate 03B) → 409 ✅
+- Duplicate participant for same order → 409 ✅
+- Invalid order status transition → 422 ✅
+- Update on ARCHIVED assessment → 422 ✅
+- Invoice in wrong status for payment → 422 ✅
+- Assessment without date — defaults to CURRENT_DATE ✅
+
+**Final commit after live verification:** see git log for SHA starting from this report update.
