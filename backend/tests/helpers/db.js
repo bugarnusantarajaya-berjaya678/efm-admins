@@ -12,9 +12,10 @@ export async function setupTestDb() {
 }
 
 export async function teardownTestDb() {
-  // Truncate all tables between runs (Phase 1 + Phase 2A)
+  // Truncate all tables between runs (Phase 1 + Phase 2A + Phase 2B + Phase 3)
   await query(`
     TRUNCATE
+      attendance_pp, agreements_pp,
       assessments_pp, participants_pp,
       refunds_pp, receipts_pp, payments_pp, invoices_pp,
       order_commercial_snapshots, orders_pp,

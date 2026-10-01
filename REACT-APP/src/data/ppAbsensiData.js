@@ -3,7 +3,7 @@
 
 const D = (id, jadwalId, tanggal, jam, lokasi, device) => ({
   id, jadwalId, tanggal, jam, lokasi, device,
-  fotoUrl: `https://drive.google.com/file/d/1Abs${id.replace('-','')}_${jadwalId.replace(/-/g,'')}/view?usp=drive_link`,
+  fotoUrl: null,
   catatanKoreksi: '',
 })
 

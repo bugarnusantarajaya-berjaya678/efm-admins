@@ -6,9 +6,15 @@ import { markInvoicePaid } from '../invoice/invoice.service.js'
 import { transitionOrderStatus } from '../order/order.service.js'
 import {
   findPaymentById, findPaymentsByInvoice, findConfirmedPaymentByInvoice,
-  insertPayment, updatePaymentStatus,
+  insertPayment, updatePaymentStatus, updatePaymentProofPath,
 } from './payment.repository.js'
 import { createReceipt } from '../receipt/receipt.service.js'
+import { uploadFile, replaceFile, getSignedUrl, validateMagicBytes } from '../../services/storage.service.js'
+import { env } from '../../config/env.js'
+
+const PROOF_BUCKET   = 'payment-proofs'
+const PROOF_MAX_BYTES = parseInt(env.PROOF_MAX_BYTES ?? '10485760', 10)
+const ALLOWED_PROOF_MIMES = ['image/jpeg', 'image/png', 'application/pdf']
 
 // Gate 03A tolerance: exact match ± tolerance (default 0)
 const PAYMENT_TOLERANCE = parseFloat(process.env.PP_PAYMENT_TOLERANCE ?? '0')
@@ -121,6 +127,47 @@ export async function confirmPayment(id, { confirmedBy } = {}, requestId) {
 
     return { payment: confirmed, receipt }
   })
+}
+
+export async function uploadPaymentProof(id, proofBuffer, requestId) {
+  if (!proofBuffer || !proofBuffer.length) throw validationError('Proof file is required')
+  if (proofBuffer.length > PROOF_MAX_BYTES) {
+    throw validationError(`File too large (${proofBuffer.length} bytes, max ${PROOF_MAX_BYTES})`)
+  }
+
+  const detectedMime = validateMagicBytes(proofBuffer, ALLOWED_PROOF_MIMES)
+
+  const payment = await findPaymentById(id)
+  if (!payment) throw notFound('Payment', id)
+
+  const ext = detectedMime === 'application/pdf' ? 'pdf' : detectedMime === 'image/png' ? 'png' : 'jpg'
+  const proofPath = `${payment.order_id}/${payment.id}.${ext}`
+
+  const uploadFn = payment.proof_path ? replaceFile : uploadFile
+  try {
+    await uploadFn(PROOF_BUCKET, proofPath, proofBuffer, detectedMime)
+  } catch (err) {
+    console.warn(`[payment] Proof upload failed: ${err.message}`)
+    throw err
+  }
+
+  const updated = await updatePaymentProofPath(id, proofPath, null)
+
+  await recordAuditEvent({
+    eventType: AuditEventType.PROOF_UPLOADED,
+    entityType: EntityType.PAYMENT,
+    entityId: id,
+    actorId: requestId,
+    metadata: { orderId: payment.order_id, proofPath },
+    requestId,
+  })
+
+  try {
+    const proofUrl = await getSignedUrl(PROOF_BUCKET, proofPath, 3600)
+    return { ...updated, proof_url: proofUrl }
+  } catch {
+    return updated
+  }
 }
 
 export async function rejectPayment(id, { rejectedBy, rejectionReason } = {}, requestId) {

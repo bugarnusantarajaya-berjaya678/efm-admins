@@ -42,6 +42,15 @@ export async function insertInvoice({ id, orderId, dueDate, finalAmount, notes }
   return rows[0]
 }
 
+export async function updateInvoicePdfPath(id, pdfPath, client) {
+  const q = client ? client.query.bind(client) : query
+  const { rows } = await q(
+    `UPDATE invoices_pp SET pdf_path=$2, updated_at=NOW() WHERE id=$1 RETURNING *`,
+    [id, pdfPath]
+  )
+  return rows[0] ?? null
+}
+
 export async function updateInvoiceStatus(id, status, client) {
   const q = client ? client.query.bind(client) : query
   const { rows } = await q(

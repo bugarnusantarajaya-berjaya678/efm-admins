@@ -1,8 +1,14 @@
 import { Router } from 'express'
 import { asyncHandler } from '../../middleware/errorHandler.js'
-import { listInvoices, getInvoice, issueInvoice, sendInvoice, cancelInvoice, runOverdueCheck } from './invoice.service.js'
+import { requireAuth, requireRole } from '../../middleware/auth.js'
+import {
+  listInvoices, getInvoice, issueInvoice, sendInvoice,
+  cancelInvoice, runOverdueCheck, generateAndStoreInvoicePdf,
+} from './invoice.service.js'
 
 export const invoiceRouter = Router()
+
+invoiceRouter.use(requireAuth)
 
 invoiceRouter.get('/invoices', asyncHandler(async (req, res) => {
   const { status, limit, offset } = req.query
@@ -38,3 +44,12 @@ invoiceRouter.post('/invoices/overdue-check', asyncHandler(async (req, res) => {
   const count = await runOverdueCheck(req.requestId)
   res.json({ data: { updated: count } })
 }))
+
+invoiceRouter.post(
+  '/invoices/:id/pdf',
+  requireRole('Admin', 'Finance', 'Operations'),
+  asyncHandler(async (req, res) => {
+    const invoice = await generateAndStoreInvoicePdf(req.params.id, req.requestId)
+    res.json({ data: invoice })
+  })
+)

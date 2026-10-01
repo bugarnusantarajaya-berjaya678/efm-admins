@@ -1,7 +1,7 @@
 {
   "name": "efm-backend",
-  "version": "1.0.0",
-  "description": "EFM V2 — Node.js API backend (Phase 1 Foundation)",
+  "version": "1.0.0-phase3",
+  "description": "EFM V2 — Node.js API backend (Phase 3 Production Foundation)",
   "type": "module",
   "main": "src/app.js",
   "scripts": {
@@ -11,11 +11,17 @@
     "test:watch": "node --experimental-vm-modules node_modules/.bin/jest --watch --runInBand",
     "migrate": "node src/db/migrate.js up",
     "migrate:down": "node src/db/migrate.js down",
-    "migrate:status": "node src/db/migrate.js status"
+    "migrate:status": "node src/db/migrate.js status",
+    "setup:buckets": "node scripts/setup-buckets.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "pdfkit": "^0.15.0",
     "pg": "^8.12.0",
+    "sharp": "^0.33.5",
     "uuid": "^10.0.0",
     "dotenv": "^16.4.5"
   },
