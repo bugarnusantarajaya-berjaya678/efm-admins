@@ -138,7 +138,8 @@ export async function generateAndStoreInvoicePdf(id, requestId) {
   if (!invoice) throw notFound('Invoice', id)
 
   const snapshot = await findSnapshotByOrderId(invoice.order_id)
-  const clientRec = snapshot ? await findClientById(snapshot.client_id ?? null) : null
+  const order = await findOrderById(invoice.order_id)
+  const clientRec = order?.client_id ? await findClientById(order.client_id) : null
   const clientName = clientRec?.full_name ?? invoice.order_id
 
   const pdfBuffer = await generateInvoicePdf({

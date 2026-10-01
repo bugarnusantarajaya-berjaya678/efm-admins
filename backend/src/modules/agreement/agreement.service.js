@@ -114,7 +114,7 @@ function defaultAgreementBody(order) {
     `PERJANJIAN LAYANAN PELATIHAN KEBUGARAN`,
     ``,
     `Perjanjian ini dibuat antara Essential Fitness Management (EFM) selaku`,
-    `Penyedia Jasa, dan ${order.client_id} selaku Penerima Layanan.`,
+    `Penyedia Jasa, dan ${order.client_name} selaku Penerima Layanan.`,
     ``,
     `1. RUANG LINGKUP LAYANAN`,
     `   Penyedia Jasa akan memberikan layanan pelatihan kebugaran sesuai paket`,

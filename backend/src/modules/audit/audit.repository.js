@@ -22,7 +22,7 @@ export async function insertAuditEvent({ eventType, entityType, entityId, actorI
 export async function getAuditEventsByEntity(entityType, entityId, limit = 50) {
   const { rows } = await query(
     `SELECT * FROM audit_events
-     WHERE entity_type = $1 AND entity_id = $2
+     WHERE LOWER(entity_type) = LOWER($1) AND entity_id = $2
      ORDER BY occurred_at DESC
      LIMIT $3`,
     [entityType, entityId, limit]

@@ -46,6 +46,7 @@ CREATE TABLE attendance_pp (
   session_number    INTEGER NOT NULL CHECK (session_number > 0),
   session_date      DATE NOT NULL DEFAULT CURRENT_DATE,
   trainer_id        TEXT,              -- FK to pic_master.id (nullable, assigned later)
+  trainer_name      TEXT,              -- freetext name (entered at time of session)
   notes             TEXT,
   client_present    BOOLEAN NOT NULL DEFAULT TRUE,
   trainer_present   BOOLEAN NOT NULL DEFAULT TRUE,

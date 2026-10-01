@@ -1,4 +1,5 @@
 import express from 'express'
+import { env } from './config/env.js'
 import { correlationId } from './middleware/correlationId.js'
 import { errorHandler } from './middleware/errorHandler.js'
 import { asyncHandler } from './middleware/errorHandler.js'
@@ -24,9 +25,15 @@ import { attendanceRouter } from './modules/attendance/attendance.router.js'
 
 const app = express()
 
-// CORS — allow all origins (auth is via JWT, not cookies)
+// CORS — restrict to configured origins in production; JWT auth is stateless so wildcard
+// is technically safe, but an explicit allowlist is better posture.
 app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
+  const origin = req.headers.origin
+  const allowed = env.CORS_ORIGINS
+  if (allowed.includes('*') || (origin && allowed.includes(origin))) {
+    res.setHeader('Access-Control-Allow-Origin', origin || '*')
+    if (origin) res.setHeader('Vary', 'Origin')
+  }
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Request-Id,X-Test-Role')
   if (req.method === 'OPTIONS') return res.sendStatus(204)
@@ -51,18 +58,18 @@ app.get('/health', asyncHandler(async (req, res) => {
 // Phase 1/2A/2B routers that predate auth middleware get it applied here)
 app.use('/api/v1/pics', requireAuth, picRouter)
 app.use('/api/v1/audit', requireAuth, auditRouter)
-// Phase 2A PP Commercial Core
-app.use('/api/pp', catalogRouter)    // catalog read is public-ish, auth inside service if needed
-app.use('/api/pp', leadRouter)
-app.use('/api/pp', clientRouter)
-app.use('/api/pp', orderRouter)
-app.use('/api/pp', invoiceRouter)    // requireAuth applied inside router (Phase 3)
-app.use('/api/pp', paymentRouter)    // requireAuth applied inside router (Phase 3)
-app.use('/api/pp', receiptRouter)    // requireAuth applied inside router (Phase 3)
-app.use('/api/pp', refundRouter)
+// Phase 2A PP Commercial Core (requireAuth at mount point for all PP routes)
+app.use('/api/pp', requireAuth, catalogRouter)
+app.use('/api/pp', requireAuth, leadRouter)
+app.use('/api/pp', requireAuth, clientRouter)
+app.use('/api/pp', requireAuth, orderRouter)
+app.use('/api/pp', requireAuth, invoiceRouter)
+app.use('/api/pp', requireAuth, paymentRouter)
+app.use('/api/pp', requireAuth, receiptRouter)
+app.use('/api/pp', requireAuth, refundRouter)
 // Phase 2B PP Participants & Assessments
-app.use('/api/pp', participantRouter)
-app.use('/api/pp', assessmentRouter)
+app.use('/api/pp', requireAuth, participantRouter)
+app.use('/api/pp', requireAuth, assessmentRouter)
 // Phase 3 — Agreements & Attendance (requireAuth inside routers)
 app.use('/api/pp', agreementRouter)
 app.use('/api/pp', attendanceRouter)
