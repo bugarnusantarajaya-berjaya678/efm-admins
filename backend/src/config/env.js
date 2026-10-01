@@ -59,4 +59,15 @@ export const env = {
   isTest: nodeEnv === 'test',
   isDev: nodeEnv === 'development',
   isProd: nodeEnv === 'production',
+
+  // Supabase — optional; required only when storage/auth features are used.
+  // Set in production via environment variables, never hard-code these values.
+  SUPABASE_URL: optional('SUPABASE_URL', null),
+  SUPABASE_SERVICE_ROLE_KEY: optional('SUPABASE_SERVICE_ROLE_KEY', null),
+  SUPABASE_JWT_SECRET: optional('SUPABASE_JWT_SECRET', null),
+  SUPABASE_ANON_KEY: optional('SUPABASE_ANON_KEY', null),
+
+  // Payment proof upload limits
+  PROOF_MAX_BYTES: parseInt(optional('PROOF_MAX_BYTES', String(10 * 1024 * 1024)), 10), // 10 MB
+  PHOTO_MAX_BYTES: parseInt(optional('PHOTO_MAX_BYTES', String(20 * 1024 * 1024)), 10), // 20 MB
 }

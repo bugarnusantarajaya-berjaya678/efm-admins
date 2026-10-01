@@ -6,8 +6,13 @@ import { findOrderById } from '../order/order.repository.js'
 import { findSnapshotByOrderId } from '../order/order.repository.js'
 import {
   findInvoiceById, findInvoiceByOrderId, findAllInvoices, countInvoices,
-  insertInvoice, updateInvoiceStatus, findOverdueInvoices,
+  insertInvoice, updateInvoiceStatus, updateInvoicePdfPath, findOverdueInvoices,
 } from './invoice.repository.js'
+import { generateInvoicePdf } from '../../services/pdf.service.js'
+import { uploadFile, replaceFile, getSignedUrl } from '../../services/storage.service.js'
+import { findClientById } from '../client/client.repository.js'
+
+const PDF_BUCKET = 'invoices'
 
 export async function listInvoices({ status, limit, offset } = {}) {
   const [data, total] = await Promise.all([
@@ -126,6 +131,56 @@ export async function cancelInvoice(id, requestId) {
     })
     return updated
   })
+}
+
+export async function generateAndStoreInvoicePdf(id, requestId) {
+  const invoice = await findInvoiceById(id)
+  if (!invoice) throw notFound('Invoice', id)
+
+  const snapshot = await findSnapshotByOrderId(invoice.order_id)
+  const order = await findOrderById(invoice.order_id)
+  const clientRec = order?.client_id ? await findClientById(order.client_id) : null
+  const clientName = clientRec?.full_name ?? invoice.order_id
+
+  const pdfBuffer = await generateInvoicePdf({
+    id: invoice.id,
+    orderId: invoice.order_id,
+    clientName,
+    packageName:   snapshot?.package_name ?? invoice.order_id,
+    sessionsTotal: snapshot?.sessions_total ?? 0,
+    unitPrice:     snapshot ? (parseFloat(snapshot.final_amount) / (snapshot.sessions_total || 1)) : 0,
+    finalAmount:   parseFloat(invoice.final_amount),
+    issuedDate:    invoice.created_at,
+    dueDate:       invoice.due_date,
+    status:        invoice.status,
+    notes:         invoice.notes,
+  })
+
+  const pdfPath = `${invoice.order_id}/${invoice.id}.pdf`
+  const uploadFn = invoice.pdf_path ? replaceFile : uploadFile
+  try {
+    await uploadFn(PDF_BUCKET, pdfPath, pdfBuffer, 'application/pdf')
+  } catch (err) {
+    console.warn(`[invoice] PDF upload skipped: ${err.message}`)
+    return invoice
+  }
+
+  const updated = await updateInvoicePdfPath(id, pdfPath, null)
+
+  await recordAuditEvent({
+    eventType: AuditEventType.PDF_GENERATED,
+    entityType: EntityType.INVOICE,
+    entityId: id,
+    metadata: { pdfPath },
+    requestId,
+  })
+
+  try {
+    const pdfUrl = await getSignedUrl(PDF_BUCKET, pdfPath, 3600)
+    return { ...updated, pdf_url: pdfUrl }
+  } catch {
+    return updated
+  }
 }
 
 /**

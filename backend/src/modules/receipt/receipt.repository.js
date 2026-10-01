@@ -21,6 +21,15 @@ export async function findReceiptsByOrder(orderId, client) {
   return rows
 }
 
+export async function updateReceiptPdfPath(id, pdfPath, client) {
+  const q = client ? client.query.bind(client) : query
+  const { rows } = await q(
+    `UPDATE receipts_pp SET pdf_path=$2, updated_at=NOW() WHERE id=$1 RETURNING *`,
+    [id, pdfPath]
+  )
+  return rows[0] ?? null
+}
+
 export async function insertReceipt({ id, paymentId, orderId, amount, notes }, client) {
   const q = client ? client.query.bind(client) : query
   const { rows } = await q(

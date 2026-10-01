@@ -36,6 +36,15 @@ export async function insertPayment({ invoiceId, orderId, amount, paymentMethod,
   return rows[0]
 }
 
+export async function updatePaymentProofPath(id, proofPath, client) {
+  const q = client ? client.query.bind(client) : query
+  const { rows } = await q(
+    `UPDATE payments_pp SET proof_path=$2, proof_uploaded_at=NOW(), updated_at=NOW() WHERE id=$1 RETURNING *`,
+    [id, proofPath]
+  )
+  return rows[0] ?? null
+}
+
 export async function updatePaymentStatus(id, status, extra = {}, client) {
   const q = client ? client.query.bind(client) : query
   const setClauses = ['status = $2', 'updated_at = NOW()']

@@ -27,6 +27,12 @@ const ALLOWED_TABLES = new Set([
   'payments_pp',
   'receipts_pp',
   'refunds_pp',
+  // Phase 2B
+  'participants_pp',
+  'assessments_pp',
+  // Phase 3
+  'agreements_pp',
+  'attendance_pp',
 ])
 
 export class BaseRepository {
